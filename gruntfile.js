@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         },
         concat: {
             build: {
-                src : ['src/**/*.js'],
+                src : ['src/imageTools/simpleTool.js', 'src/**/*.js'],
                 dest: 'build/built.js'
             },
             dist: {

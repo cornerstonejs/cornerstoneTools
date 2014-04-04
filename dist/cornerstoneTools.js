@@ -1,30 +1,67 @@
 /*! cornerstoneTools - v0.0.1 - 2014-04-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
-    function onMouseDown(e){
+    function onMouseDown(e) {
+
         var eventData = e.data;
-        var element = e.currentTarget;
+
         if(e.which === eventData.whichMouseButton) {
 
-            var lastX = e.pageX;
-            var lastY = e.pageY;
+            var element = e.currentTarget;
 
-            // now that we have started panning, hook mousemove so
-            // we can update the image as they drag
+            var startPageX = e.pageX;
+            var startPageY = e.pageY;
+            var startImagePoint = cornerstone.pageToImage(element, e.pageX, e.pageY);
+            var startImageX = startImagePoint.x;
+            var startImageY = startImagePoint.y;
+
+            var lastPageX = e.pageX;
+            var lastPageY = e.pageY;
+            var lastImageX = startImageX;
+            var lastImageY = startImageY;
+
             $(document).mousemove(function(e) {
-                var deltaX = e.pageX - lastX,
-                    deltaY = e.pageY - lastY ;
-                lastX = e.pageX;
-                lastY = e.pageY;
+                // Calculate delta values in page and image coordinates
+                var deltaPageX = e.pageX - lastPageX;
+                var deltaPageY = e.pageY - lastPageY;
+                var currentImagePoint = cornerstone.pageToImage(element, e.pageX, e.pageY);
+                var deltaImageX = currentImagePoint.x - lastImageX;
+                var deltaImageY = currentImagePoint.y - lastImageY;
 
-                var viewport = cornerstone.getViewport(element);
-                viewport.centerX += (deltaX / viewport.scale);
-                viewport.centerY += (deltaY / viewport.scale);
-                cornerstone.setViewport(element, viewport);
+                // create an object with all the data they might need
+                var mouseMoveData = {
+                    startPageX : startPageX,
+                    startPageY : startPageY,
+                    startImageX : startImageX,
+                    startImageY : startImageY,
+                    lastPageX : lastPageX,
+                    lastPageY : lastPageY,
+                    lastImageX : lastImageX,
+                    lastImageY : lastImageY,
+                    deltaPageX : deltaPageX,
+                    deltaPageY : deltaPageY,
+                    deltaImageX : deltaImageX,
+                    deltaImageY : deltaImageY,
+                    pageX : e.pageX,
+                    pageY : e.pageY,
+                    imageX : currentImagePoint.x,
+                    imageY : currentImagePoint.y,
+                };
+
+                // invoke the mouseMoveCallback with the data
+                eventData.mouseMoveCallback(element, mouseMoveData);
+
+                // update the last coordinates for page and image
+                lastPageX = e.pageX;
+                lastPageY = e.pageY;
+                lastImageX = currentImagePoint.x;
+                lastImageY = currentImagePoint.y;
 
                 // prevent left click selection of DOM elements
                 return cornerstoneTools.pauseEvent(e);
@@ -42,44 +79,50 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    // enables the pan tool on the specified element.  Note that the pan tool does nothing
-    // in this state as it has no overlays
-    function enable(element)
+    function unbind(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // disables the pan tool on the specified element
-    function disable(element)
+    function makeSimpleTool(mouseMoveCallback)
     {
-        $(element).unbind('mousedown', onMouseDown);
-    }
-
-    // Activates the pan tool so it responds to mouse events
-    function activate(element, whichMouseButton)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-        var eventData = {
-            whichMouseButton: whichMouseButton,
-            active: true
+        var toolInterface = {
+            activate: function(element, whichMouseButton) {
+                $(element).unbind('mousedown', onMouseDown);
+                var eventData = {
+                    whichMouseButton: whichMouseButton,
+                    active: true,
+                    mouseMoveCallback: mouseMoveCallback
+                };
+                $(element).mousedown(eventData, onMouseDown);
+            },
+            disable : unbind,
+            enable: unbind,
+            deactivate: unbind
         };
-        $(element).mousedown(eventData, onMouseDown);
-    }
-
-    // deactivates the pan tool.  This is the same thing as being enabled or disabled as the
-    // pan tool requires user interactivity to do anything
-    function deactivate(element)
-    {
-        $(element).unbind('mousedown', onMouseDown);
+        return toolInterface;
     }
 
     // module exports
-    cornerstoneTools.pan = {
-        enable: enable,
-        disable : disable,
-        activate: activate,
-        deactivate: deactivate
-    };
+    cornerstoneTools.makeSimpleTool = makeSimpleTool;
+
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function mouseMove(element, mouseMoveData) {
+        var viewport = cornerstone.getViewport(element);
+        viewport.centerX += (mouseMoveData.deltaPageX / viewport.scale);
+        viewport.centerY += (mouseMoveData.deltaPageY / viewport.scale);
+        cornerstone.setViewport(element, viewport);
+    }
+
+    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(mouseMove);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
