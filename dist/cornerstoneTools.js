@@ -1,3 +1,4 @@
+/*! cornerstoneTools - v0.0.1 - 2014-04-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     if(cornerstoneTools === undefined) {

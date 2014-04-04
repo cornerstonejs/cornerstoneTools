@@ -11,16 +11,31 @@ module.exports = function(grunt) {
             }
         },
         concat: {
+            build: {
+                src : ['src/**/*.js'],
+                dest: 'build/built.js'
+            },
             dist: {
-                src : [ 'src/**/*.js'],
-                dest: 'dist/cornerstone-tools.js'
+                options: {
+                    stripBanners: true,
+                    banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                        '<%= grunt.template.today("yyyy-mm-dd") %> ' +
+                        '| (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */\n'
+                },
+                src : ['build/built.js'],
+                dest: 'dist/cornerstoneTools.js'
             }
         },
         uglify: {
-            cornerstoneTools: {
+            dist: {
                 files: {
-                    'dist/cornerstone-tools.min.js': ['dist/cornerstone-tools.js']
+                    'dist/cornerstoneTools.min.js': ['dist/cornerstoneTools.js']
                 }
+            },
+            options: {
+                banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
+                    '<%= grunt.template.today("yyyy-mm-dd") %> ' +
+                    '| (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */\n'
             }
         },
         qunit: {
@@ -34,7 +49,7 @@ module.exports = function(grunt) {
         watch: {
             scripts: {
                 files: ['src/**/*.js', 'test/*.js'],
-                tasks: ['buildAll']
+                tasks: ['concat:build', 'concat:dist', 'jshint']
             }
         },
 
@@ -42,6 +57,6 @@ module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('buildAll', ['concat', 'uglify', 'jshint']);
+    grunt.registerTask('buildAll', ['concat:build', 'concat:dist', 'uglify', 'jshint']);
     grunt.registerTask('default', ['clean', 'buildAll']);
 };
