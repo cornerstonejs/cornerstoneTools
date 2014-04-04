@@ -7,11 +7,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function isMouseButtonEnabled(which, mouseButtonMask)
+    {
+        var mouseButton = (1 << (which - 1));
+        return ((mouseButtonMask & mouseButton) !== 0);
+    }
+
     function onMouseDown(e, mouseMoveCallback) {
 
         var eventData = e.data;
 
-        if(e.which === eventData.whichMouseButton) {
+        var mouseButtonEnabled = isMouseButtonEnabled(e.which, eventData.mouseButtonMask);
+        if(mouseButtonEnabled === true) {
 
             var element = e.currentTarget;
 
@@ -89,11 +96,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function makeSimpleTool(onMouseDown)
     {
         var toolInterface = {
-            activate: function(element, whichMouseButton) {
+            activate: function(element, mouseButtonMask) {
                 $(element).unbind('mousedown', onMouseDown);
                 var eventData = {
-                    whichMouseButton: whichMouseButton,
-                    active: true,
+                    mouseButtonMask: mouseButtonMask
                 };
                 $(element).mousedown(eventData, onMouseDown);
             },
@@ -111,6 +117,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
 
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
@@ -132,6 +140,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
 
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
@@ -163,6 +173,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -178,8 +190,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         mouseMoveData.viewport.scale = scale;
         cornerstone.setViewport(element, mouseMoveData.viewport);
 
-        // Now that the scale has been updated, determine the offset we need to apply to keep the center
-        // at the original spot
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
         var newCoords = cornerstone.pageToImage(element, mouseMoveData.startPageX, mouseMoveData.startPageY);
         mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;

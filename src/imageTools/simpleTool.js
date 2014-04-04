@@ -6,11 +6,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function isMouseButtonEnabled(which, mouseButtonMask)
+    {
+        var mouseButton = (1 << (which - 1));
+        return ((mouseButtonMask & mouseButton) !== 0);
+    }
+
     function onMouseDown(e, mouseMoveCallback) {
 
         var eventData = e.data;
 
-        if(e.which === eventData.whichMouseButton) {
+        var mouseButtonEnabled = isMouseButtonEnabled(e.which, eventData.mouseButtonMask);
+        if(mouseButtonEnabled === true) {
 
             var element = e.currentTarget;
 
@@ -88,11 +95,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function makeSimpleTool(onMouseDown)
     {
         var toolInterface = {
-            activate: function(element, whichMouseButton) {
+            activate: function(element, mouseButtonMask) {
                 $(element).unbind('mousedown', onMouseDown);
                 var eventData = {
-                    whichMouseButton: whichMouseButton,
-                    active: true,
+                    mouseButtonMask: mouseButtonMask
                 };
                 $(element).mousedown(eventData, onMouseDown);
             },

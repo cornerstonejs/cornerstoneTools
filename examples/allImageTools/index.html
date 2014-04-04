@@ -33,6 +33,8 @@
     <div class="row">
         <div class="col-xs-6">
             <button id="enableWindowLevelTool" type="button" class="btn">WW/WC</button>
+            <button id="pan" type="button" class="btn">Pan</button>
+            <button id="zoom" type="button" class="btn">Zoom</button>
             <button id="enableLength" type="button" class="btn">Length</button>
             <button id="probe" type="button" class="btn">Probe</button>
             <button id="circleroi" type="button" class="btn">Elliptical ROI</button>
@@ -127,7 +129,7 @@ is used by our example image loader-->
     cornerstoneTools.wwwc.activate(element, 1); // important to do ww/wc last for now, probably need separate event for the 'active' tool vs the rest
 
     cornerstoneTools.pan.activate(element, 2);
-    cornerstoneTools.zoom.activate(element, 3);
+    cornerstoneTools.zoom.activate(element, 4);
 
 
     // helper function used by the tool button handlers to disable the active tool
@@ -135,6 +137,8 @@ is used by our example image loader-->
     function disableAllTools()
     {
         cornerstoneTools.wwwc.disable(element);
+        cornerstoneTools.pan.activate(element, 2);
+        cornerstoneTools.zoom.activate(element, 4);
         //cornerstoneTools.length.deactivate(element);
         //cornerstoneTools.ellipticalRoi.deactivate(element);
         //cornerstoneTools.rectangleRoi.deactivate(element);
@@ -142,14 +146,23 @@ is used by our example image loader-->
     }
 
     // Tool button event handlers that set the new active tool
-    $('#enableLength').click(function() {
-        disableAllTools();
-        cornerstoneTools.length.activate(element, 1);
-    });
     $('#enableWindowLevelTool').click(function() {
         disableAllTools();
         cornerstoneTools.wwwc.activate(element, 1);
     });
+    $('#pan').click(function() {
+        disableAllTools();
+        cornerstoneTools.pan.activate(element, 3);
+    });
+    $('#zoom').click(function() {
+        disableAllTools();
+        cornerstoneTools.zoom.activate(element, 5);
+    });
+    $('#enableLength').click(function() {
+        disableAllTools();
+        cornerstoneTools.length.activate(element, 1);
+    });
+
     $('#probe').click(function() {
         disableAllTools();
         cornerstoneTools.probe.activate(element, 1);

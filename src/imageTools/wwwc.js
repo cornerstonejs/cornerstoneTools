@@ -1,5 +1,7 @@
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }

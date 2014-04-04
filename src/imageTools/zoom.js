@@ -1,5 +1,7 @@
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -15,8 +17,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         mouseMoveData.viewport.scale = scale;
         cornerstone.setViewport(element, mouseMoveData.viewport);
 
-        // Now that the scale has been updated, determine the offset we need to apply to keep the center
-        // at the original spot
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
         var newCoords = cornerstone.pageToImage(element, mouseMoveData.startPageX, mouseMoveData.startPageY);
         mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;
