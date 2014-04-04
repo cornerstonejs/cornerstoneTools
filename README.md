@@ -12,7 +12,7 @@ Status
 NOTE: Project is currently under active development - functionality is not complete, bugs exist,
 APIs will change and documentation is missing or not correct.
 
-View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/example/index.html) to see the
+View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) to see the
 library in action!
 
 Install

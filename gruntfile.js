@@ -12,7 +12,7 @@ module.exports = function(grunt) {
         },
         concat: {
             dist: {
-                src : [ 'src/*.js'],
+                src : [ 'src/**/*.js'],
                 dest: 'dist/cornerstone-tools.js'
             }
         },
@@ -33,7 +33,7 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/*.js', 'test/*.js'],
+                files: ['src/**/*.js', 'test/*.js'],
                 tasks: ['buildAll']
             }
         },
@@ -42,6 +42,6 @@ module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('buildAll', ['concat', 'uglify', 'jshint', 'qunit']);
+    grunt.registerTask('buildAll', ['concat', 'uglify', 'jshint']);
     grunt.registerTask('default', ['clean', 'buildAll']);
 };
