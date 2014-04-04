@@ -5,13 +5,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseMove(element, mouseMoveData) {
-        var viewport = cornerstone.getViewport(element);
-        viewport.centerX += (mouseMoveData.deltaPageX / viewport.scale);
-        viewport.centerY += (mouseMoveData.deltaPageY / viewport.scale);
-        cornerstone.setViewport(element, viewport);
+        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPageX / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPageY / mouseMoveData.viewport.scale);
+        cornerstone.setViewport(element, mouseMoveData.viewport);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(mouseMove);
+    function onMouseDown(e)
+    {
+        cornerstoneTools.onMouseDown(e, mouseMove);
+    }
+
+    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(onMouseDown);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

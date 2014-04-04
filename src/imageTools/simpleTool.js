@@ -6,7 +6,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseDown(e) {
+    function onMouseDown(e, mouseMoveCallback) {
 
         var eventData = e.data;
 
@@ -51,10 +51,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     pageY : e.pageY,
                     imageX : currentImagePoint.x,
                     imageY : currentImagePoint.y,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image
                 };
 
                 // invoke the mouseMoveCallback with the data
-                eventData.mouseMoveCallback(element, mouseMoveData);
+                mouseMoveCallback(element, mouseMoveData);
 
                 // update the last coordinates for page and image
                 lastPageX = e.pageX;
@@ -83,7 +85,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    function makeSimpleTool(mouseMoveCallback)
+    function makeSimpleTool(onMouseDown)
     {
         var toolInterface = {
             activate: function(element, whichMouseButton) {
@@ -91,7 +93,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var eventData = {
                     whichMouseButton: whichMouseButton,
                     active: true,
-                    mouseMoveCallback: mouseMoveCallback
                 };
                 $(element).mousedown(eventData, onMouseDown);
             },
@@ -104,7 +105,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.makeSimpleTool = makeSimpleTool;
-
+    cornerstoneTools.onMouseDown = onMouseDown;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

@@ -7,7 +7,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseDown(e) {
+    function onMouseDown(e, mouseMoveCallback) {
 
         var eventData = e.data;
 
@@ -52,10 +52,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     pageY : e.pageY,
                     imageX : currentImagePoint.x,
                     imageY : currentImagePoint.y,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image
                 };
 
                 // invoke the mouseMoveCallback with the data
-                eventData.mouseMoveCallback(element, mouseMoveData);
+                mouseMoveCallback(element, mouseMoveData);
 
                 // update the last coordinates for page and image
                 lastPageX = e.pageX;
@@ -84,7 +86,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    function makeSimpleTool(mouseMoveCallback)
+    function makeSimpleTool(onMouseDown)
     {
         var toolInterface = {
             activate: function(element, whichMouseButton) {
@@ -92,7 +94,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var eventData = {
                     whichMouseButton: whichMouseButton,
                     active: true,
-                    mouseMoveCallback: mouseMoveCallback
                 };
                 $(element).mousedown(eventData, onMouseDown);
             },
@@ -105,7 +106,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.makeSimpleTool = makeSimpleTool;
-
+    cornerstoneTools.onMouseDown = onMouseDown;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -116,13 +117,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseMove(element, mouseMoveData) {
-        var viewport = cornerstone.getViewport(element);
-        viewport.centerX += (mouseMoveData.deltaPageX / viewport.scale);
-        viewport.centerY += (mouseMoveData.deltaPageY / viewport.scale);
-        cornerstone.setViewport(element, viewport);
+        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPageX / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPageY / mouseMoveData.viewport.scale);
+        cornerstone.setViewport(element, mouseMoveData.viewport);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(mouseMove);
+    function onMouseDown(e)
+    {
+        cornerstoneTools.onMouseDown(e, mouseMove);
+    }
+
+    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(onMouseDown);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -132,91 +137,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseDown(e) {
-        var eventData = e.data;
-        var element = e.currentTarget;
-        if(e.which === eventData.whichMouseButton) {
-
-            var lastX = e.pageX;
-            var lastY = e.pageY;
-
-            // now that we started adjusting wwwc, hook mouse move
-            // so we can continue to update the image as they drag
-            // the mouse
-            $(document).mousemove(function(e) {
-                var deltaX = e.pageX - lastX;
-                var deltaY = e.pageY - lastY;
-                lastX = e.pageX;
-                lastY = e.pageY;
-
-                // here we normalize the ww/wc adjustments so the same number of on screen pixels
-                // adjusts the same percentage of the dynamic range of the image.  This is needed to
-                // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
-                // image will feel the same as a 16 bit image would)
-                var ee = cornerstone.getEnabledElement(element);
-                var imageDynamicRange = ee.image.maxPixelValue - ee.image.minPixelValue;
-                var multiplier = imageDynamicRange / 1024;
-
-                var viewport = cornerstone.getViewport(element);
-                viewport.windowWidth += (deltaX * multiplier);
-                viewport.windowCenter += (deltaY * multiplier);
-                cornerstone.setViewport(element, viewport);
-
-                // prevent left click selection of DOM elements
-                return cornerstoneTools.pauseEvent(e);
-            });
-
-
-            // hook mouseup so we can unbind our event listeners
-            // when they stop dragging
-            $(document).mouseup(function(e) {
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            });
-
-            // prevent left click selection of DOM elements
-            return cornerstoneTools.pauseEvent(e);
-        }
-    }
-
-    // enables the wwwwc tool on the specified element.  Note that the wwwwc tool does nothing
-    // in this state as it has no overlays
-    function enable(element)
+    function mouseMove(element, mouseMoveData)
     {
-        $(element).unbind('mousedown', onMouseDown);
+        // here we normalize the ww/wc adjustments so the same number of on screen pixels
+        // adjusts the same percentage of the dynamic range of the image.  This is needed to
+        // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
+        // image will feel the same as a 16 bit image would)
+        var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
+        var multiplier = imageDynamicRange / 1024;
+
+        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPageX * multiplier);
+        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPageY * multiplier);
+        cornerstone.setViewport(element, mouseMoveData.viewport);
     }
 
-    // disables the wwwc tool on the specified element
-    function disable(element)
+    function onMouseDown(e)
     {
-        $(element).unbind('mousedown', onMouseDown);
+        cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    // Activates the wwwc tool so it responds to mouse events
-    function activate(element, whichMouseButton)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-        var eventData = {
-            whichMouseButton: whichMouseButton,
-            active: true
-        };
-        $(element).mousedown(eventData, onMouseDown);
-    }
+    cornerstoneTools.wwwc = cornerstoneTools.makeSimpleTool(onMouseDown);
 
-    // deactivates the pan tool.  This is the same thing as being enabled or disabled as the
-    // pan tool requires user interactivity to do anything
-    function deactivate(element)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-    }
-
-    // module exports
-    cornerstoneTools.wwwc = {
-        enable: enable,
-        disable : disable,
-        activate: activate,
-        deactivate: deactivate
-    };
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -226,146 +167,33 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-
-    /*
-     function zoom(element, whichMouseButton){
-
-     if(whichMouseButton == 0) {
-
-
-     $(element).on('mousewheel DOMMouseScroll', function(e) {
-
-     var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
-
-     // Firefox e.originalEvent.detail > 0 scroll back, < 0 scroll forward
-     // chrome/safari e.originalEvent.wheelDelta < 0 scroll back, > 0 scroll forward
-     var ticks = 0;
-     var delta = Math.abs(e.originalEvent.wheelDelta ? e.originalEvent.wheelDelta/40 : e.originalEvent.detail ? -e.originalEvent.detail : 0);
-     if(e.originalEvent.wheelDelta < 0 || e.originalEvent.detail > 0)
-     {
-     ticks = delta;
-     } else {
-     ticks = -delta;
-     }
-
-     var power = 1.005;
-     var viewport = cornerstone.getViewport(element);
-     var oldFactor = Math.log(viewport.scale) / Math.log(power);
-     var factor = oldFactor + ticks;
-     var scale = Math.pow(power, factor);
-     viewport.scale = scale;
-
-     var ee = cornerstone.getEnabledElement(element);
-     ee.viewport.scale = scale;
-
-     // now adjust the centerX and Y
-     var newCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
-     viewport.centerX -= startingCoords.x - newCoords.x;
-     viewport.centerY -= startingCoords.y - newCoords.y;
-     cornerstone.setViewport(element, viewport);
-
-     //prevent page fom scrolling
-     return false;
-     });
-     }
-     else {
-
-     }
-
-     }
-     */
-
-
-    function onMouseDown(e) {
-
-        var eventData = e.data;
-        var element = e.currentTarget;
-        if(e.which === eventData.whichMouseButton) {
-
-            var lastX = e.pageX;
-            var lastY = e.pageY;
-
-            var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
-            var startPageX = e.pageX;
-            var startPageY = e.pageY;
-            $(document).mousemove(function(e) {
-                var deltaX = e.pageX - lastX,
-                    deltaY = e.pageY - lastY ;
-
-                lastX = e.pageX;
-                lastY = e.pageY;
-
-                // Calculate the new scale factor based on how far the mouse has changed
-                var pow = 1.7;
-                var viewport = cornerstone.getViewport(element);
-                var ticks = deltaY/100;
-                var oldFactor = Math.log(viewport.scale) / Math.log(pow);
-                var factor = oldFactor + ticks;
-                var scale = Math.pow(pow, factor);
-                viewport.scale = scale;
-                cornerstone.setViewport(element, viewport);
-
-                // now adjust the centerX and Y so the location the user click when the first started
-                // dragging stays in the same position as we zoom
-                var newCoords = cornerstone.pageToImage(element, startPageX, startPageY);
-                viewport.centerX -= startingCoords.x - newCoords.x;
-                viewport.centerY -= startingCoords.y - newCoords.y;
-                cornerstone.setViewport(element, viewport);
-
-                // prevent left click selection of DOM elements
-                return cornerstoneTools.pauseEvent(e);
-            });
-
-            // hook mouseup so we can unbind our event listeners
-            // when they stop dragging
-            $(document).mouseup(function(e) {
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            });
-
-            // prevent left click selection of DOM elements
-            return cornerstoneTools.pauseEvent(e);
-        }
-    }
-
-    // enables the zoom tool on the specified element.  Note that the zopm tool does nothing
-    // in this state as it has no overlays
-    function enable(element)
+    function mouseMove(element, mouseMoveData)
     {
-        $(element).unbind('mousedown', onMouseDown);
+        // Calculate the new scale factor based on how far the mouse has changed
+        var pow = 1.7;
+        var ticks = mouseMoveData.deltaPageY/100;
+        var oldFactor = Math.log(mouseMoveData.viewport.scale) / Math.log(pow);
+        var factor = oldFactor + ticks;
+        var scale = Math.pow(pow, factor);
+        mouseMoveData.viewport.scale = scale;
+        cornerstone.setViewport(element, mouseMoveData.viewport);
+
+        // Now that the scale has been updated, determine the offset we need to apply to keep the center
+        // at the original spot
+        var newCoords = cornerstone.pageToImage(element, mouseMoveData.startPageX, mouseMoveData.startPageY);
+        mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
+        mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;
+        cornerstone.setViewport(element, mouseMoveData.viewport);
+
     }
 
-    // disables the zoom tool on the specified element
-    function disable(element)
+    function onMouseDown(e)
     {
-        $(element).unbind('mousedown', onMouseDown);
+        cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    // Activates the zoom tool so it responds to mouse events
-    function activate(element, whichMouseButton)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-        var eventData = {
-            whichMouseButton: whichMouseButton,
-            active: true
-        };
-        $(element).mousedown(eventData, onMouseDown);
-    }
+    cornerstoneTools.zoom = cornerstoneTools.makeSimpleTool(onMouseDown);
 
-    // deactivates the zoom tool.  This is the same thing as being enabled or disabled as the
-    // pan tool requires user interactivity to do anything
-    function deactivate(element)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-    }
-
-    // module exports
-    cornerstoneTools.zoom = {
-        enable: enable,
-        disable : disable,
-        activate: activate,
-        deactivate: deactivate
-    };
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
