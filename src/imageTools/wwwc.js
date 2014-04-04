@@ -5,22 +5,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function onMouseDown(e) {
-        var whichMouseButton = e.data.whichMouseButton;
-        var lastX = e.pageX;
-        var lastY = e.pageY;
+        var eventData = e.data;
+        var element = e.currentTarget;
+        if(e.which === eventData.whichMouseButton) {
 
-        var mouseButton = e.which;
+            var lastX = e.pageX;
+            var lastY = e.pageY;
 
-        if(mouseButton === whichMouseButton) {
-
-            var element = e.currentTarget;
-
+            // now that we started adjusting wwwc, hook mouse move
+            // so we can continue to update the image as they drag
+            // the mouse
             $(document).mousemove(function(e) {
                 var deltaX = e.pageX - lastX;
                 var deltaY = e.pageY - lastY;
                 lastX = e.pageX;
                 lastY = e.pageY;
 
+                // here we normalize the ww/wc adjustments so the same number of on screen pixels
+                // adjusts the same percentage of the dynamic range of the image.  This is needed to
+                // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
+                // image will feel the same as a 16 bit image would)
                 var ee = cornerstone.getEnabledElement(element);
                 var imageDynamicRange = ee.image.maxPixelValue - ee.image.minPixelValue;
                 var multiplier = imageDynamicRange / 1024;
@@ -29,39 +33,38 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 viewport.windowWidth += (deltaX * multiplier);
                 viewport.windowCenter += (deltaY * multiplier);
                 cornerstone.setViewport(element, viewport);
+
+                // prevent left click selection of DOM elements
+                return cornerstoneTools.pauseEvent(e);
             });
 
+
+            // hook mouseup so we can unbind our event listeners
+            // when they stop dragging
             $(document).mouseup(function(e) {
                 $(document).unbind('mousemove');
                 $(document).unbind('mouseup');
             });
 
-            if(e.stopPropagation) e.stopPropagation();
-            if(e.preventDefault) e.preventDefault();
-            e.cancelBubble=true;
-            e.returnValue=false;
-            return false;
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
         }
     }
 
-    // enables the length tool on the specified element.  The length tool must first
-    // be enabled before it can be activated.  Enabling it will allow it to display
-    // any length measurements that already exist
-    // NOTE: if we want to make this tool at all configurable, we can pass in an options object here
+    // enables the wwwwc tool on the specified element.  Note that the wwwwc tool does nothing
+    // in this state as it has no overlays
     function enable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // disables the length tool on the specified element.  This will cause existing
-    // measurements to no longer be displayed.  You must re-enable the tool on an element
-    // before you can activate it again.
+    // disables the wwwc tool on the specified element
     function disable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // hook the mousedown event so we can create a new measurement
+    // Activates the wwwc tool so it responds to mouse events
     function activate(element, whichMouseButton)
     {
         $(element).unbind('mousedown', onMouseDown);
@@ -72,17 +75,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).mousedown(eventData, onMouseDown);
     }
 
-    // rehook mousedown with a new eventData that says we are not active
+    // deactivates the pan tool.  This is the same thing as being enabled or disabled as the
+    // pan tool requires user interactivity to do anything
     function deactivate(element)
     {
         $(element).unbind('mousedown', onMouseDown);
-        // TODO: we currently assume that left mouse button is used to move measurements, this should
-        // probably be configurable
-        var eventData = {
-            whichMouseButton: 1,
-            active: false
-        };
-        $(element).mousedown(eventData, onMouseDown);
     }
 
     // module exports

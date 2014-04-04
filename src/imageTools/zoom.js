@@ -73,51 +73,53 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 lastX = e.pageX;
                 lastY = e.pageY;
 
+                // Calculate the new scale factor based on how far the mouse has changed
                 var pow = 1.7;
-
                 var viewport = cornerstone.getViewport(element);
                 var ticks = deltaY/100;
                 var oldFactor = Math.log(viewport.scale) / Math.log(pow);
                 var factor = oldFactor + ticks;
                 var scale = Math.pow(pow, factor);
                 viewport.scale = scale;
+                cornerstone.setViewport(element, viewport);
 
-                var ee = cornerstone.getEnabledElement(element);
-                ee.viewport.scale = scale;
-
-                // now adjust the centerX and Y
+                // now adjust the centerX and Y so the location the user click when the first started
+                // dragging stays in the same position as we zoom
                 var newCoords = cornerstone.pageToImage(element, startPageX, startPageY);
                 viewport.centerX -= startingCoords.x - newCoords.x;
                 viewport.centerY -= startingCoords.y - newCoords.y;
                 cornerstone.setViewport(element, viewport);
 
+                // prevent left click selection of DOM elements
+                return cornerstoneTools.pauseEvent(e);
             });
 
+            // hook mouseup so we can unbind our event listeners
+            // when they stop dragging
             $(document).mouseup(function(e) {
                 $(document).unbind('mousemove');
                 $(document).unbind('mouseup');
             });
+
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
         }
     }
 
-    // enables the length tool on the specified element.  The length tool must first
-    // be enabled before it can be activated.  Enabling it will allow it to display
-    // any length measurements that already exist
-    // NOTE: if we want to make this tool at all configurable, we can pass in an options object here
+    // enables the zoom tool on the specified element.  Note that the zopm tool does nothing
+    // in this state as it has no overlays
     function enable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // disables the length tool on the specified element.  This will cause existing
-    // measurements to no longer be displayed.  You must re-enable the tool on an element
-    // before you can activate it again.
+    // disables the zoom tool on the specified element
     function disable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // hook the mousedown event so we can create a new measurement
+    // Activates the zoom tool so it responds to mouse events
     function activate(element, whichMouseButton)
     {
         $(element).unbind('mousedown', onMouseDown);
@@ -128,17 +130,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).mousedown(eventData, onMouseDown);
     }
 
-    // rehook mousedown with a new eventData that says we are not active
+    // deactivates the zoom tool.  This is the same thing as being enabled or disabled as the
+    // pan tool requires user interactivity to do anything
     function deactivate(element)
     {
         $(element).unbind('mousedown', onMouseDown);
-        // TODO: we currently assume that left mouse button is used to move measurements, this should
-        // probably be configurable
-        var eventData = {
-            whichMouseButton: 1,
-            active: false
-        };
-        $(element).mousedown(eventData, onMouseDown);
     }
 
     // module exports

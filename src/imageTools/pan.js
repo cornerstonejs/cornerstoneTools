@@ -5,8 +5,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function onMouseDown(e){
-
-
         var eventData = e.data;
         var element = e.currentTarget;
         if(e.which === eventData.whichMouseButton) {
@@ -14,6 +12,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var lastX = e.pageX;
             var lastY = e.pageY;
 
+            // now that we have started panning, hook mousemove so
+            // we can update the image as they drag
             $(document).mousemove(function(e) {
                 var deltaX = e.pageX - lastX,
                     deltaY = e.pageY - lastY ;
@@ -24,34 +24,37 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 viewport.centerX += (deltaX / viewport.scale);
                 viewport.centerY += (deltaY / viewport.scale);
                 cornerstone.setViewport(element, viewport);
+
+                // prevent left click selection of DOM elements
+                return cornerstoneTools.pauseEvent(e);
             });
 
+            // hook mouseup so we can unbind our event listeners
+            // when they stop dragging
             $(document).mouseup(function(e) {
                 $(document).unbind('mousemove');
                 $(document).unbind('mouseup');
             });
+
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
         }
     }
 
-
-    // enables the length tool on the specified element.  The length tool must first
-    // be enabled before it can be activated.  Enabling it will allow it to display
-    // any length measurements that already exist
-    // NOTE: if we want to make this tool at all configurable, we can pass in an options object here
+    // enables the pan tool on the specified element.  Note that the pan tool does nothing
+    // in this state as it has no overlays
     function enable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // disables the length tool on the specified element.  This will cause existing
-    // measurements to no longer be displayed.  You must re-enable the tool on an element
-    // before you can activate it again.
+    // disables the pan tool on the specified element
     function disable(element)
     {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    // hook the mousedown event so we can create a new measurement
+    // Activates the pan tool so it responds to mouse events
     function activate(element, whichMouseButton)
     {
         $(element).unbind('mousedown', onMouseDown);
@@ -62,17 +65,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).mousedown(eventData, onMouseDown);
     }
 
-    // rehook mousedown with a new eventData that says we are not active
+    // deactivates the pan tool.  This is the same thing as being enabled or disabled as the
+    // pan tool requires user interactivity to do anything
     function deactivate(element)
     {
         $(element).unbind('mousedown', onMouseDown);
-        // TODO: we currently assume that left mouse button is used to move measurements, this should
-        // probably be configurable
-        var eventData = {
-            whichMouseButton: 1,
-            active: false
-        };
-        $(element).mousedown(eventData, onMouseDown);
     }
 
     // module exports
