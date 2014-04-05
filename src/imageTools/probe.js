@@ -94,7 +94,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             $(mouseDownData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         }
 
-        if(cornerstoneTools.isMouseButtonEnabled(e.which, eventData.mouseButtonMask)) {
+        if(cornerstoneTools.isMouseButtonEnabled(mouseDownData.which, eventData.mouseButtonMask)) {
             var element = mouseDownData.element;
             var viewport = mouseDownData.viewport;
             var coords = mouseDownData.startPoints.image;
@@ -195,7 +195,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             mouseButtonMask: mouseButtonMask,
             active: true
         };
-
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
@@ -208,7 +209,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             mouseButtonMask: mouseButtonMask,
             active: false
         };
-
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
