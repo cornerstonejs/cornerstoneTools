@@ -41,6 +41,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return delta.x * delta.x + delta.y * delta.y;
     }
 
+    function insideRect(point, rect)
+    {
+        if( point.x < rect.left ||
+            point.x > rect.left + rect.width ||
+            point.y < rect.top ||
+            point.y > rect.top + rect.height)
+        {
+            return false;
+        }
+        return true;
+    }
+
+
     // module exports
     cornerstoneTools.point =
     {
@@ -48,7 +61,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         copy: copy,
         pageToPoint: pageToPoint,
         distance: distance,
-        distanceSquared: distanceSquared
+        distanceSquared: distanceSquared,
+        insideRect: insideRect
     };
 
 

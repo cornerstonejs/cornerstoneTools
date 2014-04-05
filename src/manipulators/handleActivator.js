@@ -1,9 +1,10 @@
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
-
 
     var handleRadius = 6;
 

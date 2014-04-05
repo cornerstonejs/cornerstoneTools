@@ -1,5 +1,7 @@
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -21,6 +23,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
             cornerstone.updateImage(element);
+
             doneMovingCallback();
         }
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);

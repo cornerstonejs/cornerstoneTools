@@ -473,6 +473,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+            if(cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
+            {
+                // delete the measurement
+                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
+            }
             $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         });
     }
@@ -520,10 +525,15 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     function mouseDownCallback(e) {
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
-
+        var data;
 
         function handleDoneMove()
         {
+            if(cornerstoneTools.anyHandlesOutsideImage(mouseDownData, data.handles))
+            {
+                // delete the measurement
+                cornerstoneTools.removeToolState(mouseDownData.element, toolType, data);
+            }
             $(mouseDownData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         }
 
@@ -536,7 +546,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             // now check to see if we have a tool that we can move
             if(toolData !== undefined) {
                 for(var i=0; i < toolData.data.length; i++) {
-                    var data = toolData.data[i];
+                    data = toolData.data[i];
                     if(pointNearTool(data, coords)) {
                         $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                         cornerstoneTools.moveHandle(mouseDownData, data.handles.end, handleDoneMove);
@@ -891,6 +901,42 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function anyHandlesOutsideImage(renderData, handles)
+    {
+        var image = renderData.image;
+        var imageRect = {
+            left: 0,
+            top: 0,
+            width: image.width,
+            height: image.height
+        };
+
+        var handleOutsideImage = false;
+        for(var property in handles) {
+            var handle = handles[property];
+            if(cornerstoneTools.point.insideRect(handle, imageRect) === false)
+            {
+                handleOutsideImage = true;
+            }
+        }
+        return handleOutsideImage;
+    }
+
+    // module/private exports
+    cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneCore, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -927,10 +973,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 }($, cornerstone, cornerstoneCore, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
-
 
     var handleRadius = 6;
 
@@ -984,6 +1031,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 }($, cornerstone, cornerstoneCore, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -1005,6 +1054,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
             cornerstone.updateImage(element);
+
             doneMovingCallback();
         }
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -1059,6 +1109,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return delta.x * delta.x + delta.y * delta.y;
     }
 
+    function insideRect(point, rect)
+    {
+        if( point.x < rect.left ||
+            point.x > rect.left + rect.width ||
+            point.y < rect.top ||
+            point.y > rect.top + rect.height)
+        {
+            return false;
+        }
+        return true;
+    }
+
+
     // module exports
     cornerstoneTools.point =
     {
@@ -1066,13 +1129,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         copy: copy,
         pageToPoint: pageToPoint,
         distance: distance,
-        distanceSquared: distanceSquared
+        distanceSquared: distanceSquared,
+        insideRect: insideRect
     };
 
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+
+    "use strict";
 
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
@@ -1150,6 +1216,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 }($, cornerstone, cornerstoneCore, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -1169,7 +1237,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // as modules that restore saved state
     function addToolState(element, toolType, data)
     {
-        toolStateManager = getElementToolStateManager(element);
+        var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image
         // if this change effects them
@@ -1179,8 +1247,27 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // that save state persistently
     function getToolState(element, toolType)
     {
-        toolStateManager = getElementToolStateManager(element);
+        var toolStateManager = getElementToolStateManager(element);
         return toolStateManager.get(element, toolType);
+    }
+
+    function removeToolState(element, toolType, data)
+    {
+        var toolStateManager = getElementToolStateManager(element);
+        var toolData = toolStateManager.get(element, toolType);
+        // find this tool data
+        var indexOfData = -1;
+        for(var i = 0; i < toolData.data.length; i++) {
+            if(toolData.data[i] === data)
+            {
+                console.log("found tool state");
+                indexOfData = i;
+            }
+        }
+        if(indexOfData !== -1) {
+            console.log("deleteing tool");
+            toolData.data.splice(indexOfData, 1);
+        }
     }
 
     // sets the tool state manager for an element
@@ -1201,6 +1288,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.addToolState = addToolState;
     cornerstoneTools.getToolState = getToolState;
+    cornerstoneTools.removeToolState = removeToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
 

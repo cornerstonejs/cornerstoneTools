@@ -1,5 +1,7 @@
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
+    "use strict";
+
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
@@ -19,7 +21,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // as modules that restore saved state
     function addToolState(element, toolType, data)
     {
-        toolStateManager = getElementToolStateManager(element);
+        var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image
         // if this change effects them
@@ -29,8 +31,27 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // that save state persistently
     function getToolState(element, toolType)
     {
-        toolStateManager = getElementToolStateManager(element);
+        var toolStateManager = getElementToolStateManager(element);
         return toolStateManager.get(element, toolType);
+    }
+
+    function removeToolState(element, toolType, data)
+    {
+        var toolStateManager = getElementToolStateManager(element);
+        var toolData = toolStateManager.get(element, toolType);
+        // find this tool data
+        var indexOfData = -1;
+        for(var i = 0; i < toolData.data.length; i++) {
+            if(toolData.data[i] === data)
+            {
+                console.log("found tool state");
+                indexOfData = i;
+            }
+        }
+        if(indexOfData !== -1) {
+            console.log("deleteing tool");
+            toolData.data.splice(indexOfData, 1);
+        }
     }
 
     // sets the tool state manager for an element
@@ -51,6 +72,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.addToolState = addToolState;
     cornerstoneTools.getToolState = getToolState;
+    cornerstoneTools.removeToolState = removeToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
 
