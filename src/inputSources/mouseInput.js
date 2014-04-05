@@ -6,7 +6,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-
     function mouseDown(e) {
         var eventData = e.data;
         var element = e.currentTarget;
@@ -26,7 +25,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
                     startPoints: startPoints,
-                    lastPoints: lastPoints
+                    lastPoints: lastPoints,
+                    currentPoints: startPoints,
+                    deltaPoints: {x: 0, y:0}
                 },
                 bubbles: false,
                 cancelable: false
@@ -51,7 +52,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             };
 
             var event = new CustomEvent(
-                "CornerstoneToolsMouseMove",
+                "CornerstoneToolsMouseDrag",
                 {
                     detail: {
                         event: e,
@@ -68,6 +69,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     cancelable: false
                 }
             );
+
             element.dispatchEvent(event);
 
             // update the last points
@@ -114,8 +116,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             );
             element.dispatchEvent(event);
 
-            $(document).unbind('mousemove', onMouseMove);
-            $(document).unbind('mouseup', onMouseUp);
+            $(document).off('mousemove', onMouseMove);
+            $(document).off('mouseup', onMouseUp);
         }
 
         $(document).on("mousemove", onMouseMove);
@@ -125,13 +127,67 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return cornerstoneTools.pauseEvent(e);
     }
 
+    function mouseMove(e) {
+        var eventData = e.data;
+        var element = e.currentTarget;
+
+        var startPoints = {
+            page: cornerstoneTools.point.pageToPoint(e),
+            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+        };
+        var lastPoints = cornerstoneTools.copyPoints(startPoints);
+
+        var whichMouseButton = e.which;
+
+
+        // calculate our current points in page and image coordinates
+        var currentPoints = {
+            page: cornerstoneTools.point.pageToPoint(e),
+            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+        };
+
+        // Calculate delta values in page and image coordinates
+        var deltaPoints = {
+            page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
+            image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+        };
+
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseMove",
+            {
+                detail: {
+                    event: e,
+                    which: whichMouseButton,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints,
+                    currentPoints: currentPoints,
+                    deltaPoints: deltaPoints
+                },
+                bubbles: false,
+                cancelable: false
+            }
+        );
+        element.dispatchEvent(event);
+
+        // update the last points
+        lastPoints = cornerstoneTools.copyPoints(currentPoints);
+
+        // prevent left click selection of DOM elements
+        //return cornerstoneTools.pauseEvent(e);
+    }
+
     function enable(element)
     {
         $(element).on("mousedown", mouseDown);
+        $(element).on("mousemove", mouseMove);
     }
 
     function disable(element) {
-        $(element).unbind("mousedown", mouseDown);
+        $(element).off("mousedown", mouseDown);
+        $(element).off("mousemove", mouseMove);
     }
 
     // module exports
