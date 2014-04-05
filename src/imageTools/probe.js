@@ -68,32 +68,10 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         }
     }
 
-    // from http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-    function sqr(x) { return x * x; }
-    function dist2(v, w) { return sqr(v.x - w.x) + sqr(v.y - w.y); }
-    function distToSegmentSquared(p, v, w) {
-        var l2 = dist2(v, w);
-        if (l2 === 0) {
-            return dist2(p, v);
-        }
-        var t = ((p.x - v.x) * (w.x - v.x) + (p.y - v.y) * (w.y - v.y)) / l2;
-        if (t < 0) {
-            return dist2(p, v);
-        }
-        if (t > 1) {
-            return dist2(p, w);
-        }
-        return dist2(p, { x: v.x + t * (w.x - v.x),
-            y: v.y + t * (w.y - v.y) });
-    }
-    function distToSegment(p, v, w) { return Math.sqrt(distToSegmentSquared(p, v, w)); }
-
-
     function pointNearTool(data, coords)
     {
-        var distance = dist2(data.handles.end, coords);
-        //var distance = distToSegment(coords, data.handles.start, data.handles.end);
-        return (distance < 5);
+        var distanceSquared = cornerstoneTools.point.distanceSquared(data.handles.end, coords);
+        return (distanceSquared < 25);
     }
 
     function mouseDownCallback(e) {
@@ -111,20 +89,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var viewport = mouseDownData.viewport;
             var coords = mouseDownData.startPoints.image;
             var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-
-            /*
-            // first check to see if we have an existing length measurement that has a handle that we can move
-            if(toolData !== undefined) {
-                for(var i=0; i < toolData.data.length; i++) {
-                    var data = toolData.data[i];
-                    if(cornerstoneTools.handleCursorNearHandle(e, data, coords, viewport.scale) == true) {
-                        e.stopImmediatePropagation();
-                        return;
-                    }
-                }
-            }
-            */
-
 
             // now check to see if we have a tool that we can move
             if(toolData !== undefined) {

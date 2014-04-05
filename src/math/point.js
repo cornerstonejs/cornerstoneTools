@@ -30,13 +30,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
     }
 
+    function distance(from, to)
+    {
+        return Math.sqrt(distanceSquared(from, to));
+    }
+
+    function distanceSquared(from, to)
+    {
+        var delta = subtract(from, to);
+        return delta.x * delta.x + delta.y * delta.y;
+    }
 
     // module exports
     cornerstoneTools.point =
     {
         subtract : subtract,
         copy: copy,
-        pageToPoint: pageToPoint
+        pageToPoint: pageToPoint,
+        distance: distance,
+        distanceSquared: distanceSquared
     };
 
 
