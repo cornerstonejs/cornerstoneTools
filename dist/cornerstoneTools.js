@@ -7,6 +7,260 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function mouseWheel(e)
+    {
+        // !!!HACK/NOTE/WARNING!!!
+        // for some reason I am getting mousewheel and DOMMouseScroll events on my
+        // mac os x mavericks system when middle mouse button dragging.
+        // I couldn't find any info about this so this might break other systems
+        // webkit hack
+        if(e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
+            return;
+        }
+        // firefox hack
+        if(e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis ===1) {
+            return;
+        }
+
+        var element = e.currentTarget;
+        var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
+
+        e = window.event || e; // old IE support
+        var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
+        var direction = Math.max(-1, Math.min(1, (wheelDelta)));
+
+        var mouseWheelData = {
+            element: element,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image,
+            direction : direction,
+            pageX : e.pageX,
+            pageY: e.pageY,
+            imageX : startingCoords.x,
+            imageY : startingCoords.y
+        };
+
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseWheel",
+            {
+                detail: {
+                    event: e,
+                    direction: direction,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element
+                },
+                bubbles: false,
+                cancelable: false
+            }
+        );
+        element.dispatchEvent(event);
+    }
+
+
+    var mouseWheelEvents = "mousewheel DOMMouseScroll";
+
+    function enable(element)
+    {
+        $(element).on(mouseWheelEvents, mouseWheel);
+    }
+
+    function disable(element) {
+        $(element).unbind(mouseWheelEvents, mouseWheel);
+    }
+
+    // module exports
+    cornerstoneTools.mouseWheelInput = {
+        enable : enable,
+        disable : disable
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function pageToPoint(e)
+    {
+        return {
+            x : e.pageX,
+            y : e.pageY
+        };
+    }
+
+    function subtract(lhs, rhs)
+    {
+        return {
+            x : lhs.x - rhs.x,
+            y : lhs.y - rhs.y
+        };
+    }
+
+    function copyPoint(point)
+    {
+        return {
+            x : point.x,
+            y : point.y
+        };
+    }
+
+    function copyPoints(points) {
+        var page = copyPoint(points.page);
+        var image = copyPoint(points.image);
+        return {
+            page : page,
+            image: image
+        };
+    }
+
+    function mouseDown(e) {
+        var eventData = e.data;
+        var element = e.currentTarget;
+
+        var startPoints = {
+            page: pageToPoint(e),
+            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+        };
+        var lastPoints = copyPoints(startPoints);
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseDown",
+            {
+                detail: {
+                    event: e,
+                    which: e.which,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints
+                },
+                bubbles: false,
+                cancelable: false
+            }
+        );
+        element.dispatchEvent(event);
+
+        var whichMouseButton = e.which;
+
+        function onMouseMove(e) {
+
+            // calculate our current points in page and image coordinates
+            var currentPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+
+            // Calculate delta values in page and image coordinates
+            var deltaPoints = {
+                page: subtract(currentPoints.page, lastPoints.page),
+                image: subtract(currentPoints.image, lastPoints.image)
+            };
+
+            var event = new CustomEvent(
+                "CornerstoneToolsMouseMove",
+                {
+                    detail: {
+                        event: e,
+                        which: whichMouseButton,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        lastPoints: lastPoints,
+                        currentPoints: currentPoints,
+                        deltaPoints: deltaPoints
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+            element.dispatchEvent(event);
+
+            // update the last points
+            lastPoints = $.extend({}, currentPoints);
+
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
+        }
+
+
+        // hook mouseup so we can unbind our event listeners
+        // when they stop dragging
+        function onMouseUp(e) {
+
+            // calculate our current points in page and image coordinates
+            var currentPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+
+            // Calculate delta values in page and image coordinates
+            var deltaPoints = {
+                page: subtract(currentPoints.page, lastPoints.page),
+                image: subtract(currentPoints.image, lastPoints.image)
+            };
+
+            var event = new CustomEvent(
+                "CornerstoneToolsMouseUp",
+                {
+                    detail: {
+                        event: e,
+                        which: whichMouseButton,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        lastPoints: lastPoints,
+                        currentPoints: currentPoints,
+                        deltaPoints: deltaPoints
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+            element.dispatchEvent(event);
+
+            $(document).unbind('mousemove', onMouseMove);
+            $(document).unbind('mouseup', onMouseUp);
+        }
+
+        $(document).on("mousemove", onMouseMove);
+        $(document).on("mouseup", onMouseUp);
+
+
+        return cornerstoneTools.pauseEvent(e);
+    }
+
+    function enable(element)
+    {
+        $(element).on("mousedown", mouseDown);
+    }
+
+    function disable(element) {
+        $(element).unbind("mousedown", mouseDown);
+    }
+
+    // module exports
+    cornerstoneTools.mouseInput = {
+        enable : enable,
+        disable : disable
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
     function isMouseButtonEnabled(which, mouseButtonMask)
     {
         /*jshint bitwise: false*/
@@ -23,8 +277,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     mouseButtonMask: mouseButtonMask
                 };
                 $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
-
-                //enable(element, mouseButtonMask, onMouseMoveCallback);
             },
             disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
             enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
@@ -46,47 +298,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseWheel(e) {
-        var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
-
-        e = window.event || e; // old IE support
-        var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
-        var direction = Math.max(-1, Math.min(1, (wheelDelta)));
-
-        var mouseWheelData = {
-            element: element,
-            viewport: cornerstone.getViewport(element),
-            image: cornerstone.getEnabledElement(element).image,
-            direction : direction,
-            pageX : e.pageX,
-            pageY: e.pageY,
-            imageX : startingCoords.x,
-            imageY : startingCoords.y
-        };
-
-        return mouseWheelData;
-    }
-
-    var mouseEevents = "mousewheel DOMMouseScroll";
-
     function mouseWheelTool(mouseWheelCallback)
     {
         var toolInterface = {
             activate: function(element) {
-                $(element).off(mouseEevents, mouseWheelCallback);
-                $(element).on(mouseEevents, mouseWheelCallback);
+                $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
+                var eventData = {
+                };
+                $(element).on("CornerstoneToolsMouseWheel", eventData, mouseWheelCallback);
             },
-            disable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
-            enable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
-            deactivate : function(element) {$(element).off(mouseEevents, mouseWheelCallback);}
+            disable : function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);}
         };
         return toolInterface;
     }
 
     // module exports
     cornerstoneTools.mouseWheelTool = mouseWheelTool;
-    cornerstoneTools.onMouseWheel = onMouseWheel;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -307,202 +536,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseWheelCallback(e)
     {
-        // !!!HACK/NOTE/WARNING!!!
-        // for some reason I am getting mousewheel and DOMMouseScroll events on my
-        // mac os x mavericks system when middle mouse button dragging.
-        // I couldn't find any info about this so this might break other systems
-        // webkit hack
-        if(e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
-            return;
-        }
-        // firefox hack
-        if(e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis ===1) {
-            return;
-        }
-
-        var mouseWheelData = cornerstoneTools.onMouseWheel(e);
+        var mouseWheelData = e.originalEvent.detail;
         var ticks = -mouseWheelData.direction / 4;
         zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }
 
     cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
-
-    "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function pageToPoint(e)
-    {
-        return {
-            x : e.pageX,
-            y : e.pageY
-        };
-    }
-
-    function subtract(lhs, rhs)
-    {
-        return {
-            x : lhs.x - rhs.x,
-            y : lhs.y - rhs.y
-        };
-    }
-
-    function copyPoint(point)
-    {
-        return {
-            x : point.x,
-            y : point.y
-        };
-    }
-
-    function copyPoints(points) {
-        var page = copyPoint(points.page);
-        var image = copyPoint(points.image);
-        return {
-            page : page,
-            image: image
-        };
-    }
-
-    function mouseDown(e) {
-        var eventData = e.data;
-        var element = e.currentTarget;
-
-        var startPoints = {
-            page: pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
-        };
-        var lastPoints = copyPoints(startPoints);
-        var event = new CustomEvent(
-            "CornerstoneToolsMouseDown",
-            {
-                detail: {
-                    event: e,
-                    which: e.which,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    startPoints: startPoints,
-                    lastPoints: lastPoints
-                },
-                bubbles: false,
-                cancelable: false
-            }
-        );
-        element.dispatchEvent(event);
-
-        var whichMouseButton = e.which;
-
-        function onMouseMove(e) {
-
-            // calculate our current points in page and image coordinates
-            var currentPoints = {
-                page: pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
-            };
-
-            // Calculate delta values in page and image coordinates
-            var deltaPoints = {
-                page: subtract(currentPoints.page, lastPoints.page),
-                image: subtract(currentPoints.image, lastPoints.image)
-            };
-
-            var event = new CustomEvent(
-                "CornerstoneToolsMouseMove",
-                {
-                    detail: {
-                        event: e,
-                        which: whichMouseButton,
-                        viewport: cornerstone.getViewport(element),
-                        image: cornerstone.getEnabledElement(element).image,
-                        element: element,
-                        startPoints: startPoints,
-                        lastPoints: lastPoints,
-                        currentPoints: currentPoints,
-                        deltaPoints: deltaPoints
-                    },
-                    bubbles: false,
-                    cancelable: false
-                }
-            );
-            element.dispatchEvent(event);
-
-            // update the last points
-            lastPoints = $.extend({}, currentPoints);
-
-            // prevent left click selection of DOM elements
-            return cornerstoneTools.pauseEvent(e);
-        }
-
-
-        // hook mouseup so we can unbind our event listeners
-        // when they stop dragging
-        function onMouseUp(e) {
-
-            // calculate our current points in page and image coordinates
-            var currentPoints = {
-                page: pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
-            };
-
-            // Calculate delta values in page and image coordinates
-            var deltaPoints = {
-                page: subtract(currentPoints.page, lastPoints.page),
-                image: subtract(currentPoints.image, lastPoints.image)
-            };
-
-            var event = new CustomEvent(
-                "CornerstoneToolsMouseUp",
-                {
-                    detail: {
-                        event: e,
-                        which: whichMouseButton,
-                        viewport: cornerstone.getViewport(element),
-                        image: cornerstone.getEnabledElement(element).image,
-                        element: element,
-                        startPoints: startPoints,
-                        lastPoints: lastPoints,
-                        currentPoints: currentPoints,
-                        deltaPoints: deltaPoints
-                    },
-                    bubbles: false,
-                    cancelable: false
-                }
-            );
-            element.dispatchEvent(event);
-
-            $(document).unbind('mousemove', onMouseMove);
-            $(document).unbind('mouseup', onMouseUp);
-        }
-
-        $(document).on("mousemove", onMouseMove);
-        $(document).on("mouseup", onMouseUp);
-
-
-        return cornerstoneTools.pauseEvent(e);
-    }
-
-    function enable(element)
-    {
-        $(element).on("mousedown", mouseDown);
-    }
-
-    function disable(element) {
-        $(element).unbind("mousedown", mouseDown);
-    }
-
-    // module exports
-    cornerstoneTools.mouseInput = {
-        enable : enable,
-        disable : disable
-    };
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

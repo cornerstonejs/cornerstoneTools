@@ -37,20 +37,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseWheelCallback(e)
     {
-        // !!!HACK/NOTE/WARNING!!!
-        // for some reason I am getting mousewheel and DOMMouseScroll events on my
-        // mac os x mavericks system when middle mouse button dragging.
-        // I couldn't find any info about this so this might break other systems
-        // webkit hack
-        if(e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
-            return;
-        }
-        // firefox hack
-        if(e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis ===1) {
-            return;
-        }
-
-        var mouseWheelData = cornerstoneTools.onMouseWheel(e);
+        var mouseWheelData = e.originalEvent.detail;
         var ticks = -mouseWheelData.direction / 4;
         zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }

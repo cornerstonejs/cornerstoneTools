@@ -25,6 +25,8 @@ module.exports = function(grunt) {
         concat: {
             build: {
                 src : [
+                    'src/inputSources/mouseWheelInput.js',
+                    'src/inputSources/mouseInput.js',
                     'src/imageTools/mouseButtonTool.js',
                     'src/imageTools/mouseWheelTool.js',
                     'src/imageTools/touchDragTool.js',

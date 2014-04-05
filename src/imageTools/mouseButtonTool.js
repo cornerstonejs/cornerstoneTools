@@ -22,8 +22,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     mouseButtonMask: mouseButtonMask
                 };
                 $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
-
-                //enable(element, mouseButtonMask, onMouseMoveCallback);
             },
             disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
             enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
