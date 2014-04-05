@@ -32,7 +32,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         dragData.viewport.windowWidth += (dragData.deltaPoints.page.x * multiplier);
         dragData.viewport.windowCenter += (dragData.deltaPoints.page.y * multiplier);
-        cornerstone.setViewport(element, dragData.viewport);
+        cornerstone.setViewport(dragData.element, dragData.viewport);
     }
 
     cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMoveCallback);

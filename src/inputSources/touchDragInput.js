@@ -51,7 +51,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
         var lastPoints = copyPoints(startPoints);
 
+        var processingDrag = false;
+
+
         function onDrag(e) {
+            e.gesture.preventDefault();
+            e.gesture.stopPropagation();
+            if(e.type !== 'drag')
+            {
+                return;
+            }
+
+            // we use a global flag to keep track of whether or not we are pinching
+            // to avoid queueing up tons of events
+            if(processingDrag === true)
+            {
+                cornerstoneTools.pauseEvent(e);
+                return;
+            }
+            processingDrag = true;
+
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: pageToPoint(e),
@@ -81,15 +100,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     cancelable: false
                 }
             );
-            element.dispatchEvent(event);
 
-            // update the last points
-            lastPoints = $.extend({}, currentPoints);
+            // we dispatch the event using a timer to allow the DOM to redraw
+            setTimeout(function() {
+                element.dispatchEvent(event);
+                processingDrag = false;
+                // update the last points
+                lastPoints = $.extend({}, currentPoints);
+            }, 1);
 
-
-            e.gesture.preventDefault();
             // prevent left click selection of DOM elements
-            return cornerstoneTools.pauseEvent(e);
+            cornerstoneTools.pauseEvent(e);
         }
 
         function onDragEnd(e) {

@@ -46,7 +46,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function onPinchIn(e)
     {
-        e.preventDefault();
+        e.gesture.preventDefault();
+        e.gesture.stopPropagation();
+        if(e.type !== 'transform')
+        {
+            return;
+        }
 
         // we use a global flag to keep track of whether or not we are pinching
         // to avoid queueing up tons of events
@@ -86,7 +91,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var hammerOptions = {
             transform_always_block: true,
-            transform_min_scale   : 0.01
+            transform_min_scale   : 0.01,
+            drag_block_horizontal : true,
+            drag_block_vertical   : true,
+            drag_min_distance     : 0
+
         };
         $(element).hammer(hammerOptions).on("transform", onPinchIn);
         //$(element).hammer(hammerOptions).on("pinchout", onPinchOut);
