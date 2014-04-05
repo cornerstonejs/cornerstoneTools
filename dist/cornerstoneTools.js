@@ -558,36 +558,59 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
     }
 
-    function onDragStart(e)
+    var lastScale = 1.0;
+    var processingTouch = false;
+
+
+    var startPoints;
+    var lastPoints;
+
+    function onTouch(e)
     {
+        e.gesture.preventDefault();
+        e.gesture.stopPropagation();
+
+
+        // we use a global flag to keep track of whether or not we are pinching
+        // to avoid queueing up tons of events
+        if(processingTouch === true)
+        {
+            return;
+        }
+
         var element = e.currentTarget;
+        var event;
 
-        var startPoints = {
-            page: pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
-        };
-        var lastPoints = copyPoints(startPoints);
-
-        var processingDrag = false;
-
-
-        function onDrag(e) {
-            e.gesture.preventDefault();
-            e.gesture.stopPropagation();
-            if(e.type !== 'drag')
-            {
-                return;
-            }
-
-            // we use a global flag to keep track of whether or not we are pinching
-            // to avoid queueing up tons of events
-            if(processingDrag === true)
-            {
-                cornerstoneTools.pauseEvent(e);
-                return;
-            }
-            processingDrag = true;
-
+        if(e.type === 'transform')
+        {
+            var scale = lastScale - e.gesture.scale;
+            lastScale = e.gesture.scale;
+            event = new CustomEvent(
+                "CornerstoneToolsTouchPinch",
+                {
+                    detail: {
+                        event: e,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        direction: scale < 0 ? 1 : -1
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+        }
+        else if(e.type === 'dragstart')
+        {
+            startPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+            lastPoints = copyPoints(startPoints);
+            return;
+        }
+        else if(e.type === 'drag')
+        {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: pageToPoint(e),
@@ -600,7 +623,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 image: subtract(currentPoints.image, lastPoints.image)
             };
 
-            var event = new CustomEvent(
+            event = new CustomEvent(
                 "CornerstoneToolsTouchDrag",
                 {
                     detail: {
@@ -617,131 +640,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     cancelable: false
                 }
             );
+            lastPoints = $.extend({}, currentPoints);
 
-            // we dispatch the event using a timer to allow the DOM to redraw
-            setTimeout(function() {
-                element.dispatchEvent(event);
-                processingDrag = false;
-                // update the last points
-                lastPoints = $.extend({}, currentPoints);
-            }, 1);
-
-            // prevent left click selection of DOM elements
-            cornerstoneTools.pauseEvent(e);
         }
-
-        function onDragEnd(e) {
-            $(element).hammer().off("dragstart", onDrag);
-            $(element).hammer().off("dragend", onDragEnd);
-        }
-
-        $(element).hammer().on("drag", onDrag);
-        $(element).hammer().on("dragend", onDragEnd);
-    }
-
-    function enable(element)
-    {
-        $(element).hammer().on("dragstart", onDragStart);
-    }
-
-    function disable(element) {
-        $(element).hammer().off("swipeleft", onDragStart);
-    }
-
-    // module exports
-    cornerstoneTools.touchDragInput = {
-        enable : enable,
-        disable : disable
-    };
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
-
-    "use strict";
-
-    /*jshint newcap: false */
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function pageToPoint(e)
-    {
-        return {
-            x : e.gesture.touches[0].pageX,
-            y : e.gesture.touches[0].pageY
-        };
-    }
-
-    function subtract(lhs, rhs)
-    {
-        return {
-            x : lhs.x - rhs.x,
-            y : lhs.y - rhs.y
-        };
-    }
-
-    function copyPoint(point)
-    {
-        return {
-            x : point.x,
-            y : point.y
-        };
-    }
-
-    function copyPoints(points) {
-        var page = copyPoint(points.page);
-        var image = copyPoint(points.image);
-        return {
-            page : page,
-            image: image
-        };
-    }
-
-    var lastScale = 1.0;
-    var processingPinch = false;
-
-    function onPinchIn(e)
-    {
-        e.gesture.preventDefault();
-        e.gesture.stopPropagation();
-        if(e.type !== 'transform')
+        else
         {
             return;
         }
 
-        // we use a global flag to keep track of whether or not we are pinching
-        // to avoid queueing up tons of events
-        if(processingPinch === true)
-        {
-            lastScale = e.gesture.scale;
-            return;
-        }
-        processingPinch = true;
+        processingTouch = true;
 
-        var element = e.currentTarget;
-
-        var scale = lastScale - e.gesture.scale;
-        lastScale = e.gesture.scale;
-        var event = new CustomEvent(
-            "CornerstoneToolsTouchPinch",
-            {
-                detail: {
-                    event: e,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    direction: scale < 0 ? 1 : -1
-                },
-                bubbles: false,
-                cancelable: false
-            }
-        );
         // we dispatch the event using a timer to allow the DOM to redraw
         setTimeout(function() {
             element.dispatchEvent(event);
-            processingPinch = false;
+            processingTouch = false;
         }, 1);
     }
 
@@ -755,16 +667,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             drag_min_distance     : 0
 
         };
-        $(element).hammer(hammerOptions).on("transform", onPinchIn);
-        //$(element).hammer(hammerOptions).on("pinchout", onPinchOut);
+        $(element).hammer(hammerOptions).on("touch drag transform dragstart", onTouch);
     }
 
     function disable(element) {
-        $(element).hammer().off("transform", onPinchin);
+        $(element).hammer().off("touch drag transform dragstart", onTouch);
     }
 
     // module exports
-    cornerstoneTools.touchPinchInput = {
+    cornerstoneTools.touchInput = {
         enable : enable,
         disable : disable
     };
