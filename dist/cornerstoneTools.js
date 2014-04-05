@@ -14,107 +14,28 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return ((mouseButtonMask & mouseButton) !== 0);
     }
 
-    function onMouseDown(e, mouseMoveCallback) {
-
-        var eventData = e.data;
-
-        var mouseButtonEnabled = isMouseButtonEnabled(e.which, eventData.mouseButtonMask);
-        if(mouseButtonEnabled === true) {
-
-            var element = e.currentTarget;
-
-            var startPageX = e.pageX;
-            var startPageY = e.pageY;
-            var startImagePoint = cornerstone.pageToImage(element, e.pageX, e.pageY);
-            var startImageX = startImagePoint.x;
-            var startImageY = startImagePoint.y;
-
-            var lastPageX = e.pageX;
-            var lastPageY = e.pageY;
-            var lastImageX = startImageX;
-            var lastImageY = startImageY;
-
-            $(document).on('mousemove', function(e) {
-                // Calculate delta values in page and image coordinates
-                var deltaPageX = e.pageX - lastPageX;
-                var deltaPageY = e.pageY - lastPageY;
-                var currentImagePoint = cornerstone.pageToImage(element, e.pageX, e.pageY);
-                var deltaImageX = currentImagePoint.x - lastImageX;
-                var deltaImageY = currentImagePoint.y - lastImageY;
-
-                // create an object with all the data they might need
-                var mouseMoveData = {
-                    startPageX : startPageX,
-                    startPageY : startPageY,
-                    startImageX : startImageX,
-                    startImageY : startImageY,
-                    lastPageX : lastPageX,
-                    lastPageY : lastPageY,
-                    lastImageX : lastImageX,
-                    lastImageY : lastImageY,
-                    deltaPageX : deltaPageX,
-                    deltaPageY : deltaPageY,
-                    deltaImageX : deltaImageX,
-                    deltaImageY : deltaImageY,
-                    pageX : e.pageX,
-                    pageY : e.pageY,
-                    imageX : currentImagePoint.x,
-                    imageY : currentImagePoint.y,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image
-                };
-
-                // invoke the mouseMoveCallback with the data
-                mouseMoveCallback(element, mouseMoveData);
-
-                // update the last coordinates for page and image
-                lastPageX = e.pageX;
-                lastPageY = e.pageY;
-                lastImageX = currentImagePoint.x;
-                lastImageY = currentImagePoint.y;
-
-                // prevent left click selection of DOM elements
-                return cornerstoneTools.pauseEvent(e);
-            });
-
-            // hook mouseup so we can unbind our event listeners
-            // when they stop dragging
-            $(document).mouseup(function(e) {
-                $(document).unbind('mousemove');
-                $(document).unbind('mouseup');
-            });
-
-            // prevent left click selection of DOM elements
-            return cornerstoneTools.pauseEvent(e);
-        }
-    }
-
-    function unbind(element)
-    {
-        $(element).unbind('mousedown', onMouseDown);
-    }
-
-    function mouseButtonTool(onMouseDown)
+    function mouseButtonTool(onMouseMoveCallback)
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).unbind('mousedown', onMouseDown);
+                $(element).off('CornerstoneToolsMouseMove', onMouseMoveCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("mousedown", eventData, onMouseDown);
+                $(element).on("CornerstoneToolsMouseMove", eventData, onMouseMoveCallback);
+
+                //enable(element, mouseButtonMask, onMouseMoveCallback);
             },
-            disable : unbind,
-            enable: unbind,
-            deactivate: unbind
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
         };
         return toolInterface;
     }
 
     // module exports
     cornerstoneTools.mouseButtonTool = mouseButtonTool;
-    cornerstoneTools.onMouseDown = onMouseDown;
-
+    cornerstoneTools.isMouseButtonEnabled = isMouseButtonEnabled;
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -158,7 +79,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var toolInterface = {
             activate: function(element) {
                 $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-                $(element).on('mousewheel DOMMouseScroll', onMouseWheel);
+                //$(element).on('mousewheel DOMMouseScroll', onMouseWheel);
             },
             disable : unbind,
             enable: unbind,
@@ -280,10 +201,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(element, mouseMoveData) {
-        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPageX / mouseMoveData.viewport.scale);
-        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPageY / mouseMoveData.viewport.scale);
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+    function mouseMove(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+
+            mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+            mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function drag(element, dragData)
@@ -293,16 +218,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
-    }
-
     function onDrag(e) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMove);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
@@ -315,18 +235,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(element, mouseMoveData)
+    function mouseMove(e)
     {
-        // here we normalize the ww/wc adjustments so the same number of on screen pixels
-        // adjusts the same percentage of the dynamic range of the image.  This is needed to
-        // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
-        // image will feel the same as a 16 bit image would)
-        var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
-        var multiplier = imageDynamicRange / 1024;
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+            // here we normalize the ww/wc adjustments so the same number of on screen pixels
+            // adjusts the same percentage of the dynamic range of the image.  This is needed to
+            // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
+            // image will feel the same as a 16 bit image would)
+            var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
+            var multiplier = imageDynamicRange / 1024;
 
-        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPageX * multiplier);
-        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPageY * multiplier);
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+            mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
+            mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function drag(element, dragData)
@@ -339,17 +262,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
-    }
-
     function onDrag(e) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-
-    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMove);
     cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
 
@@ -374,17 +291,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMove(element, mouseMoveData)
+    function mouseMove(e)
     {
-        var ticks = mouseMoveData.deltaPageY/100;
-        zoom(element, mouseMoveData.viewport, ticks);
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+            var ticks = mouseMoveData.deltaPoints.page.y/100;
+            zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
 
-        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
-        // keep the original start location in the same position
-        var newCoords = cornerstone.pageToImage(element, mouseMoveData.startPageX, mouseMoveData.startPageY);
-        mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
-        mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+            // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+            // keep the original start location in the same position
+            var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+            mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
+            mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function mouseWheel(element, mouseWheelData)
@@ -398,13 +318,184 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseWheel(e, mouseWheel);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMove);
+    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
     }
 
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(onMouseDown);
-    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
+    function pageToPoint(e)
+    {
+        return {
+            x : e.pageX,
+            y : e.pageY
+        };
+    }
+
+    function subtract(lhs, rhs)
+    {
+        return {
+            x : lhs.x - rhs.x,
+            y : lhs.y - rhs.y
+        };
+    }
+
+    function copyPoint(point)
+    {
+        return {
+            x : point.x,
+            y : point.y
+        };
+    }
+
+    function copyPoints(points) {
+        var page = copyPoint(points.page);
+        var image = copyPoint(points.image);
+        return {
+            page : page,
+            image: image
+        };
+    }
+
+    function mouseDown(e) {
+        var eventData = e.data;
+        var element = e.currentTarget;
+
+        var startPoints = {
+            page: pageToPoint(e),
+            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+        };
+        var lastPoints = copyPoints(startPoints);
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseDown",
+            {
+                detail: {
+                    event: e,
+                    which: e.which,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints
+                },
+                bubbles: false,
+                cancelable: false
+            }
+        );
+        element.dispatchEvent(event);
+
+        var whichMouseButton = e.which;
+
+        function onMouseMove(e) {
+
+            // calculate our current points in page and image coordinates
+            var currentPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+
+            // Calculate delta values in page and image coordinates
+            var deltaPoints = {
+                page: subtract(currentPoints.page, lastPoints.page),
+                image: subtract(currentPoints.image, lastPoints.image)
+            };
+
+            var event = new CustomEvent(
+                "CornerstoneToolsMouseMove",
+                {
+                    detail: {
+                        event: e,
+                        which: whichMouseButton,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        lastPoints: lastPoints,
+                        currentPoints: currentPoints,
+                        deltaPoints: deltaPoints
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+            element.dispatchEvent(event);
+
+            // update the last points
+            lastPoints = $.extend({}, currentPoints);
+
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
+        }
+
+
+        // hook mouseup so we can unbind our event listeners
+        // when they stop dragging
+        function onMouseUp(e) {
+
+            // calculate our current points in page and image coordinates
+            var currentPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+
+            // Calculate delta values in page and image coordinates
+            var deltaPoints = {
+                page: subtract(currentPoints.page, lastPoints.page),
+                image: subtract(currentPoints.image, lastPoints.image)
+            };
+
+            var event = new CustomEvent(
+                "CornerstoneToolsMouseUp",
+                {
+                    detail: {
+                        event: e,
+                        which: whichMouseButton,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        lastPoints: lastPoints,
+                        currentPoints: currentPoints,
+                        deltaPoints: deltaPoints
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+            element.dispatchEvent(event);
+
+            $(document).unbind('mousemove', onMouseMove);
+            $(document).unbind('mouseup', onMouseUp);
+        }
+
+        $(document).on("mousemove", onMouseMove);
+        $(document).on("mouseup", onMouseUp);
+
+
+        return cornerstoneTools.pauseEvent(e);
+    }
+
+    function enable(element)
+    {
+        $(element).on("mousedown", mouseDown);
+    }
+
+    function disable(element) {
+        $(element).unbind("mousedown", mouseDown);
+    }
+
+    // module exports
+    cornerstoneTools.mouseInput = {
+        enable : enable,
+        disable : disable
+    };
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

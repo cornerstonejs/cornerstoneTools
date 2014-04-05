@@ -6,18 +6,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(element, mouseMoveData)
+    function mouseMove(e)
     {
-        // here we normalize the ww/wc adjustments so the same number of on screen pixels
-        // adjusts the same percentage of the dynamic range of the image.  This is needed to
-        // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
-        // image will feel the same as a 16 bit image would)
-        var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
-        var multiplier = imageDynamicRange / 1024;
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+            // here we normalize the ww/wc adjustments so the same number of on screen pixels
+            // adjusts the same percentage of the dynamic range of the image.  This is needed to
+            // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
+            // image will feel the same as a 16 bit image would)
+            var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
+            var multiplier = imageDynamicRange / 1024;
 
-        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPageX * multiplier);
-        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPageY * multiplier);
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+            mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
+            mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function drag(element, dragData)
@@ -30,17 +33,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
-    }
-
     function onDrag(e) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-
-    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMove);
     cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
 

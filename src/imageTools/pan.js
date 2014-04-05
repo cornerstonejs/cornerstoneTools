@@ -6,10 +6,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(element, mouseMoveData) {
-        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPageX / mouseMoveData.viewport.scale);
-        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPageY / mouseMoveData.viewport.scale);
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+    function mouseMove(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+
+            mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+            mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function drag(element, dragData)
@@ -19,16 +23,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
-    }
-
     function onDrag(e) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMove);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;

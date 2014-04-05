@@ -39,7 +39,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var toolInterface = {
             activate: function(element) {
                 $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-                $(element).on('mousewheel DOMMouseScroll', onMouseWheel);
+                //$(element).on('mousewheel DOMMouseScroll', onMouseWheel);
             },
             disable : unbind,
             enable: unbind,

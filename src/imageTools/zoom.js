@@ -17,17 +17,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMove(element, mouseMoveData)
+    function mouseMove(e)
     {
-        var ticks = mouseMoveData.deltaPageY/100;
-        zoom(element, mouseMoveData.viewport, ticks);
+        var mouseMoveData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+            var ticks = mouseMoveData.deltaPoints.page.y/100;
+            zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
 
-        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
-        // keep the original start location in the same position
-        var newCoords = cornerstone.pageToImage(element, mouseMoveData.startPageX, mouseMoveData.startPageY);
-        mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
-        mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+            // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+            // keep the original start location in the same position
+            var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+            mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
+            mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
+            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        }
     }
 
     function mouseWheel(element, mouseWheelData)
@@ -41,12 +44,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseWheel(e, mouseWheel);
     }
 
-    function onMouseDown(e)
-    {
-        cornerstoneTools.onMouseDown(e, mouseMove);
-    }
-
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMove);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
 
     return cornerstoneTools;
