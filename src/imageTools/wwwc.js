@@ -23,22 +23,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    function drag(element, dragData)
+    function touchDragCallback(e)
     {
+        var dragData = e.originalEvent.detail;
+
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        dragData.viewport.windowWidth += (dragData.deltaPageX * multiplier);
-        dragData.viewport.windowCenter += (dragData.deltaPageY * multiplier);
+        dragData.viewport.windowWidth += (dragData.deltaPoints.page.x * multiplier);
+        dragData.viewport.windowCenter += (dragData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onDrag(e) {
-        cornerstoneTools.onDrag(e, drag);
-    }
-
     cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
-    cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+    cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(touchDragCallback);
 
 
     return cornerstoneTools;

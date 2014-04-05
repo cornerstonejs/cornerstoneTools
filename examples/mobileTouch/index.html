@@ -21,6 +21,10 @@
 <body>
 <div class="container">
 
+    <div>
+        Drag to adjust WW/WC, pinch to zoom.  Simulate pinch by holding down shift and left click dragging.
+    </div>
+
     <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
          oncontextmenu="return false"
          class='disable-selection noIbar'
@@ -49,6 +53,12 @@
 is used by our example image loader-->
 <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
 
+<!-- include the hammer.js library for touch gestures-->
+<script src="../jquery.hammer-full.js"></script>
+
+<!-- include the hammer.fakemultitouch so we can test with a mouse -->
+<script src="../hammer.fakemultitouch.js"></script>
+
 <!-- include the cornerstone library -->
 <script src="../cornerstone.js"></script>
 
@@ -71,11 +81,23 @@ is used by our example image loader-->
 
     var imageId = 'example://1';
 
+    /*if(!Hammer.HAS_TOUCHEVENTS && !Hammer.HAS_POINTEREVENTS) {
+        Hammer.plugins.showTouches();
+    }
+
+    if(!Hammer.HAS_TOUCHEVENTS && !Hammer.HAS_POINTEREVENTS) {
+        Hammer.plugins.fakeMultitouch();
+    }*/
+    Hammer.plugins.fakeMultitouch();
+
     // image enable the dicomImage element
     cornerstone.enable(element, imageId);
+    cornerstoneTools.touchDragInput.enable(element);
+    cornerstoneTools.touchPinchInput.enable(element);
 
     // Enable all tools we want to use with this element
     cornerstoneTools.wwwcTouchDrag.activate(element);
+    cornerstoneTools.zoomTouchPinch.activate(element);
 
 
 </script>

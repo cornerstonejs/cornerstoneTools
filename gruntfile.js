@@ -30,6 +30,7 @@ module.exports = function(grunt) {
                     'src/imageTools/mouseButtonTool.js',
                     'src/imageTools/mouseWheelTool.js',
                     'src/imageTools/touchDragTool.js',
+                    'src/imageTools/touchPinchTool.js',
                     'src/**/*.js'
                 ],
                 dest: 'build/built.js'

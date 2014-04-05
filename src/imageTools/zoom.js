@@ -42,8 +42,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }
 
+    function touchPinchCallback(e)
+    {
+        var pinchData = e.originalEvent.detail;
+        zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
+    }
+
     cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
-
+    cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

@@ -330,91 +330,56 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
 
-    function onDrag(e, onDragCallback)
-    {
-        var element = e.currentTarget;
-
-        var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-        var startPageX = touch.pageX;
-        var startPageY = touch.pageY;
-        var startImagePoint = cornerstone.pageToImage(element, touch.pageX, touch.pageY);
-        var startImageX = startImagePoint.x;
-        var startImageY = startImagePoint.y;
-
-        var lastPageX = touch.pageX;
-        var lastPageY = touch.pageY;
-        var lastImageX = startImageX;
-        var lastImageY = startImageY;
-
-        $(document).bind('touchmove', function(e) {
-            e.preventDefault();
-            var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-
-            var pageX = touch.pageX;
-            var pageY = touch.pageY;
-            var currentImagePoint = cornerstone.pageToImage(element, pageX, pageY);
-            var deltaImageX = currentImagePoint.x - lastImageX;
-            var deltaImageY = currentImagePoint.y - lastImageY;
-            var deltaPageX = pageX - lastPageX;
-            var deltaPageY = pageY - lastPageY;
-
-            var dragData = {
-                startPageX : startPageX,
-                startPageY : startPageY,
-                startImageX : startImageX,
-                startImageY : startImageY,
-                lastPageX : lastPageX,
-                lastPageY : lastPageY,
-                lastImageX : lastImageX,
-                lastImageY : lastImageY,
-                deltaPageX : deltaPageX,
-                deltaPageY : deltaPageY,
-                deltaImageX : deltaImageX,
-                deltaImageY : deltaImageY,
-                pageX : pageX,
-                pageY : pageY,
-                imageX : currentImagePoint.x,
-                imageY : currentImagePoint.y,
-                viewport: cornerstone.getViewport(element),
-                image: cornerstone.getEnabledElement(element).image
-            };
-
-            // update the last coordinates for page and image
-            lastPageX = pageX;
-            lastPageY = pageY;
-            lastImageX = currentImagePoint.x;
-            lastImageY = currentImagePoint.y;
-
-            // use a timeout to update the viewport so the DOM has time to update itself
-            setTimeout(function() {
-                onDragCallback(element, dragData);
-            }, 1);
-        });
-
-        $(document).bind('touchend', function()
-        {
-            $(document).unbind('touchmove');
-            $(document).unbind('touchend');
-        });
-    }
-
-    function touchDragTool(onDragStart)
+    function touchDragTool(touchDragCallback)
     {
         var toolInterface = {
-            activate: function(element) {
-                $(element).unbind('touchstart', onDragStart);
-                $(element).bind('touchstart', onDragStart);
+            activate: function(element, mouseButtonMask) {
+                $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+                var eventData = {
+                };
+                $(element).on("CornerstoneToolsTouchDrag", eventData, touchDragCallback);
             },
-            disable : function(element) {$(element).unbind('touchstart', onDragStart);},
-            enable: function(element) {$(element).unbind('touchstart', onDragStart);},
-            deactivate: function(element) {$(element).unbind('touchstart', onDragStart);}
+            disable : function(element) {$(element).off('CornerstoneToolsTouchDrag', touchDragCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsTouchDrag', touchDragCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsTouchDrag', touchDragCallback);}
         };
         return toolInterface;
     }
 
     // module exports
     cornerstoneTools.touchDragTool = touchDragTool;
-    cornerstoneTools.onDrag = onDrag;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    /*jshint newcap: false */
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+
+    function touchPinchTool(touchPinchCallback)
+    {
+        var toolInterface = {
+            activate: function(element) {
+                $(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
+                var eventData = {
+                };
+                $(element).on("CornerstoneToolsTouchPinch", eventData, touchPinchCallback);
+            },
+            disable : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
+        };
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.touchPinchTool = touchPinchTool;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -477,22 +442,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    function drag(element, dragData)
+    function touchDragCallback(e)
     {
+        var dragData = e.originalEvent.detail;
+
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        dragData.viewport.windowWidth += (dragData.deltaPageX * multiplier);
-        dragData.viewport.windowCenter += (dragData.deltaPageY * multiplier);
+        dragData.viewport.windowWidth += (dragData.deltaPoints.page.x * multiplier);
+        dragData.viewport.windowCenter += (dragData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(element, dragData.viewport);
     }
 
-    function onDrag(e) {
-        cornerstoneTools.onDrag(e, drag);
-    }
-
     cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
-    cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+    cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(touchDragCallback);
 
 
     return cornerstoneTools;
@@ -541,8 +504,240 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }
 
+    function touchPinchCallback(e)
+    {
+        var pinchData = e.originalEvent.detail;
+        zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
+    }
+
     cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+    cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    /*jshint newcap: false */
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function pageToPoint(e)
+    {
+        return {
+            x : e.gesture.touches[0].pageX,
+            y : e.gesture.touches[0].pageY
+        };
+    }
+
+    function subtract(lhs, rhs)
+    {
+        return {
+            x : lhs.x - rhs.x,
+            y : lhs.y - rhs.y
+        };
+    }
+
+    function copyPoint(point)
+    {
+        return {
+            x : point.x,
+            y : point.y
+        };
+    }
+
+    function copyPoints(points) {
+        var page = copyPoint(points.page);
+        var image = copyPoint(points.image);
+        return {
+            page : page,
+            image: image
+        };
+    }
+
+    function onDragStart(e)
+    {
+        var element = e.currentTarget;
+
+        var startPoints = {
+            page: pageToPoint(e),
+            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+        };
+        var lastPoints = copyPoints(startPoints);
+
+        function onDrag(e) {
+            // calculate our current points in page and image coordinates
+            var currentPoints = {
+                page: pageToPoint(e),
+                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            };
+
+            // Calculate delta values in page and image coordinates
+            var deltaPoints = {
+                page: subtract(currentPoints.page, lastPoints.page),
+                image: subtract(currentPoints.image, lastPoints.image)
+            };
+
+            var event = new CustomEvent(
+                "CornerstoneToolsTouchDrag",
+                {
+                    detail: {
+                        event: e,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        lastPoints: lastPoints,
+                        currentPoints: currentPoints,
+                        deltaPoints: deltaPoints
+                    },
+                    bubbles: false,
+                    cancelable: false
+                }
+            );
+            element.dispatchEvent(event);
+
+            // update the last points
+            lastPoints = $.extend({}, currentPoints);
+
+
+            e.gesture.preventDefault();
+            // prevent left click selection of DOM elements
+            return cornerstoneTools.pauseEvent(e);
+        }
+
+        function onDragEnd(e) {
+            $(element).hammer().off("dragstart", onDrag);
+            $(element).hammer().off("dragend", onDragEnd);
+        }
+
+        $(element).hammer().on("drag", onDrag);
+        $(element).hammer().on("dragend", onDragEnd);
+    }
+
+    function enable(element)
+    {
+        $(element).hammer().on("dragstart", onDragStart);
+    }
+
+    function disable(element) {
+        $(element).hammer().off("swipeleft", onDragStart);
+    }
+
+    // module exports
+    cornerstoneTools.touchDragInput = {
+        enable : enable,
+        disable : disable
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    /*jshint newcap: false */
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function pageToPoint(e)
+    {
+        return {
+            x : e.gesture.touches[0].pageX,
+            y : e.gesture.touches[0].pageY
+        };
+    }
+
+    function subtract(lhs, rhs)
+    {
+        return {
+            x : lhs.x - rhs.x,
+            y : lhs.y - rhs.y
+        };
+    }
+
+    function copyPoint(point)
+    {
+        return {
+            x : point.x,
+            y : point.y
+        };
+    }
+
+    function copyPoints(points) {
+        var page = copyPoint(points.page);
+        var image = copyPoint(points.image);
+        return {
+            page : page,
+            image: image
+        };
+    }
+
+    var lastScale = 1.0;
+    var processingPinch = false;
+
+    function onPinchIn(e)
+    {
+        e.preventDefault();
+
+        // we use a global flag to keep track of whether or not we are pinching
+        // to avoid queueing up tons of events
+        if(processingPinch === true)
+        {
+            lastScale = e.gesture.scale;
+            return;
+        }
+        processingPinch = true;
+
+        var element = e.currentTarget;
+
+        var scale = lastScale - e.gesture.scale;
+        lastScale = e.gesture.scale;
+        var event = new CustomEvent(
+            "CornerstoneToolsTouchPinch",
+            {
+                detail: {
+                    event: e,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    direction: scale < 0 ? 1 : -1
+                },
+                bubbles: false,
+                cancelable: false
+            }
+        );
+        // we dispatch the event using a timer to allow the DOM to redraw
+        setTimeout(function() {
+            element.dispatchEvent(event);
+            processingPinch = false;
+        }, 1);
+    }
+
+    function enable(element)
+    {
+        var hammerOptions = {
+            transform_always_block: true,
+            transform_min_scale   : 0.01
+        };
+        $(element).hammer(hammerOptions).on("transform", onPinchIn);
+        //$(element).hammer(hammerOptions).on("pinchout", onPinchOut);
+    }
+
+    function disable(element) {
+        $(element).hammer().off("transform", onPinchin);
+    }
+
+    // module exports
+    cornerstoneTools.touchPinchInput = {
+        enable : enable,
+        disable : disable
+    };
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
