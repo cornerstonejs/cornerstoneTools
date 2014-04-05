@@ -8,42 +8,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function pageToPoint(e)
-    {
-        return {
-            x : e.gesture.touches[0].pageX,
-            y : e.gesture.touches[0].pageY
-        };
-    }
-
-    function subtract(lhs, rhs)
-    {
-        return {
-            x : lhs.x - rhs.x,
-            y : lhs.y - rhs.y
-        };
-    }
-
-    function copyPoint(point)
-    {
-        return {
-            x : point.x,
-            y : point.y
-        };
-    }
-
-    function copyPoints(points) {
-        var page = copyPoint(points.page);
-        var image = copyPoint(points.image);
-        return {
-            page : page,
-            image: image
-        };
-    }
-
     var lastScale = 1.0;
     var processingTouch = false;
-
 
     var startPoints;
     var lastPoints;
@@ -86,17 +52,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         else if(e.type === 'dragstart')
         {
             startPoints = {
-                page: pageToPoint(e),
+                page: cornerstoneTools.point.pageToPoint(e),
                 image: cornerstone.pageToImage(element, e.pageX, e.pageY)
             };
-            lastPoints = copyPoints(startPoints);
+            lastPoints = cornerstoneTools.copyPoints(startPoints);
             return;
         }
         else if(e.type === 'drag')
         {
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: pageToPoint(e),
+                page: cornerstoneTools.point.pageToPoint(e),
                 image: cornerstone.pageToImage(element, e.pageX, e.pageY)
             };
 
