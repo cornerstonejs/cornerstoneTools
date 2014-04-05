@@ -537,8 +537,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         else if(e.type === 'dragstart')
         {
             startPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
+                image: cornerstone.pageToImage(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
             lastPoints = cornerstoneTools.copyPoints(startPoints);
             return;
@@ -547,14 +547,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
+                image: cornerstone.pageToImage(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: subtract(currentPoints.page, lastPoints.page),
-                image: subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             event = new CustomEvent(
