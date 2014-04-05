@@ -17,9 +17,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMove(e)
+    function mouseMoveCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
+
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
             var ticks = mouseMoveData.deltaPoints.page.y/100;
             zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
@@ -31,21 +32,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
             cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         }
+        return false;
     }
 
-    function mouseWheel(element, mouseWheelData)
+    function mouseWheelCallback(e)
     {
+        // !!!HACK/NOTE/WARNING!!!
+        // for some reason I am getting mousewheel and DOMMouseScroll events on my
+        // mac os x mavericks system when middle mouse button dragging.
+        // I couldn't find any info about this so this might break other systems
+        // webkit hack
+        if(e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
+            return;
+        }
+        // firefox hack
+        if(e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis ===1) {
+            return;
+        }
+
+        var mouseWheelData = cornerstoneTools.onMouseWheel(e);
         var ticks = -mouseWheelData.direction / 4;
-        zoom(element, mouseWheelData.viewport, ticks);
+        zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }
 
-    function onMouseWheel(e)
-    {
-        cornerstoneTools.onMouseWheel(e, mouseWheel);
-    }
-
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMove);
-    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

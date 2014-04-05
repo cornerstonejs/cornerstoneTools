@@ -14,21 +14,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return ((mouseButtonMask & mouseButton) !== 0);
     }
 
-    function mouseButtonTool(onMouseMoveCallback)
+    function mouseButtonTool(mouseMoveCallback)
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).off('CornerstoneToolsMouseMove', onMouseMoveCallback);
+                $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("CornerstoneToolsMouseMove", eventData, onMouseMoveCallback);
+                $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
 
                 //enable(element, mouseButtonMask, onMouseMoveCallback);
             },
-            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', onMouseMoveCallback);},
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
         };
         return toolInterface;
     }
@@ -46,10 +46,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseWheel(e, mouseWheelCallback) {
-
+    function onMouseWheel(e) {
         var element = e.currentTarget;
-
         var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
 
         e = window.event || e; // old IE support
@@ -57,33 +55,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var direction = Math.max(-1, Math.min(1, (wheelDelta)));
 
         var mouseWheelData = {
+            element: element,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image,
             direction : direction,
             pageX : e.pageX,
             pageY: e.pageY,
             imageX : startingCoords.x,
-            imageY : startingCoords.y,
-            viewport: cornerstone.getViewport(element),
-            image: cornerstone.getEnabledElement(element).image
+            imageY : startingCoords.y
         };
 
-        mouseWheelCallback(element, mouseWheelData);
+        return mouseWheelData;
     }
 
-    function unbind(element)
-    {
-        $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-    }
+    var mouseEevents = "mousewheel DOMMouseScroll";
 
-    function mouseWheelTool(onMouseWheel)
+    function mouseWheelTool(mouseWheelCallback)
     {
         var toolInterface = {
             activate: function(element) {
-                $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-                //$(element).on('mousewheel DOMMouseScroll', onMouseWheel);
+                $(element).off(mouseEevents, mouseWheelCallback);
+                $(element).on(mouseEevents, mouseWheelCallback);
             },
-            disable : unbind,
-            enable: unbind,
-            deactivate: unbind
+            disable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
+            enable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
+            deactivate : function(element) {$(element).off(mouseEevents, mouseWheelCallback);}
         };
         return toolInterface;
     }
@@ -201,7 +197,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(e) {
+    function mouseMoveCallback(e) {
         var mouseMoveData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
 
@@ -222,7 +218,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMove);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
@@ -235,7 +231,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(e)
+    function mouseMoveCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
@@ -266,7 +262,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMove);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
 
@@ -291,9 +287,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMove(e)
+    function mouseMoveCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
+
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
             var ticks = mouseMoveData.deltaPoints.page.y/100;
             zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
@@ -305,21 +302,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
             cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         }
+        return false;
     }
 
-    function mouseWheel(element, mouseWheelData)
+    function mouseWheelCallback(e)
     {
+        // !!!HACK/NOTE/WARNING!!!
+        // for some reason I am getting mousewheel and DOMMouseScroll events on my
+        // mac os x mavericks system when middle mouse button dragging.
+        // I couldn't find any info about this so this might break other systems
+        // webkit hack
+        if(e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
+            return;
+        }
+        // firefox hack
+        if(e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis ===1) {
+            return;
+        }
+
+        var mouseWheelData = cornerstoneTools.onMouseWheel(e);
         var ticks = -mouseWheelData.direction / 4;
-        zoom(element, mouseWheelData.viewport, ticks);
+        zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
     }
 
-    function onMouseWheel(e)
-    {
-        cornerstoneTools.onMouseWheel(e, mouseWheel);
-    }
-
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMove);
-    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

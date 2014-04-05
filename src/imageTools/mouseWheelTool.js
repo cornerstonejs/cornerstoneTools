@@ -6,10 +6,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function onMouseWheel(e, mouseWheelCallback) {
-
+    function onMouseWheel(e) {
         var element = e.currentTarget;
-
         var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
 
         e = window.event || e; // old IE support
@@ -17,33 +15,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var direction = Math.max(-1, Math.min(1, (wheelDelta)));
 
         var mouseWheelData = {
+            element: element,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image,
             direction : direction,
             pageX : e.pageX,
             pageY: e.pageY,
             imageX : startingCoords.x,
-            imageY : startingCoords.y,
-            viewport: cornerstone.getViewport(element),
-            image: cornerstone.getEnabledElement(element).image
+            imageY : startingCoords.y
         };
 
-        mouseWheelCallback(element, mouseWheelData);
+        return mouseWheelData;
     }
 
-    function unbind(element)
-    {
-        $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-    }
+    var mouseEevents = "mousewheel DOMMouseScroll";
 
-    function mouseWheelTool(onMouseWheel)
+    function mouseWheelTool(mouseWheelCallback)
     {
         var toolInterface = {
             activate: function(element) {
-                $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
-                //$(element).on('mousewheel DOMMouseScroll', onMouseWheel);
+                $(element).off(mouseEevents, mouseWheelCallback);
+                $(element).on(mouseEevents, mouseWheelCallback);
             },
-            disable : unbind,
-            enable: unbind,
-            deactivate: unbind
+            disable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
+            enable : function(element) {$(element).off(mouseEevents, mouseWheelCallback);},
+            deactivate : function(element) {$(element).off(mouseEevents, mouseWheelCallback);}
         };
         return toolInterface;
     }

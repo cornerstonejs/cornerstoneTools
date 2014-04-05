@@ -6,7 +6,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(e) {
+    function mouseMoveCallback(e) {
         var mouseMoveData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
 
@@ -27,7 +27,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMove);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
