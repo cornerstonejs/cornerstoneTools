@@ -9,6 +9,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function isMouseButtonEnabled(which, mouseButtonMask)
     {
+        /*jshint bitwise: false*/
         var mouseButton = (1 << (which - 1));
         return ((mouseButtonMask & mouseButton) !== 0);
     }
@@ -93,7 +94,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    function makeSimpleTool(onMouseDown)
+    function mouseButtonTool(onMouseDown)
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
@@ -111,8 +112,72 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // module exports
-    cornerstoneTools.makeSimpleTool = makeSimpleTool;
+    cornerstoneTools.mouseButtonTool = mouseButtonTool;
     cornerstoneTools.onMouseDown = onMouseDown;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function isMouseButtonEnabled(which, mouseButtonMask)
+    {
+        /*jshint bitwise: false*/
+        var mouseButton = (1 << (which - 1));
+        return ((mouseButtonMask & mouseButton) !== 0);
+    }
+
+    function onMouseWheel(e, mouseWheelCallback) {
+
+        var element = e.currentTarget;
+
+        var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
+
+
+        e = window.event || e; // old IE support
+        var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
+        var direction = Math.max(-1, Math.min(1, (wheelDelta)));
+
+        var mouseWheelData = {
+            direction : direction,
+            pageX : e.pageX,
+            pageY: e.pageY,
+            imageX : startingCoords.x,
+            imageY : startingCoords.y,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image
+        };
+
+        mouseWheelCallback(element, mouseWheelData);
+    }
+
+    function unbind(element)
+    {
+        $(element).unbind('mousedown', onMouseWheel);
+    }
+
+    function makeMouseWheelTool(onMouseWheel)
+    {
+        var toolInterface = {
+            activate: function(element) {
+                $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
+                $(element).on('mousewheel DOMMouseScroll', onMouseWheel);
+            },
+            disable : unbind,
+            enable: unbind,
+            deactivate: unbind
+        };
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.mouseWheelTool = makeMouseWheelTool;
+    cornerstoneTools.onMouseWheel = onMouseWheel;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -135,7 +200,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(onMouseDown);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(onMouseDown);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -166,7 +231,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    cornerstoneTools.wwwc = cornerstoneTools.makeSimpleTool(onMouseDown);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(onMouseDown);
 
 
     return cornerstoneTools;
@@ -179,16 +244,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMove(element, mouseMoveData)
+    function zoom(element, viewport, ticks)
     {
         // Calculate the new scale factor based on how far the mouse has changed
         var pow = 1.7;
-        var ticks = mouseMoveData.deltaPageY/100;
-        var oldFactor = Math.log(mouseMoveData.viewport.scale) / Math.log(pow);
+        var oldFactor = Math.log(viewport.scale) / Math.log(pow);
         var factor = oldFactor + ticks;
         var scale = Math.pow(pow, factor);
-        mouseMoveData.viewport.scale = scale;
-        cornerstone.setViewport(element, mouseMoveData.viewport);
+        viewport.scale = scale;
+        cornerstone.setViewport(element, viewport);
+    }
+
+    function mouseMove(element, mouseMoveData)
+    {
+        var ticks = mouseMoveData.deltaPageY/100;
+        zoom(element, mouseMoveData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
@@ -196,7 +266,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         mouseMoveData.viewport.centerX -= mouseMoveData.startImageX - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startImageY - newCoords.y;
         cornerstone.setViewport(element, mouseMoveData.viewport);
+    }
 
+    function mouseWheel(element, mouseWheelData)
+    {
+        var ticks = -mouseWheelData.direction / 4;
+        zoom(element, mouseWheelData.viewport, ticks);
+    }
+
+    function onMouseWheel(e)
+    {
+        cornerstoneTools.onMouseWheel(e, mouseWheel);
     }
 
     function onMouseDown(e)
@@ -204,8 +284,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    cornerstoneTools.zoom = cornerstoneTools.makeSimpleTool(onMouseDown);
-
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(onMouseWheel);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

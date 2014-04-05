@@ -25,7 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    cornerstoneTools.wwwc = cornerstoneTools.makeSimpleTool(onMouseDown);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(onMouseDown);
 
 
     return cornerstoneTools;

@@ -8,6 +8,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function isMouseButtonEnabled(which, mouseButtonMask)
     {
+        /*jshint bitwise: false*/
         var mouseButton = (1 << (which - 1));
         return ((mouseButtonMask & mouseButton) !== 0);
     }
@@ -92,7 +93,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).unbind('mousedown', onMouseDown);
     }
 
-    function makeSimpleTool(onMouseDown)
+    function mouseButtonTool(onMouseDown)
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
@@ -110,7 +111,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // module exports
-    cornerstoneTools.makeSimpleTool = makeSimpleTool;
+    cornerstoneTools.mouseButtonTool = mouseButtonTool;
     cornerstoneTools.onMouseDown = onMouseDown;
 
     return cornerstoneTools;

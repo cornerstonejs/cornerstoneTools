@@ -17,7 +17,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.makeSimpleTool(onMouseDown);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(onMouseDown);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
