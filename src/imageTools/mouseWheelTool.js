@@ -6,13 +6,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function isMouseButtonEnabled(which, mouseButtonMask)
-    {
-        /*jshint bitwise: false*/
-        var mouseButton = (1 << (which - 1));
-        return ((mouseButtonMask & mouseButton) !== 0);
-    }
-
     function onMouseWheel(e, mouseWheelCallback) {
 
         var element = e.currentTarget;
@@ -38,7 +31,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function unbind(element)
     {
-        $(element).unbind('mousedown', onMouseWheel);
+        $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
     }
 
     function mouseWheelTool(onMouseWheel)

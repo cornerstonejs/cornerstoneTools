@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.0.1 - 2014-04-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -34,7 +34,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var lastImageX = startImageX;
             var lastImageY = startImageY;
 
-            $(document).mousemove(function(e) {
+            $(document).on('mousemove', function(e) {
                 // Calculate delta values in page and image coordinates
                 var deltaPageX = e.pageX - lastPageX;
                 var deltaPageY = e.pageY - lastPageY;
@@ -102,7 +102,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).mousedown(eventData, onMouseDown);
+                $(element).on("mousedown", eventData, onMouseDown);
             },
             disable : unbind,
             enable: unbind,
@@ -123,13 +123,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     if(cornerstoneTools === undefined) {
         cornerstoneTools = {};
-    }
-
-    function isMouseButtonEnabled(which, mouseButtonMask)
-    {
-        /*jshint bitwise: false*/
-        var mouseButton = (1 << (which - 1));
-        return ((mouseButtonMask & mouseButton) !== 0);
     }
 
     function onMouseWheel(e, mouseWheelCallback) {
@@ -157,7 +150,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function unbind(element)
     {
-        $(element).unbind('mousedown', onMouseWheel);
+        $(element).unbind('mousewheel DOMMouseScroll', onMouseWheel);
     }
 
     function mouseWheelTool(onMouseWheel)

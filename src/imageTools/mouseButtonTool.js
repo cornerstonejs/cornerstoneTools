@@ -33,7 +33,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var lastImageX = startImageX;
             var lastImageY = startImageY;
 
-            $(document).mousemove(function(e) {
+            $(document).on('mousemove', function(e) {
                 // Calculate delta values in page and image coordinates
                 var deltaPageX = e.pageX - lastPageX;
                 var deltaPageY = e.pageY - lastPageY;
@@ -101,7 +101,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).mousedown(eventData, onMouseDown);
+                $(element).on("mousedown", eventData, onMouseDown);
             },
             disable : unbind,
             enable: unbind,
