@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!-- support for mobile touch devices -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+
+    <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        /* prevents selection when left click dragging */
+        .disable-selection {
+            -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+        }
+        /* prevents cursor from changing to the i bar on the overlays*/
+        .noIbar {
+            cursor:default;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+         oncontextmenu="return false"
+         class='disable-selection noIbar'
+         unselectable='on'
+         onselectstart='return false;'
+         onmousedown='return false;'>
+        <div id="dicomImage"
+             style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+        </div>
+        <div id="mrtopleft" style="position: absolute;top:0px; left:0px">
+            Patient Name
+        </div>
+        <div id="mrtopright" style="position: absolute;top:0px; right:0px">
+            Hospital
+        </div>
+        <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
+            Zoom:
+        </div>
+        <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
+            WW/WC:
+        </div>
+    </div>
+</body>
+
+<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
+is used by our example image loader-->
+<script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="../cornerstone.js"></script>
+
+<!-- include the cornerstone tools library -->
+<script src="../../dist/cornerstoneTools.js"></script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../exampleImageLoader.js"></script>
+
+
+<script>
+    var element = $('#dicomImage').get(0);
+
+    // Listen for changes to the viewport so we can update the text overlays in the corner
+    function onViewportUpdated(e) {
+        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.windowWidth) + "/" + Math.round(e.detail.viewport.windowCenter));
+        $('#mrbottomright').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+    };
+    element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);
+
+    var imageId = 'example://1';
+
+    // image enable the dicomImage element
+    cornerstone.enable(element, imageId);
+
+    // Enable all tools we want to use with this element
+    cornerstoneTools.wwwcTouchDrag.activate(element);
+
+
+</script>
+</html>

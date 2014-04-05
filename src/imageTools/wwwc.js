@@ -20,12 +20,28 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, mouseMoveData.viewport);
     }
 
+    function drag(element, dragData)
+    {
+        var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
+        var multiplier = imageDynamicRange / 1024;
+
+        dragData.viewport.windowWidth += (dragData.deltaPageX * multiplier);
+        dragData.viewport.windowCenter += (dragData.deltaPageY * multiplier);
+        cornerstone.setViewport(element, dragData.viewport);
+    }
+
     function onMouseDown(e)
     {
         cornerstoneTools.onMouseDown(e, mouseMove);
     }
 
+    function onDrag(e) {
+        cornerstoneTools.onDrag(e, drag);
+    }
+
+
     cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(onMouseDown);
+    cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
 
     return cornerstoneTools;

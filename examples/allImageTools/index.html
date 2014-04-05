@@ -1,9 +1,11 @@
 <!DOCTYPE HTML>
 <html>
 <head>
+    <!-- support for mobile touch devices -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
-
 
     <style>
         /* prevents selection when left click dragging */
@@ -41,8 +43,6 @@
             <button id="rectangleroi" type="button" class="btn">Rectangle ROI</button>
 
             <br>
-
-
 
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
@@ -104,8 +104,6 @@ is used by our example image loader-->
 <!-- include special code for these examples which provides images -->
 <script src="../exampleImageLoader.js"></script>
 
-
-
 <script>
     var element = $('#dicomImage').get(0);
 
@@ -127,7 +125,6 @@ is used by our example image loader-->
     //cornerstoneTools.rectangleRoi.enable(element);
     //cornerstoneTools.probe.enable(element);
     cornerstoneTools.wwwc.activate(element, 1); // important to do ww/wc last for now, probably need separate event for the 'active' tool vs the rest
-
     cornerstoneTools.pan.activate(element, 2);
     cornerstoneTools.zoom.activate(element, 4);
     cornerstoneTools.zoomWheel.activate(element);
@@ -137,9 +134,10 @@ is used by our example image loader-->
     // before making a new tool active
     function disableAllTools()
     {
-        cornerstoneTools.wwwc.disable(element);
-        cornerstoneTools.pan.activate(element, 2);
-        cornerstoneTools.zoom.activate(element, 4);
+        //cornerstoneTools.wwwc.disable(element);
+        //cornerstoneTools.pan.activate(element, 2);
+        //cornerstoneTools.zoom.activate(element, 4);
+
         //cornerstoneTools.length.deactivate(element);
         //cornerstoneTools.ellipticalRoi.deactivate(element);
         //cornerstoneTools.rectangleRoi.deactivate(element);

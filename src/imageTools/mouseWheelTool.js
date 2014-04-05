@@ -19,7 +19,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
 
-
         e = window.event || e; // old IE support
         var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
         var direction = Math.max(-1, Math.min(1, (wheelDelta)));
@@ -42,7 +41,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).unbind('mousedown', onMouseWheel);
     }
 
-    function makeMouseWheelTool(onMouseWheel)
+    function mouseWheelTool(onMouseWheel)
     {
         var toolInterface = {
             activate: function(element) {
@@ -57,7 +56,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // module exports
-    cornerstoneTools.mouseWheelTool = makeMouseWheelTool;
+    cornerstoneTools.mouseWheelTool = mouseWheelTool;
     cornerstoneTools.onMouseWheel = onMouseWheel;
 
     return cornerstoneTools;

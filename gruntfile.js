@@ -10,9 +10,26 @@ module.exports = function(grunt) {
                 ]
             }
         },
+        copy: {
+            bower: {
+                src: [
+                    'bower_components/hammerjs/hammer.min.js',
+                    'bower_components/hammerjs/hammer.min.map',
+                    'bower_components/hammerjs/plugins/hammer.fakemultitouch.js'
+                ],
+                dest: 'examples',
+                expand: true,
+                flatten: true
+            },
+        },
         concat: {
             build: {
-                src : ['src/imageTools/simpleTool.js', 'src/**/*.js'],
+                src : [
+                    'src/imageTools/mouseButtonTool.js',
+                    'src/imageTools/mouseWheelTool.js',
+                    'src/imageTools/touchDragTool.js',
+                    'src/**/*.js'
+                ],
                 dest: 'build/built.js'
             },
             dist: {
@@ -57,6 +74,6 @@ module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('buildAll', ['concat:build', 'concat:dist', 'uglify', 'jshint']);
+    grunt.registerTask('buildAll', ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint']);
     grunt.registerTask('default', ['clean', 'buildAll']);
 };
