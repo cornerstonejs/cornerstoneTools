@@ -296,15 +296,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                $(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+                $(element).on("CornerstoneToolsMouseDrag", eventData, mouseMoveCallback);
             },
-            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
         };
         return toolInterface;
     }
@@ -527,6 +527,9 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         var mouseDownData = e.originalEvent.detail;
         var data;
 
+        console.log('probe mouseMoveCallback');
+
+
         function handleDoneMove()
         {
             if(cornerstoneTools.anyHandlesOutsideImage(mouseDownData, data.handles))
@@ -550,6 +553,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
                     if(pointNearTool(data, coords)) {
                         $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                         cornerstoneTools.moveHandle(mouseDownData, data.handles.end, handleDoneMove);
+                        e.preventDefault();
                         e.stopImmediatePropagation();
                         return;
                     }
@@ -560,9 +564,10 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             if(eventData.active === true) {
                 // no existing measurements care about this, draw a new measurement
                 createNewMeasurement(mouseDownData);
-                e.stopImmediatePropagation();
-                return;
             }
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
     }
 
@@ -680,6 +685,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseMoveCallback(e)
     {
+        console.log('wwwc mouseMoveCallback');
+
         var mouseMoveData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
             // here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -692,6 +699,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
             mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
             cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
     }
 

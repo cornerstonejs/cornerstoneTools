@@ -137,6 +137,7 @@ is used by our example image loader-->
     // before making a new tool active
     function disableAllTools()
     {
+        cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.wwwc.disable(element);
         //cornerstoneTools.pan.activate(element, 2);
         //cornerstoneTools.zoom.activate(element, 4);
@@ -144,12 +145,12 @@ is used by our example image loader-->
         //cornerstoneTools.length.deactivate(element);
         //cornerstoneTools.ellipticalRoi.deactivate(element);
         //cornerstoneTools.rectangleRoi.deactivate(element);
-        //cornerstoneTools.probe.deactivate(element);
     }
 
     // Tool button event handlers that set the new active tool
     $('#enableWindowLevelTool').click(function() {
-        disableAllTools();
+        //disableAllTools();
+        cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.wwwc.activate(element, 1);
     });
     $('#pan').click(function() {

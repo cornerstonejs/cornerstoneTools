@@ -8,6 +8,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseMoveCallback(e)
     {
+        console.log('wwwc mouseMoveCallback');
+
         var mouseMoveData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
             // here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -20,6 +22,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
             mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
             cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
     }
 

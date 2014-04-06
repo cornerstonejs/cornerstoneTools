@@ -17,15 +17,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                $(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+                $(element).on("CornerstoneToolsMouseDrag", eventData, mouseMoveCallback);
             },
-            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseMoveCallback);},
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
         };
         return toolInterface;
     }
