@@ -4,16 +4,22 @@ cornerstoneTools
 cornerstoneTools is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
 a set of common tools needed in medical imaging to work with images and stacks of images.
 
+View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) to see this
+library in action!
+
+View the [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone.
+
 Status
 ------
 
-**Project Status: Alpha**
+**Project Status: Alpha (Stable) **
 
 NOTE: Project is currently under active development - functionality is not complete, bugs exist,
-APIs will change and documentation is missing or not correct.
+APIs will change and documentation is missing or not correct.  The implemented functionality is considered
+fairly stable.
 
-View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) to see the
-library in action!
+Make sure to visit the [wiki](https://github.com/chafey/cornerstoneTools/wiki) for more information.
+
 
 Install
 -------
@@ -29,6 +35,8 @@ Or install via [Bower](http://bower.io/):
 
 Usage
 -------
+
+See the live examples and wiki for documentation on how to use this library
 
 ```
 TODO
@@ -47,9 +55,14 @@ Key Features
   * Pixel Probe
 * Tools that work with a stack of images
   * Scroll
+  * Cross reference lines
+* Synchronization tools
+  * Stack by image #
+  * Stack by image position
+  * Image by zoom and pan
 * Support for binding each tool to different mouse inputs:
   * Left mouse button
-  * MIddle mouse button
+  * Middle mouse button
   * Right mouse button
   * Mouse Wheel
 * Support for touch based gestures
@@ -58,21 +71,26 @@ Key Features
 * Tool framework that can be used to simplify development of new tools that work in a consistent manner with the included
   tools
 * Math class that provide functionality often needed during tool development (e.g. computational geometry)
+* Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
 
 Architecture
 ------------
 
 This library has the following external dependencies:
 
-* jQuery
-* cornerstone
+* [jQuery](http://jquery.com/) For event handling
+* [cornerstone](https://github.com/chafey/cornerstone) For image display
+* [hammerjs](http://eightmedia.github.io/hammer.js/) For touch gestures
 
 This library organizes code into the following directories:
 
 * imageTools - code for tools that work in the context of a single image
-* stackTools - code for tools that work in the context of a stack of images (e.g. CT series)
+* inputSources - code that provides an abstraction layer for input sources (e.g. mouse events, touch events, key events)
+* manipulators - support code for common tool functionality (moving, resizing, drawing, etc)
 * math - code for mathematical calculations that tools often need (e.g. computational geometry)
-* manipulators - code for common tool interaction mechanisms - hit testing, handles, etc
+* stackTools - code for tools that work in the context of a stack of images (e.g. CT series)
+* stateManagement - code for managing tool state
+* util - code for general purpose utilities
 
 Build System
 ============
@@ -104,3 +122,13 @@ Automatically running the build and unit tests after each source change:
 
 Backlog
 ------------
+
+* stack functionality (e.g. scrolling, stack specific measurements)
+* framework support for multiple images (e.g. select ww/wc once and have it apply to a group of enabled elements)
+* cross reference lines (requires stack)
+* Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
+* angle tool
+* measurement calibration tool
+* freehand roi tool
+* stack synchronizer tool (scroll in one stack and the other synchronized stacks will follow) - for comparison
+* image synchroinizer tool (pan/zoom in one image and the other synchronized images will follow) - for comparison
