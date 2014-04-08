@@ -30,9 +30,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
             $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
+            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
     }
 
@@ -49,10 +47,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
-
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        return false;
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     function mouseWheelCallback(e)
@@ -68,7 +63,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseDownCallback);
+    cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     return cornerstoneTools;

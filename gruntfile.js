@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 src : [
                     'src/inputSources/mouseWheelInput.js',
                     'src/inputSources/mouseInput.js',
-                    'src/imageTools/mouseButtonTool.js',
+                    'src/imageTools/simpleMouseButtonTool.js',
                     'src/imageTools/mouseWheelTool.js',
                     'src/imageTools/touchDragTool.js',
                     'src/imageTools/touchPinchTool.js',

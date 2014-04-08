@@ -47,11 +47,13 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         });
     }
 
-    function mouseDownActivateCallback(e)
-    {
+    function mouseDownActivateCallback(e) {
         var mouseDownData = e.originalEvent.detail;
-        addNewMeasurement(mouseDownData);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        var eventData = e.data;
+        if (cornerstoneTools.isMouseButtonEnabled(mouseDownData.which, eventData.mouseButtonMask)) {
+            addNewMeasurement(mouseDownData);
+            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        }
     }
     ///////// END ACTIVE TOOL ///////
 
@@ -210,7 +212,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     function activate(element, mouseButtonMask) {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
-            active: true
         };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
@@ -230,7 +231,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     function deactivate(element, mouseButtonMask) {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
-            active: false
         };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
