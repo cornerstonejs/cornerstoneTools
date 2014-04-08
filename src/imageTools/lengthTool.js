@@ -37,8 +37,17 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     }
     ///////// END ACTIVE TOOL ///////
 
-    ///////// BEGIN IMAGE RENDERING ///////
+    function pointNearTool(data, coords)
+    {
+        var lineSegment = {
+            start: data.handles.start,
+            end: data.handles.end
+        };
+        var distanceToPoint = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, coords);
+        return (distanceToPoint < 5);
+    }
 
+    ///////// BEGIN IMAGE RENDERING ///////
     function onImageRendered(e) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
@@ -93,6 +102,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.length = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool : pointNearTool,
         toolType : toolType
     });
 

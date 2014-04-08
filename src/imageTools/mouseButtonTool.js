@@ -117,14 +117,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var coords = mouseDownData.startPoints.image;
                 var toolData = cornerstoneTools.getToolState(e.currentTarget, mouseToolInterface.toolType);
 
-                // now check to see if we have a tool that we can move
+                var i;
+
+                // now check to see if there is a handle we can move
                 if(toolData !== undefined) {
-                    for(var i=0; i < toolData.data.length; i++) {
+                    for(i=0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var handle = getHandleNearImagePoint(data, coords);
                         if(handle !== undefined) {
                             $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             cornerstoneTools.moveHandle(mouseDownData, handle, handleDoneMove);
+                            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+                        }
+                    }
+                }
+
+                // Now check to see if there is a line we can move
+                // now check to see if we have a tool that we can move
+                if(toolData !== undefined && mouseToolInterface.pointNearTool !== undefined) {
+                    for(i=0; i < toolData.data.length; i++) {
+                        data = toolData.data[i];
+                        if(mouseToolInterface.pointNearTool(data, coords)) {
+                            $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            cornerstoneTools.moveAllHandles(e, data, toolData, true);
                             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                         }
                     }

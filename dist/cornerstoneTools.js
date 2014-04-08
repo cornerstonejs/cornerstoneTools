@@ -458,14 +458,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var coords = mouseDownData.startPoints.image;
                 var toolData = cornerstoneTools.getToolState(e.currentTarget, mouseToolInterface.toolType);
 
-                // now check to see if we have a tool that we can move
+                var i;
+
+                // now check to see if there is a handle we can move
                 if(toolData !== undefined) {
-                    for(var i=0; i < toolData.data.length; i++) {
+                    for(i=0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var handle = getHandleNearImagePoint(data, coords);
                         if(handle !== undefined) {
                             $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             cornerstoneTools.moveHandle(mouseDownData, handle, handleDoneMove);
+                            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+                        }
+                    }
+                }
+
+                // Now check to see if there is a line we can move
+                // now check to see if we have a tool that we can move
+                if(toolData !== undefined && mouseToolInterface.pointNearTool !== undefined) {
+                    for(i=0; i < toolData.data.length; i++) {
+                        data = toolData.data[i];
+                        if(mouseToolInterface.pointNearTool(data, coords)) {
+                            $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            cornerstoneTools.moveAllHandles(e, data, toolData, true);
                             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                         }
                     }
@@ -696,8 +711,17 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     }
     ///////// END ACTIVE TOOL ///////
 
-    ///////// BEGIN IMAGE RENDERING ///////
+    function pointNearTool(data, coords)
+    {
+        var lineSegment = {
+            start: data.handles.start,
+            end: data.handles.end
+        };
+        var distanceToPoint = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, coords);
+        return (distanceToPoint < 5);
+    }
 
+    ///////// BEGIN IMAGE RENDERING ///////
     function onImageRendered(e) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
@@ -752,6 +776,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.length = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool : pointNearTool,
         toolType : toolType
     });
 
@@ -1353,6 +1378,148 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneCore, cornerstoneTools)); 
 // End Source; src/manipulators/handleMover.js
+
+// Begin Source: src/manipulators/moveAllHandles.js
+var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+
+
+    function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage)
+    {
+        var mouseEventData = e.originalEvent.detail;
+        var element = mouseEventData.element;
+
+        function mouseDragCallback(e)
+        {
+            var mouseMoveData = e.originalEvent.detail;
+            for(var property in data.handles) {
+                var handle = data.handles[property];
+                handle.x += mouseMoveData.deltaPoints.image.x;
+                handle.y += mouseMoveData.deltaPoints.image.y;
+            }
+            cornerstone.updateImage(element);
+            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        }
+
+        $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+
+        function mouseUpCallback(e) {
+            data.moving = false;
+            var mouseUpData = e.originalEvent.detail;
+
+            $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+            $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+
+            // If any handle is outside the image, delete the tool data
+
+            if(deleteIfHandleOutsideImage === true) {
+                var image = mouseUpData.image;//.getEnabledElement(element).image;
+                var handleOutsideImage = false;
+                var rect = {
+                    top: 0,
+                    left: 0,
+                    width: image.width,
+                    height: image.height
+                };
+                for(var property in data.handles) {
+                    var handle = data.handles[property];
+                    if(cornerstoneTools.point.insideRect(handle, rect) === false)
+                    {
+                        handleOutsideImage = true;
+                    }
+                }
+
+                if(handleOutsideImage)
+                {
+                    // find this tool data
+                    var indexOfData = -1;
+                    for(var i = 0; i < toolData.data.length; i++) {
+                        if(toolData.data[i] === data)
+                        {
+                            indexOfData = i;
+                        }
+                    }
+                    if(indexOfData !== -1) {
+                        toolData.data.splice(indexOfData, 1);
+                    }
+                }
+            }
+            cornerstone.updateImage(element);
+         }
+        $(element).on("CornerstoneToolsMouseUp",mouseUpCallback);
+        return true;
+    }
+
+
+    // module/private exports
+    cornerstoneTools.moveAllHandles = moveAllHandles;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+// End Source; src/manipulators/moveAllHandles.js
+
+// Begin Source: src/math/lineSegment.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // based on  http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
+    function sqr(x)
+    {
+        return x * x;
+    }
+
+    function dist2(v, w) {
+        return sqr(v.x - w.x) + sqr(v.y - w.y);
+    }
+
+    function distanceToPointSquared(lineSegment, point)
+    {
+        var l2 = dist2(lineSegment.start, lineSegment.end);
+        if(l2 === 0) {
+            return dist2(point, lineSegment.start);
+        }
+        var t = ((point.x - lineSegment.start.x) * (lineSegment.end.x - lineSegment.start.x) +
+                 (point.y - lineSegment.start.y) * (lineSegment.end.y - lineSegment.start.y)) / l2;
+        if(t < 0) {
+            return dist2(point, lineSegment.start);
+        }
+        if(t > 1) {
+            return dist2(point, lineSegment.end);
+        }
+
+        var pt = {
+            x : lineSegment.start.x + t * (lineSegment.end.x - lineSegment.start.x),
+            y : lineSegment.start.y + t * (lineSegment.end.y - lineSegment.start.y)
+        };
+        return dist2(point, pt);
+    }
+
+    function distanceToPoint(lineSegment, point)
+    {
+        return Math.sqrt(distanceToPointSquared(lineSegment, point));
+    }
+
+    // module exports
+    cornerstoneTools.lineSegment =
+    {
+        distanceToPoint : distanceToPoint
+    };
+
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/math/lineSegment.js
 
 // Begin Source: src/math/point.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
