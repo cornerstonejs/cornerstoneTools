@@ -73,25 +73,6 @@ Key Features
 * Math class that provide functionality often needed during tool development (e.g. computational geometry)
 * Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
 
-Architecture
-------------
-
-This library has the following external dependencies:
-
-* [jQuery](http://jquery.com/) For event handling
-* [cornerstone](https://github.com/chafey/cornerstone) For image display
-* [hammerjs](http://eightmedia.github.io/hammer.js/) For touch gestures
-
-This library organizes code into the following directories:
-
-* imageTools - code for tools that work in the context of a single image
-* inputSources - code that provides an abstraction layer for input sources (e.g. mouse events, touch events, key events)
-* manipulators - support code for common tool functionality (moving, resizing, drawing, etc)
-* math - code for mathematical calculations that tools often need (e.g. computational geometry)
-* stackTools - code for tools that work in the context of a stack of images (e.g. CT series)
-* stateManagement - code for managing tool state
-* util - code for general purpose utilities
-
 Build System
 ============
 
@@ -132,3 +113,7 @@ Backlog
 * freehand roi tool
 * stack synchronizer tool (scroll in one stack and the other synchronized stacks will follow) - for comparison
 * image synchroinizer tool (pan/zoom in one image and the other synchronized images will follow) - for comparison
+
+Copyright
+============
+Copyright 2014 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)
