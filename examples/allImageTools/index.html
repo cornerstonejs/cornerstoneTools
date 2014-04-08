@@ -139,8 +139,8 @@ is used by our example image loader-->
     {
         cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.wwwc.disable(element);
-        //cornerstoneTools.pan.activate(element, 2);
-        //cornerstoneTools.zoom.activate(element, 4);
+        cornerstoneTools.pan.activate(element, 2);
+        cornerstoneTools.zoom.activate(element, 4);
 
         //cornerstoneTools.length.deactivate(element);
         //cornerstoneTools.ellipticalRoi.deactivate(element);
@@ -154,7 +154,7 @@ is used by our example image loader-->
     });
     $('#pan').click(function() {
         disableAllTools();
-        cornerstoneTools.pan.activate(element, 3);
+        cornerstoneTools.pan.activate(element, 1);
     });
     $('#zoom').click(function() {
         disableAllTools();

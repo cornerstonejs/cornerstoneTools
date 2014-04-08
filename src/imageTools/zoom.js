@@ -17,21 +17,41 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMoveCallback(e)
+    function mouseUpCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+
+    }
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }
+
+    function mouseDragCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
 
-        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
-            var ticks = mouseMoveData.deltaPoints.page.y/100;
-            zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
+        var ticks = mouseMoveData.deltaPoints.page.y/100;
+        zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
 
-            // Now that the scale has been updated, determine the offset we need to apply to the center so we can
-            // keep the original start location in the same position
-            var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
-            mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
-            mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
-            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
-        }
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+        mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
+        mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
+        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
         return false;
     }
 
@@ -48,7 +68,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     return cornerstoneTools;

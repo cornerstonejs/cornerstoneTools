@@ -42,7 +42,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
     function mouseMoveCallback(e) {
 
-        console.log('probe - mouseMoveCallback');
         var eventData = e.data;
         var mouseMoveData = e.originalEvent.detail;
 
@@ -86,9 +85,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
         var data;
-
-        console.log('probe mouseMoveCallback');
-
 
         function handleDoneMove()
         {

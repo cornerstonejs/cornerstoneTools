@@ -8,30 +8,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseUpCallback(e)
     {
-        console.log('wwwc mouseUpCallback');
         var mouseData = e.originalEvent.detail;
         $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
         $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-
-    }
-    function mouseDownCallback(e)
-    {
-        console.log('wwwc mouseDownCallback');
-
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
-
         e.preventDefault();
         e.stopImmediatePropagation();
         return false;
-
+    }
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
     }
 
     function mouseDragCallback(e)
     {
-        console.log('wwwc mouseDragCallback');
-
         var mouseMoveData = e.originalEvent.detail;
         // here we normalize the ww/wc adjustments so the same number of on screen pixels
         // adjusts the same percentage of the dynamic range of the image.  This is needed to

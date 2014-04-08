@@ -44,12 +44,10 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         for(var i = 0; i < toolData.data.length; i++) {
             if(toolData.data[i] === data)
             {
-                console.log("found tool state");
                 indexOfData = i;
             }
         }
         if(indexOfData !== -1) {
-            console.log("deleteing tool");
             toolData.data.splice(indexOfData, 1);
         }
     }

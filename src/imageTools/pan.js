@@ -6,14 +6,34 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMoveCallback(e) {
-        var mouseMoveData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+    function mouseUpCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+    }
 
-            mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
-            mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
-            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
+    }
+
+    function mouseDragCallback(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
     }
 
     function drag(element, dragData)
@@ -27,7 +47,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseDownCallback);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;

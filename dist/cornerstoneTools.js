@@ -415,14 +415,34 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMoveCallback(e) {
-        var mouseMoveData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
+    function mouseUpCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+    }
 
-            mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
-            mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
-            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
         }
+    }
+
+    function mouseDragCallback(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
     }
 
     function drag(element, dragData)
@@ -436,7 +456,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.onDrag(e, drag);
     }
 
-    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.pan = cornerstoneTools.mouseButtonTool(mouseDownCallback);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
@@ -485,7 +505,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
     function mouseMoveCallback(e) {
 
-        console.log('probe - mouseMoveCallback');
         var eventData = e.data;
         var mouseMoveData = e.originalEvent.detail;
 
@@ -529,9 +548,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
         var data;
-
-        console.log('probe mouseMoveCallback');
-
 
         function handleDoneMove()
         {
@@ -689,30 +705,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseUpCallback(e)
     {
-        console.log('wwwc mouseUpCallback');
         var mouseData = e.originalEvent.detail;
         $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
         $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-
-    }
-    function mouseDownCallback(e)
-    {
-        console.log('wwwc mouseDownCallback');
-
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
-
         e.preventDefault();
         e.stopImmediatePropagation();
         return false;
-
+    }
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
     }
 
     function mouseDragCallback(e)
     {
-        console.log('wwwc mouseDragCallback');
-
         var mouseMoveData = e.originalEvent.detail;
         // here we normalize the ww/wc adjustments so the same number of on screen pixels
         // adjusts the same percentage of the dynamic range of the image.  This is needed to
@@ -767,21 +780,41 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseMoveCallback(e)
+    function mouseUpCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+
+    }
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }
+
+    function mouseDragCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
 
-        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
-            var ticks = mouseMoveData.deltaPoints.page.y/100;
-            zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
+        var ticks = mouseMoveData.deltaPoints.page.y/100;
+        zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
 
-            // Now that the scale has been updated, determine the offset we need to apply to the center so we can
-            // keep the original start location in the same position
-            var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
-            mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
-            mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
-            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
-        }
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+        mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
+        mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
+        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
         return false;
     }
 
@@ -798,7 +831,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
-    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.zoom = cornerstoneTools.mouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     return cornerstoneTools;
@@ -1297,12 +1330,10 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         for(var i = 0; i < toolData.data.length; i++) {
             if(toolData.data[i] === data)
             {
-                console.log("found tool state");
                 indexOfData = i;
             }
         }
         if(indexOfData !== -1) {
-            console.log("deleteing tool");
             toolData.data.splice(indexOfData, 1);
         }
     }
