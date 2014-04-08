@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.0.1 - 2014-04-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -85,6 +85,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function activateMouseDown(mouseEventDetail)
+    {
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseDownActivate",
+            {
+                detail: mouseEventDetail,
+                bubbles: false,
+                cancelable: true
+            }
+        );
+        mouseEventDetail.element.dispatchEvent(event);
+    }
+
+
     function mouseDown(e) {
         var eventData = e.data;
         var element = e.currentTarget;
@@ -94,25 +108,34 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             image: cornerstone.pageToImage(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
+        var mouseEventDetail = {
+                event: e,
+                which: e.which,
+                viewport: cornerstone.getViewport(element),
+                image: cornerstone.getEnabledElement(element).image,
+                element: element,
+                startPoints: startPoints,
+                lastPoints: lastPoints,
+                currentPoints: startPoints,
+                deltaPoints: {x: 0, y:0}
+            };
+
         var event = new CustomEvent(
             "CornerstoneToolsMouseDown",
             {
-                detail: {
-                    event: e,
-                    which: e.which,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    startPoints: startPoints,
-                    lastPoints: lastPoints,
-                    currentPoints: startPoints,
-                    deltaPoints: {x: 0, y:0}
-                },
+                detail: mouseEventDetail,
                 bubbles: false,
-                cancelable: false
+                cancelable: true
             }
         );
-        element.dispatchEvent(event);
+        if(element.dispatchEvent(event) === true)
+        {
+            // no tools responded to this event, give the active tool a chance
+            if(activateMouseDown(mouseEventDetail) === true)
+            {
+                return cornerstoneTools.pauseEvent(e);
+            }
+        }
 
         var whichMouseButton = e.which;
 
@@ -145,7 +168,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                         deltaPoints: deltaPoints
                     },
                     bubbles: false,
-                    cancelable: false
+                    cancelable: true
                 }
             );
 
@@ -296,15 +319,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+                $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
+                $(element).on("CornerstoneToolsMouseDownActivate", eventData, mouseDownCallback);
             },
-            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
         };
         return toolInterface;
     }
@@ -471,20 +494,28 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
     var toolType = "probe";
 
+
+    ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
     {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible : true,
-            handles : {
+            visible: true,
+            handles: {
                 end: {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
                     highlight: true,
                     active: true
                 }
             }
         };
+        return measurementData;
+    }
+
+    function addNewMeasurement(mouseEventData)
+    {
+        var measurementData = createNewMeasurement(mouseEventData);
 
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
@@ -502,14 +533,22 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         });
     }
 
+    function mouseDownActivateCallback(e)
+    {
+        var mouseDownData = e.originalEvent.detail;
+        addNewMeasurement(mouseDownData);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+    ///////// END ACTIVE TOOL ///////
 
-    function mouseMoveCallback(e) {
+    ///////// BEGIN DEACTIVE TOOL ///////
 
-        var eventData = e.data;
+    function mouseMoveCallback(e)
+    {
         var mouseMoveData = e.originalEvent.detail;
 
         // if a mouse button is down, do nothing
-        if(e.originalEvent.detail.which !== 0) {
+        if(mouseMoveData.which !== 0) {
             return;
         }
 
@@ -544,7 +583,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     }
 
     function mouseDownCallback(e) {
-        console.log('probe - mouseDownCallback');
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
         var data;
@@ -560,8 +598,6 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         }
 
         if(cornerstoneTools.isMouseButtonEnabled(mouseDownData.which, eventData.mouseButtonMask)) {
-            var element = mouseDownData.element;
-            var viewport = mouseDownData.viewport;
             var coords = mouseDownData.startPoints.image;
             var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
 
@@ -572,24 +608,16 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
                     if(pointNearTool(data, coords)) {
                         $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                         cornerstoneTools.moveHandle(mouseDownData, data.handles.end, handleDoneMove);
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        return;
+                        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                     }
                 }
             }
-
-            // If we are "active" start drawing a new measurement
-            if(eventData.active === true) {
-                // no existing measurements care about this, draw a new measurement
-                createNewMeasurement(mouseDownData);
-                e.preventDefault();
-                e.stopImmediatePropagation();
-                return false;
-            }
-
         }
     }
+    ///////// END DEACTIVE TOOL ///////
+
+
+    ///////// BEGIN IMAGE RENDERING ///////
 
     function onImageRendered(e) {
 
@@ -638,6 +666,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             context.restore();
         }
     }
+    ///////// END IMAGE RENDERING ///////
 
     // not visible, not interactive
     function disable(element)
@@ -645,15 +674,21 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
         cornerstone.updateImage(element);
     }
 
     // visible but not interactive
     function enable(element)
     {
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        $(element).on("CornerstoneImageRendered", onImageRendered);
+
         cornerstone.updateImage(element);
     }
 
@@ -663,11 +698,17 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             mouseButtonMask: mouseButtonMask,
             active: true
         };
+
+        $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+        $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+
         cornerstone.updateImage(element);
     }
 
@@ -677,11 +718,16 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             mouseButtonMask: mouseButtonMask,
             active: false
         };
+
+        $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+
         cornerstone.updateImage(element);
     }
 

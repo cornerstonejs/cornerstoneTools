@@ -137,6 +137,8 @@ is used by our example image loader-->
     // before making a new tool active
     function disableAllTools()
     {
+        // TODO: There needs to be some framework support for switching the
+        // active tool for a mouse button
         cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.wwwc.disable(element);
         cornerstoneTools.pan.activate(element, 2);

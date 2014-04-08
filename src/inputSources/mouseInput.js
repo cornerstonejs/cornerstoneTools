@@ -6,6 +6,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function activateMouseDown(mouseEventDetail)
+    {
+        var event = new CustomEvent(
+            "CornerstoneToolsMouseDownActivate",
+            {
+                detail: mouseEventDetail,
+                bubbles: false,
+                cancelable: true
+            }
+        );
+        mouseEventDetail.element.dispatchEvent(event);
+    }
+
+
     function mouseDown(e) {
         var eventData = e.data;
         var element = e.currentTarget;
@@ -15,25 +29,34 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             image: cornerstone.pageToImage(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
+        var mouseEventDetail = {
+                event: e,
+                which: e.which,
+                viewport: cornerstone.getViewport(element),
+                image: cornerstone.getEnabledElement(element).image,
+                element: element,
+                startPoints: startPoints,
+                lastPoints: lastPoints,
+                currentPoints: startPoints,
+                deltaPoints: {x: 0, y:0}
+            };
+
         var event = new CustomEvent(
             "CornerstoneToolsMouseDown",
             {
-                detail: {
-                    event: e,
-                    which: e.which,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    startPoints: startPoints,
-                    lastPoints: lastPoints,
-                    currentPoints: startPoints,
-                    deltaPoints: {x: 0, y:0}
-                },
+                detail: mouseEventDetail,
                 bubbles: false,
-                cancelable: false
+                cancelable: true
             }
         );
-        element.dispatchEvent(event);
+        if(element.dispatchEvent(event) === true)
+        {
+            // no tools responded to this event, give the active tool a chance
+            if(activateMouseDown(mouseEventDetail) === true)
+            {
+                return cornerstoneTools.pauseEvent(e);
+            }
+        }
 
         var whichMouseButton = e.which;
 
@@ -66,7 +89,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                         deltaPoints: deltaPoints
                     },
                     bubbles: false,
-                    cancelable: false
+                    cancelable: true
                 }
             );
 
