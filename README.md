@@ -16,7 +16,7 @@ Status
 
 NOTE: Project is currently under active development - functionality is not complete, bugs exist,
 APIs will change and documentation is missing or not correct.  The implemented functionality is considered
-fairly stable.
+relatively stable.
 
 Make sure to visit the [wiki](https://github.com/chafey/cornerstoneTools/wiki) for more information.
 

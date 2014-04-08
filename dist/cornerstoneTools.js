@@ -2061,6 +2061,173 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/math/rect.js
 
+// Begin Source: src/stackTools/stackPrefetch.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "stackPrefetch";
+
+    function prefetch(element)
+    {
+        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        if(stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+            return;
+        }
+
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        if(stackPrefetchData === undefined) {
+            // should not happen
+            return;
+        }
+
+        var stackPrefetch = stackPrefetchData.data[0];
+
+        var stack = stackData.data[0];
+        var stackPrefetchImageIdIndex = stackPrefetch.prefetchImageIdIndex + 1;
+        stackPrefetchImageIdIndex = Math.min(stack.imageIds.length - 1, stackPrefetchImageIdIndex);
+        stackPrefetchImageIdIndex = Math.max(0, stackPrefetchImageIdIndex);
+
+        // if no change turn off prefetching for this stack
+        if(stackPrefetchImageIdIndex === stackPrefetch.prefetchImageIdIndex)
+        {
+            stackPrefetch.enabled = false;
+            return;
+        }
+
+        stackPrefetch.prefetchImageIdIndex = stackPrefetchImageIdIndex;
+
+        var imageId = stack.imageIds[stackPrefetchImageIdIndex];
+
+        var loadImageDeferred = cornerstone.loadImage(imageId);
+
+        loadImageDeferred.done(function(image)
+        {
+            // image has been loaded, call prefetch on the next image
+            setTimeout(function() {
+                prefetch(element);
+            }, 1);
+        });
+    }
+
+    function enable(element)
+    {
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        if(stackPrefetchData === undefined) {
+            stackPrefetchData = {
+                prefetchImageIdIndex : 0,
+                enabled: true
+            };
+            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+        }
+
+        prefetch(element);
+    }
+
+    function disable(element)
+    {
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        if(stackPrefetchData === undefined) {
+            stackPrefetchData = {
+                prefetchImageIdIndex : 0,
+                enabled: false
+            };
+            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+        }
+        else
+        {
+            stackPrefetchData.enabled = false;
+        }
+    }
+
+    // module/private exports
+    cornerstoneTools.stackPrefetch = {
+        enable: enable,
+        disable: disable
+        };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+ 
+// End Source; src/stackTools/stackPrefetch.js
+
+// Begin Source: src/stackTools/stackScroll.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "stackScroll";
+
+    function scroll(element, images)
+    {
+        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        var stackData = toolData.data[0];
+
+        var newImageIdIndex = stackData.currentImageIdIndex + images;
+        newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
+        newImageIdIndex = Math.max(0, newImageIdIndex);
+
+        if(newImageIdIndex !== stackData.currentImageIdIndex)
+        {
+            stackData.currentImageIdIndex = newImageIdIndex;
+            cornerstone.newStackImage(element, stackData.imageIds[newImageIdIndex]);
+        }
+    }
+
+    function mouseUpCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+    }
+
+    function mouseDownCallback(e)
+    {
+        var mouseData = e.originalEvent.detail;
+        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        }
+    }
+
+    function mouseDragCallback(e)
+    {
+        var mouseMoveData = e.originalEvent.detail;
+
+        var images = mouseMoveData.deltaPoints.page.y/100;
+        scroll(mouseMoveData.element, images);
+
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+    function mouseWheelCallback(e)
+    {
+        var mouseWheelData = e.originalEvent.detail;
+        var images = -mouseWheelData.direction;
+        scroll(mouseWheelData.element, images);
+    }
+
+    // module/private exports
+    cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    cornerstoneTools.stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/stackTools/stackScroll.js
+
 // Begin Source: src/stateManagement/imageIdSpecificStateManager.js
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
@@ -2141,6 +2308,100 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneCore, cornerstoneTools)); 
 // End Source; src/stateManagement/imageIdSpecificStateManager.js
+
+// Begin Source: src/stateManagement/stackSpecificStateManager.js
+var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This implements an Stack specific tool state management strategy.  This means
+    // that tool data is shared between all imageIds in a given stack
+    function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
+        var toolState = {};
+
+        // here we add tool state, this is done by tools as well
+        // as modules that restore saved state
+        function addStackSpecificToolState(element, toolType, data)
+        {
+            // if this is a tool type to apply to the stack, do so
+            if(toolTypes.indexOf(toolType) >= 0) {
+                var enabledImage = cornerstone.getEnabledElement(element);
+
+                // if we don't have tool state for this type of tool, add an empty object
+                if(toolState.hasOwnProperty(toolType) === false)
+                {
+                    toolState[toolType] = {
+                        data: []
+                    };
+                }
+                var toolData = toolState[toolType];
+
+                // finally, add this new tool to the state
+                toolData.data.push(data);
+            }
+            else {
+                // call the imageId specific tool state manager
+                return oldStateManager.add(element, toolType, data);
+            }
+        }
+
+        // here you can get state - used by tools as well as modules
+        // that save state persistently
+        function getStackSpecificToolState(element, toolType)
+        {
+            // if this is a tool type to apply to the stack, do so
+            if(toolTypes.indexOf(toolType) >= 0) {
+                // if we don't have tool state for this type of tool, add an empty object
+                if(toolState.hasOwnProperty(toolType) === false)
+                {
+                    toolState[toolType] = {
+                        data: []
+                    };
+                }
+                var toolData = toolState[toolType];
+                return toolData;
+            }
+            else
+            {
+                // call the imageId specific tool state manager
+                return oldStateManager.get(element, toolType);
+            }
+        }
+
+        var imageIdToolStateManager = {
+            get: getStackSpecificToolState,
+            add: addStackSpecificToolState
+        };
+        return imageIdToolStateManager;
+    }
+
+    var stackStateManagers = [];
+
+    function addStackStateManager(element)
+    {
+        var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
+        if(oldStateManager === undefined) {
+            oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
+        }
+
+        var stackTools = ['stack', 'stackScroll'];
+        var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
+        stackStateManagers.push(stackSpecificStateManager);
+        cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
+    }
+
+    // module/private exports
+    cornerstoneTools.newStackSpecificToolStateManager = newStackSpecificToolStateManager;
+    cornerstoneTools.addStackStateManager = addStackStateManager;
+
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+// End Source; src/stateManagement/stackSpecificStateManager.js
 
 // Begin Source: src/stateManagement/toolStateManager.js
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {

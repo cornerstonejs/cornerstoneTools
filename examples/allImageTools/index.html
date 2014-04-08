@@ -70,9 +70,11 @@
         <div class="col-xs-6">
             Functionality:
             <ul>
-                <li>Activation of different tools via buttons
+                <li>Activation of a tool for the left mouse button
                     <ul>
-                        <li>WW/WC - Adjust the window width and window center of the image</li>
+                        <li>WW/WC - Adjust the window width and window center of the image (activated by default)</li>
+                        <li>Pan - Pan the image</li>
+                        <li>Zoom - Zoom the image</li>
                         <li>Length - Length measurement tool</li>
                         <li>Probe - Display the image x,y coordinate under cursor as well as the pixel value (stored pixel and modality)</li>
                         <li>Elliptical ROI - An elliptical ROI that shows mean, stddev and area</li>
@@ -82,6 +84,7 @@
                 <li>Use the activated tool by dragging the left mouse button</li>
                 <li>Pan by dragging the middle mouse button</li>
                 <li>Zoom by dragging the right mouse button</li>
+                <li>Zoom by rolling the mouse wheel</li>
                 <li>Tool dragging - left click drag on any measurement tool line to move it</li>
                 <li>Tool deletion - left click drag on any measurement tool line and drop it off the image to delete it</li>
                 <li>Tool handles - left click drag on any measurement tool handle (the circle) to change the handles position</li>
@@ -122,29 +125,24 @@ is used by our example image loader-->
     cornerstoneTools.mouseWheelInput.enable(element);
 
     // Enable all tools we want to use with this element
-    //cornerstoneTools.length.deactivate(element);
-    //cornerstoneTools.ellipticalRoi.enable(element);
-    //cornerstoneTools.rectangleRoi.enable(element);
-    //cornerstoneTools.probe.enable(element);
-    cornerstoneTools.wwwc.activate(element, 1); // important to do ww/wc last for now, probably need separate event for the 'active' tool vs the rest
-    cornerstoneTools.pan.activate(element, 2);
-    cornerstoneTools.zoom.activate(element, 4);
-    cornerstoneTools.zoomWheel.activate(element);
+    cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
+    cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
+    cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
+    cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
     cornerstoneTools.probe.enable(element);
     cornerstoneTools.length.enable(element);
     cornerstoneTools.ellipticalRoi.enable(element);
+    cornerstoneTools.rectangleRoi.enable(element);
 
 
     // helper function used by the tool button handlers to disable the active tool
     // before making a new tool active
     function disableAllTools()
     {
-        // TODO: There needs to be some framework support for switching the
-        // active tool for a mouse button
-        cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.wwwc.disable(element);
-        cornerstoneTools.pan.activate(element, 2);
-        cornerstoneTools.zoom.activate(element, 4);
+        cornerstoneTools.pan.activate(element, 2); // 2 is middle mouse button
+        cornerstoneTools.zoom.activate(element, 4); // 4 is right mouse button
+        cornerstoneTools.probe.deactivate(element, 1);
         cornerstoneTools.length.deactivate(element, 1);
         cornerstoneTools.ellipticalRoi.deactivate(element, 1);
         cornerstoneTools.rectangleRoi.deactivate(element, 1);
@@ -157,17 +155,16 @@ is used by our example image loader-->
     });
     $('#pan').click(function() {
         disableAllTools();
-        cornerstoneTools.pan.activate(element, 1);
+        cornerstoneTools.pan.activate(element, 3); // 3 means left mouse button and middle mouse button
     });
     $('#zoom').click(function() {
         disableAllTools();
-        cornerstoneTools.zoom.activate(element, 5);
+        cornerstoneTools.zoom.activate(element, 5); // 5 means left mouse button and right mouse button
     });
     $('#enableLength').click(function() {
         disableAllTools();
         cornerstoneTools.length.activate(element, 1);
     });
-
     $('#probe').click(function() {
         disableAllTools();
         cornerstoneTools.probe.activate(element, 1);
