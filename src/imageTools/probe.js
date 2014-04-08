@@ -41,6 +41,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
 
     function mouseMoveCallback(e) {
+
+        console.log('probe - mouseMoveCallback');
         var eventData = e.data;
         var mouseMoveData = e.originalEvent.detail;
 
@@ -80,6 +82,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     }
 
     function mouseDownCallback(e) {
+        console.log('probe - mouseDownCallback');
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
         var data;
@@ -121,10 +124,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             if(eventData.active === true) {
                 // no existing measurements care about this, draw a new measurement
                 createNewMeasurement(mouseDownData);
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
             }
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
+
         }
     }
 

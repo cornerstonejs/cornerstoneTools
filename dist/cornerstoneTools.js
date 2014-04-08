@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.0.1 - 2014-04-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -292,19 +292,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return ((mouseButtonMask & mouseButton) !== 0);
     }
 
-    function mouseButtonTool(mouseMoveCallback)
+    function mouseButtonTool(mouseDownCallback)
     {
         var toolInterface = {
             activate: function(element, mouseButtonMask) {
-                $(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
+                $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
                 var eventData = {
                     mouseButtonMask: mouseButtonMask
                 };
-                $(element).on("CornerstoneToolsMouseDrag", eventData, mouseMoveCallback);
+                $(element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
             },
-            disable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);},
+            disable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);},
         };
         return toolInterface;
     }
@@ -484,6 +484,8 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
 
     function mouseMoveCallback(e) {
+
+        console.log('probe - mouseMoveCallback');
         var eventData = e.data;
         var mouseMoveData = e.originalEvent.detail;
 
@@ -523,6 +525,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     }
 
     function mouseDownCallback(e) {
+        console.log('probe - mouseDownCallback');
         var eventData = e.data;
         var mouseDownData = e.originalEvent.detail;
         var data;
@@ -564,10 +567,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             if(eventData.active === true) {
                 // no existing measurements care about this, draw a new measurement
                 createNewMeasurement(mouseDownData);
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
             }
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
+
         }
     }
 
@@ -683,27 +687,47 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseMoveCallback(e)
+    function mouseUpCallback(e)
     {
-        console.log('wwwc mouseMoveCallback');
+        console.log('wwwc mouseUpCallback');
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+
+    }
+    function mouseDownCallback(e)
+    {
+        console.log('wwwc mouseDownCallback');
+
+        var mouseData = e.originalEvent.detail;
+        $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
+
+    }
+
+    function mouseDragCallback(e)
+    {
+        console.log('wwwc mouseDragCallback');
 
         var mouseMoveData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseMoveData.which, e.data.mouseButtonMask)) {
-            // here we normalize the ww/wc adjustments so the same number of on screen pixels
-            // adjusts the same percentage of the dynamic range of the image.  This is needed to
-            // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
-            // image will feel the same as a 16 bit image would)
-            var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
-            var multiplier = imageDynamicRange / 1024;
+        // here we normalize the ww/wc adjustments so the same number of on screen pixels
+        // adjusts the same percentage of the dynamic range of the image.  This is needed to
+        // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
+        // image will feel the same as a 16 bit image would)
+        var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
+        var multiplier = imageDynamicRange / 1024;
 
-            mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
-            mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
-            cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
+        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
+        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
 
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            return false;
-        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        return false;
     }
 
     function touchDragCallback(e)
@@ -718,7 +742,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(dragData.element, dragData.viewport);
     }
 
-    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseMoveCallback);
+    cornerstoneTools.wwwc = cornerstoneTools.mouseButtonTool(mouseDownCallback);
     cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(touchDragCallback);
 
 
@@ -966,7 +990,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
                 context.beginPath();
                 if(handle.active)
                 {
-                    context.lineWidth = 1 / renderData.viewport.scale;
+                    context.lineWidth = 2 / renderData.viewport.scale;
                 }
                 else
                 {

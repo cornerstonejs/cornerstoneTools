@@ -18,7 +18,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
                 context.beginPath();
                 if(handle.active)
                 {
-                    context.lineWidth = 1 / renderData.viewport.scale;
+                    context.lineWidth = 2 / renderData.viewport.scale;
                 }
                 else
                 {

@@ -149,8 +149,7 @@ is used by our example image loader-->
 
     // Tool button event handlers that set the new active tool
     $('#enableWindowLevelTool').click(function() {
-        //disableAllTools();
-        cornerstoneTools.probe.deactivate(element, 1);
+        disableAllTools();
         cornerstoneTools.wwwc.activate(element, 1);
     });
     $('#pan').click(function() {
