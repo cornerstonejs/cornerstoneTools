@@ -106,7 +106,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             if(cornerstoneTools.isMouseButtonEnabled(mouseDownData.which, eventData.mouseButtonMask)) {
                 var coords = mouseDownData.startPoints.image;
-                var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+                var toolData = cornerstoneTools.getToolState(e.currentTarget, mouseToolInterface.toolType);
 
                 // now check to see if we have a tool that we can move
                 if(toolData !== undefined) {
