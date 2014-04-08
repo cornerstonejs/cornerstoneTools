@@ -49,7 +49,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var mouseMoveData = e.originalEvent.detail;
 
-        var images = mouseMoveData.deltaPoints.page.y/100;
+        var images = mouseMoveData.deltaPoints.page.y;
         scroll(mouseMoveData.element, images);
 
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
