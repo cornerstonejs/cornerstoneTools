@@ -1,6 +1,3 @@
-/**
- * lengthTool.js
- */
 var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
     "use strict";

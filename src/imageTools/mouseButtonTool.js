@@ -1,7 +1,3 @@
-/**
- * amouseButtonTool.js
- */
-
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
