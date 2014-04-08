@@ -1,3 +1,7 @@
+/**
+ * amouseButtonTool.js
+ */
+
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -83,10 +87,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
         }
 
-        function pointNearTool(data, coords)
+        function getHandleNearImagePoint(data, coords)
         {
-            var distanceSquared = cornerstoneTools.point.distanceSquared(data.handles.end, coords);
-            return (distanceSquared < 25);
+            for(var handle in data.handles) {
+                var distanceSquared = cornerstoneTools.point.distanceSquared(data.handles[handle], coords);
+                if(distanceSquared < 25)
+                {
+                    return data.handles[handle];
+                }
+            }
         }
 
         function mouseDownCallback(e) {
@@ -112,9 +121,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 if(toolData !== undefined) {
                     for(var i=0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
-                        if(pointNearTool(data, coords)) {
+                        var handle = getHandleNearImagePoint(data, coords);
+                        if(handle !== undefined) {
                             $(mouseDownData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-                            cornerstoneTools.moveHandle(mouseDownData, data.handles.end, handleDoneMove);
+                            cornerstoneTools.moveHandle(mouseDownData, handle, handleDoneMove);
                             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                         }
                     }

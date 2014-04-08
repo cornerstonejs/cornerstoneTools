@@ -28,12 +28,18 @@ module.exports = function(grunt) {
                     'src/inputSources/mouseWheelInput.js',
                     'src/inputSources/mouseInput.js',
                     'src/imageTools/simpleMouseButtonTool.js',
+                    'src/imageTools/mouseButtonTool.js',
                     'src/imageTools/mouseWheelTool.js',
                     'src/imageTools/touchDragTool.js',
                     'src/imageTools/touchPinchTool.js',
                     'src/**/*.js'
                 ],
-                dest: 'build/built.js'
+                dest: 'build/built.js',
+                options: {
+                    process: function (src, filepath) {
+                        return '// Begin Source: ' + filepath + '\n' + src + ' \n// End Source; ' + filepath + '\n';
+                    }
+                }
             },
             dist: {
                 options: {
