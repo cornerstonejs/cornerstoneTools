@@ -668,7 +668,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/touchPinchTool.js
 
 // Begin Source: src/imageTools/ellipticalRoi.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -801,7 +801,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -818,7 +818,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             context.beginPath();
             context.strokeStyle = 'white';
             context.lineWidth = 1 / renderData.viewport.scale;
-            csc.drawEllipse(context, left, top, width, height);
+            cornerstoneTools.drawEllipse(context, left, top, width, height);
             context.closePath();
 
             // draw the handles
@@ -840,7 +840,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
@@ -871,11 +871,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/ellipticalRoi.js
 
 // Begin Source: src/imageTools/lengthTool.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
 
     "use strict";
 
@@ -933,7 +933,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -959,7 +959,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
@@ -981,7 +981,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/lengthTool.js
 
 // Begin Source: src/imageTools/pan.js
@@ -1037,7 +1037,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/pan.js
 
 // Begin Source: src/imageTools/probe.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1079,7 +1079,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -1091,7 +1091,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             context.stroke();
 
             // Draw text
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
@@ -1126,11 +1126,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/probe.js
 
 // Begin Source: src/imageTools/rectangleRoi.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1231,7 +1231,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -1270,7 +1270,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
@@ -1301,7 +1301,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/rectangleRoi.js
 
 // Begin Source: src/imageTools/wwwc.js
@@ -1576,7 +1576,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/inputSources/touchInput.js
 
 // Begin Source: src/manipulators/anyHandlesOutsideImage.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1609,11 +1609,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/manipulators/anyHandlesOutsideImage.js
 
 // Begin Source: src/manipulators/drawHandles.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1650,11 +1650,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.drawHandles = drawHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/manipulators/drawHandles.js
 
 // Begin Source: src/manipulators/handleActivator.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1670,7 +1670,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
         for(var property in handles) {
             var handle = handles[property];
-            var distance = csc.distance(imagePoint, handle);
+            var distance = cornerstoneTools.point.distance(imagePoint, handle);
             if(distance <= handleRadiusScaled)
             {
                 return handle;
@@ -1711,11 +1711,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
     cornerstoneTools.handleActivator = handleActivator;
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/manipulators/handleActivator.js
 
 // Begin Source: src/manipulators/handleMover.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1751,11 +1751,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.moveHandle = moveHandle;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/manipulators/handleMover.js
 
 // Begin Source: src/manipulators/moveAllHandles.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -1836,7 +1836,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.moveAllHandles = moveAllHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/manipulators/moveAllHandles.js
 
 // Begin Source: src/math/lineSegment.js
@@ -2271,7 +2271,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/stackTools/stackScroll.js
 
 // Begin Source: src/stateManagement/imageIdSpecificStateManager.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -2348,11 +2348,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/imageIdSpecificStateManager.js
 
 // Begin Source: src/stateManagement/stackSpecificStateManager.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -2442,11 +2442,11 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/stackSpecificStateManager.js
 
 // Begin Source: src/stateManagement/toolStateManager.js
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -2523,7 +2523,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/toolStateManager.js
 
 // Begin Source: src/util/copyPoints.js
@@ -2553,6 +2553,43 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/util/copyPoints.js
+
+// Begin Source: src/util/drawEllipse.js
+
+var cornerstoneTools = (function (cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
+    function drawEllipse(ctx, x, y, w, h) {
+        var kappa = 0.5522848,
+            ox = (w / 2) * kappa, // control point offset horizontal
+            oy = (h / 2) * kappa, // control point offset vertical
+            xe = x + w,           // x-end
+            ye = y + h,           // y-end
+            xm = x + w / 2,       // x-middle
+            ym = y + h / 2;       // y-middle
+
+        ctx.beginPath();
+        ctx.moveTo(x, ym);
+        ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+        ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+        ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+        ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+        ctx.closePath();
+        ctx.stroke();
+    }
+
+    // Module exports
+    cornerstoneTools.drawEllipse = drawEllipse;
+
+    return cornerstoneTools;
+}(cornerstoneTools)); 
+// End Source; src/util/drawEllipse.js
 
 // Begin Source: src/util/isMouseButtonEnabled.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {

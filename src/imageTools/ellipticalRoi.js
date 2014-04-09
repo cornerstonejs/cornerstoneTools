@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -131,7 +131,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -148,7 +148,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             context.beginPath();
             context.strokeStyle = 'white';
             context.lineWidth = 1 / renderData.viewport.scale;
-            csc.drawEllipse(context, left, top, width, height);
+            cornerstoneTools.drawEllipse(context, left, top, width, height);
             context.closePath();
 
             // draw the handles
@@ -170,7 +170,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
@@ -201,4 +201,4 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools));
+}($, cornerstone, cornerstoneTools));

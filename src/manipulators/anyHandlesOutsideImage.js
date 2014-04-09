@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -31,4 +31,4 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools));
+}($, cornerstone, cornerstoneTools));

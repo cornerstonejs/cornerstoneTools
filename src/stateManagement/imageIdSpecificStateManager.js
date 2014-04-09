@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -75,4 +75,4 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools));
+}($, cornerstone, cornerstoneTools));

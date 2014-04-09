@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
 
     "use strict";
 
@@ -56,7 +56,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var renderData = e.originalEvent.detail;
         var context = renderData.canvasContext.canvas.getContext("2d");
-        csc.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -82,7 +82,7 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = csc.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
@@ -104,4 +104,4 @@ var cornerstoneTools = (function ($, cornerstone, csc, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneCore, cornerstoneTools));
+}($, cornerstone, cornerstoneTools));
