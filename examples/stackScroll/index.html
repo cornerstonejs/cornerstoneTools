@@ -42,6 +42,19 @@
                 <div id="dicomImage"
                      style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
                 </div>
+                <div id="mrtopleft" style="position: absolute;top:0px; left:0px">
+                    Patient Name
+                </div>
+                <div id="mrtopright" style="position: absolute;top:0px; right:0px">
+                    Hospital
+                </div>
+                <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
+                    <div id="zoomText">Zoom:</div>
+                    <div id="imageNumAndCount">Image #</div>
+                </div>
+                <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
+                    WW/WC:
+                </div>
             </div>
         </div>
 
@@ -65,6 +78,17 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
+    function onViewportUpdated(e) {
+        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.windowWidth) + "/" + Math.round(e.detail.viewport.windowCenter));
+        $('#zoomText').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+    };
+    element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);
+
+    function onNewImage(e) {
+        $("#imageNumAndCount").text("Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length);
+    }
+    element.addEventListener("CornerstoneNewImage", onNewImage, false);
+
     var imageIds = [
         'example://1',
         'example://2'
@@ -87,6 +111,8 @@ is used by our example image loader-->
     // Enable all tools we want to use with this element
     cornerstoneTools.stackScroll.activate(element, 1);
     cornerstoneTools.stackScrollWheel.activate(element);
+
+
 
 </script>
 </html>
