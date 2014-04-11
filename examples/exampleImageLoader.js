@@ -31,6 +31,7 @@
 
     function getExampleImage(imageId) {
         var image = {
+            imageId: imageId,
             minPixelValue : 0,
             maxPixelValue : 257,
             slope: 1.0,
