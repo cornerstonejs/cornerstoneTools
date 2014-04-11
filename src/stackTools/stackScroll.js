@@ -24,7 +24,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             stackData.currentImageIdIndex = newImageIdIndex;
-            cornerstone.newStackImage(element, stackData.imageIds[newImageIdIndex]);
+            cornerstone.showImage(element, stackData.imageIds[newImageIdIndex]);
         }
     }
 
@@ -89,7 +89,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(imageIdIndex !== stack.currentImageIdIndex)
             {
                 stack.currentImageIdIndex = imageIdIndex;
-                cornerstone.newStackImage(mouseMoveData.element, stack.imageIds[imageIdIndex]);
+                cornerstone.showImage(mouseMoveData.element, stack.imageIds[imageIdIndex]);
             }
 
         }

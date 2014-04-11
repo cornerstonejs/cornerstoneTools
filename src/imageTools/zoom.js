@@ -43,7 +43,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
-        var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+        var newCoords = cornerstone.pageToPixel(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
         mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);

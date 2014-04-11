@@ -22,7 +22,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
+        var startingCoords = cornerstone.pageToPixel(element, e.pageX, e.pageY);
 
         e = window.event || e; // old IE support
         var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;

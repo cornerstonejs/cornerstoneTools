@@ -26,7 +26,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var startPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var mouseEventDetail = {
@@ -65,7 +65,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
@@ -110,7 +110,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
@@ -156,7 +156,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var startPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
 
@@ -166,7 +166,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // calculate our current points in page and image coordinates
         var currentPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
 
         // Calculate delta values in page and image coordinates

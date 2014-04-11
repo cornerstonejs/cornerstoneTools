@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-09 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.0.1 - 2014-04-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -24,7 +24,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToImage(element, e.pageX, e.pageY);
+        var startingCoords = cornerstone.pageToPixel(element, e.pageX, e.pageY);
 
         e = window.event || e; // old IE support
         var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
@@ -109,7 +109,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var startPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var mouseEventDetail = {
@@ -148,7 +148,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
@@ -193,7 +193,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneTools.point.pageToPoint(e),
-                image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
@@ -239,7 +239,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var startPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
 
@@ -249,7 +249,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // calculate our current points in page and image coordinates
         var currentPoints = {
             page: cornerstoneTools.point.pageToPoint(e),
-            image: cornerstone.pageToImage(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
 
         // Calculate delta values in page and image coordinates
@@ -1412,7 +1412,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
-        var newCoords = cornerstone.pageToImage(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
+        var newCoords = cornerstone.pageToPixel(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
         mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
         mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
@@ -1495,7 +1495,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             startPoints = {
                 page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
-                image: cornerstone.pageToImage(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
+                image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
             lastPoints = cornerstoneTools.copyPoints(startPoints);
             return;
@@ -1505,7 +1505,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
-                image: cornerstone.pageToImage(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
+                image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
 
             // Calculate delta values in page and image coordinates
@@ -2182,7 +2182,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             stackData.currentImageIdIndex = newImageIdIndex;
-            cornerstone.newStackImage(element, stackData.imageIds[newImageIdIndex]);
+            cornerstone.showImage(element, stackData.imageIds[newImageIdIndex]);
         }
     }
 
@@ -2247,7 +2247,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(imageIdIndex !== stack.currentImageIdIndex)
             {
                 stack.currentImageIdIndex = imageIdIndex;
-                cornerstone.newStackImage(mouseMoveData.element, stack.imageIds[imageIdIndex]);
+                cornerstone.showImage(mouseMoveData.element, stack.imageIds[imageIdIndex]);
             }
 
         }
