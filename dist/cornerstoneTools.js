@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.0.1 - 2014-04-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -840,7 +840,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
@@ -959,7 +959,7 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
@@ -1091,7 +1091,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.stroke();
 
             // Draw text
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
@@ -1270,7 +1270,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
@@ -2651,3 +2651,50 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/util/pauseEvent.js
+
+// Begin Source: src/util/setContextToDisplayFontSize.js
+/**
+ * This module sets the transformation matrix for a canvas context so it displays fonts
+ * smoothly even when the image is highly scaled up
+ */
+
+var cornerstone = (function (cornerstone) {
+
+    "use strict";
+
+    if(cornerstone === undefined) {
+        cornerstone = {};
+    }
+
+    /**
+     * Sets the canvas context transformation matrix so it is scaled to show text
+     * more cleanly even if the image is scaled up.  See
+     * https://github.com/chafey/cornerstoneTools/wiki/DrawingText
+     * for more information
+     *
+     * @param ee
+     * @param context
+     * @param fontSize
+     * @returns {{fontSize: number, lineHeight: number, fontScale: number}}
+     */
+    function setContextToDisplayFontSize(ee, context, fontSize)
+    {
+        var fontScale = 0.1;
+        cornerstone.setToPixelCoordinateSystem(ee, context, fontScale);
+        // return the font size to use
+        var scaledFontSize = fontSize / ee.viewport.scale / fontScale;
+        // TODO: actually calculate this?
+        var lineHeight  = fontSize / ee.viewport.scale / fontScale;
+        return {
+            fontSize :scaledFontSize,
+            lineHeight:lineHeight,
+            fontScale: fontScale
+        };
+    }
+
+    // Module exports
+    cornerstoneTools.setContextToDisplayFontSize = setContextToDisplayFontSize;
+
+    return cornerstone;
+}(cornerstone)); 
+// End Source; src/util/setContextToDisplayFontSize.js

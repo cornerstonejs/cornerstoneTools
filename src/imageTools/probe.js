@@ -52,7 +52,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.stroke();
 
             // Draw text
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor

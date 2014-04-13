@@ -138,7 +138,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);

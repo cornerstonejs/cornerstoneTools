@@ -82,7 +82,7 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = cornerstone.setToFontCoordinateSystem(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
