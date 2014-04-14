@@ -7,6 +7,8 @@
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
+    <link href="../cornerstone.min.css" rel="stylesheet">
+
     <style>
         /* prevents selection when left click dragging */
         .disable-selection {
@@ -31,7 +33,7 @@
 
     <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
          oncontextmenu="return false"
-         class='disable-selection noIbar'
+         class='cornerstone-enabled-image'
          unselectable='on'
          onselectstart='return false;'
          onmousedown='return false;'>
@@ -64,7 +66,7 @@ is used by our example image loader-->
 <script src="../hammer.fakemultitouch.js"></script>
 
 <!-- include the cornerstone library -->
-<script src="../cornerstone.js"></script>
+<script src="../cornerstone.min.js"></script>
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.0.1 - 2014-04-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.1.0 - 2014-04-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1012,8 +1012,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseDragCallback(e) {
         var mouseMoveData = e.originalEvent.detail;
-        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
-        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.translation.x += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.translation.y += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
@@ -1340,8 +1340,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
-        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
+        mouseMoveData.viewport.voi.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
+        mouseMoveData.viewport.voi.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
@@ -1353,8 +1353,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        dragData.viewport.windowWidth += (dragData.deltaPoints.page.x * multiplier);
-        dragData.viewport.windowCenter += (dragData.deltaPoints.page.y * multiplier);
+        dragData.viewport.voi.windowWidth += (dragData.deltaPoints.page.x * multiplier);
+        dragData.viewport.voi.windowCenter += (dragData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(dragData.element, dragData.viewport);
     }
 
@@ -1413,8 +1413,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
-        mouseMoveData.viewport.centerX -= mouseMoveData.startPoints.image.x - newCoords.x;
-        mouseMoveData.viewport.centerY -= mouseMoveData.startPoints.image.y - newCoords.y;
+        mouseMoveData.viewport.translation.x -= mouseMoveData.startPoints.image.x - newCoords.x;
+        mouseMoveData.viewport.translation.y -= mouseMoveData.startPoints.image.y - newCoords.y;
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }

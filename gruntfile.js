@@ -13,6 +13,8 @@ module.exports = function(grunt) {
         copy: {
             bower: {
                 src: [
+                    'bower_components/cornerstone/dist/cornerstone.min.css',
+                    'bower_components/cornerstone/dist/cornerstone.min.js',
                     'bower_components/hammerjs/hammer.min.js',
                     'bower_components/hammerjs/hammer.min.map',
                     'bower_components/hammerjs/plugins/hammer.fakemultitouch.js'
@@ -20,7 +22,7 @@ module.exports = function(grunt) {
                 dest: 'examples',
                 expand: true,
                 flatten: true
-            },
+            }
         },
         concat: {
             build: {
@@ -86,3 +88,14 @@ module.exports = function(grunt) {
     grunt.registerTask('buildAll', ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint']);
     grunt.registerTask('default', ['clean', 'buildAll']);
 };
+
+
+// Release process:
+//  1) Update version numbers
+//  2) do a build (needed to update dist versions with correct build number)
+//  3) commit changes
+//      git commit -am "Changes...."
+//  4) tag the commit
+//      git tag -a 0.1.0 -m "Version 0.1.0"
+//  5) push to github
+//      git push origin master --tags

@@ -1,15 +1,22 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Tools for use with the cornerstone HTML5 Medical Image Viewer Component",
-  "private": true,
+  "main" : "dist/cornerstoneTools.js",
   "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test"
+      "examples",
+      "src",
+      "test",
+      "gruntfile.js",
+      "package.json",
+      "bower.json",
+      ".gitignore"
   ],
   "dependencies": {
-    "qunit": "~1.14.0"
+    "cornerstone": "~0.1.0",
+    "hammerjs": "~1.0.10"
+  },
+  "devDependencies": {
+        "qunit": "~1.14.0"
   }
 }

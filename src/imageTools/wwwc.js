@@ -33,8 +33,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        mouseMoveData.viewport.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
-        mouseMoveData.viewport.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
+        mouseMoveData.viewport.voi.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
+        mouseMoveData.viewport.voi.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
@@ -46,8 +46,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        dragData.viewport.windowWidth += (dragData.deltaPoints.page.x * multiplier);
-        dragData.viewport.windowCenter += (dragData.deltaPoints.page.y * multiplier);
+        dragData.viewport.voi.windowWidth += (dragData.deltaPoints.page.x * multiplier);
+        dragData.viewport.voi.windowCenter += (dragData.deltaPoints.page.y * multiplier);
         cornerstone.setViewport(dragData.element, dragData.viewport);
     }
 

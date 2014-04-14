@@ -7,16 +7,8 @@
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
-    <style>
-        /* prevents selection when left click dragging */
-        .disable-selection {
-            -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
-        }
-        /* prevents cursor from changing to the i bar on the overlays*/
-        .noIbar {
-            cursor:default;
-        }
-    </style>
+    <link href="../cornerstone.min.css" rel="stylesheet">
+
 </head>
 <body>
 <div class="container">
@@ -35,7 +27,7 @@
         <div class="col-xs-6">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
-                 class='disable-selection noIbar'
+                 class='cornerstone-enabled-image'
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
@@ -67,7 +59,7 @@ is used by our example image loader-->
 <script src="https://code.jquery.com/jquery-2.1.0.min.js"></script>
 
 <!-- include the cornerstone library -->
-<script src="../cornerstone.js"></script>
+<script src="../cornerstone.min.js"></script>
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
@@ -79,7 +71,7 @@ is used by our example image loader-->
     var element = $('#dicomImage').get(0);
 
     function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.windowWidth) + "/" + Math.round(e.detail.viewport.windowCenter));
+        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
         $('#zoomText').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
     };
     element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);

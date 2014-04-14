@@ -25,8 +25,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function mouseDragCallback(e) {
         var mouseMoveData = e.originalEvent.detail;
-        mouseMoveData.viewport.centerX += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
-        mouseMoveData.viewport.centerY += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.translation.x += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
+        mouseMoveData.viewport.translation.y += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
         cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
