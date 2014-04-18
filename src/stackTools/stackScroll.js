@@ -58,7 +58,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var eventData = e.data;
         eventData.deltaY += mouseMoveData.deltaPoints.page.y;
 
-        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
         if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }

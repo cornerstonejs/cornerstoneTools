@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.2.1 - 2014-04-18 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.2.2 - 2014-04-18 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2216,7 +2216,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var eventData = e.data;
         eventData.deltaY += mouseMoveData.deltaPoints.page.y;
 
-        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
         if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
