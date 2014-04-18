@@ -42,11 +42,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var mouseData = e.originalEvent.detail;
         if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
-            var toolData = cornerstoneTools.getToolState(mouseData.element, 'stack');
-            if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
-                return;
-            }
-            var stackData = toolData.data[0];
 
             var eventData = {
                 deltaY : 0
@@ -60,38 +55,28 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function mouseDragCallback(e)
     {
         var mouseMoveData = e.originalEvent.detail;
-        var eventData = e.detail;
-        var stackData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
-        if(stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+        var eventData = e.data;
+        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
+
+        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-        var stack = stackData.data[0];
 
-        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, toolType);
-        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
-            toolData = {
-                deltaY : 0
-            };
-            cornerstoneTools.addToolState(mouseMoveData.element, toolType, toolData);
-        }
-        else
+        var stackData = toolData.data[0];
+        if(eventData.deltaY >=3 || eventData.deltaY <= -3)
         {
-            toolData = toolData.data[0];
-        }
-
-        toolData.deltaY += mouseMoveData.deltaPoints.page.y;
-        if(toolData.deltaY >=3 || toolData.deltaY <= -3)
-        {
-            var imageDelta = toolData.deltaY / 3;
-            var imageDeltaMod = toolData.deltaY % 3;
+            var imageDelta = eventData.deltaY / 3;
+            var imageDeltaMod = eventData.deltaY % 3;
             var imageIdIndexOffset = Math.round(imageDelta);
-            toolData.deltaY = imageDeltaMod;
-            var imageIdIndex = stack.currentImageIdIndex + imageIdIndexOffset;
-            imageIdIndex = Math.min(stack.imageIds.length - 1, imageIdIndex);
+            eventData.deltaY = imageDeltaMod;
+
+            var imageIdIndex = stackData.currentImageIdIndex + imageIdIndexOffset;
+            imageIdIndex = Math.min(stackData.imageIds.length - 1, imageIdIndex);
             imageIdIndex = Math.max(0, imageIdIndex);
-            if(imageIdIndex !== stack.currentImageIdIndex)
+            if(imageIdIndex !== stackData.currentImageIdIndex)
             {
-                stack.currentImageIdIndex = imageIdIndex;
+                stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(mouseMoveData.element);
                 cornerstone.loadImage(stackData.imageIds[imageIdIndex]).then(function(image) {
                     cornerstone.displayImage(mouseMoveData.element, image, viewport);
