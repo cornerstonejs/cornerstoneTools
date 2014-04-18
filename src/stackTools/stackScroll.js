@@ -23,9 +23,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
-            stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
-            cornerstone.showImage(element, stackData.imageIds[newImageIdIndex], viewport);
+            cornerstone.loadImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                stackData.currentImageIdIndex = newImageIdIndex;
+                cornerstone.displayImage(element, image, viewport);
+            });
         }
     }
 
@@ -91,7 +93,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stack.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(mouseMoveData.element);
-                cornerstone.showImage(mouseMoveData.element, stack.imageIds[imageIdIndex], viewport);
+                cornerstone.loadImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                });
             }
 
         }

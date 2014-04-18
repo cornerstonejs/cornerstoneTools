@@ -92,17 +92,23 @@ is used by our example image loader-->
     };
 
     // image enable the dicomImage element and the mouse inputs
-    cornerstone.enable(element, imageIds[0]);
+    cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.mouseWheelInput.enable(element);
+    cornerstone.loadImage(imageIds[0]).then(function(image) {
+        // display this image
+        cornerstone.displayImage(element, image);
 
-    // set the stack as tool state
-    cornerstoneTools.addStackStateManager(element);
-    cornerstoneTools.addToolState(element, 'stack', stack);
+        // set the stack as tool state
+        cornerstoneTools.addStackStateManager(element);
+        cornerstoneTools.addToolState(element, 'stack', stack);
 
-    // Enable all tools we want to use with this element
-    cornerstoneTools.stackScroll.activate(element, 1);
-    cornerstoneTools.stackScrollWheel.activate(element);
+        // Enable all tools we want to use with this element
+        cornerstoneTools.stackScroll.activate(element, 1);
+        cornerstoneTools.stackScrollWheel.activate(element);
+    });
+
+
 
 
 

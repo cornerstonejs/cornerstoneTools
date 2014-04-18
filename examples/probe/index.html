@@ -67,36 +67,46 @@ is used by our example image loader-->
     var imageId = 'example://1';
 
     // image enable the dicomImage element
-    cornerstone.enable(element, imageId);
+    cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
 
-    // Enable all tools we want to use with this element
-    cornerstoneTools.probe.activate(element, 1);
-    activate("#activate");
+    cornerstone.loadImage(imageId).then(function(image) {
+        cornerstone.displayImage(element, image);
 
-    function activate(id)
-    {
-        $('a').removeClass('active');
-        $(id).addClass('active');
-    }
-
-    // Tool button event handlers that set the new active tool
-    $('#disable').click(function() {
-        activate("#disable");
-        cornerstoneTools.probe.disable(element);
-    });
-    $('#enable').click(function() {
-        activate("#enable");
-        cornerstoneTools.probe.enable(element);
-    });
-    $('#activate').click(function() {
-        activate("#activate");
+        // Enable all tools we want to use with this element
         cornerstoneTools.probe.activate(element, 1);
+        activate("#activate");
+
+        function activate(id)
+        {
+            $('a').removeClass('active');
+            $(id).addClass('active');
+        }
+
+        // Tool button event handlers that set the new active tool
+        $('#disable').click(function() {
+            activate("#disable");
+            cornerstoneTools.probe.disable(element);
+            return false;
+        });
+        $('#enable').click(function() {
+            activate("#enable");
+            cornerstoneTools.probe.enable(element);
+            return false;
+        });
+        $('#activate').click(function() {
+            activate("#activate");
+            cornerstoneTools.probe.activate(element, 1);
+            return false;
+        });
+        $('#deactivate').click(function() {
+            activate("#deactivate");
+            cornerstoneTools.probe.deactivate(element, 1);
+            return false;
+        });
     });
-    $('#deactivate').click(function() {
-        activate("#deactivate");
-        cornerstoneTools.probe.deactivate(element, 1);
-    });
+
+
 
 </script>
 </html>

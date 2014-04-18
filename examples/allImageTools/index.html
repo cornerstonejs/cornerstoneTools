@@ -112,63 +112,66 @@ is used by our example image loader-->
     var imageId = 'example://1';
 
     // image enable the dicomImage element
-    cornerstone.enable(element, imageId);
-    cornerstoneTools.mouseInput.enable(element);
-    cornerstoneTools.mouseWheelInput.enable(element);
+    cornerstone.enable(element);
+    cornerstone.loadImage(imageId).then(function(image) {
+        cornerstone.displayImage(element, image);
+        cornerstoneTools.mouseInput.enable(element);
+        cornerstoneTools.mouseWheelInput.enable(element);
+        // Enable all tools we want to use with this element
+        cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
+        cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
+        cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
+        cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
+        cornerstoneTools.probe.enable(element);
+        cornerstoneTools.length.enable(element);
+        cornerstoneTools.ellipticalRoi.enable(element);
+        cornerstoneTools.rectangleRoi.enable(element);
 
-    // Enable all tools we want to use with this element
-    cornerstoneTools.wwwc.activate(element, 1); // ww/wc is the default tool for left mouse button
-    cornerstoneTools.pan.activate(element, 2); // pan is the default tool for middle mouse button
-    cornerstoneTools.zoom.activate(element, 4); // zoom is the default tool for right mouse button
-    cornerstoneTools.zoomWheel.activate(element); // zoom is the default tool for middle mouse wheel
-    cornerstoneTools.probe.enable(element);
-    cornerstoneTools.length.enable(element);
-    cornerstoneTools.ellipticalRoi.enable(element);
-    cornerstoneTools.rectangleRoi.enable(element);
 
+        // helper function used by the tool button handlers to disable the active tool
+        // before making a new tool active
+        function disableAllTools()
+        {
+            cornerstoneTools.wwwc.disable(element);
+            cornerstoneTools.pan.activate(element, 2); // 2 is middle mouse button
+            cornerstoneTools.zoom.activate(element, 4); // 4 is right mouse button
+            cornerstoneTools.probe.deactivate(element, 1);
+            cornerstoneTools.length.deactivate(element, 1);
+            cornerstoneTools.ellipticalRoi.deactivate(element, 1);
+            cornerstoneTools.rectangleRoi.deactivate(element, 1);
+        }
 
-    // helper function used by the tool button handlers to disable the active tool
-    // before making a new tool active
-    function disableAllTools()
-    {
-        cornerstoneTools.wwwc.disable(element);
-        cornerstoneTools.pan.activate(element, 2); // 2 is middle mouse button
-        cornerstoneTools.zoom.activate(element, 4); // 4 is right mouse button
-        cornerstoneTools.probe.deactivate(element, 1);
-        cornerstoneTools.length.deactivate(element, 1);
-        cornerstoneTools.ellipticalRoi.deactivate(element, 1);
-        cornerstoneTools.rectangleRoi.deactivate(element, 1);
-    }
+        // Tool button event handlers that set the new active tool
+        $('#enableWindowLevelTool').click(function() {
+            disableAllTools();
+            cornerstoneTools.wwwc.activate(element, 1);
+        });
+        $('#pan').click(function() {
+            disableAllTools();
+            cornerstoneTools.pan.activate(element, 3); // 3 means left mouse button and middle mouse button
+        });
+        $('#zoom').click(function() {
+            disableAllTools();
+            cornerstoneTools.zoom.activate(element, 5); // 5 means left mouse button and right mouse button
+        });
+        $('#enableLength').click(function() {
+            disableAllTools();
+            cornerstoneTools.length.activate(element, 1);
+        });
+        $('#probe').click(function() {
+            disableAllTools();
+            cornerstoneTools.probe.activate(element, 1);
+        });
+        $('#circleroi').click(function() {
+            disableAllTools();
+            cornerstoneTools.ellipticalRoi.activate(element, 1);
+        });
+        $('#rectangleroi').click(function() {
+            disableAllTools();
+            cornerstoneTools.rectangleRoi.activate(element, 1);
+        });
+    });
 
-    // Tool button event handlers that set the new active tool
-    $('#enableWindowLevelTool').click(function() {
-        disableAllTools();
-        cornerstoneTools.wwwc.activate(element, 1);
-    });
-    $('#pan').click(function() {
-        disableAllTools();
-        cornerstoneTools.pan.activate(element, 3); // 3 means left mouse button and middle mouse button
-    });
-    $('#zoom').click(function() {
-        disableAllTools();
-        cornerstoneTools.zoom.activate(element, 5); // 5 means left mouse button and right mouse button
-    });
-    $('#enableLength').click(function() {
-        disableAllTools();
-        cornerstoneTools.length.activate(element, 1);
-    });
-    $('#probe').click(function() {
-        disableAllTools();
-        cornerstoneTools.probe.activate(element, 1);
-    });
-    $('#circleroi').click(function() {
-        disableAllTools();
-        cornerstoneTools.ellipticalRoi.activate(element, 1);
-    });
-    $('#rectangleroi').click(function() {
-        disableAllTools();
-        cornerstoneTools.rectangleRoi.activate(element, 1);
-    });
 
 
 </script>
