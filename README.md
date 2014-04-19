@@ -42,8 +42,8 @@ See the live examples and wiki for documentation on how to use this library
 TODO
 ```
 
-Key Features
-------------
+Features Targeted for V1.0
+--------------------------
 
 * Tools that work with a single image
   * WW/WL
@@ -55,11 +55,12 @@ Key Features
   * Pixel Probe
 * Tools that work with a stack of images
   * Scroll
-  * Cross reference lines
+  * Cine / Playing Clips
+  * Cross reference lines (not implemented yet)
 * Synchronization tools
-  * Stack by image #
-  * Stack by image position
-  * Image by zoom and pan
+  * Stack by image # (not implemented yet)
+  * Stack by image position (not implemented yet)
+  * Image by zoom and pan (not implemented yet)
 * Support for binding each tool to different mouse inputs:
   * Left mouse button
   * Middle mouse button
@@ -104,7 +105,6 @@ Automatically running the build and unit tests after each source change:
 Backlog
 ------------
 
-* stack functionality (e.g. scrolling, stack specific measurements)
 * framework support for multiple images (e.g. select ww/wc once and have it apply to a group of enabled elements)
 * cross reference lines (requires stack)
 * Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
