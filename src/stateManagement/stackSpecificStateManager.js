@@ -76,7 +76,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackScroll'];
+        var stackTools = ['stack', 'stackScroll', 'playClip'];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);

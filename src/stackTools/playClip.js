@@ -32,7 +32,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
-        if (playClipToolData === undefined) {
+        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
                 intervalId : undefined,
                 framesPerSecond: framesPerSecond,
