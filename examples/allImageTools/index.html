@@ -104,7 +104,7 @@ is used by our example image loader-->
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.windowWidth) + "/" + Math.round(e.detail.viewport.windowCenter));
+        $('#mrbottomleft').text("WW/WC:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
         $('#mrbottomright').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
     };
     element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);

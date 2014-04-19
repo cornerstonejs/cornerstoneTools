@@ -24,6 +24,12 @@
     </div>
 
     <div class="row">
+        <div class="col-xs-2">
+            <ul class="list-group">
+                <a href="#" id="playClip" class="list-group-item">Play Clip</a>
+                <a href="#" id="stopClip" class="list-group-item">Stop Clip</a>
+            </ul>
+        </div>
         <div class="col-xs-6">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
@@ -41,6 +47,7 @@
                     Hospital
                 </div>
                 <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
+                    <div id="frameRate">FPS: </div>
                     <div id="zoomText">Zoom:</div>
                     <div id="imageNumAndCount">Image #</div>
                 </div>
@@ -78,6 +85,16 @@ is used by our example image loader-->
 
     function onNewImage(e) {
         $("#imageNumAndCount").text("Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length);
+
+        // if we are currently playing a clip then update the FPS
+        var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
+        if(playClipToolData !== undefined && playClipToolData.data[0].intervalId !== undefined) {
+            $("#frameRate").text("FPS: " + Math.round(e.detail.frameRate));
+        } else {
+            if($("#frameRate").text().length > 0) {
+                $("#frameRate").text("");
+            }
+        }
     }
     element.addEventListener("CornerstoneNewImage", onNewImage, false);
 
@@ -100,12 +117,32 @@ is used by our example image loader-->
         cornerstone.displayImage(element, image);
 
         // set the stack as tool state
-        cornerstoneTools.addStackStateManager(element);
+        cornerstoneTools.addStackStateManager(element, ['stack', 'playClip']);
         cornerstoneTools.addToolState(element, 'stack', stack);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.stackScroll.activate(element, 1);
         cornerstoneTools.stackScrollWheel.activate(element);
+
+        function activate(id)
+        {
+            $('a').removeClass('active');
+            $(id).addClass('active');
+        }
+
+
+        $('#playClip').click(function() {
+            activate("#playClip");
+            cornerstoneTools.playClip(element, 31);
+            return false;
+        });
+        $('#stopClip').click(function() {
+            activate("#stopClip");
+            cornerstoneTools.stopClip(element);
+            $("#frameRate").text("");
+            return false;
+        });
+
     });
 
 
