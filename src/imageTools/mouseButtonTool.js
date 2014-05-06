@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -86,7 +86,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         function getHandleNearImagePoint(data, coords)
         {
             for(var handle in data.handles) {
-                var distanceSquared = cornerstoneTools.point.distanceSquared(data.handles[handle], coords);
+                var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
                 if(distanceSquared < 25)
                 {
                     return data.handles[handle];
@@ -221,4 +221,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.mouseButtonTool = mouseButtonTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

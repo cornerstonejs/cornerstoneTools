@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.2.2 - 2014-04-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.2.2 - 2014-05-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -81,7 +81,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/inputSources/mouseWheelInput.js
 
 // Begin Source: src/inputSources/mouseInput.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -108,7 +108,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
@@ -147,14 +147,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
+                page: cornerstoneMath.point.pageToPoint(e),
                 image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             var event = new CustomEvent(
@@ -192,14 +192,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
+                page: cornerstoneMath.point.pageToPoint(e),
                 image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             var event = new CustomEvent(
@@ -238,7 +238,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
@@ -248,14 +248,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // calculate our current points in page and image coordinates
         var currentPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
 
         // Calculate delta values in page and image coordinates
         var deltaPoints = {
-            page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-            image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+            page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+            image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
         };
 
         var event = new CustomEvent(
@@ -303,7 +303,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/inputSources/mouseInput.js
 
 // Begin Source: src/imageTools/simpleMouseButtonTool.js
@@ -339,7 +339,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/simpleMouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseButtonTool.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -427,7 +427,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         function getHandleNearImagePoint(data, coords)
         {
             for(var handle in data.handles) {
-                var distanceSquared = cornerstoneTools.point.distanceSquared(data.handles[handle], coords);
+                var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
                 if(distanceSquared < 25)
                 {
                     return data.handles[handle];
@@ -562,7 +562,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.mouseButtonTool = mouseButtonTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/imageTools/mouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseWheelTool.js
@@ -668,7 +668,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/touchPinchTool.js
 
 // Begin Source: src/imageTools/ellipticalRoi.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -714,7 +714,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
 
-        var distanceToPoint = cornerstoneTools.rect.distanceToPoint(rect, coords);
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
     }
 
@@ -871,11 +871,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/imageTools/ellipticalRoi.js
 
 // Begin Source: src/imageTools/lengthTool.js
-var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -917,7 +917,7 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
             start: data.handles.start,
             end: data.handles.end
         };
-        var distanceToPoint = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, coords);
+        var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         return (distanceToPoint < 5);
     }
 
@@ -981,7 +981,7 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/imageTools/lengthTool.js
 
 // Begin Source: src/imageTools/pan.js
@@ -1130,7 +1130,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/probe.js
 
 // Begin Source: src/imageTools/rectangleRoi.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -1175,7 +1175,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
 
-        var distanceToPoint = cornerstoneTools.rect.distanceToPoint(rect, coords);
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
     }
 
@@ -1301,7 +1301,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/imageTools/rectangleRoi.js
 
 // Begin Source: src/imageTools/wwwc.js
@@ -1440,7 +1440,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/zoom.js
 
 // Begin Source: src/inputSources/touchInput.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -1494,7 +1494,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         else if(e.type === 'dragstart')
         {
             startPoints = {
-                page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
+                page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
                 image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
             lastPoints = cornerstoneTools.copyPoints(startPoints);
@@ -1504,14 +1504,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e.gesture.touches[0]),
+                page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
                 image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             event = new CustomEvent(
@@ -1572,11 +1572,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/inputSources/touchInput.js
 
 // Begin Source: src/manipulators/anyHandlesOutsideImage.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -1597,7 +1597,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var handleOutsideImage = false;
         for(var property in handles) {
             var handle = handles[property];
-            if(cornerstoneTools.point.insideRect(handle, imageRect) === false)
+            if(cornerstoneMath.point.insideRect(handle, imageRect) === false)
             {
                 handleOutsideImage = true;
             }
@@ -1609,7 +1609,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/manipulators/anyHandlesOutsideImage.js
 
 // Begin Source: src/manipulators/drawHandles.js
@@ -1654,7 +1654,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/manipulators/drawHandles.js
 
 // Begin Source: src/manipulators/handleActivator.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -1670,7 +1670,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         for(var property in handles) {
             var handle = handles[property];
-            var distance = cornerstoneTools.point.distance(imagePoint, handle);
+            var distance = cornerstoneMath.point.distance(imagePoint, handle);
             if(distance <= handleRadiusScaled)
             {
                 return handle;
@@ -1711,7 +1711,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     cornerstoneTools.handleActivator = handleActivator;
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/manipulators/handleActivator.js
 
 // Begin Source: src/manipulators/handleMover.js
@@ -1755,7 +1755,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/manipulators/handleMover.js
 
 // Begin Source: src/manipulators/moveAllHandles.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -1804,7 +1804,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 };
                 for(var property in data.handles) {
                     var handle = data.handles[property];
-                    if(cornerstoneTools.point.insideRect(handle, rect) === false)
+                    if(cornerstoneMath.point.insideRect(handle, rect) === false)
                     {
                         handleOutsideImage = true;
                     }
@@ -1836,230 +1836,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.moveAllHandles = moveAllHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/manipulators/moveAllHandles.js
-
-// Begin Source: src/math/lineSegment.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
-
-    "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    // based on  http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
-    function sqr(x)
-    {
-        return x * x;
-    }
-
-    function dist2(v, w) {
-        return sqr(v.x - w.x) + sqr(v.y - w.y);
-    }
-
-    function distanceToPointSquared(lineSegment, point)
-    {
-        var l2 = dist2(lineSegment.start, lineSegment.end);
-        if(l2 === 0) {
-            return dist2(point, lineSegment.start);
-        }
-        var t = ((point.x - lineSegment.start.x) * (lineSegment.end.x - lineSegment.start.x) +
-                 (point.y - lineSegment.start.y) * (lineSegment.end.y - lineSegment.start.y)) / l2;
-        if(t < 0) {
-            return dist2(point, lineSegment.start);
-        }
-        if(t > 1) {
-            return dist2(point, lineSegment.end);
-        }
-
-        var pt = {
-            x : lineSegment.start.x + t * (lineSegment.end.x - lineSegment.start.x),
-            y : lineSegment.start.y + t * (lineSegment.end.y - lineSegment.start.y)
-        };
-        return dist2(point, pt);
-    }
-
-    function distanceToPoint(lineSegment, point)
-    {
-        return Math.sqrt(distanceToPointSquared(lineSegment, point));
-    }
-
-    // module exports
-    cornerstoneTools.lineSegment =
-    {
-        distanceToPoint : distanceToPoint
-    };
-
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
-// End Source; src/math/lineSegment.js
-
-// Begin Source: src/math/point.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
-
-    "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function pageToPoint(e)
-    {
-        return {
-            x : e.pageX,
-            y : e.pageY
-        };
-    }
-
-    function subtract(lhs, rhs)
-    {
-        return {
-            x : lhs.x - rhs.x,
-            y : lhs.y - rhs.y
-        };
-    }
-
-    function copy(point)
-    {
-        return {
-            x : point.x,
-            y : point.y
-        };
-    }
-
-    function distance(from, to)
-    {
-        return Math.sqrt(distanceSquared(from, to));
-    }
-
-    function distanceSquared(from, to)
-    {
-        var delta = subtract(from, to);
-        return delta.x * delta.x + delta.y * delta.y;
-    }
-
-    function insideRect(point, rect)
-    {
-        if( point.x < rect.left ||
-            point.x > rect.left + rect.width ||
-            point.y < rect.top ||
-            point.y > rect.top + rect.height)
-        {
-            return false;
-        }
-        return true;
-    }
-
-
-    // module exports
-    cornerstoneTools.point =
-    {
-        subtract : subtract,
-        copy: copy,
-        pageToPoint: pageToPoint,
-        distance: distance,
-        distanceSquared: distanceSquared,
-        insideRect: insideRect
-    };
-
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
-// End Source; src/math/point.js
-
-// Begin Source: src/math/rect.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
-
-    "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function rectToLineSegments(rect)
-    {
-        var top = {
-            start : {
-                x :rect.left,
-                y :rect.top
-            },
-            end : {
-                x :rect.left + rect.width,
-                y :rect.top
-
-            }
-        };
-        var right = {
-            start : {
-                x :rect.left + rect.width,
-                y :rect.top
-            },
-            end : {
-                x :rect.left + rect.width,
-                y :rect.top + rect.height
-
-            }
-        };
-        var bottom = {
-            start : {
-                x :rect.left + rect.width,
-                y :rect.top + rect.height
-            },
-            end : {
-                x :rect.left,
-                y :rect.top + rect.height
-
-            }
-        };
-        var left = {
-            start : {
-                x :rect.left,
-                y :rect.top + rect.height
-            },
-            end : {
-                x :rect.left,
-                y :rect.top
-
-            }
-        };
-        var lineSegments = [top, right, bottom, left];
-        return lineSegments;
-    }
-
-    function pointNearLineSegment(point, lineSegment, maxDistance)
-    {
-        if(maxDistance === undefined) {
-            maxDistance = 5;
-        }
-        var distance = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, point);
-
-        return (distance < maxDistance);
-    }
-    function distanceToPoint(rect, point)
-    {
-        var minDistance = 655535;
-        var lineSegments = rectToLineSegments(rect);
-        lineSegments.forEach(function(lineSegment) {
-            var distance = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, point);
-            if(distance < minDistance) {
-                minDistance = distance;
-            }
-        });
-        return minDistance;
-    }
-
-    // module exports
-    cornerstoneTools.rect =
-    {
-        distanceToPoint : distanceToPoint
-    };
-
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
-// End Source; src/math/rect.js
 
 // Begin Source: src/stackTools/playClip.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -2389,11 +2167,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
-            if(toolState.hasOwnProperty(enabledImage.imageId) === false)
+            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
-                toolState[enabledImage.imageId] = {};
+                toolState[enabledImage.image.imageId] = {};
             }
-            var imageIdToolState = toolState[enabledImage.imageId];
+            var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, add an empty object
             if(imageIdToolState.hasOwnProperty(toolType) === false)
@@ -2414,11 +2192,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, return undefined
-            if(toolState.hasOwnProperty(enabledImage.imageId) === false)
+            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 return undefined;
             }
-            var imageIdToolState = toolState[enabledImage.imageId];
+            var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, return undefined
             if(imageIdToolState.hasOwnProperty(toolType) === false)
@@ -2527,7 +2305,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackScroll', 'playClip'];
+        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab'];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
@@ -2624,7 +2402,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/stateManagement/toolStateManager.js
 
 // Begin Source: src/util/copyPoints.js
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -2634,8 +2412,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function copyPoints(points)
     {
-        var page = cornerstoneTools.point.copy(points.page);
-        var image = cornerstoneTools.point.copy(points.image);
+        var page = cornerstoneMath.point.copy(points.page);
+        var image = cornerstoneMath.point.copy(points.image);
         return {
             page : page,
             image: image
@@ -2648,7 +2426,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/util/copyPoints.js
 
 // Begin Source: src/util/drawEllipse.js

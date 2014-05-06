@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -43,7 +43,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
 
-        var distanceToPoint = cornerstoneTools.rect.distanceToPoint(rect, coords);
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
     }
 
@@ -169,4 +169,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

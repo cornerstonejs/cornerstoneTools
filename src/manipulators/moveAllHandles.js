@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -47,7 +47,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 };
                 for(var property in data.handles) {
                     var handle = data.handles[property];
-                    if(cornerstoneTools.point.insideRect(handle, rect) === false)
+                    if(cornerstoneMath.point.insideRect(handle, rect) === false)
                     {
                         handleOutsideImage = true;
                     }
@@ -79,4 +79,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.moveAllHandles = moveAllHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

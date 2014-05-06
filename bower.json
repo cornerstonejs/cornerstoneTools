@@ -13,8 +13,9 @@
       ".gitignore"
   ],
   "dependencies": {
-    "cornerstone": "~0.3.0",
-    "hammerjs": "~1.0.10"
+    "cornerstone": "~0.4.1",
+     "cornerstoneMath": "~0.1.0",
+     "hammerjs": "~1.0.10"
   },
   "devDependencies": {
         "qunit": "~1.14.0"

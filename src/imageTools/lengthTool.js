@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -40,7 +40,7 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
             start: data.handles.start,
             end: data.handles.end
         };
-        var distanceToPoint = cornerstoneTools.lineSegment.distanceToPoint(lineSegment, coords);
+        var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         return (distanceToPoint < 5);
     }
 
@@ -104,4 +104,4 @@ var cornerstoneTools = (function ($, cornerstone,  cornerstoneTools) {
     });
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

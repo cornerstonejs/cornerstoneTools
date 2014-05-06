@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -25,7 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
@@ -64,14 +64,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
+                page: cornerstoneMath.point.pageToPoint(e),
                 image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             var event = new CustomEvent(
@@ -109,14 +109,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneTools.point.pageToPoint(e),
+                page: cornerstoneMath.point.pageToPoint(e),
                 image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
             };
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-                image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
             var event = new CustomEvent(
@@ -155,7 +155,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
@@ -165,14 +165,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // calculate our current points in page and image coordinates
         var currentPoints = {
-            page: cornerstoneTools.point.pageToPoint(e),
+            page: cornerstoneMath.point.pageToPoint(e),
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
 
         // Calculate delta values in page and image coordinates
         var deltaPoints = {
-            page: cornerstoneTools.point.subtract(currentPoints.page, lastPoints.page),
-            image: cornerstoneTools.point.subtract(currentPoints.image, lastPoints.image)
+            page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+            image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
         };
 
         var event = new CustomEvent(
@@ -220,4 +220,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

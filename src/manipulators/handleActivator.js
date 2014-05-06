@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -14,7 +14,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         for(var property in handles) {
             var handle = handles[property];
-            var distance = cornerstoneTools.point.distance(imagePoint, handle);
+            var distance = cornerstoneMath.point.distance(imagePoint, handle);
             if(distance <= handleRadiusScaled)
             {
                 return handle;
@@ -55,4 +55,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     cornerstoneTools.handleActivator = handleActivator;
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));

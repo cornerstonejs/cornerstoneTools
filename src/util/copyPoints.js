@@ -1,4 +1,4 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -8,8 +8,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function copyPoints(points)
     {
-        var page = cornerstoneTools.point.copy(points.page);
-        var image = cornerstoneTools.point.copy(points.image);
+        var page = cornerstoneMath.point.copy(points.page);
+        var image = cornerstoneMath.point.copy(points.image);
         return {
             page : page,
             image: image
@@ -22,4 +22,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
