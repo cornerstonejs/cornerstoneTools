@@ -67,7 +67,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(newImageIdIndex !== stackData.currentImageIdIndex)
             {
                 var viewport = cornerstone.getViewport(element);
-                cornerstone.loadImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                 });

@@ -39,7 +39,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageId = stack.imageIds[stackPrefetchImageIdIndex];
 
-        var loadImageDeferred = cornerstone.loadImage(imageId);
+        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
 
         loadImageDeferred.done(function(image)
         {
