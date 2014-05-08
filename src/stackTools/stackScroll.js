@@ -95,9 +95,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(mouseWheelData.element, images);
     }
 
+    function onDrag(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        var eventData = {
+            deltaY : 0
+        };
+        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
+
+        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        var stackData = toolData.data[0];
+        if(eventData.deltaY >=3 || eventData.deltaY <= -3)
+        {
+            var imageDelta = eventData.deltaY / 3;
+            var imageDeltaMod = eventData.deltaY % 3;
+            var imageIdIndexOffset = Math.round(imageDelta);
+            eventData.deltaY = imageDeltaMod;
+
+            var imageIdIndex = stackData.currentImageIdIndex + imageIdIndexOffset;
+            imageIdIndex = Math.min(stackData.imageIds.length - 1, imageIdIndex);
+            imageIdIndex = Math.max(0, imageIdIndex);
+            if(imageIdIndex !== stackData.currentImageIdIndex)
+            {
+                stackData.currentImageIdIndex = imageIdIndex;
+                var viewport = cornerstone.getViewport(mouseMoveData.element);
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                });
+            }
+
+        }
+
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+
     // module/private exports
     cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+    cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
