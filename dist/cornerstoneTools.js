@@ -1158,15 +1158,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function drag(element, dragData)
-    {
-        dragData.viewport.centerX += (dragData.deltaPageX / dragData.viewport.scale);
-        dragData.viewport.centerY += (dragData.deltaPageY / dragData.viewport.scale);
-        cornerstone.setViewport(element, dragData.viewport);
-    }
-
     function onDrag(e) {
-        cornerstoneTools.onDrag(e, drag);
+        var dragData = e.originalEvent.detail;
+        dragData.viewport.translation.x += (dragData.deltaPoints.page.x / dragData.viewport.scale);
+        dragData.viewport.translation.y += (dragData.deltaPoints.page.y / dragData.viewport.scale);
+        cornerstone.setViewport(dragData.element, dragData.viewport);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     cornerstoneTools.pan = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
@@ -1572,9 +1569,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
+    function zoomTouchDrag(e)
+    {
+        var dragData = e.originalEvent.detail;
+        var ticks = dragData.deltaPoints.page.y/100;
+        zoom(dragData.element, dragData.viewport, ticks);
+
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
+        dragData.viewport.translation.x -= dragData.startPoints.image.x - newCoords.x;
+        dragData.viewport.translation.y -= dragData.startPoints.image.y - newCoords.y;
+        cornerstone.setViewport(dragData.element, dragData.viewport);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
+    cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/zoom.js
@@ -2049,7 +2063,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(newImageIdIndex !== stackData.currentImageIdIndex)
             {
                 var viewport = cornerstone.getViewport(element);
-                cornerstone.loadImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                 });
@@ -2065,7 +2079,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
-        if (playClipToolData === undefined) {
+        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             return;
         }
         else {
@@ -2127,7 +2141,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageId = stack.imageIds[stackPrefetchImageIdIndex];
 
-        var loadImageDeferred = cornerstone.loadImage(imageId);
+        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
 
         loadImageDeferred.done(function(image)
         {
@@ -2206,7 +2220,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             var viewport = cornerstone.getViewport(element);
-            cornerstone.loadImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                 stackData.currentImageIdIndex = newImageIdIndex;
                 cornerstone.displayImage(element, image, viewport);
             });
@@ -2260,7 +2274,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(mouseMoveData.element);
-                cornerstone.loadImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
                     cornerstone.displayImage(mouseMoveData.element, image, viewport);
                 });
             }
@@ -2277,9 +2291,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(mouseWheelData.element, images);
     }
 
+    function onDrag(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        var eventData = {
+            deltaY : 0
+        };
+        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
+
+        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        var stackData = toolData.data[0];
+        if(eventData.deltaY >=3 || eventData.deltaY <= -3)
+        {
+            var imageDelta = eventData.deltaY / 3;
+            var imageDeltaMod = eventData.deltaY % 3;
+            var imageIdIndexOffset = Math.round(imageDelta);
+            eventData.deltaY = imageDeltaMod;
+
+            var imageIdIndex = stackData.currentImageIdIndex + imageIdIndexOffset;
+            imageIdIndex = Math.min(stackData.imageIds.length - 1, imageIdIndex);
+            imageIdIndex = Math.max(0, imageIdIndex);
+            if(imageIdIndex !== stackData.currentImageIdIndex)
+            {
+                stackData.currentImageIdIndex = imageIdIndex;
+                var viewport = cornerstone.getViewport(mouseMoveData.element);
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                });
+            }
+
+        }
+
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+
     // module/private exports
     cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+    cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 

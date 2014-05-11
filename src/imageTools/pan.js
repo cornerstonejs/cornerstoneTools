@@ -31,15 +31,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function drag(element, dragData)
-    {
-        dragData.viewport.centerX += (dragData.deltaPageX / dragData.viewport.scale);
-        dragData.viewport.centerY += (dragData.deltaPageY / dragData.viewport.scale);
-        cornerstone.setViewport(element, dragData.viewport);
-    }
-
     function onDrag(e) {
-        cornerstoneTools.onDrag(e, drag);
+        var dragData = e.originalEvent.detail;
+        dragData.viewport.translation.x += (dragData.deltaPoints.page.x / dragData.viewport.scale);
+        dragData.viewport.translation.y += (dragData.deltaPoints.page.y / dragData.viewport.scale);
+        cornerstone.setViewport(dragData.element, dragData.viewport);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     cornerstoneTools.pan = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);

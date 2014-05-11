@@ -63,8 +63,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
+    function zoomTouchDrag(e)
+    {
+        var dragData = e.originalEvent.detail;
+        var ticks = dragData.deltaPoints.page.y/100;
+        zoom(dragData.element, dragData.viewport, ticks);
+
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
+        dragData.viewport.translation.x -= dragData.startPoints.image.x - newCoords.x;
+        dragData.viewport.translation.y -= dragData.startPoints.image.y - newCoords.y;
+        cornerstone.setViewport(dragData.element, dragData.viewport);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
+    cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
