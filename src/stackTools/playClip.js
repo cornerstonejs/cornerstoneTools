@@ -27,7 +27,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackToolData = cornerstoneTools.getToolState(element, 'stack');
         if (stackToolData === undefined || stackToolData.data === undefined || stackToolData.data.length === 0) {
             return;
-       }
+        }
         var stackData = stackToolData.data[0];
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
@@ -44,6 +44,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         else {
             playClipData = playClipToolData.data[0];
             playClipData.framesPerSecond = framesPerSecond;
+        }
+
+        // if already playing, do not set a new interval
+        if(playClipData.intervalId !== undefined) {
+            return;
         }
 
         playClipData.intervalId = setInterval(function() {

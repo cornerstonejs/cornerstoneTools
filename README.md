@@ -53,6 +53,7 @@ Features Targeted for V1.0
   * Rectangle ROI
   * Elliptical ROI
   * Pixel Probe
+  * Angle
 * Tools that work with a stack of images
   * Scroll
   * Cine / Playing Clips
@@ -71,7 +72,6 @@ Features Targeted for V1.0
   * Pinch
 * Tool framework that can be used to simplify development of new tools that work in a consistent manner with the included
   tools
-* Math class that provide functionality often needed during tool development (e.g. computational geometry)
 * Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
 
 Build System
@@ -112,7 +112,6 @@ Backlog
 * framework support for multiple images (e.g. select ww/wc once and have it apply to a group of enabled elements)
 * cross reference lines (requires stack)
 * Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
-* angle tool
 * measurement calibration tool
 * freehand roi tool
 * stack synchronizer tool (scroll in one stack and the other synchronized stacks will follow) - for comparison

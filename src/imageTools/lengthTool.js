@@ -77,8 +77,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Draw the text
             context.fillStyle = "white";
-            var dx = data.handles.start.x - data.handles.end.x * renderData.image.columnPixelSpacing;
-            var dy = data.handles.start.y - data.handles.end.y * renderData.image.rowPixelSpacing;
+            var dx = (data.handles.start.x - data.handles.end.x) * renderData.image.columnPixelSpacing;
+            var dy = (data.handles.start.y - data.handles.end.y) * renderData.image.rowPixelSpacing;
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 

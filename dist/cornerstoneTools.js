@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.2.2 - 2014-05-12 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.3.0 - 2014-07-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1094,8 +1094,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Draw the text
             context.fillStyle = "white";
-            var dx = data.handles.start.x - data.handles.end.x * renderData.image.columnPixelSpacing;
-            var dy = data.handles.start.y - data.handles.end.y * renderData.image.rowPixelSpacing;
+            var dx = (data.handles.start.x - data.handles.end.x) * renderData.image.columnPixelSpacing;
+            var dy = (data.handles.start.y - data.handles.end.y) * renderData.image.rowPixelSpacing;
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
@@ -2023,7 +2023,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackToolData = cornerstoneTools.getToolState(element, 'stack');
         if (stackToolData === undefined || stackToolData.data === undefined || stackToolData.data.length === 0) {
             return;
-       }
+        }
         var stackData = stackToolData.data[0];
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
@@ -2040,6 +2040,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         else {
             playClipData = playClipToolData.data[0];
             playClipData.framesPerSecond = framesPerSecond;
+        }
+
+        // if already playing, do not set a new interval
+        if(playClipData.intervalId !== undefined) {
+            return;
         }
 
         playClipData.intervalId = setInterval(function() {

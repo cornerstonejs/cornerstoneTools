@@ -13,8 +13,12 @@ module.exports = function(grunt) {
         copy: {
             bower: {
                 src: [
+                    'bower_components/jquery/dist/jquery.min.js',
+                    'bower_components/jquery/dist/jquery.min.map',
                     'bower_components/cornerstone/dist/cornerstone.min.css',
                     'bower_components/cornerstone/dist/cornerstone.min.js',
+                    'bower_components/cornerstoneMath/dist/cornerstoneMath.min.css',
+                    'bower_components/cornerstoneMath/dist/cornerstoneMath.min.js',
                     'bower_components/hammerjs/hammer.min.js',
                     'bower_components/hammerjs/hammer.min.map',
                     'bower_components/hammerjs/plugins/hammer.fakemultitouch.js'

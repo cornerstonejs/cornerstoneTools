@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Tools for use with the cornerstone HTML5 Medical Image Viewer Component",
   "main" : "dist/cornerstoneTools.js",
   "ignore": [
@@ -18,7 +18,8 @@
      "hammerjs": "~1.0.10"
   },
   "devDependencies": {
-        "qunit": "~1.14.0"
+        "qunit": "~1.14.0",
+        "jquery" : "~2.1.1"
   },
     "license": "MIT",
     "authors" : ["Chris Hafey"],
