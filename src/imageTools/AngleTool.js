@@ -59,7 +59,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         lineSegment.end = data.handles.end2;
 
         distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint2 < 5);
+        return (distanceToPoint < 5);
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
