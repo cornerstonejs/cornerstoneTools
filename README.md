@@ -116,6 +116,7 @@ Backlog
 * freehand roi tool
 * stack synchronizer tool (scroll in one stack and the other synchronized stacks will follow) - for comparison
 * image synchroinizer tool (pan/zoom in one image and the other synchronized images will follow) - for comparison
+* Config object that allows tool appearance to be customized (e.g. line color, text color, handle size, shape, etc)
 
 Copyright
 ============
