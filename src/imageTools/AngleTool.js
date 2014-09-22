@@ -63,7 +63,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e) {
+    function onImageRendered(e, eventData) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -72,9 +72,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var renderData = e.originalEvent.detail;
-        var context = renderData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
@@ -83,7 +82,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // draw the line
             context.beginPath();
             context.strokeStyle = 'white';
-            context.lineWidth = 1 / renderData.viewport.scale;
+            context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
             context.moveTo(data.handles.start2.x, data.handles.start2.y);
@@ -92,7 +91,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, renderData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
             context.stroke();
 
             // Draw the text
@@ -100,10 +99,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle. 
-            var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * renderData.image.columnPixelSpacing;
-            var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * renderData.image.rowPixelSpacing;
-            var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * renderData.image.columnPixelSpacing;
-            var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * renderData.image.rowPixelSpacing;
+            var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
+            var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
+            var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
+            var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
 
             var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
             angle = angle * (180 / Math.PI);
@@ -112,7 +111,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var str = "00B0"; // degrees symbol
             var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start2.x + data.handles.end2.x) / 2 / fontParameters.fontScale;

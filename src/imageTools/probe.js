@@ -29,7 +29,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     ///////// BEGIN IMAGE RENDERING ///////
 
-    function onImageRendered(e) {
+    function onImageRendered(e, eventData) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -38,9 +38,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var renderData = e.originalEvent.detail;
-        var context = renderData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -48,11 +47,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, renderData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
             context.stroke();
 
             // Draw text
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
@@ -66,9 +65,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             context.fillStyle = "white";
 
-            var storedPixels = cornerstone.getStoredPixels(renderData.element, x, y, 1, 1);
+            var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             var sp = storedPixels[0];
-            var mo = sp * renderData.image.slope + renderData.image.intercept;
+            var mo = sp * eventData.image.slope + eventData.image.intercept;
 
             context.fillText("" + x + "," + y, textX, textY);
             context.fillText("SP: " + sp + " MO: " + mo, textX, textY + fontParameters.lineHeight);

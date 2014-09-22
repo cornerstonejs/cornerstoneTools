@@ -39,21 +39,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             imageY : startingCoords.y
         };
 
-        var event = new CustomEvent(
-            "CornerstoneToolsMouseWheel",
-            {
-                detail: {
-                    event: e,
-                    direction: direction,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element
-                },
-                bubbles: false,
-                cancelable: false
-            }
-        );
-        element.dispatchEvent(event);
+        $(element).trigger("CornerstoneToolsMouseWheel", mouseWheelData);
     }
 
 

@@ -45,7 +45,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e) {
+    function onImageRendered(e, eventData) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -54,9 +54,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var renderData = e.originalEvent.detail;
-        var context = renderData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -65,24 +64,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // draw the line
             context.beginPath();
             context.strokeStyle = 'white';
-            context.lineWidth = 1 / renderData.viewport.scale;
+            context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
             context.stroke();
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, renderData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
             context.stroke();
 
             // Draw the text
             context.fillStyle = "white";
-            var dx = (data.handles.start.x - data.handles.end.x) * renderData.image.columnPixelSpacing;
-            var dy = (data.handles.start.y - data.handles.end.y) * renderData.image.rowPixelSpacing;
+            var dx = (data.handles.start.x - data.handles.end.x) * eventData.image.columnPixelSpacing;
+            var dy = (data.handles.start.y - data.handles.end.y) * eventData.image.rowPixelSpacing;
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;

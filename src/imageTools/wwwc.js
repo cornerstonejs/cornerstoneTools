@@ -6,36 +6,33 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseUpCallback(e)
+    function mouseUpCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-    function mouseDownCallback(e)
+    function mouseDownCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
-            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function mouseDragCallback(e)
+    function mouseDragCallback(e, eventData)
     {
-        var mouseMoveData = e.originalEvent.detail;
         // here we normalize the ww/wc adjustments so the same number of on screen pixels
         // adjusts the same percentage of the dynamic range of the image.  This is needed to
         // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
         // image will feel the same as a 16 bit image would)
-        var imageDynamicRange = mouseMoveData.image.maxPixelValue - mouseMoveData.image.minPixelValue;
+        var imageDynamicRange = eventData.image.maxPixelValue - eventData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        mouseMoveData.viewport.voi.windowWidth += (mouseMoveData.deltaPoints.page.x * multiplier);
-        mouseMoveData.viewport.voi.windowCenter += (mouseMoveData.deltaPoints.page.y * multiplier);
-        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        eventData.viewport.voi.windowWidth += (eventData.deltaPoints.page.x * multiplier);
+        eventData.viewport.voi.windowCenter += (eventData.deltaPoints.page.y * multiplier);
+        cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 

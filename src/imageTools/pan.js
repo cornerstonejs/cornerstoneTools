@@ -6,28 +6,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function mouseUpCallback(e)
+    function mouseUpCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-    function mouseDownCallback(e)
+    function mouseDownCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
-            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function mouseDragCallback(e) {
-        var mouseMoveData = e.originalEvent.detail;
-        mouseMoveData.viewport.translation.x += (mouseMoveData.deltaPoints.page.x / mouseMoveData.viewport.scale);
-        mouseMoveData.viewport.translation.y += (mouseMoveData.deltaPoints.page.y / mouseMoveData.viewport.scale);
-        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+    function mouseDragCallback(e, eventData) {
+        eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
+        eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+        cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 

@@ -31,45 +31,42 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    function mouseUpCallback(e)
+    function mouseUpCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-    function mouseDownCallback(e)
+    function mouseDownCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
-            var eventData = {
+            var mouseDragEventData = {
                 deltaY : 0
             };
-            $(mouseData.element).on("CornerstoneToolsMouseDrag", eventData, mouseDragCallback);
-            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.stopImmediatePropagation();
+            return false;
         }
     }
 
-    function mouseDragCallback(e)
+    function mouseDragCallback(e, eventData)
     {
-        var mouseMoveData = e.originalEvent.detail;
-        var eventData = e.data;
-        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
+        e.data.deltaY += eventData.deltaPoints.page.y;
 
-        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+        var toolData = cornerstoneTools.getToolState(eventData.element, 'stack');
         if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
 
         var stackData = toolData.data[0];
-        if(eventData.deltaY >=3 || eventData.deltaY <= -3)
+        if(e.data.deltaY >=3 || e.data.deltaY <= -3)
         {
-            var imageDelta = eventData.deltaY / 3;
-            var imageDeltaMod = eventData.deltaY % 3;
+            var imageDelta = e.data.deltaY / 3;
+            var imageDeltaMod = e.data.deltaY % 3;
             var imageIdIndexOffset = Math.round(imageDelta);
-            eventData.deltaY = imageDeltaMod;
+            e.data.deltaY = imageDeltaMod;
 
             var imageIdIndex = stackData.currentImageIdIndex + imageIdIndexOffset;
             imageIdIndex = Math.min(stackData.imageIds.length - 1, imageIdIndex);
@@ -77,9 +74,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(imageIdIndex !== stackData.currentImageIdIndex)
             {
                 stackData.currentImageIdIndex = imageIdIndex;
-                var viewport = cornerstone.getViewport(mouseMoveData.element);
+                var viewport = cornerstone.getViewport(eventData.element);
                 cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
-                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                    // only display this image if it is the current one to be displayed - it may not
+                    // be if the user scrolls quickly
+                    if(stackData.currentImageIdIndex === imageIdIndex) {
+                        cornerstone.displayImage(eventData.element, image, viewport);
+                    }
                 });
             }
 
@@ -88,11 +89,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function mouseWheelCallback(e)
+    function mouseWheelCallback(e, eventData)
     {
-        var mouseWheelData = e.originalEvent.detail;
-        var images = -mouseWheelData.direction;
-        scroll(mouseWheelData.element, images);
+        var images = -eventData.direction;
+        scroll(eventData.element, images);
     }
 
     function onDrag(e) {

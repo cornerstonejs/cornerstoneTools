@@ -88,7 +88,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
 
-    function onImageRendered(e) {
+    function onImageRendered(e, eventData) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -97,9 +97,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var renderData = e.originalEvent.detail;
-        var context = renderData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(renderData.enabledElement, context);
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -115,18 +114,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             context.beginPath();
             context.strokeStyle = 'white';
-            context.lineWidth = 1 / renderData.viewport.scale;
+            context.lineWidth = 1 / eventData.viewport.scale;
             context.rect(left, top, width, height);
             context.stroke();
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, renderData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
             context.stroke();
 
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
-            var storedPixels = cornerstone.getStoredPixels(renderData.element, left, top, width, height);
+            var storedPixels = cornerstone.getStoredPixels(eventData.element, left, top, width, height);
             var ellipse = {
                 left: left,
                 top: top,
@@ -134,18 +133,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 height: height
             };
             var meanStdDev = calculateMeanStdDev(storedPixels, ellipse);
-            var area = (width * renderData.image.columnPixelSpacing) * (height * renderData.image.rowPixelSpacing);
+            var area = (width * eventData.image.columnPixelSpacing) * (height * eventData.image.rowPixelSpacing);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(renderData.enabledElement, renderData.canvasContext, 15);
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             var textSize = context.measureText(area);
 
             var offset = fontParameters.lineHeight;
-            var textX  = centerX < (renderData.image.columns / 2) ? centerX + (width /2): centerX - (width/2) - textSize.width * fontParameters.fontScale;
-            var textY  = centerY < (renderData.image.rows / 2) ? centerY + (height /2): centerY - (height/2);
+            var textX  = centerX < (eventData.image.columns / 2) ? centerX + (width /2): centerX - (width/2) - textSize.width * fontParameters.fontScale;
+            var textY  = centerY < (eventData.image.rows / 2) ? centerY + (height /2): centerY - (height/2);
 
             textX = textX / fontParameters.fontScale;
             textY = textY / fontParameters.fontScale;

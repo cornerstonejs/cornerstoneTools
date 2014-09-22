@@ -13,13 +13,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var mouseEventData = e.originalEvent.detail;
         var element = mouseEventData.element;
 
-        function mouseDragCallback(e)
+        function mouseDragCallback(e, eventData)
         {
-            var mouseMoveData = e.originalEvent.detail;
             for(var property in data.handles) {
                 var handle = data.handles[property];
-                handle.x += mouseMoveData.deltaPoints.image.x;
-                handle.y += mouseMoveData.deltaPoints.image.y;
+                handle.x += eventData.deltaPoints.image.x;
+                handle.y += eventData.deltaPoints.image.y;
             }
             cornerstone.updateImage(element);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
@@ -27,9 +26,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
 
-        function mouseUpCallback(e) {
+        function mouseUpCallback(e, eventData) {
             data.moving = false;
-            var mouseUpData = e.originalEvent.detail;
 
             $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
@@ -37,7 +35,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // If any handle is outside the image, delete the tool data
 
             if(deleteIfHandleOutsideImage === true) {
-                var image = mouseUpData.image;//.getEnabledElement(element).image;
+                var image = eventData.image;//.getEnabledElement(element).image;
                 var handleOutsideImage = false;
                 var rect = {
                     top: 0,

@@ -17,44 +17,40 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseUpCallback(e)
+    function mouseUpCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        $(mouseData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(mouseData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
 
     }
-    function mouseDownCallback(e)
+    function mouseDownCallback(e, eventData)
     {
-        var mouseData = e.originalEvent.detail;
-        if(cornerstoneTools.isMouseButtonEnabled(mouseData.which, e.data.mouseButtonMask)) {
-            $(mouseData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-            $(mouseData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function mouseDragCallback(e)
+    function mouseDragCallback(e, eventData)
     {
-        var mouseMoveData = e.originalEvent.detail;
 
-        var ticks = mouseMoveData.deltaPoints.page.y/100;
-        zoom(mouseMoveData.element, mouseMoveData.viewport, ticks);
+        var ticks = eventData.deltaPoints.page.y/100;
+        zoom(eventData.element, eventData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
-        var newCoords = cornerstone.pageToPixel(mouseMoveData.element, mouseMoveData.startPoints.page.x, mouseMoveData.startPoints.page.y);
-        mouseMoveData.viewport.translation.x -= mouseMoveData.startPoints.image.x - newCoords.x;
-        mouseMoveData.viewport.translation.y -= mouseMoveData.startPoints.image.y - newCoords.y;
-        cornerstone.setViewport(mouseMoveData.element, mouseMoveData.viewport);
+        var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+        eventData.viewport.translation.x -= eventData.startPoints.image.x - newCoords.x;
+        eventData.viewport.translation.y -= eventData.startPoints.image.y - newCoords.y;
+        cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function mouseWheelCallback(e)
+    function mouseWheelCallback(e, eventData)
     {
-        var mouseWheelData = e.originalEvent.detail;
-        var ticks = -mouseWheelData.direction / 4;
-        zoom(mouseWheelData.element, mouseWheelData.viewport, ticks);
+        var ticks = -eventData.direction / 4;
+        zoom(eventData.element, eventData.viewport, ticks);
     }
 
     function touchPinchCallback(e)

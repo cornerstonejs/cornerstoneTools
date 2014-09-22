@@ -10,15 +10,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var element = mouseEventData.element;
 
-        function mouseDragCallback(e) {
-            var mouseMoveData = e.originalEvent.detail;
-            handle.x = mouseMoveData.currentPoints.image.x;
-            handle.y = mouseMoveData.currentPoints.image.y;
+        function mouseDragCallback(e, eventData) {
+            handle.x = eventData.currentPoints.image.x;
+            handle.y = eventData.currentPoints.image.y;
             cornerstone.updateImage(element);
         }
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
 
-        function mouseUpCallback(mouseMoveData) {
+        function mouseUpCallback(e, eventData) {
             handle.eactive = false;
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
