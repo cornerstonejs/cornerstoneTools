@@ -9,10 +9,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function simpleMouseButtonTool(mouseDownCallback)
     {
         var toolInterface = {
-            activate: function(element, mouseButtonMask) {
+            activate: function(element, mouseButtonMask, options) {
                 $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
                 var eventData = {
-                    mouseButtonMask: mouseButtonMask
+                    mouseButtonMask: mouseButtonMask,
+                    options: options
                 };
                 $(element).on("CornerstoneToolsMouseDownActivate", eventData, mouseDownCallback);
             },

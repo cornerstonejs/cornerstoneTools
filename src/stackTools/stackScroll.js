@@ -42,7 +42,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
             var mouseDragEventData = {
-                deltaY : 0
+                deltaY : 0,
+                options: e.data.options
             };
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -59,12 +60,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-
         var stackData = toolData.data[0];
-        if(e.data.deltaY >=3 || e.data.deltaY <= -3)
+
+        var pixelsPerImage = $(eventData.element).height() / stackData.imageIds.length ;
+        if(e.data.options !== undefined && e.data.options.stackScrollSpeed !== undefined) {
+            pixelsPerImage = e.data.options.stackScrollSpeed;
+        }
+
+        if(e.data.deltaY >=pixelsPerImage || e.data.deltaY <= -pixelsPerImage)
         {
-            var imageDelta = e.data.deltaY / 3;
-            var imageDeltaMod = e.data.deltaY % 3;
+            var imageDelta = e.data.deltaY / pixelsPerImage;
+            var imageDeltaMod = e.data.deltaY % pixelsPerImage;
             var imageIdIndexOffset = Math.round(imageDelta);
             e.data.deltaY = imageDeltaMod;
 

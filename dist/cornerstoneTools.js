@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.0 - 2014-09-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.1 - 2014-09-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -102,7 +102,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 deltaPoints: {x: 0, y:0}
             };
 
-        var event = jQuery.Event( "CornerstoneToolsMouseDown" );
+        var event = jQuery.Event( "CornerstoneToolsMouseDown", mouseEventDetail);
         $(mouseEventDetail.element).trigger(event, mouseEventDetail);
         if(event.isImmediatePropagationStopped() === false)
         //if(element.dispatchEvent(event) === true)
@@ -181,7 +181,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             };
             //element.dispatchEvent(event);
 
-            var event = jQuery.Event( "CornerstoneToolsMouseUp" );
+            var event = jQuery.Event( "CornerstoneToolsMouseUp", eventData);
             $(mouseEventDetail.element).trigger(event, eventData);
 
             $(document).off('mousemove', onMouseMove);
@@ -273,10 +273,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function simpleMouseButtonTool(mouseDownCallback)
     {
         var toolInterface = {
-            activate: function(element, mouseButtonMask) {
+            activate: function(element, mouseButtonMask, options) {
                 $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
                 var eventData = {
-                    mouseButtonMask: mouseButtonMask
+                    mouseButtonMask: mouseButtonMask,
+                    options: options
                 };
                 $(element).on("CornerstoneToolsMouseDownActivate", eventData, mouseDownCallback);
             },
@@ -2176,7 +2177,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
             var mouseDragEventData = {
-                deltaY : 0
+                deltaY : 0,
+                options: e.data.options
             };
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -2193,12 +2195,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-
         var stackData = toolData.data[0];
-        if(e.data.deltaY >=3 || e.data.deltaY <= -3)
+
+        var pixelsPerImage = $(eventData.element).height() / stackData.imageIds.length ;
+        if(e.data.options !== undefined && e.data.options.stackScrollSpeed !== undefined) {
+            pixelsPerImage = e.data.options.stackScrollSpeed;
+        }
+
+        if(e.data.deltaY >=pixelsPerImage || e.data.deltaY <= -pixelsPerImage)
         {
-            var imageDelta = e.data.deltaY / 3;
-            var imageDeltaMod = e.data.deltaY % 3;
+            var imageDelta = e.data.deltaY / pixelsPerImage;
+            var imageDeltaMod = e.data.deltaY % pixelsPerImage;
             var imageIdIndexOffset = Math.round(imageDelta);
             e.data.deltaY = imageDeltaMod;
 

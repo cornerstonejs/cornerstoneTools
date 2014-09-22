@@ -33,7 +33,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 deltaPoints: {x: 0, y:0}
             };
 
-        var event = jQuery.Event( "CornerstoneToolsMouseDown" );
+        var event = jQuery.Event( "CornerstoneToolsMouseDown", mouseEventDetail);
         $(mouseEventDetail.element).trigger(event, mouseEventDetail);
         if(event.isImmediatePropagationStopped() === false)
         //if(element.dispatchEvent(event) === true)
@@ -112,7 +112,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             };
             //element.dispatchEvent(event);
 
-            var event = jQuery.Event( "CornerstoneToolsMouseUp" );
+            var event = jQuery.Event( "CornerstoneToolsMouseUp", eventData);
             $(mouseEventDetail.element).trigger(event, eventData);
 
             $(document).off('mousemove', onMouseMove);
