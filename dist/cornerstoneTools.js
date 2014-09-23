@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.1 - 2014-09-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.1 - 2014-09-23 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1149,6 +1149,46 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// END ACTIVE TOOL ///////
 
+    function calculateSUV(image, storedPixelValue)
+    {
+        // if no dicom data set, return undefined
+        if(image.data === undefined) {
+            return undefined;
+        }
+        // image must be PET
+        if(image.data.string('x00080060') !== "PT")
+        {
+            return undefined;
+        }
+        var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
+
+        var patientWeight = image.data.floatString('x00101030'); // in kg
+        if(patientWeight === undefined)
+        {
+            return undefined;
+        }
+        var petSequence = image.data.elements.x00540016;
+        if(petSequence === undefined) {
+            return undefined;
+        }
+        petSequence = petSequence.items[0].dataSet;
+        var startTime = petSequence.time('x00181072');
+        var totalDose = petSequence.floatString('x00181074');
+        var halfLife = petSequence.floatString('x00181075');
+        var acquisitionTime = image.data.time('x00080032');
+        if(startTime === undefined || totalDose === undefined || halfLife === undefined || acquisitionTime === undefined)
+        {
+            return undefined;
+        }
+
+        var acquisitionTimeInSeconds = acquisitionTime.fractionalSeconds + acquisitionTime.seconds + acquisitionTime.minutes * 60 + acquisitionTime.hours * 60 * 60;
+        var injectionStartTimeInSeconds = startTime.fractionalSeconds + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+        var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
+        var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
+        var suv = modalityPixelValue * patientWeight / correctedDose * 1000;
+
+        return suv;
+    }
     ///////// BEGIN IMAGE RENDERING ///////
 
     function onImageRendered(e, eventData) {
@@ -1190,9 +1230,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * eventData.image.slope + eventData.image.intercept;
+            var suv = calculateSUV(eventData.image, sp);
+
 
             context.fillText("" + x + "," + y, textX, textY);
-            context.fillText("SP: " + sp + " MO: " + mo, textX, textY + fontParameters.lineHeight);
+            var str = "SP: " + sp + " MO: " + mo.toFixed(3);
+            if(suv !== undefined) {
+                str += " SUV: " + suv.toFixed(3);
+            }
+            context.fillText(str, textX, textY + fontParameters.lineHeight);
 
             context.restore();
         }
