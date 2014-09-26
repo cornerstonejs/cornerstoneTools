@@ -130,6 +130,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         onImageRendered: onImageRendered,
         toolType : toolType
     });
+    cornerstoneTools.probeTouch = cornerstoneTools.touchTool({
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        toolType: toolType
+    });
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

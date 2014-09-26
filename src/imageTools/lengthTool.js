@@ -101,6 +101,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         pointNearTool : pointNearTool,
         toolType : toolType
     });
-
+    cornerstoneTools.lengthTouch = cornerstoneTools.touchTool({
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
+    });
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));

@@ -103,7 +103,9 @@ is used by our example image loader-->
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
         // Enable all tools we want to use with this element
-        cornerstoneTools.wwwcTouchDrag.activate(element);
+         cornerstoneTools.ellipticalroi_Touch.activate(element);
+       
+        //cornerstoneTools.wwwcTouchDrag.activate(element);
         cornerstoneTools.zoomTouchPinch.activate(element);
     });
 
