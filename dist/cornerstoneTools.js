@@ -974,7 +974,12 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         pointNearTool: pointNearTool,
         toolType: toolType
     });
-
+     cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
+    });
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
 // End Source; src/imageTools/AngleTool.js
