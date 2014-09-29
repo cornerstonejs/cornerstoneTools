@@ -24,11 +24,11 @@
   },
     "license": "MIT",
     "authors" : ["Chris Hafey"],
-    "homepage": "https://github.com/chafey/cornerstoneTools",
+    "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
     "keywords": ["DICOM", "medical", "imaging", "cornerstone", "cornerstoneTools"],
     "repository": {
         "type": "git",
-        "url": "https://github.com/chafey/cornerstoneTools.git"
+        "url": "https://github.com/prasath-rasterimages/cornerstoneTools.git"
     }
 
 }
