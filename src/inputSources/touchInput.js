@@ -61,7 +61,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             );
         } else if (e.type === 'touch')
         {
-            var element = e.currentTarget;
+            
             startPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
                 image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
@@ -109,13 +109,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         else if (e.type === 'drag')
         {
             // calculate our current points in page and image coordinates
-            var currentPoints = {
+             currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
                 image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
 
             // Calculate delta values in page and image coordinates
-            var deltaPoints = {
+             deltaPoints = {
                 page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
                 image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
@@ -141,7 +141,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         } else if (e.type === 'dragend')
         {
-            var element = e.currentTarget;
+     
 
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
