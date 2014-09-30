@@ -10,7 +10,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage)
     {
-        var mouseEventData = e.originalEvent.detail;
+        var mouseEventData = e;
         var element = mouseEventData.element;
 
         function mouseDragCallback(e, eventData)

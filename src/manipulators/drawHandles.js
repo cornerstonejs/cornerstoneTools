@@ -8,9 +8,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles)
+    function drawHandles(context, renderData, handles,color)
     {
-        context.strokeStyle = 'white';
+        context.strokeStyle = color;
         var radius = handleRadius / renderData.viewport.scale;
         for(var property in handles) {
             var handle = handles[property];
