@@ -1,3 +1,4 @@
+var coordsData;
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
@@ -24,6 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+           
 
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
@@ -49,18 +51,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         ///////// BEGIN DEACTIVE TOOL ///////
 
         function mouseMoveCallback(e, eventData)
-        {
+        {  
+             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;
             }
-
+          
+            
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, mouseToolInterface.toolType);
             if(toolData === undefined) {
                 return;
             }
-
+            
             // We have tool data, search through all data
             // and see if we can activate a handle
             var imageNeedsUpdate = false;

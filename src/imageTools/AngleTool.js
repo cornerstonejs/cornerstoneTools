@@ -74,14 +74,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+        //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+           //diffrentiate the color of activation tool
+             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
 
             // draw the line
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
@@ -95,7 +102,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.stroke();
 
             // Draw the text
-            context.fillStyle = "white";
+            context.fillStyle = color;
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle. 

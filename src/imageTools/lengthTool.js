@@ -41,7 +41,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             end: data.handles.end
         };
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 5);
+        return (distanceToPoint < 25);
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -56,14 +56,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-
+            if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
+         
             // draw the line
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
@@ -71,11 +76,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Draw the text
-            context.fillStyle = "white";
+            context.fillStyle = color;
             var dx = (data.handles.start.x - data.handles.end.x) * eventData.image.columnPixelSpacing;
             var dy = (data.handles.start.y - data.handles.end.y) * eventData.image.rowPixelSpacing;
             var length = Math.sqrt(dx * dx + dy * dy);

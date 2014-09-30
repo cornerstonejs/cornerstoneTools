@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.2 - 2014-09-29 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.2 - 2014-09-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -181,7 +181,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             };
             //element.dispatchEvent(event);
 
-            var event = jQuery.Event( "CornerstoneToolsMouseUp", eventData);
+            var event = jQuery.Event("CornerstoneToolsMouseUp", eventData);
             $(mouseEventDetail.element).trigger(event, eventData);
 
             $(document).off('mousemove', onMouseMove);
@@ -258,7 +258,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
+ 
 // End Source; src/inputSources/mouseInput.js
 
 // Begin Source: src/imageTools/simpleMouseButtonTool.js
@@ -295,6 +296,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 // End Source; src/imageTools/simpleMouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseButtonTool.js
+var coordsData;
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
@@ -321,6 +323,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+           
 
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
@@ -346,18 +349,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         ///////// BEGIN DEACTIVE TOOL ///////
 
         function mouseMoveCallback(e, eventData)
-        {
+        {  
+             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;
             }
-
+          
+            
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, mouseToolInterface.toolType);
             if(toolData === undefined) {
                 return;
             }
-
+            
             // We have tool data, search through all data
             // and see if we can activate a handle
             var imageNeedsUpdate = false;
@@ -514,7 +519,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     cornerstoneTools.mouseButtonTool = mouseButtonTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
+ 
 // End Source; src/imageTools/mouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseWheelTool.js
@@ -652,6 +658,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         function touchMoveCallback(e)
         {
             var touchMoveData = e.originalEvent.detail;
+            cornerstoneTools.activeToolcoordinate.setCoords(touchMoveData);
+      
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(touchMoveData.element, touchToolInterface.toolType);
             if (toolData === undefined) {
@@ -891,14 +899,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+        //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+           //diffrentiate the color of activation tool
+             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
 
             // draw the line
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
@@ -912,7 +927,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.stroke();
 
             // Draw the text
-            context.fillStyle = "white";
+            context.fillStyle = color;
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle. 
@@ -1094,11 +1109,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+         //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-
+           //diffrentiate the color of activation tool
+             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
             // draw the ellipse
             var width = Math.abs(data.handles.start.x - data.handles.end.x);
             var height = Math.abs(data.handles.start.y - data.handles.end.y);
@@ -1108,7 +1129,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var centerY = (data.handles.start.y + data.handles.end.y) / 2;
 
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             cornerstoneTools.drawEllipse(context, left, top, width, height);
             context.closePath();
@@ -1144,7 +1165,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             textX = textX / fontParameters.fontScale;
             textY = textY / fontParameters.fontScale;
 
-            context.fillStyle = "white";
+            context.fillStyle =color;
             context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - offset);
             context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
             context.fillText(areaText, textX, textY + offset);
@@ -1217,7 +1238,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             end: data.handles.end
         };
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 5);
+        return (distanceToPoint < 25);
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -1232,14 +1253,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-
+            if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
+         
             // draw the line
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.moveTo(data.handles.start.x, data.handles.start.y);
             context.lineTo(data.handles.end.x, data.handles.end.y);
@@ -1247,11 +1273,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Draw the text
-            context.fillStyle = "white";
+            context.fillStyle = color;
             var dx = (data.handles.start.x - data.handles.end.x) * eventData.image.columnPixelSpacing;
             var dy = (data.handles.start.y - data.handles.end.y) * eventData.image.rowPixelSpacing;
             var length = Math.sqrt(dx * dx + dy * dy);
@@ -1417,14 +1443,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+        var color="white";
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Draw text
@@ -1580,10 +1606,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+             //diffrentiate the color of activation tool
+             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
 
             // draw the ellipse
             var width = Math.abs(data.handles.start.x - data.handles.end.x);
@@ -1594,14 +1628,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var centerY = (data.handles.start.y + data.handles.end.y) / 2;
 
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.rect(left, top, width, height);
             context.stroke();
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Calculate the mean, stddev, and area
@@ -1630,7 +1664,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             textX = textX / fontParameters.fontScale;
             textY = textY / fontParameters.fontScale;
 
-            context.fillStyle = "white";
+            context.fillStyle =color;
             context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - offset);
             context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
             context.fillText(areaText, textX, textY + offset);
@@ -2069,9 +2103,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles)
+    function drawHandles(context, renderData, handles,color)
     {
-        context.strokeStyle = 'white';
+        context.strokeStyle = color;
         var radius = handleRadius / renderData.viewport.scale;
         for(var property in handles) {
             var handle = handles[property];
@@ -2096,7 +2130,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.drawHandles = drawHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
+ 
 // End Source; src/manipulators/drawHandles.js
 
 // Begin Source: src/manipulators/handleActivator.js
@@ -2254,7 +2289,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage)
     {
-        var mouseEventData = e.originalEvent.detail;
+        var mouseEventData = e;
         var element = mouseEventData.element;
 
         function mouseDragCallback(e, eventData)
@@ -2321,7 +2356,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     cornerstoneTools.moveAllHandles = moveAllHandles;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
+ 
 // End Source; src/manipulators/moveAllHandles.js
 
 // Begin Source: src/manipulators/touchmoveAllHandles.js
@@ -2773,6 +2809,39 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // This implements an imageId specific tool state management strategy.  This means that
     // measurements data is tied to a specific imageId and only visible for enabled elements
     // that are displaying that imageId.
+    
+    function activeToolcoordinate(){
+      var cooordsData="",selectionColor="greenyellow",toolsColor="white";
+        function setActiveToolCoords(eventData){
+              console.log("__#__");
+              cooordsData=eventData.currentPoints.image;
+        }
+        function getActiveToolCoords(){
+          return cooordsData;
+        }
+        function setActivecolor(color){
+         selectionColor=color;
+        }
+        function getActivecolor(){
+          return selectionColor;
+        }
+        function setToolcolor(toolcolor){
+         toolsColor=toolcolor;
+        }
+        function getToolcolor(){
+          return toolsColor;
+        }
+      
+         var activeTool = {
+            setToolColor:setToolcolor,
+            setActiveColor:setActivecolor,
+            getToolColor:getToolcolor,
+            getActiveColor:getActivecolor,
+            setCoords:setActiveToolCoords,
+            getCoords:getActiveToolCoords
+        };
+        return activeTool;
+    }
 
     function newImageIdSpecificToolStateManager() {
         var toolState = {};
@@ -2833,13 +2902,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-
+   var activetoolsData=activeToolcoordinate();
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
+    cornerstoneTools.activeToolcoordinate=activetoolsData;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
+ 
 // End Source; src/stateManagement/imageIdSpecificStateManager.js
 
 // Begin Source: src/stateManagement/stackSpecificStateManager.js

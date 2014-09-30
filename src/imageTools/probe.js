@@ -80,14 +80,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-
+        var color="white";
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Draw text

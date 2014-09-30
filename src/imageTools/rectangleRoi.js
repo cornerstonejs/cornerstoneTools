@@ -99,10 +99,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+             //diffrentiate the color of activation tool
+             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
 
             // draw the ellipse
             var width = Math.abs(data.handles.start.x - data.handles.end.x);
@@ -113,14 +121,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var centerY = (data.handles.start.y + data.handles.end.y) / 2;
 
             context.beginPath();
-            context.strokeStyle = 'white';
+            context.strokeStyle = color;
             context.lineWidth = 1 / eventData.viewport.scale;
             context.rect(left, top, width, height);
             context.stroke();
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
             context.stroke();
 
             // Calculate the mean, stddev, and area
@@ -149,7 +157,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             textX = textX / fontParameters.fontScale;
             textY = textY / fontParameters.fontScale;
 
-            context.fillStyle = "white";
+            context.fillStyle =color;
             context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - offset);
             context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
             context.fillText(areaText, textX, textY + offset);
