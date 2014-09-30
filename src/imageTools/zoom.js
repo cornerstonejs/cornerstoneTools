@@ -53,15 +53,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         zoom(eventData.element, eventData.viewport, ticks);
     }
 
-    function touchPinchCallback(e)
+    function touchPinchCallback(e, eventData)
     {
-        var pinchData = e.originalEvent.detail;
+        var pinchData =eventData;
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
-    function zoomTouchDrag(e)
+    function zoomTouchDrag(e, eventData)
     {
-        var dragData = e.originalEvent.detail;
+        var dragData = eventData;
         var ticks = dragData.deltaPoints.page.y/100;
         zoom(dragData.element, dragData.viewport, ticks);
 

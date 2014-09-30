@@ -36,9 +36,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function touchDragCallback(e)
+    function touchDragCallback(e,eventData)
     {
-        var dragData = e.originalEvent.detail;
+        var dragData = eventData;
 
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;

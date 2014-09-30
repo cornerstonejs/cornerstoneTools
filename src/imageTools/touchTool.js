@@ -16,24 +16,33 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         {
             var measurementData = touchToolInterface.createNewMeasurement(touchEventData);
             cornerstoneTools.addToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
+            $(touchEventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
+            cornerstoneTools.moveHandle(touchEventData, measurementData.handles.end, function() {
+                if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles))
+                {
+                    // delete the measurement
+                    cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+                }
+                $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
+            });
         }
 
-        function touchDownActivateCallback(e) {
-            var touchstart = e.originalEvent.detail;
-            addNewMeasurement(touchstart);
+        function touchDownActivateCallback(e, eventData) {
+           
+            addNewMeasurement(eventData);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
         ///////// END ACTIVE TOOL ///////
 
         ///////// BEGIN DEACTIVE TOOL ///////
 
-        function touchMoveCallback(e)
+        function touchMoveCallback(e, eventData)
         {
-            var touchMoveData = e.originalEvent.detail;
-            cornerstoneTools.activeToolcoordinate.setCoords(touchMoveData);
+           
+            cornerstoneTools.activeToolcoordinate.setCoords(eventData);
       
             // if we have no tool data for this element, do nothing
-            var toolData = cornerstoneTools.getToolState(touchMoveData.element, touchToolInterface.toolType);
+            var toolData = cornerstoneTools.getToolState(eventData.element, touchToolInterface.toolType);
             if (toolData === undefined) {
                 return;
             }
@@ -44,7 +53,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             for (var i = 0; i < toolData.data.length; i++) {
                 // get the touch position in image coordinates
                 var data = toolData.data[i];
-                if (cornerstoneTools.handleActivator(data.handles, touchMoveData.currentPoints.image, touchMoveData.viewport.scale) === true)
+                if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale) === true)
                 {
                     imageNeedsUpdate = true;
                 }
@@ -52,7 +61,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
             // Handle activation status changed, redraw the image
             if (imageNeedsUpdate === true) {
-                cornerstone.updateImage(touchMoveData.element);
+                cornerstone.updateImage(eventData.element);
             }
         }
 
@@ -67,21 +76,19 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             }
         }
 
-        function touchstartCallback(e) {
-            var touchstart = e.originalEvent.detail;
+        function touchstartCallback(e, eventData){
             var data;
-
             function handleDoneMove()
             {
-                if (cornerstoneTools.anyHandlesOutsideImage(touchstart, data.handles))
+                if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles))
                 {
                     // delete the measurement
-                    cornerstoneTools.removeToolState(touchstart.element, touchToolInterface.toolType, data);
+                    cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);
                 }
-                $(touchstart.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
+                $(eventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
             }
 
-            var coords = touchstart.startPoints.image;
+            var coords = eventData.startPoints.image;
             var toolData = cornerstoneTools.getToolState(e.currentTarget, touchToolInterface.toolType);
             var i;
 
@@ -91,7 +98,9 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     data = toolData.data[i];
                     var handle = getHandleNearImagePoint(data, coords);
                     if (handle !== undefined) {
-                        cornerstoneTools.touchmoveHandle(touchstart, handle, handleDoneMove);
+                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
+                        cornerstoneTools.touchmoveHandle(eventData, handle, handleDoneMove);
+                         e.stopImmediatePropagation();
                         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                     }
                 }
@@ -103,8 +112,9 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     if (touchToolInterface.pointNearTool(data, coords)) {
-                        $(touchstart.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
+                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
                         cornerstoneTools.touchmoveAllHandles(e, data, toolData, true);
+                         e.stopImmediatePropagation();
                         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
                     }
                 }

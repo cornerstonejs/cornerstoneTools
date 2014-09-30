@@ -28,8 +28,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
-    function onDrag(e) {
-        var dragData = e.originalEvent.detail;
+    function onDrag(e, eventData) {
+        var dragData = eventData;
         dragData.viewport.translation.x += (dragData.deltaPoints.page.x / dragData.viewport.scale);
         dragData.viewport.translation.y += (dragData.deltaPoints.page.y / dragData.viewport.scale);
         cornerstone.setViewport(dragData.element, dragData.viewport);

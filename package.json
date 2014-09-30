@@ -1,13 +1,13 @@
 {
     "name": "cornerstoneTools",
-    "version": "0.4.2",
-    "description": "Enabling the touch events",
+    "version": "0.4.3",
+    "description": "Enabling the touch events for all tools",
     "keywords": [
         "DICOM",
         "medical",
         "imaging"
     ],
-    "author": "Chris Hafey",
+    "author": "Chris Hafey,Prasath",
     "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
     "license": "MIT",
     "repository": {

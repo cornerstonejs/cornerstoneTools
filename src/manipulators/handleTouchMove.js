@@ -11,8 +11,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
     {
         var element = touchEventData.element;
 
-        function touchDragCallback(e) {
-            var toucheMoveData = e.originalEvent.detail;
+        function touchDragCallback(e,eventData) {
+            var toucheMoveData = eventData;
             handle.x = toucheMoveData.currentPoints.image.x;
             handle.y = toucheMoveData.currentPoints.image.y;
             cornerstone.updateImage(element);

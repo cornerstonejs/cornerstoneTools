@@ -8,12 +8,12 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     }
     function touchmoveAllHandles(e, data, toolData, deleteIfHandleOutsideImage)
     {
-        var touchEventData = e.originalEvent.detail;
+        var touchEventData = e;
         var element = touchEventData.element;
 
-        function touchDragCallback(e)
+        function touchDragCallback(e,eventData)
         {
-            var touchMoveData = e.originalEvent.detail;
+            var touchMoveData = eventData;
             for (var property in data.handles) {
                 var handle = data.handles[property];
                 handle.x += touchMoveData.deltaPoints.image.x;
@@ -25,9 +25,9 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
 
-        function touchendCallback(e) {
+        function touchendCallback(e,eventData) {
             data.moving = false;
-            var touchendData = e.originalEvent.detail;
+            var touchendData = eventData;
 
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
             $(element).off('CornerstoneToolsDragEnd', touchendCallback);

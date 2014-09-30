@@ -23,7 +23,7 @@
         "jquery" : "~2.1.1"
   },
     "license": "MIT",
-    "authors" : ["Chris Hafey"],
+    "authors" : ["Chris Hafey","Prasath"],
     "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
     "keywords": ["DICOM", "medical", "imaging", "cornerstone", "cornerstoneTools"],
     "repository": {
