@@ -56,8 +56,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
-            var x = Math.round(data.handles.end.x);
-            var y = Math.round(data.handles.end.y);
+            var x = cornerstoneTools.roundToDecimal(data.handles.end.x, 2);
+            var y = cornerstoneTools.roundToDecimal(data.handles.end.y, 2);
             textX = data.handles.end.x + 3;
             textY = data.handles.end.y - 3;
 

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.2.2 - 2014-05-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.2.2 - 2014-08-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -721,15 +721,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             start: data.handles.start,
             end: data.handles.end
         };
-        var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        if (distanceToPoint < 5)
+        var distance = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+        if (distance < 5)
             return true;
 
         lineSegment.start = data.handles.start2;
         lineSegment.end = data.handles.end2;
 
-        distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint2 < 5);
+        distance = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+        return (distance < 5);
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -770,10 +770,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle. 
-            var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * renderData.image.columnPixelSpacing;
-            var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * renderData.image.rowPixelSpacing;
-            var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * renderData.image.columnPixelSpacing;
-            var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * renderData.image.rowPixelSpacing;
+            var dx1 = (data.handles.start.x - data.handles.end.x) * renderData.image.columnPixelSpacing;
+            var dy1 = (data.handles.start.y - data.handles.end.y) * renderData.image.rowPixelSpacing;
+            var dx2 = (data.handles.start2.x - data.handles.end2.x) * renderData.image.columnPixelSpacing;
+            var dy2 = (data.handles.start2.y - data.handles.end2.y) * renderData.image.rowPixelSpacing;
 
             var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
             angle = angle * (180 / Math.PI);
@@ -1232,8 +1232,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
-            var x = Math.round(data.handles.end.x);
-            var y = Math.round(data.handles.end.y);
+            var x = cornerstoneTools.roundToDecimal(data.handles.end.x, 2);
+            var y = cornerstoneTools.roundToDecimal(data.handles.end.y, 2);
             textX = data.handles.end.x + 3;
             textY = data.handles.end.y - 3;
 

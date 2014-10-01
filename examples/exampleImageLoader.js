@@ -55,6 +55,7 @@
             windowCenter : 127,
             windowWidth : 256,
             getPixelData: getPixelData,
+            render: cornerstone.renderGrayscaleImage,
             rows: height,
             columns: width,
             height: height,
