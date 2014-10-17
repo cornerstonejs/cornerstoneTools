@@ -6,6 +6,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
+    // keep track of currently pressed mouse buttons
+    var buttonsDown = [];
+
     function activateMouseDown(mouseEventDetail)
     {
         $(mouseEventDetail.element).trigger("CornerstoneToolsMouseDownActivate", mouseEventDetail);
@@ -13,7 +16,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
 
     function mouseDown(e) {
-        var eventData = e.data;
+
+        if (buttonsDown.length > 0){
+            // clear any mouse down actions ongoing at time of second button press
+            $(document).trigger('mouseup');
+        }
+
+        buttonsDown.push(1 << (e.which - 1));
+
         var element = e.currentTarget;
 
         var startPoints = {
@@ -21,16 +31,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
+
+        var whichMouseButton = buttonsDown.length > 1 ? buttonsDown : e.which;
+
         var mouseEventDetail = {
                 event: e,
-                which: e.which,
+                which: whichMouseButton,
                 viewport: cornerstone.getViewport(element),
                 image: cornerstone.getEnabledElement(element).image,
                 element: element,
                 startPoints: startPoints,
                 lastPoints: lastPoints,
                 currentPoints: startPoints,
-                deltaPoints: {x: 0, y:0}
+                deltaPoints: {x: 0, y:0},
+                buttonsDown: buttonsDown
             };
 
         var event = jQuery.Event( "CornerstoneToolsMouseDown", mouseEventDetail);
@@ -44,8 +58,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 return cornerstoneTools.pauseEvent(e);
             }
         }
-
-        var whichMouseButton = e.which;
 
         function onMouseMove(e) {
             // calculate our current points in page and image coordinates
@@ -87,6 +99,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // when they stop dragging
         function onMouseUp(e) {
 
+            // if this is a real mouseup event and not the one triggered when
+            // a second button is pressed, remove from pressed button list
+            if (e.which){
+                var button = (1 << (e.which - 1));
+                buttonsDown.splice(buttonsDown.indexOf(button),1);
+            }
+
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e),
@@ -108,15 +127,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 startPoints: startPoints,
                 lastPoints: lastPoints,
                 currentPoints: currentPoints,
-                deltaPoints: deltaPoints
+                deltaPoints: deltaPoints,
+                buttonsDown: buttonsDown
             };
-            //element.dispatchEvent(event);
 
-            var event = jQuery.Event("CornerstoneToolsMouseUp", eventData);
-            $(mouseEventDetail.element).trigger(event, eventData);
+            // var event = jQuery.Event("CornerstoneToolsMouseUp", eventData);
+            $(mouseEventDetail.element).trigger("CornerstoneToolsMouseUp", eventData);
 
-            $(document).off('mousemove', onMouseMove);
-            $(document).off('mouseup', onMouseUp);
+            $(document).off('mousemove');
+            
+            if (buttonsDown.length < 1){
+                $(document).off('mouseup', onMouseUp);
+            }
         }
 
         $(document).on("mousemove", onMouseMove);
@@ -127,7 +149,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     function mouseMove(e) {
-        var eventData = e.data;
+        // var eventData = e.data;
         var element = e.currentTarget;
 
         var startPoints = {

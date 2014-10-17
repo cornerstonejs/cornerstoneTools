@@ -39,9 +39,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageId = stack.imageIds[stackPrefetchImageIdIndex];
 
-        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
+        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId, element);
 
-        loadImageDeferred.done(function(image)
+        loadImageDeferred.then(function(image)
         {
             // image has been loaded, call prefetch on the next image
             setTimeout(function() {
@@ -53,12 +53,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function enable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: true
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.addToolState(element, toolType, data);
         }
 
         prefetch(element);
@@ -67,16 +67,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function disable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: false
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.addToolState(element, toolType, data);
         }
         else
         {
-            stackPrefetchData.enabled = false;
+            stackPrefetchData.data[0].enabled = false;
         }
     }
 

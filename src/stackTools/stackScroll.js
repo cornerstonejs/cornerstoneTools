@@ -24,7 +24,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             var viewport = cornerstone.getViewport(element);
-            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex], element).then(function(image) {
                 stackData.currentImageIdIndex = newImageIdIndex;
                 cornerstone.displayImage(element, image, viewport);
             });
@@ -81,7 +81,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(eventData.element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex], eventData.element).then(function(image) {
                     // only display this image if it is the current one to be displayed - it may not
                     // be if the user scrolls quickly
                     if(stackData.currentImageIdIndex === imageIdIndex) {
@@ -101,8 +101,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(eventData.element, images);
     }
 
-    function onDrag(e) {
-        var mouseMoveData = e.originalEvent.detail;
+    function onDrag(e, mouseMoveData) {
         var eventData = {
             deltaY : 0
         };
@@ -128,8 +127,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(mouseMoveData.element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
-                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex], mouseMoveData.element).then(function(image) {
+                    // only display this image if it is the current one to be displayed - it may not
+                    // be if the user scrolls quickly
+                    if(stackData.currentImageIdIndex === imageIdIndex) {
+                        cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                    }
                 });
             }
 

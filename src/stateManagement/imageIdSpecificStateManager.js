@@ -52,7 +52,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 toolState[enabledImage.image.imageId] = {};
             }
@@ -77,7 +77,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, return undefined
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 return undefined;
             }

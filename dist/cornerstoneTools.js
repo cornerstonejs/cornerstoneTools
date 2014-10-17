@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.2 - 2014-09-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.3 - 2014-10-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -75,6 +75,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
+    // keep track of currently pressed mouse buttons
+    var buttonsDown = [];
+
     function activateMouseDown(mouseEventDetail)
     {
         $(mouseEventDetail.element).trigger("CornerstoneToolsMouseDownActivate", mouseEventDetail);
@@ -82,7 +85,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
 
     function mouseDown(e) {
-        var eventData = e.data;
+
+        if (buttonsDown.length > 0){
+            // clear any mouse down actions ongoing at time of second button press
+            $(document).trigger('mouseup');
+        }
+
+        buttonsDown.push(1 << (e.which - 1));
+
         var element = e.currentTarget;
 
         var startPoints = {
@@ -90,16 +100,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
+
+        var whichMouseButton = buttonsDown.length > 1 ? buttonsDown : e.which;
+
         var mouseEventDetail = {
                 event: e,
-                which: e.which,
+                which: whichMouseButton,
                 viewport: cornerstone.getViewport(element),
                 image: cornerstone.getEnabledElement(element).image,
                 element: element,
                 startPoints: startPoints,
                 lastPoints: lastPoints,
                 currentPoints: startPoints,
-                deltaPoints: {x: 0, y:0}
+                deltaPoints: {x: 0, y:0},
+                buttonsDown: buttonsDown
             };
 
         var event = jQuery.Event( "CornerstoneToolsMouseDown", mouseEventDetail);
@@ -113,8 +127,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 return cornerstoneTools.pauseEvent(e);
             }
         }
-
-        var whichMouseButton = e.which;
 
         function onMouseMove(e) {
             // calculate our current points in page and image coordinates
@@ -156,6 +168,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // when they stop dragging
         function onMouseUp(e) {
 
+            // if this is a real mouseup event and not the one triggered when
+            // a second button is pressed, remove from pressed button list
+            if (e.which){
+                var button = (1 << (e.which - 1));
+                buttonsDown.splice(buttonsDown.indexOf(button),1);
+            }
+
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e),
@@ -177,15 +196,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 startPoints: startPoints,
                 lastPoints: lastPoints,
                 currentPoints: currentPoints,
-                deltaPoints: deltaPoints
+                deltaPoints: deltaPoints,
+                buttonsDown: buttonsDown
             };
-            //element.dispatchEvent(event);
 
-            var event = jQuery.Event("CornerstoneToolsMouseUp", eventData);
-            $(mouseEventDetail.element).trigger(event, eventData);
+            // var event = jQuery.Event("CornerstoneToolsMouseUp", eventData);
+            $(mouseEventDetail.element).trigger("CornerstoneToolsMouseUp", eventData);
 
-            $(document).off('mousemove', onMouseMove);
-            $(document).off('mouseup', onMouseUp);
+            $(document).off('mousemove');
+            
+            if (buttonsDown.length < 1){
+                $(document).off('mouseup', onMouseUp);
+            }
         }
 
         $(document).on("mousemove", onMouseMove);
@@ -196,7 +218,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     function mouseMove(e) {
-        var eventData = e.data;
+        // var eventData = e.data;
         var element = e.currentTarget;
 
         var startPoints = {
@@ -502,7 +524,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-            cornerstone.updateImage(element);
+            // causing big delay when switching tools for large images, i.e. mammograms
+            //cornerstone.updateImage(element);
         }
 
         var toolInterface = {
@@ -1720,8 +1743,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseDownCallback(e, eventData)
-    {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    {   
+        var enabled = false;
+
+        if ($.isArray(e.data.mouseButtonMask)){
+            enabled = e.data.mouseButtonMask
+                        .filter(function(n) { return eventData.buttonsDown.indexOf(n) != -1; })
+                        .length === e.data.mouseButtonMask.length;
+        } else {
+            enabled = cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask);
+        }
+        if(enabled) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
@@ -2565,6 +2597,199 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stackTools/playClip.js
 
+// Begin Source: src/stackTools/progressIndicator.js
+/*
+Display scroll and image loading progress bar across bottom of image.
+Display % loaded while image is loading.
+ */
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var scrollBarHeight = 6;
+
+    function updateImage(e, eventData){
+
+        var context = eventData.enabledElement.canvas.getContext("2d");
+
+        var width = eventData.enabledElement.canvas.width;
+        var height = eventData.enabledElement.canvas.height;
+
+        // draw progress indicator background
+        if (width > 0 && height > 0){
+            drawBackground(context, width, height);
+        } else {
+            return false; // image not actually rendered yet, not sure what's going on here
+        }
+
+        // get current image index
+        
+        var stackData = cornerstoneTools.getToolState(eventData.element, 'stack');
+        stackData = stackData && stackData.data[0];
+
+        var imageScrollIndex = stackData && stackData.currentImageIdIndex;
+        var totalImages = stackData && stackData.imageIds.length;
+
+        var prefetchData = cornerstoneTools.getToolState(eventData.element, 'stackPrefetch');
+        var imageLoadedIndex = prefetchData && prefetchData.data && prefetchData.data[0] && prefetchData.data[0].prefetchImageIdIndex;
+
+        // draw loaded images indicator
+        if (typeof imageLoadedIndex !== 'undefined'){
+            setLoadedMarker(context, width, height, imageLoadedIndex, totalImages);
+        }
+
+        // draw current image cursor
+        if (typeof imageScrollIndex !== 'undefined'){
+            drawCursor(context, width, height, imageScrollIndex, totalImages);
+        }
+        
+    }
+
+    function showProgress(event, data){
+
+        if (!event.data.element){
+            console.error('No element is available for this event.');
+            return false;
+        }
+
+        var instances = event.data.instances;
+        var enabledElement = cornerstone.getEnabledElement(event.data.element);
+
+        var file = data.fileURL.substring(data.fileURL.indexOf('://'));
+        var stackData = cornerstoneTools.getToolState(event.data.element, 'stack');
+        stackData = stackData && stackData.data[0];
+
+        var currentImage;
+
+        if (stackData){
+            currentImage = stackData.imageIds[stackData.currentImageIdIndex];
+        } else {
+            currentImage = cornerstone.getEnabledElement(event.data.element).loadingImageId;
+        }
+
+        if (!currentImage){
+            return false;
+        }
+        
+        var currentImageURL = currentImage.substring(currentImage.indexOf('://'));
+
+        if (file !== currentImageURL){
+            return false;
+        }
+
+        var width = enabledElement.canvas.width;
+        var height = enabledElement.canvas.height;
+        var context = enabledElement.canvas.getContext("2d");
+        
+        /*
+        Check if we need to compute the percent complete because it isn't given
+        in the progress event
+         */
+        if (!data.total){
+            if (!instances || !data.loaded){
+                console.error('Cannot compute progress with the information provided.', instances, data.loaded);
+                return false;
+            }
+
+            var files = instances.map(function(instance){ return instance.url.substring(instance.url.indexOf('://')); });
+            var currentImageIndex = files.indexOf(currentImageURL);
+
+            data.total = instances[currentImageIndex].originalSize;
+            data.percentComplete = Math.round((data.loaded / data.total)*100);
+
+        }
+
+        drawImageLoadIndicator(context, data.percentComplete + '%', width, height);
+    }
+
+    function drawImageLoadIndicator(context, string, width, height){
+        var x = width / 2;
+        var y = height / 2;
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.clearRect( 0, 0, width, height - scrollBarHeight);
+        context.fillStyle = "white";
+        context.font = "40px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(string, x, y);
+    }
+
+    function drawBackground(context, width, height) {
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.fillStyle = 'rgb(19, 63, 141)';
+        context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+    }
+
+    function drawCursor(context, width, height, index, totalImages){
+
+        var cursorWidth = width / totalImages;
+        var xPos = cursorWidth * index;
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.fillStyle = 'white';
+        context.fillRect(xPos, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+    }
+
+    function setLoadedMarker(context, width, height, index, totalImages){
+
+        var unitWidth = width / totalImages;
+        var markerWidth = unitWidth * (index + 1);
+        var xPos = 0;
+
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        context.fillStyle = 'rgb(44, 154, 255)';
+        context.fillRect(xPos, height - scrollBarHeight, markerWidth, scrollBarHeight);
+    }
+
+    function activateScrollIndicator(element) {
+
+        $(element).off("CornerstoneImageRendered", updateImage);
+        $(element).off("CornerstoneImageLoaded", updateImage);
+
+        $(element).on("CornerstoneImageRendered", updateImage);
+        $(element).on("CornerstoneImageLoaded", updateImage);
+    }
+
+    /**
+     * Activate image download indicator for the element
+     * @param  {Object} element   DOM element
+     * @param  {Array} instances Optional array of objects with metadata
+     *                           for each instance in the stack, useful when loading
+     *                           compressed images which do not report total file size
+     *                           in XHR progress event. Each instance object needs
+     *                           parameters 'url' (String) and 'originalSize' (Integer, in bytes)
+     */
+    function activateLoadingIndicator(element, instances) {
+
+        $(document).off("CornerstoneImageLoadProgress", {element: element, instances: instances}, showProgress);
+
+        $(document).on("CornerstoneImageLoadProgress", {element: element, instances: instances}, showProgress);
+
+    }
+
+    cornerstoneTools.scrollIndicator = {
+        activate: activateScrollIndicator
+    };
+
+    cornerstoneTools.loadingIndicator = {
+        activate: activateLoadingIndicator
+    };
+
+    return cornerstoneTools;
+
+} ($, cornerstone, cornerstoneTools)); 
+// End Source; src/stackTools/progressIndicator.js
+
 // Begin Source: src/stackTools/stackPrefetch.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2607,9 +2832,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageId = stack.imageIds[stackPrefetchImageIdIndex];
 
-        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
+        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId, element);
 
-        loadImageDeferred.done(function(image)
+        loadImageDeferred.then(function(image)
         {
             // image has been loaded, call prefetch on the next image
             setTimeout(function() {
@@ -2621,12 +2846,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function enable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: true
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.addToolState(element, toolType, data);
         }
 
         prefetch(element);
@@ -2635,16 +2860,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function disable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: false
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.addToolState(element, toolType, data);
         }
         else
         {
-            stackPrefetchData.enabled = false;
+            stackPrefetchData.data[0].enabled = false;
         }
     }
 
@@ -2686,7 +2911,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             var viewport = cornerstone.getViewport(element);
-            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex], element).then(function(image) {
                 stackData.currentImageIdIndex = newImageIdIndex;
                 cornerstone.displayImage(element, image, viewport);
             });
@@ -2743,7 +2968,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(eventData.element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex], eventData.element).then(function(image) {
                     // only display this image if it is the current one to be displayed - it may not
                     // be if the user scrolls quickly
                     if(stackData.currentImageIdIndex === imageIdIndex) {
@@ -2763,8 +2988,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(eventData.element, images);
     }
 
-    function onDrag(e) {
-        var mouseMoveData = e.originalEvent.detail;
+    function onDrag(e, mouseMoveData) {
         var eventData = {
             deltaY : 0
         };
@@ -2790,8 +3014,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             {
                 stackData.currentImageIdIndex = imageIdIndex;
                 var viewport = cornerstone.getViewport(mouseMoveData.element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
-                    cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex], mouseMoveData.element).then(function(image) {
+                    // only display this image if it is the current one to be displayed - it may not
+                    // be if the user scrolls quickly
+                    if(stackData.currentImageIdIndex === imageIdIndex) {
+                        cornerstone.displayImage(mouseMoveData.element, image, viewport);
+                    }
                 });
             }
 
@@ -2865,7 +3093,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 toolState[enabledImage.image.imageId] = {};
             }
@@ -2890,7 +3118,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, return undefined
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 return undefined;
             }
@@ -3005,7 +3233,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab'];
+        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab', 'stackPrefetch'];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
@@ -3199,6 +3427,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function isMouseButtonEnabled(which, mouseButtonMask)
     {
+        if($.isArray(which)){ return false; }
         /*jshint bitwise: false*/
         var mouseButton = (1 << (which - 1));
         return ((mouseButtonMask & mouseButton) !== 0);
