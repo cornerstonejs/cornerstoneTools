@@ -15,13 +15,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var viewport = cornerstone.getViewport(element);
 
-        viewport.voi.windowWidth = wwwc[0];
-        viewport.voi.windowCenter = wwwc[1];
+        if (!viewport){ return false; }
+
+        if (wwwc[0]){
+            viewport.voi.windowWidth = parseInt(wwwc[0], 10);
+        }
+        if (wwwc[1]){
+            viewport.voi.windowCenter = parseInt(wwwc[1], 10);
+        }
 
         cornerstone.setViewport(element, viewport);
     }
 
     function autoScroll (element, instance, animate){
+
+        animate = typeof animate === 'undefined' ? true : animate;
 
         var stackData = cornerstoneTools.getToolState(element, 'stack').data[0];
         var viewport = cornerstone.getViewport(element);
