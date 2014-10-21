@@ -3369,7 +3369,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var viewport = cornerstone.getViewport(element);
 
-        if (!viewport){ return false; }
+        if (!viewport){
+
+            // no image rendered, bind to event to set later
+            $(element).one("CornerstoneImageRendered", function(){
+                setWWWC(element, wwwc);
+            });
+
+            return false;
+        }
 
         if (wwwc[0]){
             viewport.voi.windowWidth = parseInt(wwwc[0], 10);
