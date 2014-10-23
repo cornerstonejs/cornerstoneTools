@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.3 - 2014-10-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.3 - 2014-10-23 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3369,15 +3369,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var viewport = cornerstone.getViewport(element);
 
+    
         if (!viewport){
 
             // no image rendered, bind to event to set later
-            $(element).one("CornerstoneImageRendered", function(){
+            $(element).one("CornerstoneImageRendered", function(e, data){
                 setWWWC(element, wwwc);
             });
 
             return false;
         }
+        
 
         if (wwwc[0]){
             viewport.voi.windowWidth = parseInt(wwwc[0], 10);
@@ -3394,7 +3396,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         animate = typeof animate === 'undefined' ? true : animate;
 
         var stackData = cornerstoneTools.getToolState(element, 'stack').data[0];
-        var viewport = cornerstone.getViewport(element);
         var currentImageIdIndex = stackData.currentImageIdIndex;
 
         instance = instance - 1; // use 0 indexed numbering
@@ -3405,6 +3406,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var goToInstance = function(instance) {
 
+            var viewport = cornerstone.getViewport(element);
             var imageId = stackData.imageIds[instance];
 
             if (!imageId){
