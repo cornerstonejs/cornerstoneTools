@@ -55,8 +55,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstone.updateImage(element);
     }
 
+    function clearAnnotations(element) {
+
+        // get each annotation type, wipe it out
+        $.each(annotationTypes, function(index, type){
+
+            var toolState = cornerstoneTools.getToolState(element, type);
+
+            if (toolState && toolState.data && toolState.data.length > 0){
+
+                // empty array
+                toolState.data.length = 0;
+            }
+        });
+
+        cornerstone.updateImage(element);
+    }
+
     cornerstoneTools.getAnnotations = getAnnotations;
     cornerstoneTools.setAnnotations = setAnnotations;
+    cornerstoneTools.clearAnnotations = clearAnnotations;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
