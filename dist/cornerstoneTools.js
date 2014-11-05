@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.3 - 2014-10-23 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.3 - 2014-11-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3038,6 +3038,71 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stackTools/stackScroll.js
 
+// Begin Source: src/stateManagement/annotations.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var annotationTypes = ['length', 'angle', 'ellipticalRoi', 'probe', 'rectangleRoi', 'arrow'];
+
+    function getAnnotations(element) {
+        
+        var annotations = {};
+
+        // get all current annotations for the element
+        $.each(annotationTypes, function(index, type){
+
+            var toolState = cornerstoneTools.getToolState(element, type);
+
+            if (toolState && toolState.data && toolState.data.length > 0){
+
+                // perform deep copy of array
+                annotations[type] = $.extend(true, [], toolState.data);
+            }
+        });
+
+        return annotations;
+    }
+
+    function setAnnotations(element, annotations) {
+
+        // set annotations by type, must have signature:
+        // {
+        //  'toolType': [annotationData]
+        // }
+        
+        if (!annotations){
+            return false;
+        }
+
+        // loop through annotation types
+        $.each(annotations, function(type, annotationArray){
+
+            if (annotationTypes.indexOf(type) > -1 && annotationArray.length > 0){
+
+                // loop through individual annotations for each type and add them
+                $.each(annotationArray, function(index, annotation){
+
+                    cornerstoneTools.addToolState(element, type, annotation);
+                });
+            }
+        });
+
+        // update image to show any annotations on the currently displayed image
+        cornerstone.updateImage(element);
+    }
+
+    cornerstoneTools.getAnnotations = getAnnotations;
+    cornerstoneTools.setAnnotations = setAnnotations;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/stateManagement/annotations.js
+
 // Begin Source: src/stateManagement/imageIdSpecificStateManager.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3373,7 +3438,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (!viewport){
 
             // no image rendered, bind to event to set later
-            $(element).one("CornerstoneImageRendered", function(e, data){
+            $(element).one("CornerstoneImageRendered", function(){
                 setWWWC(element, wwwc);
             });
 
@@ -3398,9 +3463,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackData = cornerstoneTools.getToolState(element, 'stack').data[0];
         var currentImageIdIndex = stackData.currentImageIdIndex;
 
-        instance = instance - 1; // use 0 indexed numbering
+        var targetInstance = parseInt(instance, 10) - 1; // use 0 indexed numbering
 
-        if (parseInt(instance, 10) === parseInt(currentImageIdIndex, 10)){
+        if (targetInstance === parseInt(currentImageIdIndex, 10)){
             return false;
         }
 
@@ -3414,16 +3479,41 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 return false;
             }
 
+            if (!viewport){
+
+            }
+
             stackData.currentImageIdIndex = instance;
-            cornerstone.loadAndCacheImage(imageId, element).then(function(image) {
-                cornerstone.displayImage(element, image, viewport);
-            });
+
+            var image = cornerstone.imageCache.getImagePromise(imageId);
+
+            if (image){
+                // if image has already loaded and is cached, display it while scrolling through
+                image.then(function(image){
+                    cornerstone.displayImage(element, image);
+                });
+            } else {
+                // if image isn't cached, and this is the target image, load and cache it
+                if (stackData.currentImageIdIndex === targetInstance) {
+
+                    cornerstone.loadAndCacheImage(imageId, element).then(function(image) {
+                        cornerstone.displayImage(element, image);
+                    });
+                } else {
+                // otherwise, just skip the image to make it faster to autoscroll
+                    return false;
+                }
+            }
+
         };
+
+        // turn off animation for now
+        animate = false;
 
         if (animate){
 
-            var diff = instance - currentImageIdIndex;
-            var dir = instance > currentImageIdIndex ? 1 : -1;
+            var diff = targetInstance - currentImageIdIndex;
+            var dir = targetInstance > currentImageIdIndex ? 1 : -1;
             var i = 0;
 
             var move = function(){
@@ -3439,7 +3529,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             
             move();
         } else {
-            goToInstance(instance);
+            goToInstance(targetInstance);
         }
     }
 
