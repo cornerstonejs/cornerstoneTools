@@ -92,9 +92,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return toolData;
         }
 
+        // get private toolstate
+        function getToolState()
+        {
+            return toolState;
+        }
+
+        // set private toolstate
+        function setToolState(state)
+        {
+            if (!state || !$.isPlainObject(state)){
+                return false;
+            }
+
+            toolState = state;
+        }
+
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState
+            add: addImageIdSpecificToolState,
+            getToolState: getToolState,
+            setToolState: setToolState
         };
         return imageIdToolStateManager;
     }
@@ -102,7 +120,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-   var activetoolsData=activeToolcoordinate();
+    var activetoolsData=activeToolcoordinate();
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;

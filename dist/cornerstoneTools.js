@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.3 - 2014-11-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.3 - 2014-11-09 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3047,70 +3047,50 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    var annotationTypes = ['length', 'angle', 'ellipticalRoi', 'probe', 'rectangleRoi', 'arrow'];
+    // var annotationTypes = ['length', 'angle', 'ellipticalRoi', 'probe', 'rectangleRoi', 'arrow'];
 
-    function getAnnotations(element) {
-        
-        var annotations = {};
+    function getAnnotations() {
 
-        // get all current annotations for the element
-        $.each(annotationTypes, function(index, type){
+        var annotations = cornerstoneTools.globalImageIdSpecificToolStateManager.getToolState();
 
-            var toolState = cornerstoneTools.getToolState(element, type);
+        if ($.isEmptyObject(annotations)){
+            return false;
+        }
 
-            if (toolState && toolState.data && toolState.data.length > 0){
-
-                // perform deep copy of array
-                annotations[type] = $.extend(true, [], toolState.data);
-            }
-        });
-
-        return annotations;
+        // return copy of the object
+        return $.extend(true, {}, annotations);
     }
 
     function setAnnotations(element, annotations) {
 
-        // set annotations by type, must have signature:
+        // set annotations by image specific id, must have signature:
         // {
-        //  'toolType': [annotationData]
+        //  'imageId': {
+        //      'toolType': {
+        //          data: [annotationDataObject]
+        //      }
+        //  }
         // }
         
         if (!annotations){
             return false;
         }
 
-        // loop through annotation types
-        $.each(annotations, function(type, annotationArray){
-
-            if (annotationTypes.indexOf(type) > -1 && annotationArray.length > 0){
-
-                // loop through individual annotations for each type and add them
-                $.each(annotationArray, function(index, annotation){
-
-                    cornerstoneTools.addToolState(element, type, annotation);
-                });
-            }
-        });
+        cornerstoneTools.globalImageIdSpecificToolStateManager.setToolState(annotations);
 
         // update image to show any annotations on the currently displayed image
-        cornerstone.updateImage(element);
+        if (cornerstone.getEnabledElement(element).image){
+            cornerstone.updateImage(element);
+        }
     }
 
     function clearAnnotations(element) {
 
-        // get each annotation type, wipe it out
-        $.each(annotationTypes, function(index, type){
+        cornerstoneTools.globalImageIdSpecificToolStateManager.setToolState({});
 
-            var toolState = cornerstoneTools.getToolState(element, type);
-
-            if (toolState && toolState.data && toolState.data.length > 0){
-
-                // empty array
-                toolState.data.length = 0;
-            }
-        });
-
-        cornerstone.updateImage(element);
+        if (cornerstone.getEnabledElement(element).image){
+            cornerstone.updateImage(element);
+        }
     }
 
     cornerstoneTools.getAnnotations = getAnnotations;
@@ -3216,9 +3196,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return toolData;
         }
 
+        // get private toolstate
+        function getToolState()
+        {
+            return toolState;
+        }
+
+        // set private toolstate
+        function setToolState(state)
+        {
+            if (!state || !$.isPlainObject(state)){
+                return false;
+            }
+
+            toolState = state;
+        }
+
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState
+            add: addImageIdSpecificToolState,
+            getToolState: getToolState,
+            setToolState: setToolState
         };
         return imageIdToolStateManager;
     }
@@ -3226,7 +3224,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-   var activetoolsData=activeToolcoordinate();
+    var activetoolsData=activeToolcoordinate();
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
