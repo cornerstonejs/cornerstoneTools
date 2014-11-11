@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.2 - 2014-09-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.3 - 2014-11-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1121,6 +1121,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
          //activation color 
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
@@ -1151,14 +1152,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
-            var storedPixels = cornerstone.getStoredPixels(eventData.element, left, top, width, height);
+            var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
+
             var ellipse = {
                 left: left,
                 top: top,
                 width: width,
                 height: height
             };
-            var meanStdDev = calculateMeanStdDev(storedPixels, ellipse);
+
+            var meanStdDev = calculateMeanStdDev(pixels, ellipse);
             var area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
@@ -1651,14 +1654,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
-            var storedPixels = cornerstone.getStoredPixels(eventData.element, left, top, width, height);
+            var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
+
             var ellipse = {
                 left: left,
                 top: top,
                 width: width,
                 height: height
             };
-            var meanStdDev = calculateMeanStdDev(storedPixels, ellipse);
+
+            var meanStdDev = calculateMeanStdDev(pixels, ellipse);
             var area = (width * eventData.image.columnPixelSpacing) * (height * eventData.image.rowPixelSpacing);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
