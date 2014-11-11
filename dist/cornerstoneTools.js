@@ -1024,7 +1024,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible : false,
+            visible : true,
             handles : {
                 start : {
                     x : mouseEventData.currentPoints.image.x,
@@ -1285,6 +1285,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
          //activation color 
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+
+        // calculate Hounsfield units
+        function getHounsfield (pixel){
+            return pixel * eventData.image.slope + eventData.image.intercept;
+        }
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
@@ -1316,13 +1322,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
             var storedPixels = cornerstone.getStoredPixels(eventData.element, left, top, width, height);
+
+            // calculate Hounsfield units
+            var HUs = storedPixels.map(getHounsfield);
+
             var ellipse = {
                 left: left,
                 top: top,
                 width: width,
                 height: height
             };
-            var meanStdDev = calculateMeanStdDev(storedPixels, ellipse);
+            var meanStdDev = calculateMeanStdDev(HUs, ellipse);
             var area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
@@ -1784,6 +1794,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         //activation color 
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
+        // calculate Hounsfield units
+        function getHounsfield (pixel){
+            return pixel * eventData.image.slope + eventData.image.intercept;
+        }
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
@@ -1816,13 +1831,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
             var storedPixels = cornerstone.getStoredPixels(eventData.element, left, top, width, height);
+
+            // calculate Hounsfield units
+            var HUs = storedPixels.map(getHounsfield);
+
             var ellipse = {
                 left: left,
                 top: top,
                 width: width,
                 height: height
             };
-            var meanStdDev = calculateMeanStdDev(storedPixels, ellipse);
+            var meanStdDev = calculateMeanStdDev(HUs, ellipse);
             var area = (width * eventData.image.columnPixelSpacing) * (height * eventData.image.rowPixelSpacing);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
