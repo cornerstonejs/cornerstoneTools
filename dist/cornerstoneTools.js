@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.4 - 2014-11-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.4.4 - 2014-12-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -522,6 +522,234 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
  
 // End Source; src/imageTools/mouseButtonTool.js
+
+// Begin Source: src/imageTools/mouseButtonRectangleTool.js
+var coordsData;
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+/*
+    mouseToolInterface = {
+        createNewMeasurement : function() {},
+        onImageRendered: function() {},
+        toolType : "probe",
+    };
+
+ */
+
+    function mouseButtonRectangleTool(mouseToolInterface, preventHandleOutsideImage)
+    {
+        ///////// BEGIN ACTIVE TOOL ///////
+        function addNewMeasurement(mouseEventData)
+        {
+            var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
+
+            // associate this data with this imageId so we can render it and manipulate it
+            cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+           
+
+            // since we are dragging to another place to drop the end point, we can just activate
+            // the end point and let the moveHandle move it for us.
+            $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+            cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+                if(cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
+                {
+                    // delete the measurement
+                    cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+                }
+                $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+            }, preventHandleOutsideImage);
+        }
+
+        function mouseDownActivateCallback(e, eventData) {
+            if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+                addNewMeasurement(eventData);
+                return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            }
+        }
+        ///////// END ACTIVE TOOL ///////
+
+        ///////// BEGIN DEACTIVE TOOL ///////
+
+        function mouseMoveCallback(e, eventData)
+        {
+             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+            // if a mouse button is down, do nothing
+            if(eventData.which !== 0) {
+                return;
+            }
+          
+            
+            // if we have no tool data for this element, do nothing
+            var toolData = cornerstoneTools.getToolState(eventData.element, mouseToolInterface.toolType);
+            if(toolData === undefined) {
+                return;
+            }
+            
+            // We have tool data, search through all data
+            // and see if we can activate a handle
+            var imageNeedsUpdate = false;
+            for(var i=0; i < toolData.data.length; i++) {
+                // get the cursor position in image coordinates
+                var data = toolData.data[i];
+                if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true)
+                {
+                    imageNeedsUpdate = true;
+                }
+            }
+
+            // Handle activation status changed, redraw the image
+            if(imageNeedsUpdate === true) {
+                cornerstone.updateImage(eventData.element);
+            }
+        }
+
+        function getHandleNearImagePoint(data, coords)
+        {
+            for(var handle in data.handles) {
+                var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
+                if(distanceSquared < 25)
+                {
+                    return data.handles[handle];
+                }
+            }
+        }
+
+        function mouseDownCallback(e, eventData) {
+            var data;
+
+            function handleDoneMove()
+            {
+                if(cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles))
+                {
+                    // delete the measurement
+                    cornerstoneTools.removeToolState(eventData.element, mouseToolInterface.toolType, data);
+                }
+                $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+            }
+
+            if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+                var coords = eventData.startPoints.image;
+                var toolData = cornerstoneTools.getToolState(e.currentTarget, mouseToolInterface.toolType);
+
+                var i;
+
+                // now check to see if there is a handle we can move
+                if(toolData !== undefined) {
+                    for(i=0; i < toolData.data.length; i++) {
+                        data = toolData.data[i];
+                        var handle = getHandleNearImagePoint(data, coords);
+                        if(handle !== undefined) {
+                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            cornerstoneTools.moveHandle(eventData, handle, handleDoneMove, preventHandleOutsideImage);
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    }
+                }
+
+                // Now check to see if there is a line we can move
+                // now check to see if we have a tool that we can move
+                if(toolData !== undefined && mouseToolInterface.pointInsideRect !== undefined) {
+                    for(i=0; i < toolData.data.length; i++) {
+                        data = toolData.data[i];
+                        if(mouseToolInterface.pointInsideRect(data, coords)) {
+                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            cornerstoneTools.moveAllHandles(e, data, toolData, false, preventHandleOutsideImage);
+                            e.stopImmediatePropagation();
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+        ///////// END DEACTIVE TOOL ///////
+
+
+
+        // not visible, not interactive
+        function disable(element)
+        {
+            $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+            cornerstone.updateImage(element);
+        }
+
+        // visible but not interactive
+        function enable(element)
+        {
+            $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+            $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+
+            cornerstone.updateImage(element);
+        }
+
+        // visible, interactive and can create
+        function activate(element, mouseButtonMask) {
+            var eventData = {
+                mouseButtonMask: mouseButtonMask,
+            };
+
+            $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+            $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+            $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+            $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+            $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+
+            cornerstone.updateImage(element);
+        }
+
+        // visible, interactive
+        function deactivate(element, mouseButtonMask) {
+            var eventData = {
+                mouseButtonMask: mouseButtonMask,
+            };
+
+            $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+            $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+            $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+            $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+            $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+
+            cornerstone.updateImage(element);
+        }
+
+        var toolInterface = {
+            enable: enable,
+            disable : disable,
+            activate: activate,
+            deactivate: deactivate
+        };
+
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.mouseButtonRectangleTool = mouseButtonRectangleTool;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
+ 
+// End Source; src/imageTools/mouseButtonRectangleTool.js
 
 // Begin Source: src/imageTools/mouseWheelTool.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -1206,6 +1434,153 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
  
 // End Source; src/imageTools/ellipticalRoi.js
+
+// Begin Source: src/imageTools/highlight.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "highlight";
+
+    ///////// BEGIN ACTIVE TOOL ///////
+    function createNewMeasurement(mouseEventData)
+    {
+        // create the measurement data for this tool with the end handle activated
+        var measurementData = {
+            visible : true,
+            handles : {
+                start : {
+                    x : mouseEventData.currentPoints.image.x,
+                    y : mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                end: {
+                    x : mouseEventData.currentPoints.image.x,
+                    y : mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
+                }
+            }
+        };
+
+        return measurementData;
+    }
+    ///////// END ACTIVE TOOL ///////
+
+    function pointInsideRect(data, coords)
+    {
+        var rect = {
+            left : Math.min(data.handles.start.x, data.handles.end.x),
+            top : Math.min(data.handles.start.y, data.handles.end.y),
+            width : Math.abs(data.handles.start.x - data.handles.end.x),
+            height : Math.abs(data.handles.start.y - data.handles.end.y)
+        };
+
+        var insideBox = false;
+        if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) &&
+            coords.y >= rect.top && coords.y <= (rect.top + rect.height)) {
+            insideBox = true;
+        }
+        return insideBox;
+    }
+
+    function pointNearTool(data, coords)
+    {
+        var rect = {
+            left : Math.min(data.handles.start.x, data.handles.end.x),
+            top : Math.min(data.handles.start.y, data.handles.end.y),
+            width : Math.abs(data.handles.start.x - data.handles.end.x),
+            height : Math.abs(data.handles.start.y - data.handles.end.y)
+        };
+
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
+        return (distanceToPoint < 5);
+    }
+
+    ///////// BEGIN IMAGE RENDERING ///////
+
+    function onImageRendered(e, eventData) {
+
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+
+        // we have tool data for this elemen
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+
+        //activation color 
+        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+
+        context.save();
+        var data = toolData.data[0];
+        
+        var selectionColor="white",
+            toolsColor="white";
+
+        //differentiate the color of activation tool
+        var rect = {
+            left : Math.min(data.handles.start.x, data.handles.end.x),
+            top : Math.min(data.handles.start.y, data.handles.end.y),
+            width : Math.abs(data.handles.start.x - data.handles.end.x),
+            height : Math.abs(data.handles.start.y - data.handles.end.y)
+        };
+
+        // draw the handles
+        context.beginPath();
+        cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+        context.stroke();
+
+        // draw dark fill outside the rectangle
+        context.beginPath();
+        context.strokeStyle = "transparent";
+        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+        context.stroke();
+        context.fillStyle = "rgba(0,0,0,0.7)";
+        context.fill();
+        context.closePath();
+
+        // draw dashed stroke rectangle
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = 2.5 / eventData.viewport.scale;
+        context.setLineDash([4]);
+        context.strokeRect(rect.left, rect.top, rect.width, rect.height);
+        context.restore();
+    }
+    ///////// END IMAGE RENDERING ///////
+
+
+    // module exports
+    var preventHandleOutsideImage = true;
+
+    cornerstoneTools.highlight = cornerstoneTools.mouseButtonRectangleTool({
+        createNewMeasurement : createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool : pointNearTool,
+        pointInsideRect: pointInsideRect,
+        toolType : toolType
+    }, preventHandleOutsideImage);
+    cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        pointInsideRect: pointInsideRect,
+        toolType: toolType
+    }, preventHandleOutsideImage);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
+ 
+// End Source; src/imageTools/highlight.js
 
 // Begin Source: src/imageTools/lengthTool.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
@@ -2222,13 +2597,32 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function moveHandle(mouseEventData, handle, doneMovingCallback)
+    function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage)
     {
         var element = mouseEventData.element;
 
         function mouseDragCallback(e, eventData) {
             handle.x = eventData.currentPoints.image.x;
             handle.y = eventData.currentPoints.image.y;
+            if (preventHandleOutsideImage)
+            {
+                if (handle.x < 0)
+                {
+                    handle.x = 0;
+                }
+                if (handle.x > eventData.image.width)
+                {
+                    handle.x = eventData.image.width;
+                }
+                if (handle.y < 0)
+                {
+                    handle.y = 0;
+                }
+                if (handle.y > eventData.image.height)
+                {
+                    handle.y = eventData.image.height;
+                }
+            }
             cornerstone.updateImage(element);
         }
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
@@ -2305,7 +2699,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
 
 
-    function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage)
+    function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage, preventHandleOutsideImage)
     {
         var mouseEventData = e;
         var element = mouseEventData.element;
@@ -2316,6 +2710,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 var handle = data.handles[property];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
+                if (preventHandleOutsideImage)
+                {
+                    if (handle.x < 0)
+                    {
+                        handle.x = 0;
+                    }
+                    if (handle.x > eventData.image.width)
+                    {
+                        handle.x = eventData.image.width;
+                    }
+                    if (handle.y < 0)
+                    {
+                        handle.y = 0;
+                    }
+                    if (handle.y > eventData.image.height)
+                    {
+                        handle.y = eventData.image.height;
+                    }
+                }
             }
             cornerstone.updateImage(element);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
