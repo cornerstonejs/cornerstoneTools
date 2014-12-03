@@ -1,0 +1,113 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!-- support for mobile touch devices -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <link href="../cornerstone.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>
+            Highlight Tool Example
+        </h1>
+        <p>
+            This page contains an example of the highlight tool
+        </p>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-2">
+            <ul class="list-group">
+                <a href="#" id="disable" class="list-group-item">Disable</a>
+                <a href="#" id="enable" class="list-group-item">Enable</a>
+                <a href="#" id="activate" class="list-group-item">Activate</a>
+                <a href="#" id="deactivate" class="list-group-item">Deactivate</a>
+            </ul>
+        </div>
+        <div class="col-xs-6">
+            <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
+                 oncontextmenu="return false"
+                 class='cornerstone-enabled-image'
+                 unselectable='on'
+                 onselectstart='return false;'
+                 onmousedown='return false;'>
+                <div id="dicomImage"
+                     style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
+is used by our example image loader-->
+<script src="../jquery.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="../cornerstone.min.js"></script>
+<script src="../cornerstoneMath.min.js"></script>
+
+<!-- include the cornerstone tools library -->
+<script src="../../dist/cornerstoneTools.js"></script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../exampleImageLoader.js"></script>
+
+<script>
+    var element = $('#dicomImage').get(0);
+
+    var imageId = 'example://1';
+
+    // image enable the dicomImage element
+    cornerstone.enable(element);
+    cornerstoneTools.mouseInput.enable(element);
+
+    cornerstone.loadImage(imageId).then(function(image) {
+        cornerstone.displayImage(element, image);
+
+        // Enable all tools we want to use with this element
+        cornerstoneTools.highlight.activate(element, 1);
+        activate("#activate");
+
+        function activate(id)
+        {
+            $('a').removeClass('active');
+            $(id).addClass('active');
+        }
+
+        // Tool button event handlers that set the new active tool
+        $('#disable').click(function() {
+            activate("#disable");
+            cornerstoneTools.highlight.disable(element);
+            return false;
+        });
+        $('#enable').click(function() {
+            activate("#enable");
+            cornerstoneTools.highlight.enable(element);
+            return false;
+        });
+        $('#activate').click(function() {
+            activate("#activate");
+            cornerstoneTools.highlight.activate(element, 1);
+            return false;
+        });
+        $('#deactivate').click(function() {
+            activate("#deactivate");
+            cornerstoneTools.highlight.deactivate(element, 1);
+            return false;
+        });
+    });
+
+
+
+</script>
+</html>
