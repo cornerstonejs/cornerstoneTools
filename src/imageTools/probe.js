@@ -6,7 +6,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    var toolType = "probe";
+    var toolType = cornerstoneTools.toolsDirectory.probe;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)

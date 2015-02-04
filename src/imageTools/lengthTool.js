@@ -6,7 +6,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "length";
+    var toolType = cornerstoneTools.toolsDirectory.lengthTool;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -65,7 +65,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             } else {
                color=cornerstoneTools.activeToolcoordinate.getToolColor();
             }
-         
+
             // draw the line
             context.beginPath();
             context.strokeStyle = color;

@@ -6,7 +6,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "rectangleRoi";
+    var toolType = cornerstoneTools.toolsDirectory.rectangleRoi;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -99,7 +99,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        //activation color 
+        //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         for(var i=0; i < toolData.data.length; i++) {
