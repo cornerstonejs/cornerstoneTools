@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.4.4 - 2014-11-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.5.0 - 2015-02-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2459,6 +2459,233 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
  
 // End Source; src/manipulators/touchmoveAllHandles.js
 
+// Begin Source: src/metaData.js
+// this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
+// so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
+// NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
+
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var providers = [];
+
+    function addProvider( provider)
+    {
+        providers.push(provider);
+    }
+
+    function removeProvider( provider)
+    {
+        var index = providers.indexOf(provider);
+        if(index === -1) {
+            return;
+        }
+        providers.splice(index, 1);
+    }
+
+    function getMetaData(type, imageId)
+    {
+        var result;
+        $.each(providers, function(index, provider) {
+            result = provider(type, imageId);
+            if(result !== undefined) {
+                return true;
+            }
+        });
+        return result;
+    }
+
+    // module/private exports
+    cornerstoneTools.metaData =
+    {
+        addProvider: addProvider,
+        removeProvider: removeProvider,
+        get : getMetaData
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/metaData.js
+
+// Begin Source: src/referenceLines/calculateReferenceLine.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+    if(cornerstoneTools.referenceLines === undefined) {
+        cornerstoneTools.referenceLines = {};
+    }
+
+    // calculates a reference line between two planes by projecting the top left hand corner and bottom right hand corner
+    // of the reference image onto the target image.  Ideally we would calculate the intersection between the planes but
+    // that requires a bit more math and this works fine for most cases
+    function calculateReferenceLine(targetImagePlane, referenceImagePlane)
+    {
+        var tlhcPatient = referenceImagePlane.imagePositionPatient;
+        var tlhcImage = cornerstoneTools.projectPatientPointToImagePlane(tlhcPatient, targetImagePlane);
+
+        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({x:referenceImagePlane.columns, y:referenceImagePlane.rows}, referenceImagePlane);
+        var brhcImage = cornerstoneTools.projectPatientPointToImagePlane(brhcPatient, targetImagePlane);
+
+        var referenceLineSegment = {
+            start : {x :tlhcImage.x, y:tlhcImage.y},
+            end : {x :brhcImage.x, y:brhcImage.y}
+        };
+        return referenceLineSegment;
+    }
+
+    // module/private exports
+    cornerstoneTools.referenceLines.calculateReferenceLine = calculateReferenceLine;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/referenceLines/calculateReferenceLine.js
+
+// Begin Source: src/referenceLines/referenceLinesTool.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+    if(cornerstoneTools.referenceLines === undefined) {
+        cornerstoneTools.referenceLines = {};
+    }
+
+    var toolType = "referenceLines";
+
+    function onImageRendered(e, eventData)
+    {
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+        if (toolData === undefined) {
+            return;
+        }
+
+        // Get the enabled elements associated with this synchronization context and draw them
+        var syncContext = toolData.data[0].synchronizationContext;
+        var enabledElements = syncContext.getSourceElements();
+
+        var renderer = toolData.data[0].renderer;
+
+        // Create the canvas context and reset it to the pixel coordinate system
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+
+        // Iterate over each referenced element
+        $.each(enabledElements, function(index, referenceEnabledElement) {
+
+            // don't draw ourselves
+            if (referenceEnabledElement === e.currentTarget) {
+                return;
+            }
+
+            // render it
+            renderer(context, eventData, e.currentTarget, referenceEnabledElement);
+        });
+    }
+
+    // enables the reference line tool for a given element.  Note that a custom renderer
+    // can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
+    function enable(element, synchronizationContext, renderer)
+    {
+        renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
+
+        cornerstoneTools.addToolState(element, toolType, {
+            synchronizationContext : synchronizationContext,
+            renderer : renderer
+        });
+        $(element).on("CornerstoneImageRendered", onImageRendered);
+        cornerstone.updateImage(element);
+    }
+
+    // disables the reference line tool for the given element
+    function disable(element, synchronizationContext)
+    {
+        $(element).off("CornerstoneImageRendered", onImageRendered);
+        cornerstone.updateImage(element);
+    }
+
+    // module/private exports
+    cornerstoneTools.referenceLines.tool = {
+        enable: enable,
+        disable: disable
+
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/referenceLines/referenceLinesTool.js
+
+// Begin Source: src/referenceLines/renderActiveReferenceLine.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+    if(cornerstoneTools.referenceLines === undefined) {
+        cornerstoneTools.referenceLines = {};
+    }
+
+    // renders the active reference line
+    function renderActiveReferenceLine(context, eventData, targetElement, referenceElement)
+    {
+        var targetImage = cornerstone.getEnabledElement(targetElement).image;
+        var referenceImage = cornerstone.getEnabledElement(referenceElement).image;
+
+        // make sure the images are actually loaded for the target and reference
+        if(targetImage === undefined || referenceImage === undefined) {
+            return;
+        }
+
+        var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImage.imageId);
+        var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
+
+        // the image planes must be in the same frame of reference
+        if(targetImagePlane.frameOfReferenceUID != referenceImagePlane.frameOfReferenceUID) {
+            return;
+        }
+
+        // the image plane normals must be > 30 degrees apart
+        var targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
+        var referenceNormal = referenceImagePlane.rowCosines.clone().cross(referenceImagePlane.columnCosines);
+        var angleInRadians = targetNormal.angleTo(referenceNormal);
+        angleInRadians = Math.abs(angleInRadians);
+        if(angleInRadians < 0.5) { // 0.5 radians = ~30 degrees
+            return;
+        }
+
+        var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
+
+        var color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+
+        // draw the referenceLines
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = 1 / eventData.viewport.scale;
+        context.moveTo(referenceLine.start.x, referenceLine.start.y);
+        context.lineTo(referenceLine.end.x, referenceLine.end.y);
+        context.stroke();
+    }
+
+    // module/private exports
+    cornerstoneTools.referenceLines.renderActiveReferenceLine = renderActiveReferenceLine;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/referenceLines/renderActiveReferenceLine.js
+
 // Begin Source: src/stackTools/playClip.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2597,6 +2824,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetch = stackPrefetchData.data[0];
 
         var stack = stackData.data[0];
+
+        if(stack.enabled === false) {
+            return;
+        }
+
         var stackPrefetchImageIdIndex = stackPrefetch.prefetchImageIdIndex + 1;
         stackPrefetchImageIdIndex = Math.min(stack.imageIds.length - 1, stackPrefetchImageIdIndex);
         stackPrefetchImageIdIndex = Math.max(0, stackPrefetchImageIdIndex);
@@ -2616,6 +2848,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         loadImageDeferred.done(function(image)
         {
+            // if we are no longer enabled, do not try to prefetch again
+            if(stack.enabled === false) {
+                return;
+            }
+
             // image has been loaded, call prefetch on the next image
             setTimeout(function() {
                 prefetch(element);
@@ -2645,7 +2882,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 prefetchImageIdIndex : 0,
                 enabled: false
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);
         }
         else
         {
@@ -3010,7 +3247,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab'];
+        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab', 'referenceLines'];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
@@ -3105,6 +3342,366 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/toolStateManager.js
+
+// Begin Source: src/synchronization/panZoomSynchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This function synchronizes the target zoom and pan to match the source
+    function panZoomSynchronizer(synchronizer, sourceElement, targetElement) {
+
+        // ignore the case where the source and target are the same enabled element
+        if(targetElement === sourceElement) {
+            return;
+        }
+        // get the source and target viewports
+        var sourceViewport = cornerstone.getViewport(sourceElement);
+        var targetViewport = cornerstone.getViewport(targetElement);
+
+        // do nothing if the scale and translation are the same
+        if(targetViewport.scale === sourceViewport.scale &&
+            targetViewport.translation.x === sourceViewport.translation.x &&
+            targetViewport.translation.y === sourceViewport.translation.y) {
+            return;
+        }
+
+        // scale and/or translation are different, sync them
+        targetViewport.scale = sourceViewport.scale;
+        targetViewport.translation.x = sourceViewport.translation.x;
+        targetViewport.translation.y = sourceViewport.translation.y;
+        synchronizer.setViewport(targetElement, targetViewport);
+    }
+
+
+    // module/private exports
+    cornerstoneTools.panZoomSynchronizer = panZoomSynchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/panZoomSynchronizer.js
+
+// Begin Source: src/synchronization/stackImageIndexSynchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This function causes the image in the target stack to be set to the one closest
+    // to the image in the source stack by image position
+    function stackImageIndexSynchronizer(synchronizer, sourceElement, targetElement) {
+
+        // ignore the case where the source and target are the same enabled element
+        if(targetElement === sourceElement) {
+            return;
+        }
+
+        var sourceStackToolDataSource = cornerstoneTools.getToolState(sourceElement, 'stack');
+        var sourceStackData = sourceStackToolDataSource.data[0];
+        var targetStackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var targetStackData = targetStackToolDataSource.data[0];
+
+        var newImageIdIndex = sourceStackData.currentImageIdIndex;
+
+        // clamp the index
+        newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length -1);
+
+        // Do nothing if the index has not changed
+        if(newImageIdIndex === targetStackData.currentImageIdIndex)
+        {
+            return;
+        }
+
+        cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]).then(function(image) {
+            var viewport = cornerstone.getViewport(targetElement);
+            targetStackData.currentImageIdIndex = newImageIdIndex;
+            synchronizer.displayImage(targetElement, image, viewport);
+        });
+    }
+
+    // module/private exports
+    cornerstoneTools.stackImageIndexSynchronizer = stackImageIndexSynchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/stackImageIndexSynchronizer.js
+
+// Begin Source: src/synchronization/stackImagePositionSynchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This function causes the image in the target stack to be set to the one closest
+    // to the image in the source stack by image position
+    function stackImagePositionSynchronizer(synchronizer, sourceElement, targetElement) {
+
+        // ignore the case where the source and target are the same enabled element
+        if(targetElement === sourceElement) {
+            return;
+        }
+
+        var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
+        var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImage.imageId);
+        var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var stackData = stackToolDataSource.data[0];
+
+        var minDistance = Number.MAX_VALUE;
+        var newImageIdIndex = -1;
+
+        $.each(stackData.imageIds, function(index, imageId) {
+            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+            var imagePosition = imagePlane.imagePositionPatient;
+            var distance = imagePosition.distanceToSquared(sourceImagePosition);
+            //console.log(index + '=' + distance);
+            if(distance < minDistance) {
+                minDistance = distance;
+                newImageIdIndex = index;
+            }
+        });
+
+        if(newImageIdIndex === stackData.currentImageIdIndex)
+        {
+            return;
+        }
+
+        if(newImageIdIndex !== -1) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                var viewport = cornerstone.getViewport(targetElement);
+                stackData.currentImageIdIndex = newImageIdIndex;
+                synchronizer.displayImage(targetElement, image, viewport);
+            });
+        }
+    }
+
+    // module/private exports
+    cornerstoneTools.stackImagePositionSynchronizer = stackImagePositionSynchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/stackImagePositionSynchronizer.js
+
+// Begin Source: src/synchronization/synchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This object is responsible for synchronizing target elements when an event fires on a source
+    // element
+    function Synchronizer(event, handler) {
+
+        var that = this;
+        var sourceElements = []; // source elements fire the events we want to synchronize to
+        var targetElements = []; // target elements we want to synchronize to source elements
+
+        var ignoreFiredEvents = false;
+
+        function fireEvent(sourceEnabledElement) {
+
+            // Broadcast an event that something changed
+            ignoreFiredEvents = true;
+            $.each(targetElements, function(index, targetEnabledElement) {
+                handler(that, sourceEnabledElement, targetEnabledElement);
+            });
+            ignoreFiredEvents = false;
+        }
+
+        function onEvent(e)
+        {
+            if(ignoreFiredEvents === true) {
+                //console.log("event ignored");
+                return;
+            }
+            fireEvent(e.currentTarget);
+        }
+
+        // adds an element as a source
+        this.addSource = function(element) {
+            // Return if this element was previously added
+            var index = sourceElements.indexOf(element);
+            if(index !== -1) {
+                return;
+            }
+
+            // Add to our list of enabled elements
+            sourceElements.push(element);
+
+            // subscribe to the event
+            $(element).on(event, onEvent);
+
+            // Update everyone listening for events
+            fireEvent(element);
+        };
+
+        // adds an element as a target
+        this.addTarget = function(element) {
+            // Return if this element was previously added
+            var index = targetElements.indexOf(element);
+            if(index !== -1) {
+                return;
+            }
+
+            // Add to our list of enabled elements
+            targetElements.push(element);
+
+            // Invoke the handler for this new target element
+            handler(that, element, element);
+        };
+
+        // adds an element as both a source and a target
+        this.add = function(element) {
+            that.addSource(element);
+            that.addTarget(element);
+        };
+
+        // removes an element as a source
+        this.removeSource = function(element) {
+            // Find the index of this element
+            var index = sourceElements.indexOf(element);
+            if(index === -1) {
+                return;
+            }
+
+            // remove this element from the array
+            sourceElements.splice(index, 1);
+
+            // stop listening for the event
+            $(element).off(event, onEvent);
+
+            // Update everyone listening for events
+            fireEvent(element);
+        };
+
+        // removes an element as a target
+        this.removeTarget = function(element) {
+            // Find the index of this element
+            var index = targetElements.indexOf(element);
+            if(index === -1) {
+                return;
+            }
+
+            // remove this element from the array
+            targetElements.splice(index, 1);
+
+            // Invoke the handler for the removed target
+            handler(that, element, element);
+        };
+
+        // removes an element as both a source and target
+        this.remove = function(element) {
+            that.removeTarget(element);
+            that.removeSource(element);
+        };
+
+        // returns the source elements
+        this.getSourceElements = function() {
+            return sourceElements;
+        };
+
+        this.displayImage = function(element, image, viewport) {
+            ignoreFiredEvents = true;
+            cornerstone.displayImage(element, image, viewport);
+            ignoreFiredEvents = false;
+        };
+
+        this.setViewport = function(element, viewport) {
+            ignoreFiredEvents = true;
+            cornerstone.setViewport(element, viewport);
+            ignoreFiredEvents = false;
+        };
+    }
+
+    // module/private exports
+    cornerstoneTools.Synchronizer = Synchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/synchronizer.js
+
+// Begin Source: src/synchronization/updateImageSynchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This function causes the target image to be drawn immediately
+    function updateImageSynchronizer(synchronizer, sourceElement, targetElement) {
+
+        // ignore the case where the source and target are the same enabled element
+        if(targetElement === sourceElement) {
+            return;
+        }
+
+        cornerstone.updateImage(targetElement);
+    }
+
+    // module/private exports
+    cornerstoneTools.updateImageSynchronizer = updateImageSynchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/updateImageSynchronizer.js
+
+// Begin Source: src/synchronization/wwwcSynchronizer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This function synchronizes the target element ww/wc to match the source element
+    function wwwcSynchronizer(synchronizer, sourceElement, targetElement) {
+
+        // ignore the case where the source and target are the same enabled element
+        if(targetElement === sourceElement) {
+            return;
+        }
+        // get the source and target viewports
+        var sourceViewport = cornerstone.getViewport(sourceElement);
+        var targetViewport = cornerstone.getViewport(targetElement);
+
+        // do nothing if the ww/wc already match
+        if(targetViewport.voi.windowWidth === sourceViewport.voi.windowWidth &&
+            targetViewport.voi.windowCenter === sourceViewport.voi.windowCenter &&
+            targetViewport.invert === sourceViewport.invert) {
+            return;
+        }
+
+        // www/wc are different, sync them
+        targetViewport.voi.windowWidth = sourceViewport.voi.windowWidth;
+        targetViewport.voi.windowCenter = sourceViewport.voi.windowCenter;
+        targetViewport.invert = sourceViewport.invert;
+        synchronizer.setViewport(targetElement, targetViewport);
+    }
+
+
+    // module/private exports
+    cornerstoneTools.wwwcSynchronizer = wwwcSynchronizer;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/synchronization/wwwcSynchronizer.js
 
 // Begin Source: src/util/RoundToDecimal.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -3251,6 +3848,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/util/pauseEvent.js
+
+// Begin Source: src/util/pointProjector.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+    if(cornerstoneTools.referenceLines === undefined) {
+        cornerstoneTools.referenceLines = {};
+    }
+
+    // projects a patient point to an image point
+    function projectPatientPointToImagePlane(patientPoint, imagePlane)
+    {
+        var point = patientPoint.clone().sub(imagePlane.imagePositionPatient);
+        var x = imagePlane.rowCosines.dot(point) / imagePlane.columnPixelSpacing;
+        var y = imagePlane.columnCosines.dot(point) / imagePlane.rowPixelSpacing;
+        var imagePoint = {x: x, y: y};
+        return imagePoint;
+    }
+
+    // projects an image point to a patient point
+    function imagePointToPatientPoint(imagePoint, imagePlane)
+    {
+        var x = imagePlane.rowCosines.clone().multiplyScalar(imagePoint.x);
+        x.multiplyScalar(imagePlane.columnPixelSpacing);
+        var y = imagePlane.columnCosines.clone().multiplyScalar(imagePoint.y);
+        y.multiplyScalar(imagePlane.rowPixelSpacing);
+        var patientPoint = x.add(y);
+        patientPoint.add(imagePlane.imagePositionPatient);
+        return patientPoint;
+    }
+
+    // module/private exports
+    cornerstoneTools.projectPatientPointToImagePlane = projectPatientPointToImagePlane;
+    cornerstoneTools.imagePointToPatientPoint = imagePointToPatientPoint;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/util/pointProjector.js
 
 // Begin Source: src/util/setContextToDisplayFontSize.js
 /**

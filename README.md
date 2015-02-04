@@ -57,11 +57,12 @@ Features Targeted for V1.0
 * Tools that work with a stack of images
   * Scroll
   * Cine / Playing Clips
-  * Cross reference lines (not implemented yet)
+  * Cross reference lines
 * Synchronization tools
-  * Stack by image # (not implemented yet)
-  * Stack by image position (not implemented yet)
-  * Image by zoom and pan (not implemented yet)
+  * Stack by image index
+  * Stack by image position
+  * Image by zoom and pan
+  * Sync ww/wc/invert
 * Support for binding each tool to different mouse inputs:
   * Left mouse button
   * Middle mouse button
@@ -109,15 +110,21 @@ Automatically running the build and unit tests after each source change:
 Backlog
 ------------
 
-* framework support for multiple images (e.g. select ww/wc once and have it apply to a group of enabled elements)
-* cross reference lines (requires stack)
 * Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
 * measurement calibration tool
 * freehand roi tool
-* stack synchronizer tool (scroll in one stack and the other synchronized stacks will follow) - for comparison
-* image synchroinizer tool (pan/zoom in one image and the other synchronized images will follow) - for comparison
 * Config object that allows tool appearance to be customized (e.g. line color, text color, handle size, shape, etc)
+* automatically disabling tools when the enabled element is disabled
+* reconsider the state management api, it is a bit clunky
+* add support for pointer events as an input source
+* Localizer tool / 3d cursor / crosshair
+* Reference line renderer for all images
+* Reference line renderer for first/last/active
+* Annotations (e.g. text, arrows, circles)
+* Move all API documentation from wiki into markdown in a doc folder
+* Update to latest hammer.js library
+* key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
 Copyright
 ============
-Copyright 2014 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)
+Copyright 2015 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)

@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "description": "Tools for use with the cornerstone HTML5 Medical Image Viewer Component",
   "main" : "dist/cornerstoneTools.js",
   "ignore": [
@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "cornerstone": "~0.5.2",
-     "cornerstoneMath": "~0.1.0",
+     "cornerstoneMath": "~0.1.1",
      "hammerjs": "~1.0.10",
      "jquery" : "~2.1.1"
   },

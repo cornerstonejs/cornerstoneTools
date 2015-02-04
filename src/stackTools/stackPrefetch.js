@@ -24,6 +24,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetch = stackPrefetchData.data[0];
 
         var stack = stackData.data[0];
+
+        if(stack.enabled === false) {
+            return;
+        }
+
         var stackPrefetchImageIdIndex = stackPrefetch.prefetchImageIdIndex + 1;
         stackPrefetchImageIdIndex = Math.min(stack.imageIds.length - 1, stackPrefetchImageIdIndex);
         stackPrefetchImageIdIndex = Math.max(0, stackPrefetchImageIdIndex);
@@ -43,6 +48,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         loadImageDeferred.done(function(image)
         {
+            // if we are no longer enabled, do not try to prefetch again
+            if(stack.enabled === false) {
+                return;
+            }
+
             // image has been loaded, call prefetch on the next image
             setTimeout(function() {
                 prefetch(element);
@@ -72,7 +82,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 prefetchImageIdIndex : 0,
                 enabled: false
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);
         }
         else
         {
