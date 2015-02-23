@@ -59,6 +59,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         enabledImage.toolStateManager = toolStateManager;
     }
 
+    // Clears all the tool data associated with the element
+    // This would also clear the currently drawn measurements on the viewport.
+    function clearAllToolData(element) {
+      var tools   = cornerstoneTools.toolsDirectory;
+      var manager = cornerstoneTools.getElementToolStateManager(element);
+
+      for (var tool in tools){
+        var toolType = tools[tool];
+        var toolData = manager.get(element, toolType);
+
+        if (toolData) { toolData.data = []; }
+      }
+    }
+
     /*
      function getElementToolStateManager(element)
      {
@@ -73,6 +87,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.removeToolState = removeToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
+    cornerstoneTools.clearAllToolData = clearAllToolData;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

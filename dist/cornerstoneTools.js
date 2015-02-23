@@ -63,7 +63,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/inputSources/mouseWheelInput.js
 
 // Begin Source: src/inputSources/mouseInput.js
@@ -259,8 +259,30 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/inputSources/mouseInput.js
+
+// Begin Source: src/imageTools/toolsDirectory.js
+var cornerstoneTools = (function($, cornertone, cornerstoneTools) {
+
+  "use strict";
+
+  if (cornerstoneTools === undefined) {
+    cornerstoneTools = {};
+  }
+
+  cornerstoneTools.toolsDirectory = {
+    probe:         "probe",
+    angleTool:     "angle",
+    ellipticalRoi: "ellipticalRoi",
+    lengthTool:    "length",
+    rectangleRoi:  "rectangleRoi"
+  }
+
+  return cornerstoneTools;
+
+}($, cornerstone, cornerstoneTools));
+// End Source: src/imageTools/toolsDirectory.js
 
 // Begin Source: src/imageTools/simpleMouseButtonTool.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -292,7 +314,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module exports
     cornerstoneTools.simpleMouseButtonTool = simpleMouseButtonTool;
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/imageTools/simpleMouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseButtonTool.js
@@ -323,7 +345,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
-           
+
 
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
@@ -349,20 +371,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         ///////// BEGIN DEACTIVE TOOL ///////
 
         function mouseMoveCallback(e, eventData)
-        {  
+        {
              cornerstoneTools.activeToolcoordinate.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;
             }
-          
-            
+
+
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, mouseToolInterface.toolType);
             if(toolData === undefined) {
                 return;
             }
-            
+
             // We have tool data, search through all data
             // and see if we can activate a handle
             var imageNeedsUpdate = false;
@@ -520,7 +542,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/imageTools/mouseButtonTool.js
 
 // Begin Source: src/imageTools/mouseWheelTool.js
@@ -552,7 +574,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.mouseWheelTool = mouseWheelTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/imageTools/mouseWheelTool.js
 
 // Begin Source: src/imageTools/touchDragTool.js
@@ -587,7 +609,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.touchDragTool = touchDragTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/imageTools/touchDragTool.js
 
 // Begin Source: src/imageTools/touchPinchTool.js
@@ -622,7 +644,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.touchPinchTool = touchPinchTool;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/imageTools/touchPinchTool.js
 
 // Begin Source: src/imageTools/touchTool.js
@@ -656,7 +678,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         }
 
         function touchDownActivateCallback(e, eventData) {
-           
+
             addNewMeasurement(eventData);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
@@ -666,9 +688,9 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         function touchMoveCallback(e, eventData)
         {
-           
+
             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
-      
+
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, touchToolInterface.toolType);
             if (toolData === undefined) {
@@ -795,7 +817,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         // visible, interactive
         function deactivate(element) {
-           
+
 
             $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
@@ -829,7 +851,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
 
 
- 
+
 // End Source; src/imageTools/touchTool.js
 
 // Begin Source: src/imageTools/AngleTool.js
@@ -841,7 +863,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "angle";
+    var toolType = cornerstoneTools.toolsDirectory.angleTool;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -909,7 +931,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        //activation color 
+        //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
@@ -940,7 +962,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.fillStyle = color;
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-            // where lines cross to measure angle. For now it will show smallest angle. 
+            // where lines cross to measure angle. For now it will show smallest angle.
             var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
             var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
             var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
@@ -982,7 +1004,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 } ($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/imageTools/AngleTool.js
 
 // Begin Source: src/imageTools/ellipticalRoi.js
@@ -994,7 +1016,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "ellipticalRoi";
+    var toolType = cornerstoneTools.toolsDirectory.ellipticalRoi;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -1119,7 +1141,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-         //activation color 
+         //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         for(var i=0; i < toolData.data.length; i++) {
@@ -1204,7 +1226,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/imageTools/ellipticalRoi.js
 
 // Begin Source: src/imageTools/lengthTool.js
@@ -1216,7 +1238,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "length";
+    var toolType = cornerstoneTools.toolsDirectory.lengthTool;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -1275,7 +1297,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             } else {
                color=cornerstoneTools.activeToolcoordinate.getToolColor();
             }
-         
+
             // draw the line
             context.beginPath();
             context.strokeStyle = color;
@@ -1324,7 +1346,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     });
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/imageTools/lengthTool.js
 
 // Begin Source: src/imageTools/pan.js
@@ -1371,7 +1393,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/imageTools/pan.js
 
 // Begin Source: src/imageTools/probe.js
@@ -1383,7 +1405,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    var toolType = "probe";
+    var toolType = cornerstoneTools.toolsDirectory.probe;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -1515,7 +1537,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/imageTools/probe.js
 
 // Begin Source: src/imageTools/rectangleRoi.js
@@ -1527,7 +1549,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    var toolType = "rectangleRoi";
+    var toolType = cornerstoneTools.toolsDirectory.rectangleRoi;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
@@ -1620,7 +1642,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        //activation color 
+        //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         for(var i=0; i < toolData.data.length; i++) {
@@ -1706,7 +1728,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/imageTools/rectangleRoi.js
 
 // Begin Source: src/imageTools/wwwc.js
@@ -1766,7 +1788,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/imageTools/wwwc.js
 
 // Begin Source: src/imageTools/zoom.js
@@ -1853,7 +1875,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/imageTools/zoom.js
 
 // Begin Source: src/inputSources/touchInput.js
@@ -1872,15 +1894,15 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
     var startPoints;
     var lastPoints,touchEventDetail,eventData;
-    
-   
-  
+
+
+
     function activateMouseDown(mouseEventDetail)
-    {   
+    {
        $(mouseEventDetail.element).trigger("CornerstoneToolsDragStartActive", mouseEventDetail);
-       
-      
-        
+
+
+
     }
     function onTouch(e)
     {
@@ -1925,12 +1947,12 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
            event = jQuery.Event("CornerstoneToolsTouchPinch", tranformEvent);
           $(tranformEvent.element).trigger(event, tranformEvent);
           } else if (e.type === 'touch')
-          {    
+          {
                 startPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
                 image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
             };
-           
+
             touchEventDetail = {
                 event: e,
                 viewport: cornerstone.getViewport(element),
@@ -1941,25 +1963,25 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 currentPoints: startPoints,
                 deltaPoints: {x: 0, y: 0}
             };
-                
+
             event = jQuery.Event("CornerstoneToolsDragStart", touchEventDetail);
            $(touchEventDetail.element).trigger(event, touchEventDetail);
             lastPoints = cornerstoneTools.copyPoints(startPoints);
             //return cornerstoneTools.pauseEvent(e);
-         
+
 
              if(event.isImmediatePropagationStopped() === false)
             {
                 // no tools responded to this event, give the active tool a chance
-                 
+
                 if (activateMouseDown(touchEventDetail) === true)
-                {                      
+                {
                     return cornerstoneTools.pauseEvent(e);
                 }
-             
+
             }
-            
-         
+
+
 
         }
 //        else if (e.type === 'dragstart')
@@ -1973,7 +1995,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 //        }
 
         else if (e.type === 'drag')
-        {    
+        {
             // calculate our current points in page and image coordinates
              currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
@@ -1985,7 +2007,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
                 image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
-          
+
              eventData={ viewport: cornerstone.getViewport(element),
                         image: cornerstone.getEnabledElement(element).image,
                         element: element,
@@ -1996,13 +2018,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                         };
             $(touchEventDetail.element).trigger("CornerstoneToolsTouchDrag", eventData);
 
-              
+
            lastPoints = cornerstoneTools.copyPoints(currentPoints);
-            
+
 
         } else if (e.type === 'dragend')
         {
-     
+
 
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
@@ -2015,7 +2037,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image)
             };
 
-           
+
 
               eventData = {
                 event: e,
@@ -2034,7 +2056,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         } else {
             return;
         }
-        
+
 
         processingTouch = false;
 
@@ -2070,7 +2092,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/inputSources/touchInput.js
 
 // Begin Source: src/manipulators/anyHandlesOutsideImage.js
@@ -2107,7 +2129,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
 // End Source; src/manipulators/anyHandlesOutsideImage.js
 
 // Begin Source: src/manipulators/drawHandles.js
@@ -2149,7 +2171,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/manipulators/drawHandles.js
 
 // Begin Source: src/manipulators/handleActivator.js
@@ -2210,7 +2232,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     cornerstoneTools.handleActivator = handleActivator;
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
 // End Source; src/manipulators/handleActivator.js
 
 // Begin Source: src/manipulators/handleMover.js
@@ -2249,7 +2271,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.moveHandle = moveHandle;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/manipulators/handleMover.js
 
 // Begin Source: src/manipulators/handleTouchMove.js
@@ -2291,7 +2313,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/manipulators/handleTouchMove.js
 
 // Begin Source: src/manipulators/moveAllHandles.js
@@ -2375,7 +2397,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/manipulators/moveAllHandles.js
 
 // Begin Source: src/manipulators/touchmoveAllHandles.js
@@ -2456,7 +2478,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     cornerstoneTools.touchmoveAllHandles = touchmoveAllHandles;
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+
 // End Source; src/manipulators/touchmoveAllHandles.js
 
 // Begin Source: src/metaData.js
@@ -2794,7 +2816,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.stopClip = stopClip;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/stackTools/playClip.js
 
 // Begin Source: src/stackTools/stackPrefetch.js
@@ -2898,7 +2920,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/stackTools/stackPrefetch.js
 
 // Begin Source: src/stackTools/stackScroll.js
@@ -3049,7 +3071,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/stackTools/stackScroll.js
 
 // Begin Source: src/stateManagement/imageIdSpecificStateManager.js
@@ -3064,11 +3086,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // This implements an imageId specific tool state management strategy.  This means that
     // measurements data is tied to a specific imageId and only visible for enabled elements
     // that are displaying that imageId.
-    
+
     function activeToolcoordinate(){
       var cooordsData="",selectionColor="greenyellow",toolsColor="white";
         function setActiveToolCoords(eventData){
-             
+
               cooordsData=eventData.currentPoints.image;
         }
         function getActiveToolCoords(){
@@ -3086,7 +3108,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         function getToolcolor(){
           return toolsColor;
         }
-      
+
          var activeTool = {
             setToolColor:setToolcolor,
             setActiveColor:setActivecolor,
@@ -3165,7 +3187,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
- 
+
 // End Source; src/stateManagement/imageIdSpecificStateManager.js
 
 // Begin Source: src/stateManagement/stackSpecificStateManager.js
@@ -3259,7 +3281,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/stateManagement/stackSpecificStateManager.js
 
 // Begin Source: src/stateManagement/toolStateManager.js
@@ -3324,6 +3346,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         enabledImage.toolStateManager = toolStateManager;
     }
 
+    // Clears all the measurement data associated with the element
+    // This would also clear the currently drawn measurements on the viewport.
+    function clearAllToolData(element) {
+      var tools   = cornerstoneTools.toolsDirectory;
+      var manager = cornerstoneTools.getElementToolStateManager(element);
+
+      for (var tool in tools){
+        var toolType = tools[tool];
+        var toolData = manager.get(element, toolType);
+
+        if (toolData) { toolData.data = []; }
+      }
+    }
+
     /*
      function getElementToolStateManager(element)
      {
@@ -3338,9 +3374,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.removeToolState = removeToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
+    cornerstoneTools.clearAllToolData = clearAllToolData;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/stateManagement/toolStateManager.js
 
 // Begin Source: src/synchronization/panZoomSynchronizer.js
@@ -3722,7 +3759,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.roundToDecimal = roundToDecimal;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/util/RoundToDecimal.js
 
 // Begin Source: src/util/copyPoints.js
@@ -3750,7 +3787,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
+}($, cornerstone, cornerstoneMath, cornerstoneTools));
 // End Source; src/util/copyPoints.js
 
 // Begin Source: src/util/drawEllipse.js
@@ -3787,7 +3824,7 @@ var cornerstoneTools = (function (cornerstoneTools) {
     cornerstoneTools.drawEllipse = drawEllipse;
 
     return cornerstoneTools;
-}(cornerstoneTools)); 
+}(cornerstoneTools));
 // End Source; src/util/drawEllipse.js
 
 // Begin Source: src/util/isMouseButtonEnabled.js
@@ -3810,7 +3847,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.isMouseButtonEnabled = isMouseButtonEnabled;
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/util/isMouseButtonEnabled.js
 
 // Begin Source: src/util/pauseEvent.js
@@ -3846,7 +3883,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneTools)); 
+}($, cornerstone, cornerstoneTools));
 // End Source; src/util/pauseEvent.js
 
 // Begin Source: src/util/pointProjector.js
@@ -3935,5 +3972,6 @@ var cornerstone = (function (cornerstone) {
     cornerstoneTools.setContextToDisplayFontSize = setContextToDisplayFontSize;
 
     return cornerstone;
-}(cornerstone)); 
+}(cornerstone));
 // End Source; src/util/setContextToDisplayFontSize.js
+
