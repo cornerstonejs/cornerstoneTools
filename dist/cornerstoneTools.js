@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.5.1 - 2015-02-23 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-02-24 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2872,6 +2872,81 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
  
 // End Source; src/manipulators/touchmoveAllHandles.js
 
+// Begin Source: src/measurementManager/lineSample.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This object manages a collection of measurements
+    function LineSampleMeasurement() {
+
+        var that = this;
+        that.samples = [];
+
+        // adds an element as both a source and a target
+        this.set = function(samples) {
+            that.samples = samples;
+            // fire event
+            $(that).trigger("CornerstoneLineSampleUpdated");
+        };
+    }
+
+    // module/private exports
+    cornerstoneTools.LineSampleMeasurement = LineSampleMeasurement;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/measurementManager/lineSample.js
+
+// Begin Source: src/measurementManager/measurementManager.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This object manages a collection of measurements
+    function MeasurementManager() {
+
+        var that = this;
+        that.measurements = [];
+
+        // adds an element as both a source and a target
+        this.add = function(measurement) {
+            var index = that.measurements.push(measurement);
+            // fire event
+            var eventDetail = {
+                index: index,
+                measurement: measurement
+            };
+            $(that).trigger("CornerstoneMeasurementAdded", eventDetail);
+        };
+
+        this.remove = function(index) {
+            var measurement = that.measurements[index];
+            that.measurements.splice(index, 1);
+            // fire event
+            var eventDetail = {
+                index: index,
+                measurement: measurement
+            };
+            $(that).trigger("CornerstoneMeasurementRemoved", eventDetail);
+        };
+
+    }
+
+    // module/private exports
+    cornerstoneTools.MeasurementManager = new MeasurementManager();
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/measurementManager/measurementManager.js
+
 // Begin Source: src/metaData.js
 // this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
 // so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
@@ -3342,8 +3417,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var viewport = cornerstone.getViewport(element);
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
-                stackData.currentImageIdIndex = newImageIdIndex;
-                cornerstone.displayImage(element, image, viewport);
+                stackData = toolData.data[0];
+                if(stackData.newImageIdIndex !== newImageIdIndex) {
+                    stackData.currentImageIdIndex = newImageIdIndex;
+                    cornerstone.displayImage(element, image, viewport);
+                }
             });
         }
     }
@@ -3401,6 +3479,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex]).then(function(image) {
                     // only display this image if it is the current one to be displayed - it may not
                     // be if the user scrolls quickly
+                    var stackData = toolData.data[0];
                     if(stackData.currentImageIdIndex === imageIdIndex) {
                         cornerstone.displayImage(eventData.element, image, viewport);
                     }
@@ -3449,12 +3528,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     cornerstone.displayImage(mouseMoveData.element, image, viewport);
                 });
             }
-
         }
 
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
-
 
     // module/private exports
     cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
@@ -3674,6 +3751,100 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/stackSpecificStateManager.js
+
+// Begin Source: src/stateManagement/timeSeriesSpecificStateManager.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    // This implements an Stack specific tool state management strategy.  This means
+    // that tool data is shared between all imageIds in a given stack
+    function newTimeSeriesSpecificToolStateManager(toolTypes, oldStateManager) {
+        var toolState = {};
+
+        // here we add tool state, this is done by tools as well
+        // as modules that restore saved state
+        function addStackSpecificToolState(element, toolType, data)
+        {
+            // if this is a tool type to apply to the stack, do so
+            if(toolTypes.indexOf(toolType) >= 0) {
+                var enabledImage = cornerstone.getEnabledElement(element);
+
+                // if we don't have tool state for this type of tool, add an empty object
+                if(toolState.hasOwnProperty(toolType) === false)
+                {
+                    toolState[toolType] = {
+                        data: []
+                    };
+                }
+                var toolData = toolState[toolType];
+
+                // finally, add this new tool to the state
+                toolData.data.push(data);
+            }
+            else {
+                // call the imageId specific tool state manager
+                return oldStateManager.add(element, toolType, data);
+            }
+        }
+
+        // here you can get state - used by tools as well as modules
+        // that save state persistently
+        function getStackSpecificToolState(element, toolType)
+        {
+            // if this is a tool type to apply to the stack, do so
+            if(toolTypes.indexOf(toolType) >= 0) {
+                // if we don't have tool state for this type of tool, add an empty object
+                if(toolState.hasOwnProperty(toolType) === false)
+                {
+                    toolState[toolType] = {
+                        data: []
+                    };
+                }
+                var toolData = toolState[toolType];
+                return toolData;
+            }
+            else
+            {
+                // call the imageId specific tool state manager
+                return oldStateManager.get(element, toolType);
+            }
+        }
+
+        var imageIdToolStateManager = {
+            get: getStackSpecificToolState,
+            add: addStackSpecificToolState
+        };
+        return imageIdToolStateManager;
+    }
+
+    var timeSeriesStateManagers = [];
+
+    function addTimeSeriesStateManager(element, tools)
+    {
+        tools = tools || ['timeSeries'];
+        var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
+        if(oldStateManager === undefined) {
+            oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
+        }
+
+        var timeSeriesSpecificStateManager = cornerstoneTools.newTimeSeriesSpecificToolStateManager(tools, oldStateManager);
+        timeSeriesStateManagers.push(timeSeriesSpecificStateManager);
+        cornerstoneTools.setElementToolStateManager(element, timeSeriesSpecificStateManager);
+    }
+
+    // module/private exports
+    cornerstoneTools.newTimeSeriesSpecificToolStateManager = newTimeSeriesSpecificToolStateManager;
+    cornerstoneTools.addTimeSeriesStateManager = addTimeSeriesStateManager;
+
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/stateManagement/timeSeriesSpecificStateManager.js
 
 // Begin Source: src/stateManagement/toolStateManager.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -4115,6 +4286,379 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/synchronization/wwwcSynchronizer.js
+
+// Begin Source: src/timeSeriesTools/ProbeTool4D.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "probe4D";
+
+    function updateLineSample(measurementData)
+    {
+        var samples = [];
+
+        measurementData.timeSeries.stacks.forEach(function(stack) {
+            cornerstone.loadAndCacheImage(stack.imageIds[measurementData.imageIdIndex]).then(function(image) {
+                var offset = Math.round(measurementData.handles.end.x) + Math.round(measurementData.handles.end.y) * image.width;
+                var sample = image.getPixelData()[offset];
+                samples.push(sample);
+                //console.log(sample);
+            });
+        });
+        measurementData.lineSample.set(samples);
+    }
+
+    ///////// BEGIN ACTIVE TOOL ///////
+    function createNewMeasurement(mouseEventData)
+    {
+        var timeSeriestoolData = cornerstoneTools.getToolState(mouseEventData.element, 'timeSeries');
+        if(timeSeriestoolData === undefined || timeSeriestoolData.data === undefined || timeSeriestoolData.data.length === 0) {
+            return;
+        }
+        var timeSeries = timeSeriestoolData.data[0];
+
+        // create the measurement data for this tool with the end handle activated
+        var measurementData = {
+            timeSeries: timeSeries,
+            lineSample : new cornerstoneTools.LineSampleMeasurement(),
+            imageIdIndex: timeSeries.stacks[timeSeries.currentStackIndex].currentImageIdIndex,
+            visible: true,
+            handles: {
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
+                }
+            }
+        };
+        updateLineSample(measurementData);
+        cornerstoneTools.MeasurementManager.add(measurementData);
+        return measurementData;
+    }
+    ///////// END ACTIVE TOOL ///////
+
+
+    ///////// BEGIN IMAGE RENDERING ///////
+
+    function onImageRendered(e, eventData) {
+
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+
+        // we have tool data for this element - iterate over each one and draw it
+        var context = eventData.canvasContext.canvas.getContext("2d");
+        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        var color="white";
+        for(var i=0; i < toolData.data.length; i++) {
+            context.save();
+            var data = toolData.data[i];
+
+            // draw the handles
+            context.beginPath();
+            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
+            context.stroke();
+
+            // Draw text
+            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
+            context.font = "" + fontParameters.fontSize + "px Arial";
+
+            // translate the x/y away from the cursor
+            var x = Math.round(data.handles.end.x);
+            var y = Math.round(data.handles.end.y);
+            textX = data.handles.end.x + 3;
+            textY = data.handles.end.y - 3;
+
+            var textX = textX / fontParameters.fontScale;
+            var textY = textY / fontParameters.fontScale;
+
+            context.fillStyle = "white";
+
+            context.fillText("" + x + "," + y, textX, textY);
+
+            context.restore();
+        }
+    }
+    ///////// END IMAGE RENDERING ///////
+
+
+    // module exports
+    cornerstoneTools.probeTool4D = cornerstoneTools.mouseButtonTool({
+        createNewMeasurement : createNewMeasurement,
+        onImageRendered: onImageRendered,
+        toolType : toolType
+    });
+
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+ 
+// End Source; src/timeSeriesTools/ProbeTool4D.js
+
+// Begin Source: src/timeSeriesTools/timeSeries.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "timeSeriesScroll";
+
+    function incrementTimePoint(element, timePoints, wrap)
+    {
+        var toolData = cornerstoneTools.getToolState(element, 'timeSeries');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        var timeSeriesData = toolData.data[0];
+        var currentStack = timeSeriesData.stacks[timeSeriesData.currentStackIndex];
+        var currentImageIdIndex = currentStack.currentImageIdIndex;
+        var newStackIndex = timeSeriesData.currentStackIndex + timePoints;
+
+        // loop around if we go outside the stack
+        if(wrap) {
+            if (newStackIndex >= timeSeriesData.stacks.length)
+            {
+                newStackIndex =0;
+            }
+            if(newStackIndex < 0) {
+                newStackIndex = timeSeriesData.stacks.length -1;
+            }
+        }
+        else {
+            newStackIndex = Math.min(timeSeriesData.stacks.length - 1, newStackIndex);
+            newStackIndex = Math.max(0, newStackIndex);
+        }
+
+        if(newStackIndex !== timeSeriesData.currentStackIndex)
+        {
+            var viewport = cornerstone.getViewport(element);
+            var newStack = timeSeriesData.stacks[newStackIndex];
+            cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]).then(function(image) {
+                if(timeSeriesData.currentImageIdIndex !== currentImageIdIndex) {
+                    newStack.currentImageIdIndex = currentImageIdIndex;
+                    timeSeriesData.currentStackIndex = newStackIndex;
+                    //var stackToolData = cornerstoneTools.getToolState(element, 'stack');
+                    //stackToolData[0] = newStack;
+                    cornerstone.displayImage(element, image, viewport);
+                }
+            });
+        }
+    }
+
+    // module/private exports
+    cornerstoneTools.incrementTimePoint = incrementTimePoint;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/timeSeriesTools/timeSeries.js
+
+// Begin Source: src/timeSeriesTools/timeSeriesPlayer.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "timeSeriesPlayer";
+
+    /**
+     * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
+     * optional and defaults to 30 if not specified.  A negative framesPerSecond will play the clip in reverse.
+     * The element must be a stack of images
+     * @param element
+     * @param framesPerSecond
+     */
+    function playClip(element, framesPerSecond)
+    {
+        if(element === undefined) {
+            throw "playClip: element must not be undefined";
+        }
+        if(framesPerSecond === undefined) {
+            framesPerSecond = 30;
+        }
+
+        var timeSeriesToolData = cornerstoneTools.getToolState(element, 'timeSeries');
+        if (timeSeriesToolData === undefined || timeSeriesToolData.data === undefined || timeSeriesToolData.data.length === 0) {
+            return;
+        }
+        var timeSeriesData = timeSeriesToolData.data[0];
+
+        var playClipToolData = cornerstoneTools.getToolState(element, toolType);
+        var playClipData;
+        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+            playClipData = {
+                intervalId : undefined,
+                framesPerSecond: framesPerSecond,
+                lastFrameTimeStamp: undefined,
+                frameRate: 0
+            };
+            cornerstoneTools.addToolState(element, toolType, playClipData);
+        }
+        else {
+            playClipData = playClipToolData.data[0];
+            playClipData.framesPerSecond = framesPerSecond;
+        }
+
+        // if already playing, do not set a new interval
+        if(playClipData.intervalId !== undefined) {
+            return;
+        }
+
+        playClipData.intervalId = setInterval(function() {
+            var currentImageIdIndex = timeSeriesData.stacks[timeSeriesData.currentStackIndex].currentImageIdIndex;
+
+            var newStackIndex = timeSeriesData.currentStackIndex;
+            if(playClipData.framesPerSecond > 0) {
+                cornerstoneTools.incrementTimePoint(element, 1, true);
+            } else {
+                cornerstoneTools.incrementTimePoint(element, -1,true);
+            }
+
+
+
+        }, 1000/Math.abs(playClipData.framesPerSecond));
+    }
+
+    /**
+     * Stops an already playing clip.
+     * * @param element
+     */
+    function stopClip(element)
+    {
+        var playClipToolData = cornerstoneTools.getToolState(element, toolType);
+        var playClipData;
+        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+            return;
+        }
+        else {
+            playClipData = playClipToolData.data[0];
+        }
+
+        clearInterval(playClipData.intervalId);
+        playClipData.intervalId = undefined;
+    }
+
+
+    // module/private exports
+    cornerstoneTools.timeSeriesPlayer = {
+        start : playClip,
+        stop: stopClip
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/timeSeriesTools/timeSeriesPlayer.js
+
+// Begin Source: src/timeSeriesTools/timeSeriesScroll.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "timeSeriesScroll";
+
+    function mouseUpCallback(e, eventData)
+    {
+        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+    }
+
+    function mouseDownCallback(e, eventData)
+    {
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+
+            var mouseDragEventData = {
+                deltaY : 0,
+                options: e.data.options
+            };
+            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            e.stopImmediatePropagation();
+            return false;
+        }
+    }
+
+    function mouseDragCallback(e, eventData)
+    {
+        e.data.deltaY += eventData.deltaPoints.page.y;
+
+        var toolData = cornerstoneTools.getToolState(eventData.element, 'timeSeries');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+        var timeSeriesData = toolData.data[0];
+
+        var pixelsPerTimeSeries = $(eventData.element).height() / timeSeriesData.stacks.length ;
+        if(e.data.options !== undefined && e.data.options.timeSeriesScrollSpeed !== undefined) {
+            pixelsPerTimeSeries = e.data.options.timeSeriesScrollSpeed;
+        }
+
+        if(e.data.deltaY >=pixelsPerTimeSeries || e.data.deltaY <= -pixelsPerTimeSeries)
+        {
+            var timeSeriesDelta = Math.round(e.data.deltaY / pixelsPerTimeSeries);
+            var timeSeriesDeltaMod = e.data.deltaY % pixelsPerTimeSeries;
+            cornerstoneTools.incrementTimePoint(eventData.element, timeSeriesDelta);
+            e.data.deltaY = timeSeriesDeltaMod;
+        }
+
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+    function mouseWheelCallback(e, eventData)
+    {
+        var images = -eventData.direction;
+        cornerstoneTools.incrementTimePoint(eventData.element, images);
+    }
+
+    function onDrag(e) {
+        var mouseMoveData = e.originalEvent.detail;
+        var eventData = {
+            deltaY : 0
+        };
+        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
+
+        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        if(eventData.deltaY >=3 || eventData.deltaY <= -3)
+        {
+            var timeSeriesDelta = eventData.deltaY / 3;
+            var timeSeriesDeltaMod = eventData.deltaY % 3;
+            cornerstoneTools.setTimePoint(eventData.element, timeSeriesDelta);
+            eventData.deltaY = timeSeriesDeltaMod;
+        }
+
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+
+    // module/private exports
+    cornerstoneTools.timeSeriesScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    cornerstoneTools.timeSeriesScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+    cornerstoneTools.timeSeriesScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/timeSeriesTools/timeSeriesScroll.js
 
 // Begin Source: src/util/RoundToDecimal.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {

@@ -58,6 +58,11 @@ Features Targeted for V1.0
   * Scroll
   * Cine / Playing Clips
   * Cross reference lines
+* Tools that work with timeseries (4D)
+  * Play
+  * Scroll
+  * Probe
+* Measurement Manager
 * Synchronization tools
   * Stack by image index
   * Stack by image position
