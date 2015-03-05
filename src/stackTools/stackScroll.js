@@ -24,9 +24,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if(newImageIdIndex !== stackData.currentImageIdIndex)
         {
             var viewport = cornerstone.getViewport(element);
+
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex], element).then(function(image) {
-                stackData.currentImageIdIndex = newImageIdIndex;
-                cornerstone.displayImage(element, image, viewport);
+                stackData = toolData.data[0];
+                if(stackData.newImageIdIndex !== newImageIdIndex) {
+                    stackData.currentImageIdIndex = newImageIdIndex;
+                    cornerstone.displayImage(element, image, viewport);
+                }
             });
         }
     }
@@ -84,6 +88,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 cornerstone.loadAndCacheImage(stackData.imageIds[imageIdIndex], eventData.element).then(function(image) {
                     // only display this image if it is the current one to be displayed - it may not
                     // be if the user scrolls quickly
+                    var stackData = toolData.data[0];
                     if(stackData.currentImageIdIndex === imageIdIndex) {
                         cornerstone.displayImage(eventData.element, image, viewport);
                     }
@@ -135,12 +140,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     }
                 });
             }
-
         }
 
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
-
 
     // module/private exports
     cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);

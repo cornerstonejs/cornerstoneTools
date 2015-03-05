@@ -141,6 +141,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 width: width,
                 height: height
             };
+
             var meanStdDev = calculateMeanStdDev(pixels, ellipse);
             var area = (width * eventData.image.columnPixelSpacing) * (height * eventData.image.rowPixelSpacing);
             var areaText = "Area: " + area.toFixed(2) + " mm^2";

@@ -8,7 +8,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // This implements an Stack specific tool state management strategy.  This means
     // that tool data is shared between all imageIds in a given stack
-    function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
+    function newTimeSeriesSpecificToolStateManager(toolTypes, oldStateManager) {
         var toolState = {};
 
         // here we add tool state, this is done by tools as well
@@ -67,25 +67,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return imageIdToolStateManager;
     }
 
-    var stackStateManagers = [];
+    var timeSeriesStateManagers = [];
 
-    function addStackStateManager(element)
+    function addTimeSeriesStateManager(element, tools)
     {
+        tools = tools || ['timeSeries'];
         var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
         if(oldStateManager === undefined) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackScroll', 'playClip', 'volume', 'slab', 'stackPrefetch', 'referenceLines'];
-
-        var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
-        stackStateManagers.push(stackSpecificStateManager);
-        cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
+        var timeSeriesSpecificStateManager = cornerstoneTools.newTimeSeriesSpecificToolStateManager(tools, oldStateManager);
+        timeSeriesStateManagers.push(timeSeriesSpecificStateManager);
+        cornerstoneTools.setElementToolStateManager(element, timeSeriesSpecificStateManager);
     }
 
     // module/private exports
-    cornerstoneTools.newStackSpecificToolStateManager = newStackSpecificToolStateManager;
-    cornerstoneTools.addStackStateManager = addStackStateManager;
+    cornerstoneTools.newTimeSeriesSpecificToolStateManager = newTimeSeriesSpecificToolStateManager;
+    cornerstoneTools.addTimeSeriesStateManager = addTimeSeriesStateManager;
 
 
     return cornerstoneTools;
