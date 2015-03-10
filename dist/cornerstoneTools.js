@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.0 - 2015-03-09 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-03-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3498,6 +3498,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var prefetchData = cornerstoneTools.getToolState(eventData.element, 'stackPrefetch');
         var imageLoadedIndex = prefetchData && prefetchData.data && prefetchData.data[0] && prefetchData.data[0].prefetchImageIdIndex;
 
+        console.log('loaded:', imageLoadedIndex);
+
         // draw loaded images indicator
         if (typeof imageLoadedIndex !== 'undefined'){
             setLoadedMarker(context, width, height, imageLoadedIndex, totalImages);
@@ -3679,7 +3681,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var stack = stackData.data[0];
 
-        if(stack.enabled === false) {
+        if(stackPrefetch.enabled === false) {
             return;
         }
 
@@ -3703,7 +3705,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         loadImageDeferred.then(function(image)
         {
             // if we are no longer enabled, do not try to prefetch again
-            if(stack.enabled === false) {
+            if(stackPrefetch.enabled === false) {
                 return;
             }
 
@@ -4324,6 +4326,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // as modules that restore saved state
     function addToolState(element, toolType, data)
     {
+        console.log('add tool state', element, toolType, data);
         var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image
