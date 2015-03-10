@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.0 - 2015-03-09 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-03-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3679,7 +3679,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var stack = stackData.data[0];
 
-        if(stack.enabled === false) {
+        if(stackPrefetch.enabled === false) {
             return;
         }
 
@@ -3703,7 +3703,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         loadImageDeferred.then(function(image)
         {
             // if we are no longer enabled, do not try to prefetch again
-            if(stack.enabled === false) {
+            if(stackPrefetch.enabled === false) {
                 return;
             }
 
