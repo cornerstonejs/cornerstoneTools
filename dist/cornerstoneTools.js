@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.0 - 2015-03-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-03-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3955,18 +3955,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.globalImageIdSpecificToolStateManager.setToolState(annotations);
 
         // update image to show any annotations on the currently displayed image
-        if (cornerstone.getEnabledElement(element).image){
-            cornerstone.updateImage(element);
-        }
+        // if no element is passed, loop through all enabled
+        var enabledElements = element ? [cornerstone.getEnabledElement(element)] : cornerstone.getEnabledElements();
+        enabledElements.forEach(function(enabledElement){
+            if (enabledElement.image){
+                cornerstone.updateImage(enabledElement.element);
+            }
+        });
     }
 
     function clearAnnotations(element) {
 
         cornerstoneTools.globalImageIdSpecificToolStateManager.setToolState({});
 
-        if (cornerstone.getEnabledElement(element).image){
-            cornerstone.updateImage(element);
-        }
+        var enabledElements = element ? [cornerstone.getEnabledElement(element)] : cornerstone.getEnabledElements();
+        enabledElements.forEach(function(enabledElement){
+            if (enabledElement.image){
+                cornerstone.updateImage(enabledElement.element);
+            }
+        });
     }
 
     cornerstoneTools.getAnnotations = getAnnotations;
