@@ -3498,6 +3498,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var prefetchData = cornerstoneTools.getToolState(eventData.element, 'stackPrefetch');
         var imageLoadedIndex = prefetchData && prefetchData.data && prefetchData.data[0] && prefetchData.data[0].prefetchImageIdIndex;
 
+        console.log('loaded:', imageLoadedIndex);
+
         // draw loaded images indicator
         if (typeof imageLoadedIndex !== 'undefined'){
             setLoadedMarker(context, width, height, imageLoadedIndex, totalImages);
@@ -4331,6 +4333,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // as modules that restore saved state
     function addToolState(element, toolType, data)
     {
+        console.log('add tool state', element, toolType, data);
         var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image
