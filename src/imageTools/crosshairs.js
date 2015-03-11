@@ -31,19 +31,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var syncContext = toolData.data[0].synchronizationContext;
         var enabledElements = syncContext.getSourceElements();
 
-        var minDistance = Number.MAX_VALUE;
-        var newImageIdIndex = -1;
-
         // Iterate over each synchronized element
         $.each(enabledElements, function(index, targetElement) {
             // don't do anything if the target is the same as the source
             if (targetElement === sourceElement) {
-                return false; // Same as 'continue' in a normal for loop
+                return; // Same as 'continue' in a normal for loop
             }
-            
+            var minDistance = Number.MAX_VALUE;
+            var newImageIdIndex = -1;
+
             var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
             if (stackToolDataSource === undefined) {
-                return false;
+                return;  // Same as 'continue' in a normal for loop
             }
             
             var stackData = stackToolDataSource.data[0];
@@ -52,7 +51,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             $.each(stackData.imageIds, function(index, imageId) {
                 var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
                 var imagePosition = imagePlane.imagePositionPatient;
-                var distance = imagePosition.distanceToSquared(patientPoint);
+                var row = imagePlane.rowCosines.clone();
+                var column = imagePlane.columnCosines.clone();
+                var normal = column.clone().cross(row.clone());
+                var distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
                 //console.log(index + '=' + distance);
                 if(distance < minDistance) {
                     minDistance = distance;
@@ -66,7 +68,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
 
             // Switch the loaded image to the required image
-            if(newImageIdIndex !== -1) {
+            if(newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 //console.log('Switching to ' + newImageIdIndex);
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     var viewport = cornerstone.getViewport(targetElement);
@@ -76,6 +78,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
         });
     }
+
     function mouseUpCallback(e, eventData)
     {
         $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
