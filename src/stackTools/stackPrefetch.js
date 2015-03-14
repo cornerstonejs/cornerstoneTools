@@ -25,7 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var stack = stackData.data[0];
 
-        if(stack.enabled === false) {
+        if(stackPrefetch.enabled === false) {
             return;
         }
 
@@ -44,12 +44,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageId = stack.imageIds[stackPrefetchImageIdIndex];
 
-        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
+        var loadImageDeferred = cornerstone.loadAndCacheImage(imageId, element);
 
-        loadImageDeferred.done(function(image)
+        loadImageDeferred.then(function(image)
         {
             // if we are no longer enabled, do not try to prefetch again
-            if(stack.enabled === false) {
+            if(stackPrefetch.enabled === false) {
                 return;
             }
 
@@ -63,12 +63,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function enable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: true
             };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+            cornerstoneTools.addToolState(element, toolType, data);
         }
 
         prefetch(element);
@@ -77,16 +77,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function disable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
+        if(stackPrefetchData.data.length === 0) {
+            var data = {
                 prefetchImageIdIndex : 0,
                 enabled: false
             };
+
             cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);
+
         }
         else
         {
-            stackPrefetchData.enabled = false;
+            stackPrefetchData.data[0].enabled = false;
         }
     }
 

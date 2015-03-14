@@ -13,8 +13,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseDownCallback(e, eventData)
-    {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    {   
+        var enabled = false;
+
+        if ($.isArray(e.data.mouseButtonMask)){
+            enabled = e.data.mouseButtonMask
+                        .filter(function(n) { return eventData.buttonsDown.indexOf(n) != -1; })
+                        .length === e.data.mouseButtonMask.length;
+        } else {
+            enabled = cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask);
+        }
+        if(enabled) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event

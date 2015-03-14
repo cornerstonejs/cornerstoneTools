@@ -52,7 +52,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 toolState[enabledImage.image.imageId] = {};
             }
@@ -77,7 +77,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, return undefined
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            if(!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false)
             {
                 return undefined;
             }
@@ -92,9 +92,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return toolData;
         }
 
+        // get private toolstate
+        function getToolState()
+        {
+            return toolState;
+        }
+
+        // set private toolstate
+        function setToolState(state)
+        {
+            if (!state || !$.isPlainObject(state)){
+                return false;
+            }
+
+            toolState = state;
+        }
+
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState
+            add: addImageIdSpecificToolState,
+            getToolState: getToolState,
+            setToolState: setToolState
         };
         return imageIdToolStateManager;
     }
@@ -102,7 +120,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-   var activetoolsData=activeToolcoordinate();
+    var activetoolsData=activeToolcoordinate();
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;

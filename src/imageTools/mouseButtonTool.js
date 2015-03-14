@@ -204,7 +204,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-            cornerstone.updateImage(element);
+            // causing big delay when switching tools for large images, i.e. mammograms
+            //cornerstone.updateImage(element);
         }
 
         var toolInterface = {
