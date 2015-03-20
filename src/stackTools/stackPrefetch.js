@@ -25,7 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var stack = stackData.data[0];
 
-        if(stack.enabled === false) {
+        if(stackPrefetch.enabled === false) {
             return;
         }
 
@@ -49,7 +49,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         loadImageDeferred.done(function(image)
         {
             // if we are no longer enabled, do not try to prefetch again
-            if(stack.enabled === false) {
+            if(stackPrefetch.enabled === false) {
                 return;
             }
 
