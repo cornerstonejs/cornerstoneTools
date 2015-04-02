@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.0 - 2015-03-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-04-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -824,6 +824,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             activate: function(element, mouseButtonMask) {
                 $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
                 var eventData = {
+                    deltaY : 0
                 };
                 $(element).on("CornerstoneToolsTouchDrag", eventData, touchDragCallback);
             },
@@ -3498,8 +3499,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var prefetchData = cornerstoneTools.getToolState(eventData.element, 'stackPrefetch');
         var imageLoadedIndex = prefetchData && prefetchData.data && prefetchData.data[0] && prefetchData.data[0].prefetchImageIdIndex;
 
-        console.log('loaded:', imageLoadedIndex);
-
         // draw loaded images indicator
         if (typeof imageLoadedIndex !== 'undefined'){
             setLoadedMarker(context, width, height, imageLoadedIndex, totalImages);
@@ -3868,10 +3867,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(eventData.element, images);
     }
 
-    function onDrag(e, mouseMoveData) {
-        var eventData = {
+    function onDrag(e, mouseMoveData, data) {
+        /*var eventData = {
             deltaY : 0
-        };
+        };*/
+        var eventData = e.data;
+
         eventData.deltaY += mouseMoveData.deltaPoints.page.y;
 
         var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
@@ -4333,7 +4334,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // as modules that restore saved state
     function addToolState(element, toolType, data)
     {
-        console.log('add tool state', element, toolType, data);
         var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image

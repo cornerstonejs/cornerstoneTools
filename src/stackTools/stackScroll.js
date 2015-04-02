@@ -106,10 +106,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         scroll(eventData.element, images);
     }
 
-    function onDrag(e, mouseMoveData) {
-        var eventData = {
+    function onDrag(e, mouseMoveData, data) {
+        /*var eventData = {
             deltaY : 0
-        };
+        };*/
+        var eventData = e.data;
+
         eventData.deltaY += mouseMoveData.deltaPoints.page.y;
 
         var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');

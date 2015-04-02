@@ -15,6 +15,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             activate: function(element, mouseButtonMask) {
                 $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
                 var eventData = {
+                    deltaY : 0
                 };
                 $(element).on("CornerstoneToolsTouchDrag", eventData, touchDragCallback);
             },
