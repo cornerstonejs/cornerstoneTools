@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.0 - 2015-04-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.0 - 2015-04-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3423,7 +3423,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if(newImageIdIndex !== stackData.currentImageIdIndex)
             {
                 var viewport = cornerstone.getViewport(element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex], element).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                 });
