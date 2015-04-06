@@ -103,8 +103,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // draw dark fill outside the rectangle
         context.beginPath();
         context.strokeStyle = "transparent";
-        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.save();
+        context.setTransform(1,0,0,1,0,0);        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+        context.restore();
         context.stroke();
         context.fillStyle = "rgba(0,0,0,0.7)";
         context.fill();
