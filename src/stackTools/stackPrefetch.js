@@ -65,7 +65,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if(stackPrefetchData === undefined) {
             stackPrefetchData = {
-                prefetchImageIdIndex : 0,
+                prefetchImageIdIndex : -1,
                 enabled: true
             };
             cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
@@ -79,7 +79,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if(stackPrefetchData === undefined) {
             stackPrefetchData = {
-                prefetchImageIdIndex : 0,
+                prefetchImageIdIndex : -1,
                 enabled: false
             };
             cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);
