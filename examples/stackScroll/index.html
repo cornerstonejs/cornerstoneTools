@@ -14,11 +14,11 @@
 <div class="container">
     <div class="page-header">
         <h1>
-            Stack Scroll  Tools Example
+            Stack Scroll Tools Example
         </h1>
         <p>
-            This page contains an example of the probe tool.  Scroll by left click dragging or using
-            the mouse wheel
+            This page contains an example of the stackScroll tool, the play/stopClip tools, and integration with an HTML5 "range" input.
+            Scroll by left click dragging or using the mouse wheel
         </p>
 
     </div>
@@ -29,6 +29,7 @@
                 <a href="#" id="playClip" class="list-group-item">Play Clip</a>
                 <a href="#" id="stopClip" class="list-group-item">Stop Clip</a>
             </ul>
+            <input type="range" id="slice-range">
         </div>
         <div class="col-xs-6">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
@@ -49,7 +50,7 @@
                 <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
                     <div id="frameRate">FPS: </div>
                     <div id="zoomText">Zoom:</div>
-                    <div id="imageNumAndCount">Image #</div>
+                    <div id="imageNumAndCount"><span id="slice-range-value"></span></div>
                 </div>
                 <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
                     WW/WC:
@@ -109,15 +110,75 @@ is used by our example image loader-->
         imageIds: imageIds
     };
 
-    // image enable the dicomImage element and the mouse inputs
+    // Initialize range input
+    var range, max, slice, currentValueSpan;
+    range = document.getElementById('slice-range');
+
+    // Set minimum and maximum value
+    range.min = 0;
+    range.max = imageIds.length-1;
+
+    // Set current value
+    range.value = stack.currentImageIdIndex;
+
+    // Populate the current slice span
+    currentValueSpan = document.getElementById("slice-range-value");
+    currentValueSpan.textContent = "Image # " + range.value;
+
+    function selectImage(event){
+        var targetElement = document.getElementById("dicomImage");
+
+        // Get the range input value
+        var newImageIdIndex = event.currentTarget.value;
+
+        // Update the current slice span
+        var currentValueSpan = document.getElementById("slice-range-value");
+        currentValueSpan.textContent = "Image # " + newImageIdIndex;
+
+        // Get the stack data
+        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        if (stackToolDataSource === undefined) {
+            return;
+        }
+        var stackData = stackToolDataSource.data[0];
+
+        // Switch images, if necessary
+        if(newImageIdIndex !== stackData.currentImageIdIndex && stackData.imageIds[newImageIdIndex] !== undefined) {
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                var viewport = cornerstone.getViewport(targetElement);
+                stackData.currentImageIdIndex = newImageIdIndex;
+                cornerstone.displayImage(targetElement, image, viewport);
+            });
+        }
+    }
+
+    function onNewImage(e) {
+        var newImageIdIndex = stack.currentImageIdIndex;
+
+        // Update the slider value
+        var slider = document.getElementById('slice-range');
+        slider.value = newImageIdIndex;
+
+        // Populate the current slice span
+        var currentValueSpan = document.getElementById("slice-range-value");
+        currentValueSpan.textContent = newImageIdIndex;
+    }
+
+    // Bind the range slider events
+    $("#slice-range").on("input", selectImage);
+
+    // Bind the new image handler
+    $(element).on("CornerstoneNewImage", onNewImage);
+
+    // Enable the dicomImage element and the mouse inputs
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.mouseWheelInput.enable(element);
     cornerstone.loadImage(imageIds[0]).then(function(image) {
-        // display this image
+        // Display the image
         cornerstone.displayImage(element, image);
 
-        // set the stack as tool state
+        // Set the stack as tool state
         cornerstoneTools.addStackStateManager(element, ['stack', 'playClip']);
         cornerstoneTools.addToolState(element, 'stack', stack);
 
