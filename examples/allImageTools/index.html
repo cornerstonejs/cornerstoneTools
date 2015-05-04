@@ -62,6 +62,14 @@
                     WW/WC:
                 </div>
             </div>
+
+            <br/>
+            <button id="clearLength" type="button" class="btn">Clear Length</button>
+            <button id="clearProbe" type="button" class="btn">Clear Probe</button>
+            <button id="clearCircleroi" type="button" class="btn">Clear Elliptical ROI</button>
+            <button id="clearRectangleroi" type="button" class="btn">Clear Rectangle ROI</button>
+            <button id="clearAngle" type="button" class="btn">Clear Angle</button>
+            <button id="clearHighlight" type="button" class="btn">Clear Highlight</button>
         </div>
     </div>
     <div class="row">
@@ -208,6 +216,24 @@ is used by our example image loader-->
             activate('#highlight')
             disableAllTools();
             cornerstoneTools.highlight.activate(element, 1);
+        });
+        $('#clearLength').click(function() {
+            cornerstoneTools.length.clear(element);
+        });
+        $('#clearProbe').click(function() {
+            cornerstoneTools.probe.clear(element);
+        });
+        $('#clearCircleroi').click(function() {
+            cornerstoneTools.ellipticalRoi.clear(element);
+        });
+        $('#clearRectangleroi').click(function() {
+            cornerstoneTools.rectangleRoi.clear(element);
+        });
+        $('#clearAngle').click(function() {
+            cornerstoneTools.angle.clear(element);
+        });
+        $('#clearHighlight').click(function() {
+            cornerstoneTools.highlight.clear(element);
         });
     });
 

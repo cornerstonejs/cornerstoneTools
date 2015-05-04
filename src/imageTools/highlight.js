@@ -122,6 +122,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     var preventHandleOutsideImage = true;
@@ -131,14 +139,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
         pointInsideRect: pointInsideRect,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     }, preventHandleOutsideImage);
     cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
         pointInsideRect: pointInsideRect,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     }, preventHandleOutsideImage);
 
     return cornerstoneTools;

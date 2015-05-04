@@ -181,11 +181,19 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             cornerstone.updateImage(element);
         }
 
+        function clear(element) {
+            touchToolInterface.clearToolData(element);
+
+            cornerstone.updateImage(element);
+        }
+
+
         var toolInterface = {
             enable: enable,
             disable: disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            clear: clear
         };
 
         return toolInterface;

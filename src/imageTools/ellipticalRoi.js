@@ -199,19 +199,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.ellipticalRoi = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     });
       cornerstoneTools.ellipticalroi_Touch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
 
     return cornerstoneTools;
