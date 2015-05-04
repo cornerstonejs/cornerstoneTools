@@ -207,11 +207,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstone.updateImage(element);
         }
 
+        function clear(element) {
+            mouseToolInterface.clearToolData(element);
+
+            cornerstone.updateImage(element);
+        }
+
         var toolInterface = {
             enable: enable,
             disable : disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            clear: clear
         };
 
         return toolInterface;

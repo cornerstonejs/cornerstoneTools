@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-04-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-05-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -505,11 +505,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstone.updateImage(element);
         }
 
+        function clear(element) {
+            mouseToolInterface.clearToolData(element);
+
+            cornerstone.updateImage(element);
+        }
+
         var toolInterface = {
             enable: enable,
             disable : disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            clear: clear
         };
 
         return toolInterface;
@@ -733,11 +740,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstone.updateImage(element);
         }
 
+        function clear(element) {
+            mouseToolInterface.clearToolData(element);
+
+            cornerstone.updateImage(element);
+        }
+
         var toolInterface = {
             enable: enable,
             disable : disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            clear: clear
         };
 
         return toolInterface;
@@ -1037,11 +1051,19 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             cornerstone.updateImage(element);
         }
 
+        function clear(element) {
+            touchToolInterface.clearToolData(element);
+
+            cornerstone.updateImage(element);
+        }
+
+
         var toolInterface = {
             enable: enable,
             disable: disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            clear: clear
         };
 
         return toolInterface;
@@ -1193,19 +1215,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.angle = cornerstoneTools.mouseButtonTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
      cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
 
     return cornerstoneTools;
@@ -1554,19 +1586,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.ellipticalRoi = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     });
       cornerstoneTools.ellipticalroi_Touch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
 
     return cornerstoneTools;
@@ -1699,6 +1741,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     var preventHandleOutsideImage = true;
@@ -1708,14 +1758,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
         pointInsideRect: pointInsideRect,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     }, preventHandleOutsideImage);
     cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
         pointInsideRect: pointInsideRect,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     }, preventHandleOutsideImage);
 
     return cornerstoneTools;
@@ -1824,19 +1876,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.length = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     });
     cornerstoneTools.lengthTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
@@ -2016,17 +2078,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.probe = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     });
     cornerstoneTools.probeTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
 
     return cornerstoneTools;
@@ -2205,19 +2277,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
+    function clearToolData(element){
+        // if we have no toolData for this element, return immediately as there is nothing to do
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if(toolData === undefined) {
+            return;
+        }
+        toolData.data = [];
+    }
 
     // module exports
     cornerstoneTools.rectangleRoi = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool : pointNearTool,
-        toolType : toolType
+        toolType : toolType,
+        clearToolData: clearToolData
     });
     cornerstoneTools.rectangleRoiTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        clearToolData: clearToolData
     });
 
     return cornerstoneTools;
@@ -2294,6 +2376,32 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function correctShift(shift, viewport) {
+        //Apply rotations
+        if(viewport.rotation!==0) {
+            var angle = viewport.rotation * Math.PI/180;
+    
+            var cosA = Math.cos(angle);
+            var sinA = Math.sin(angle);
+    
+            var newX = shift.x * cosA - shift.y * sinA;
+            var newY = shift.x * sinA + shift.y * cosA;
+
+            shift.x = newX;
+            shift.y = newY;
+        }
+
+        //Apply Flips        
+        if(viewport.hflip) {
+            shift.x *=-1;
+        }
+        
+        if(viewport.vflip) {
+            shift.y *=-1;
+        }
+        return shift;
+    }
+
     function zoom(element, viewport, ticks)
     {
         // Calculate the new scale factor based on how far the mouse has changed
@@ -2329,10 +2437,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        eventData.viewport.translation.x -= eventData.startPoints.image.x - newCoords.x;
-        eventData.viewport.translation.y -= eventData.startPoints.image.y - newCoords.y;
+        var shift = {x: eventData.startPoints.image.x - newCoords.x,
+                     y: eventData.startPoints.image.y - newCoords.y};
+
+        shift = correctShift(shift, eventData.viewport);
+        eventData.viewport.translation.x -= shift.x;
+        eventData.viewport.translation.y -= shift.y;
         cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function mouseWheelCallback(e, eventData)
@@ -2343,7 +2455,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function touchPinchCallback(e, eventData)
     {
-        var pinchData =eventData;
+        var pinchData = eventData;
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
@@ -2356,10 +2468,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
-        dragData.viewport.translation.x -= dragData.startPoints.image.x - newCoords.x;
-        dragData.viewport.translation.y -= dragData.startPoints.image.y - newCoords.y;
+        var shift = {x: dragData.startPoints.image.x - newCoords.x,
+                     y: dragData.startPoints.image.y - newCoords.y};
+
+        shift = correctShift(shift, dragData.viewport);
+        dragData.viewport.translation.x -= shift.x;
+        dragData.viewport.translation.y -= shift.y;
         cornerstone.setViewport(dragData.element, dragData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
 
