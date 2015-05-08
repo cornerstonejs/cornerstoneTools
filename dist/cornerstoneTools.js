@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-04-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-05-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1655,12 +1655,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-        //activation color 
+        //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         context.save();
         var data = toolData.data[0];
-        
+
         var selectionColor="white",
             toolsColor="white";
 
@@ -1680,8 +1680,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // draw dark fill outside the rectangle
         context.beginPath();
         context.strokeStyle = "transparent";
+
         context.save();
-        context.setTransform(1,0,0,1,0,0);        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.setTransform(1,0,0,1,0,0);
+        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.restore();
+
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
         context.restore();
         context.stroke();
@@ -2294,6 +2298,32 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    function correctShift(shift, viewport) {
+        //Apply rotations
+        if(viewport.rotation!==0) {
+            var angle = viewport.rotation * Math.PI/180;
+    
+            var cosA = Math.cos(angle);
+            var sinA = Math.sin(angle);
+    
+            var newX = shift.x * cosA - shift.y * sinA;
+            var newY = shift.x * sinA + shift.y * cosA;
+
+            shift.x = newX;
+            shift.y = newY;
+        }
+
+        //Apply Flips        
+        if(viewport.hflip) {
+            shift.x *=-1;
+        }
+        
+        if(viewport.vflip) {
+            shift.y *=-1;
+        }
+        return shift;
+    }
+
     function zoom(element, viewport, ticks)
     {
         // Calculate the new scale factor based on how far the mouse has changed
@@ -2329,10 +2359,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        eventData.viewport.translation.x -= eventData.startPoints.image.x - newCoords.x;
-        eventData.viewport.translation.y -= eventData.startPoints.image.y - newCoords.y;
+        var shift = {x: eventData.startPoints.image.x - newCoords.x,
+                     y: eventData.startPoints.image.y - newCoords.y};
+
+        shift = correctShift(shift, eventData.viewport);
+        eventData.viewport.translation.x -= shift.x;
+        eventData.viewport.translation.y -= shift.y;
         cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function mouseWheelCallback(e, eventData)
@@ -2343,7 +2377,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function touchPinchCallback(e, eventData)
     {
-        var pinchData =eventData;
+        var pinchData = eventData;
         zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
     }
 
@@ -2356,10 +2390,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
-        dragData.viewport.translation.x -= dragData.startPoints.image.x - newCoords.x;
-        dragData.viewport.translation.y -= dragData.startPoints.image.y - newCoords.y;
+        var shift = {x: dragData.startPoints.image.x - newCoords.x,
+                     y: dragData.startPoints.image.y - newCoords.y};
+
+        shift = correctShift(shift, dragData.viewport);
+        dragData.viewport.translation.x -= shift.x;
+        dragData.viewport.translation.y -= shift.y;
         cornerstone.setViewport(dragData.element, dragData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
 
@@ -3494,7 +3532,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if(stackPrefetchData === undefined) {
             stackPrefetchData = {
-                prefetchImageIdIndex : 0,
+                prefetchImageIdIndex : -1,
                 enabled: true
             };
             cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
@@ -3508,7 +3546,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if(stackPrefetchData === undefined) {
             stackPrefetchData = {
-                prefetchImageIdIndex : 0,
+                prefetchImageIdIndex : -1,
                 enabled: false
             };
             cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);

@@ -78,12 +78,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-        //activation color 
+        //activation color
         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
 
         context.save();
         var data = toolData.data[0];
-        
+
         var selectionColor="white",
             toolsColor="white";
 
@@ -103,8 +103,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // draw dark fill outside the rectangle
         context.beginPath();
         context.strokeStyle = "transparent";
+
         context.save();
-        context.setTransform(1,0,0,1,0,0);        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.setTransform(1,0,0,1,0,0);
+        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+        context.restore();
+
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
         context.restore();
         context.stroke();
