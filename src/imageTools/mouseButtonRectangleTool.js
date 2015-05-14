@@ -52,7 +52,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         function mouseMoveCallback(e, eventData)
         {
-             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+             cornerstoneTools.toolCoordinates.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;

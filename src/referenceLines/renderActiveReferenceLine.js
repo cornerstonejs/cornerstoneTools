@@ -39,7 +39,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
 
-        var color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+        var color=cornerstoneTools.toolColors.getActiveColor();
 
         // draw the referenceLines
         context.beginPath();
