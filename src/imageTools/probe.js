@@ -68,6 +68,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return suv;
     }
     ///////// BEGIN IMAGE RENDERING ///////
+    function pointNearTool(data, coords) {
+        var point = {
+            left: data.handles.end.x,
+            top: data.handles.end.y,
+            width: 0,
+            height: 0
+        };
+
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(point, coords);
+        return (distanceToPoint < 5);
+    }
+
 
     function onImageRendered(e, eventData) {
 
@@ -84,6 +96,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+            
+            if (pointNearTool(data, cornerstoneTools.activeToolcoordinate.getCoords())) {
+                data.active = true;
+                color = cornerstoneTools.activeToolcoordinate.getActiveColor();
+            } else {
+                data.active = false;
+                color = cornerstoneTools.activeToolcoordinate.getToolColor();
+            }
 
             // draw the handles
             context.beginPath();

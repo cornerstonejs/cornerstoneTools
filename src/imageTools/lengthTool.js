@@ -61,8 +61,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.save();
             var data = toolData.data[i];
             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+              data.active = true;
                color=cornerstoneTools.activeToolcoordinate.getActiveColor();
             } else {
+              data.active = false;
                color=cornerstoneTools.activeToolcoordinate.getToolColor();
             }
          
