@@ -110,7 +110,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                data.active = true;
                color=cornerstoneTools.activeToolcoordinate.getActiveColor();
             } else {
-              data.active = false;
+               data.active = false;
                color=cornerstoneTools.activeToolcoordinate.getToolColor();
             }
 
