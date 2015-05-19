@@ -69,13 +69,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
-        var point = {
-            x: data.handles.end.x,
-            y: data.handles.end.y
-        };
-
-        var distanceToPoint = cornerstoneMath.point.distance(point, coords);
-        return (distanceToPoint < 5);
+        return  cornerstoneMath.point.distance(data.handles.end, coords) < 5;
     }
 
 
