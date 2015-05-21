@@ -84,9 +84,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.save();
         var data = toolData.data[0];
 
-        var selectionColor="white",
-            toolsColor="white";
-
         //differentiate the color of activation tool
         var rect = {
             left : Math.min(data.handles.start.x, data.handles.end.x),

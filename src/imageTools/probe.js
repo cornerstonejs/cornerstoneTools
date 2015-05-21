@@ -89,17 +89,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.save();
             var data = toolData.data[i];
             
-            if (pointNearTool(data, cornerstoneTools.activeToolcoordinate.getCoords())) {
+            if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
                 data.active = true;
-                color = cornerstoneTools.activeToolcoordinate.getActiveColor();
+                color = cornerstoneTools.toolColors.getActiveColor();
             } else {
                 data.active = false;
-                color = cornerstoneTools.activeToolcoordinate.getToolColor();
+                color = cornerstoneTools.toolColors.getToolColor();
             }
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
             context.stroke();
 
             // Draw text
