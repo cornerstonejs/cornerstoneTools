@@ -9,6 +9,11 @@ library in action!
 
 View the [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone.
 
+Community
+---------
+
+Have questions?  Try posting on our [google groups forum](https://groups.google.com/forum/#!forum/cornerstone-platform).
+
 Status
 ------
 
@@ -122,8 +127,6 @@ Backlog
 * automatically disabling tools when the enabled element is disabled
 * reconsider the state management api, it is a bit clunky
 * add support for pointer events as an input source
-* Localizer tool / 3d cursor / crosshair
-* Reference line renderer for all images
 * Reference line renderer for first/last/active
 * Annotations (e.g. text, arrows, circles)
 * Move all API documentation from wiki into markdown in a doc folder
