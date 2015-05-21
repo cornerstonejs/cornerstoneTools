@@ -1666,9 +1666,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.save();
         var data = toolData.data[0];
 
-        var selectionColor="white",
-            toolsColor="white";
-
         //differentiate the color of activation tool
         var rect = {
             left : Math.min(data.handles.start.x, data.handles.end.x),
@@ -1995,17 +1992,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.save();
             var data = toolData.data[i];
             
-            if (pointNearTool(data, cornerstoneTools.activeToolcoordinate.getCoords())) {
+            if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
                 data.active = true;
-                color = cornerstoneTools.activeToolcoordinate.getActiveColor();
+                color = cornerstoneTools.toolColors.getActiveColor();
             } else {
                 data.active = false;
-                color = cornerstoneTools.activeToolcoordinate.getToolColor();
+                color = cornerstoneTools.toolColors.getToolColor();
             }
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
             context.stroke();
 
             // Draw text
