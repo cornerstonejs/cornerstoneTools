@@ -20,7 +20,7 @@
             This page contains an example of the stackScroll tool, the play/stopClip tools, and integration with an HTML5 "range" input.
             Scroll by left click dragging or using the mouse wheel
         </p>
-
+        <a href="../index.html">Go back to the Examples page</a>
     </div>
 
     <div class="row">
@@ -41,18 +41,18 @@
                 <div id="dicomImage"
                      style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
                 </div>
-                <div id="mrtopleft" style="position: absolute;top:0px; left:0px">
+                <div id="mrtopleft" style="position: absolute;top:3px; left:3px">
                     Patient Name
                 </div>
-                <div id="mrtopright" style="position: absolute;top:0px; right:0px">
+                <div id="mrtopright" style="position: absolute;top:3px; right:3px">
                     Hospital
                 </div>
-                <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
-                    <div id="frameRate">FPS: </div>
-                    <div id="zoomText">Zoom:</div>
-                    <div id="imageNumAndCount"><span id="slice-range-value"></span></div>
+                <div id="mrbottomright" style="position: absolute;bottom:6px; right:3px">
+                    <div id="frameRate"></div>
+                    <div id="zoomText">Zoom: </div>
+                    <div id="sliceText">Image: </div>
                 </div>
-                <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
+                <div id="mrbottomleft" style="position: absolute;bottom:3px; left:3px">
                     WW/WC:
                 </div>
             </div>
@@ -79,26 +79,36 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
-    function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
-        $('#zoomText').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+    function onViewportUpdated(e, data) {
+        var viewport = data.viewport;
+        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
+        $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
     };
-    element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);
 
-    function onNewImage(e) {
-        $("#imageNumAndCount").text("Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length);
+    $(element).on("CornerstoneImageRendered", onViewportUpdated);
+
+    function onNewImage(e, data) {
+        var newImageIdIndex = stack.currentImageIdIndex;
+
+        // Update the slider value
+        var slider = document.getElementById('slice-range');
+        slider.value = newImageIdIndex;
+
+        // Populate the current slice span
+        var currentValueSpan = document.getElementById("sliceText");
+        currentValueSpan.textContent = "Image " + (newImageIdIndex + 1) + "/" + imageIds.length;
 
         // if we are currently playing a clip then update the FPS
         var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
-        if(playClipToolData !== undefined && playClipToolData.data[0].intervalId !== undefined) {
-            $("#frameRate").text("FPS: " + Math.round(e.detail.frameRate));
+        if (playClipToolData !== undefined && !$.isEmptyObject(playClipToolData.data)) {
+            $("#frameRate").text("FPS: " + Math.round(data.frameRate));
         } else {
-            if($("#frameRate").text().length > 0) {
+            if ($("#frameRate").text().length > 0) {
                 $("#frameRate").text("");
             }
         }
     }
-    element.addEventListener("CornerstoneNewImage", onNewImage, false);
+    $(element).on("CornerstoneNewImage", onNewImage);
 
     var imageIds = [
         'example://1',
@@ -116,24 +126,17 @@ is used by our example image loader-->
 
     // Set minimum and maximum value
     range.min = 0;
-    range.max = imageIds.length-1;
+    range.step = 1;
+    range.max = imageIds.length - 1;
 
     // Set current value
     range.value = stack.currentImageIdIndex;
-
-    // Populate the current slice span
-    currentValueSpan = document.getElementById("slice-range-value");
-    currentValueSpan.textContent = "Image # " + range.value;
 
     function selectImage(event){
         var targetElement = document.getElementById("dicomImage");
 
         // Get the range input value
-        var newImageIdIndex = event.currentTarget.value;
-
-        // Update the current slice span
-        var currentValueSpan = document.getElementById("slice-range-value");
-        currentValueSpan.textContent = "Image # " + newImageIdIndex;
+        var newImageIdIndex = parseInt(event.currentTarget.value, 10);
 
         // Get the stack data
         var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
@@ -152,23 +155,8 @@ is used by our example image loader-->
         }
     }
 
-    function onNewImage(e) {
-        var newImageIdIndex = stack.currentImageIdIndex;
-
-        // Update the slider value
-        var slider = document.getElementById('slice-range');
-        slider.value = newImageIdIndex;
-
-        // Populate the current slice span
-        var currentValueSpan = document.getElementById("slice-range-value");
-        currentValueSpan.textContent = newImageIdIndex;
-    }
-
     // Bind the range slider events
     $("#slice-range").on("input", selectImage);
-
-    // Bind the new image handler
-    $(element).on("CornerstoneNewImage", onNewImage);
 
     // Enable the dicomImage element and the mouse inputs
     cornerstone.enable(element);
@@ -192,7 +180,6 @@ is used by our example image loader-->
             $(id).addClass('active');
         }
 
-
         $('#playClip').click(function() {
             activate("#playClip");
             cornerstoneTools.playClip(element, 31);
@@ -206,10 +193,6 @@ is used by our example image loader-->
         });
 
     });
-
-
-
-
 
 </script>
 </html>
