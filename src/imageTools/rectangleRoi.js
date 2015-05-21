@@ -107,8 +107,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var data = toolData.data[i];
              //diffrentiate the color of activation tool
              if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+               data.active = true;
                color=cornerstoneTools.activeToolcoordinate.getActiveColor();
             } else {
+               data.active = false;
                color=cornerstoneTools.activeToolcoordinate.getToolColor();
             }
 
