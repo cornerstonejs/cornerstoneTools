@@ -84,7 +84,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        var color="white";
+        var color;
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
@@ -115,7 +116,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var textX = textX / fontParameters.fontScale;
             var textY = textY / fontParameters.fontScale;
 
-            context.fillStyle = "white";
+            context.fillStyle = color;
 
             var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             var sp = storedPixels[0];
