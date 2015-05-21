@@ -79,13 +79,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         //activation color
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color=cornerstoneTools.toolColors.getToolColor();
 
         context.save();
         var data = toolData.data[0];
-
-        var selectionColor="white",
-            toolsColor="white";
 
         //differentiate the color of activation tool
         var rect = {

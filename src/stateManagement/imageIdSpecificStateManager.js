@@ -9,39 +9,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // This implements an imageId specific tool state management strategy.  This means that
     // measurements data is tied to a specific imageId and only visible for enabled elements
     // that are displaying that imageId.
-    
-    function activeToolcoordinate(){
-      var cooordsData="",selectionColor="greenyellow",toolsColor="white";
-        function setActiveToolCoords(eventData){
-             
-              cooordsData=eventData.currentPoints.image;
-        }
-        function getActiveToolCoords(){
-          return cooordsData;
-        }
-        function setActivecolor(color){
-         selectionColor=color;
-        }
-        function getActivecolor(){
-          return selectionColor;
-        }
-        function setToolcolor(toolcolor){
-         toolsColor=toolcolor;
-        }
-        function getToolcolor(){
-          return toolsColor;
-        }
-      
-         var activeTool = {
-            setToolColor:setToolcolor,
-            setActiveColor:setActivecolor,
-            getToolColor:getToolcolor,
-            getActiveColor:getActivecolor,
-            setCoords:setActiveToolCoords,
-            getCoords:getActiveToolCoords
-        };
-        return activeTool;
-    }
 
     function newImageIdSpecificToolStateManager() {
         var toolState = {};
@@ -92,9 +59,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return toolData;
         }
 
+        // Clears all tool data from this toolStateManager.
+        function clearImageIdSpecificToolStateManager(element) {
+            var enabledImage = cornerstone.getEnabledElement(element);
+            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            {
+                return undefined;
+            }
+            delete toolState[enabledImage.image.imageId];
+        }
+
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState
+            add: addImageIdSpecificToolState,
+            clear: clearImageIdSpecificToolStateManager
         };
         return imageIdToolStateManager;
     }
@@ -102,11 +80,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-   var activetoolsData=activeToolcoordinate();
+    
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
-    cornerstoneTools.activeToolcoordinate=activetoolsData;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

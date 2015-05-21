@@ -56,16 +56,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color;
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-            if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
                data.active = true;
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+               color=cornerstoneTools.toolColors.getActiveColor();
             } else {
                data.active = false;
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               color=cornerstoneTools.toolColors.getToolColor();
             }
          
             // draw the line

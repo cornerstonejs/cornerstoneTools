@@ -39,7 +39,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         function touchMoveCallback(e, eventData)
         {
            
-            cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+            cornerstoneTools.toolCoordinates.setCoords(eventData);
       
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, touchToolInterface.toolType);

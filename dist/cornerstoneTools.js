@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-05-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-05-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -349,8 +349,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         ///////// BEGIN DEACTIVE TOOL ///////
 
         function mouseMoveCallback(e, eventData)
-        {  
-             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+        {
+            cornerstoneTools.toolCoordinates.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;
@@ -578,7 +578,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         function mouseMoveCallback(e, eventData)
         {
-             cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+             cornerstoneTools.toolCoordinates.setCoords(eventData);
             // if a mouse button is down, do nothing
             if(eventData.which !== 0) {
                 return;
@@ -895,7 +895,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         function touchMoveCallback(e, eventData)
         {
            
-            cornerstoneTools.activeToolcoordinate.setCoords(eventData);
+            cornerstoneTools.toolCoordinates.setCoords(eventData);
       
             // if we have no tool data for this element, do nothing
             var toolData = cornerstoneTools.getToolState(eventData.element, touchToolInterface.toolType);
@@ -1138,15 +1138,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
         //activation color 
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color;
+        
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-           //diffrentiate the color of activation tool
-             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            //differentiate the color of activation tool
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
+               data.active = true;
+               color=cornerstoneTools.toolColors.getActiveColor();
             } else {
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               data.active = false;
+               color=cornerstoneTools.toolColors.getToolColor();
             }
 
             // draw the line
@@ -1487,16 +1490,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
          //activation color 
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color;
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-           //diffrentiate the color of activation tool
-             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            //differentiate the color of activation tool
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
+               data.active = true;
+               color = cornerstoneTools.toolColors.getActiveColor();
             } else {
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               data.active = false;
+               color = cornerstoneTools.toolColors.getToolColor();
             }
             // draw the ellipse
             var width = Math.abs(data.handles.start.x - data.handles.end.x);
@@ -1656,13 +1661,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         //activation color
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color=cornerstoneTools.toolColors.getToolColor();
 
         context.save();
         var data = toolData.data[0];
-
-        var selectionColor="white",
-            toolsColor="white";
 
         //differentiate the color of activation tool
         var rect = {
@@ -1786,14 +1788,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-         var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color;
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-            if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
+               data.active = true;
+               color=cornerstoneTools.toolColors.getActiveColor();
             } else {
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               data.active = false;
+               color=cornerstoneTools.toolColors.getToolColor();
             }
          
             // draw the line
@@ -1965,6 +1971,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return suv;
     }
     ///////// BEGIN IMAGE RENDERING ///////
+    function pointNearTool(data, coords) {
+        return  cornerstoneMath.point.distance(data.handles.end, coords) < 5;
+    }
+
 
     function onImageRendered(e, eventData) {
 
@@ -1977,14 +1987,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        var color="white";
+        var color;
+
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
+            
+            if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
+                data.active = true;
+                color = cornerstoneTools.toolColors.getActiveColor();
+            } else {
+                data.active = false;
+                color = cornerstoneTools.toolColors.getToolColor();
+            }
 
             // draw the handles
             context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
             context.stroke();
 
             // Draw text
@@ -2000,7 +2019,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var textX = textX / fontParameters.fontScale;
             var textY = textY / fontParameters.fontScale;
 
-            context.fillStyle = "white";
+            context.fillStyle = color;
 
             var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             var sp = storedPixels[0];
@@ -2141,16 +2160,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
         //activation color 
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
-
+        var color;
+        
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-             //diffrentiate the color of activation tool
-             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+            //differentiate the color of activation tool
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
+               data.active = true;
+               color=cornerstoneTools.toolColors.getActiveColor();
             } else {
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               data.active = false;
+               color=cornerstoneTools.toolColors.getToolColor();
             }
 
             // draw the ellipse
@@ -3278,7 +3299,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
 
-        var color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+        var color=cornerstoneTools.toolColors.getActiveColor();
 
         // draw the referenceLines
         context.beginPath();
@@ -3676,39 +3697,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // This implements an imageId specific tool state management strategy.  This means that
     // measurements data is tied to a specific imageId and only visible for enabled elements
     // that are displaying that imageId.
-    
-    function activeToolcoordinate(){
-      var cooordsData="",selectionColor="greenyellow",toolsColor="white";
-        function setActiveToolCoords(eventData){
-             
-              cooordsData=eventData.currentPoints.image;
-        }
-        function getActiveToolCoords(){
-          return cooordsData;
-        }
-        function setActivecolor(color){
-         selectionColor=color;
-        }
-        function getActivecolor(){
-          return selectionColor;
-        }
-        function setToolcolor(toolcolor){
-         toolsColor=toolcolor;
-        }
-        function getToolcolor(){
-          return toolsColor;
-        }
-      
-         var activeTool = {
-            setToolColor:setToolcolor,
-            setActiveColor:setActivecolor,
-            getToolColor:getToolcolor,
-            getActiveColor:getActivecolor,
-            setCoords:setActiveToolCoords,
-            getCoords:getActiveToolCoords
-        };
-        return activeTool;
-    }
 
     function newImageIdSpecificToolStateManager() {
         var toolState = {};
@@ -3759,9 +3747,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return toolData;
         }
 
+        // Clears all tool data from this toolStateManager.
+        function clearImageIdSpecificToolStateManager(element) {
+            var enabledImage = cornerstone.getEnabledElement(element);
+            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
+            {
+                return undefined;
+            }
+            delete toolState[enabledImage.image.imageId];
+        }
+
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState
+            add: addImageIdSpecificToolState,
+            clear: clearImageIdSpecificToolStateManager
         };
         return imageIdToolStateManager;
     }
@@ -3769,11 +3768,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // a global imageIdSpecificToolStateManager - the most common case is to share state between all
     // visible enabled images
     var globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
-   var activetoolsData=activeToolcoordinate();
+    
     // module/private exports
     cornerstoneTools.newImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager;
     cornerstoneTools.globalImageIdSpecificToolStateManager = globalImageIdSpecificToolStateManager;
-    cornerstoneTools.activeToolcoordinate=activetoolsData;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));
@@ -3968,6 +3966,84 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stateManagement/timeSeriesSpecificStateManager.js
 
+// Begin Source: src/stateManagement/toolColorManager.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function toolColorManager(){
+        var defaultColor = "white",
+            activeColor = "greenyellow";
+
+        function setToolColor(color){
+            defaultColor = color;
+        }
+        function getToolColor(){
+            return defaultColor;
+        }
+        function setActiveToolColor(color){
+            activeColor = color;
+        }
+        function getActiveToolColor(){
+            return activeColor;
+        }
+      
+        var toolColors = {
+            setToolColor: setToolColor,
+            getToolColor: getToolColor,
+            setActiveColor: setActiveToolColor,
+            getActiveColor: getActiveToolColor
+        };
+
+        return toolColors;
+    }
+
+    // module/private exports
+    cornerstoneTools.toolColors = toolColorManager();
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+ 
+// End Source; src/stateManagement/toolColorManager.js
+
+// Begin Source: src/stateManagement/toolCoordinateManager.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function toolCoordinateManager(){
+        var cooordsData = "";
+
+        function setActiveToolCoords(eventData){
+            cooordsData = eventData.currentPoints.image;
+        }
+        function getActiveToolCoords(){
+            return cooordsData;
+        }
+      
+        var toolCoords = {
+            setCoords: setActiveToolCoords,
+            getCoords: getActiveToolCoords
+        };
+
+        return toolCoords;
+    }
+
+    // module/private exports
+    cornerstoneTools.toolCoordinates = toolCoordinateManager();
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/stateManagement/toolCoordinateManager.js
+
 // Begin Source: src/stateManagement/toolStateManager.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -4023,6 +4099,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
+    function clearToolState(element, toolType)
+    {
+        var toolStateManager = getElementToolStateManager(element);
+        var toolData = toolStateManager.get(element, toolType);
+        
+        // If any toolData actually exists, clear it
+        if (toolData !== undefined) {
+            toolData.data = [];
+        }
+    }
+
     // sets the tool state manager for an element
     function setElementToolStateManager(element, toolStateManager)
     {
@@ -4030,18 +4117,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         enabledImage.toolStateManager = toolStateManager;
     }
 
-    /*
-     function getElementToolStateManager(element)
-     {
-     var enabledImage = cornerstone.getEnabledElement(element);
-     return enabledImage.toolStateManager;
-     }
-     */
-
     // module/private exports
     cornerstoneTools.addToolState = addToolState;
     cornerstoneTools.getToolState = getToolState;
     cornerstoneTools.removeToolState = removeToolState;
+    cornerstoneTools.clearToolState = clearToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
 
