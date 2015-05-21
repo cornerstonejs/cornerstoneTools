@@ -8,8 +8,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function toolColorManager(){
         var defaultColor = "white",
-            activeColor = "greenyellow";
+            activeColor = "greenyellow",
+            fillColor = "blue";
 
+        function setFillColor(color){
+            fillColor = color;
+        }
+        function getFillColor(){
+            return fillColor;
+        }
         function setToolColor(color){
             defaultColor = color;
         }
@@ -24,6 +31,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
       
         var toolColors = {
+            setFillColor: setFillColor,
+            getFillColor: getFillColor,
             setToolColor: setToolColor,
             getToolColor: getToolColor,
             setActiveColor: setActiveToolColor,
