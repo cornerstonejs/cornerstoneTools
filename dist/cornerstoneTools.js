@@ -2146,7 +2146,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -2161,19 +2161,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     };
 
     var currentHandle = -1;
-    var freehand;
+    var currentTool = 0;
+    var freehand = true;
+    var modifying = false;
 
     ///////// BEGIN ACTIVE TOOL ///////
     function addPoint(eventData)
     {
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
         // Get the toolData from the last-drawn drawing
         // (this should change when modification is added)
-        var data = toolData.data[toolData.data.length - 1];
+        var data = toolData.data[currentTool];
 
         var handleData = {
                     x : eventData.currentPoints.image.x,
@@ -2202,13 +2204,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.updateImage(eventData.element);
     }
 
-    function pointNearHandle(eventData) {
+    function pointNearHandle(eventData, toolIndex) {
 
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
-        var data = toolData.data[toolData.data.length - 1];
+        var data = toolData.data[toolIndex];
         if (data.handles === undefined) {
             return;
         }
@@ -2220,6 +2222,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
         }
         return -1;
+    }
+
+    function pointNearHandleAllTools(eventData) {
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        if (toolData === undefined) {
+            return;
+        }
+
+        var handleNearby;
+
+        for (var toolIndex=0; toolIndex < toolData.data.length; toolIndex++) {
+            handleNearby = pointNearHandle(eventData, toolIndex);
+            if (handleNearby > -1) {
+                return [handleNearby, toolIndex];
+            }
+        }
+        return; // Maybe this should return false?
     }
 
     // --- Drawing loop ---
@@ -2235,7 +2254,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // Check if drawing is finished
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
@@ -2243,9 +2262,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             freehand = false;
         }
 
-        if (!toolData.data[toolData.data.length - 1].active){
-            $(eventData.element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        }
         cornerstone.updateImage(eventData.element);
     }
 
@@ -2257,21 +2273,36 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // Freehand drawing
 
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
-        var data = toolData.data[toolData.data.length - 1];
+        var data = toolData.data[currentTool];
 
         // Set the mouseLocation handle
         mouseLocation.handles.start.x = eventData.currentPoints.image.x;
         mouseLocation.handles.start.y = eventData.currentPoints.image.y;
 
+        if (modifying) {
+            // Move the handle
+            data.active = true;
+            data.highlight = true;
+            data.handles[currentHandle].x = mouseLocation.handles.start.x;
+            data.handles[currentHandle].y = mouseLocation.handles.start.y;
+            if (currentHandle !== 0) {
+                var lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+                var lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+                lastLine.x = mouseLocation.handles.start.x;
+                lastLine.y = mouseLocation.handles.start.y;
+            }
+        }
+
+
         if (freehand) {
             data.handles[currentHandle].lines.push(eventData.currentPoints.image);
         } else {
             // No snapping in freehand mode
-            var handleNearby = pointNearHandle(eventData);
+            var handleNearby = pointNearHandle(eventData, currentTool);
 
             // If there is a handle nearby to snap to
             // (and it's not the actual mouse handle)
@@ -2297,42 +2328,84 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             handles: [],
         };
 
+        mouseLocation.handles.start.x = eventData.currentPoints.image.x;
+        mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+
         cornerstoneTools.addToolState(eventData.element, toolType, measurementData);
 
-        cornerstone.updateImage(eventData.element);
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        currentTool = toolData.data.length - 1;
     }
 
     function endDrawing(eventData, handleNearby)
     {
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
-        var data = toolData.data[toolData.data.length - 1];
+        var data = toolData.data[currentTool];
 
         data.active = false;
         data.highlight = false;
 
         // Connect the end of the drawing to the handle nearest to the click
-        data.handles[currentHandle].lines.push(data.handles[handleNearby]);
+        if (handleNearby !== undefined){
+            data.handles[currentHandle].lines.push(data.handles[handleNearby]);
+        }
+
+        if (modifying) {
+            modifying = false;
+        }
 
         // Reset the current handle
         currentHandle = -1;
+        currentTool = -1;
+
+        $(eventData.element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
 
         cornerstone.updateImage(eventData.element);
     }
 
     function mouseDownCallback(e, eventData)
     {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-            
-            if (toolData === undefined || !toolData.data[toolData.data.length - 1].active) {
-                startDrawing(eventData);
-                addPoint(eventData);
 
-            } else if (toolData.data[toolData.data.length - 1].active) {
-                var handleNearby = pointNearHandle(eventData);
+            var handleNearby,
+                toolIndex;
+
+            if (currentTool >= 0) {
+                handleNearby = pointNearHandle(eventData, currentTool);
+            }
+
+            if (toolData === undefined) {
+                currentTool = 0;
+            }
+
+            if (modifying) {
+                endDrawing(eventData);
+                return;
+            }
+
+            if (toolData === undefined || currentTool < 0) {
+                var nearby = pointNearHandleAllTools(eventData);
+                    if (nearby !== undefined) {
+                        handleNearby = nearby[0];
+                        toolIndex = nearby[1];
+                        // This means the user is trying to modify a point
+                        if (currentHandle < 0 && handleNearby >= 0) {
+                            $(eventData.element).on("CornerstoneToolsMouseMove", mouseMoveCallback);
+                            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+                            modifying = true;
+                            currentHandle = handleNearby;
+                            currentTool = toolIndex;
+                        }
+
+                    } else {
+                        startDrawing(eventData);
+                        addPoint(eventData);
+                    }
+            } else if (toolData.data[currentTool].active) {
                 if (handleNearby > -1) {
                     endDrawing(eventData, handleNearby);
                 } else if (eventData.event.shiftKey) {
@@ -2352,7 +2425,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
@@ -2372,10 +2445,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
+                fillColor = cornerstoneTools.toolColors.getFillColor();
             } else {
                 color = cornerstoneTools.toolColors.getToolColor();
+                fillColor = cornerstoneTools.toolColors.getToolColor();
             }
-            
 
             var handleStart,
                 handleEnd;
@@ -2398,7 +2472,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                     }
 
                     if (j === (data.handles.length - 1)) {
-                        if (data.active && !freehand) {
+                        if (data.active && !freehand && !modifying) {
                             // If it's still being actively drawn, keep the last line to 
                             // the mouse location
                             context.lineTo(mouseLocation.handles.start.x, mouseLocation.handles.start.y);
@@ -2409,12 +2483,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
             
             // draw the handles
-            if (data.active) {
-                context.beginPath();
+            context.beginPath();
+            if (data.active){
                 cornerstoneTools.drawHandles(context, eventData, mouseLocation.handles, color, fillColor);
-                cornerstoneTools.drawHandles(context, eventData, data.handles, color, fillColor);
-                context.stroke();
             }
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color, fillColor);
+            context.stroke();
             context.restore();
         }
 
