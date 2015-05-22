@@ -2263,12 +2263,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var data = toolData.data[toolData.data.length - 1];
 
-        if (freehand) {
-            data.handles[currentHandle].lines.push(eventData.currentPoints.image);
-        }
-
+        // Set the mouseLocation handle
         mouseLocation.handles.start.x = eventData.currentPoints.image.x;
         mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+
+        if (freehand) {
+            data.handles[currentHandle].lines.push(eventData.currentPoints.image);
+        } else {
+            // No snapping in freehand mode
+            var handleNearby = pointNearHandle(eventData);
+
+            // If there is a handle nearby to snap to
+            // (and it's not the actual mouse handle)
+            if (handleNearby > -1 && handleNearby < (data.handles.length - 1)) {
+                mouseLocation.handles.start.x = data.handles[handleNearby].x;
+                mouseLocation.handles.start.y = data.handles[handleNearby].y;
+            }
+
+        }
+
+        // Force onImageRendered
         cornerstone.updateImage(eventData.element);
     }
 
@@ -2406,16 +2420,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     }
     ///////// END IMAGE RENDERING ///////
-    function enable(element, mouseButtonMask)
+    function enable(element)
     {
-        var eventData = {
-            mouseButtonMask: mouseButtonMask,
-        };
-
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneImageRendered", onImageRendered);
 
-        $(element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
         $(element).on("CornerstoneImageRendered", onImageRendered);
         cornerstone.updateImage(element);
     }
@@ -2424,15 +2435,51 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     function disable(element)
     {
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneImageRendered", onImageRendered);
+        cornerstone.updateImage(element);
+    }
+
+    // visible and interactive
+    function activate(element, mouseButtonMask) {
+        var eventData = {
+            mouseButtonMask: mouseButtonMask,
+        };
+
+        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+        $(element).off("CornerstoneImageRendered", onImageRendered);
+
+        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+
+        cornerstone.updateImage(element);
+    }
+
+    // visible, but not interactive
+    function deactivate(element, mouseButtonMask) {
+        var eventData = {
+            mouseButtonMask: mouseButtonMask,
+        };
+
+        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+        $(element).off("CornerstoneImageRendered", onImageRendered);
+
+        $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+
         cornerstone.updateImage(element);
     }
 
     // module/private exports
     cornerstoneTools.freehand = {
         enable: enable,
-        disable: disable
-
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate
     };
 
     return cornerstoneTools;
