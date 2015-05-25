@@ -1,4 +1,3 @@
-// Begin Source: src/manipulators/handletouchMover.js
 var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -7,7 +6,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function touchmoveHandle(touchEventData, handle, doneMovingCallback)
+    function touchMoveHandle(touchEventData, handle, doneMovingCallback)
     {
         var element = touchEventData.element;
 
@@ -23,17 +22,16 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         function touchendCallback(mouseMoveData) {
             handle.active = false;
             $(element).off("CornerstoneToolsTouchDrag", touchDragCallback);
-            $(element).off("CornerstoneToolsDragEnd", touchendCallback);
+            $(element).off("CornerstoneToolsDragEnd", touchEndCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
-        $(element).on("CornerstoneToolsDragEnd", touchendCallback);
+        $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
     }
 
-
     // module/private exports
-    cornerstoneTools.touchmoveHandle = touchmoveHandle;
+    cornerstoneTools.touchMoveHandle = touchMoveHandle;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

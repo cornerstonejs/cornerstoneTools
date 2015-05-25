@@ -20,8 +20,7 @@ module.exports = function(grunt) {
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.css',
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.js',
                     'bower_components/hammerjs/hammer.min.js',
-                    'bower_components/hammerjs/hammer.min.map',
-                    'bower_components/hammerjs/plugins/hammer.fakemultitouch.js'
+                    'bower_components/hammerjs/hammer.min.map'
                 ],
                 dest: 'examples',
                 expand: true,
@@ -33,6 +32,7 @@ module.exports = function(grunt) {
                 src : [
                     'src/inputSources/mouseWheelInput.js',
                     'src/inputSources/mouseInput.js',
+                    'src/inputSources/touchInput.js',
                     'src/imageTools/simpleMouseButtonTool.js',
                     'src/imageTools/mouseButtonTool.js',
                     'src/imageTools/mouseButtonRectangleTool.js',

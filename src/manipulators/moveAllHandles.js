@@ -7,7 +7,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
 
-
     function moveAllHandles(e, data, toolData, deleteIfHandleOutsideImage, preventHandleOutsideImage) {
         var mouseEventData = e;
         var element = mouseEventData.element;
@@ -19,28 +18,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 var handle = data.handles[property];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
-                if (preventHandleOutsideImage)
-                {
-                    if (handle.x < 0)
-                    {
+                if (preventHandleOutsideImage) {
+                    if (handle.x < 0) {
                         handle.x = 0;
                     }
-                    if (handle.x > eventData.image.width)
-                    {
+                    if (handle.x > eventData.image.width) {
                         handle.x = eventData.image.width;
                     }
-                    if (handle.y < 0)
-                    {
+                    if (handle.y < 0) {
                         handle.y = 0;
                     }
-                    if (handle.y > eventData.image.height)
-                    {
+                    if (handle.y > eventData.image.height) {
                         handle.y = eventData.image.height;
                     }
                 }
             }
             cornerstone.updateImage(element);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
 
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
@@ -85,11 +79,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
             cornerstone.updateImage(element);
         }
-        
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
         return true;
     }
-
 
     // module/private exports
     cornerstoneTools.moveAllHandles = moveAllHandles;

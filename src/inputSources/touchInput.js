@@ -8,32 +8,33 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         cornerstoneTools = {};
     }
 
-    var lastScale = 1.0;
-
-    var startPoints;
-    var lastPoints,touchEventDetail,eventData;
+    var lastScale = 1.0,
+        startPoints,
+        lastPoints,
+        touchEventDetail,
+        eventData;
     
 
-    function activateMouseDown(mouseEventDetail)
+    function activateMouseDown(touchEventDetail)
     {
-        $(mouseEventDetail.element).trigger("CornerstoneToolsDragStartActive", mouseEventDetail);
+        $(touchEventDetail.element).trigger("CornerstoneToolsDragStartActive", touchEventDetail);
     }
 
     function onTouch(e)
     {
-        e.gesture.preventDefault();
-        e.gesture.stopPropagation();
+        //e.srcEvent.preventDefault();
+        //e.srcEvent.stopPropagation();
 
-        var element = e.currentTarget;
+        var element = e.srcEvent.currentTarget;
         var event;
 
         switch (e.type)
         {
-            case 'transform':
-                var scale = lastScale - e.gesture.scale;
-                lastScale = e.gesture.scale;
+            case 'pinch':
+                var scale = lastScale - e.scale;
+                lastScale = e.scale;
                 var tranformEvent = {
-                    event:e,
+                    event: e,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
@@ -44,15 +45,15 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 $(tranformEvent.element).trigger(event, tranformEvent);
                 break;
 
-            case 'touch':
+            case 'panstart':
                 startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
                     client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
                 touchEventDetail = {
-                    event: e,
+                    event: e.srcEvent,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
@@ -61,24 +62,23 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     currentPoints: startPoints,
                     deltaPoints: {x: 0, y: 0}
                 };
-                    
+                
                 event = jQuery.Event("CornerstoneToolsDragStart", touchEventDetail);
                 $(touchEventDetail.element).trigger(event, touchEventDetail);
                 lastPoints = cornerstoneTools.copyPoints(startPoints);
 
                 if (event.isImmediatePropagationStopped() === false) {
-                    // no tools responded to this event, give the active tool a chance
-                    if (activateMouseDown(touchEventDetail) === true) {
-                        return cornerstoneTools.pauseEvent(e);
-                    }
+                    // No current tools responded to the drag action.
+                    // Create new tool measurement
+                    activateMouseDown(touchEventDetail);
                 }
                 break;
 
-            case 'drag':
+            case 'panmove':
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
                     client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
@@ -103,10 +103,10 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                lastPoints = cornerstoneTools.copyPoints(currentPoints);
                break;
 
-            case 'dragend':
+            case 'panend':
                 var currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
                     client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
@@ -117,7 +117,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 };
 
                 eventData = {
-                    event: e,
+                    event: e.srcEvent,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
@@ -142,11 +142,24 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             drag_min_distance: 0
 
         };
-        $(element).hammer(hammerOptions).on("touch drag transform dragstart dragend", onTouch);
+
+        var mc = new Hammer.Manager(element);
+        mc.set(hammerOptions);
+        mc.add(new Hammer.Pan());
+        
+        // This weird line here is necessary to get panstart and panend to fire
+        // See https://github.com/hammerjs/hammer.js/issues/723
+        mc.add(new Hammer.Swipe()).recognizeWith(mc.get('pan'));
+
+        mc.add(new Hammer.Pinch());
+        
+        mc.on('panstart panmove panend pinch', onTouch);
+        $(element).data("hammer", mc);
     }
 
     function disable(element) {
-        $(element).hammer().off("touch drag transform dragstart dragend", onTouch);
+        var mc = $(element).data("hammer");
+        mc.off('panstart panmove panend pinch', onTouch);
     }
 
     // module exports
