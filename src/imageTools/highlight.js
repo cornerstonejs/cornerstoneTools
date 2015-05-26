@@ -11,6 +11,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
     {
+        //if already a highlight measurement, creating a new one will be useless
+        var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
+        if (existingToolData && existingToolData.data && existingToolData.data.length > 0)
+            return null;
+    
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
@@ -83,9 +88,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         context.save();
         var data = toolData.data[0];
+        if (!data) return;
 
-        var selectionColor="white",
-            toolsColor="white";
+        if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
+            data.active = true;
+            color = cornerstoneTools.toolColors.getActiveColor();
+        } else {
+            data.active = false;
+            color = cornerstoneTools.toolColors.getToolColor();
+        }
 
         //differentiate the color of activation tool
         var rect = {
@@ -94,11 +105,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             width : Math.abs(data.handles.start.x - data.handles.end.x),
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
-
-        // draw the handles
-        context.beginPath();
-        cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-        context.stroke();
 
         // draw dark fill outside the rectangle
         context.beginPath();
@@ -123,6 +129,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.setLineDash([4]);
         context.strokeRect(rect.left, rect.top, rect.width, rect.height);
         context.restore();
+        
+        // draw the handles last, so they will be on top of the overlay
+        context.beginPath();
+        cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+        context.stroke();
     }
     ///////// END IMAGE RENDERING ///////
 
