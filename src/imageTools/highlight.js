@@ -14,7 +14,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         //if already a highlight measurement, creating a new one will be useless
         var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
         if (existingToolData && existingToolData.data && existingToolData.data.length > 0)
-            return null;
+            return;
     
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
