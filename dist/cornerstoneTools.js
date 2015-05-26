@@ -1669,7 +1669,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         //activation color
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
+        var color='white';
 
         context.save();
         var data = toolData.data[0];
