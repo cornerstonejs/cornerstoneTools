@@ -22,12 +22,18 @@
 </head>
 <body>
 <div class="container">
-
-    <div>
-        Note - this example works on iOS/Android based devices but may not work on other devices yet.
+    <div class="page-header">
+        <h1>
+            Mobile Touch Tools Example
+        </h1>
+        <p>
+            This page contains an example of some touch-support tools.
+            Pinch to zoom, touch and drag to change window width and level.
+            Note - this example works on iOS/Android based devices but may not work on other devices yet.
+        </p>
+        <a href="../index.html">Go back to the Examples page</a>
     </div>
-
-    <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
+    <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
          oncontextmenu="return false"
          class='cornerstone-enabled-image'
          unselectable='on'
@@ -36,16 +42,16 @@
         <div id="dicomImage"
              style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
         </div>
-        <div id="mrtopleft" style="position: absolute;top:0px; left:0px">
+        <div id="mrtopleft" style="position: absolute;top:3px; left:3px">
             Patient Name
         </div>
-        <div id="mrtopright" style="position: absolute;top:0px; right:0px">
+        <div id="mrtopright" style="position: absolute;top:3px; right:3px">
             Hospital
         </div>
-        <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
+        <div id="mrbottomright" style="position: absolute;bottom:3px; right:3px">
             Zoom:
         </div>
-        <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
+        <div id="mrbottomleft" style="position: absolute;bottom:3px; left:3px">
             WW/WC:
         </div>
     </div>
@@ -77,20 +83,15 @@ is used by our example image loader-->
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WC:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
-        $('#mrbottomright').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+        var viewport = cornerstone.getViewport(e.target)
+        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
+        $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
     };
-    element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);
+    
+    $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
 
     var imageId = 'example://1';
 
-    /*if(!Hammer.HAS_TOUCHEVENTS && !Hammer.HAS_POINTEREVENTS) {
-        Hammer.plugins.showTouches();
-    }
-
-    if(!Hammer.HAS_TOUCHEVENTS && !Hammer.HAS_POINTEREVENTS) {
-        Hammer.plugins.fakeMultitouch();
-    }*/
     Hammer.plugins.fakeMultitouch();
 
     // image enable the dicomImage element
@@ -98,14 +99,10 @@ is used by our example image loader-->
     cornerstoneTools.touchInput.enable(element);
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
-       // Enable all tools we want to use with this element
-        // cornerstoneTools.ellipticalroi_Touch.activate(element);
        
+        // Enable all tools we want to use with this element
         cornerstoneTools.wwwcTouchDrag.activate(element);
         cornerstoneTools.zoomTouchPinch.activate(element);
     });
-
-
-
 </script>
 </html>

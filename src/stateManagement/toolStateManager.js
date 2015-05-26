@@ -52,6 +52,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
+    function clearToolState(element, toolType)
+    {
+        var toolStateManager = getElementToolStateManager(element);
+        var toolData = toolStateManager.get(element, toolType);
+        
+        // If any toolData actually exists, clear it
+        if (toolData !== undefined) {
+            toolData.data = [];
+        }
+    }
+
     // sets the tool state manager for an element
     function setElementToolStateManager(element, toolStateManager)
     {
@@ -59,18 +70,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         enabledImage.toolStateManager = toolStateManager;
     }
 
-    /*
-     function getElementToolStateManager(element)
-     {
-     var enabledImage = cornerstone.getEnabledElement(element);
-     return enabledImage.toolStateManager;
-     }
-     */
-
     // module/private exports
     cornerstoneTools.addToolState = addToolState;
     cornerstoneTools.getToolState = getToolState;
     cornerstoneTools.removeToolState = removeToolState;
+    cornerstoneTools.clearToolState = clearToolState;
     cornerstoneTools.setElementToolStateManager = setElementToolStateManager;
     cornerstoneTools.getElementToolStateManager = getElementToolStateManager;
 

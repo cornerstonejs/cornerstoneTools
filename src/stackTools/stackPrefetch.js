@@ -63,12 +63,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function enable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
+        if (stackPrefetchData === undefined) {
+            // If this is the first time enabling the prefetching, add tool data
             stackPrefetchData = {
                 prefetchImageIdIndex : -1,
                 enabled: true
             };
             cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+        } else {
+            // Otherwise, re-enable the prefetching
+            stackPrefetchData.data[0].enabled = true;
         }
 
         prefetch(element);
@@ -77,16 +81,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function disable(element)
     {
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if(stackPrefetchData === undefined) {
-            stackPrefetchData = {
-                prefetchImageIdIndex : -1,
-                enabled: false
-            };
-            cornerstoneTools.removeToolState(element, toolType, stackPrefetchData);
-        }
-        else
-        {
-            stackPrefetchData.enabled = false;
+        // If there is actually something to disable, disable it
+        if (stackPrefetchData !== undefined) {
+            stackPrefetchData.data[0].enabled = false;
         }
     }
 

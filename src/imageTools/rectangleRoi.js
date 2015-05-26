@@ -100,18 +100,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
         //activation color 
-        var color=cornerstoneTools.activeToolcoordinate.getToolColor();
-
+        var color;
+        
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
-             //diffrentiate the color of activation tool
-             if (pointNearTool(data,cornerstoneTools.activeToolcoordinate.getCoords())) {
+            //differentiate the color of activation tool
+            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
                data.active = true;
-               color=cornerstoneTools.activeToolcoordinate.getActiveColor();
+               color=cornerstoneTools.toolColors.getActiveColor();
             } else {
                data.active = false;
-               color=cornerstoneTools.activeToolcoordinate.getToolColor();
+               color=cornerstoneTools.toolColors.getToolColor();
             }
 
             // draw the ellipse
