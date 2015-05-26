@@ -17,7 +17,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             var measurementData = touchToolInterface.createNewMeasurement(touchEventData);
             cornerstoneTools.addToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
             $(touchEventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
-            cornerstoneTools.moveHandle(touchEventData, measurementData.handles.end, function() {
+            cornerstoneTools.touchmoveHandle(touchEventData, measurementData.handles.end, function() {
                 if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles))
                 {
                     // delete the measurement
