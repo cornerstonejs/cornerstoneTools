@@ -10,10 +10,17 @@
     <link href="../cornerstone.min.css" rel="stylesheet">
 
     <style>
-        #magnify{
-            border:1px black solid;
+
+        /* These are some good CSS settings for a circular magnifying glass 
+           Try removing the border-radius to make a square magnifying glass */
+        .magnifyTool{
+            border: 4px white solid;
             box-shadow: 2px 2px 10px #1e1e1e;
+            border-radius: 50%; 
+            width: 200px;
+            height: 200px;
             display: none;
+            cursor: none;
         }
         /* prevents selection when left click dragging */
         .disable-selection {
@@ -89,8 +96,14 @@ is used by our example image loader-->
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.touchInput.enable(element);
 
+    var magnifySize = 100;
+    var magnificationLevel = 2;
+
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
+
+        cornerstoneTools.magnify.enable(element, magnifySize, magnificationLevel);
+        cornerstoneTools.magnifyTouchDrag.enable(element, magnifySize, magnificationLevel);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.magnify.activate(element, 1);
