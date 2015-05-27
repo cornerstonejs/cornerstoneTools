@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-05-26 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-05-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1668,8 +1668,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-        //activation color
-        var color='white';
+        var color;
 
         context.save();
         var data = toolData.data[0];

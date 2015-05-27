@@ -83,8 +83,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var context = eventData.canvasContext.canvas.getContext("2d");
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-        //activation color
-        var color='white';
+        var color;
 
         context.save();
         var data = toolData.data[0];
