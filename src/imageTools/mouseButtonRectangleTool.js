@@ -22,6 +22,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         function addNewMeasurement(mouseEventData)
         {
             var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
+            
+            //prevent adding new measurement if tool returns nill
+            if (!measurementData) return;
 
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
