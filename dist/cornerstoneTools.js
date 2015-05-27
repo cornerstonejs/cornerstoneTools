@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 /*! cornerstoneTools - v0.6.2 - 2015-05-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
-=======
-/*! cornerstoneTools - v0.6.2 - 2015-05-26 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
->>>>>>> Window width/level by rectangular region
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2391,6 +2387,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     var startPoint,
         endPoint;
 
+    /** Calculates the minimum and maximum value in the given pixel array */
     function calculateMinMax(storedPixelData)
     {
         var min = 65535;
@@ -2409,6 +2406,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         };
     }
 
+    /** Applies the windowing procedure when the mouse drag ends */
     function mouseUpCallback(e, eventData)
     {
         $(eventData.element).off("CornerstoneToolsMouseDrag", dragCallback);
@@ -2422,24 +2420,29 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         applyWWWCRegion(eventData);
     }
 
+    /** Calculates the minimum and maximum value in the given pixel array */
     function applyWWWCRegion(eventData)
     {
+        // Get the rectangular region defined by the handles
         var width = Math.abs(startPoint.x - endPoint.x);
         var height = Math.abs(startPoint.y - endPoint.y);
         var left = Math.min(startPoint.x, endPoint.x);
         var top = Math.min(startPoint.y, endPoint.y);
 
+        // Get the pixel data in the rectangular region
         var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
-        
+
+        // Calculate the minimum and maximum pixel values
         var minMax = calculateMinMax(pixels);
 
+        // Adjust the viewport window width and center based on the calculated values
         var viewport = cornerstone.getViewport(eventData.element);
         viewport.voi.windowWidth = minMax.max - minMax.min;
         viewport.voi.windowCenter = (minMax.max - minMax.min) / 2;
-
         cornerstone.setViewport(eventData.element, viewport);
     }
 
+    /** Records the start point and attaches the drag event handler */
     function mouseDownCallback(e, eventData)
     {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
@@ -2449,6 +2452,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
     }
 
+    /** Records the start point of the click or touch */
     function recordStartPoint(eventData)
     {
         startPoint = {
@@ -2457,27 +2461,36 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         };
     }
 
+    /** Draws the rectangular region while the touch or mouse event drag occurs */
     function dragCallback(e, eventData)
     {
+        // Update the endpoint as the mouse/touch is dragged
         endPoint = {
             x : eventData.currentPoints.image.x,
             y : eventData.currentPoints.image.y
         };
+
+        // Clear the image so the rectangle can be redrawn
         cornerstone.updateImage(eventData.element);
 
+        // Get the current element's canvas
         var canvas = $(eventData.element).find("canvas").get(0);
         var context = canvas.getContext("2d");
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
         cornerstone.setToPixelCoordinateSystem(enabledElement, context);
+
+        // Set to the active tool color
         var color = cornerstoneTools.toolColors.getActiveColor();
         
-        context.save();
-
+        // Calculate the rectangle parameters
         var width = Math.abs(startPoint.x - endPoint.x);
         var height = Math.abs(startPoint.y - endPoint.y);
         var left = Math.min(startPoint.x, endPoint.x);
         var top = Math.min(startPoint.y, endPoint.y);
 
+        context.save();
+
+        // Draw the rectangle
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = 1 / eventData.viewport.scale;
@@ -2487,6 +2500,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.restore();
     }
 
+    // --- Mouse tool enable / disable --- ///
     function disable(element)
     {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
@@ -2505,6 +2519,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.updateImage(element);
     }
 
+    // --- Touch tool enable / disable --- //
     function disableTouchDrag(element)
     {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
@@ -2525,11 +2540,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     // module exports
     cornerstoneTools.wwwcRegion = {
         activate: activate,
+        deactivate: disable,
         disable: disable
     };
 
     cornerstoneTools.wwwcRegionTouch = {
         activate: activateTouchDrag,
+        deactivate: disableTouchDrag,
         disable: disableTouchDrag
     };
 
