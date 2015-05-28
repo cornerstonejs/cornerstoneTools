@@ -49,7 +49,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             eventData.getTextCallback = e.data.getTextCallback;
             addNewMeasurement(eventData);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
     ///////// END ACTIVE TOOL ///////
@@ -265,8 +265,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
                 var textY = (data.handles.start.y + data.handles.end.y) / 2 / fontParameters.fontScale;
                 context.fillText(data.annotationText, textX, textY);
-                context.restore();
             }
+
+            context.restore();
         }
     }
 
@@ -282,7 +283,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible but not interactive
-    function enable(element, getTextCallback)
+    function enable(element)
     {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
@@ -379,7 +380,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function touchMoveCallback(e, eventData)
     {
-       
         cornerstoneTools.toolCoordinates.setCoords(eventData);
   
         // if we have no tool data for this element, do nothing
