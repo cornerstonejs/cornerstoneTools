@@ -1520,7 +1520,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     // visible, interactive and can create
     function activate(element, mouseButtonMask, getTextCallback) {
         if (getTextCallback === undefined) {
-            getTextCallback = prompt("Enter your annotation", "");
+            getTextCallback = function() {
+                return prompt("Enter your annotation", "");
+            };
         }
 
         var eventData = {
@@ -1711,7 +1713,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     // visible, interactive and can create
     function activateTouch(element, getTextCallback) {
         if (getTextCallback === undefined) {
-            getTextCallback = prompt("Enter your annotation", "");
+            getTextCallback = function() {
+                return prompt("Enter your annotation", "");
+            };
         }
 
         var eventData = {
