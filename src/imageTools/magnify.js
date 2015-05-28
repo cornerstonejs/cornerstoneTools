@@ -6,6 +6,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
+    var toolType = "magnify";
+
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData)
     {
@@ -40,9 +42,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     /** Draws the magnifying glass */
     function drawMagnificationTool(eventData)
     {
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if (toolData === undefined) {
+            return;
+        }
+        var magnifySize = toolData.data[0].magnifySize;
+        var magnificationLevel = toolData.data[0].magnificationLevel;
+
         var main = $(eventData.element).find("canvas").get(0);
         var magnify = $(eventData.element).find(".magnifyTool").get(0);
         var zoomCtx = magnify.getContext("2d");
+        
 
         // Calculate the on-canvas location of the mouse pointer / touch
         var canvasLocation = {
@@ -78,8 +88,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // The magnifyTool class is used to find the canvas later on
             magnify.classList.add("magnifyTool");
 
-            magnify.width = magnifySize;
-            magnify.height = magnifySize;
+            var toolData = cornerstoneTools.getToolState(element, toolType);
+            if (toolData === undefined) {
+                return;
+            }
+
+            magnify.width = toolData.data[0].magnifySize;
+            magnify.height = toolData.data[0].magnifySize;
 
             // Make sure position is absolute so the canvas can follow the mouse / touch
             magnify.style.position = "absolute";
@@ -102,29 +117,30 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function enable(element, magnifySize, magnificationLevel)
     {
-        if (magnifySize === undefined){
-            magnifySize = 100;
-        }
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        if (toolData === undefined) {
+            if (magnifySize === undefined){
+                magnifySize = 100;
+            }
 
-        if (magnificationLevel === undefined){
-            magnifySize = 2;
+            if (magnificationLevel === undefined){
+                magnificationLevel = 2;
+            }
+
+            var data = {
+                magnifySize: magnifySize,
+                magnificationLevel: magnificationLevel,
+            };
+            cornerstoneTools.addToolState(element, toolType, data);
         }
         createMagnificationCanvas(element);
     }
 
-    function activate(element, mouseButtonMask, magnifySize, magnificationLevel)
+    function activate(element, mouseButtonMask)
     {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
         };
-
-        if (magnifySize === undefined){
-            magnifySize = 100;
-        }
-
-        if (magnificationLevel === undefined){
-            magnifySize = 2;
-        }
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 
@@ -140,16 +156,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         removeMagnificationCanvas(element);
     }
 
-    function activateTouchDrag(element, magnifySize, magnificationLevel)
+    function activateTouchDrag(element)
     {
-        if (magnifySize === undefined){
-            magnifySize = 100;
-        }
-
-        if (magnificationLevel === undefined){
-            magnifySize = 2;
-        }
-
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsDragStart', dragCallback);
 
