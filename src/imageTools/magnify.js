@@ -13,7 +13,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         $(eventData.element).off("CornerstoneToolsMouseDrag", dragCallback);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        hideTool(eventData);
+    }
 
+    function hideTool(eventData)
+    {
         var magnify = $(eventData.element).find(".magnifyTool").get(0);
         magnify.style.display = "none";
 
@@ -25,8 +29,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function mouseDownCallback(e, eventData)
     {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on("CornerstoneToolsMouseDrag", dragCallback);
-            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(eventData.element).on("CornerstoneToolsMouseDrag", eventData, dragCallback);
+            $(eventData.element).on("CornerstoneToolsMouseUp", eventData, mouseUpCallback);
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -49,15 +53,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var magnifySize = toolData.data[0].magnifySize;
         var magnificationLevel = toolData.data[0].magnificationLevel;
 
-        var main = $(eventData.element).find("canvas").get(0);
+        var canvas = $(eventData.element).find("canvas").get(0);
         var magnify = $(eventData.element).find(".magnifyTool").get(0);
         var zoomCtx = magnify.getContext("2d");
-        
 
         // Calculate the on-canvas location of the mouse pointer / touch
+        var rect = canvas.getBoundingClientRect();
         var canvasLocation = {
-            x: eventData.currentPoints.image.x * eventData.viewport.scale,
-            y: eventData.currentPoints.image.y * eventData.viewport.scale
+            x: eventData.currentPoints.client.x - rect.left,
+            y: eventData.currentPoints.client.y - rect.top
         };
 
         // Clear the rectangle
@@ -66,7 +70,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // Fill it with the pixels that the mouse is clicking on
         zoomCtx.fillRect(0,0, magnify.width, magnify.height);
-        zoomCtx.drawImage(main, canvasLocation.x - magnifySize / 4, canvasLocation.y - magnifySize / 4, magnifySize, magnifySize, 0, 0, magnifySize * magnificationLevel, magnifySize * magnificationLevel);
+        zoomCtx.drawImage(canvas, canvasLocation.x - magnifySize / 4, canvasLocation.y - magnifySize / 4, magnifySize, magnifySize, 0, 0, magnifySize * magnificationLevel, magnifySize * magnificationLevel);
 
         // Place the magnification tool at the same location as the pointer
         magnify.style.top = canvasLocation.y - magnifySize / 2 + "px";

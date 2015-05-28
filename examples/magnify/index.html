@@ -107,6 +107,9 @@ is used by our example image loader-->
         cornerstoneTools.magnify.enable(element, magnifySize, magnificationLevel);
         cornerstoneTools.magnifyTouchDrag.enable(element, magnifySize, magnificationLevel);
 
+        cornerstoneTools.pan.activate(element, 2);
+        cornerstoneTools.zoom.activate(element, 4);
+
         // Enable all tools we want to use with this element
         cornerstoneTools.magnify.activate(element, 1);
         cornerstoneTools.magnifyTouchDrag.activate(element);
