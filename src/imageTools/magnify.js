@@ -42,7 +42,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     /** Draws the magnifying glass */
     function drawMagnificationTool(eventData)
     {
-        var toolData = cornerstoneTools.getToolState(element, toolType);
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (toolData === undefined) {
             return;
         }
