@@ -18,9 +18,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function hideTool(eventData)
     {
-        var magnify = $(eventData.element).find(".magnifyTool").get(0);
-        magnify.style.display = "none";
-
+        $(eventData.element).find(".magnifyTool").hide();
         // Re-enable the mouse cursor
         document.body.style.cursor = "default";
     }
@@ -50,11 +48,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (toolData === undefined) {
             return;
         }
+
+        var magnify = $(eventData.element).find(".magnifyTool").get(0);
+
+        if (magnify === undefined) {
+            createMagnificationCanvas(element);
+        }
+
         var magnifySize = toolData.data[0].magnifySize;
         var magnificationLevel = toolData.data[0].magnificationLevel;
 
         var canvas = $(eventData.element).find("canvas").get(0);
-        var magnify = $(eventData.element).find(".magnifyTool").get(0);
         var zoomCtx = magnify.getContext("2d");
 
         // Calculate the on-canvas location of the mouse pointer / touch
