@@ -1253,13 +1253,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             var annotationText;
             if (measurementData.annotationText === undefined) {
-                annotationText = prompt("Enter your annotation", "");
+                annotationText = mouseEventData.getTextCallback();
             }
             
             if (annotationText !== null) {
                 measurementData.annotationText = annotationText;
-                cornerstone.updateImage(mouseEventData.element);
+            } else {
+                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
             }
+            cornerstone.updateImage(mouseEventData.element);
 
             $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         });
@@ -1267,6 +1269,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function mouseDownActivateCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            eventData.getTextCallback = e.data.getTextCallback;
             addNewMeasurement(eventData);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
@@ -1470,9 +1473,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             drawArrow(context, data.handles.start, data.handles.end, color, lineWidth);
 
             // draw the handles
-            /*context.beginPath();
+            context.beginPath();
             cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-            context.stroke();*/
+            context.stroke();
 
             // Draw the text
             if (data.annotationText !== undefined && data.annotationText !== null)
@@ -1501,7 +1504,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible but not interactive
-    function enable(element)
+    function enable(element, getTextCallback)
     {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
@@ -1514,9 +1517,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible, interactive and can create
-    function activate(element, mouseButtonMask) {
+    function activate(element, mouseButtonMask, getTextCallback) {
+        if (getTextCallback === undefined) {
+            getTextCallback = prompt("Enter your annotation", "");
+        }
+
         var eventData = {
             mouseButtonMask: mouseButtonMask,
+            getTextCallback: getTextCallback
         };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
@@ -1567,13 +1575,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             var annotationText;
             if (measurementData.annotationText === undefined) {
-                annotationText = prompt("Enter your annotation", "");
+                annotationText = touchEventData.getTextCallback();
             }
             
             if (annotationText !== null) {
                 measurementData.annotationText = annotationText;
-                cornerstone.updateImage(touchEventData.element);
+            } else {
+                cornerstoneTools.removeToolState(touchEventData.element, toolType, measurementData);
             }
+            cornerstone.updateImage(touchEventData.element);
 
             $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
         });
@@ -1581,6 +1591,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function touchDownActivateCallback(e, eventData)
     {
+        eventData.getTextCallback = e.data.getTextCallback;
         addNewMeasurementTouch(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
@@ -1698,7 +1709,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible, interactive and can create
-    function activateTouch(element) {
+    function activateTouch(element, getTextCallback) {
+        if (getTextCallback === undefined) {
+            getTextCallback = prompt("Enter your annotation", "");
+        }
+
+        var eventData = {
+            "getTextCallback": getTextCallback
+        };
+
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsTouchDrag", touchMoveCallback);
         $(element).off("CornerstoneToolsDragStart", touchStartCallback);
@@ -1707,7 +1726,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
         $(element).on('CornerstoneToolsDragStart', touchStartCallback);
-        $(element).on('CornerstoneToolsDragStartActive', touchDownActivateCallback);
+        $(element).on('CornerstoneToolsDragStartActive', eventData, touchDownActivateCallback);
 
         cornerstone.updateImage(element);
     }

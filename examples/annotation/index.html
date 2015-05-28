@@ -80,6 +80,13 @@ is used by our example image loader-->
 
     var imageId = 'example://1';
 
+    // Define a callback to get your text annotation
+    // This could be used, e.g. to open a modal
+    function getTextCallback()
+    {
+        return prompt("Enter your annotation", "");
+    }
+
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
@@ -89,10 +96,8 @@ is used by our example image loader-->
         cornerstone.displayImage(element, image);
 
         // Enable all tools we want to use with this element
-        //cornerstoneTools.arrowAnnotate.enable(element);
-
-        //cornerstoneTools.arrowAnnotate.activate(element, 1);
-        cornerstoneTools.arrowAnnotateTouch.activate(element);
+        cornerstoneTools.arrowAnnotate.activate(element, 1, getTextCallback);
+        cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
 
         activate("#activate");
 
@@ -117,8 +122,8 @@ is used by our example image loader-->
         });
         $('#activate').click(function() {
             activate("#activate");
-            cornerstoneTools.arrowAnnotate.activate(element, 1);
-            cornerstoneTools.arrowAnnotateTouch.activate(element);
+            cornerstoneTools.arrowAnnotate.activate(element, 1, getTextCallback);
+            cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
             return false;
         });
         $('#deactivate').click(function() {
