@@ -47,7 +47,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             case 'touch':
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
+                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
                 touchEventDetail = {
@@ -77,7 +78,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 // calculate our current points in page and image coordinates
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
+                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
                 // Calculate delta values in page and image coordinates
@@ -104,7 +106,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             case 'dragend':
                 var currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.gesture.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY)
+                    image: cornerstone.pageToPixel(element, e.gesture.touches[0].pageX, e.gesture.touches[0].pageY),
+                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
                 };
 
                 // Calculate delta values in page and image coordinates

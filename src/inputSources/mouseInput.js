@@ -18,7 +18,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var startPoints = {
             page: cornerstoneMath.point.pageToPoint(e),
-            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {x: e.clientX, y: e.clientY}
         };
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var mouseEventDetail = {
@@ -51,7 +52,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e),
-                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+                client: {x: e.clientX, y: e.clientY}
             };
 
             // Calculate delta values in page and image coordinates
@@ -90,7 +92,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // calculate our current points in page and image coordinates
             var currentPoints = {
                 page: cornerstoneMath.point.pageToPoint(e),
-                image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+                client: {x: e.clientX, y: e.clientY}
             };
 
             // Calculate delta values in page and image coordinates
@@ -142,7 +145,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // calculate our current points in page and image coordinates
         var currentPoints = {
             page: cornerstoneMath.point.pageToPoint(e),
-            image: cornerstone.pageToPixel(element, e.pageX, e.pageY)
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {x: e.clientX, y: e.clientY}
         };
 
         // Calculate delta values in page and image coordinates
