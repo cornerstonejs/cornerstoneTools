@@ -9,7 +9,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function toolColorManager(){
         var defaultColor = "white",
             activeColor = "greenyellow",
-            fillColor = "blue";
+            fillColor = "transparent";
 
         function setFillColor(color){
             fillColor = color;

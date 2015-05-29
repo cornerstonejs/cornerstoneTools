@@ -2300,15 +2300,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         if (freehand) {
             data.handles[currentHandle].lines.push(eventData.currentPoints.image);
-        }
+        } else {
+            // No snapping in freehand mode
+            var handleNearby = pointNearHandle(eventData, currentTool);
 
-        var handleNearby = pointNearHandle(eventData, currentTool);
+            // If there is a handle nearby to snap to
+            // (and it's not the actual mouse handle)
+            if (handleNearby > -1 && handleNearby < (data.handles.length - 1)) {
+                mouseLocation.handles.start.x = data.handles[handleNearby].x;
+                mouseLocation.handles.start.y = data.handles[handleNearby].y;
+            }
 
-        // If there is a handle nearby to snap to
-        // (and it's not the actual mouse handle)
-        if (handleNearby > -1 && handleNearby < (data.handles.length - 1)) {
-            mouseLocation.handles.start.x = data.handles[handleNearby].x;
-            mouseLocation.handles.start.y = data.handles[handleNearby].y;
         }
 
         // Force onImageRendered
@@ -5447,7 +5449,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function toolColorManager(){
         var defaultColor = "white",
             activeColor = "greenyellow",
-            fillColor = "blue";
+            fillColor = "transparent";
 
         function setFillColor(color){
             fillColor = color;
