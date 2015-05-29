@@ -97,7 +97,9 @@ is used by our example image loader-->
 
         // Enable all tools we want to use with this element
         cornerstoneTools.arrowAnnotate.activate(element, 1, getTextCallback);
-        cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
+
+        // Example is buggy if both mouse and touch handler are active at once.
+        //cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
 
         activate("#activate");
 
@@ -111,25 +113,25 @@ is used by our example image loader-->
         $('#enable').click(function() {
             activate("#enable");
             cornerstoneTools.arrowAnnotate.enable(element);
-            cornerstoneTools.arrowAnnotateTouch.enable(element);
+            //cornerstoneTools.arrowAnnotateTouch.enable(element);
             return false;
         });
         $('#disable').click(function() {
             activate("#disable");
             cornerstoneTools.arrowAnnotate.disable(element);
-            cornerstoneTools.arrowAnnotateTouch.disable(element);
+            //cornerstoneTools.arrowAnnotateTouch.disable(element);
             return false;
         });
         $('#activate').click(function() {
             activate("#activate");
             cornerstoneTools.arrowAnnotate.activate(element, 1, getTextCallback);
-            cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
+            //cornerstoneTools.arrowAnnotateTouch.activate(element, getTextCallback);
             return false;
         });
         $('#deactivate').click(function() {
             activate("#deactivate");
             cornerstoneTools.arrowAnnotate.deactivate(element, 1);
-            cornerstoneTools.arrowAnnotateTouch.deactivate(element);
+            //cornerstoneTools.arrowAnnotateTouch.deactivate(element);
             return false;
         });
     });

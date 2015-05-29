@@ -87,6 +87,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         if(imageNeedsUpdate === true) {
             cornerstone.updateImage(eventData.element);
         }
+        return false;
     }
 
     function getHandleNearImagePoint(data, coords)
@@ -146,6 +147,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                     }
                 }
             }
+            return false;
         }
     }
 
@@ -406,6 +408,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         if (imageNeedsUpdate === true) {
             cornerstone.updateImage(eventData.element);
         }
+        return false;
     }
 
     function getHandleNearImagePointTouch(data, coords)
@@ -462,6 +465,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 }
             }
         }
+        return false;
     }
 
     // not visible, not interactive
