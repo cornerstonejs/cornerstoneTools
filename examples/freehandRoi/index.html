@@ -14,24 +14,31 @@
 <div class="container">
     <div class="page-header">
         <h1>
-            Probe Tools Example
+            Freehand drawing
         </h1>
         <p>
-            This page contains an example of the probe tool
+            This page demonstrates how to use the freehand drawing tool
         </p>
-
+        <a href="../index.html">Go back to the Examples page</a>
     </div>
+
+    <br>
 
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="disable" class="list-group-item">Disable</a>
-                <a href="#" id="enable" class="list-group-item">Enable</a>
-                <a href="#" id="activate" class="list-group-item">Activate</a>
-                <a href="#" id="deactivate" class="list-group-item">Deactivate</a>
+                <a id="disable" class="list-group-item">Disable</a>
+                <a id="enable" class="list-group-item">Enable</a>
+                <a id="activate" class="list-group-item">Activate</a>
+                <a id="deactivate" class="list-group-item">Deactivate</a>
             </ul>
+            <br/>
+            <ul class="list-group">
+                <a id="clearToolData" class="list-group-item">Clear drawing</a>
+            </ul>
+            <br/>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-10">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image'
@@ -43,9 +50,19 @@
                 </div>
             </div>
         </div>
-
     </div>
-
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Functionality</h3>
+            <ul>
+                <li>Click to draw a point</li>
+                <li>Keep clicking to draw a shape</li>
+                <li>Hold Shift while dragging to draw freehand</li>
+                <li>End the shape by connecting it to one of the other nodes</li>
+                <li>Click elsewhere to start a new shape</li>
+            </ul>
+        </div>
+    </div>
 </body>
 
 <!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
@@ -54,7 +71,9 @@ is used by our example image loader-->
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
+
 <script src="../cornerstoneMath.min.js"></script>
+
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
@@ -66,16 +85,21 @@ is used by our example image loader-->
     var element = $('#dicomImage').get(0);
 
     var imageId = 'example://1';
+    
+    cornerstoneTools.toolStyle.setToolWidth(3);
+    cornerstoneTools.toolColors.setToolColor("#ffcc33");
+    cornerstoneTools.toolColors.setActiveColor("#0099ff");
+    cornerstoneTools.toolColors.setFillColor("#0099ff");
 
     // image enable the dicomImage element
     cornerstone.enable(element);
-    cornerstoneTools.mouseInput.enable(element);
-
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
+        cornerstoneTools.mouseInput.enable(element);
 
         // Enable all tools we want to use with this element
-        cornerstoneTools.probe.activate(element, 1);
+        cornerstoneTools.freehand.activate(element, 1);
+
         activate("#activate");
 
         function activate(id)
@@ -87,23 +111,30 @@ is used by our example image loader-->
         // Tool button event handlers that set the new active tool
         $('#disable').click(function() {
             activate("#disable");
-            cornerstoneTools.probe.disable(element);
+            cornerstoneTools.freehand.disable(element);
             return false;
         });
         $('#enable').click(function() {
             activate("#enable");
-            cornerstoneTools.probe.enable(element);
+            cornerstoneTools.freehand.enable(element);
             return false;
         });
         $('#activate').click(function() {
             activate("#activate");
-            cornerstoneTools.probe.activate(element, 1);
+            cornerstoneTools.freehand.activate(element, 1);
             return false;
         });
         $('#deactivate').click(function() {
             activate("#deactivate");
-            cornerstoneTools.probe.deactivate(element, 1);
+            cornerstoneTools.freehand.deactivate(element, 1);
             return false;
+        });
+
+        $('#clearToolData').click(function() {
+            var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+            // Note that this only works on ImageId-specific tool state managers (for now)
+            toolStateManager.clear(element)
+            cornerstone.updateImage(element);
         });
     });
 

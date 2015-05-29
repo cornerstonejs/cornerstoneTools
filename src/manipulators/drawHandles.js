@@ -8,7 +8,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles,color)
+    function drawHandles(context, renderData, handles, color, fill)
     {
         context.strokeStyle = color;
         var radius = handleRadius / renderData.viewport.scale;
@@ -25,6 +25,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     context.lineWidth = 0.5 / renderData.viewport.scale;
                 }
                 context.arc(handle.x, handle.y, radius, 0, 2 * Math.PI);
+
+                if (fill) {
+                    context.fillStyle = fill;
+                    context.fill();
+                }
+
                 context.stroke();
             }
         }
