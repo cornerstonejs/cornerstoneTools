@@ -21,8 +21,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    function mouseDragCallback(e, eventData)
-    {
+    function defaultStrategy(eventData) {
         // here we normalize the ww/wc adjustments so the same number of on screen pixels
         // adjusts the same percentage of the dynamic range of the image.  This is needed to
         // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
@@ -30,8 +29,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageDynamicRange = eventData.image.maxPixelValue - eventData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
 
-        eventData.viewport.voi.windowWidth += (eventData.deltaPoints.page.x * multiplier);
-        eventData.viewport.voi.windowCenter += (eventData.deltaPoints.page.y * multiplier);
+        var deltaX = eventData.deltaPoints.page.x * multiplier;
+        var deltaY = eventData.deltaPoints.page.y * multiplier;
+
+        eventData.viewport.voi.windowWidth += (deltaX);
+        eventData.viewport.voi.windowCenter += (deltaY);
+    }
+
+    function mouseDragCallback(e, eventData)
+    {
+        cornerstoneTools.wwwc.strategy(eventData);
         cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
@@ -42,13 +49,35 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
         var multiplier = imageDynamicRange / 1024;
+        var deltaX = dragData.deltaPoints.page.x * multiplier;
+        var deltaY = dragData.deltaPoints.page.y * multiplier;
 
-        dragData.viewport.voi.windowWidth += (dragData.deltaPoints.page.x * multiplier);
-        dragData.viewport.voi.windowCenter += (dragData.deltaPoints.page.y * multiplier);
+        var config = cornerstoneTools.getConfiguration();
+        if(config.orientation) {
+            if(config.orientation ===0) {
+                console.log('normal (default)');
+                dragData.viewport.voi.windowWidth += (deltaX);
+                dragData.viewport.voi.windowCenter += (deltaY);
+            }
+            else {
+                console.log('swapped');
+                dragData.viewport.voi.windowWidth += (deltaY);
+                dragData.viewport.voi.windowCenter += (deltaX);
+            }
+        } else {
+            console.log('default');
+            dragData.viewport.voi.windowWidth += (deltaX);
+            dragData.viewport.voi.windowCenter += (deltaY);
+        }
+
         cornerstone.setViewport(dragData.element, dragData.viewport);
     }
 
     cornerstoneTools.wwwc = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    cornerstoneTools.wwwc.strategies = {
+        default : defaultStrategy
+    };
+    cornerstoneTools.wwwc.strategy = defaultStrategy;
     cornerstoneTools.wwwcTouchDrag = cornerstoneTools.touchDragTool(touchDragCallback);
 
 

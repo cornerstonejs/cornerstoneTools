@@ -8,6 +8,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function simpleMouseButtonTool(mouseDownCallback)
     {
+        var configuration = {};
+
         var toolInterface = {
             activate: function(element, mouseButtonMask, options) {
                 $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
@@ -20,6 +22,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             disable : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
             enable : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
             deactivate : function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            getConfiguration : function() { return configuration;},
+            setConfiguration : function(config) {configuration = config;}
         };
         return toolInterface;
     }
