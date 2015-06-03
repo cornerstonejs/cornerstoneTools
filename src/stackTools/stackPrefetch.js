@@ -65,7 +65,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // and there are 20 images in the stack
         // Fetch images 0 to 9 first, then recall this function
         // Fetch images 15-20 and 9-14
-        // console.log("Calculating imageIdIndices");
 
         // Check if this is the first run through of the recursion
         if (stackPrefetch.indicesToRequest.length === stack.imageIds.length) {
@@ -74,41 +73,52 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             stackPrefetch.maxIndex = stackPrefetch.initialImageIdIndex + Math.floor(stackPrefetch.maxSimultaneousRequests / 2);
         }
 
+        // Calculate the "low range" (in the example, this would be images 0-4)
         lowRange = range(stackPrefetch.minIndex, stackPrefetch.minIndex + Math.floor(stackPrefetch.maxSimultaneousRequests / 2) - 1);
-        stackPrefetch.minIndex -= Math.floor(stackPrefetch.maxSimultaneousRequests / 2);
 
+        // Calculate the "low range" (in the example, this would be images 5-9)
         highRange = range(stackPrefetch.maxIndex - Math.floor(stackPrefetch.maxSimultaneousRequests / 2), stackPrefetch.maxIndex);
 
-        // + 1 to prevent overlap with the previous batch
-        stackPrefetch.maxIndex += Math.floor(stackPrefetch.maxSimultaneousRequests / 2) + 1;
-
-        stackLength = stack.imageIds.length;
+        // Combine the ranges into a single array
         imageIdIndices = lowRange.concat(highRange);
 
+        // StackLength is used to wrap the calculated imageIdIndices around the size of the stack
+        // e.g. if the high range extends above the stack size, make it start from the beginning of the stack
+        stackLength = stack.imageIds.length;
+
+        // Uses imageIdIndices[i] to change the values in the array
         imageIdIndices.forEach(function(imageIdIndex, i, imageIdIndices) {
-            // Uses imageIdIndices[i] to change the values in the array
+            // If the indices in the range are larger than the stack array size,
+            // make them start from the bottom of the stack
             if (imageIdIndex > stackLength - 1) {
                 imageIdIndices[i] -= stackLength;
             }
+
+            // If the index is negative, make it start from the top of the stack
             if (imageIdIndex < 0) {
                 imageIdIndices[i] += stackLength;
             }
         });
 
-        //console.log("Batch: " + element.id + " imageIdIndices:" + imageIdIndices);
-        
+        // Remove duplicates in the array, in case the ranges overlap
+        var uniqueImageIdIndices = imageIdIndices.filter(function(elem, pos) {
+            return imageIdIndices.indexOf(elem) == pos;
+        });
+
+        // Remove an imageIdIndex from the list of indices to request
+        // This fires when the individual image loading deferred is resolved        
         function removeFromList(imageIdIndex) {
-            //console.log("Removing imageIdIndex: " + imageIdIndex);
             var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
             stackPrefetch.indicesToRequest.splice(index, 1);
         }
         
+        // Throws an error if something has gone wrong
         function errorHandler(imageId) {
             throw "stackPrefetch: image not retrieved: " + imageId;
         }
 
         // Loop through the images that should be requested in this batch
-        imageIdIndices.forEach(function(imageIdIndex) {
+        uniqueImageIdIndices.forEach(function(imageIdIndex) {
             imageId = stack.imageIds[imageIdIndex];
 
             // Load and cache the image
@@ -122,19 +132,22 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             deferredList.push(loadImageDeferred);
         });
 
+        // Update the min and maximum values in the tool data, for the next iteration
+        stackPrefetch.minIndex -= Math.floor(stackPrefetch.maxSimultaneousRequests / 2);
+        // Add one to the maxIndex to prevent overlap with the previous batch
+        stackPrefetch.maxIndex += Math.floor(stackPrefetch.maxSimultaneousRequests / 2) + 1;
+
+
         // When this batch of images is loaded (all async requests have finished)
-        // call this function again
         $.when.apply($, deferredList).done(function () {
-            //console.log("Batch " + element.id + " complete");
+            // If there are still images that need to be requested, call this function again
             if (stackPrefetch.indicesToRequest.length > 0) {
                 // Set a timeout here to prevent locking up the UI
-                // Maybe use a web worker for this?
                 setTimeout(prefetch(element), 50);
-            }/* else {
-                console.log("All images loaded " + element.id);
-            }*/
+            }
         });
 
+        // If the entire batch of requests has failed, throw an error
         $.when.apply($, deferredList).fail(function () {
             throw "stackPrefetch: batch failed for element: " + element.id;
         });
@@ -153,6 +166,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
             var stack = stackData.data[0];
 
+            // The maximum simultaneous requests is capped at 
+            // a rather arbitrary number of 11, since we don't want to overload any servers
             if (maxSimultaneousRequests === undefined) {
                 maxSimultaneousRequests = Math.max(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests);
             }

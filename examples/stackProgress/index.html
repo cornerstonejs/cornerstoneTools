@@ -49,7 +49,7 @@ is used by our example image loader-->
 <script src="../jquery.min.js"></script>
 
 <!-- include the cornerstone library -->
-<script src="../cornerstone.min.js"></script>
+<script src="../cornerstone.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
 
 <!-- include the cornerstone tools library -->
@@ -126,7 +126,7 @@ is used by our example image loader-->
 
         // Uncomment below to enable stack prefetching
         // With the example images the loading will be extremely quick, though
-        // cornerstoneTools.stackPrefetch.enable(element, 3);
+        cornerstoneTools.stackPrefetch.enable(element, 3);
     });
 
 </script>
