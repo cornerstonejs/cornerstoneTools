@@ -11,17 +11,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData)
     {
-        var toolData = cornerstoneTools.getToolState(element, toolType);
-        if (!toolData) {
-            return;
-        }
-
-        var data = toolData.data[0];
+        var config = cornerstoneTools.textMarker.getConfiguration();
 
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible: true,
-            text: data.current,
+            text: config.current,
             handles: {
                 end: {
                     x: mouseEventData.currentPoints.image.x,
@@ -33,19 +28,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
 
         // Update the current marker for the next marker
-        var currentIndex = data.markers.indexOf(data.current);
-        if (data.ascending) {
+        var currentIndex = config.markers.indexOf(config.current);
+        if (config.ascending) {
             currentIndex += 1;
-            if (currentIndex >= data.markers.length) {
-                currentIndex -= data.markers.length;
+            if (currentIndex >= config.markers.length) {
+                currentIndex -= config.markers.length;
             }
         } else {
             currentIndex -= 1;
             if (currentIndex < 0) {
-                currentIndex += data.markers.length;
+                currentIndex += config.markers.length;
             }
         }
-        data.current = data.markers[currentIndex];
+        config.current = config.markers[currentIndex];
 
         return measurementData;
     }
@@ -53,9 +48,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
-        return  cornerstoneMath.point.distance(data.handles.end, coords) < 5;
+        return cornerstoneMath.point.distance(data.handles.end, coords) < 5;
     }
-
 
     function onImageRendered(e, eventData) {
 
@@ -72,7 +66,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // Start the toolData loop at 1, since the first element is just used to store
         // ascending / current / marker data
-        for(var i=1; i < toolData.data.length; i++) {
+        for(var i=0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
             
@@ -84,23 +78,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 color = cornerstoneTools.toolColors.getToolColor();
             }
 
-            // draw the handles
-            context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-            context.stroke();
-
             // Draw text
             var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
             context.font = "" + fontParameters.fontSize + "px Arial";
 
             // translate the x/y away from the cursor
-            var x = Math.round(data.handles.end.x);
-            var y = Math.round(data.handles.end.y);
-            textX = data.handles.end.x + 3;
-            textY = data.handles.end.y - 3;
-
-            var textX = textX / fontParameters.fontScale;
-            var textY = textY / fontParameters.fontScale;
+            var textX = data.handles.end.x - 4;
+            var textY = data.handles.end.y + 3;
+            textX = textX / fontParameters.fontScale;
+            textY = textY / fontParameters.fontScale;
 
             context.fillStyle = color;
             context.fillText(data.text, textX, textY);
@@ -109,39 +95,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// END IMAGE RENDERING ///////
 
-    function enable(element, options)
-    {
-        console.log(options);
-        var toolData = cornerstoneTools.getToolState(element, toolType);
-        if (toolData === undefined) {
-            if (options === undefined) {
-                options = {
-                    'markers' : ['C1', 'C2', 'C3', 'C3', 'C4', 'C5'],
-                    'current': 'C1',
-                    'ascending': true
-                };
-            }
-            cornerstoneTools.addToolState(element, toolType, options);
-        }
-
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off('CornerstoneToolsMouseMove', cornerstoneTools.mouseButtonTool.mouseMoveCallback);
-        $(element).off('CornerstoneToolsMouseDown', cornerstoneTools.mouseButtonTool.mouseDownCallback);
-        $(element).off('CornerstoneToolsMouseDownActivate', cornerstoneTools.mouseButtonTool.mouseDownActivateCallback);
-
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-
-        cornerstone.updateImage(element);
-    }
-
     // module exports
     cornerstoneTools.textMarker = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
         toolType : toolType,
     });
-
-    cornerstoneTools.textMarker.enable = enable;
 
     cornerstoneTools.textMarkerTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,

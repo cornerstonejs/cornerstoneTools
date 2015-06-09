@@ -34,11 +34,35 @@
 
             <label for="startFrom">Start from</label>
             <select name="start" id="startFrom">
+                <!-- Cervical spine !-->
+                <option value="C1">C1</option>
+                <option value="C2">C2</option>
+                <option value="C3">C3</option>
+                <option value="C4">C4</option>
+                <option value="C5">C5</option>
+                <option value="C6">C6</option>
+                <option value="C7">C7</option>
+                
+                <!-- Thoracic spine !-->
                 <option value="T1">T1</option>
                 <option value="T2">T2</option>
                 <option value="T3">T3</option>
                 <option value="T4">T4</option>
                 <option value="T5">T5</option>
+                <option value="T6">T6</option>
+                <option value="T7">T7</option>
+                <option value="T8">T8</option>
+                <option value="T9">T9</option>
+                <option value="T10">T10</option>
+                <option value="T11">T11</option>
+                <option value="T12">T12</option>
+
+                <!-- Lumbar spine !-->
+                <option value="L1">L1</option>
+                <option value="L2">L2</option>
+                <option value="L3">L3</option>
+                <option value="L4">L4</option>
+                <option value="L5">L5</option>
             </select>
 
             <label for="ascending">Ascending <input type="checkbox" id="ascending" checked/></label>
@@ -81,20 +105,24 @@ is used by our example image loader-->
 
     var startFrom = $('#startFrom');
     startFrom.on('change', function() {
-        var toolData = cornerstoneTools.getToolState(element, "textMarker");
-        toolData.data[0].current = startFrom.val();
-        console.log("Changed starting point to: " + toolData.data[0].current)
+        var config = cornerstoneTools.textMarker.getConfiguration(config);
+        config.current = startFrom.val();
+        console.log("Changed starting point to: " + config.current)
     })
 
     var ascending = $("#ascending");
     ascending.on('change', function() {
-        var toolData = cornerstoneTools.getToolState(element, "textMarker");
-        toolData.data[0].ascending = ascending.is(':checked');
-        console.log("Changed ascending to: " + toolData.data[0].ascending)
+        var config = cornerstoneTools.textMarker.getConfiguration(config);
+        config.ascending = ascending.is(':checked');
+        console.log("Changed ascending to: " + config.ascending)
     })
 
-    var options = {
-        'markers' : ['T1', 'T2', 'T3', 'T4', 'T5'],
+    var config = {
+        'markers' : ['L5', 'L4', 'L3', 'L2', 'L1', // Lumbar spine
+                     'T12', 'T11', 'T10', 'T9', 'T8', 'T7', // Thoracic spine
+                     'T6', 'T5', 'T4', 'T3', 'T2', 'T1',
+                     'C7', 'C6', 'C5', 'C4', 'C3', 'C2', 'C1', // Cervical spine
+                     ],
         'current': startFrom.val(),
         'ascending': ascending.is(':checked')
     };
@@ -106,7 +134,8 @@ is used by our example image loader-->
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
-        cornerstoneTools.textMarker.enable(element, options);
+        cornerstoneTools.textMarker.enable(element);
+        cornerstoneTools.textMarker.setConfiguration(config);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.textMarker.activate(element, 1);

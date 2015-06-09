@@ -1,4 +1,3 @@
-var coordsData;
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
@@ -18,6 +17,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function mouseButtonTool(mouseToolInterface)
     {
+        var configuration = {};
+
         ///////// BEGIN ACTIVE TOOL ///////
         function addNewMeasurement(mouseEventData)
         {
@@ -83,8 +84,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
         }
 
-        function getHandleNearImagePoint(data, coords)
-        {
+        function getHandleNearImagePoint(data, coords) {
             for(var handle in data.handles) {
                 var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
                 if(distanceSquared < 25)
@@ -207,11 +207,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstone.updateImage(element);
         }
 
+        function getConfiguration() {
+            return configuration;
+        }
+        
+        function setConfiguration(config) {
+            configuration = config;
+        }
+
         var toolInterface = {
             enable: enable,
             disable : disable,
             activate: activate,
-            deactivate: deactivate
+            deactivate: deactivate,
+            getConfiguration: getConfiguration,
+            setConfiguration: setConfiguration
         };
 
         return toolInterface;
