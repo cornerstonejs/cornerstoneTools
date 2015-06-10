@@ -11,7 +11,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     var configuration = {};
 
     function renablePrefetch(e, data) {
-        console.log('Current image changed, re-enabling prefetch');
         var element = data.element;
         var stackData = cornerstoneTools.getToolState(element, 'stack');
         if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
@@ -24,9 +23,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return;
         }
         var stackPrefetch = stackPrefetchData.data[0];
-        stackPrefetch.enabled = true;
-
-        prefetch(element);
+        if (!stackPrefetch.enabled) {
+            stackPrefetch.enabled = true;
+            prefetch(element);
+        }
     }
 
     function range(lowEnd, highEnd) {
@@ -72,13 +72,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var config = cornerstoneTools.stackPrefetch.getConfiguration();
 
         var stackLength = stack.imageIds.length;
+        
+        var lastImageIdIndexFetched = stackPrefetch.lastImageIdIndexFetched;
+        if (!lastImageIdIndexFetched) {
+            lastImageIdIndexFetched = currentImageIdIndex;
+        }
 
-        var maxImageIdIndex = currentImageIdIndex + config.maxSimultaneousRequests;
+        var maxImageIdIndex = lastImageIdIndexFetched + config.maxSimultaneousRequests;
         if (maxImageIdIndex > stackLength) {
             maxImageIdIndex = stackLength - 1;
         }
 
-        var imageIdIndices = range(currentImageIdIndex, maxImageIdIndex);
+        var imageIdIndices = range(lastImageIdIndexFetched, maxImageIdIndex);
+        stackPrefetch.lastImageIdIndexFetched = maxImageIdIndex + 1;
 
         // Remove an imageIdIndex from the list of indices to request
         // This fires when the individual image loading deferred is resolved        
@@ -97,26 +103,28 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var deferredList = [];
         var lastCacheInfo;
 
-
         imageIdIndices.forEach(function(imageIdIndex) {
             var imageId = stack.imageIds[imageIdIndex];
-            console.log("Fetching " + imageId);
 
+            // Check if we already have this image promise in the cache
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            
+            if(imagePromise !== undefined) {
+                return; // If we do, stop processing this iteration
+            }
+            
             // Load and cache the image
             var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
 
             // When this is complete, remove the imageIdIndex from the list
             loadImageDeferred.done(function() {
-                console.log("Done Fetching " + imageId);
                 removeFromList(imageIdIndex);
 
                 var cacheInfo = cornerstone.imageCache.getCacheInfo();
-                console.log(cacheInfo);
 
                 // Check if the cache is full
-                if (lastCacheInfo && cacheInfo.sizeInBytes === lastCacheInfo.sizeInBytes) {
+                if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
                     stackPrefetch.enabled = false;
-                    console.log("Cache size isn't changing, stopping prefetching");
                 }
 
                 lastCacheInfo = cacheInfo;
@@ -150,43 +158,33 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     {
         var config = cornerstoneTools.stackPrefetch.getConfiguration();
 
+        // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if (stackPrefetchData.data.length === 0) {
-            // If this is the first time enabling the prefetching, add tool data
+        stackPrefetchData = [];
 
-            // First check that there is stack data available
-            var stackData = cornerstoneTools.getToolState(element, 'stack');
-            if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
-                return;
-            }
-            var stack = stackData.data[0];
-
-            // The maximum simultaneous requests is capped at 
-            // a rather arbitrary number of 11, since we don't want to overload any servers
-            if (config === undefined || config.maxSimultaneousRequests === undefined) {
-                config = {
-                    "maxSimultaneousRequests" : Math.max(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
-                };
-            }
-
-            cornerstoneTools.stackPrefetch.setConfiguration(config);
-
-            // Use the currentImageIdIndex from the stack as the initalImageIdIndex
-            stackPrefetchData = {
-                indicesToRequest : range(0, stack.imageIds.length - 1),
-                enabled: true
-            };
-            cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
-        } else {
-            // Otherwise, re-enable the prefetching
-            stackPrefetchData.data[0].enabled = true;
-            if (config && config.maxSimultaneousRequests) {
-                config = {
-                    "maxSimultaneousRequests" : maxSimultaneousRequests
-                };
-                cornerstoneTools.stackPrefetch.setConfiguration(config);
-            }
+        // First check that there is stack data available
+        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+            return;
         }
+        var stack = stackData.data[0];
+
+        // The maximum simultaneous requests is capped at 
+        // a rather arbitrary number of 11, since we don't want to overload any servers
+        if (config === undefined || config.maxSimultaneousRequests === undefined) {
+            config = {
+                "maxSimultaneousRequests" : Math.max(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
+            };
+        }
+
+        cornerstoneTools.stackPrefetch.setConfiguration(config);
+
+        // Use the currentImageIdIndex from the stack as the initalImageIdIndex
+        stackPrefetchData = {
+            indicesToRequest : range(0, stack.imageIds.length - 1),
+            enabled: true
+        };
+        cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
 
