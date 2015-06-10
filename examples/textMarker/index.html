@@ -8,8 +8,21 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet"> -->
     <link href="../bootstrap.min.css" rel="stylesheet">
 
+    <link href="../dialogPolyfill.css" rel="stylesheet">
+
     <link href="../cornerstone.min.css" rel="stylesheet">
 
+    <style>
+        .relabelDialog{
+            width: 200px;
+            border: 1px black solid;
+            border-radius: 5px;
+        }
+
+        .relabelConfirm {
+            float: right;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -20,7 +33,7 @@
         <p>
             This page contains an example of the text marker tool
         </p>
-
+        <a href="../index.html">Go back to the Examples page</a>
     </div>
 
     <div class="row">
@@ -41,7 +54,7 @@
                 <option value="C4">C4</option>
                 <option value="C5">C5</option>
                 <option value="C6">C6</option>
-                <option value="C7">C7</option>
+                <option value="C7" selected>C7</option>
                 
                 <!-- Thoracic spine !-->
                 <option value="T1">T1</option>
@@ -66,6 +79,10 @@
             </select>
 
             <label for="ascending">Ascending <input type="checkbox" id="ascending" checked/></label>
+            <br/>
+            <label for="loop">Loop <input type="checkbox" id="loop"/></label>
+            <br/>
+            <label for="clearLabels"><a id="clearLabels" class="btn btn-secondary">Clear Labels</a></label>
         </div>
         <div class="col-xs-6">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
@@ -79,6 +96,45 @@
                 </div>
             </div>
         </div>
+        <dialog class="relabelDialog">
+            <h5>Change spine label</h5>
+            <div>
+                <label for="relabelSelect">New label</label>
+                <select name="relabelSelect" class="relabelSelect">
+                    <!-- Cervical spine !-->
+                    <option value="C1">C1</option>
+                    <option value="C2">C2</option>
+                    <option value="C3">C3</option>
+                    <option value="C4">C4</option>
+                    <option value="C5">C5</option>
+                    <option value="C6">C6</option>
+                    <option value="C7">C7</option>
+                    
+                    <!-- Thoracic spine !-->
+                    <option value="T1">T1</option>
+                    <option value="T2">T2</option>
+                    <option value="T3">T3</option>
+                    <option value="T4">T4</option>
+                    <option value="T5">T5</option>
+                    <option value="T6">T6</option>
+                    <option value="T7">T7</option>
+                    <option value="T8">T8</option>
+                    <option value="T9">T9</option>
+                    <option value="T10">T10</option>
+                    <option value="T11">T11</option>
+                    <option value="T12">T12</option>
+
+                    <!-- Lumbar spine !-->
+                    <option value="L1">L1</option>
+                    <option value="L2">L2</option>
+                    <option value="L3">L3</option>
+                    <option value="L4">L4</option>
+                    <option value="L5">L5</option>
+                </select>
+            </div>
+            
+            <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+        </dialog>
 
     </div>
 
@@ -98,7 +154,12 @@ is used by our example image loader-->
 <!-- include special code for these examples which provides images -->
 <script src="../exampleImageLoader.js"></script>
 
+<script src="../dialogPolyfill.js"></script>
+
 <script>
+    var dialog = document.querySelector('dialog');
+    dialogPolyfill.registerDialog(dialog);
+
     var element = $('#dicomImage').get(0);
 
     var imageId = 'example://1';
@@ -114,8 +175,40 @@ is used by our example image loader-->
     ascending.on('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
         config.ascending = ascending.is(':checked');
+        config.current = startFrom.val();
         console.log("Changed ascending to: " + config.ascending)
     })
+
+    var loop = $("#loop");
+    loop.on('change', function() {
+        var config = cornerstoneTools.textMarker.getConfiguration(config);
+        config.loop = loop.is(':checked');
+        config.current = startFrom.val();
+        console.log("Changed loop to: " + config.loop)
+    })
+
+    var toolType = 'textMarker';
+    var clearLabels = $("#clearLabels");
+    clearLabels.on('click', function() {
+        cornerstoneTools.clearToolState(element, toolType);
+        cornerstone.updateImage(element);
+    })
+
+
+    function changeTextCallback(data, doneChangingTextCallback) {
+        var dialog = $('.relabelDialog');
+        var select = dialog.find('.relabelSelect');
+        var confirm = dialog.find('.relabelConfirm');
+
+        dialog.get(0).showModal();
+        select.val(data.text);
+
+        confirm.off('click');
+        confirm.on('click', function() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, select.val());
+        });
+    }
 
     var config = {
         'markers' : ['L5', 'L4', 'L3', 'L2', 'L1', // Lumbar spine
@@ -124,7 +217,9 @@ is used by our example image loader-->
                      'C7', 'C6', 'C5', 'C4', 'C3', 'C2', 'C1', // Cervical spine
                      ],
         'current': startFrom.val(),
-        'ascending': ascending.is(':checked')
+        'ascending': ascending.is(':checked'),
+        'loop': loop.is(':checked'),
+        'changeTextCallback': changeTextCallback
     };
 
     // image enable the dicomImage element
