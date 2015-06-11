@@ -3676,7 +3676,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     y: data.handles.end.y + 3
             };
 
-            var textCoords = cornerstone.pixelToCanvas(element, coords);
+            var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
             context.font = "15px Arial";
             context.fillStyle = color;
