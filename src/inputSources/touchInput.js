@@ -22,6 +22,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
     function onTouch(e)
     {
+        console.log(e.type);
         //e.srcEvent.preventDefault();
         //e.srcEvent.stopPropagation();
 
@@ -142,26 +143,27 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             drag_block_horizontal: true,
             drag_block_vertical: true,
             drag_min_distance: 0
-
         };
 
-        var mc = new Hammer.Manager(element);
-        mc.set(hammerOptions);
-        mc.add(new Hammer.Pan());
-        
-        // This weird line here is necessary to get panstart and panend to fire
-        // See https://github.com/hammerjs/hammer.js/issues/723
-        mc.add(new Hammer.Swipe()).recognizeWith(mc.get('pan'));
+        var panOptions = {
+            threshold: 0,
+            pointers: 0,
+            direction: Hammer.DIRECTION_ALL
+        };
 
+        var mc = new Hammer(element);
+        mc.set(hammerOptions);
+        mc.add(new Hammer.Pan(panOptions));
         mc.add(new Hammer.Pinch());
         
-        mc.on('pan panstart panmove panend pinch', onTouch);
+        mc.on('panstart panmove panend pinch', onTouch);
+
         $(element).data("hammer", mc);
     }
 
     function disable(element) {
         var mc = $(element).data("hammer");
-        mc.off('pan panstart panmove panend pinch', onTouch);
+        mc.off('panstart panmove panend pinch', onTouch);
     }
 
     // module exports
