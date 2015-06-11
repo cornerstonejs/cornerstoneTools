@@ -9,25 +9,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     var toolType = "stackPrefetch";
     var defaultMaxRequests = 11;
     var configuration = {};
+    var reenablePrefetchTimeout;
 
     function renablePrefetch(e, data) {
-        var element = data.element;
-        var stackData = cornerstoneTools.getToolState(element, 'stack');
-        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
-            return;
-        }
-        // Get the stackPrefetch tool data
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if (stackPrefetchData === undefined) {
-            // should not happen
-            return;
-        }
-        var stackPrefetch = stackPrefetchData.data[0];
-        if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-            //console.log("Re-enabling prefetch");
-            stackPrefetch.enabled = true;
-            prefetch(element);
-        }
+        // Use timeouts here to prevent this being called over and over
+        // during scrolling
+        clearTimeout(reenablePrefetchTimeout);
+        reenablePrefetchTimeout = setTimeout(function() {
+            var element = data.element;
+            var stackData = cornerstoneTools.getToolState(element, 'stack');
+            if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+                return;
+            }
+            // Get the stackPrefetch tool data
+            var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+            if (stackPrefetchData === undefined) {
+                // should not happen
+                return;
+            }
+            var stackPrefetch = stackPrefetchData.data[0];
+            if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
+                //console.log("Re-enabling prefetch");
+                stackPrefetch.enabled = true;
+                prefetch(element);
+            }
+        }, 50);
     }
 
     function range(lowEnd, highEnd) {
