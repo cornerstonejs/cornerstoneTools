@@ -242,7 +242,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                         // Allow tool data deletion if shift key is held
                         if (eventData.event.shiftKey) {
                             cornerstoneTools.removeToolState(eventData.element, toolType, data);
-                            cornerstone.updateImage(element);
+                            cornerstone.updateImage(eventData.element);
 
                             e.stopImmediatePropagation();
                             return false;
