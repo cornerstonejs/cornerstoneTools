@@ -46,10 +46,12 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 break;
 
             case 'panstart':
+
+                // Check HERE?
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
-                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
+                    client: {x: e.pointers[0].clientX, y: e.pointers[0].clientY}
                 };
 
                 touchEventDetail = {
@@ -79,7 +81,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
-                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
+                    client: {x: e.pointers[0].clientX, y: e.pointers[0].clientY}
                 };
 
                 // Calculate delta values in page and image coordinates
@@ -100,14 +102,14 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
                 $(touchEventDetail.element).trigger("CornerstoneToolsTouchDrag", eventData);
 
-               lastPoints = cornerstoneTools.copyPoints(currentPoints);
-               break;
+                lastPoints = cornerstoneTools.copyPoints(currentPoints);
+                break;
 
             case 'panend':
                 var currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
-                    client: {x: e.gesture.center.clientX, y: e.gesture.center.clientY}
+                    client: {x: e.pointers[0].clientX, y: e.pointers[0].clientY}
                 };
 
                 // Calculate delta values in page and image coordinates
@@ -153,13 +155,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         mc.add(new Hammer.Pinch());
         
-        mc.on('panstart panmove panend pinch', onTouch);
+        mc.on('pan panstart panmove panend pinch', onTouch);
         $(element).data("hammer", mc);
     }
 
     function disable(element) {
         var mc = $(element).data("hammer");
-        mc.off('panstart panmove panend pinch', onTouch);
+        mc.off('pan panstart panmove panend pinch', onTouch);
     }
 
     // module exports

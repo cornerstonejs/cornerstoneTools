@@ -52,6 +52,7 @@
                     <li class="dropdown-header">Tools</li>
                     <li><a id="enableWindowLevelTool" class="list-group-item">WW/WC</a></li>
                     <li><a id="pan" class="list-group-item">Pan</a></li>
+                    <li><a id="rotate" class="list-group-item">Rotate</a></li>
                     <li><a id="zoom" class="list-group-item">Zoom (pinch)</a></li>
                     <li><a id="zoomDrag" class="list-group-item">Zoom (drag)</a></li>
                     <li><a id="length" class="list-group-item">Length</a></li>
@@ -163,6 +164,7 @@ is used by our example image loader-->
         function disableAllTools()
         {
             cornerstoneTools.panTouchDrag.deactivate(element);
+            cornerstoneTools.rotateTouchDrag.deactivate(element);
             cornerstoneTools.ellipticalRoiTouch.deactivate(element);
             cornerstoneTools.angleTouch.deactivate(element);
             cornerstoneTools.rectangleRoiTouch.deactivate(element);
@@ -182,6 +184,11 @@ is used by our example image loader-->
         $('#pan').click(function (e) {
             disableAllTools();
             cornerstoneTools.panTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
+        });
+        $('#rotate').click(function (e) {
+            disableAllTools();
+            cornerstoneTools.rotateTouchDrag.activate(element);
             toolSelector.text(e.currentTarget.innerHTML)
         });
         $('#zoom').click(function (e) {

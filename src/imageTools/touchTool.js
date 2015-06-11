@@ -22,8 +22,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             });
         }
 
-        function touchDownActivateCallback(e, eventData)
-        {
+        function touchDownActivateCallback(e, eventData) {
             console.log("touchDownActivateCallback");
             addNewMeasurement(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
@@ -31,8 +30,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         ///////// END ACTIVE TOOL ///////
 
         ///////// BEGIN INACTIVE TOOL ///////
-        function touchMoveCallback(e, eventData)
-        {
+        function touchMoveCallback(e, eventData) {
             cornerstoneTools.toolCoordinates.setCoords(eventData);
       
             // if we have no tool data for this element, do nothing
@@ -58,8 +56,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             }
         }
 
-        function getHandleNearImagePoint(data, coords)
-        {
+        function getHandleNearImagePoint(data, coords) {
             for (var handle in data.handles) {
                 var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
                 if (distanceSquared < 30) {
@@ -68,13 +65,11 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             }
         }
 
-        function touchStartCallback(e, eventData)
-        {
+        function touchStartCallback(e, eventData) {
             console.log("touchStartCallback");
             var data;
 
-            function handleDoneMove()
-            {
+            function handleDoneMove() {
                 if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);
@@ -83,7 +78,6 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             }
 
             var coords = eventData.startPoints.image;
-            console.log(touchToolInterface.toolType);
             var toolData = cornerstoneTools.getToolState(e.currentTarget, touchToolInterface.toolType);
             var i;
 
@@ -122,8 +116,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         ///////// END INACTIVE TOOL ///////
 
         // not visible, not interactive
-        function disable(element)
-        {
+        function disable(element) {
             $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
@@ -133,8 +126,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         }
 
         // visible but not interactive
-        function enable(element)
-        {
+        function enable(element) {
             $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
@@ -146,8 +138,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         }
 
         // visible, interactive and can create
-        function activate(element)
-        {
+        function activate(element) {
             $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsTouchDrag", touchMoveCallback);
             $(element).off("CornerstoneToolsDragStart", touchStartCallback);
@@ -162,16 +153,15 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         }
 
         // visible, interactive
-        function deactivate(element)
-        {
+        function deactivate(element) {
             $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
             $(element).on("CornerstoneImageRendered", touchToolInterface.onImageRendered);
-            $(element).on("CornerstoneToolsTouchDrag",  touchMoveCallback);
-            $(element).on('CornerstoneToolsDragStart',  touchStartCallback);
+            $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
+            $(element).on('CornerstoneToolsDragStart', touchStartCallback);
 
             cornerstone.updateImage(element);
         }
