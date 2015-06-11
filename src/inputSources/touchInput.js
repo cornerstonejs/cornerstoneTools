@@ -12,24 +12,25 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         lastRotation = 0.0,
         startPoints,
         lastPoints,
-        touchEventDetail,
         eventData;
     
 
-    function activateMouseDown(touchEventDetail) {
-        $(touchEventDetail.element).trigger("CornerstoneToolsDragStartActive", touchEventDetail);
+    function activateMouseDown(eventData) {
+        $(eventData.element).trigger("CornerstoneToolsDragStartActive", eventData);
     }
 
     function onTouch(e) {
-        var element = e.srcEvent.currentTarget;
-        var event;
+        
+        var element = e.srcEvent.currentTarget,
+            event,
+            eventType;
 
-        switch (e.type)
-        {
+        switch (e.type) {
             case 'pinch':
                 var scale = lastScale - e.scale;
                 lastScale = e.scale;
-                var tranformEvent = {
+                
+                eventData = {
                     event: e,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
@@ -37,20 +38,18 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     direction: scale < 0 ? 1 : -1
                 };
 
-                event = jQuery.Event("CornerstoneToolsTouchPinch", tranformEvent);
-                $(tranformEvent.element).trigger(event, tranformEvent);
+                event = jQuery.Event("CornerstoneToolsTouchPinch", eventData);
+                $(element).trigger(event, eventData);
                 break;
 
             case 'panstart':
-
-                // Check HERE?
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
                     client: {x: e.pointers[0].clientX, y: e.pointers[0].clientY}
                 };
 
-                touchEventDetail = {
+                eventData = {
                     event: e.srcEvent,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
@@ -61,14 +60,19 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     deltaPoints: {x: 0, y: 0}
                 };
                 
-                event = jQuery.Event("CornerstoneToolsDragStart", touchEventDetail);
-                $(touchEventDetail.element).trigger(event, touchEventDetail);
+                if (e.pointers.length === 1) {
+                    eventType = "CornerstoneToolsDragStart";
+                } else {
+                    eventType = "CornerstoneToolsMultiTouchDragStart";
+                }
+                event = jQuery.Event(eventType, eventData);
+                $(eventData.element).trigger(event, eventData);
                 lastPoints = cornerstoneTools.copyPoints(startPoints);
 
                 if (event.isImmediatePropagationStopped() === false) {
                     // No current tools responded to the drag action.
                     // Create new tool measurement
-                    activateMouseDown(touchEventDetail);
+                    activateMouseDown(eventData);
                 }
                 break;
 
@@ -96,7 +100,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     deltaPoints: deltaPoints
                 };
 
-                $(touchEventDetail.element).trigger("CornerstoneToolsTouchDrag", eventData);
+                if (e.pointers.length === 1) {
+                    eventType = "CornerstoneToolsTouchDrag";
+                } else {
+                    eventType = "CornerstoneToolsMultiTouchDrag";
+                }
+                event = jQuery.Event(eventType, eventData);
+                $(element).trigger(event, eventData);
 
                 lastPoints = cornerstoneTools.copyPoints(currentPoints);
                 break;
@@ -124,8 +134,14 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     currentPoints: currentPoints,
                     deltaPoints: deltaPoints
                 };
-                event = jQuery.Event("CornerstoneToolsDragEnd", eventData);
-                $(eventData.element).trigger(event, eventData);
+
+                if (e.pointers.length === 1) {
+                    eventType = "CornerstoneToolsDragEnd";
+                } else {
+                    eventType = "CornerstoneToolsMultiTouchDragEnd";
+                }
+                event = jQuery.Event(eventType, eventData);
+                $(element).trigger(event, eventData);
                 return cornerstoneTools.pauseEvent(e);
 
             case 'rotate':
@@ -168,12 +184,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         var rotate = new Hammer.Rotate();
 
         // we want to detect both the same time
+        pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
         mc.add([pan, pinch, rotate]);
 
-        mc.on('panstart panmove panend pinch rotatestart rotate', onTouch);
+        mc.on('panstart panmove panend pinch rotate', onTouch);
 
         $(element).data("hammer", mc);
     }
