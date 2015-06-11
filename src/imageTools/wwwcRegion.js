@@ -109,6 +109,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var startPointCanvas = cornerstone.pixelToCanvas(eventData.element, startPoint);
         var endPointCanvas = cornerstone.pixelToCanvas(eventData.element, endPoint);
 
+        var left = Math.min(startPointCanvas.x, endPointCanvas.x);
+        var top = Math.min(startPointCanvas.y, endPointCanvas.y);
         var width = Math.abs(startPointCanvas.x - endPointCanvas.x);
         var height = Math.abs(startPointCanvas.y - endPointCanvas.y);
 
@@ -116,7 +118,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = 1 / eventData.viewport.scale;
-        context.rect(startPointCanvas.x, startPointCanvas.y, width, height);
+        context.rect(left, top, width, height);
         context.stroke();
     }
 
