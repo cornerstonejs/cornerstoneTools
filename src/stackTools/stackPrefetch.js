@@ -23,7 +23,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return;
         }
         var stackPrefetch = stackPrefetchData.data[0];
-        if (!stackPrefetch.enabled) {
+        if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
+            //console.log("Re-enabling prefetch");
             stackPrefetch.enabled = true;
             prefetch(element);
         }
@@ -103,9 +104,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var deferredList = [];
         var lastCacheInfo;
 
+        if (imageIdIndices.length === 0) {
+            stackPrefetch.enabled = false;
+            return;
+        }
+
+        //console.log(imageIdIndices);
         imageIdIndices.forEach(function(imageIdIndex) {
             var imageId = stack.imageIds[imageIdIndex];
 
+            if (!stackPrefetch.enabled) {
+                return;
+            }
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
@@ -124,6 +134,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
                 // Check if the cache is full
                 if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
+                    //console.log("Cache full, stopping");
                     stackPrefetch.enabled = false;
                 }
 
@@ -142,7 +153,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $.when.apply($, deferredList).done(function () {
             // If there are still images that need to be requested, and the 
             // cache is not full, call this function again
+            //console.log("Batch finished");
             if (stackPrefetch.indicesToRequest.length > 0 && stackPrefetch.enabled) {
+                //console.log("Running prefetch again");
                 // Set a timeout here to prevent locking up the UI
                 setTimeout(prefetch(element), 1);
             }
@@ -187,6 +200,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
+
+        $(element).off("CornerstoneNewImage", renablePrefetch);
 
         $(element).on("CornerstoneNewImage", renablePrefetch);
     }
