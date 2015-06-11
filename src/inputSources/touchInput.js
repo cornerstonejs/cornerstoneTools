@@ -9,23 +9,18 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     }
 
     var lastScale = 1.0,
+        lastRotation = 0.0,
         startPoints,
         lastPoints,
         touchEventDetail,
         eventData;
     
 
-    function activateMouseDown(touchEventDetail)
-    {
+    function activateMouseDown(touchEventDetail) {
         $(touchEventDetail.element).trigger("CornerstoneToolsDragStartActive", touchEventDetail);
     }
 
-    function onTouch(e)
-    {
-        console.log(e.type);
-        //e.srcEvent.preventDefault();
-        //e.srcEvent.stopPropagation();
-
+    function onTouch(e) {
         var element = e.srcEvent.currentTarget;
         var event;
 
@@ -130,13 +125,27 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     deltaPoints: deltaPoints
                 };
                 event = jQuery.Event("CornerstoneToolsDragEnd", eventData);
-                $(touchEventDetail.element).trigger(event, eventData);
+                $(eventData.element).trigger(event, eventData);
                 return cornerstoneTools.pauseEvent(e);
+
+            case 'rotate':
+                var rotation = e.rotation - lastRotation;
+                lastRotation = e.rotation;
+
+                eventData = {
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    rotation: rotation
+                };
+                event = jQuery.Event("CornerstoneToolsTouchRotate", eventData);
+                $(element).trigger(event, eventData);
+                break;
         }
     }
 
-    function enable(element)
-    {
+    function enable(element) {
         var hammerOptions = {
             transform_always_block: true,
             transform_min_scale: 0.01,
@@ -153,17 +162,25 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
         var mc = new Hammer(element);
         mc.set(hammerOptions);
-        mc.add(new Hammer.Pan(panOptions));
-        mc.add(new Hammer.Pinch());
-        
-        mc.on('panstart panmove panend pinch', onTouch);
+
+        var pan = new Hammer.Pan(panOptions);
+        var pinch = new Hammer.Pinch();
+        var rotate = new Hammer.Rotate();
+
+        // we want to detect both the same time
+        pinch.recognizeWith(rotate);
+
+        // add to the Manager
+        mc.add([pan, pinch, rotate]);
+
+        mc.on('panstart panmove panend pinch rotatestart rotate', onTouch);
 
         $(element).data("hammer", mc);
     }
 
     function disable(element) {
         var mc = $(element).data("hammer");
-        mc.off('panstart panmove panend pinch', onTouch);
+        mc.off('panstart panmove panend pinch rotate', onTouch);
     }
 
     // module exports

@@ -86,12 +86,10 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
-                    // This is probably the problem?
                     var handle = getHandleNearImagePoint(data, coords);
                     if (handle !== undefined) {
                         $(eventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
                         
-                        // This is probably the problem?
                         cornerstoneTools.touchMoveHandle(e, handle, handleDoneMove);
                         e.stopImmediatePropagation();
                         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
