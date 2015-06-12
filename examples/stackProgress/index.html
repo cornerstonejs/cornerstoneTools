@@ -23,7 +23,7 @@
     </div>
 
     <div class="row">
-        <div class="col-xs-2">
+        <div class="col-xs-12 col-sm-2">
             <h5>Percentage loaded</h5>
             <span id="loadProgress"></span>
         </div>
@@ -95,6 +95,10 @@ is used by our example image loader-->
         loadProgress["remaining"] = imageIds.length;
         loadProgress["percentLoaded"] = parseInt(100 - loadProgress["remaining"] / loadProgress["total"] * 100, 10);
 
+        if ((loadProgress["remaining"] / loadProgress["total"]) === 0) {
+            console.timeEnd("Loading");
+        }
+
         // Write to a span in the DOM
         var currentValueSpan = document.getElementById("loadProgress");
         currentValueSpan.textContent = loadProgress["percentLoaded"];
@@ -104,10 +108,11 @@ is used by our example image loader-->
     $(cornerstone).on("CornerstoneImageLoaded", onImageLoaded);
 
     // image enable the dicomImage element and the mouse inputs
+    console.time("Loading");
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.mouseWheelInput.enable(element);
-    cornerstone.loadImage(imageIds[0]).then(function(image) {
+    cornerstone.loadImage(imageIds[stack.currentImageIdIndex]).then(function(image) {
         // display this image
         cornerstone.displayImage(element, image);
 
@@ -121,7 +126,7 @@ is used by our example image loader-->
 
         // Uncomment below to enable stack prefetching
         // With the example images the loading will be extremely quick, though
-        // cornerstoneTools.stackPrefetch.enable(element);
+        // cornerstoneTools.stackPrefetch.enable(element, 3);
     });
 
 </script>
