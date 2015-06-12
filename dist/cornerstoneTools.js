@@ -5669,7 +5669,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
-        if (stackPrefetchData) {
+        if (stackPrefetchData && stackPrefetchData.data.length) {
             stackPrefetchData.data[0].enabled = false;
         }
     }
