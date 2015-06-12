@@ -2,15 +2,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
     var toolType = "ellipticalRoi";
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function createNewMeasurement(mouseEventData)
-    {
+    function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
@@ -35,8 +34,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointNearTool(data, coords)
-    {
+    function pointNearTool(data, coords) {
         // TODO: Find a formula for shortest distance betwen point and ellipse.  Rectangle is close enough
         var rect = {
             left : Math.min(data.handles.start.x, data.handles.end.x),
@@ -50,8 +48,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function pointInEllipse(ellipse, location)
-    {
+    function pointInEllipse(ellipse, location) {
         var xRadius = ellipse.width / 2;
         var yRadius = ellipse.height / 2;
 
@@ -79,8 +76,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         return inEllipse;
     }
 
-    function calculateMeanStdDev(sp, ellipse)
-    {
+    function calculateMeanStdDev(sp, ellipse) {
         // TODO: Get a real statistics library here that supports large counts
 
         var sum = 0;
@@ -88,9 +84,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var count = 0;
         var index =0;
 
-        for(var y=ellipse.top; y < ellipse.top + ellipse.height; y++) {
-            for(var x=ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if(pointInEllipse(ellipse, {x: x, y: y}) === true)
+        for (var y=ellipse.top; y < ellipse.top + ellipse.height; y++) {
+            for (var x=ellipse.left; x < ellipse.left + ellipse.width; x++) {
+                if (pointInEllipse(ellipse, {x: x, y: y}) === true)
                 {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
@@ -100,7 +96,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
         }
 
-        if(count === 0) {
+        if (count === 0) {
             return {
                 count: count,
                 mean: 0.0,
@@ -125,46 +121,59 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
          //activation color 
         var color;
+        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        var font = cornerstoneTools.textStyle.getFont();
+        var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
-        for(var i=0; i < toolData.data.length; i++) {
+        for (var i=0; i < toolData.data.length; i++) {
             context.save();
+
             var data = toolData.data[i];
+
             //differentiate the color of activation tool
             if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
             } else {
                 color = cornerstoneTools.toolColors.getToolColor();
             }
+
             // draw the ellipse
+            var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+            var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+            var widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
+            var heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
+            var leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
+            var topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
+            var centerX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
+            var centerY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+
+            context.beginPath();
+            context.strokeStyle = color;
+            context.lineWidth = lineWidth;
+            cornerstoneTools.drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
+            context.closePath();
+
+            // draw the handles
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
+
+            // Calculate the mean, stddev, and area
+            // TODO: calculate this in web worker for large pixel counts...
             var width = Math.abs(data.handles.start.x - data.handles.end.x);
             var height = Math.abs(data.handles.start.y - data.handles.end.y);
             var left = Math.min(data.handles.start.x, data.handles.end.x);
             var top = Math.min(data.handles.start.y, data.handles.end.y);
-            var centerX = (data.handles.start.x + data.handles.end.x) / 2;
-            var centerY = (data.handles.start.y + data.handles.end.y) / 2;
 
-            context.beginPath();
-            context.strokeStyle = color;
-            context.lineWidth = 1 / eventData.viewport.scale;
-            cornerstoneTools.drawEllipse(context, left, top, width, height);
-            context.closePath();
-
-            // draw the handles
-            context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
-            context.stroke();
-
-            // Calculate the mean, stddev, and area
-            // TODO: calculate this in web worker for large pixel counts...
             var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
 
             var ellipse = {
@@ -179,22 +188,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var areaText = "Area: " + area.toFixed(2) + " mm^2";
 
             // Draw text
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
-            context.font = "" + fontParameters.fontSize + "px Arial";
+            context.font = font;
 
             var textSize = context.measureText(area);
 
-            var offset = fontParameters.lineHeight;
-            var textX  = centerX < (eventData.image.columns / 2) ? centerX + (width /2): centerX - (width/2) - textSize.width * fontParameters.fontScale;
-            var textY  = centerY < (eventData.image.rows / 2) ? centerY + (height /2): centerY - (height/2);
+            var textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
+            var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
-            textX = textX / fontParameters.fontScale;
-            textY = textY / fontParameters.fontScale;
-
-            context.fillStyle =color;
-            context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - offset);
+            context.fillStyle = color;
+            context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight);
             context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
-            context.fillText(areaText, textX, textY + offset);
+            context.fillText(areaText, textX, textY + fontHeight);
             context.restore();
         }
     }
