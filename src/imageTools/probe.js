@@ -83,6 +83,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
+        var font = cornerstoneTools.textStyle.getFont();
+        var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
         for (var i=0; i < toolData.data.length; i++) {
 
@@ -116,14 +118,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             };
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
             
-            context.font = "15px Arial";
+            context.font = font;
             context.fillStyle = color;
             context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
             var str = "SP: " + sp + " MO: " + mo.toFixed(3);
             if (suv) {
                 str += " SUV: " + suv.toFixed(3);
             }
-            context.fillText(str, textCoords.x, textCoords.y + 15);
+            context.fillText(str, textCoords.x, textCoords.y + fontHeight);
 
             context.restore();
         }
