@@ -50,7 +50,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var magnifySize = config.magnifySize;
         var magnificationLevel = config.magnificationLevel;
 
-        var canvas = $(eventData.element).find("canvas").get(0);
+        // The 'not' magnifyTool class here is necessary because cornerstone places
+        // no classes of it's own on the canvas we want to select
+        var canvas = $(eventData.element).find("canvas").not('.magnifyTool').get(0);
         var zoomCtx = magnify.getContext("2d");
 
         // Calculate the on-canvas location of the mouse pointer / touch
