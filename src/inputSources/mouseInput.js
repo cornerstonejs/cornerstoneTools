@@ -6,11 +6,35 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstoneTools = {};
     }
 
-    function activateMouseDown(mouseEventDetail)
-    {
+    function activateMouseDown(mouseEventDetail) {
         $(mouseEventDetail.element).trigger("CornerstoneToolsMouseDownActivate", mouseEventDetail);
     }
 
+    function mouseDoubleClick(e) {
+        var eventData = e.data;
+        var element = e.currentTarget;
+
+        var startPoints = {
+            page: cornerstoneMath.point.pageToPoint(e),
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {x: e.clientX, y: e.clientY}
+        };
+        var lastPoints = cornerstoneTools.copyPoints(startPoints);
+        var mouseEventDetail = {
+                event: e,
+                which: e.which,
+                viewport: cornerstone.getViewport(element),
+                image: cornerstone.getEnabledElement(element).image,
+                element: element,
+                startPoints: startPoints,
+                lastPoints: lastPoints,
+                currentPoints: startPoints,
+                deltaPoints: {x: 0, y:0}
+            };
+
+        var event = jQuery.Event("CornerstoneToolsMouseDoubleClick", mouseEventDetail);
+        $(mouseEventDetail.element).trigger(event, mouseEventDetail);
+    }
 
     function mouseDown(e) {
         var eventData = e.data;
@@ -34,14 +58,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 deltaPoints: {x: 0, y:0}
             };
 
-        var event = jQuery.Event( "CornerstoneToolsMouseDown", mouseEventDetail);
+        var event = jQuery.Event("CornerstoneToolsMouseDown", mouseEventDetail);
         $(mouseEventDetail.element).trigger(event, mouseEventDetail);
-        if(event.isImmediatePropagationStopped() === false)
-        //if(element.dispatchEvent(event) === true)
-        {
+
+        if (event.isImmediatePropagationStopped() === false) {
             // no tools responded to this event, give the active tool a chance
-            if(activateMouseDown(mouseEventDetail) === true)
-            {
+            if (activateMouseDown(mouseEventDetail) === true) {
                 return cornerstoneTools.pauseEvent(e);
             }
         }
@@ -165,7 +187,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             currentPoints: currentPoints,
             deltaPoints: deltaPoints
         };
-        //element.dispatchEvent(event);
         $(element).trigger("CornerstoneToolsMouseMove", mouseMoveEventData);
 
         // update the last points
@@ -179,11 +200,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     {
         $(element).on("mousedown", mouseDown);
         $(element).on("mousemove", mouseMove);
+        $(element).on("dblclick", mouseDoubleClick);
     }
 
     function disable(element) {
         $(element).off("mousedown", mouseDown);
         $(element).off("mousemove", mouseMove);
+        $(element).off("dblclick", mouseDoubleClick);
     }
 
     // module exports
