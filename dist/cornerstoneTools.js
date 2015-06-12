@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-12 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3651,7 +3651,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var max = -32768;
         var numPixels = storedPixelData.length;
         var pixelData = storedPixelData;
-        for(var index = 0; index < numPixels; index++) {
+
+        for (var index = 0; index < numPixels; index++) {
             var spv = pixelData[index];
             min = Math.min(min, spv);
             max = Math.max(max, spv);
@@ -3683,6 +3684,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // Get the rectangular region defined by the handles
         var width = Math.abs(startPoint.x - endPoint.x);
         var height = Math.abs(startPoint.y - endPoint.y);
+
         var left = Math.min(startPoint.x, endPoint.x);
         var top = Math.min(startPoint.y, endPoint.y);
 
@@ -3694,7 +3696,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // Adjust the viewport window width and center based on the calculated values
         var viewport = cornerstone.getViewport(eventData.element);
-        viewport.voi.windowWidth = minMax.max - minMax.min;
+        viewport.voi.windowWidth = Math.abs(minMax.max - minMax.min);
         viewport.voi.windowCenter = (minMax.max - minMax.min) / 2;
         cornerstone.setViewport(eventData.element, viewport);
     }
@@ -3733,19 +3735,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // Get the current element's canvas
         var canvas = $(eventData.element).find("canvas").get(0);
         var context = canvas.getContext("2d");
-        var enabledElement = cornerstone.getEnabledElement(eventData.element);
-        cornerstone.setToPixelCoordinateSystem(enabledElement, context);
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         // Set to the active tool color
         var color = cornerstoneTools.toolColors.getActiveColor();
         
         // Calculate the rectangle parameters
-        var width = Math.abs(startPoint.x - endPoint.x);
-        var height = Math.abs(startPoint.y - endPoint.y);
-        var left = Math.min(startPoint.x, endPoint.x);
-        var top = Math.min(startPoint.y, endPoint.y);
+        var startPointCanvas = cornerstone.pixelToCanvas(eventData.element, startPoint);
+        var endPointCanvas = cornerstone.pixelToCanvas(eventData.element, endPoint);
 
-        context.save();
+        var left = Math.min(startPointCanvas.x, endPointCanvas.x);
+        var top = Math.min(startPointCanvas.y, endPointCanvas.y);
+        var width = Math.abs(startPointCanvas.x - endPointCanvas.x);
+        var height = Math.abs(startPointCanvas.y - endPointCanvas.y);
 
         // Draw the rectangle
         context.beginPath();
@@ -3753,8 +3755,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.lineWidth = 1 / eventData.viewport.scale;
         context.rect(left, top, width, height);
         context.stroke();
-
-        context.restore();
     }
 
     // --- Mouse tool enable / disable --- ///
@@ -3808,8 +3808,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     };
 
     return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
- 
+}($, cornerstone, cornerstoneMath, cornerstoneTools)); 
 // End Source; src/imageTools/wwwcRegion.js
 
 // Begin Source: src/imageTools/zoom.js
