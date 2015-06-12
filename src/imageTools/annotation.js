@@ -234,6 +234,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             return;
         }
 
+        var config = cornerstoneTools.arrowAnnotate.getConfiguration();
+
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
         context.setTransform(1, 0, 0, 1, 0, 0);

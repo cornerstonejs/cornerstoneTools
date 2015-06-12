@@ -9,7 +9,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // --- Strategies --- //
     function defaultStrategy(eventData) {
         // Calculate distance from the center of the image
-        var rect = element.getBoundingClientRect(eventData.element);
+        var rect = eventData.element.getBoundingClientRect(eventData.element);
 
         var points = {
             x: eventData.currentPoints.client.x,
