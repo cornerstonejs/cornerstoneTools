@@ -8,7 +8,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function toolStyleManager(){
         var defaultWidth = 1,
-            highlightWidth = 2;
+            activeWidth = 2;
 
         function setToolWidth(width){
             defaultWidth = width;
