@@ -74,13 +74,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+        
         //activation color 
         var color;
-        
+        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        var font = cornerstoneTools.textStyle.getFont();
+
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
+
             var data = toolData.data[i];
+
             //differentiate the color of activation tool
             if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
@@ -91,17 +96,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // draw the line
             context.beginPath();
             context.strokeStyle = color;
-            context.lineWidth = 1 / eventData.viewport.scale;
-            context.moveTo(data.handles.start.x, data.handles.start.y);
-            context.lineTo(data.handles.end.x, data.handles.end.y);
-            context.moveTo(data.handles.start2.x, data.handles.start2.y);
-            context.lineTo(data.handles.end2.x, data.handles.end2.y);
+            context.lineWidth = lineWidth;
+
+            var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+            var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+            context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+            context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+
+            handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
+            handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
+
+            context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+            context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
             context.stroke();
 
             // draw the handles
-            context.beginPath();
             cornerstoneTools.drawHandles(context, eventData, data.handles);
-            context.stroke();
 
             // Draw the text
             context.fillStyle = color;
@@ -120,11 +131,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var str = "00B0"; // degrees symbol
             var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
-            context.font = "" + fontParameters.fontSize + "px Arial";
+            var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
+            var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
-            var textX = (data.handles.start2.x + data.handles.end2.x) / 2 / fontParameters.fontScale;
-            var textY = (data.handles.start2.y + data.handles.end2.y) / 2 / fontParameters.fontScale;
+            context.font = font;
             context.fillText(text, textX, textY);
             context.restore();
         }
