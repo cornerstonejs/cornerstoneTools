@@ -309,7 +309,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
     function onTouch(e) {
         
-        var element = e.srcEvent.currentTarget,
+        var element = e.target.parentNode,
             event,
             eventType;
 
