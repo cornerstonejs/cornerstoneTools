@@ -7,25 +7,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     var toolType = "magnify";
+    var configuration = {};
 
     /** Remove the magnifying glass when the mouse event ends */
-    function mouseUpCallback(e, eventData)
-    {
+    function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", dragCallback);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
         hideTool(eventData);
     }
 
-    function hideTool(eventData)
-    {
+    function hideTool(eventData) {
         $(eventData.element).find(".magnifyTool").hide();
         // Re-enable the mouse cursor
         document.body.style.cursor = "default";
     }
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
-    function mouseDownCallback(e, eventData)
-    {
+    function mouseDownCallback(e, eventData) {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", eventData, dragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", eventData, mouseUpCallback);
@@ -35,28 +33,22 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     /** Drag callback is triggers by both the touch and mouse magnify tools */
-    function dragCallback(e, eventData)
-    {
+    function dragCallback(e, eventData) {
         drawMagnificationTool(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     /** Draws the magnifying glass */
-    function drawMagnificationTool(eventData)
-    {
-        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (toolData === undefined) {
-            return;
-        }
-
+    function drawMagnificationTool(eventData) {
         var magnify = $(eventData.element).find(".magnifyTool").get(0);
 
         if (magnify === undefined) {
-            createMagnificationCanvas(element);
+            createMagnificationCanvas(eventData.element);
         }
 
-        var magnifySize = toolData.data[0].magnifySize;
-        var magnificationLevel = toolData.data[0].magnificationLevel;
+        var config = cornerstoneTools.magnify.getConfiguration();
+        var magnifySize = config.magnifySize;
+        var magnificationLevel = config.magnificationLevel;
 
         var canvas = $(eventData.element).find("canvas").get(0);
         var zoomCtx = magnify.getContext("2d");
@@ -89,20 +81,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function createMagnificationCanvas(element)
     {
         // If the magnifying glass canvas doesn't already exist
-        if ($(element).find(".magnifyTool").length === 0)
-        {
+        if ($(element).find(".magnifyTool").length === 0) {
             // Create a canvas and append it as a child to the element
             var magnify = document.createElement('canvas');
             // The magnifyTool class is used to find the canvas later on
             magnify.classList.add("magnifyTool");
 
-            var toolData = cornerstoneTools.getToolState(element, toolType);
-            if (toolData === undefined) {
-                return;
-            }
-
-            magnify.width = toolData.data[0].magnifySize;
-            magnify.height = toolData.data[0].magnifySize;
+            var config = cornerstoneTools.magnify.getConfiguration();
+            magnify.width = config.magnifySize;
+            magnify.height = config.magnifySize;
 
             // Make sure position is absolute so the canvas can follow the mouse / touch
             magnify.style.position = "absolute";
@@ -111,41 +98,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     /** Find the magnifying glass canvas and remove it */
-    function removeMagnificationCanvas(element)
-    {
+    function removeMagnificationCanvas(element) {
         $(element).find(".magnifyTool").remove();
     }
 
     // --- Mouse tool activate / disable --- //
-    function disable(element)
-    {
+    function disable(element) {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         removeMagnificationCanvas(element);
     }
 
-    function enable(element, magnifySize, magnificationLevel)
-    {
-        var toolData = cornerstoneTools.getToolState(element, toolType);
-        if (toolData === undefined) {
-            if (magnifySize === undefined){
-                magnifySize = 100;
-            }
+    function enable(element) {
+        var config = cornerstoneTools.magnify.getConfiguration(config);
 
-            if (magnificationLevel === undefined){
-                magnificationLevel = 2;
-            }
-
-            var data = {
-                magnifySize: magnifySize,
-                magnificationLevel: magnificationLevel,
+        // Checks if config object is empty
+        if (!Object.keys(config).length) {
+            config = {
+                magnifySize: 100,
+                magnificationLevel: 2,
             };
-            cornerstoneTools.addToolState(element, toolType, data);
+            cornerstoneTools.magnify.setConfiguration(config);
         }
         createMagnificationCanvas(element);
     }
 
-    function activate(element, mouseButtonMask)
-    {
+    function activate(element, mouseButtonMask) {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
         };
@@ -157,15 +134,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // --- Touch tool activate / disable --- //
-    function disableTouchDrag(element)
-    {
+    function disableTouchDrag(element) {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsDragStart', dragCallback);
         removeMagnificationCanvas(element);
     }
 
-    function activateTouchDrag(element)
-    {
+    function activateTouchDrag(element) {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsDragStart', dragCallback);
 
@@ -174,12 +149,22 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         createMagnificationCanvas(element);
     }
 
+    function getConfiguration() {
+        return configuration;
+    }
+    
+    function setConfiguration(config) {
+        configuration = config;
+    }
+
     // module exports
     cornerstoneTools.magnify = {
         enable: enable,
         activate: activate,
         deactivate: disable,
         disable : disable,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration
     };
 
     cornerstoneTools.magnifyTouchDrag = {
