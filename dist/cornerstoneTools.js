@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-05-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -1237,12 +1237,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     var toolType = "arrowAnnotate";
+    var configuration = {};
 
     /// --- Mouse Tool --- ///
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function addNewMeasurement(mouseEventData)
-    {
+    function addNewMeasurement(mouseEventData) {
+
+        var annotationText;
+        function doneChangingTextCallback(annotationText) {
+            if (annotationText !== null) {
+                measurementData.annotationText = annotationText;
+            } else {
+                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
+            }
+            cornerstone.updateImage(mouseEventData.element);
+        }
+
         var measurementData = createNewMeasurement(mouseEventData);
 
         // associate this data with this imageId so we can render it and manipulate it
@@ -1259,25 +1270,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
             }
 
-            var annotationText;
+            var config = cornerstoneTools.arrowAnnotate.getConfiguration();
             if (measurementData.annotationText === undefined) {
-                annotationText = mouseEventData.getTextCallback();
+                config.getTextCallback(doneChangingTextCallback);
             }
             
-            if (annotationText !== null) {
-                measurementData.annotationText = annotationText;
-            } else {
-                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
-            }
-            cornerstone.updateImage(mouseEventData.element);
-
             $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         });
     }
 
     function mouseDownActivateCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            eventData.getTextCallback = e.data.getTextCallback;
             addNewMeasurement(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -1463,11 +1466,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
         var color;
 
         for(var i=0; i < toolData.data.length; i++) {
-            context.save();
             var data = toolData.data[i];
 
             if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
@@ -1480,26 +1483,35 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             
             // Draw the arrow
             var lineWidth = 1 / eventData.viewport.scale;
-            drawArrow(context, data.handles.start, data.handles.end, color, lineWidth);
 
-            // draw the handles
-            context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-            context.stroke();
+            var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+            var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-            // Draw the text
-            if (data.annotationText !== undefined && data.annotationText !== null)
-            {
-                context.fillStyle = color;
-                var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
-                context.font = "" + fontParameters.fontSize + "px Arial";
-
-                var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
-                var textY = (data.handles.start.y + data.handles.end.y) / 2 / fontParameters.fontScale;
-                context.fillText(data.annotationText, textX, textY);
+            if (config.arrowFirst) {
+                drawArrow(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
+            } else {
+                drawArrow(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
             }
 
-            context.restore();
+            // If statement !== false so that by default the handles are drawn
+            if (config.drawHandles !== false) {
+                context.beginPath();
+                cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+                context.stroke();
+            }
+
+            // Draw the text
+            if (data.annotationText !== undefined && data.annotationText !== null) {
+                context.fillStyle = color;
+                context.font = "14px Arial";
+
+                var textCoords = {
+                    x : (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                    y : (handleStartCanvas.y + handleEndCanvas.y) / 2
+                };
+
+                context.fillText(data.annotationText, textCoords.x, textCoords.y);
+            }
         }
     }
 
@@ -1528,16 +1540,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible, interactive and can create
-    function activate(element, mouseButtonMask, getTextCallback) {
-        if (getTextCallback === undefined) {
-            getTextCallback = function() {
-                return prompt("Enter your annotation", "");
-            };
-        }
-
+    function activate(element, mouseButtonMask) {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
-            getTextCallback: getTextCallback
         };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
@@ -1574,8 +1579,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     // ---- Touch tool ----
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function addNewMeasurementTouch(touchEventData)
-    {
+    function addNewMeasurementTouch(touchEventData) {
+        
+        var annotationText;
+        function doneChangingTextCallback(annotationText) {
+            if (annotationText !== null) {
+                measurementData.annotationText = annotationText;
+            } else {
+                cornerstoneTools.removeToolState(touchEventData.element, toolType, measurementData);
+            }
+            cornerstone.updateImage(touchEventData.element);
+        }
+
         var measurementData = createNewMeasurement(touchEventData);
         cornerstoneTools.addToolState(touchEventData.element, toolType, measurementData);
         $(touchEventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
@@ -1586,17 +1601,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 cornerstoneTools.removeToolState(touchEventData.element, toolType, measurementData);
             }
 
-            var annotationText;
+            var config = cornerstoneTools.arrowAnnotate.getConfiguration();
             if (measurementData.annotationText === undefined) {
-                annotationText = touchEventData.getTextCallback();
+                config.getTextCallback(doneChangingTextCallback);
             }
-            
-            if (annotationText !== null) {
-                measurementData.annotationText = annotationText;
-            } else {
-                cornerstoneTools.removeToolState(touchEventData.element, toolType, measurementData);
-            }
-            cornerstone.updateImage(touchEventData.element);
 
             $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
         });
@@ -1604,7 +1612,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function touchDownActivateCallback(e, eventData)
     {
-        eventData.getTextCallback = e.data.getTextCallback;
         addNewMeasurementTouch(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
@@ -1628,8 +1635,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         for (var i = 0; i < toolData.data.length; i++) {
             // get the touch position in image coordinates
             var data = toolData.data[i];
-            if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale) === true)
-            {
+            if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale) === true) {
                 imageNeedsUpdate = true;
             }
         }
@@ -1723,17 +1729,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible, interactive and can create
-    function activateTouch(element, getTextCallback) {
-        if (getTextCallback === undefined) {
-            getTextCallback = function() {
-                return prompt("Enter your annotation", "");
-            };
-        }
-
-        var eventData = {
-            "getTextCallback": getTextCallback
-        };
-
+    function activateTouch(element) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsTouchDrag", touchMoveCallback);
         $(element).off("CornerstoneToolsDragStart", touchStartCallback);
@@ -1761,12 +1757,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         cornerstone.updateImage(element);
     }
 
+    function getConfiguration() {
+        return configuration;
+    }
+    
+    function setConfiguration(config) {
+        configuration = config;
+    }
 
     cornerstoneTools.arrowAnnotate = {
         enable: enable,
         disable: disable,
         activate: activate,
-        deactivate: deactivate
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration
     };
 
     cornerstoneTools.arrowAnnotateTouch = {
@@ -1775,7 +1780,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         activate: activateTouch,
         deactivate: deactivateTouch
     };
-
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
