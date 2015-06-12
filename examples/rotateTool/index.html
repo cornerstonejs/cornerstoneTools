@@ -2,6 +2,7 @@
 <html>
 <head>
     <!-- support for mobile touch devices -->
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
@@ -37,7 +38,11 @@
             <ul class="list-group">
                 <a id="activate" class="list-group-item">Activate</a>
                 <a id="disable" class="list-group-item">Disable</a>
+                <a id="defaultStrategy" class="list-group-item">Default Strategy</a>
+                <a id="verticalStrategy" class="list-group-item">Vertical Strategy</a>
+                <a id="horizontalStrategy" class="list-group-item">Horizontal Strategy</a>
             </ul>
+            <span id="rotation"></span>
         </div>
         <div class="col-xs-12 col-sm-6">
             <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
@@ -75,6 +80,13 @@ is used by our example image loader-->
     var element = $('#dicomImage').get(0);
 
     var imageId = 'example://1';
+
+    function onImageRendered(e) {
+        var viewport = cornerstone.getViewport(e.target)
+        $('#rotation').text("Rotation: " + Math.round(viewport.rotation) + "°");
+    };
+
+    $('#dicomImage').on("CornerstoneImageRendered", onImageRendered);
 
     // image enable the dicomImage element
     cornerstone.enable(element);
@@ -114,7 +126,21 @@ is used by our example image loader-->
             cornerstoneTools.rotateTouchDrag.activate(element);
             return false;
         });
-
+        $('#defaultStrategy').click(function() {
+            activate("#defaultStrategy");
+            cornerstoneTools.rotate.strategy = cornerstoneTools.rotate.strategies.default;
+            return false;
+        });
+        $('#verticalStrategy').click(function() {
+            activate("#verticalStrategy");
+            cornerstoneTools.rotate.strategy = cornerstoneTools.rotate.strategies.vertical;
+            return false;
+        });
+        $('#horizontalStrategy').click(function() {
+            activate("#horizontalStrategy");
+            cornerstoneTools.rotate.strategy = cornerstoneTools.rotate.strategies.horizontal;
+            return false;
+        });
     });
 
 </script>
