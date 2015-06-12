@@ -9,14 +9,25 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // --- Strategies --- //
     function defaultStrategy(eventData) {
         // Calculate distance from the center of the image
-        var pointsFromCenter = {
-            x: eventData.lastPoints.image.x - eventData.image.columns / 2,
-            // Invert the coordinate system so that up is positive
-            y: -1 * (eventData.lastPoints.image.y - eventData.image.rows / 2)
+        var rect = element.getBoundingClientRect(eventData.element);
+
+        var points = {
+            x: eventData.currentPoints.client.x,
+            y: eventData.currentPoints.client.y
         };
+
+        var width = eventData.element.clientWidth;
+        var height = eventData.element.clientHeight;
+
+        var pointsFromCenter = {
+            x: points.x - rect.left - width / 2,
+            // Invert the coordinate system so that up is positive
+            y: -1 * (points.y - rect.top - height / 2)
+        };
+
         var rotationRadians = Math.atan2(pointsFromCenter.y, pointsFromCenter.x);
         var rotationDegrees = rotationRadians * (180 / Math.PI);
-        var rotation = -1 * rotationDegrees  + 90;
+        var rotation = -1 * rotationDegrees + 90;
         eventData.viewport.rotation = rotation;
     }
 
