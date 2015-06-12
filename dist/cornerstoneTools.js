@@ -458,18 +458,18 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             drag_min_distance: 0
         };
 
+        var mc = new Hammer(element);
+        mc.set(hammerOptions);
+
         var panOptions = {
             threshold: 0,
             pointers: 0,
             direction: Hammer.DIRECTION_ALL
         };
 
-        var mc = new Hammer(element);
-        mc.set(hammerOptions);
-
         var pan = new Hammer.Pan(panOptions);
-        var pinch = new Hammer.Pinch();
-        var rotate = new Hammer.Rotate();
+        var pinch = new Hammer.Pinch({threshold: 0.25});
+        var rotate = new Hammer.Rotate({threshold: 0.05});
 
         // we want to detect both the same time
         pinch.recognizeWith(pan);

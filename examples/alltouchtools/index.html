@@ -23,13 +23,13 @@
 </head>
 
 <script>
-  if (typeof CustomEvent === 'undefined') {
-                CustomEvent = function(type, eventInitDict) {
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent(type, eventInitDict['bubbles'], eventInitDict['cancelable'], eventInitDict['detail']);
-                    return event;
-                };
-            }
+    if (typeof CustomEvent === 'undefined') {
+        CustomEvent = function(type, eventInitDict) {
+            var event = document.createEvent('CustomEvent');
+            event.initCustomEvent(type, eventInitDict['bubbles'], eventInitDict['cancelable'], eventInitDict['detail']);
+            return event;
+        };
+    }
 </script>
 
 <body>
@@ -63,6 +63,7 @@
                 </ul>
                 <a id="clearToolData" class="btn btn-secondary">Clear Tools</a>
                 <a id="resetViewport" class="btn btn-secondary">Reset View</a>
+                <a id="fullscreen" class="btn btn-secondary">Fullscreen</a>
             </div>
         </div>
     </div>
@@ -135,6 +136,50 @@ is used by our example image loader-->
     $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
 
     var imageId = 'example://1';
+
+    var container = element.parentNode;
+
+    $('#fullscreen').click(function (e) {
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            }
+        }
+    });
+
+    $(document).on("webkitfullscreenchange mozfullscreenchange fullscreenchange", function() {
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            $(container).width(256);
+            $(container).height(256);
+            $(element).width(256);
+            $(element).height(256);
+        } else {
+            $(container).width($(window).width());
+            $(container).height($(window).height());
+            $(element).width($(container).width());
+            $(element).height($(container).height());
+        }
+        cornerstone.resize(element, true);
+    })
+
+    $(window).on("resize orientationchange", function () {
+        if (document.fullscreenElement || document.mozFullScreenElement ||
+            document.webkitFullscreenElement || document.msFullscreenElement) {
+            $(container).width($(window).width());
+            $(container).height($(window).height());
+            $(element).width($(container).width());
+            $(element).height($(container).height());
+            cornerstone.resize(element, true);
+        }
+    })
 
     // image enable the dicomImage element
     cornerstone.enable(element);
