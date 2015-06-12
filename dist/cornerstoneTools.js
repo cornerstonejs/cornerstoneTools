@@ -4653,6 +4653,86 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/metaData.js
 
+// Begin Source: src/orientation/getOrientationString.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    if(cornerstoneTools.orientation === undefined) {
+        cornerstoneTools.orientation = {};
+    }
+
+    function getOrientationString(vector) {
+        // Thanks to David Clunie
+        // https://sites.google.com/site/dicomnotes/
+
+        var orientation = "",
+            orientationX = vector.y < 0 ? 'R' : 'L',
+            orientationY = vector.y < 0 ? 'A' : 'P',
+            orientationZ = vector.z < 0 ? 'F' : 'H';
+
+        // Should probably make this a function vector3.abs
+        var abs = new cornerstoneMath.Vector3(Math.abs(vector.x), Math.abs(vector.y), Math.abs(vector.z));
+
+        for(var i=0; i < 3; i++) {
+            if (abs.x > 0.0001 && abs.x > abs.y && abs.x > abs.z) {
+                orientation += orientationX;
+                abs.x = 0;
+            } else if (abs.y > 0.0001 && abs.y > abs.x && abs.y > abs.z) {
+                orientation += orientationY;
+                abs.y = 0;
+            } else if (abs.z > 0.0001 && abs.z > abs.x && abs.z > abs.y) {
+                orientation += orientationZ;
+                abs.z = 0;
+            } else {
+                break;
+            }
+        }
+        return orientation;
+    }
+
+    // module/private exports
+    cornerstoneTools.orientation.getOrientationString = getOrientationString;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/orientation/getOrientationString.js
+
+// Begin Source: src/orientation/invertOrientationString.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    if(cornerstoneTools.orientation === undefined) {
+        cornerstoneTools.orientation = {};
+    }
+
+    function invertOrientationString(string) {
+        var inverted = string.replace("H", "f");
+        inverted = inverted.replace("F", "h");
+        inverted = inverted.replace("R", "l");
+        inverted = inverted.replace("L", "r");
+        inverted = inverted.replace("A", "p");
+        inverted = inverted.replace("P", "a");
+        inverted = inverted.toUpperCase();
+        return inverted;
+    }
+
+    // module/private exports
+    cornerstoneTools.orientation.invertOrientationString = invertOrientationString;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/orientation/invertOrientationString.js
+
 // Begin Source: src/referenceLines/calculateReferenceLine.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
