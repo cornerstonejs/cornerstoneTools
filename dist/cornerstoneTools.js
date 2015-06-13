@@ -2810,6 +2810,40 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
  
 // End Source; src/imageTools/highlight.js
 
+// Begin Source: src/imageTools/keyboardTool.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function keyboardTool(keyDownCallback)
+    {
+        var configuration = {};
+
+        var toolInterface = {
+            activate: function(element) {
+                $(element).off('CornerstoneToolsKeyDown', keyDownCallback);
+                $(element).on("CornerstoneToolsKeyDown", keyDownCallback);
+            },
+            disable : function(element) {$(element).off('CornerstoneToolsKeyDown', keyDownCallback);},
+            enable : function(element) {$(element).off('CornerstoneToolsKeyDown', keyDownCallback);},
+            deactivate : function(element) {$(element).off('CornerstoneToolsKeyDown', keyDownCallback);},
+            getConfiguration : function() { return configuration; },
+            setConfiguration : function(config) {configuration = config;}
+        };
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.keyboardTool = keyboardTool;
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/imageTools/keyboardTool.js
+
 // Begin Source: src/imageTools/lengthTool.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
@@ -4459,6 +4493,70 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
  
 // End Source; src/imageTools/zoom.js
 
+// Begin Source: src/inputSources/keyboardInput.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+    var mouseX,
+        mouseY;
+
+    function keyPress(e) {
+        var element = e.currentTarget;
+        var startingCoords = cornerstone.pageToPixel(element, mouseX, mouseY);
+
+        e = window.event || e; // old IE support
+
+        var keyPressData = {
+            element: element,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image,
+            pageX : mouseX,
+            pageY: mouseY,
+            imageX : startingCoords.x,
+            imageY : startingCoords.y,
+            keyCode: e.keyCode,
+            which: e.which
+        };
+
+        if (e.type === "keydown") {
+            $(element).trigger("CornerstoneToolsKeyDown", keyPressData);
+        } else if (e.type === "keypress") {
+            $(element).trigger("CornerstoneToolsKeyPress", keyPressData);
+        } else if (e.type === "keyup") {
+            $(element).trigger("CornerstoneToolsKeyUp", keyPressData);
+        }
+    }
+
+    function mouseMove(e) {
+        mouseX = e.pageX || e.originalEvent.pageX;
+        mouseY = e.pageY || e.originalEvent.pageY;
+    }
+
+    var keyboardEvent = "keydown keypress keyup";
+
+    function enable(element) {
+        $(element).bind(keyboardEvent, keyPress);
+        $(element).on("mousemove", mouseMove);
+    }
+
+    function disable(element) {
+        $(element).unbind(keyboardEvent, keyPress);
+    }
+
+    // module exports
+    cornerstoneTools.keyboardInput = {
+        enable : enable,
+        disable : disable
+    };
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/inputSources/keyboardInput.js
+
 // Begin Source: src/inputSources/touchInput.js
 var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
@@ -5946,6 +6044,71 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/stackTools/stackScroll.js
+
+// Begin Source: src/stackTools/stackScrollKeyboard.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    var toolType = "stackScrollKeyboard";
+
+    var keys = {
+        UP: 38,
+        DOWN: 40
+    };
+
+    function scroll(element, images)
+    {
+        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+            return;
+        }
+
+        var stackData = toolData.data[0];
+
+        var newImageIdIndex = stackData.currentImageIdIndex + images;
+        newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
+        newImageIdIndex = Math.max(0, newImageIdIndex);
+
+        if(newImageIdIndex !== stackData.currentImageIdIndex)
+        {
+            var viewport = cornerstone.getViewport(element);
+            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                stackData = toolData.data[0];
+                if(stackData.newImageIdIndex !== newImageIdIndex) {
+                    stackData.currentImageIdIndex = newImageIdIndex;
+                    cornerstone.displayImage(element, image, viewport);
+                }
+            });
+        }
+    }
+
+    function keyDownCallback(e, eventData)
+    {
+        var keyCode = eventData.keyCode;
+        if (keyCode !== keys.UP && keyCode !== keys.DOWN) {
+            return;
+        }
+
+        var images = 1;
+        if (keyCode === keys.DOWN) {
+            images = -1;
+        }
+        scroll(eventData.element, images);
+        //console.log('Scrolled: ' + images + ' image(s)');
+    }
+
+
+    // module/private exports
+    cornerstoneTools.stackScrollKeyboard = cornerstoneTools.keyboardTool(keyDownCallback);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools)); 
+// End Source; src/stackTools/stackScrollKeyboard.js
 
 // Begin Source: src/stateManagement/imageIdSpecificStateManager.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
