@@ -399,7 +399,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneImageRendered", onImageRendered);
 
-        $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+        $(element).on("CornerstoneImageRendered", onImageRendered);
 
         cornerstone.updateImage(element);
     }
