@@ -2616,7 +2616,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
         $(element).off("CornerstoneImageRendered", onImageRendered);
 
-        $(element).on("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
+        $(element).on("CornerstoneImageRendered", onImageRendered);
 
         cornerstone.updateImage(element);
     }
@@ -2738,17 +2738,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var data = toolData.data[0];
 
-<<<<<<< HEAD
-        if (data.active) {
-=======
         if (!data) {
             return;
         }
 
-        //differentiate the color of activation tool
-        if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
-            data.active = true;
->>>>>>> Used pixelToCanvas in highlight tool
+        if (data.active) {
             color = cornerstoneTools.toolColors.getActiveColor();
         } else {
             color = cornerstoneTools.toolColors.getToolColor();
