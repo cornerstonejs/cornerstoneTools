@@ -36,6 +36,7 @@
                 <a id="rectangleroi" class="list-group-item">Rectangle ROI</a>
                 <a id="angle" class="list-group-item">Angle</a>
                 <a id="highlight" class="list-group-item">Highlight</a>
+                <a id="freehand" class="list-group-item">Freeform ROI</a>
             </ul>
             <br/>
         </div>
@@ -208,6 +209,11 @@ is used by our example image loader-->
             activate('#highlight')
             disableAllTools();
             cornerstoneTools.highlight.activate(element, 1);
+        });
+        $('#freehand').click(function() {
+            activate('#freehand')
+            disableAllTools();
+            cornerstoneTools.freehand.activate(element, 1);
         });
     });
 

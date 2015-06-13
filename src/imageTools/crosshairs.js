@@ -62,8 +62,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 }
             });
 
-            if(newImageIdIndex === stackData.currentImageIdIndex)
-            {
+            if(newImageIdIndex === stackData.currentImageIdIndex) {
                 return;
             }
 
@@ -79,14 +78,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         });
     }
 
-    function mouseUpCallback(e, eventData)
-    {
+    function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-    function mouseDownCallback(e, eventData)
-    {
+    function mouseDownCallback(e, eventData) {
         if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -95,14 +92,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
     }
 
-    function mouseDragCallback(e, eventData)
-    {
+    function mouseDragCallback(e, eventData) {
         chooseLocation(e, eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-    function enable(element, mouseButtonMask, synchronizationContext)
-    {
+    function enable(element, mouseButtonMask, synchronizationContext) {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
         };
@@ -114,21 +109,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
 
         $(element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
-        cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
-    function disable(element, synchronizationContext)
-    {
+    function disable(element, synchronizationContext) {
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
-        cornerstone.updateImage(element);
     }
 
     // module/private exports
     cornerstoneTools.crosshairs = {
         enable: enable,
         disable: disable
-
     };
 
 
