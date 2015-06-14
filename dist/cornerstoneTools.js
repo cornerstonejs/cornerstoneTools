@@ -3214,11 +3214,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         return suv;
     }
+
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
         return cornerstoneMath.point.distance(data.handles.end, coords) < 5;
     }
-
 
     function onImageRendered(e, eventData) {
 
@@ -3286,11 +3286,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.probe = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
         toolType : toolType
     });
     cornerstoneTools.probeTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
         toolType: toolType
     });
 
