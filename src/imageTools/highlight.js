@@ -115,12 +115,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.beginPath();
         context.strokeStyle = "transparent";
 
-        context.save();
         context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
-        context.restore();
 
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-        context.restore();
         context.stroke();
         context.fillStyle = "rgba(0,0,0,0.7)";
         context.fill();
@@ -132,10 +129,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.lineWidth = lineWidth;
         context.setLineDash([4]);
         context.strokeRect(rect.left, rect.top, rect.width, rect.height);
-        context.restore();
+
+        // Strange fix, but restore doesn't seem to reset the line dashes?
+        context.setLineDash([]);
         
         // draw the handles last, so they will be on top of the overlay
         cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+        context.restore();
     }
     ///////// END IMAGE RENDERING ///////
 
