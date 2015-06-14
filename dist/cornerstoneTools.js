@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-14 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-16 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -5539,7 +5539,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -5552,12 +5552,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
      * @param element
      * @param framesPerSecond
      */
-    function playClip(element, framesPerSecond)
-    {
-        if(element === undefined) {
+    function playClip(element, framesPerSecond) {
+        if (element === undefined) {
             throw "playClip: element must not be undefined";
         }
-        if(framesPerSecond === undefined) {
+        if (framesPerSecond === undefined) {
             framesPerSecond = 30;
         }
 
@@ -5569,52 +5568,59 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
+        
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
                 intervalId : undefined,
                 framesPerSecond: framesPerSecond,
                 lastFrameTimeStamp: undefined,
-                frameRate: 0
+                frameRate: 0,
+                loop: true
             };
             cornerstoneTools.addToolState(element, toolType, playClipData);
-        }
-        else {
+        } else {
             playClipData = playClipToolData.data[0];
             playClipData.framesPerSecond = framesPerSecond;
         }
 
         // if already playing, do not set a new interval
-        if(playClipData.intervalId !== undefined) {
+        if (playClipData.intervalId !== undefined) {
             return;
         }
 
         playClipData.intervalId = setInterval(function() {
 
             var newImageIdIndex = stackData.currentImageIdIndex;
-            if(playClipData.framesPerSecond > 0) {
+
+            if (playClipData.framesPerSecond > 0) {
                 newImageIdIndex++;
             } else {
                 newImageIdIndex--;
             }
 
-            // loop around if we go outside the stack
-            if (newImageIdIndex >= stackData.imageIds.length)
-            {
-                newImageIdIndex =0;
+            if (!playClipData.loop && (newImageIdIndex >= stackData.imageIds.length || newImageIdIndex < 0)) {
+                clearInterval(playClipData.intervalId);
+                playClipData.intervalId = undefined;
+                return;
             }
-            if(newImageIdIndex < 0) {
+
+            // loop around if we go outside the stack
+            if (newImageIdIndex >= stackData.imageIds.length) {
+                newImageIdIndex = 0;
+            }
+
+            if (newImageIdIndex < 0) {
                 newImageIdIndex = stackData.imageIds.length -1;
             }
 
-            if(newImageIdIndex !== stackData.currentImageIdIndex)
-            {
+            if (newImageIdIndex !== stackData.currentImageIdIndex) {
                 var viewport = cornerstone.getViewport(element);
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                 });
             }
-        }, 1000/Math.abs(playClipData.framesPerSecond));
+        }, 1000 / Math.abs(playClipData.framesPerSecond));
     }
 
     /**
@@ -5627,8 +5633,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var playClipData;
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             return;
-        }
-        else {
+        } else {
             playClipData = playClipToolData.data[0];
         }
 
