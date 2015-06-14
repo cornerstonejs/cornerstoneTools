@@ -9,8 +9,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     var toolType = "length";
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function createNewMeasurement(mouseEventData)
-    {
+    function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
@@ -35,8 +34,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointNearTool(data, coords)
-    {
+    function pointNearTool(data, coords) {
         var lineSegment = {
             start: data.handles.start,
             end: data.handles.end
@@ -56,11 +54,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
         var color;
+        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        var font = cornerstoneTools.textStyle.getFont();
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
+            
             var data = toolData.data[i];
 
             if (data.active) {
@@ -70,17 +72,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
 
             // draw the line
+            var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+            var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
             context.beginPath();
             context.strokeStyle = color;
-            context.lineWidth = 1 / eventData.viewport.scale;
-            context.moveTo(data.handles.start.x, data.handles.start.y);
-            context.lineTo(data.handles.end.x, data.handles.end.y);
+            context.lineWidth = lineWidth;
+            context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+            context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
             context.stroke();
 
             // draw the handles
-            context.beginPath();
-            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
-            context.stroke();
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
 
             // Draw the text
             context.fillStyle = color;
@@ -89,12 +92,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = "" + length.toFixed(2) + " mm";
 
-            var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
-            context.font = "" + fontParameters.fontSize + "px Arial";
+            context.font = font;
+            var textCoords = {
+                x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                y: (handleStartCanvas.y + handleEndCanvas.y) / 2
+            };
 
-            var textX = (data.handles.start.x + data.handles.end.x) / 2 / fontParameters.fontScale;
-            var textY = (data.handles.start.y + data.handles.end.y) / 2 / fontParameters.fontScale;
-            context.fillText(text, textX, textY);
+            context.fillText(text, textCoords.x, textCoords.y);
             context.restore();
         }
 

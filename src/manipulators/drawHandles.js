@@ -11,20 +11,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function drawHandles(context, renderData, handles, color, fill)
     {
         context.strokeStyle = color;
-        var radius = handleRadius / renderData.viewport.scale;
+
         for(var property in handles) {
             var handle = handles[property];
-            if(handle.active || handle.highlight) {
+
+            if (handle.active || handle.highlight) {
                 context.beginPath();
-                if(handle.active)
-                {
-                    context.lineWidth = 2 / renderData.viewport.scale;
+
+                if (handle.active) {
+                    context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
+                } else {
+                    context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
                 }
-                else
-                {
-                    context.lineWidth = 0.5 / renderData.viewport.scale;
-                }
-                context.arc(handle.x, handle.y, radius, 0, 2 * Math.PI);
+                
+                var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
+                context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
                 if (fill) {
                     context.fillStyle = fill;

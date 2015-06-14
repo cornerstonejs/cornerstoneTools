@@ -82,13 +82,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // we have tool data for this elemen
         var context = eventData.canvasContext.canvas.getContext("2d");
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+        context.setTransform(1,0,0,1,0,0);
 
         var color;
+        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         context.save();
+
         var data = toolData.data[0];
-        if (!data) return;
+
+        if (!data) {
+            return;
+        }
 
         if (data.active) {
             color = cornerstoneTools.toolColors.getActiveColor();
@@ -96,25 +101,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             color = cornerstoneTools.toolColors.getToolColor();
         }
 
-        //differentiate the color of activation tool
+        var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+        var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
         var rect = {
-            left : Math.min(data.handles.start.x, data.handles.end.x),
-            top : Math.min(data.handles.start.y, data.handles.end.y),
-            width : Math.abs(data.handles.start.x - data.handles.end.x),
-            height : Math.abs(data.handles.start.y - data.handles.end.y)
+            left : Math.min(handleStartCanvas.x, handleEndCanvas.x),
+            top : Math.min(handleStartCanvas.y, handleEndCanvas.y),
+            width : Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+            height : Math.abs(handleStartCanvas.y - handleEndCanvas.y)
         };
 
         // draw dark fill outside the rectangle
         context.beginPath();
         context.strokeStyle = "transparent";
 
-        context.save();
-        context.setTransform(1,0,0,1,0,0);
         context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
-        context.restore();
 
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-        context.restore();
         context.stroke();
         context.fillStyle = "rgba(0,0,0,0.7)";
         context.fill();
@@ -123,15 +126,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // draw dashed stroke rectangle
         context.beginPath();
         context.strokeStyle = color;
-        context.lineWidth = 2.5 / eventData.viewport.scale;
+        context.lineWidth = lineWidth;
         context.setLineDash([4]);
         context.strokeRect(rect.left, rect.top, rect.width, rect.height);
-        context.restore();
+
+        // Strange fix, but restore doesn't seem to reset the line dashes?
+        context.setLineDash([]);
         
         // draw the handles last, so they will be on top of the overlay
-        context.beginPath();
         cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-        context.stroke();
+        context.restore();
     }
     ///////// END IMAGE RENDERING ///////
 

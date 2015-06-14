@@ -78,6 +78,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
+        var font = cornerstoneTools.textStyle.getFont();
 
         // Start the toolData loop at 1, since the first element is just used to store
         // ascending / current / marker data
@@ -92,13 +93,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // Draw text
             var coords = {
-                    x: data.handles.end.x - 4,
-                    y: data.handles.end.y + 3
+                x: data.handles.end.x - 4,
+                y: data.handles.end.y + 3
             };
 
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-            context.font = "15px Arial";
+            context.font = font;
             context.fillStyle = color;
             context.fillText(data.text, textCoords.x, textCoords.y);
         }

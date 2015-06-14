@@ -27,15 +27,16 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="enableWindowLevelTool" class="list-group-item">WW/WC</a>
-                <a href="#" id="pan" class="list-group-item">Pan</a>
-                <a href="#" id="zoom" class="list-group-item">Zoom</a>
-                <a href="#" id="enableLength" class="list-group-item">Length</a>
-                <a href="#" id="probe" class="list-group-item">Probe</a>
-                <a href="#" id="circleroi" class="list-group-item">Elliptical ROI</a>
-                <a href="#" id="rectangleroi" class="list-group-item">Rectangle ROI</a>
-                <a href="#" id="angle" class="list-group-item">Angle</a>
-                <a href="#" id="highlight" class="list-group-item">Highlight</a>
+                <a id="enableWindowLevelTool" class="list-group-item">WW/WC</a>
+                <a id="pan" class="list-group-item">Pan</a>
+                <a id="zoom" class="list-group-item">Zoom</a>
+                <a id="enableLength" class="list-group-item">Length</a>
+                <a id="probe" class="list-group-item">Probe</a>
+                <a id="circleroi" class="list-group-item">Elliptical ROI</a>
+                <a id="rectangleroi" class="list-group-item">Rectangle ROI</a>
+                <a id="angle" class="list-group-item">Angle</a>
+                <a id="highlight" class="list-group-item">Highlight</a>
+                <a id="freehand" class="list-group-item">Freeform ROI</a>
             </ul>
             <br/>
         </div>
@@ -161,6 +162,7 @@ is used by our example image loader-->
             cornerstoneTools.rectangleRoi.deactivate(element, 1);
             cornerstoneTools.angle.deactivate(element, 1);
             cornerstoneTools.highlight.deactivate(element, 1);
+            cornerstoneTools.freehand.deactivate(element, 1);
         }
 
         // Tool button event handlers that set the new active tool
@@ -208,6 +210,11 @@ is used by our example image loader-->
             activate('#highlight')
             disableAllTools();
             cornerstoneTools.highlight.activate(element, 1);
+        });
+        $('#freehand').click(function() {
+            activate('#freehand')
+            disableAllTools();
+            cornerstoneTools.freehand.activate(element, 1);
         });
     });
 

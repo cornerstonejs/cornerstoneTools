@@ -251,8 +251,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
+        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        var font = cornerstoneTools.textStyle.getFont();
 
         for(var i=0; i < toolData.data.length; i++) {
+            context.save();
+
             var data = toolData.data[i];
 
             if (data.active) {
@@ -262,8 +266,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
             
             // Draw the arrow
-            var lineWidth = 1 / eventData.viewport.scale;
-
             var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
             var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
@@ -275,15 +277,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // If statement !== false so that by default the handles are drawn
             if (config.drawHandles !== false) {
-                context.beginPath();
                 cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-                context.stroke();
             }
 
             // Draw the text
             if (data.annotationText !== undefined && data.annotationText !== null) {
                 context.fillStyle = color;
-                context.font = "14px Arial";
+                context.font = font;
 
                 var textCoords = {
                     x : (handleStartCanvas.x + handleEndCanvas.x) / 2,
@@ -292,6 +292,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
                 context.fillText(data.annotationText, textCoords.x, textCoords.y);
             }
+
+            context.restore();
         }
     }
 
