@@ -195,7 +195,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         for(var i=0; i < toolData.data.length; i++) {
             // get the cursor position in image coordinates
             var data = toolData.data[i];
-            if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+            if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                imageNeedsUpdate = true;
+            }
+            
+            if ((pointNearTool(data, eventData.currentPoints.image) && !data.active) ||
+                (!pointNearTool(data, eventData.currentPoints.image) && data.active)) {
+                data.active = !data.active;
                 imageNeedsUpdate = true;
             }
         }

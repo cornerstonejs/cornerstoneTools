@@ -397,10 +397,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // We have tool data, search through all data
             // and see if we can activate a handle
             var imageNeedsUpdate = false;
-            for(var i=0; i < toolData.data.length; i++) {
+            for (var i=0; i < toolData.data.length; i++) {
                 // get the cursor position in image coordinates
                 var data = toolData.data[i];
                 if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                    imageNeedsUpdate = true;
+                }
+
+                if ((mouseToolInterface.pointNearTool(data, eventData.currentPoints.image) && !data.active) ||
+                    (!mouseToolInterface.pointNearTool(data, eventData.currentPoints.image) && data.active)) {
+                    data.active = !data.active;
                     imageNeedsUpdate = true;
                 }
             }
@@ -643,8 +649,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             for(var i=0; i < toolData.data.length; i++) {
                 // get the cursor position in image coordinates
                 var data = toolData.data[i];
-                if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true)
-                {
+                if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                    imageNeedsUpdate = true;
+                }
+
+                if ((mouseToolInterface.pointInsideRect(data, eventData.currentPoints.image) && !data.active) ||
+                    (!mouseToolInterface.pointInsideRect(data, eventData.currentPoints.image) && data.active)) {
+                    data.active = !data.active;
                     imageNeedsUpdate = true;
                 }
             }
@@ -1349,8 +1360,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         for(var i=0; i < toolData.data.length; i++) {
             // get the cursor position in image coordinates
             var data = toolData.data[i];
-            if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true)
-            {
+            if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                imageNeedsUpdate = true;
+            }
+
+            if ((pointNearTool(data, eventData.currentPoints.image) && !data.active) ||
+                (!pointNearTool(data, eventData.currentPoints.image) && data.active)) {
+                data.active = !data.active;
                 imageNeedsUpdate = true;
             }
         }
@@ -3806,7 +3822,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         for(var i=0; i < toolData.data.length; i++) {
             // get the cursor position in image coordinates
             var data = toolData.data[i];
-            if(cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+            if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                imageNeedsUpdate = true;
+            }
+            
+            if ((pointNearTool(data, eventData.currentPoints.image) && !data.active) ||
+                (!pointNearTool(data, eventData.currentPoints.image) && data.active)) {
+                data.active = !data.active;
                 imageNeedsUpdate = true;
             }
         }
