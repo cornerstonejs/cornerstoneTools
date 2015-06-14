@@ -14,18 +14,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
+            active : true,
             handles : {
                 start : {
                     x : mouseEventData.currentPoints.image.x,
                     y : mouseEventData.currentPoints.image.y,
                     highlight: true,
-                    active: false
+                    active : false
                 },
                 end: {
                     x : mouseEventData.currentPoints.image.x,
                     y : mouseEventData.currentPoints.image.y,
                     highlight: true,
-                    active: true
+                    active : true
                 }
             }
         };
@@ -62,14 +63,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.save();
             var data = toolData.data[i];
 
-            if (pointNearTool(data,cornerstoneTools.toolCoordinates.getCoords())) {
-               data.active = true;
-               color=cornerstoneTools.toolColors.getActiveColor();
+            if (data.active) {
+                color = cornerstoneTools.toolColors.getActiveColor();
             } else {
-               data.active = false;
-               color=cornerstoneTools.toolColors.getToolColor();
+                color = cornerstoneTools.toolColors.getToolColor();
             }
-         
+
             // draw the line
             context.beginPath();
             context.strokeStyle = color;

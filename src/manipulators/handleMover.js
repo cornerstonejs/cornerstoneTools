@@ -6,29 +6,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage)
-    {
+    function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
 
         function mouseDragCallback(e, eventData) {
+            handle.active = true;
             handle.x = eventData.currentPoints.image.x;
             handle.y = eventData.currentPoints.image.y;
-            if (preventHandleOutsideImage)
-            {
-                if (handle.x < 0)
-                {
+            if (preventHandleOutsideImage) {
+                if (handle.x < 0) {
                     handle.x = 0;
                 }
-                if (handle.x > eventData.image.width)
-                {
+                if (handle.x > eventData.image.width) {
                     handle.x = eventData.image.width;
                 }
-                if (handle.y < 0)
-                {
+                if (handle.y < 0) {
                     handle.y = 0;
                 }
-                if (handle.y > eventData.image.height)
-                {
+                if (handle.y > eventData.image.height) {
                     handle.y = eventData.image.height;
                 }
             }
@@ -37,7 +32,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
 
         function mouseUpCallback(e, eventData) {
-            handle.eactive = false;
+            handle.active = false;
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
             cornerstone.updateImage(element);

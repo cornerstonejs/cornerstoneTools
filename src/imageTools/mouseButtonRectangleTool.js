@@ -34,6 +34,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // the end point and let the moveHandle move it for us.
             $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+                measurementData.active = false;
                 if(cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
                 {
                     // delete the measurement
@@ -102,11 +103,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             function handleDoneMove()
             {
+                data.active = false;
                 if(cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles))
                 {
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, mouseToolInterface.toolType, data);
                 }
+                cornerstone.updateImage(eventData.element);
                 $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
             }
 
@@ -123,6 +126,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                         var handle = getHandleNearImagePoint(data, coords);
                         if(handle !== undefined) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            data.active = true;
                             cornerstoneTools.moveHandle(eventData, handle, handleDoneMove, preventHandleOutsideImage);
                             e.stopImmediatePropagation();
                             return false;
@@ -138,6 +142,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                         if(mouseToolInterface.pointInsideRect(data, coords)) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             cornerstoneTools.moveAllHandles(e, data, toolData, false, preventHandleOutsideImage);
+                            $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
                             e.stopImmediatePropagation();
                             return false;
                         }
