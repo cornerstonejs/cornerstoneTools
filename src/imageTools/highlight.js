@@ -19,6 +19,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
+            active: true,
             handles : {
                 start : {
                     x : mouseEventData.currentPoints.image.x,
@@ -89,11 +90,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var data = toolData.data[0];
         if (!data) return;
 
-        if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
-            data.active = true;
+        if (data.active) {
             color = cornerstoneTools.toolColors.getActiveColor();
         } else {
-            data.active = false;
             color = cornerstoneTools.toolColors.getToolColor();
         }
 

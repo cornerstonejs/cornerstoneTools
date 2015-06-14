@@ -14,6 +14,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible: true,
+            active: true,
             handles: {
                 end: {
                     x: mouseEventData.currentPoints.image.x,
@@ -67,11 +68,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         return suv;
     }
+
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
         return cornerstoneMath.point.distance(data.handles.end, coords) < 5;
     }
-
 
     function onImageRendered(e, eventData) {
 
@@ -90,11 +91,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.save();
             var data = toolData.data[i];
             
-            if (pointNearTool(data, cornerstoneTools.toolCoordinates.getCoords())) {
-                data.active = true;
+            if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
             } else {
-                data.active = false;
                 color = cornerstoneTools.toolColors.getToolColor();
             }
 
@@ -141,11 +140,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.probe = cornerstoneTools.mouseButtonTool({
         createNewMeasurement : createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
         toolType : toolType
     });
     cornerstoneTools.probeTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
         toolType: toolType
     });
 

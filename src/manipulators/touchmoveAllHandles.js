@@ -11,8 +11,9 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         var touchEventData = e;
         var element = touchEventData.element;
 
-        function touchDragCallback(e,eventData)
-        {
+        function touchDragCallback(e,eventData) {
+            data.active = true;
+            
             var touchMoveData = eventData;
             for (var property in data.handles) {
                 var handle = data.handles[property];
@@ -26,7 +27,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
 
         function touchendCallback(e,eventData) {
-            data.moving = false;
+            data.active = false;
+
             var touchendData = eventData;
 
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
