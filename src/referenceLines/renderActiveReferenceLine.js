@@ -39,8 +39,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
 
-        var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.handles.start);
-        var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.handles.end);
+        var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.start);
+        var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.end);
 
         var color = cornerstoneTools.toolColors.getActiveColor();
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
