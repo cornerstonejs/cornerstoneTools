@@ -3037,16 +3037,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
 
         // Clear the rectangle
-        zoomCtx.clearRect(0,0, magnify.width, magnify.height);
+        zoomCtx.clearRect(0, 0, magnify.width, magnify.height);
         zoomCtx.fillStyle = "transparent";
 
         // Fill it with the pixels that the mouse is clicking on
-        zoomCtx.fillRect(0,0, magnify.width, magnify.height);
-        zoomCtx.drawImage(canvas, canvasLocation.x - magnifySize / 4, canvasLocation.y - magnifySize / 4, magnifySize, magnifySize, 0, 0, magnifySize * magnificationLevel, magnifySize * magnificationLevel);
+        zoomCtx.fillRect(0, 0, magnify.width, magnify.height);
+        
+        var size = magnifySize * magnificationLevel;
+        var startX = canvasLocation.x - 0.5 * magnifySize / magnificationLevel;
+        var startY = canvasLocation.y - 0.5 * magnifySize / magnificationLevel;
+
+        zoomCtx.drawImage(canvas, startX, startY, magnifySize, magnifySize, 0, 0, size, size);
 
         // Place the magnification tool at the same location as the pointer
-        magnify.style.top = canvasLocation.y - magnifySize / 2 + "px";
-        magnify.style.left = canvasLocation.x - magnifySize / 2 + "px";
+        magnify.style.top = canvasLocation.y - 0.45 * magnifySize + "px";
+        magnify.style.left = canvasLocation.x - 0.45 * magnifySize + "px";
         magnify.style.display = "block";
 
         // Hide the mouse cursor, so the user can see better

@@ -17,10 +17,10 @@
             border: 4px white solid;
             box-shadow: 2px 2px 10px #1e1e1e;
             border-radius: 50%; 
-            width: 200px;
-            height: 200px;
+            width: 225px;
+            height: 225px;
             display: none;
-            cursor: none;
+            
         }
         /* prevents selection when left click dragging */
         .disable-selection {
@@ -50,6 +50,11 @@
                 <a id="activate" class="list-group-item">Activate</a>
                 <a id="disable" class="list-group-item">Disable</a>
             </ul>
+            <label for="magLevelRange">Magnification Level</label>
+            <input id="magLevelRange" type="range" min="1" value="2" max="10" />
+            <br/>
+            <label for="magSizeRange">Magnifying glass size</label>
+            <input id="magSizeRange" type="range" min="100" value="225" max="300" step="50"/>
         </div>
         <div class="col-xs-12 col-sm-6">
             <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
@@ -98,14 +103,31 @@ is used by our example image loader-->
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.touchInput.enable(element);
 
-    var magnifySize = 100;
-    var magnificationLevel = 2;
+    var magLevelRange = $("#magLevelRange")
+    magLevelRange.on("change", function() {
+        var config = cornerstoneTools.magnify.getConfiguration();
+        config.magnificationLevel = parseInt(magLevelRange.val(), 10);
+    });
+
+    var magSizeRange = $("#magSizeRange")
+    magSizeRange.on("change", function() {
+        var config = cornerstoneTools.magnify.getConfiguration();
+        config.magnifySize = parseInt(magSizeRange.val(), 10)
+        $(".magnifyTool").css("width", config.magnifySize).css("height", config.magnifySize);
+    });
+
+    var config = {
+        magnifySize: parseInt(magSizeRange.val(), 10),
+        magnificationLevel: parseInt(magLevelRange.val(), 10)
+    };
+
+    cornerstoneTools.magnify.setConfiguration(config);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
-        cornerstoneTools.magnify.enable(element, magnifySize, magnificationLevel);
-        cornerstoneTools.magnifyTouchDrag.enable(element, magnifySize, magnificationLevel);
+        cornerstoneTools.magnify.enable(element);
+        cornerstoneTools.magnifyTouchDrag.enable(element);
 
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
