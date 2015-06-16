@@ -114,11 +114,25 @@ is used by our example image loader-->
 
         confirm.off('click');
         confirm.on('click', function() {
+            closeHandler()
+        });
+
+        dialog.off("keypress");
+        dialog.on('keypress', keyPressHandler);
+
+        function keyPressHandler(e) {
+            // If Enter is pressed, close the dialog
+            if (e.which === 13) {
+                closeHandler();
+            }
+        }
+
+        function closeHandler() {
             dialog.get(0).close();
             doneChangingTextCallback(getTextInput.val());
             // Reset the text value
             getTextInput.val("");
-        });
+        }
     }
 
     var config = {

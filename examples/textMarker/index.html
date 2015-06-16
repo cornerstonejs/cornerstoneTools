@@ -208,6 +208,22 @@ is used by our example image loader-->
             dialog.get(0).close();
             doneChangingTextCallback(data, select.val());
         });
+
+        dialog.off("keypress");
+        dialog.on('keypress', keyPressHandler);
+
+        function keyPressHandler(e) {
+            // If Enter is pressed, close the dialog
+            if (e.which === 13) {
+                closeHandler();
+            }
+        }
+
+        function closeHandler() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, select.val());
+        }
+        
     }
 
     var config = {
