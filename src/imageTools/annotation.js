@@ -253,6 +253,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
+        var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
         for(var i=0; i < toolData.data.length; i++) {
             context.save();
@@ -285,10 +286,44 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 context.fillStyle = color;
                 context.font = font;
 
-                var textCoords = {
-                    x : (handleStartCanvas.x + handleEndCanvas.x) / 2,
-                    y : (handleStartCanvas.y + handleEndCanvas.y) / 2
+                
+                var distance = 4;
+
+                // TODO: add 2 dimensional vector operations to cornerstoneMath
+                var vector;
+                
+                var displacement = {
+                    x: distance,
+                    y: distance
                 };
+
+                vector = {
+                        x: handleEndCanvas.x - handleStartCanvas.x,
+                        y: handleEndCanvas.y - handleStartCanvas.y
+                };
+
+                var textCoords;
+                if (config.arrowFirst) {
+                    // Fix text placement if arrow faces right
+                    if (vector.x < 0) {
+                        displacement.x = -displacement.x - context.measureText(data.annotationText).width;
+                    }
+
+                    textCoords = {
+                        x: vector.x + handleStartCanvas.x + displacement.x,
+                        y: vector.y + handleStartCanvas.y + displacement.y
+                    };
+                } else {
+                    // Fix text placement if arrow faces right
+                    if (vector.x > 0) {
+                        displacement.x = -displacement.x - context.measureText(data.annotationText).width;
+                    }
+
+                    textCoords = {
+                        x: -vector.x + handleEndCanvas.x + displacement.x,
+                        y: -vector.y + handleEndCanvas.y + displacement.y
+                    };
+                }
 
                 context.fillText(data.annotationText, textCoords.x, textCoords.y);
             }
