@@ -29,6 +29,8 @@
                 <a href="#" id="playClip" class="list-group-item">Play Clip</a>
                 <a href="#" id="stopClip" class="list-group-item">Stop Clip</a>
             </ul>
+            <label>Loop</label>
+            <input type="checkbox" id="loop" checked />
             <input type="range" id="slice-range">
         </div>
         <div class="col-xs-6">
@@ -109,6 +111,12 @@ is used by our example image loader-->
         }
     }
     $(element).on("CornerstoneNewImage", onNewImage);
+
+    var loopCheckbox = $("#loop");
+    loopCheckbox.on('change', function() {
+        var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
+        playClipToolData.data[0].loop = loopCheckbox.is(":checked");
+    })
 
     var imageIds = [
         'example://1',
