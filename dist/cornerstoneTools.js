@@ -3788,6 +3788,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         return (distanceToPoint < 5);
     }
 
+    function length(vector) {
+        return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+    }
+
     ///////// BEGIN IMAGE RENDERING ///////
     function onImageRendered(e, eventData) {
 
@@ -3842,12 +3846,28 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle. 
-            var dx1 = (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing;
-            var dy1 = (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing;
-            var dx2 = (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * eventData.image.columnPixelSpacing;
-            var dy2 = (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * eventData.image.rowPixelSpacing;
 
-            var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+            var sideA = {
+                x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing,
+                y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing
+            };
+
+            var sideB = {
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * eventData.image.columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * eventData.image.rowPixelSpacing
+            };
+
+            var sideC = {
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing
+            };
+
+            var sideALength = length(sideA);
+            var sideBLength = length(sideB);
+            var sideCLength = length(sideC);
+
+            // Cosine law
+            var angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
             angle = angle * (180 / Math.PI);
 
             var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
@@ -3855,10 +3875,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             if (rAngle) {
                 var str = "00B0"; // degrees symbol
                 var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+                
+                var distance = 15;
 
-                var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
-                var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+                var textX = handleMiddleCanvas.x + distance;
+                var textY = handleMiddleCanvas.y + distance;
+                
+                var textWidth = context.measureText(data.annotationText).width;
 
+                if ((handleMiddleCanvas.x - handleStartCanvas.x) < 0) {
+                    textX = handleMiddleCanvas.x - distance - textWidth;
+                } else {
+                    textX = handleMiddleCanvas.x + distance;
+                }
+
+                textY = handleMiddleCanvas.y;
                 context.font = font;
                 context.fillText(text, textX, textY);
             }
