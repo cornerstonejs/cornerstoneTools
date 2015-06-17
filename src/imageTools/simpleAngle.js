@@ -29,6 +29,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                     active: true
                 },
                 end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
                 }
             }
         };
@@ -96,29 +100,30 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
             context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
 
-            if (data.handles.end.x) {
-                var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-                //context.moveTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
-                context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-                context.stroke();
+            var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-                // draw the handles
-                cornerstoneTools.drawHandles(context, eventData, data.handles);
+            context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+            context.stroke();
 
-                // Draw the text
-                context.fillStyle = color;
+            // draw the handles
+            cornerstoneTools.drawHandles(context, eventData, data.handles);
 
-                // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-                // where lines cross to measure angle. For now it will show smallest angle. 
-                var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.middle.x)) * eventData.image.columnPixelSpacing;
-                var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.middle.y)) * eventData.image.rowPixelSpacing;
-                var dx2 = (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-                var dy2 = (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
+            // Draw the text
+            context.fillStyle = color;
 
-                var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-                angle = angle * (180 / Math.PI);
+            // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+            // where lines cross to measure angle. For now it will show smallest angle. 
+            var dx1 = (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing;
+            var dy1 = (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing;
+            var dx2 = (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * eventData.image.columnPixelSpacing;
+            var dy2 = (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * eventData.image.rowPixelSpacing;
 
-                var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
+            var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+            angle = angle * (180 / Math.PI);
+
+            var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
+
+            if (rAngle) {
                 var str = "00B0"; // degrees symbol
                 var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
@@ -127,12 +132,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
                 context.font = font;
                 context.fillText(text, textX, textY);
-            } else {
-                context.stroke();
-
-                // draw the handles
-                cornerstoneTools.drawHandles(context, eventData, data.handles);
             }
+
             context.restore();
         }
 
@@ -146,24 +147,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
-       
+        
+        function moveLastHandle(e, mouseEventData) {
+            var handle = measurementData.handles.end;
+            handle.x = mouseEventData.currentPoints.image.x;
+            handle.y = mouseEventData.currentPoints.image.y;
+            console.log(handle);
+            if (handle.x < 0) {
+                handle.x = 0;
+            }
+            if (handle.x > mouseEventData.image.width) {
+                handle.x = mouseEventData.image.width;
+            }
+            if (handle.y < 0) {
+                handle.y = 0;
+            }
+            if (handle.y > mouseEventData.image.height) {
+                handle.y = mouseEventData.image.height;
+            }
+            cornerstone.updateImage(element);
+        }
+
+        function stopMovingLastHandle(mouseEventData) {
+            var handle = measurementData.handles.end;
+            handle.active = false;
+            $(mouseEventData.element).off("CornerstoneToolsMouseMove", moveLastHandle);
+            $(mouseEventData.element).off('CornerstoneToolsMouseUp', stopMovingLastHandle);
+            $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+        }
+
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-
-        // First move the middle
         cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.middle, function() {
-
-            // Then move the end handle
-            cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
-                measurementData.active = false;
-                if(cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
-                {
-                    // delete the measurement
-                    cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
-                }
-                $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
-            });
+            measurementData.active = false;
+            if(cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
+            {
+                // delete the measurement
+                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
+            }
+            measurementData.handles.end.active = true;
+            $(mouseEventData.element).on('CornerstoneToolsMouseMove', moveLastHandle);
+            $(mouseEventData.element).on('CornerstoneToolsMouseUp', stopMovingLastHandle);
         });
     }
 
