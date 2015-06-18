@@ -596,5 +596,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         deactivate: deactivateTouch
     };
 
+    cornerstoneTools.getConfiguration = getConfiguration;
+
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));
