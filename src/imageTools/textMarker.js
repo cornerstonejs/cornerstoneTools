@@ -62,7 +62,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
-        return cornerstoneMath.point.distance(data.handles.end, coords) < 5;
+        return cornerstoneMath.point.distance(data.handles.end, coords) < 10;
     }
 
     function onImageRendered(e, eventData) {
