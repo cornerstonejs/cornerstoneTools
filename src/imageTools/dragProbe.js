@@ -39,13 +39,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         
         context.font = font;
         context.fillStyle = color;
-        context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
+        var text = "" + x + "," + y;
         var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
         if (suv) {
             str += " SUV: " + parseFloat(suv.toFixed(3));
         }
-        context.fillText(str, textCoords.x, textCoords.y + fontHeight);
-
+        cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
@@ -80,7 +80,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         
         context.font = font;
         context.fillStyle = color;
-        context.fillText(sp, textCoords.x, textCoords.y);
+        cornerstoneTools.drawTextBox(context, sp, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
