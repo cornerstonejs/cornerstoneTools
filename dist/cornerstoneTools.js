@@ -6255,15 +6255,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         reenablePrefetchTimeout = setTimeout(function() {
             var element = data.element;
             var stackData = cornerstoneTools.getToolState(element, 'stack');
-            if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+            if (!stackData || !stackData.data || !stackData.data.length) {
                 return;
             }
             // Get the stackPrefetch tool data
             var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-            if (stackPrefetchData === undefined) {
+            if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
                 // should not happen
                 return;
             }
+
             var stackPrefetch = stackPrefetchData.data[0];
             if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
                 //console.log("Re-enabling prefetch");
@@ -6410,8 +6411,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         });
     }
 
-    function enable(element)
-    {
+    function enable(element) {
         var config = cornerstoneTools.stackPrefetch.getConfiguration();
 
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
@@ -6449,14 +6449,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).on("CornerstoneNewImage", renablePrefetch);
     }
 
-    function disable(element)
-    {
+    function disable(element) {
         $(element).off("CornerstoneNewImage", renablePrefetch);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
         if (stackPrefetchData && stackPrefetchData.data.length) {
             stackPrefetchData.data[0].enabled = false;
+            clearTimeout(reenablePrefetchTimeout);
         }
     }
 
