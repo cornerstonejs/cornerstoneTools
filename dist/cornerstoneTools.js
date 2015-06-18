@@ -8143,7 +8143,7 @@ var cornerstoneTools = (function (cornerstoneTools) {
         var padding = 5,
             font = cornerstoneTools.textStyle.getFont(),
             fontSize = cornerstoneTools.textStyle.getFontSize(),
-            backgroundColor = "black";
+            backgroundColor = cornerstoneTools.textStyle.getBackgroundColor();
 
         context.save();
 
