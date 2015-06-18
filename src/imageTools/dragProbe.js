@@ -49,6 +49,41 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.restore();
     }
 
+    function minimalStrategy(eventData) {
+        var enabledElement = cornerstone.getEnabledElement(eventData.element);
+        var image = enabledElement.image;
+
+        cornerstone.updateImage(eventData.element);
+
+        var context = enabledElement.canvas.getContext("2d");
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        var color = cornerstoneTools.toolColors.getActiveColor();
+        var font = cornerstoneTools.textStyle.getFont();
+        var fontHeight = cornerstoneTools.textStyle.getFontSize();
+
+        context.save();
+
+        var x = Math.round(eventData.currentPoints.image.x);
+        var y = Math.round(eventData.currentPoints.image.y);
+
+        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+        var sp = storedPixels[0];
+
+        // Draw text
+        var coords = {
+            // translate the x/y away from the cursor
+            x: eventData.currentPoints.image.x + 4,
+            y: eventData.currentPoints.image.y - 4
+        };
+        var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+        
+        context.font = font;
+        context.fillStyle = color;
+        context.fillText(sp, textCoords.x, textCoords.y);
+        context.restore();
+    }
+
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", onDrag);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -73,6 +108,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     
     cornerstoneTools.dragProbe.strategies = {
         default : defaultStrategy,
+        minimal: minimalStrategy
     };
     cornerstoneTools.dragProbe.strategy = defaultStrategy;
 

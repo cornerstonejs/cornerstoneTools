@@ -27,6 +27,8 @@
             <ul class="list-group">
                 <a href="#" id="disable" class="list-group-item">Disable</a>
                 <a href="#" id="activate" class="list-group-item">Activate</a>
+                <a href="#" id="defaultStrategy" class="list-group-item">Default Strategy</a>
+                <a href="#" id="minimalStrategy" class="list-group-item">Minimal Strategy</a>
             </ul>
         </div>
         <div class="col-xs-6">
@@ -91,6 +93,16 @@ is used by our example image loader-->
         $('#activate').click(function() {
             activate("#activate");
             cornerstoneTools.dragProbe.activate(element, 1);
+            return false;
+        });
+        $('#defaultStrategy').click(function() {
+            activate("#defaultStrategy");
+            cornerstoneTools.dragProbe.strategy = cornerstoneTools.dragProbe.strategies.default;
+            return false;
+        });
+        $('#minimalStrategy').click(function() {
+            activate("#minimalStrategy");
+            cornerstoneTools.dragProbe.strategy = cornerstoneTools.dragProbe.strategies.minimal;
             return false;
         });
     });
