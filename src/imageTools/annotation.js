@@ -283,18 +283,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Draw the text
             if (data.annotationText !== undefined && data.annotationText !== null) {
-                context.fillStyle = color;
                 context.font = font;
-
                 
-                var distance = 4;
+                var distance = 13;
 
                 // TODO: add 2 dimensional vector operations to cornerstoneMath
                 var vector;
                 
                 var displacement = {
                     x: distance,
-                    y: distance
+                    y: distance / 2
                 };
 
                 vector = {
@@ -325,7 +323,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                     };
                 }
 
-                context.fillText(data.annotationText, textCoords.x, textCoords.y);
+                cornerstoneTools.drawTextBox(context, data.annotationText, textCoords.x, textCoords.y, color);
             }
 
             context.restore();

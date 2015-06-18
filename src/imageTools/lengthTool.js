@@ -94,11 +94,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             context.font = font;
             var textCoords = {
-                x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                x: (handleStartCanvas.x + handleEndCanvas.x) / 2 + 5,
                 y: (handleStartCanvas.y + handleEndCanvas.y) / 2
             };
 
-            context.fillText(text, textCoords.x, textCoords.y);
+            cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
             context.restore();
         }
 

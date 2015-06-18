@@ -135,7 +135,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
             context.font = font;
-            context.fillText(text, textX, textY);
+            cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             context.restore();
         }
 

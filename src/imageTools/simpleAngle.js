@@ -155,14 +155,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 var textWidth = context.measureText(data.annotationText).width;
 
                 if ((handleMiddleCanvas.x - handleStartCanvas.x) < 0) {
-                    textX = handleMiddleCanvas.x - distance - textWidth;
+                    textX = handleMiddleCanvas.x - distance - textWidth - 10;
                 } else {
                     textX = handleMiddleCanvas.x + distance;
                 }
 
                 textY = handleMiddleCanvas.y;
                 context.font = font;
-                context.fillText(text, textX, textY);
+                cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             }
 
             context.restore();

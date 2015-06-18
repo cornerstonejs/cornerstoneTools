@@ -80,7 +80,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // TODO: Get a real statistics library here that supports large counts
 
         var sum = 0;
-        var sumSquared =0;
+        var sumSquared = 0;
         var count = 0;
         var index =0;
 
@@ -196,9 +196,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
-            context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight);
-            context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
-            context.fillText(areaText, textX, textY + fontHeight);
+            cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
+            cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+            cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
             context.restore();
         }
     }

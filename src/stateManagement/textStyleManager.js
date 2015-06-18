@@ -8,27 +8,37 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function textStyleManager() {
         var defaultFontSize = 15,
-            defaultFont = defaultFontSize + "px Arial";
+            defaultFont = defaultFontSize + "px Arial",
+            defaultBackgroundColor = "transparent";
 
-        function setFont(font){
+        function setFont(font) {
             defaultFont = font;
         }
-        function getFont(){
+        function getFont() {
             return defaultFont;
         }
 
-        function setFontSize(fontSize){
+        function setFontSize(fontSize) {
             defaultFontSize = fontSize;
         }
-        function getFontSize(){
+        function getFontSize() {
             return defaultFontSize;
+        }
+
+        function setBackgroundColor(backgroundColor) {
+            defaultBackgroundColor = backgroundColor;
+        }
+        function getBackgroundColor() {
+            return defaultBackgroundColor;
         }
       
         var textStyle = {
             setFont: setFont,
             getFont: getFont,
             setFontSize: setFontSize,
-            getFontSize: getFontSize
+            getFontSize: getFontSize,
+            setBackgroundColor: setBackgroundColor,
+            getBackgroundColor: getBackgroundColor
         };
 
         return textStyle;

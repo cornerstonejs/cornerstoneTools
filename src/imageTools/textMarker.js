@@ -101,7 +101,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             context.font = font;
             context.fillStyle = color;
-            context.fillText(data.text, textCoords.x, textCoords.y);
+            cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
         }
     }
 

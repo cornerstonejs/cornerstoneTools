@@ -1259,7 +1259,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
             context.font = font;
-            context.fillText(text, textX, textY);
+            cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             context.restore();
         }
 
@@ -1572,18 +1572,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Draw the text
             if (data.annotationText !== undefined && data.annotationText !== null) {
-                context.fillStyle = color;
                 context.font = font;
-
                 
-                var distance = 4;
+                var distance = 13;
 
                 // TODO: add 2 dimensional vector operations to cornerstoneMath
                 var vector;
                 
                 var displacement = {
                     x: distance,
-                    y: distance
+                    y: distance / 2
                 };
 
                 vector = {
@@ -1614,7 +1612,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                     };
                 }
 
-                context.fillText(data.annotationText, textCoords.x, textCoords.y);
+                cornerstoneTools.drawTextBox(context, data.annotationText, textCoords.x, textCoords.y, color);
             }
 
             context.restore();
@@ -2064,13 +2062,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         
         context.font = font;
         context.fillStyle = color;
-        context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
+        var text = "" + x + "," + y;
         var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
         if (suv) {
             str += " SUV: " + parseFloat(suv.toFixed(3));
         }
-        context.fillText(str, textCoords.x, textCoords.y + fontHeight);
-
+        cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
@@ -2105,7 +2103,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         
         context.font = font;
         context.fillStyle = color;
-        context.fillText(sp, textCoords.x, textCoords.y);
+        cornerstoneTools.drawTextBox(context, sp, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
@@ -2227,7 +2225,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // TODO: Get a real statistics library here that supports large counts
 
         var sum = 0;
-        var sumSquared =0;
+        var sumSquared = 0;
         var count = 0;
         var index =0;
 
@@ -2343,9 +2341,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
-            context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight);
-            context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
-            context.fillText(areaText, textX, textY + fontHeight);
+            cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
+            cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+            cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
             context.restore();
         }
     }
@@ -3098,11 +3096,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             context.font = font;
             var textCoords = {
-                x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                x: (handleStartCanvas.x + handleEndCanvas.x) / 2 + 5,
                 y: (handleStartCanvas.y + handleEndCanvas.y) / 2
             };
 
-            context.fillText(text, textCoords.x, textCoords.y);
+            cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
             context.restore();
         }
 
@@ -3448,13 +3446,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             
             context.font = font;
             context.fillStyle = color;
-            context.fillText("" + x + ", " + y, textCoords.x, textCoords.y);
+            var text = "" + x + ", " + y;
             var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
             if (suv) {
                 str += " SUV: " + parseFloat(suv.toFixed(3));
             }
-            context.fillText(str, textCoords.x, textCoords.y + fontHeight);
-
+            cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+            cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
             context.restore();
         }
     }
@@ -3648,9 +3646,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textY  = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
-            context.fillText("Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight);
-            context.fillText("StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY);
-            context.fillText(areaText, textX, textY + fontHeight);
+            cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
+            cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+            cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
             context.restore();
         }
     }
@@ -3967,14 +3965,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 var textWidth = context.measureText(data.annotationText).width;
 
                 if ((handleMiddleCanvas.x - handleStartCanvas.x) < 0) {
-                    textX = handleMiddleCanvas.x - distance - textWidth;
+                    textX = handleMiddleCanvas.x - distance - textWidth - 10;
                 } else {
                     textX = handleMiddleCanvas.x + distance;
                 }
 
                 textY = handleMiddleCanvas.y;
                 context.font = font;
-                context.fillText(text, textX, textY);
+                cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             }
 
             context.restore();
@@ -4332,7 +4330,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             context.font = font;
             context.fillStyle = color;
-            context.fillText(data.text, textCoords.x, textCoords.y);
+            cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
         }
     }
 
@@ -6899,27 +6897,37 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function textStyleManager() {
         var defaultFontSize = 15,
-            defaultFont = defaultFontSize + "px Arial";
+            defaultFont = defaultFontSize + "px Arial",
+            defaultBackgroundColor = "transparent";
 
-        function setFont(font){
+        function setFont(font) {
             defaultFont = font;
         }
-        function getFont(){
+        function getFont() {
             return defaultFont;
         }
 
-        function setFontSize(fontSize){
+        function setFontSize(fontSize) {
             defaultFontSize = fontSize;
         }
-        function getFontSize(){
+        function getFontSize() {
             return defaultFontSize;
+        }
+
+        function setBackgroundColor(backgroundColor) {
+            defaultBackgroundColor = backgroundColor;
+        }
+        function getBackgroundColor() {
+            return defaultBackgroundColor;
         }
       
         var textStyle = {
             setFont: setFont,
             getFont: getFont,
             setFontSize: setFontSize,
-            getFontSize: getFontSize
+            getFontSize: getFontSize,
+            setBackgroundColor: setBackgroundColor,
+            getBackgroundColor: getBackgroundColor
         };
 
         return textStyle;
@@ -8121,6 +8129,46 @@ var cornerstoneTools = (function (cornerstoneTools) {
     return cornerstoneTools;
 }(cornerstoneTools)); 
 // End Source; src/util/drawEllipse.js
+
+// Begin Source: src/util/drawTextBox.js
+var cornerstoneTools = (function (cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function drawTextBox(context, text, x, y, color) {
+        var padding = 5,
+            font = cornerstoneTools.textStyle.getFont(),
+            fontSize = cornerstoneTools.textStyle.getFontSize(),
+            backgroundColor = cornerstoneTools.textStyle.getBackgroundColor();
+
+        context.save();
+
+        // Get the text width in the current font
+        context.font = font;
+        var width = context.measureText(text).width;
+
+        // Draw the background box with padding
+        context.textBaseline = 'top';
+        context.fillStyle = backgroundColor;
+        context.fillRect(x, y - fontSize, width + (padding * 2), fontSize + (padding * 2));
+        
+        // Draw the text
+        context.fillStyle = color;
+        context.fillText(text, x + padding, y - fontSize + padding);
+        
+        context.restore();
+    }
+
+    // module exports
+    cornerstoneTools.drawTextBox = drawTextBox;
+
+    return cornerstoneTools;
+}(cornerstoneTools)); 
+// End Source; src/util/drawTextBox.js
 
 // Begin Source: src/util/isMouseButtonEnabled.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
