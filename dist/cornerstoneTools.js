@@ -2065,9 +2065,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.font = font;
         context.fillStyle = color;
         context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
-        var str = "SP: " + sp + " MO: " + mo.toFixed(3);
+        var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
         if (suv) {
-            str += " SUV: " + suv.toFixed(3);
+            str += " SUV: " + parseFloat(suv.toFixed(3));
         }
         context.fillText(str, textCoords.x, textCoords.y + fontHeight);
 
@@ -2093,7 +2093,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var y = Math.round(eventData.currentPoints.image.y);
 
         var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var sp = storedPixels[0];
+        var sp = parseFloat(storedPixels[0].toFixed(3));
 
         // Draw text
         var coords = {
@@ -3448,10 +3448,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             
             context.font = font;
             context.fillStyle = color;
-            context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
-            var str = "SP: " + sp + " MO: " + mo.toFixed(3);
+            context.fillText("" + x + ", " + y, textCoords.x, textCoords.y);
+            var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
             if (suv) {
-                str += " SUV: " + suv.toFixed(3);
+                str += " SUV: " + parseFloat(suv.toFixed(3));
             }
             context.fillText(str, textCoords.x, textCoords.y + fontHeight);
 

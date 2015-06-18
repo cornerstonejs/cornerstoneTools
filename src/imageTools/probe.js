@@ -81,10 +81,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             
             context.font = font;
             context.fillStyle = color;
-            context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
-            var str = "SP: " + sp + " MO: " + mo.toFixed(3);
+            context.fillText("" + x + ", " + y, textCoords.x, textCoords.y);
+            var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
             if (suv) {
-                str += " SUV: " + suv.toFixed(3);
+                str += " SUV: " + parseFloat(suv.toFixed(3));
             }
             context.fillText(str, textCoords.x, textCoords.y + fontHeight);
 
