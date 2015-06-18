@@ -105,18 +105,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     /** Records the start point of the click or touch */
     function recordStartPoint(eventData) {
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (toolData === undefined) {
-            return;
+        if (toolData && toolData.data) {
+            toolData.data = [];
         }
 
-        var startPoint = {
-            x : eventData.currentPoints.image.x,
-            y : eventData.currentPoints.image.y
+        var measurementData = {
+            startPoint: {
+                x : eventData.currentPoints.image.x,
+                y : eventData.currentPoints.image.y
+            }
         };
 
-        toolData.data[0] = {
-            startPoint: startPoint
-        };
+        cornerstoneTools.addToolState(eventData.element, toolType, measurementData);
     }
 
     /** Draws the rectangular region while the touch or mouse event drag occurs */
@@ -210,6 +210,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).off('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+        $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).on("CornerstoneToolsMouseDrag", dragCallback);
         $(element).on('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
