@@ -183,7 +183,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var handle = measurementData.handles.end;
             handle.x = mouseEventData.currentPoints.image.x;
             handle.y = mouseEventData.currentPoints.image.y;
-            console.log(handle);
             if (handle.x < 0) {
                 handle.x = 0;
             }
@@ -196,7 +195,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             if (handle.y > mouseEventData.image.height) {
                 handle.y = mouseEventData.image.height;
             }
-            cornerstone.updateImage(element);
+            cornerstone.updateImage(mouseEventData.element);
         }
 
         function stopMovingLastHandle(mouseEventData) {
