@@ -2022,6 +2022,92 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/imageTools/crosshairs.js
 
+// Begin Source: src/imageTools/dragProbe.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function defaultStrategy(eventData) {
+        var enabledElement = cornerstone.getEnabledElement(eventData.element);
+        var image = enabledElement.image;
+
+        cornerstone.updateImage(eventData.element);
+
+        var context = enabledElement.canvas.getContext("2d");
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        var color = cornerstoneTools.toolColors.getActiveColor();
+        var font = cornerstoneTools.textStyle.getFont();
+        var fontHeight = cornerstoneTools.textStyle.getFontSize();
+
+        context.save();
+
+        var x = Math.round(eventData.currentPoints.image.x);
+        var y = Math.round(eventData.currentPoints.image.y);
+
+        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+        var sp = storedPixels[0];
+        var mo = sp * eventData.image.slope + eventData.image.intercept;
+        var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+        // Draw text
+        var coords = {
+            // translate the x/y away from the cursor
+            x: eventData.currentPoints.image.x + 3,
+            y: eventData.currentPoints.image.y - 3
+        };
+        var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+        
+        context.font = font;
+        context.fillStyle = color;
+        context.fillText("" + x + "," + y, textCoords.x, textCoords.y);
+        var str = "SP: " + sp + " MO: " + mo.toFixed(3);
+        if (suv) {
+            str += " SUV: " + suv.toFixed(3);
+        }
+        context.fillText(str, textCoords.x, textCoords.y + fontHeight);
+
+        context.restore();
+    }
+
+    function mouseUpCallback(e, eventData) {
+        $(eventData.element).off("CornerstoneToolsMouseDrag", onDrag);
+        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        cornerstone.updateImage(eventData.element);
+    }
+
+    function mouseDownCallback(e, eventData) {
+        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on("CornerstoneToolsMouseDrag", onDrag);
+            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            cornerstoneTools.dragProbe.strategy(eventData);
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+        }
+    }
+
+    function onDrag(e, eventData) {
+        cornerstoneTools.dragProbe.strategy(eventData);
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+    }
+
+    cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    
+    cornerstoneTools.dragProbe.strategies = {
+        default : defaultStrategy,
+    };
+    cornerstoneTools.dragProbe.strategy = defaultStrategy;
+
+    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(onDrag);
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+ 
+// End Source; src/imageTools/dragProbe.js
+
 // Begin Source: src/imageTools/ellipticalRoi.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
@@ -3273,44 +3359,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// END ACTIVE TOOL ///////
 
-    function calculateSUV(image, storedPixelValue)
-    {
-        // if no dicom data set, return undefined
-        if (image.data === undefined) {
-            return undefined;
-        }
-        // image must be PET
-        if (image.data.string('x00080060') !== "PT") {
-            return undefined;
-        }
-        var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
-
-        var patientWeight = image.data.floatString('x00101030'); // in kg
-        if (patientWeight === undefined) {
-            return undefined;
-        }
-        var petSequence = image.data.elements.x00540016;
-        if (petSequence === undefined) {
-            return undefined;
-        }
-        petSequence = petSequence.items[0].dataSet;
-        var startTime = petSequence.time('x00181072');
-        var totalDose = petSequence.floatString('x00181074');
-        var halfLife = petSequence.floatString('x00181075');
-        var acquisitionTime = image.data.time('x00080032');
-        if (!startTime || !totalDose || !halfLife || !acquisitionTime) {
-            return undefined;
-        }
-
-        var acquisitionTimeInSeconds = acquisitionTime.fractionalSeconds + acquisitionTime.seconds + acquisitionTime.minutes * 60 + acquisitionTime.hours * 60 * 60;
-        var injectionStartTimeInSeconds = startTime.fractionalSeconds + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
-        var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
-        var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
-        var suv = modalityPixelValue * patientWeight / correctedDose * 1000;
-
-        return suv;
-    }
-
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(data, coords) {
         return cornerstoneMath.point.distance(data.handles.end, coords) < 5;
@@ -3351,8 +3399,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * eventData.image.slope + eventData.image.intercept;
-            var suv = calculateSUV(eventData.image, sp);
-
+            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
 
             // Draw text
 
@@ -7914,6 +7961,65 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools)); 
 // End Source; src/util/RoundToDecimal.js
+
+// Begin Source: src/util/calculateSUV.js
+var cornerstoneTools = (function (cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function calculateSUV(image, storedPixelValue)
+    {
+        // if no dicom data set, return undefined
+        if (image.data === undefined) {
+            return undefined;
+        }
+        
+        // image must be PET
+        if (image.data.string('x00080060') !== "PT") {
+            return undefined;
+        }
+        var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
+
+        var patientWeight = image.data.floatString('x00101030'); // in kg
+        if (patientWeight === undefined) {
+            return undefined;
+        }
+        
+        var petSequence = image.data.elements.x00540016;
+        if (petSequence === undefined) {
+            return undefined;
+        }
+
+        petSequence = petSequence.items[0].dataSet;
+        var startTime = petSequence.time('x00181072');
+        var totalDose = petSequence.floatString('x00181074');
+        var halfLife = petSequence.floatString('x00181075');
+        var acquisitionTime = image.data.time('x00080032');
+        
+        if (!startTime || !totalDose || !halfLife || !acquisitionTime) {
+            return undefined;
+        }
+
+        var acquisitionTimeInSeconds = acquisitionTime.fractionalSeconds + acquisitionTime.seconds + acquisitionTime.minutes * 60 + acquisitionTime.hours * 60 * 60;
+        var injectionStartTimeInSeconds = startTime.fractionalSeconds + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+        var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
+        var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
+        var suv = modalityPixelValue * patientWeight / correctedDose * 1000;
+
+        return suv;
+    }
+
+
+    // module exports
+    cornerstoneTools.calculateSUV = calculateSUV;
+
+    return cornerstoneTools;
+}(cornerstoneTools)); 
+// End Source; src/util/calculateSUV.js
 
 // Begin Source: src/util/copyPoints.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
