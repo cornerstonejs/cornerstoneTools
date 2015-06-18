@@ -4660,7 +4660,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var deltaX = dragData.deltaPoints.page.x * multiplier;
         var deltaY = dragData.deltaPoints.page.y * multiplier;
 
-        var config = cornerstoneTools.getConfiguration();
+        var config = cornerstoneTools.wwwc.getConfiguration();
         if(config.orientation) {
             if(config.orientation ===0) {
                 console.log('normal (default)');
