@@ -212,7 +212,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         pointNearTool : pointNearTool,
         toolType : toolType
     });
-      cornerstoneTools.ellipticalroi_Touch = cornerstoneTools.touchTool({
+    cornerstoneTools.ellipticalRoiTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,

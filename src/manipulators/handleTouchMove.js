@@ -1,4 +1,3 @@
-// Begin Source: src/manipulators/handletouchMover.js
 var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
     "use strict";
@@ -7,33 +6,32 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         cornerstoneTools = {};
     }
 
-    function touchmoveHandle(touchEventData, handle, doneMovingCallback)
+    function touchMoveHandle(touchEventData, handle, doneMovingCallback)
     {
         var element = touchEventData.element;
 
-        function touchDragCallback(e,eventData) {
+        function touchDragCallback(e, eventData) {
             handle.active = true;
-            var toucheMoveData = eventData;
-            handle.x = toucheMoveData.currentPoints.image.x;
-            handle.y = toucheMoveData.currentPoints.image.y;
+            var touchMoveData = eventData;
+            handle.x = touchMoveData.currentPoints.image.x;
+            handle.y = touchMoveData.currentPoints.image.y;
             cornerstone.updateImage(element);
         }
         $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
 
-        function touchendCallback(mouseMoveData) {
+        function touchEndCallback(mouseMoveData) {
             handle.active = false;
             $(element).off("CornerstoneToolsTouchDrag", touchDragCallback);
-            $(element).off("CornerstoneToolsDragEnd", touchendCallback);
+            $(element).off("CornerstoneToolsDragEnd", touchEndCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
-        $(element).on("CornerstoneToolsDragEnd", touchendCallback);
+        $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
     }
 
-
     // module/private exports
-    cornerstoneTools.touchmoveHandle = touchmoveHandle;
+    cornerstoneTools.touchMoveHandle = touchMoveHandle;
 
     return cornerstoneTools;
 }($, cornerstone, cornerstoneTools));

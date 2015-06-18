@@ -122,7 +122,6 @@ Backlog
 
 * Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
 * measurement calibration tool
-* freehand roi tool
 * Config object that allows tool appearance to be customized (e.g. line color, text color, handle size, shape, etc)
 * automatically disabling tools when the enabled element is disabled
 * reconsider the state management api, it is a bit clunky
@@ -130,7 +129,6 @@ Backlog
 * Reference line renderer for first/last/active
 * Annotations (e.g. text, arrows, circles)
 * Move all API documentation from wiki into markdown in a doc folder
-* Update to latest hammer.js library
 * key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
 Copyright

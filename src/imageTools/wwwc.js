@@ -55,17 +55,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var config = cornerstoneTools.wwwc.getConfiguration();
         if(config.orientation) {
             if(config.orientation ===0) {
-                console.log('normal (default)');
                 dragData.viewport.voi.windowWidth += (deltaX);
                 dragData.viewport.voi.windowCenter += (deltaY);
             }
             else {
-                console.log('swapped');
                 dragData.viewport.voi.windowWidth += (deltaY);
                 dragData.viewport.voi.windowCenter += (deltaX);
             }
         } else {
-            console.log('default');
             dragData.viewport.voi.windowWidth += (deltaX);
             dragData.viewport.voi.windowCenter += (deltaY);
         }

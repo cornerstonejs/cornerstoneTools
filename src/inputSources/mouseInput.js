@@ -163,7 +163,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var whichMouseButton = e.which;
 
-
         // calculate our current points in page and image coordinates
         var currentPoints = {
             page: cornerstoneMath.point.pageToPoint(e),
@@ -191,9 +190,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // update the last points
         lastPoints = cornerstoneTools.copyPoints(currentPoints);
-
-        // prevent left click selection of DOM elements
-        //return cornerstoneTools.pauseEvent(e);
     }
 
     function enable(element)

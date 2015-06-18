@@ -2,124 +2,120 @@
 <html>
 <head>
     <!-- support for mobile touch devices -->
-   <meta name="viewport" content="width=device-width, user-scalable=no">
-        <meta name="apple-mobile-web-app-capable" content="yes"/>
-        
-        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
 
+    <style>
+        /* prevents selection when left click dragging */
+        .disable-selection {
+            -moz-user-select: none; -webkit-user-select: none; -ms-user-select:none; user-select:none;
+        }
+        /* prevents cursor from changing to the i bar on the overlays*/
+        .noIbar {
+            cursor:default;
+        }
+    </style>
 </head>
-<style>
-    .imageContainor{
-        
-    }
-</style>
+
 <script>
-  if (typeof CustomEvent === 'undefined') {
-                CustomEvent = function(type, eventInitDict) {
-                    var event = document.createEvent('CustomEvent');
-                    event.initCustomEvent(type, eventInitDict['bubbles'], eventInitDict['cancelable'], eventInitDict['detail']);
-                    return event;
-                };
-            }
+    if (typeof CustomEvent === 'undefined') {
+        CustomEvent = function(type, eventInitDict) {
+            var event = document.createEvent('CustomEvent');
+            event.initCustomEvent(type, eventInitDict['bubbles'], eventInitDict['cancelable'], eventInitDict['detail']);
+            return event;
+        };
+    }
 </script>
+
 <body>
 <div class="container">
-   
+   <div class="page-header">
+        <h2>
+            Touch Tools Example
+        </h2>
         <p>
-            All Image Tools Example
+            This page contains an example of all the touch-capable tools. <strong>Load this on a mobile device.</strong>
         </p>
-        <p>
-            This page contains an example of all image tools for Desktop and touch support tools
-        </p>
-
-   
-
+        <a href="../index.html">Go back to the Examples page</a>
+    </div>
 
     <div class="row">
-        <div class="">
-            <button id="enableWindowLevelTool" type="button" class="btn">WW/WC</button>
-            <button id="pan" type="button" class="btn">Pan</button>
-            <button id="zoom" type="button" class="btn">Zoom</button>
-            <button id="enableLength" type="button" class="btn">Line</button>
-            <button id="probe" type="button" class="btn">Probe</button>
-            <button id="circleroi" type="button" class="btn">Ell-ROI</button>
-            <button id="rectangleroi" type="button" class="btn">Rec-ROI</button>
-            <button id="angle" type="button" class="btn">Angle</button>
-
-            <br/>
-
-            <div  style="width:100%;height: 100%;position:relative;display:inline-block;color:white;"
+        <div class="col-lg-12 col-md-12 col-xs-12 col-md-offset-0">
+            <div class="dropdown">
+                <button id="toolSelector" class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select tool <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li class="dropdown-header">Tools</li>
+                    <li><a id="enableWindowLevelTool" class="list-group-item">WW/WC</a></li>
+                    <li><a id="pan" class="list-group-item">Pan</a></li>
+                    <li><a id="rotate" class="list-group-item">Rotate</a></li>
+                    <li><a id="zoom" class="list-group-item">Zoom (pinch)</a></li>
+                    <li><a id="zoomDrag" class="list-group-item">Zoom (drag)</a></li>
+                    <li><a id="length" class="list-group-item">Length</a></li>
+                    <li><a id="probe" class="list-group-item">Probe</a></li>
+                    <li><a id="circleroi" class="list-group-item">Ellipse</a></li>
+                    <li><a id="rectangleroi" class="list-group-item">Rectangle</a></li>
+                    <li><a id="angle" class="list-group-item">Angle</a></li>
+                </ul>
+                <a id="clearToolData" class="btn btn-secondary">Clear Tools</a>
+                <a id="resetViewport" class="btn btn-secondary">Reset View</a>
+                <a id="fullscreen" class="btn btn-secondary">Fullscreen</a>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-xs-6 col-xs-offset-1 col-md-offset-0">
+            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
-                 class='cornerstone-enabled-image imageContainor'
+                 class='cornerstone-enabled-image'
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
                 <div id="dicomImage"
-                     style="top:0px;left:0px; position:absolute;" class="imageContainor">
+                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
-                <div id="mrtopleft" style="position: absolute;top:0px; left:0px">
+                <div id="mrtopleft" style="position: absolute;top:3px; left:3px">
                     Patient Name
                 </div>
-                <div id="mrtopright" style="position: absolute;top:0px; right:0px">
+                <div id="mrtopright" style="position: absolute;top:3px; right:3px">
                     Hospital
                 </div>
-                <div id="mrbottomright" style="position: absolute;bottom:0px; right:0px">
+                <div id="mrbottomright" style="position: absolute;bottom:3px; right:3px">
                     Zoom:
                 </div>
-                <div id="mrbottomleft" style="position: absolute;bottom:0px; left:0px">
+                <div id="mrbottomleft" style="position: absolute;bottom:3px; left:3px">
                     WW/WC:
                 </div>
             </div>
         </div>
-        
     </div>
-<!--    <div class="" style="float: left;position: absolute">
-            Functionality:
-            <ul>
-                <li>Activation of a tool for the left mouse button
-                    <ul>
-                        <li>WW/WC - Adjust the window width and window center of the image (activated by default)</li>
-                        <li>Pan - Pan the image</li>
-                        <li>Zoom - Zoom the image</li>
-                        <li>Length - Length measurement tool</li>
-                        <li>Probe - Display the image x,y coordinate under cursor as well as the pixel value (stored pixel and modality)</li>
-                        <li>Elliptical ROI - An elliptical ROI that shows mean, stddev and area</li>
-                        <li>Rectangle ROI - A rectangular ROI that shows mean, stddev and area</li>
-                        <li>Angle - Cobb angle tool</li>
-                    </ul>
-                </li>
-                <li>Use the activated tool by dragging the left mouse button</li>
-                <li>Pan by dragging the middle mouse button</li>
-                <li>Zoom by dragging the right mouse button</li>
-                <li>Zoom by rolling the mouse wheel</li>
-                <li>Tool dragging - left click drag on any measurement tool line to move it</li>
-                <li>Tool deletion - left click drag on any measurement tool line and drop it off the image to delete it</li>
-                <li>Tool handles - left click drag on any measurement tool handle (the circle) to change the handles position</li>
-            </ul>
-        </div>-->
-
 </body>
 
 <!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
 is used by our example image loader-->
 <script src="../jquery.min.js"></script>
 
-<!-- include the hammer.js library for touch gestures-->
-<script src="../jquery.hammer-full.js"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 <!-- include the hammer.fakemultitouch so we can test with a mouse -->
-<script src="../hammer.fakemultitouch.js"></script>
+<script src="../touch-emulator.js"></script>
+<script> TouchEmulator(); </script>
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="../hammer.min.js"></script>
+
+<!-- include the hammer.js library for touch gestures-->
+<!-- <script src="../jquery.hammer.js"></script> -->
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
-
 <script src="../cornerstoneMath.min.js"></script>
-
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
@@ -128,41 +124,76 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var toolsContainer = $(".imageContainor");
-    toolsContainer.css({"width": $(window).width()*.9 + "px"});
-    toolsContainer.css({"height": ($(window).height()*.7) + "px"});
-    
     var element = $('#dicomImage').get(0);
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WC:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
-        $('#mrbottomright').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+        var viewport = cornerstone.getViewport(e.target)
+        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
+        $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
     };
-    element.addEventListener("CornerstoneImageRendered", onViewportUpdated, false);
+
+    $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
 
     var imageId = 'example://1';
-     Hammer.plugins.fakeMultitouch();
+
+    var container = element.parentNode;
+
+    $('#fullscreen').click(function (e) {
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (container.requestFullscreen) {
+                container.requestFullscreen();
+            } else if (container.msRequestFullscreen) {
+                container.msRequestFullscreen();
+            } else if (container.mozRequestFullScreen) {
+                container.mozRequestFullScreen();
+            } else if (container.webkitRequestFullscreen) {
+                container.webkitRequestFullscreen();
+            }
+        }
+    });
+
+    $(document).on("webkitfullscreenchange mozfullscreenchange fullscreenchange", function() {
+        if (!document.fullscreenElement && !document.mozFullScreenElement &&
+            !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            $(container).width(256);
+            $(container).height(256);
+            $(element).width(256);
+            $(element).height(256);
+        } else {
+            $(container).width($(window).width());
+            $(container).height($(window).height());
+            $(element).width($(container).width());
+            $(element).height($(container).height());
+        }
+        cornerstone.resize(element, true);
+    })
+
+    $(window).on("resize orientationchange", function () {
+        if (document.fullscreenElement || document.mozFullScreenElement ||
+            document.webkitFullscreenElement || document.msFullscreenElement) {
+            $(container).width($(window).width());
+            $(container).height($(window).height());
+            $(element).width($(container).width());
+            $(element).height($(container).height());
+            cornerstone.resize(element, true);
+        }
+    })
 
     // image enable the dicomImage element
     cornerstone.enable(element);
-    cornerstoneTools.touchInput.enable(element);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
-      
-        // Enable all tools we want to use with this element
-     
 
         cornerstoneTools.touchInput.enable(element);
-        cornerstoneTools.panTouchDrag.enable(element);
-        cornerstoneTools.ellipticalroi_Touch.enable(element);
-        cornerstoneTools.angleTouch.enable(element);
-        cornerstoneTools.rectangleRoiTouch.enable(element);
-        cornerstoneTools.lengthTouch.enable(element);
-        cornerstoneTools.wwwcTouchDrag.enable(element);
-        cornerstoneTools.zoomTouchDrag.enable(element);
-        cornerstoneTools.probeTouch.enable(element);
+      
+        // Enable all tools we want to use with this element
+        cornerstoneTools.wwwcTouchDrag.activate(element);
+        cornerstoneTools.zoomTouchPinch.activate(element);
+        cornerstoneTools.rotateTouch.activate(element);
+        cornerstoneTools.panMultiTouch.activate(element);
 
 
         // helper function used by the tool button handlers to disable the active tool
@@ -170,51 +201,88 @@ is used by our example image loader-->
         function disableAllTools()
         {
             cornerstoneTools.panTouchDrag.deactivate(element);
-        cornerstoneTools.ellipticalroi_Touch.deactivate(element);
-        cornerstoneTools.angleTouch.deactivate(element);
-        cornerstoneTools.rectangleRoiTouch.deactivate(element);
-        cornerstoneTools.lengthTouch.deactivate(element);
-        cornerstoneTools.wwwcTouchDrag.deactivate(element);
-        cornerstoneTools.zoomTouchDrag.deactivate(element);
-        cornerstoneTools.probeTouch.deactivate(element);
+            cornerstoneTools.rotateTouchDrag.deactivate(element);
+            cornerstoneTools.rotateTouch.disable(element);
+            cornerstoneTools.ellipticalRoiTouch.deactivate(element);
+            cornerstoneTools.angleTouch.deactivate(element);
+            cornerstoneTools.rectangleRoiTouch.deactivate(element);
+            cornerstoneTools.lengthTouch.deactivate(element);
+            cornerstoneTools.probeTouch.deactivate(element);
+            cornerstoneTools.zoomTouchDrag.deactivate(element);
+            cornerstoneTools.wwwcTouchDrag.deactivate(element);
         }
 
         // Tool button event handlers that set the new active tool
-        $('#enableWindowLevelTool').click(function() {
+        var toolSelector = $("#toolSelector");
+        $('#enableWindowLevelTool').click(function (e) {
             disableAllTools();
-           cornerstoneTools.wwwcTouchDrag.activate(element);
+            cornerstoneTools.wwwcTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#pan').click(function() {
+        $('#pan').click(function (e) {
             disableAllTools();
-             cornerstoneTools.panTouchDrag.activate(element);
+            cornerstoneTools.panTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#zoom').click(function() {
+        $('#rotate').click(function (e) {
             disableAllTools();
-           cornerstoneTools.zoomTouchDrag.activate(element);
+            cornerstoneTools.rotateTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#enableLength').click(function() {
+        $('#zoom').click(function (e) {
             disableAllTools();
-           cornerstoneTools.lengthTouch.activate(element);
+            cornerstoneTools.zoomTouchPinch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#probe').click(function() {
+        $('#zoomDrag').click(function (e) {
             disableAllTools();
-             cornerstoneTools.probeTouch.activate(element);
+            cornerstoneTools.zoomTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#circleroi').click(function() {
+        $('#length').click(function (e) {
             disableAllTools();
-            cornerstoneTools.ellipticalroi_Touch.activate(element);
+            cornerstoneTools.lengthTouch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#rectangleroi').click(function() {
+        $('#probe').click(function (e) {
+            disableAllTools();
+            cornerstoneTools.probeTouch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
+        });
+        $('#circleroi').click(function (e) {
+            disableAllTools();
+            cornerstoneTools.ellipticalRoiTouch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
+        });
+        $('#rectangleroi').click(function (e) {
             disableAllTools();
             cornerstoneTools.rectangleRoiTouch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
         });
-        $('#angle').click(function () {
+        $('#angle').click(function (e) {
             disableAllTools();
-             cornerstoneTools.angleTouch.activate(element);
+            cornerstoneTools.angleTouch.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
+        });
+        $('#clearToolData').click(function() {
+            disableAllTools();
+            cornerstoneTools.wwwcTouchDrag.activate(element);
+            cornerstoneTools.zoomTouchPinch.activate(element);
+
+            toolSelector.html('Select tool <span class="caret"></span>')
+
+            var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+            // Note that this only works on ImageId-specific tool state managers (for now)
+            toolStateManager.clear(element)
+            cornerstone.updateImage(element);
+        });
+        $('#resetViewport').click(function() {
+            var canvas = $('#dicomImage canvas').get(0);
+            var enabledElement = cornerstone.getEnabledElement(element);
+            var viewport = cornerstone.getDefaultViewport(canvas, enabledElement.image)
+            cornerstone.setViewport(element, viewport);
         });
     });
-
-
 
 </script>
 </html>
