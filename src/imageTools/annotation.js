@@ -586,7 +586,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         activate: activate,
         deactivate: deactivate,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
 
     cornerstoneTools.arrowAnnotateTouch = {

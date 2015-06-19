@@ -367,7 +367,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         activate: activate,
         deactivate: deactivate,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
     ///////// END IMAGE RENDERING ///////
 

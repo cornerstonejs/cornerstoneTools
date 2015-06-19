@@ -231,6 +231,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             setConfiguration: setConfiguration
         };
 
+        // Expose pointNearTool if available
+        if (mouseToolInterface.pointNearTool) {
+            toolInterface.pointNearTool = mouseToolInterface.pointNearTool;
+        }
+
         return toolInterface;
     }
 

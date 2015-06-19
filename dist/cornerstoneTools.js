@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-18 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -769,6 +769,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             getConfiguration: getConfiguration,
             setConfiguration: setConfiguration
         };
+
+        // Expose pointNearTool if available
+        if (mouseToolInterface.pointNearTool) {
+            toolInterface.pointNearTool = mouseToolInterface.pointNearTool;
+        }
 
         return toolInterface;
     }
@@ -2063,7 +2068,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         activate: activate,
         deactivate: deactivate,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
 
     cornerstoneTools.arrowAnnotateTouch = {
@@ -4476,7 +4482,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         activate: activate,
         deactivate: deactivate,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
 
     return cornerstoneTools;
@@ -4854,7 +4861,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         activate: activate,
         deactivate: deactivate,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
     ///////// END IMAGE RENDERING ///////
 
