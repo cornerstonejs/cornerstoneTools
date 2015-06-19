@@ -8338,6 +8338,11 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
 
         var stackData = toolData.data[0];
 
+        // Allow for negative indexing
+        if (newImageIdIndex < 0) {
+            newImageIdIndex += stackData.imageIds.length;
+        }
+
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
