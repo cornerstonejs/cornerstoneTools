@@ -1764,7 +1764,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             }
 
             // Draw the text
-            if (data.annotationText !== undefined && data.annotationText !== null) {
+            if (data.annotationText && data.annotationText !== "") {
                 context.font = font;
                 
                 var distance = 13;
@@ -1813,8 +1813,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // not visible, not interactive
-    function disable(element)
-    {
+    function disable(element) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
@@ -1824,8 +1823,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     // visible but not interactive
-    function enable(element)
-    {
+    function enable(element) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
