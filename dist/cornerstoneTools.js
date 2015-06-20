@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3323,12 +3323,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
     var toolType = "magnify";
-    var configuration = {};
+    var configuration = {
+        magnifySize: 100,
+        magnificationLevel: 2,
+    };
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -3345,7 +3348,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", eventData, dragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", eventData, mouseUpCallback);
             drawMagnificationTool(eventData);
@@ -3367,38 +3370,61 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             createMagnificationCanvas(eventData.element);
         }
 
+        var enabledElement = cornerstone.getEnabledElement(eventData.element);
+        var image = enabledElement.image;
+
         var config = cornerstoneTools.magnify.getConfiguration();
+
         var magnifySize = config.magnifySize;
         var magnificationLevel = config.magnificationLevel;
 
         // The 'not' magnifyTool class here is necessary because cornerstone places
         // no classes of it's own on the canvas we want to select
         var canvas = $(eventData.element).find("canvas").not('.magnifyTool').get(0);
+        var context = canvas.getContext("2d");
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
         var zoomCtx = magnify.getContext("2d");
+        zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
 
         // Calculate the on-canvas location of the mouse pointer / touch
-        var rect = canvas.getBoundingClientRect();
-        var canvasLocation = {
-            x: eventData.currentPoints.client.x - rect.left,
-            y: eventData.currentPoints.client.y - rect.top
-        };
+        var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
+
+        canvasLocation.x = Math.max(canvasLocation.x, 0);
+        canvasLocation.x = Math.min(canvasLocation.x, image.width);
+
+        canvasLocation.y = Math.max(canvasLocation.y, 0);
+        canvasLocation.y = Math.min(canvasLocation.y, image.height);
 
         // Clear the rectangle
-        zoomCtx.clearRect(0, 0, magnify.width, magnify.height);
+        zoomCtx.clearRect(0, 0, magnifySize, magnifySize);
         zoomCtx.fillStyle = "transparent";
 
         // Fill it with the pixels that the mouse is clicking on
-        zoomCtx.fillRect(0, 0, magnify.width, magnify.height);
+        zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
         
-        var size = magnifySize * magnificationLevel;
-        var startX = canvasLocation.x - 0.5 * magnifySize / magnificationLevel;
-        var startY = canvasLocation.y - 0.5 * magnifySize / magnificationLevel;
+        var scaledMagnifySize = magnifySize * magnificationLevel;
+        var getSize = magnifySize / magnificationLevel;
+        var copyFrom = {
+            x: canvasLocation.x - 0.5 * getSize,
+            y: canvasLocation.y - 0.5 * getSize
+        };
 
-        zoomCtx.drawImage(canvas, startX, startY, magnifySize, magnifySize, 0, 0, size, size);
+        console.log(canvasLocation);
+        console.log(magnifySize);
+        console.log(magnificationLevel);
+        console.log(copyFrom);
+
+        zoomCtx.drawImage(canvas,
+                          copyFrom.x, copyFrom.y,
+                          magnifySize, magnifySize,
+                          0, 0, scaledMagnifySize, scaledMagnifySize);
+        
+        //ctx.drawImage(img, img.width / 4, img.height / 4, img.width / 2, img.height / 2, 0, 0, canvas.width, canvas.height);
 
         // Place the magnification tool at the same location as the pointer
-        magnify.style.top = canvasLocation.y - 0.45 * magnifySize + "px";
-        magnify.style.left = canvasLocation.x - 0.45 * magnifySize + "px";
+        magnify.style.top = canvasLocation.y - 0.5 * magnifySize + "px";
+        magnify.style.left = canvasLocation.x - 0.5 * magnifySize + "px";
         magnify.style.display = "block";
 
         // Hide the mouse cursor, so the user can see better
@@ -3406,8 +3432,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     /** Creates the magnifying glass canvas */
-    function createMagnificationCanvas(element)
-    {
+    function createMagnificationCanvas(element) {
         // If the magnifying glass canvas doesn't already exist
         if ($(element).find(".magnifyTool").length === 0) {
             // Create a canvas and append it as a child to the element
@@ -3438,15 +3463,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function enable(element) {
         var config = cornerstoneTools.magnify.getConfiguration(config);
-
-        // Checks if config object is empty
-        if (!Object.keys(config).length) {
-            config = {
-                magnifySize: 100,
-                magnificationLevel: 2,
-            };
-            cornerstoneTools.magnify.setConfiguration(config);
-        }
         createMagnificationCanvas(element);
     }
 
