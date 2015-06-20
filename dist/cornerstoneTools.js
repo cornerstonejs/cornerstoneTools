@@ -3390,6 +3390,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Calculate the on-canvas location of the mouse pointer / touch
         var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
+        canvasLocation.x = Math.max(canvasLocation.x, 0);
+        canvasLocation.x = Math.min(canvasLocation.x, image.width);
+
+        canvasLocation.y = Math.max(canvasLocation.y, 0);
+        canvasLocation.y = Math.min(canvasLocation.y, image.height);
+
         // Clear the rectangle
         zoomCtx.clearRect(0, 0, magnifySize, magnifySize);
         zoomCtx.fillStyle = "transparent";
