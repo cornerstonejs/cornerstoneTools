@@ -11,8 +11,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     var toolType = "referenceLines";
 
-    function onImageRendered(e, eventData)
-    {
+    function onImageRendered(e, eventData) {
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -44,8 +43,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // enables the reference line tool for a given element.  Note that a custom renderer
     // can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
-    function enable(element, synchronizationContext, renderer)
-    {
+    function enable(element, synchronizationContext, renderer) {
         renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
 
         cornerstoneTools.addToolState(element, toolType, {
@@ -57,8 +55,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // disables the reference line tool for the given element
-    function disable(element, synchronizationContext)
-    {
+    function disable(element, synchronizationContext) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         cornerstone.updateImage(element);
     }

@@ -105,7 +105,8 @@ is used by our example image loader-->
         cornerstoneTools.addToolState(axialElement, 'stack', axialStack);
 
         // Enable all tools we want to use with this element
-        cornerstoneTools.stackScroll.activate(axialElement, 1);
+        cornerstoneTools.pan.activate(axialElement, 1);
+        cornerstoneTools.zoom.activate(axialElement, 4);
         cornerstoneTools.stackScrollWheel.activate(axialElement);
 
         // Add the enabled elements to the synchronization context
