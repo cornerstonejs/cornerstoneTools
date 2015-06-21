@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3391,10 +3391,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
         canvasLocation.x = Math.max(canvasLocation.x, 0);
-        canvasLocation.x = Math.min(canvasLocation.x, image.width);
+        canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
 
         canvasLocation.y = Math.max(canvasLocation.y, 0);
-        canvasLocation.y = Math.min(canvasLocation.y, image.height);
+        canvasLocation.y = Math.min(canvasLocation.y, canvas.height);
 
         // Clear the rectangle
         zoomCtx.clearRect(0, 0, magnifySize, magnifySize);
