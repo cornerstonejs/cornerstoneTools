@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2033,7 +2033,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
         $(element).on('CornerstoneToolsDragStart', touchStartCallback);
-        $(element).on('CornerstoneToolsDragStartActive', eventData, touchDownActivateCallback);
+        $(element).on('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
         cornerstone.updateImage(element);
     }

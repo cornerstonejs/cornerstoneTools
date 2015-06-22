@@ -551,7 +551,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         $(element).on("CornerstoneImageRendered", onImageRendered);
         $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
         $(element).on('CornerstoneToolsDragStart', touchStartCallback);
-        $(element).on('CornerstoneToolsDragStartActive', eventData, touchDownActivateCallback);
+        $(element).on('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
         cornerstone.updateImage(element);
     }
