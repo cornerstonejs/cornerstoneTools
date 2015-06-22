@@ -46,12 +46,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         // draw the referenceLines
+        context.setTransform(1,0,0,1,0,0);
+
+        context.save();
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
         context.moveTo(refLineStartCanvas.x, refLineStartCanvas.y);
         context.lineTo(refLineEndCanvas.x, refLineEndCanvas.y);
         context.stroke();
+        context.restore();
     }
 
     // module/private exports
