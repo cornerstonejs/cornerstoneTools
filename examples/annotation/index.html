@@ -19,6 +19,11 @@
             cursor:default;
         }
         #annotationDialog {
+            z-index: 1000;
+            position: absolute;
+            margin: 0px;
+            left: 40%;
+            top: 40%;
             width: 300px;
             border: 1px black solid;
             border-radius: 5px;
@@ -112,11 +117,11 @@ is used by our example image loader-->
         var getTextInput = $('.annotationTextInput');
         var confirm = dialog.find('.annotationDialogConfirm');
 
-        dialog.get(0).showModal();
+        dialog.get(0).show();
 
         confirm.off('click');
         confirm.on('click', function() {
-            closeHandler()
+            closeHandler();
         });
 
         dialog.off("keypress");
@@ -151,18 +156,19 @@ is used by our example image loader-->
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
+        // Try commenting this out to see the default behaviour
+        // By default, the tool uses Javascript's Prompt function
+        // to ask the user for the annotation. This example uses a
+        // slightly nicer HTML5 dialog element.
         cornerstoneTools.arrowAnnotate.setConfiguration(config);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.arrowAnnotate.activate(element, 1);
-
-        // Example is buggy if both mouse and touch handler are active at once.
-        //cornerstoneTools.arrowAnnotateTouch.activate(element);
+        cornerstoneTools.arrowAnnotateTouch.activate(element);
 
         activate("#activate");
 
-        function activate(id)
-        {
+        function activate(id) {
             $('a').removeClass('active');
             $(id).addClass('active');
         }
@@ -171,25 +177,25 @@ is used by our example image loader-->
         $('#enable').click(function() {
             activate("#enable");
             cornerstoneTools.arrowAnnotate.enable(element);
-            //cornerstoneTools.arrowAnnotateTouch.enable(element);
+            cornerstoneTools.arrowAnnotateTouch.enable(element);
             return false;
         });
         $('#disable').click(function() {
             activate("#disable");
             cornerstoneTools.arrowAnnotate.disable(element);
-            //cornerstoneTools.arrowAnnotateTouch.disable(element);
+            cornerstoneTools.arrowAnnotateTouch.disable(element);
             return false;
         });
         $('#activate').click(function() {
             activate("#activate");
             cornerstoneTools.arrowAnnotate.activate(element, 1);
-            //cornerstoneTools.arrowAnnotateTouch.activate(element);
+            cornerstoneTools.arrowAnnotateTouch.activate(element);
             return false;
         });
         $('#deactivate').click(function() {
             activate("#deactivate");
             cornerstoneTools.arrowAnnotate.deactivate(element, 1);
-            //cornerstoneTools.arrowAnnotateTouch.deactivate(element);
+            cornerstoneTools.arrowAnnotateTouch.deactivate(element);
             return false;
         });
     });
