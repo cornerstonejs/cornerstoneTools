@@ -127,7 +127,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
             if(imagePromise !== undefined) {
-                return; // If we do, stop processing this iteration
+                // If we do, remove from list and stop processing this iteration
+                removeFromList(imageIdIndex);
+                return;
             }
             
             // Load and cache the image
