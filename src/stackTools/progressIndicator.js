@@ -35,12 +35,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var totalImages = stackData && stackData.imageIds.length;
 
         var prefetchData = cornerstoneTools.getToolState(eventData.element, 'stackPrefetch');
-        var indicesToRequest = prefetchData && prefetchData.data && prefetchData.data[0] && prefetchData.data[0].indicesToRequest;
+        var imageIds = stackData.imageIds;
 
         // draw loaded images indicator
-        if (typeof indicesToRequest !== 'undefined'){
-            setLoadedMarker(context, width, height, indicesToRequest, totalImages);
-        }
+        // if (typeof indicesToRequest !== 'undefined'){
+            setLoadedMarker(context, width, height, imageIds);
+        // }
 
         // draw current image cursor
         if (typeof imageScrollIndex !== 'undefined'){
@@ -56,8 +56,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return false;
         }
 
-        var instances = event.data.instances;
-        var enabledElement = cornerstone.getEnabledElement(event.data.element);
+        var instances = event.data.instances,
+            enabledElement;
+
+        try {
+            enabledElement = cornerstone.getEnabledElement(event.data.element);
+        } catch (err) {
+            // this may occur if an element in the midst of prefetching
+            // is disabled/destroyed.
+            console.warn('Progress event caught for non-enabled element');
+            return false;
+        }
 
         var file = data.fileURL.substring(data.fileURL.indexOf('://'));
         var stackData = cornerstoneTools.getToolState(event.data.element, 'stack');
@@ -139,15 +148,19 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.fillRect(xPos, height - scrollBarHeight, cursorWidth, scrollBarHeight);
     }
 
-    function setLoadedMarker(context, width, height, indicesToRequest, totalImages){
+    function setLoadedMarker(context, width, height, imageIds){
 
-        var unitWidth = width / totalImages;
+        var totalImages = imageIds.length,
+            unitWidth = width / totalImages;
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         for (var i=0; i<totalImages; i++){
             // if image not in 'indicesToRequest', means it has loaded
-            if (indicesToRequest.indexOf(i) === -1){
+            //if (indicesToRequest.indexOf(i) === -1){
+            var imageId = imageIds[i],
+                imagePromise = viewer.cornerstone.imageCache.getImagePromise(imageId);
+            if (imagePromise && imagePromise.state() === "resolved"){
 
                 var offset = unitWidth * i;
 
@@ -197,6 +210,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         $(document).off("CornerstoneImageLoadProgress", {element: element, instances: instances}, showProgress);
     }
+
     /**
      * Activate image download indicator for the element
      * @param  {Object} element   DOM element
