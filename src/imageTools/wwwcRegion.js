@@ -10,9 +10,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     /** Calculates the minimum and maximum value in the given pixel array */
     function calculateMinMax(storedPixelData, globalMin, globalMax) {
+        var numPixels = storedPixelData.length;
+
+        if (numPixels < 2) {
+            return {
+                min: globalMin,
+                max: globalMax,
+            };
+        }
+        
         var min = globalMax;
         var max = globalMin;
-        var numPixels = storedPixelData.length;
+        
         var pixelData = storedPixelData;
 
         for (var index = 0; index < numPixels; index++) {
