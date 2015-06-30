@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-06-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -6426,6 +6426,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
         var stackPrefetch = stackPrefetchData.data[0];
 
+
         // If all the requests are complete, disable the stackPrefetch tool
         if (stackPrefetch.indicesToRequest.length === 0) {
             stackPrefetch.enabled = false;
@@ -6434,6 +6435,33 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Make sure the tool is still enabled
         if (stackPrefetch.enabled === false) {
             return;
+        }
+
+        // Remove an imageIdIndex from the list of indices to request
+        // This fires when the individual image loading deferred is resolved        
+        function removeFromList(imageIdIndex) {
+            var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
+            if (index > -1){ // don't remove last element if imageIdIndex not found
+                stackPrefetch.indicesToRequest.splice(index, 1);
+            }
+        }
+        
+        // Throws an error if something has gone wrong
+        function errorHandler(imageId) {
+            throw "stackPrefetch: image not retrieved: " + imageId;
+        }
+
+        // remove all already cached images from the
+        // indicesToRequest array
+        var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
+        for (var i=0; i<indicesToRequestCopy.length; i++){
+            var imageIdIndex = indicesToRequestCopy[i],
+                imageId = stack.imageIds[imageIdIndex],
+                imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+
+            if (imagePromise !== undefined && imagePromise.state() === "resolved"){
+                removeFromList(imageIdIndex);
+            }
         }
 
         // Get tool configuration
@@ -6454,17 +6482,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageIdIndices = range(lastImageIdIndexFetched, maxImageIdIndex);
         stackPrefetch.lastImageIdIndexFetched = maxImageIdIndex + 1;
 
-        // Remove an imageIdIndex from the list of indices to request
-        // This fires when the individual image loading deferred is resolved        
-        function removeFromList(imageIdIndex) {
-            var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
-            stackPrefetch.indicesToRequest.splice(index, 1);
-        }
-        
-        // Throws an error if something has gone wrong
-        function errorHandler(imageId) {
-            throw "stackPrefetch: image not retrieved: " + imageId;
-        }
 
         // Loop through the images that should be requested in this batch
 
@@ -6474,6 +6491,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (imageIdIndices.length === 0) {
             stackPrefetch.enabled = false;
             return;
+        }
+
+        function onLoadImageComplete(imageIdIndex){
+            removeFromList(imageIdIndex);
+
+            var cacheInfo = cornerstone.imageCache.getCacheInfo();
+
+            // Check if the cache is full
+            if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
+                //console.log("Cache full, stopping");
+                stackPrefetch.enabled = false;
+            }
+
+            lastCacheInfo = cacheInfo;
         }
 
         //console.log(imageIdIndices);
@@ -6487,25 +6518,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
             if(imagePromise !== undefined) {
-                return; // If we do, stop processing this iteration
+                // If we do, remove from list (when resolved, as we could have
+                // pending prefetch requests) and stop processing this iteration
+                imagePromise.done(function(){
+                    onLoadImageComplete(imageIdIndex);
+                });
+                return;
             }
             
             // Load and cache the image
             var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
 
             // When this is complete, remove the imageIdIndex from the list
-            loadImageDeferred.done(function() {
-                removeFromList(imageIdIndex);
-
-                var cacheInfo = cornerstone.imageCache.getCacheInfo();
-
-                // Check if the cache is full
-                if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
-                    //console.log("Cache full, stopping");
-                    stackPrefetch.enabled = false;
-                }
-
-                lastCacheInfo = cacheInfo;
+            loadImageDeferred.done(function(){
+                onLoadImageComplete(imageIdIndex);
             });
 
             loadImageDeferred.fail(function() {
@@ -6552,7 +6578,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // a rather arbitrary number of 11, since we don't want to overload any servers
         if (config === undefined || config.maxSimultaneousRequests === undefined) {
             config = {
-                "maxSimultaneousRequests" : Math.max(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
+                "maxSimultaneousRequests" : Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
             };
         }
 
