@@ -99,6 +99,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             $(eventData.element).on("CornerstoneToolsMouseDrag", dragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             recordStartPoint(eventData);
+            return false;
         }
     }
 
@@ -178,11 +179,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         // Draw the rectangle
+        context.save();
+
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
         context.rect(left, top, width, height);
         context.stroke();
+
+        context.restore();
     }
 
     // --- Mouse tool enable / disable --- ///

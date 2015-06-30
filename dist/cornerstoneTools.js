@@ -5096,6 +5096,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             $(eventData.element).on("CornerstoneToolsMouseDrag", dragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             recordStartPoint(eventData);
+            return false;
         }
     }
 
@@ -5175,11 +5176,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         // Draw the rectangle
+        context.save();
+
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
         context.rect(left, top, width, height);
         context.stroke();
+
+        context.restore();
     }
 
     // --- Mouse tool enable / disable --- ///
@@ -6454,15 +6459,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // remove all already cached images from the
         // indicesToRequest array
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
-        for (var i=0; i<indicesToRequestCopy.length; i++){
-            var imageIdIndex = indicesToRequestCopy[i],
-                imageId = stack.imageIds[imageIdIndex],
-                imagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
+        indicesToRequestCopy.forEach(function(imageIdIndex) {
+            var imageId = stack.imageIds[imageIdIndex];
+
+            if (!imageId) {
+                return;
+            }
+
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            
             if (imagePromise !== undefined && imagePromise.state() === "resolved"){
                 removeFromList(imageIdIndex);
             }
-        }
+        });
 
         // Get tool configuration
         var config = cornerstoneTools.stackPrefetch.getConfiguration();
@@ -6475,7 +6485,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         var maxImageIdIndex = lastImageIdIndexFetched + config.maxSimultaneousRequests;
-        if (maxImageIdIndex > stackLength) {
+        if (maxImageIdIndex >= stackLength) {
             maxImageIdIndex = stackLength - 1;
         }
 
@@ -6514,6 +6524,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if (!stackPrefetch.enabled) {
                 return;
             }
+
+            if (!imageId) {
+                return;
+            }
+
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             

@@ -94,15 +94,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // remove all already cached images from the
         // indicesToRequest array
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
-        for (var i=0; i<indicesToRequestCopy.length; i++){
-            var imageIdIndex = indicesToRequestCopy[i],
-                imageId = stack.imageIds[imageIdIndex],
-                imagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
+        indicesToRequestCopy.forEach(function(imageIdIndex) {
+            var imageId = stack.imageIds[imageIdIndex];
+
+            if (!imageId) {
+                return;
+            }
+
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            
             if (imagePromise !== undefined && imagePromise.state() === "resolved"){
                 removeFromList(imageIdIndex);
             }
-        }
+        });
 
         // Get tool configuration
         var config = cornerstoneTools.stackPrefetch.getConfiguration();
@@ -115,7 +120,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         var maxImageIdIndex = lastImageIdIndexFetched + config.maxSimultaneousRequests;
-        if (maxImageIdIndex > stackLength) {
+        if (maxImageIdIndex >= stackLength) {
             maxImageIdIndex = stackLength - 1;
         }
 
@@ -154,6 +159,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if (!stackPrefetch.enabled) {
                 return;
             }
+
+            if (!imageId) {
+                return;
+            }
+
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
