@@ -72,7 +72,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageIdToolStateManager = {
             get: getImageIdSpecificToolState,
             add: addImageIdSpecificToolState,
-            clear: clearImageIdSpecificToolStateManager
+            clear: clearImageIdSpecificToolStateManager,
+            toolState: toolState
         };
         return imageIdToolStateManager;
     }
