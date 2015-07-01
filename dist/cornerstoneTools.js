@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -6320,6 +6320,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
 
             if (!playClipData.loop && (newImageIdIndex >= stackData.imageIds.length || newImageIdIndex < 0)) {
+                
+                var eventDetail = {
+                    element: element
+                };
+                var event = jQuery.Event("CornerstoneToolsClipStopped", eventDetail);
+                $(element).trigger(event, eventDetail);
+
                 clearInterval(playClipData.intervalId);
                 playClipData.intervalId = undefined;
                 return;
@@ -6883,6 +6890,53 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 }($, cornerstone, cornerstoneTools));
  
 // End Source; src/stateManagement/imageIdSpecificStateManager.js
+
+// Begin Source: src/stateManagement/loadHandlerManager.js
+var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+
+    "use strict";
+
+    if(cornerstoneTools === undefined) {
+        cornerstoneTools = {};
+    }
+
+    function loadHandlerManager() {
+        var defaultStartLoadHandler,
+            defaultEndLoadHandler;
+
+        function setStartLoadHandler(handler){
+            defaultStartLoadHandler = handler;
+        }
+        
+        function getStartLoadHandler(){
+            return defaultStartLoadHandler;
+        }
+
+        function setEndLoadHandler(handler){
+            defaultEndLoadHandler = handler;
+        }
+        
+        function getEndLoadHandler(){
+            return defaultEndLoadHandler;
+        }
+      
+        var loadHandlers = {
+            setStartLoadHandler: setStartLoadHandler,
+            getStartLoadHandler: getStartLoadHandler,
+            setEndLoadHandler: setEndLoadHandler,
+            getEndLoadHandler: getEndLoadHandler
+        };
+
+        return loadHandlers;
+    }
+
+    // module/private exports
+    cornerstoneTools.loadHandlerManager = loadHandlerManager();
+
+    return cornerstoneTools;
+}($, cornerstone, cornerstoneTools));
+ 
+// End Source; src/stateManagement/loadHandlerManager.js
 
 // Begin Source: src/stateManagement/stackSpecificStateManager.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
@@ -8406,10 +8460,19 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
     }
 
     function scrollToIndex(element, newImageIdIndex) {
+
         var toolData = cornerstoneTools.getToolState(element, 'stack');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        
+        if (startLoadingHandler) {
+            startLoadingHandler(element);
+        }
+        
 
         var stackData = toolData.data[0];
 
@@ -8425,6 +8488,9 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 }
             });
         }
@@ -8432,6 +8498,7 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.scrollToIndex = scrollToIndex;
+    cornerstoneTools.loadHandlers = {};
 
     return cornerstoneTools;
 }(cornerstone, cornerstoneTools)); 

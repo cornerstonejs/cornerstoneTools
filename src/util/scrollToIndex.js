@@ -7,11 +7,19 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
     }
 
     function scrollToIndex(element, newImageIdIndex) {
+
         var toolData = cornerstoneTools.getToolState(element, 'stack');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
 
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(element);
+        }
+        
         var stackData = toolData.data[0];
 
         // Allow for negative indexing
@@ -26,6 +34,9 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 }
             });
         }
@@ -33,6 +44,7 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.scrollToIndex = scrollToIndex;
+    cornerstoneTools.loadHandlers = {};
 
     return cornerstoneTools;
 }(cornerstone, cornerstoneTools));

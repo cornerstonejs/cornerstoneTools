@@ -62,6 +62,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
 
             if (!playClipData.loop && (newImageIdIndex >= stackData.imageIds.length || newImageIdIndex < 0)) {
+                
+                var eventDetail = {
+                    element: element
+                };
+                var event = jQuery.Event("CornerstoneToolsClipStopped", eventDetail);
+                $(element).trigger(event, eventDetail);
+
                 clearInterval(playClipData.intervalId);
                 playClipData.intervalId = undefined;
                 return;
