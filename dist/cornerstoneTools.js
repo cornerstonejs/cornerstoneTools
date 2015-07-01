@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-06-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -7512,23 +7512,22 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var ignoreFiredEvents = false;
 
-        function fireEvent(sourceEnabledElement) {
-
+        function fireEvent(sourceEnabledElement, eventData) {
             // Broadcast an event that something changed
             ignoreFiredEvents = true;
             $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement);
+                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
             });
             ignoreFiredEvents = false;
         }
 
-        function onEvent(e)
+        function onEvent(e, eventData)
         {
             if(ignoreFiredEvents === true) {
                 //console.log("event ignored");
                 return;
             }
-            fireEvent(e.currentTarget);
+            fireEvent(e.currentTarget, eventData);
         }
 
         // adds an element as a source
