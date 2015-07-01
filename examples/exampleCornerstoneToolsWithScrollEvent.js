@@ -6722,6 +6722,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function mouseWheelCallback(e, eventData) {
         var images = -eventData.direction;
         cornerstoneTools.scroll(eventData.element, images);
+        $(eventData.element).trigger("CornerstoneScrollStack", { direction: images });
     }
 
     function onDrag(e) {
@@ -7450,7 +7451,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // This function causes the image in the target stack to be set to the one closest
     // to the image in the source stack by image position
-    function stackImageIndexSynchronizer(synchronizer, sourceElement, targetElement) {
+    function stackImageIndexSynchronizer(synchronizer, sourceElement, targetElement, eventData) {
+
+        // Example demonstrate the direction
+        if (eventData != undefined) {
+            $("#direction").text(eventData.direction < 0 ? "Up" : "Down");
+        }
 
         // ignore the case where the source and target are the same enabled element
         if(targetElement === sourceElement) {

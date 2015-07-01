@@ -16,23 +16,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         var ignoreFiredEvents = false;
 
-        function fireEvent(sourceEnabledElement) {
+        function fireEvent(sourceEnabledElement, eventData) {
 
             // Broadcast an event that something changed
             ignoreFiredEvents = true;
             $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement);
+                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
             });
             ignoreFiredEvents = false;
         }
 
-        function onEvent(e)
+        function onEvent(e, eventData)
         {
             if(ignoreFiredEvents === true) {
                 //console.log("event ignored");
                 return;
             }
-            fireEvent(e.currentTarget);
+            fireEvent(e.currentTarget, eventData);
         }
 
         // adds an element as a source
