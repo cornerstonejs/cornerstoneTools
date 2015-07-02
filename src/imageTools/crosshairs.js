@@ -68,11 +68,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // Switch the loaded image to the required image
             if(newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
-                //console.log('Switching to ' + newImageIdIndex);
+                var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+                if (startLoadingHandler) {
+                    startLoadingHandler(element);
+                }
+
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     var viewport = cornerstone.getViewport(targetElement);
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(targetElement, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 });
             }
         });

@@ -12,13 +12,6 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-
-        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-
-        if (startLoadingHandler) {
-            startLoadingHandler(element);
-        }
         
         var stackData = toolData.data[0];
 
@@ -28,6 +21,13 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
         }
 
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
+            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+            if (startLoadingHandler) {
+                startLoadingHandler(element);
+            }
+
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
 

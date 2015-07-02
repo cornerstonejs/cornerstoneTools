@@ -2,7 +2,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -11,7 +11,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function stackImagePositionSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
 
@@ -30,22 +30,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var imagePosition = imagePlane.imagePositionPatient;
             var distance = imagePosition.distanceToSquared(sourceImagePosition);
             //console.log(index + '=' + distance);
-            if(distance < minDistance) {
+            if (distance < minDistance) {
                 minDistance = distance;
                 newImageIdIndex = index;
             }
         });
 
-        if(newImageIdIndex === stackData.currentImageIdIndex)
-        {
+        if (newImageIdIndex === stackData.currentImageIdIndex) {
             return;
         }
 
-        if(newImageIdIndex !== -1) {
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
+        }
+
+        if (newImageIdIndex !== -1) {
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                 var viewport = cornerstone.getViewport(targetElement);
                 stackData.currentImageIdIndex = newImageIdIndex;
                 synchronizer.displayImage(targetElement, image, viewport);
+                if (endLoadingHandler) {
+                    endLoadingHandler(targetElement);
+                }
             });
         }
     }

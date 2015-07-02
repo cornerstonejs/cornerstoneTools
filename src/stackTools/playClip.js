@@ -84,10 +84,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
 
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
+                var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+                if (startLoadingHandler) {
+                    startLoadingHandler(element);
+                }
+
                 var viewport = cornerstone.getViewport(element);
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 });
             }
         }, 1000 / Math.abs(playClipData.framesPerSecond));

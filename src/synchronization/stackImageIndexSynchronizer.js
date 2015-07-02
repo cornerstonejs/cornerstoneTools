@@ -2,7 +2,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -11,7 +11,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function stackImageIndexSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
 
@@ -26,15 +26,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length -1);
 
         // Do nothing if the index has not changed
-        if(newImageIdIndex === targetStackData.currentImageIdIndex)
-        {
+        if (newImageIdIndex === targetStackData.currentImageIdIndex) {
             return;
+        }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
         }
 
         cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]).then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             targetStackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(targetElement);
+            }
         });
     }
 

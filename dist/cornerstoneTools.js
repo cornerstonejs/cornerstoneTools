@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2164,11 +2164,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             // Switch the loaded image to the required image
             if(newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
-                //console.log('Switching to ' + newImageIdIndex);
+                var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+                if (startLoadingHandler) {
+                    startLoadingHandler(element);
+                }
+
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     var viewport = cornerstone.getViewport(targetElement);
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(targetElement, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 });
             }
         });
@@ -6342,10 +6351,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             }
 
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
+                var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+                if (startLoadingHandler) {
+                    startLoadingHandler(element);
+                }
+
                 var viewport = cornerstone.getViewport(element);
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 });
             }
         }, 1000 / Math.abs(playClipData.framesPerSecond));
@@ -7444,7 +7463,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -7453,7 +7472,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function stackImageIndexSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
 
@@ -7468,15 +7487,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length -1);
 
         // Do nothing if the index has not changed
-        if(newImageIdIndex === targetStackData.currentImageIdIndex)
-        {
+        if (newImageIdIndex === targetStackData.currentImageIdIndex) {
             return;
+        }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
         }
 
         cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]).then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             targetStackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(targetElement);
+            }
         });
     }
 
@@ -7492,7 +7520,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -7501,7 +7529,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function stackImagePositionSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
 
@@ -7520,22 +7548,31 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var imagePosition = imagePlane.imagePositionPatient;
             var distance = imagePosition.distanceToSquared(sourceImagePosition);
             //console.log(index + '=' + distance);
-            if(distance < minDistance) {
+            if (distance < minDistance) {
                 minDistance = distance;
                 newImageIdIndex = index;
             }
         });
 
-        if(newImageIdIndex === stackData.currentImageIdIndex)
-        {
+        if (newImageIdIndex === stackData.currentImageIdIndex) {
             return;
         }
 
-        if(newImageIdIndex !== -1) {
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
+        }
+
+        if (newImageIdIndex !== -1) {
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
                 var viewport = cornerstone.getViewport(targetElement);
                 stackData.currentImageIdIndex = newImageIdIndex;
                 synchronizer.displayImage(targetElement, image, viewport);
+                if (endLoadingHandler) {
+                    endLoadingHandler(targetElement);
+                }
             });
         }
     }
@@ -7878,7 +7915,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -7887,7 +7924,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function incrementTimePoint(element, timePoints, wrap)
     {
         var toolData = cornerstoneTools.getToolState(element, 'timeSeries');
-        if(toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+        if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
 
@@ -7897,12 +7934,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var newStackIndex = timeSeriesData.currentStackIndex + timePoints;
 
         // loop around if we go outside the stack
-        if(wrap) {
-            if (newStackIndex >= timeSeriesData.stacks.length)
-            {
+        if (wrap) {
+            if (newStackIndex >= timeSeriesData.stacks.length) {
                 newStackIndex =0;
             }
-            if(newStackIndex < 0) {
+            if (newStackIndex < 0) {
                 newStackIndex = timeSeriesData.stacks.length -1;
             }
         }
@@ -7911,17 +7947,24 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             newStackIndex = Math.max(0, newStackIndex);
         }
 
-        if(newStackIndex !== timeSeriesData.currentStackIndex)
-        {
+        if (newStackIndex !== timeSeriesData.currentStackIndex) {
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
+            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+            if (startLoadingHandler) {
+                startLoadingHandler(element);
+            }
+
             cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]).then(function(image) {
-                if(timeSeriesData.currentImageIdIndex !== currentImageIdIndex) {
+                if (timeSeriesData.currentImageIdIndex !== currentImageIdIndex) {
                     newStack.currentImageIdIndex = currentImageIdIndex;
                     timeSeriesData.currentStackIndex = newStackIndex;
-                    //var stackToolData = cornerstoneTools.getToolState(element, 'stack');
-                    //stackToolData[0] = newStack;
                     cornerstone.displayImage(element, image, viewport);
+                    if (endLoadingHandler) {
+                        endLoadingHandler(element);
+                    }
                 }
             });
         }
@@ -8465,15 +8508,7 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-
-        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
         
-        if (startLoadingHandler) {
-            startLoadingHandler(element);
-        }
-        
-
         var stackData = toolData.data[0];
 
         // Allow for negative indexing
@@ -8482,6 +8517,13 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
         }
 
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
+            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+
+            if (startLoadingHandler) {
+                startLoadingHandler(element);
+            }
+
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
 
