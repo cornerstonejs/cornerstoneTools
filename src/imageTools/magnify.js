@@ -89,17 +89,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             y: canvasLocation.y - 0.5 * getSize
         };
 
-        console.log(canvasLocation);
-        console.log(magnifySize);
-        console.log(magnificationLevel);
-        console.log(copyFrom);
-
         zoomCtx.drawImage(canvas,
                           copyFrom.x, copyFrom.y,
                           magnifySize, magnifySize,
                           0, 0, scaledMagnifySize, scaledMagnifySize);
-        
-        //ctx.drawImage(img, img.width / 4, img.height / 4, img.width / 2, img.height / 2, 0, 0, canvas.width, canvas.height);
 
         // Place the magnification tool at the same location as the pointer
         magnify.style.top = canvasLocation.y - 0.5 * magnifySize + "px";
