@@ -8,7 +8,14 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
-
+    <style type="text/css">
+        .index { 
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: yellow;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
@@ -43,6 +50,7 @@
                 <div id="axial1"
                      style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
+                <span class="index">0</span>
             </div>
             <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
@@ -53,6 +61,7 @@
                 <div id="axial2"
                      style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
+                <span class="index">1</span>
             </div>
             <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
@@ -63,6 +72,7 @@
                 <div id="axial3"
                      style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
+                <span class="index">2</span>
             </div>
         </div>
     </div>
@@ -106,7 +116,7 @@ is used by our example image loader-->
         currentImageIdIndex : 0,
         imageIds: axialImageIds
     };
-    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneNewImage", cornerstoneTools.stackImageIndexSynchronizer);
+    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneStackScroll", cornerstoneTools.stackImageIndexSynchronizer);
 
     // image enable the dicomImage element and the mouse inputs
     cornerstone.enable(axialElement1);
