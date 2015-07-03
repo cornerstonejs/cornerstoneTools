@@ -15,11 +15,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
             cornerstoneTools.touchMoveHandle(touchEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
+                measurementData.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
                     // delete the measurement
                     cornerstoneTools.removeToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
                 }
                 $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
+                cornerstone.updateImage(mouseEventData.element);
             });
         }
 
@@ -70,6 +72,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
 
             function handleDoneMove() {
                 data.active = false;
+                data.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);

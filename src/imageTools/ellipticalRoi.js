@@ -8,12 +8,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     var toolType = "ellipticalRoi";
 
+    var cachedEllipseData = [];
+
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible : true,
             active: true,
+            invalidated: true,
             handles : {
                 start : {
                     x : mouseEventData.currentPoints.image.x,
@@ -52,8 +55,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var xRadius = ellipse.width / 2;
         var yRadius = ellipse.height / 2;
 
-        if (xRadius <= 0.0 || yRadius <= 0.0)
-        {
+        if (xRadius <= 0.0 || yRadius <= 0.0) {
             return false;
         }
 
@@ -82,12 +84,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var sum = 0;
         var sumSquared = 0;
         var count = 0;
-        var index =0;
+        var index = 0;
 
         for (var y=ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x=ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, {x: x, y: y}) === true)
-                {
+                if (pointInEllipse(ellipse, {x: x, y: y}) === true) {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
                     count++;
@@ -166,34 +167,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // draw the handles
             cornerstoneTools.drawHandles(context, eventData, data.handles);
-
-            // Calculate the mean, stddev, and area
-            // TODO: calculate this in web worker for large pixel counts...
-            var width = Math.abs(data.handles.start.x - data.handles.end.x);
-            var height = Math.abs(data.handles.start.y - data.handles.end.y);
-            var left = Math.min(data.handles.start.x, data.handles.end.x);
-            var top = Math.min(data.handles.start.y, data.handles.end.y);
-
-            var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
-
-            var ellipse = {
-                left: left,
-                top: top,
-                width: width,
-                height: height
-            };
-
-            var meanStdDev = calculateMeanStdDev(pixels, ellipse);
-            var area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
-            var areaText = "Area: " + area.toFixed(2) + " mm^2";
-
-            // Draw text
+            
             context.font = font;
 
-            var textSize = context.measureText(area);
+            var textX,
+                textY,
+                meanStdDev,
+                areaText;
 
-            var textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
-            var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
+            if (!data.invalidated) {
+                textX = data.textX;
+                textY = data.textY;
+                meanStdDev = data.meanStdDev;
+                areaText = data.areaText;
+            } else {
+                // TODO: calculate this in web worker for large pixel counts...
+                var width = Math.abs(data.handles.start.x - data.handles.end.x);
+                var height = Math.abs(data.handles.start.y - data.handles.end.y);
+                var left = Math.min(data.handles.start.x, data.handles.end.x);
+                var top = Math.min(data.handles.start.y, data.handles.end.y);
+
+                var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
+
+                var ellipse = {
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height
+                };
+
+                // Calculate the mean, stddev, and area
+                meanStdDev = calculateMeanStdDev(pixels, ellipse);
+                var area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
+                areaText = "Area: " + area.toFixed(2) + " mm" + String.fromCharCode(178); // Char code 178 is a superscript 2
+
+                data.invalidated = false;
+                data.areaText = areaText;
+                data.meanStdDev = meanStdDev;
+            }
+            // Draw text
+            var textSize = context.measureText(areaText);
+            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
+            textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
             cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
