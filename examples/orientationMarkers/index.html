@@ -86,6 +86,13 @@
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.touchInput.enable(element);
 
+    var config = {
+        drawAllMarkers: true
+    }
+
+    // Comment this out to draw only the top and left markers
+    cornerstoneTools.orientationMarkers.setConfiguration(config);
+
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
