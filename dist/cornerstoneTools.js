@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -3591,10 +3591,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var oppositeColumnString = cornerstoneTools.orientation.invertOrientationString(columnString);
 
         return {
-            top: rowString,
-            bottom: oppositeRowString,
-            left: columnString,
-            right: oppositeColumnString
+            top: oppositeColumnString,
+            bottom: columnString,
+            left: oppositeRowString,
+            right: rowString
         };
     }
 

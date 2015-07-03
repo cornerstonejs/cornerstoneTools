@@ -18,10 +18,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var oppositeColumnString = cornerstoneTools.orientation.invertOrientationString(columnString);
 
         return {
-            top: rowString,
-            bottom: oppositeRowString,
-            left: columnString,
-            right: oppositeColumnString
+            top: oppositeColumnString,
+            bottom: columnString,
+            left: oppositeRowString,
+            right: rowString
         };
     }
 
