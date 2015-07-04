@@ -72,9 +72,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             return;
         }
 
-        var mousePoint = eventData.currentPoints.image;
+        var mousePoint = eventData.currentPoints.page;
+        var mousePointClient = cornerstone.pageToCanvas(eventData.element, mousePoint);
+        
         for (var i=0; i < data.handles.length; i++) {
-            if (cornerstoneMath.point.distance(data.handles[i], mousePoint) < 5) {
+            var handlePointClient = cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
+            var distance = cornerstoneMath.point.distance(handlePointClient, mousePointClient);
+            if (distance < 5) {
                 return i;
             }
         }
