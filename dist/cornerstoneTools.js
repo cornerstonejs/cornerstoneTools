@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -5436,13 +5436,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
     function correctShift(shift, viewport) {
         //Apply rotations
-        if(viewport.rotation!==0) {
+        if (viewport.rotation !== 0) {
             var angle = viewport.rotation * Math.PI/180;
     
             var cosA = Math.cos(angle);
@@ -5456,45 +5456,48 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         //Apply Flips        
-        if(viewport.hflip) {
+        if (viewport.hflip) {
             shift.x *=-1;
         }
         
-        if(viewport.vflip) {
+        if (viewport.vflip) {
             shift.y *=-1;
         }
         return shift;
     }
 
-    function zoom(element, viewport, ticks)
-    {
+    function zoom(element, viewport, ticks) {
         // Calculate the new scale factor based on how far the mouse has changed
         var pow = 1.7;
         var oldFactor = Math.log(viewport.scale) / Math.log(pow);
         var factor = oldFactor + ticks;
         var scale = Math.pow(pow, factor);
         viewport.scale = scale;
+        
+        var config = cornerstoneTools.zoom.getConfiguration();
+        if (config.maxScale && scale > config.maxScale) {
+            viewport.scale = config.maxScale;
+        } else if (config.minScale && scale < config.minScale) {
+            viewport.scale = config.minScale;
+        }
+
         cornerstone.setViewport(element, viewport);
     }
 
-    function mouseUpCallback(e, eventData)
-    {
+    function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-
     }
-    function mouseDownCallback(e, eventData)
-    {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+
+    function mouseDownCallback(e, eventData) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function mouseDragCallback(e, eventData)
-    {
-
+    function mouseDragCallback(e, eventData) {
         var ticks = eventData.deltaPoints.page.y/100;
         zoom(eventData.element, eventData.viewport, ticks);
 
@@ -5511,20 +5514,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-    function mouseWheelCallback(e, eventData)
-    {
+    function mouseWheelCallback(e, eventData) {
         var ticks = -eventData.direction / 4;
         zoom(eventData.element, eventData.viewport, ticks);
     }
 
-    function touchPinchCallback(e, eventData)
-    {
-        var pinchData = eventData;
-        zoom(pinchData.element, pinchData.viewport, pinchData.direction / 4);
+    function touchPinchCallback(e, eventData) {
+        zoom(eventData.element, eventData.viewport, eventData.direction / 4);
     }
 
-    function zoomTouchDrag(e, eventData)
-    {
+    function zoomTouchDrag(e, eventData) {
         var dragData = eventData;
         var ticks = dragData.deltaPoints.page.y/100;
         zoom(dragData.element, dragData.viewport, ticks);
@@ -5547,7 +5546,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
+
     return cornerstoneTools;
+
 }($, cornerstone, cornerstoneTools));
  
 // End Source; src/imageTools/zoom.js
