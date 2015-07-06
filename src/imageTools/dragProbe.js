@@ -68,7 +68,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var y = Math.round(eventData.currentPoints.image.y);
 
         var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var sp = parseFloat(storedPixels[0].toFixed(3));
+        var huValue = storedPixels[0] * eventData.image.slope + eventData.image.intercept;
+        huValue = parseFloat(huValue.toFixed(3));
 
         // Draw text
         var coords = {
@@ -80,7 +81,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         
         context.font = font;
         context.fillStyle = color;
-        cornerstoneTools.drawTextBox(context, sp, textCoords.x, textCoords.y, color);
+        cornerstoneTools.drawTextBox(context, huValue, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
