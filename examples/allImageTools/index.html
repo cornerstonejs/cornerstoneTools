@@ -124,6 +124,12 @@ is used by our example image loader-->
 
     var imageId = 'example://1';
     
+    var config = {
+        minScale: 0.25,
+        maxScale: 20.0
+    };
+    cornerstoneTools.zoom.setConfiguration(config);
+
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstone.loadImage(imageId).then(function(image) {
