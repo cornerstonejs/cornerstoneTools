@@ -31,14 +31,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
             $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+            
             cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
+                measurementData.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
                 {
                     // delete the measurement
                     cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
                 }
                 $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                cornerstone.updateImage(mouseEventData.element);
             });
         }
 
@@ -71,7 +74,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             for (var i=0; i < toolData.data.length; i++) {
                 // get the cursor position in image coordinates
                 var data = toolData.data[i];
-                if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+                if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale) === true) {
                     imageNeedsUpdate = true;
                 }
 
@@ -91,8 +94,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         function getHandleNearImagePoint(data, coords) {
             for(var handle in data.handles) {
                 var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
-                if (distanceSquared < 25)
-                {
+                if (distanceSquared < 25) {
                     return data.handles[handle];
                 }
             }
@@ -103,8 +105,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             function handleDoneMove() {
                 data.active = false;
-                if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles))
-                {
+                data.invalidated = true;
+                if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, mouseToolInterface.toolType, data);
                 }

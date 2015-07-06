@@ -41,14 +41,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         function mouseUpCallback(e, eventData) {
             data.active = false;
+            data.invalidated = true;
 
             $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
 
             // If any handle is outside the image, delete the tool data
-
-            if(deleteIfHandleOutsideImage === true) {
-                var image = eventData.image;//.getEnabledElement(element).image;
+            if (deleteIfHandleOutsideImage === true) {
+                var image = eventData.image;
                 var handleOutsideImage = false;
                 var rect = {
                     top: 0,
