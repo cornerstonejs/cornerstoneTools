@@ -11,6 +11,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var enabledElement = cornerstone.getEnabledElement(element);
         var imagePlaneMetaData = cornerstoneTools.metaData.get('imagePlane', enabledElement.image.imageId);
 
+        if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
+            return;
+        }
+
         var rowString = cornerstoneTools.orientation.getOrientationString(imagePlaneMetaData.rowCosines);
         var columnString = cornerstoneTools.orientation.getOrientationString(imagePlaneMetaData.columnCosines);
 
@@ -65,15 +69,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function onImageRendered(e, eventData) {
         var element = eventData.element;
 
+        var markers = getOrientationMarkers(element);
+
+        if (!markers) {
+            return;
+        }
+
+        var coords = getOrientationMarkerPositions(element, markers);
+
         var context = eventData.canvasContext.canvas.getContext("2d");
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getToolColor();
         var font = cornerstoneTools.textStyle.getFont();
         var fontHeight = cornerstoneTools.textStyle.getFontSize();
-
-        var markers = getOrientationMarkers(element);
-        var coords = getOrientationMarkerPositions(element, markers);
 
         var textWidths = {
             top: context.measureText(markers.top).width,
