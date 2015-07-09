@@ -14,10 +14,10 @@
 <div class="container">
     <div class="page-header">
         <h1>
-            Stack Loading Progress Example
+            Stack Prefetch Example
         </h1>
         <p>
-            This page contains an example of monitoring percentage of images in the stack which have been loaded.
+            This page is used to test the stackPrefetch tool.
         </p>
         <a href="../index.html">Go back to the Examples page</a>
     </div>
@@ -62,14 +62,8 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
-    /*var imageIds = [
-        'example://1',
-        'example://2',
-        'example://3'
-    ];*/
-
     var imageIds = cornerstoneTestImageLoader.generateStringStack(100, 0, "Image (", ")");
-
+    cornerstone.imageCache.setMaximumSizeBytes(10000);
 
     var stack = {
         currentImageIdIndex : 0,
