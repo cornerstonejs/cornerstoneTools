@@ -21,7 +21,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     cornerstoneTools.removeToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
                 }
                 $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
-                cornerstone.updateImage(mouseEventData.element);
+                cornerstone.updateImage(touchEventData.element);
             });
         }
 

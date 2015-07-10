@@ -388,7 +388,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
                     client: {x: e.pointers[0].clientX, y: e.pointers[0].clientY}
                 };
-                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+                currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
                 // Calculate delta values in page and image coordinates
                 deltaPoints = {
@@ -1152,7 +1152,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     cornerstoneTools.removeToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
                 }
                 $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
-                cornerstone.updateImage(mouseEventData.element);
+                cornerstone.updateImage(touchEventData.element);
             });
         }
 
