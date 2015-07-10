@@ -114,9 +114,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // Draw the text
             context.fillStyle = color;
 
-            // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-            // where lines cross to measure angle. For now it will show smallest angle. 
-
             var sideA = {
                 x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing,
                 y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing
@@ -267,16 +264,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
     }
 
-    function getHandleNearImagePoint(element, data, coords) {
-        for (var handle in data.handles) {
-            var handleCanvas = cornerstone.pixelToCanvas(element, data.handles[handle]);
-            var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
-            if (distanceSquared < 25) {
-                return data.handles[handle];
-            }
-        }
-    }
-
     function mouseDownCallback(e, eventData) {
         var data;
 
@@ -291,7 +278,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            var coords = eventData.startPoints.image;
+            var coords = eventData.startPoints.canvas;
             var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
 
             var i;
@@ -300,7 +287,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             if (toolData !== undefined) {
                 for (i=0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
-                    var handle = getHandleNearImagePoint(eventData.element, data, coords);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
                     if (handle !== undefined) {
                         $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                         data.active = true;

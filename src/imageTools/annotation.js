@@ -17,6 +17,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     var configuration = {
         'getTextCallback' : getTextCallback,
         'drawHandles' : false,
+        'drawHandlesOnHover' : true,
         'arrowFirst' : true
     };
 
@@ -89,15 +90,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // We have tool data, search through all data
         // and see if we can activate a handle
         var imageNeedsUpdate = false;
+        var coords = eventData.currentPoints.canvas;
+
         for(var i=0; i < toolData.data.length; i++) {
-            // get the cursor position in image coordinates
             var data = toolData.data[i];
-            if (cornerstoneTools.handleActivator(data.handles, eventData.currentPoints.image, eventData.viewport.scale ) === true) {
+            if (cornerstoneTools.handleActivator(eventData.element, data.handles, coords) === true) {
                 imageNeedsUpdate = true;
             }
 
-            if ((pointNearTool(data, eventData.currentPoints.image) && !data.active) ||
-                (!pointNearTool(data, eventData.currentPoints.image) && data.active)) {
+            if ((pointNearTool(eventData.element, data, coords) && !data.active) ||
+                (!pointNearTool(eventData.element, data, coords) && data.active)) {
                 data.active = !data.active;
                 imageNeedsUpdate = true;
             }
@@ -108,16 +110,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstone.updateImage(eventData.element);
         }
         return false;
-    }
-
-    function getHandleNearImagePoint(element, data, coords) {
-        for(var handle in data.handles) {
-            var handleCanvas = cornerstone.pixelToCanvas(element, data.handles[handle]);
-            var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
-            if (distanceSquared < 25) {
-                return data.handles[handle];
-            }
-        }
     }
 
     function mouseDownCallback(e, eventData) {
@@ -144,7 +136,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             if (toolData !== undefined) {
                 for(i=0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
-                    var handle = getHandleNearImagePoint(eventData.element, data, coords);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
                     if (handle !== undefined) {
                         $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                         data.active = true;
@@ -284,9 +276,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 drawArrow(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
             }
 
-            // If statement !== false so that by default the handles are drawn
-            if (config.drawHandles !== false) {
+            if (config.drawHandles) {
                 cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            } else if (config.drawHandlesOnHover && data.handles.start.active) {
+                cornerstoneTools.drawHandles(context, eventData, [data.handles.start], color);
+            } else if (config.drawHandlesOnHover && data.handles.end.active) {
+                cornerstoneTools.drawHandles(context, eventData, [data.handles.end], color);
             }
 
             // Draw the text
@@ -509,7 +504,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         if (toolData !== undefined && pointNearTool !== undefined) {
             for (i = 0; i < toolData.data.length; i++) {
                 data = toolData.data[i];
-                if (pointNearTool(data, coords)) {
+                if (pointNearTool(eventData.element, data, coords)) {
                     $(eventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
                     cornerstoneTools.touchMoveAllHandles(e, data, toolData, true);
                     e.stopImmediatePropagation();

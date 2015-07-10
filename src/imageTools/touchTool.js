@@ -60,15 +60,6 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
             }
         }
 
-        function getHandleNearImagePoint(data, coords) {
-            for (var handle in data.handles) {
-                var distanceSquared = cornerstoneMath.point.distanceSquared(data.handles[handle], coords);
-                if (distanceSquared < 30) {
-                    return data.handles[handle];
-                }
-            }
-        }
-
         function touchStartCallback(e, eventData) {
             var data;
 
@@ -92,7 +83,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
-                    var handle = getHandleNearImagePoint(eventData.element, data, coords);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
                     if (handle !== undefined) {
                         $(eventData.element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
                         data.active = true;
