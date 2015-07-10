@@ -10,8 +10,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     var configuration = {};
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function createNewMeasurement(mouseEventData)
-    {
+    function createNewMeasurement(mouseEventData) {
         var config = cornerstoneTools.textMarker.getConfiguration();
 
         if (!config.current) {
@@ -61,13 +60,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     ///////// END ACTIVE TOOL ///////
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function pointNearTool(data, coords) {
+    function pointNearTool(element, data, coords) {
         var rect = {
-            left : data.handles.end.x - data.textWidth / 2,
-            top : data.handles.end.y,
             width : data.textWidth,
             height : data.textHeight
         };
+
+        var canvasRect = cornerstone.pixelToCanvas(element, {
+            x: data.handles.end.x - data.textWidth / 2,
+            y: data.handles.end.y
+        });
+        rect.left = canvasRect.x;
+        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 10);

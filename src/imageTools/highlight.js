@@ -9,8 +9,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     var toolType = "highlight";
 
     ///////// BEGIN ACTIVE TOOL ///////
-    function createNewMeasurement(mouseEventData)
-    {
+    function createNewMeasurement(mouseEventData) {
         //if already a highlight measurement, creating a new one will be useless
         var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
         if (existingToolData && existingToolData.data && existingToolData.data.length > 0)
@@ -40,14 +39,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointInsideRect(data, coords)
-    {
+    function pointInsideRect(element, data, coords) {
         var rect = {
-            left : Math.min(data.handles.start.x, data.handles.end.x),
-            top : Math.min(data.handles.start.y, data.handles.end.y),
             width : Math.abs(data.handles.start.x - data.handles.end.x),
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
+
+        var canvasRect = cornerstone.pixelToCanvas(element, {
+            x: Math.min(data.handles.start.x, data.handles.end.x),
+            y: Math.min(data.handles.start.y, data.handles.end.y)
+        });
+        rect.left = canvasRect.x;
+        rect.top = canvasRect.y;
 
         var insideBox = false;
         if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) &&
@@ -57,14 +60,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         return insideBox;
     }
 
-    function pointNearTool(data, coords)
-    {
+    function pointNearTool(element, data, coords) {
         var rect = {
-            left : Math.min(data.handles.start.x, data.handles.end.x),
-            top : Math.min(data.handles.start.y, data.handles.end.y),
             width : Math.abs(data.handles.start.x - data.handles.end.x),
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
+
+        var canvasRect = cornerstone.pixelToCanvas(element, {
+            x: Math.min(data.handles.start.x, data.handles.end.x),
+            y: Math.min(data.handles.start.y, data.handles.end.y)
+        });
+        rect.left = canvasRect.x;
+        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
@@ -150,6 +157,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         pointInsideRect: pointInsideRect,
         toolType : toolType
     }, preventHandleOutsideImage);
+    
     cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,

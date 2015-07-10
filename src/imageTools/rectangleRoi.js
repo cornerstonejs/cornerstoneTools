@@ -34,13 +34,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointNearTool(data, coords) {
+    function pointNearTool(element, data, coords) {
         var rect = {
-            left : Math.min(data.handles.start.x, data.handles.end.x),
-            top : Math.min(data.handles.start.y, data.handles.end.y),
             width : Math.abs(data.handles.start.x - data.handles.end.x),
             height : Math.abs(data.handles.start.y - data.handles.end.y)
         };
+        
+        var canvasRect = cornerstone.pixelToCanvas(element, {
+            x: Math.min(data.handles.start.x, data.handles.end.x),
+            y: Math.min(data.handles.start.y, data.handles.end.y)
+        });
+        rect.left = canvasRect.x;
+        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
