@@ -936,7 +936,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 if (toolData !== undefined) {
                     for(i=0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
-                        var handle = getHandleNearImagePoint(eventData.element, coords);
+                        var handle = getHandleNearImagePoint(eventData.element, data, coords);
                         if (handle !== undefined) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             data.active = true;
@@ -2444,19 +2444,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function pointNearTool(element, data, coords) {
         // TODO: Find a formula for shortest distance between point and ellipse.  Rectangle is close enough
+        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+
         var rect = {
-            width : Math.abs(data.handles.start.x - data.handles.end.x),
-            height : Math.abs(data.handles.start.y - data.handles.end.y)
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width : Math.abs(startCanvas.x - endCanvas.x),
+            height : Math.abs(startCanvas.y - endCanvas.y)
         };
-
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: Math.min(data.handles.start.x, data.handles.end.x),
-            y: Math.min(data.handles.start.y, data.handles.end.y)
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
-
-        // TODO: Convert pixel width/height to canvas width/height!
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
@@ -3124,17 +3120,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     ///////// END ACTIVE TOOL ///////
 
     function pointInsideRect(element, data, coords) {
-        var rect = {
-            width : Math.abs(data.handles.start.x - data.handles.end.x),
-            height : Math.abs(data.handles.start.y - data.handles.end.y)
-        };
+        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: Math.min(data.handles.start.x, data.handles.end.x),
-            y: Math.min(data.handles.start.y, data.handles.end.y)
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
+        var rect = {
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width : Math.abs(startCanvas.x - endCanvas.x),
+            height : Math.abs(startCanvas.y - endCanvas.y)
+        };
 
         var insideBox = false;
         if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) &&
@@ -3145,17 +3139,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
 
     function pointNearTool(element, data, coords) {
-        var rect = {
-            width : Math.abs(data.handles.start.x - data.handles.end.x),
-            height : Math.abs(data.handles.start.y - data.handles.end.y)
-        };
+        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: Math.min(data.handles.start.x, data.handles.end.x),
-            y: Math.min(data.handles.start.y, data.handles.end.y)
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
+        var rect = {
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width : Math.abs(startCanvas.x - endCanvas.x),
+            height : Math.abs(startCanvas.y - endCanvas.y)
+        };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
@@ -3966,17 +3958,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     ///////// END ACTIVE TOOL ///////
 
     function pointNearTool(element, data, coords) {
+        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+
         var rect = {
-            width : Math.abs(data.handles.start.x - data.handles.end.x),
-            height : Math.abs(data.handles.start.y - data.handles.end.y)
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width : Math.abs(startCanvas.x - endCanvas.x),
+            height : Math.abs(startCanvas.y - endCanvas.y)
         };
-        
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: Math.min(data.handles.start.x, data.handles.end.x),
-            y: Math.min(data.handles.start.y, data.handles.end.y)
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 5);
@@ -4778,17 +4768,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(element, data, coords) {
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+
         var rect = {
+            left: endCanvas.x - data.textWidth / 2,
+            top: endCanvas.y,
             width : data.textWidth,
             height : data.textHeight
         };
-
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: data.handles.end.x - data.textWidth / 2,
-            y: data.handles.end.y
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 10);

@@ -61,17 +61,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(element, data, coords) {
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+
         var rect = {
+            left: endCanvas.x - data.textWidth / 2,
+            top: endCanvas.y,
             width : data.textWidth,
             height : data.textHeight
         };
-
-        var canvasRect = cornerstone.pixelToCanvas(element, {
-            x: data.handles.end.x - data.textWidth / 2,
-            y: data.handles.end.y
-        });
-        rect.left = canvasRect.x;
-        rect.top = canvasRect.y;
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
         return (distanceToPoint < 10);

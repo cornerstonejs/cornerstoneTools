@@ -119,7 +119,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 if (toolData !== undefined) {
                     for(i=0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
-                        var handle = getHandleNearImagePoint(eventData.element, coords);
+                        var handle = getHandleNearImagePoint(eventData.element, data, coords);
                         if (handle !== undefined) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             data.active = true;
