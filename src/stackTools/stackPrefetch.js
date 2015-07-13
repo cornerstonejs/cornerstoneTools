@@ -135,7 +135,6 @@
         // Get tool configuration
         //var config = cornerstoneTools.stackPrefetch.getConfiguration();
 
-        var lastCacheInfo;
         stackPrefetch.numCurrentRequests = 0;
 
         function getNextImage() {
@@ -213,20 +212,6 @@
             // Load and cache the image
             console.log('fetchImage: ' + imageId);
             cornerstone.loadAndCacheImage(imageId).then(function() {
-                // Check if the cache is full
-                // TODO=Revisit cache check mechanism. Maybe add an 'CornerstoneCacheFull' event
-                // to cornerstone?
-                //
-                var cacheInfo = cornerstone.imageCache.getCacheInfo();
-                console.log(lastCacheInfo);
-                if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
-                    console.log('Cache full, stopping');
-                    stackPrefetch.enabled = false;
-                    return;
-                }
-
-                lastCacheInfo = cacheInfo;
-
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
@@ -257,6 +242,17 @@
         }
     }
 
+    function handleCacheFull(e) {
+        // Stop prefetching if the ImageCacheFull event is fired from cornerstone
+        console.log('CornerstoneImageCacheFull full, stopping');
+        var element = e.data.element;
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        // If there is actually something to disable, disable it
+        if (stackPrefetchData && stackPrefetchData.data.length) {
+            stackPrefetchData.data[0].enabled = false;
+        }
+    }
+
     function enable(element) {
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
@@ -279,12 +275,17 @@
         prefetch(element);
 
         $(element).off('CornerstoneNewImage', reenablePrefetch);
-
         $(element).on('CornerstoneNewImage', reenablePrefetch);
+
+        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
+        $(cornerstone).on('CornerstoneImageCacheFull', {
+            element: element
+        }, handleCacheFull);
     }
 
     function disable(element) {
         $(element).off('CornerstoneNewImage', reenablePrefetch);
+        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
