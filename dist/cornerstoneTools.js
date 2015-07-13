@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-10 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -2547,13 +2547,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var textX,
                 textY,
                 meanStdDev,
-                areaText;
+                area,
+                areaText,
+                textSize;
 
             if (!data.invalidated) {
                 textX = data.textX;
                 textY = data.textY;
                 meanStdDev = data.meanStdDev;
-                areaText = data.areaText;
+                area = data.area;
             } else {
                 // TODO: calculate this in web worker for large pixel counts...
                 var width = Math.abs(data.handles.start.x - data.handles.end.x);
@@ -2572,22 +2574,38 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
                 // Calculate the mean, stddev, and area
                 meanStdDev = calculateMeanStdDev(pixels, ellipse);
-                var area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
-                areaText = "Area: " + area.toFixed(2) + " mm" + String.fromCharCode(178); // Char code 178 is a superscript 2
+                area = Math.PI * (width * eventData.image.columnPixelSpacing / 2) * (height * eventData.image.rowPixelSpacing / 2);
 
                 data.invalidated = false;
-                data.areaText = areaText;
-                data.meanStdDev = meanStdDev;
+                if (!isNaN(area)) {
+                    data.area = area;
+                }
+                if (!isNaN(meanStdDev.mean) && !isNaN(meanStdDev.stdDev)) {
+                    data.meanStdDev = meanStdDev;
+                }
             }
             // Draw text
-            var textSize = context.measureText(areaText);
+            if (area !== undefined) {
+                areaText = "Area: " + area.toFixed(2) + " mm" + String.fromCharCode(178);
+                textSize = context.measureText(areaText);
+            } else {
+                var stdDevText = "StdDev: " + meanStdDev.stdDev.toFixed(2);
+                textSize = context.measureText(stdDevText);
+            }
+        
             textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
             textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
-            cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
-            cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
-            cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
+            if (meanStdDev) {
+                cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
+                cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+            }
+            
+            // Char code 178 is a superscript 2 for mm^2
+            if (area !== undefined && !isNaN(area)) {
+                cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
+            }
             context.restore();
         }
     }
