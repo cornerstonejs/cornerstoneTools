@@ -46,18 +46,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointNearTool(data, coords) {
-
+    function pointNearTool(element, data, coords) {
         var lineSegment = {
-            start: data.handles.start,
-            end: data.handles.end
+            start: cornerstone.pixelToCanvas(element, data.handles.start),
+            end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         if (distanceToPoint < 5)
             return true;
 
-        lineSegment.start = data.handles.start2;
-        lineSegment.end = data.handles.end2;
+        lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.start2);
+        lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end2);
 
         distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         return (distanceToPoint < 5);

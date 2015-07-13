@@ -10,7 +10,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var cooordsData = "";
 
         function setActiveToolCoords(eventData){
-            cooordsData = eventData.currentPoints.image;
+            cooordsData = eventData.currentPoints.canvas;
         }
         function getActiveToolCoords(){
             return cooordsData;

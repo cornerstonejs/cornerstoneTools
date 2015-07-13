@@ -2,47 +2,40 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
     var handleRadius = 6;
 
-    function findHandleNear(handles, imagePoint, scale)
-    {
-        var handleRadiusScaled = handleRadius / scale;
-
+    function findHandleNear(element, handles, canvasPoint) {
         for(var property in handles) {
             var handle = handles[property];
-            var distance = cornerstoneMath.point.distance(imagePoint, handle);
-            if(distance <= handleRadiusScaled)
-            {
+            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
+            var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
+            if (distance <= 36) {
                 return handle;
             }
         }
-        return undefined;
     }
 
     function getActiveHandle(handles) {
         for(var property in handles) {
             var handle = handles[property];
-            if(handle.active === true) {
+            if (handle.active === true) {
                 return handle;
             }
         }
-        return undefined;
     }
 
-    function handleActivator(handles, imagePoint, scale)
-    {
+    function handleActivator(element, handles, canvasPoint) {
         var activeHandle = getActiveHandle(handles);
-        var nearbyHandle = findHandleNear(handles, imagePoint, scale);
-        if(activeHandle !== nearbyHandle)
-        {
-            if(nearbyHandle !== undefined) {
+        var nearbyHandle = findHandleNear(element, handles, canvasPoint);
+        if (activeHandle !== nearbyHandle) {
+            if (nearbyHandle !== undefined) {
                 nearbyHandle.active = true;
             }
-            if(activeHandle !== undefined) {
+            if (activeHandle !== undefined) {
                 activeHandle.active = false;
             }
             return true;
@@ -50,9 +43,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         return false;
     }
 
-
     // module/private exports
-
     cornerstoneTools.handleActivator = handleActivator;
+
     return cornerstoneTools;
 }($, cornerstone, cornerstoneMath, cornerstoneTools));

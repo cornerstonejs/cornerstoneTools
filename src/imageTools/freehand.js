@@ -72,9 +72,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             return;
         }
 
-        var mousePoint = eventData.currentPoints.image;
+        var mousePoint = eventData.currentPoints.canvas;
         for (var i=0; i < data.handles.length; i++) {
-            if (cornerstoneMath.point.distance(data.handles[i], mousePoint) < 5) {
+            var handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
+            if (cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
                 return i;
             }
         }
@@ -88,7 +89,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         var handleNearby;
-
         for (var toolIndex=0; toolIndex < toolData.data.length; toolIndex++) {
             handleNearby = pointNearHandle(eventData, toolIndex);
             if (handleNearby !== undefined) {
