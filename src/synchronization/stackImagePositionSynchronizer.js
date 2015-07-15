@@ -38,6 +38,7 @@
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -50,6 +51,10 @@
                 synchronizer.displayImage(targetElement, image, viewport);
                 if (endLoadingHandler) {
                     endLoadingHandler(targetElement);
+                }
+            }, function(image) {
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(targetElement, image);
                 }
             });
         }

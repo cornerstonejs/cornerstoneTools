@@ -80,6 +80,7 @@
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
                 var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(element);
@@ -91,6 +92,10 @@
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
+                    }
+                }, function(image) {
+                    if (errorLoadingHandler) {
+                        errorLoadingHandler(element, image);
                     }
                 });
             }

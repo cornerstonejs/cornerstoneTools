@@ -30,8 +30,10 @@
         if (newStackIndex !== timeSeriesData.currentStackIndex) {
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
+
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
             var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -45,6 +47,10 @@
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
+                }
+            }, function(image) {
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(element, image);
                 }
             });
         }
