@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-15 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -6881,7 +6881,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
         var stackData = toolData.data[0];
 
-        var pixelsPerImage = $(eventData.element).height() / stackData.imageIds.length ;
+        // The Math.max here makes it easier to mouseDrag-scroll small image stacks
+        var pixelsPerImage = $(eventData.element).height() / Math.max(stackData.imageIds.length, 8);
         if (e.data.options !== undefined && e.data.options.stackScrollSpeed !== undefined) {
             pixelsPerImage = e.data.options.stackScrollSpeed;
         }
