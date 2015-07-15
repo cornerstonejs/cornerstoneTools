@@ -26,7 +26,7 @@
 
             var stackPrefetch = stackPrefetchData.data[0];
             if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-                //console.log('Re-enabling prefetch');
+                console.log('Re-enabling prefetch');
                 stackPrefetch.enabled = true;
                 prefetch(element);
             }
@@ -191,7 +191,7 @@
                     stackPrefetch.numCurrentRequests -= 1;
 
                     if (stackPrefetch.indicesToRequest.length) {
-                        console.log(stackPrefetch.indicesToRequest);
+                        //console.log(stackPrefetch.indicesToRequest);
                         setTimeout(function() {
                             var nextImageId = getNextImage();
                             if (!nextImageId) {
@@ -215,7 +215,7 @@
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
-                    console.log(stackPrefetch.indicesToRequest);
+                    //console.log(stackPrefetch.indicesToRequest);
                     setTimeout(function() {
                         var nextImageId = getNextImage();
                         if (!nextImageId) {
@@ -233,7 +233,7 @@
         // Begin by grabbing X images
         var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
 
-        for (var i = 1; i< maxSimultaneousRequests; i++) {
+        for (var i = 0; i < maxSimultaneousRequests; i++) {
             if (stackPrefetch.enabled && stackPrefetch.indicesToRequest.length) {
                 console.log('Starting branch: ' + i);
                 var imageId = getNextImage();
@@ -246,10 +246,31 @@
         // Stop prefetching if the ImageCacheFull event is fired from cornerstone
         console.log('CornerstoneImageCacheFull full, stopping');
         var element = e.data.element;
+
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        // If there is actually something to disable, disable it
         if (stackPrefetchData && stackPrefetchData.data.length) {
             stackPrefetchData.data[0].enabled = false;
+        }
+    }
+
+    function promiseRemovedHandler(e, eventData) {
+        // When an imagePromise has been pushed out of the cache, re-add its index
+        // it to the indicesToRequest list so that it will be retrieved later if the
+        // currentImageIdIndex is changed to an image nearby
+        var element = e.data.element;
+        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+            return;
+        }
+
+        var stack = stackData.data[0];
+        var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
+
+        // Make sure the image that was removed is actually in this stack
+        // before adding it to the indicesToRequest array
+        if (imageIdIndex > -1) {
+            var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+            stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
         }
     }
 
@@ -268,8 +289,14 @@
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
-            indicesToRequest: range(0, stack.imageIds.length - 1), enabled: true
+            indicesToRequest: range(0, stack.imageIds.length - 1),
+            enabled: true
         };
+
+        // Remove the currentImageIdIndex from the list to request
+        var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
+        stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
+
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
@@ -281,11 +308,17 @@
         $(cornerstone).on('CornerstoneImageCacheFull', {
             element: element
         }, handleCacheFull);
+
+        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
+            element: element
+        }, promiseRemovedHandler);
     }
 
     function disable(element) {
         $(element).off('CornerstoneNewImage', reenablePrefetch);
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
+        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
