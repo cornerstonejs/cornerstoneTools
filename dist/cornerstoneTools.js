@@ -4802,8 +4802,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             context.fillStyle = color;
 
             var measureText = context.measureText(data.text);
-            data.textWidth = measureText.width / viewport.scale;
-            data.textHeight = fontSize / viewport.scale;
+            data.textWidth = measureText.width;
+            data.textHeight = fontSize;
 
             var coords = {
                 x: data.handles.end.x - data.textWidth / 2,
