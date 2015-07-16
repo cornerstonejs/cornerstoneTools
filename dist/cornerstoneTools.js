@@ -4395,19 +4395,27 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             // Draw the text
             context.fillStyle = color;
 
+            // Default to isotropic pixel size, update suffix to reflect this
+            var columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+            var rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+            var suffix = "";
+            if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+                suffix = " (isotropic)";
+            }
+
             var sideA = {
-                x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing,
-                y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing
+                x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
             };
 
             var sideB = {
-                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * eventData.image.columnPixelSpacing,
-                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * eventData.image.rowPixelSpacing
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
             };
 
             var sideC = {
-                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * eventData.image.columnPixelSpacing,
-                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * eventData.image.rowPixelSpacing
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
             };
 
             var sideALength = length(sideA);
@@ -4422,14 +4430,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             if (rAngle) {
                 var str = "00B0"; // degrees symbol
-                var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+                var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
                 
                 var distance = 15;
 
                 var textX = handleMiddleCanvas.x + distance;
                 var textY = handleMiddleCanvas.y + distance;
-                
-                var textWidth = context.measureText(data.annotationText).width;
+
+                context.font = font;
+                var textWidth = context.measureText(text).width;
 
                 if ((handleMiddleCanvas.x - handleStartCanvas.x) < 0) {
                     textX = handleMiddleCanvas.x - distance - textWidth - 10;
@@ -4438,7 +4447,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
                 }
 
                 textY = handleMiddleCanvas.y;
-                context.font = font;
                 cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             }
 
