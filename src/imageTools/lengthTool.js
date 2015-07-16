@@ -87,12 +87,20 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             // Draw the text
             context.fillStyle = color;
-            var dx = (data.handles.start.x - data.handles.end.x) * eventData.image.columnPixelSpacing;
-            var dy = (data.handles.start.y - data.handles.end.y) * eventData.image.rowPixelSpacing;
-            var length = Math.sqrt(dx * dx + dy * dy);
-            var text = "" + length.toFixed(2) + " mm";
-
             context.font = font;
+
+            var suffix = " mm";
+            if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+                suffix = " pixels";
+            }
+
+            // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+            var dx = (data.handles.start.x - data.handles.end.x) * (eventData.image.columnPixelSpacing || 1);
+            var dy = (data.handles.start.y - data.handles.end.y) * (eventData.image.rowPixelSpacing || 1);
+            
+            var length = Math.sqrt(dx * dx + dy * dy);
+            var text = "" + length.toFixed(2) + suffix;
+
             var textCoords = {
                 x: (handleStartCanvas.x + handleEndCanvas.x) / 2 + 5,
                 y: (handleStartCanvas.y + handleEndCanvas.y) / 2
