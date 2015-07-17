@@ -22,10 +22,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var min = globalMax;
         var max = globalMin;
         
-        var pixelData = storedPixelData;
-
         for (var index = 0; index < numPixels; index++) {
-            var spv = pixelData[index];
+            var spv = storedPixelData[index];
             min = Math.min(min, spv);
             max = Math.max(max, spv);
         }
@@ -83,6 +81,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var left = Math.min(startPoint.x, endPoint.x);
         var top = Math.min(startPoint.y, endPoint.y);
+
+        // Bound the rectangle so we don't get undefined pixels
+        left = Math.max(left, 0);
+        left = Math.min(left, eventData.image.width);
+        top = Math.max(top, 0);
+        top = Math.min(left, eventData.image.height);
+        width = Math.min(width, eventData.image.width - left);
+        height = Math.min(height, eventData.image.height - top);
 
         // Get the pixel data in the rectangular region
         var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
