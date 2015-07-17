@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-16 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/inputSources/mouseWheelInput.js
 var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
@@ -6998,7 +6998,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
+    if (cornerstoneTools === undefined) {
         cornerstoneTools = {};
     }
 
@@ -7011,19 +7011,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
-        function addImageIdSpecificToolState(element, toolType, data)
-        {
+        function addImageIdSpecificToolState(element, toolType, data) {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
-            {
+            if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
                 toolState[enabledImage.image.imageId] = {};
             }
             var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, add an empty object
-            if(imageIdToolState.hasOwnProperty(toolType) === false)
-            {
+            if (imageIdToolState.hasOwnProperty(toolType) === false) {
                 imageIdToolState[toolType] = {
                     data: []
                 };
@@ -7036,20 +7033,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // here you can get state - used by tools as well as modules
         // that save state persistently
-        function getImageIdSpecificToolState(element, toolType)
-        {
+        function getImageIdSpecificToolState(element, toolType) {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, return undefined
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
-            {
-                return undefined;
+            if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+                return;
             }
             var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, return undefined
-            if(imageIdToolState.hasOwnProperty(toolType) === false)
-            {
-                return undefined;
+            if (imageIdToolState.hasOwnProperty(toolType) === false) {
+                return;
             }
             var toolData = imageIdToolState[toolType];
             return toolData;
@@ -7058,9 +7052,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         // Clears all tool data from this toolStateManager.
         function clearImageIdSpecificToolStateManager(element) {
             var enabledImage = cornerstone.getEnabledElement(element);
-            if(toolState.hasOwnProperty(enabledImage.image.imageId) === false)
-            {
-                return undefined;
+            if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+                return;
             }
             delete toolState[enabledImage.image.imageId];
         }
