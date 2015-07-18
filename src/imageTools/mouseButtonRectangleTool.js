@@ -1,11 +1,7 @@
 var coordsData;
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
     
     function mouseButtonRectangleTool(mouseToolInterface, preventHandleOutsideImage)
     {
@@ -214,5 +210,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     // module exports
     cornerstoneTools.mouseButtonRectangleTool = mouseButtonRectangleTool;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

@@ -1,14 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function (cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    if(cornerstoneTools.orientation === undefined) {
-        cornerstoneTools.orientation = {};
-    }
 
     function invertOrientationString(string) {
         var inverted = string.replace("H", "f");
@@ -24,5 +16,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.orientation.invertOrientationString = invertOrientationString;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstoneTools);

@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function displayTool(onImageRendered) {
         var configuration = {};
@@ -26,6 +22,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module exports
     cornerstoneTools.displayTool = displayTool;
 
-    return cornerstoneTools;
-
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

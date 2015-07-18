@@ -1,10 +1,7 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
     function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage) {
         var element = touchEventData.element;
 
@@ -70,5 +67,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     // module/private exports
     cornerstoneTools.touchMoveAllHandles = touchMoveAllHandles;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

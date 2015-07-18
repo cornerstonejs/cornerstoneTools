@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function correctShift(shift, viewport) {
         //Apply rotations
@@ -115,4 +111,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     return cornerstoneTools;
 
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

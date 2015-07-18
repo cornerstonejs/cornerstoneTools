@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function simpleMouseButtonTool(mouseDownCallback)
     {
@@ -30,5 +26,5 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.simpleMouseButtonTool = simpleMouseButtonTool;
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+
+})($, cornerstone, cornerstoneTools);

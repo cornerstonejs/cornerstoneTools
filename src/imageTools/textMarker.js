@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "textMarker";
     var configuration = {};
@@ -377,5 +373,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     };
     ///////// END IMAGE RENDERING ///////
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

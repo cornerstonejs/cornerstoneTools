@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function (cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // This implements an Stack specific tool state management strategy.  This means
     // that tool data is shared between all imageIds in a given stack
@@ -86,6 +82,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.newStackSpecificToolStateManager = newStackSpecificToolStateManager;
     cornerstoneTools.addStackStateManager = addStackStateManager;
 
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstone, cornerstoneTools);

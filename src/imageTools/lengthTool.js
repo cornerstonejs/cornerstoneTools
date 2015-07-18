@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "length";
 
@@ -127,5 +123,5 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         pointNearTool: pointNearTool,
         toolType: toolType
     });
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

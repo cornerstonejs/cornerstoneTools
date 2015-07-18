@@ -1,12 +1,8 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
     /*jshint newcap: false */
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var lastScale = 1.0,
         lastRotation = 0.0,
@@ -213,5 +209,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         disable: disable
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

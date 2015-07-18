@@ -1,4 +1,4 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -33,5 +33,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.touchMoveHandle = touchMoveHandle;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

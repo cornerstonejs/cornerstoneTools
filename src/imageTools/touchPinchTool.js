@@ -1,13 +1,8 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
     /*jshint newcap: false */
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
 
     function touchPinchTool(touchPinchCallback)
     {
@@ -28,5 +23,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module exports
     cornerstoneTools.touchPinchTool = touchPinchTool;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

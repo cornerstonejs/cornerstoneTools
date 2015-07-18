@@ -1,14 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function (cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    if (cornerstoneTools.orientation === undefined) {
-        cornerstoneTools.orientation = {};
-    }
 
     function getOrientationString(vector) {
         // Thanks to David Clunie
@@ -42,5 +34,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.orientation.getOrientationString = getOrientationString;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstoneMath, cornerstoneTools);

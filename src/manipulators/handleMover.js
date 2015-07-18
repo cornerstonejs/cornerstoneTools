@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
@@ -42,9 +38,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-
     // module/private exports
     cornerstoneTools.moveHandle = moveHandle;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function ($, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // This object manages a collection of measurements
     function MeasurementManager() {
@@ -38,5 +34,5 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // module/private exports
     cornerstoneTools.MeasurementManager = new MeasurementManager();
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+
+})($, cornerstoneTools);

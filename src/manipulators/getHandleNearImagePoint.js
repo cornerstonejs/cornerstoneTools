@@ -1,10 +1,6 @@
-var cornerstoneTools = (function (cornerstone, cornerstoneMath, cornerstoneTools) {
+(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function getHandleNearImagePoint(element, data, coords) {
         for (var handle in data.handles) {
@@ -19,5 +15,4 @@ var cornerstoneTools = (function (cornerstone, cornerstoneMath, cornerstoneTools
     // module exports
     cornerstoneTools.getHandleNearImagePoint = getHandleNearImagePoint;
 
-    return cornerstoneTools;
-}(cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);
