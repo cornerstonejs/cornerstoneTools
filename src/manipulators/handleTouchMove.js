@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -6,8 +6,7 @@
         cornerstoneTools = {};
     }
 
-    function touchMoveHandle(touchEventData, handle, doneMovingCallback)
-    {
+    function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
 
         function touchDragCallback(e, eventData) {
@@ -17,9 +16,10 @@
             handle.y = touchMoveData.currentPoints.image.y;
             cornerstone.updateImage(element);
         }
+
         $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
 
-        function touchEndCallback(mouseMoveData) {
+        function touchEndCallback() {
             handle.active = false;
             $(element).off("CornerstoneToolsTouchDrag", touchDragCallback);
             $(element).off("CornerstoneToolsDragEnd", touchEndCallback);
@@ -27,6 +27,7 @@
 
             doneMovingCallback();
         }
+
         $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
     }
 

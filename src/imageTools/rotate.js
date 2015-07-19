@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -8,8 +8,7 @@
         var rect = eventData.element.getBoundingClientRect(eventData.element);
 
         var points = {
-            x: eventData.currentPoints.client.x,
-            y: eventData.currentPoints.client.y
+            x: eventData.currentPoints.client.x, y: eventData.currentPoints.client.y
         };
 
         var width = eventData.element.clientWidth;
@@ -42,7 +41,7 @@
     }
 
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
@@ -64,10 +63,9 @@
 
     cornerstoneTools.rotate = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.rotate.strategies = {
-        default : defaultStrategy,
-        horizontal : horizontalStrategy,
-        vertical : verticalStrategy
+        default: defaultStrategy, horizontal: horizontalStrategy, vertical: verticalStrategy
     };
+    
     cornerstoneTools.rotate.strategy = defaultStrategy;
 
     cornerstoneTools.rotateTouchDrag = cornerstoneTools.touchDragTool(onDrag);

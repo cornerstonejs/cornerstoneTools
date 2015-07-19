@@ -1,4 +1,4 @@
-(function (cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 
@@ -8,13 +8,13 @@
         function setActiveToolCoords(eventData){
             cooordsData = eventData.currentPoints.canvas;
         }
+
         function getActiveToolCoords(){
             return cooordsData;
         }
-      
+
         var toolCoords = {
-            setCoords: setActiveToolCoords,
-            getCoords: getActiveToolCoords
+            setCoords: setActiveToolCoords, getCoords: getActiveToolCoords
         };
 
         return toolCoords;

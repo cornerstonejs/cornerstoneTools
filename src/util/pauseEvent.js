@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     /**
      * This function is used to prevent selection from occuring when left click dragging on the image
@@ -12,22 +8,21 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
      * Based on: http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
      * @returns {boolean}
      */
-    function pauseEvent(e)
-    {
-        if(e.stopPropagation) {
+    function pauseEvent(e) {
+        if (e.stopPropagation) {
             e.stopPropagation();
         }
-        if(e.preventDefault) {
+
+        if (e.preventDefault) {
             e.preventDefault();
         }
-        e.cancelBubble=true;
-        e.returnValue=false;
+
+        e.cancelBubble = true;
+        e.returnValue = false;
         return false;
     }
 
     // module exports
     cornerstoneTools.pauseEvent = pauseEvent;
 
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

@@ -1,13 +1,8 @@
-var cornerstoneTools = (function (cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function calculateSUV(image, storedPixelValue)
-    {
+    function calculateSUV(image, storedPixelValue) {
         // if no dicom data set, return undefined
         if (image.data === undefined) {
             return undefined;
@@ -17,13 +12,14 @@ var cornerstoneTools = (function (cornerstoneTools) {
         if (image.data.string('x00080060') !== "PT") {
             return undefined;
         }
+
         var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
         var patientWeight = image.data.floatString('x00101030'); // in kg
         if (patientWeight === undefined) {
             return undefined;
         }
-        
+
         var petSequence = image.data.elements.x00540016;
         if (petSequence === undefined) {
             return undefined;
@@ -48,9 +44,7 @@ var cornerstoneTools = (function (cornerstoneTools) {
         return suv;
     }
 
-
     // module exports
     cornerstoneTools.calculateSUV = calculateSUV;
 
-    return cornerstoneTools;
-}(cornerstoneTools));
+})(cornerstoneTools);

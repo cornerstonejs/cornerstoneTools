@@ -1,12 +1,9 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    var toolType = "magnify";
     var configuration = {
-        magnifySize: 100,
-        magnificationLevel: 2,
-    };
+        magnifySize: 100, magnificationLevel: 2, };
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -45,9 +42,6 @@
             createMagnificationCanvas(eventData.element);
         }
 
-        var enabledElement = cornerstone.getEnabledElement(eventData.element);
-        var image = enabledElement.image;
-
         var config = cornerstoneTools.magnify.getConfiguration();
 
         var magnifySize = config.magnifySize;
@@ -81,14 +75,10 @@
         var scaledMagnifySize = magnifySize * magnificationLevel;
         var getSize = magnifySize / magnificationLevel;
         var copyFrom = {
-            x: canvasLocation.x - 0.5 * getSize,
-            y: canvasLocation.y - 0.5 * getSize
+            x: canvasLocation.x - 0.5 * getSize, y: canvasLocation.y - 0.5 * getSize
         };
 
-        zoomCtx.drawImage(canvas,
-                          copyFrom.x, copyFrom.y,
-                          magnifySize, magnifySize,
-                          0, 0, scaledMagnifySize, scaledMagnifySize);
+        zoomCtx.drawImage(canvas, copyFrom.x, copyFrom.y, magnifySize, magnifySize, 0, 0, scaledMagnifySize, scaledMagnifySize);
 
         // Place the magnification tool at the same location as the pointer
         magnify.style.top = canvasLocation.y - 0.5 * magnifySize + "px";
@@ -136,8 +126,7 @@
 
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask,
-        };
+            mouseButtonMask: mouseButtonMask, };
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 
@@ -164,26 +153,18 @@
     function getConfiguration() {
         return configuration;
     }
-    
+
     function setConfiguration(config) {
         configuration = config;
     }
 
     // module exports
     cornerstoneTools.magnify = {
-        enable: enable,
-        activate: activate,
-        deactivate: disable,
-        disable : disable,
-        getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        enable: enable, activate: activate, deactivate: disable, disable: disable, getConfiguration: getConfiguration, setConfiguration: setConfiguration
     };
 
     cornerstoneTools.magnifyTouchDrag = {
-        enable: enable,
-        activate: activateTouchDrag,
-        deactivate: disableTouchDrag,
-        disable: disableTouchDrag
+        enable: enable, activate: activateTouchDrag, deactivate: disableTouchDrag, disable: disableTouchDrag
     };
 
 })($, cornerstone, cornerstoneTools);

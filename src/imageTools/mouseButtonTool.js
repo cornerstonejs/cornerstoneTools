@@ -1,20 +1,17 @@
-(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
-    function mouseButtonTool(mouseToolInterface)
-    {
+    function mouseButtonTool(mouseToolInterface) {
         var configuration = {};
 
         ///////// BEGIN ACTIVE TOOL ///////
-        function addNewMeasurement(mouseEventData)
-        {
+        function addNewMeasurement(mouseEventData) {
             var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
 
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
            
-
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
             $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
@@ -22,11 +19,11 @@
             cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
-                if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles))
-                {
+                if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                     // delete the measurement
                     cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
                 }
+
                 $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
                 cornerstone.updateImage(mouseEventData.element);
             });
@@ -58,7 +55,7 @@
             // We have tool data, search through all data
             // and see if we can activate a handle
             var imageNeedsUpdate = false;
-            for (var i=0; i < toolData.data.length; i++) {
+            for (var i = 0; i < toolData.data.length; i++) {
                 // get the cursor position in canvas coordinates
                 var coords = eventData.currentPoints.canvas;
 
@@ -67,8 +64,7 @@
                     imageNeedsUpdate = true;
                 }
 
-                if ((mouseToolInterface.pointNearTool(eventData.element, data, coords) && !data.active) ||
-                    (!mouseToolInterface.pointNearTool(eventData.element, data, coords) && data.active)) {
+                if ((mouseToolInterface.pointNearTool(eventData.element, data, coords) && !data.active) || (!mouseToolInterface.pointNearTool(eventData.element, data, coords) && data.active)) {
                     data.active = !data.active;
                     imageNeedsUpdate = true;
                 }
@@ -90,6 +86,7 @@
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, mouseToolInterface.toolType, data);
                 }
+
                 cornerstone.updateImage(eventData.element);
                 $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
             }
@@ -102,7 +99,7 @@
 
                 // now check to see if there is a handle we can move
                 if (toolData !== undefined) {
-                    for (i=0; i < toolData.data.length; i++) {
+                    for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
                         if (handle !== undefined) {
@@ -118,7 +115,7 @@
                 // Now check to see if there is a line we can move
                 // now check to see if we have a tool that we can move
                 if (toolData !== undefined && mouseToolInterface.pointNearTool !== undefined) {
-                    for (i=0; i < toolData.data.length; i++) {
+                    for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         if (mouseToolInterface.pointNearTool(eventData.element, data, coords)) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
@@ -133,11 +130,8 @@
         }
         ///////// END DEACTIVE TOOL ///////
 
-
-
         // not visible, not interactive
-        function disable(element)
-        {
+        function disable(element) {
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
@@ -147,8 +141,7 @@
         }
 
         // visible but not interactive
-        function enable(element)
-        {
+        function enable(element) {
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
@@ -162,8 +155,7 @@
         // visible, interactive and can create
         function activate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask,
-            };
+                mouseButtonMask: mouseButtonMask, };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -181,8 +173,7 @@
         // visible, interactive
         function deactivate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask,
-            };
+                mouseButtonMask: mouseButtonMask, };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -199,18 +190,13 @@
         function getConfiguration() {
             return configuration;
         }
-        
+
         function setConfiguration(config) {
             configuration = config;
         }
 
         var toolInterface = {
-            enable: enable,
-            disable : disable,
-            activate: activate,
-            deactivate: deactivate,
-            getConfiguration: getConfiguration,
-            setConfiguration: setConfiguration
+            enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration
         };
 
         // Expose pointNearTool if available

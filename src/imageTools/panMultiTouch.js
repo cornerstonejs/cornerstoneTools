@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -20,8 +20,7 @@
     }
 
     cornerstoneTools.panMultiTouch = {
-        activate: activate,
-        disable: disable
+        activate: activate, disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

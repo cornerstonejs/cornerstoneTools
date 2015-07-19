@@ -1,10 +1,6 @@
-var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function scroll(element, images) {
         var toolData = cornerstoneTools.getToolState(element, 'stack');
@@ -21,10 +17,7 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
         cornerstoneTools.scrollToIndex(element, newImageIdIndex);
     }
 
-
-
     // module exports
     cornerstoneTools.scroll = scroll;
 
-    return cornerstoneTools;
-}(cornerstone, cornerstoneTools));
+})(cornerstone, cornerstoneTools);

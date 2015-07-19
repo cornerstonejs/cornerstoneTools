@@ -1,30 +1,18 @@
-(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
     var toolType = "ellipticalRoi";
 
-    var cachedEllipseData = [];
-
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible : true,
-            active: true,
-            invalidated: true,
-            handles : {
-                start : {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: false
-                },
-                end: {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: true
+            visible: true, active: true, invalidated: true, handles: {
+                start: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
+                }, end: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
                 }
             }
         };
@@ -39,10 +27,7 @@
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width : Math.abs(startCanvas.x - endCanvas.x),
-            height : Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -59,8 +44,7 @@
         }
 
         var center = {
-            x: ellipse.left + xRadius,
-            y: ellipse.top + yRadius
+            x: ellipse.left + xRadius, y: ellipse.top + yRadius
         };
 
         /* This is a more general form of the circle equation
@@ -69,8 +53,7 @@
          */
 
         var normalized = {
-            x: location.x - center.x,
-            y: location.y - center.y
+            x: location.x - center.x, y: location.y - center.y
         };
 
         var inEllipse = ((normalized.x * normalized.y) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
@@ -85,23 +68,21 @@
         var count = 0;
         var index = 0;
 
-        for (var y=ellipse.top; y < ellipse.top + ellipse.height; y++) {
-            for (var x=ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, {x: x, y: y}) === true) {
+        for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
+            for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
+                if (pointInEllipse(ellipse, { x: x, y: y }) === true) {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
                     count++;
                 }
+
                 index++;
             }
         }
 
         if (count === 0) {
             return {
-                count: count,
-                mean: 0.0,
-                variance: 0.0,
-                stdDev: 0.0
+                count: count, mean: 0.0, variance: 0.0, stdDev: 0.0
             };
         }
 
@@ -109,13 +90,9 @@
         var variance = sumSquared / count - mean * mean;
 
         return {
-            count: count,
-            mean: mean,
-            variance: variance,
-            stdDev: Math.sqrt(variance)
+            count: count, mean: mean, variance: variance, stdDev: Math.sqrt(variance)
         };
     }
-
 
     function onImageRendered(e, eventData) {
 
@@ -135,7 +112,7 @@
         var font = cornerstoneTools.textStyle.getFont();
         var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
-        for (var i=0; i < toolData.data.length; i++) {
+        for (var i = 0; i < toolData.data.length; i++) {
             context.save();
 
             var data = toolData.data[i];
@@ -169,12 +146,7 @@
             
             context.font = font;
 
-            var textX,
-                textY,
-                meanStdDev,
-                area,
-                areaText,
-                textSize;
+            var textX, textY, meanStdDev, area, areaText, textSize;
 
             if (!data.invalidated) {
                 textX = data.textX;
@@ -191,10 +163,7 @@
                 var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
 
                 var ellipse = {
-                    left: left,
-                    top: top,
-                    width: width,
-                    height: height
+                    left: left, top: top, width: width, height: height
                 };
 
                 // Calculate the mean, stddev, and area
@@ -205,6 +174,7 @@
                 if (!isNaN(area)) {
                     data.area = area;
                 }
+
                 if (!isNaN(meanStdDev.mean) && !isNaN(meanStdDev.stdDev)) {
                     data.meanStdDev = meanStdDev;
                 }
@@ -217,7 +187,7 @@
                 var stdDevText = "StdDev: " + meanStdDev.stdDev.toFixed(2);
                 textSize = context.measureText(stdDevText);
             }
-        
+
             textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
             textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
@@ -231,24 +201,18 @@
             if (area !== undefined && !isNaN(area)) {
                 cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
             }
+
             context.restore();
         }
     }
     ///////// END IMAGE RENDERING ///////
 
-
     // module exports
     cornerstoneTools.ellipticalRoi = cornerstoneTools.mouseButtonTool({
-        createNewMeasurement : createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool : pointNearTool,
-        toolType : toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
     cornerstoneTools.ellipticalRoiTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        toolType: toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

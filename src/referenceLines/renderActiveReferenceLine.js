@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -16,7 +16,7 @@
         var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
 
         // the image planes must be in the same frame of reference
-        if (targetImagePlane.frameOfReferenceUID != referenceImagePlane.frameOfReferenceUID) {
+        if (targetImagePlane.frameOfReferenceUID !== referenceImagePlane.frameOfReferenceUID) {
             return;
         }
 
@@ -39,7 +39,7 @@
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         // draw the referenceLines
-        context.setTransform(1,0,0,1,0,0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         context.save();
         context.beginPath();

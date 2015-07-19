@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -18,8 +18,7 @@
     }
 
     cornerstoneTools.rotateTouch = {
-        activate: activate,
-        disable: disable
+        activate: activate, disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

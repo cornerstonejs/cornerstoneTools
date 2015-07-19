@@ -1,16 +1,9 @@
-var cornerstoneTools = (function (cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function drawTextBox(context, text, x, y, color) {
-        var padding = 5,
-            font = cornerstoneTools.textStyle.getFont(),
-            fontSize = cornerstoneTools.textStyle.getFontSize(),
-            backgroundColor = cornerstoneTools.textStyle.getBackgroundColor();
+        var padding = 5, font = cornerstoneTools.textStyle.getFont(), fontSize = cornerstoneTools.textStyle.getFontSize(), backgroundColor = cornerstoneTools.textStyle.getBackgroundColor();
 
         context.save();
 
@@ -33,5 +26,4 @@ var cornerstoneTools = (function (cornerstoneTools) {
     // module exports
     cornerstoneTools.drawTextBox = drawTextBox;
 
-    return cornerstoneTools;
-}(cornerstoneTools));
+})(cornerstoneTools);

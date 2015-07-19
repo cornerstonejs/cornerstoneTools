@@ -4,7 +4,6 @@ if (typeof cornerstone === 'undefined') {
 
 if (typeof cornerstoneTools === 'undefined') {
     cornerstoneTools = {
-        referenceLines: {},
-        orientation: {}
+        referenceLines: {}, orientation: {}
     };
 }

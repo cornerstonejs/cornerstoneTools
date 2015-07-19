@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -19,7 +19,7 @@
         var newImageIdIndex = sourceStackData.currentImageIdIndex;
 
         // clamp the index
-        newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length -1);
+        newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length - 1);
 
         // Do nothing if the index has not changed
         if (newImageIdIndex === targetStackData.currentImageIdIndex) {

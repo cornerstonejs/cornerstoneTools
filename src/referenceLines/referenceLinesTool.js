@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -40,23 +40,21 @@
         renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
 
         cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext : synchronizationContext,
-            renderer : renderer
+            synchronizationContext: synchronizationContext, renderer: renderer
         });
         $(element).on("CornerstoneImageRendered", onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
-    function disable(element, synchronizationContext) {
+    function disable(element) {
         $(element).off("CornerstoneImageRendered", onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // module/private exports
     cornerstoneTools.referenceLines.tool = {
-        enable: enable,
-        disable: disable
+        enable: enable, disable: disable
 
     };
 

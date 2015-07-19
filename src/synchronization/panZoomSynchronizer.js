@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -6,7 +6,7 @@
     function panZoomSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
         // get the source and target viewports
@@ -14,9 +14,7 @@
         var targetViewport = cornerstone.getViewport(targetElement);
 
         // do nothing if the scale and translation are the same
-        if(targetViewport.scale === sourceViewport.scale &&
-            targetViewport.translation.x === sourceViewport.translation.x &&
-            targetViewport.translation.y === sourceViewport.translation.y) {
+        if (targetViewport.scale === sourceViewport.scale && targetViewport.translation.x === sourceViewport.translation.x && targetViewport.translation.y === sourceViewport.translation.y) {
             return;
         }
 
@@ -26,7 +24,6 @@
         targetViewport.translation.y = sourceViewport.translation.y;
         synchronizer.setViewport(targetElement, targetViewport);
     }
-
 
     // module/private exports
     cornerstoneTools.panZoomSynchronizer = panZoomSynchronizer;

@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -9,25 +9,27 @@
         function mouseDragCallback(e, eventData) {
             data.active = true;
 
-            for(var property in data.handles) {
-                var handle = data.handles[property];
+            Object.keys(data.handles).forEach(function(handle) {
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
                 if (preventHandleOutsideImage) {
                     if (handle.x < 0) {
                         handle.x = 0;
                     }
+
                     if (handle.x > eventData.image.width) {
                         handle.x = eventData.image.width;
                     }
+
                     if (handle.y < 0) {
                         handle.y = 0;
                     }
+
                     if (handle.y > eventData.image.height) {
                         handle.y = eventData.image.height;
                     }
                 }
-            }
+            });
             cornerstone.updateImage(element);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -46,34 +48,34 @@
                 var image = eventData.image;
                 var handleOutsideImage = false;
                 var rect = {
-                    top: 0,
-                    left: 0,
-                    width: image.width,
-                    height: image.height
+                    top: 0, left: 0, width: image.width, height: image.height
                 };
-                for(var property in data.handles) {
-                    var handle = data.handles[property];
+                
+                Object.keys(data.handles).forEach(function(handle) {
                     handle.active = false;
-                    if(cornerstoneMath.point.insideRect(handle, rect) === false) {
+                    if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
                     }
-                }
+                });
 
-                if(handleOutsideImage) {
+                if (handleOutsideImage) {
                     // find this tool data
                     var indexOfData = -1;
-                    for(var i = 0; i < toolData.data.length; i++) {
-                        if (toolData.data[i] === data) {
-                            indexOfData = i;
+                    toolData.data.forEach(function(thisToolData, index) {
+                        if (thisToolData === data) {
+                            indexOfData = index;
                         }
-                    }
-                    if(indexOfData !== -1) {
+                    });
+
+                    if (indexOfData !== -1) {
                         toolData.data.splice(indexOfData, 1);
                     }
                 }
             }
+
             cornerstone.updateImage(element);
         }
+
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
         return true;
     }

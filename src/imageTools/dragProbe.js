@@ -1,10 +1,9 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
     function defaultStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
-        var image = enabledElement.image;
 
         cornerstone.updateImage(eventData.element);
 
@@ -28,8 +27,7 @@
         // Draw text
         var coords = {
             // translate the x/y away from the cursor
-            x: eventData.currentPoints.image.x + 3,
-            y: eventData.currentPoints.image.y - 3
+            x: eventData.currentPoints.image.x + 3, y: eventData.currentPoints.image.y - 3
         };
         var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
         
@@ -40,6 +38,7 @@
         if (suv) {
             str += " SUV: " + parseFloat(suv.toFixed(3));
         }
+
         cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
         cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
         context.restore();
@@ -47,7 +46,6 @@
 
     function minimalStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
-        var image = enabledElement.image;
 
         cornerstone.updateImage(eventData.element);
 
@@ -56,7 +54,6 @@
 
         var color = cornerstoneTools.toolColors.getActiveColor();
         var font = cornerstoneTools.textStyle.getFont();
-        var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
         context.save();
 
@@ -70,8 +67,7 @@
         // Draw text
         var coords = {
             // translate the x/y away from the cursor
-            x: eventData.currentPoints.image.x + 4,
-            y: eventData.currentPoints.image.y - 4
+            x: eventData.currentPoints.image.x + 4, y: eventData.currentPoints.image.y - 4
         };
         var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
         
@@ -88,7 +84,7 @@
     }
 
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", onDrag);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             cornerstoneTools.dragProbe.strategy(eventData);
@@ -104,8 +100,7 @@
     cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     
     cornerstoneTools.dragProbe.strategies = {
-        default : defaultStrategy,
-        minimal: minimalStrategy
+        default: defaultStrategy, minimal: minimalStrategy
     };
     cornerstoneTools.dragProbe.strategy = defaultStrategy;
 

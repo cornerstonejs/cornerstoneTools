@@ -16,6 +16,7 @@
                     // delete the measurement
                     cornerstoneTools.removeToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
                 }
+
                 $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
                 cornerstone.updateImage(touchEventData.element);
             });
@@ -66,6 +67,7 @@
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);
                 }
+
                 cornerstone.updateImage(eventData.element);
                 $(eventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
             }
@@ -158,10 +160,7 @@
         }
 
         var toolInterface = {
-            enable: enable,
-            disable: disable,
-            activate: activate,
-            deactivate: deactivate
+            enable: enable, disable: disable, activate: activate, deactivate: deactivate
         };
 
         return toolInterface;

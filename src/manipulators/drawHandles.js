@@ -1,16 +1,13 @@
-(function (cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
 
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles, color, fill)
-    {
+    function drawHandles(context, renderData, handles, color, fill) {
         context.strokeStyle = color;
 
-        for(var property in handles) {
-            var handle = handles[property];
-
+        handles.forEach(function(handle) {
             if (handle.active || handle.highlight) {
                 context.beginPath();
 
@@ -19,7 +16,7 @@
                 } else {
                     context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
                 }
-                
+
                 var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
                 context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
@@ -30,9 +27,8 @@
 
                 context.stroke();
             }
-        }
+        });
     }
-
 
     // module/private exports
     cornerstoneTools.drawHandles = drawHandles;

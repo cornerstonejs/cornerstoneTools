@@ -1,4 +1,4 @@
-(function (cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -17,6 +17,7 @@
             if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
                 toolState[enabledImage.image.imageId] = {};
             }
+
             var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, add an empty object
@@ -25,6 +26,7 @@
                     data: []
                 };
             }
+
             var toolData = imageIdToolState[toolType];
 
             // finally, add this new tool to the state
@@ -39,12 +41,14 @@
             if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
                 return;
             }
+
             var imageIdToolState = toolState[enabledImage.image.imageId];
 
             // if we don't have tool state for this type of tool, return undefined
             if (imageIdToolState.hasOwnProperty(toolType) === false) {
                 return;
             }
+
             var toolData = imageIdToolState[toolType];
             return toolData;
         }
@@ -55,14 +59,12 @@
             if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
                 return;
             }
+
             delete toolState[enabledImage.image.imageId];
         }
 
         var imageIdToolStateManager = {
-            get: getImageIdSpecificToolState,
-            add: addImageIdSpecificToolState,
-            clear: clearImageIdSpecificToolStateManager,
-            toolState: toolState
+            get: getImageIdSpecificToolState, add: addImageIdSpecificToolState, clear: clearImageIdSpecificToolStateManager, toolState: toolState
         };
         return imageIdToolStateManager;
     }

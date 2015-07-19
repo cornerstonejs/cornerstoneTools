@@ -1,18 +1,13 @@
-var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function scrollToIndex(element, newImageIdIndex) {
-
         var toolData = cornerstoneTools.getToolState(element, 'stack');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
-        
+
         var stackData = toolData.data[0];
 
         // Allow for negative indexing
@@ -46,5 +41,4 @@ var cornerstoneTools = (function (cornerstone, cornerstoneTools) {
     cornerstoneTools.scrollToIndex = scrollToIndex;
     cornerstoneTools.loadHandlers = {};
 
-    return cornerstoneTools;
-}(cornerstone, cornerstoneTools));
+})(cornerstone, cornerstoneTools);

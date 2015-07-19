@@ -1,4 +1,4 @@
-(function (cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -9,25 +9,22 @@
 
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
-        function addStackSpecificToolState(element, toolType, data)
-        {
+        function addStackSpecificToolState(element, toolType, data) {
             // if this is a tool type to apply to the stack, do so
-            if(toolTypes.indexOf(toolType) >= 0) {
-                var enabledImage = cornerstone.getEnabledElement(element);
+            if (toolTypes.indexOf(toolType) >= 0) {
 
                 // if we don't have tool state for this type of tool, add an empty object
-                if(toolState.hasOwnProperty(toolType) === false)
-                {
+                if (toolState.hasOwnProperty(toolType) === false) {
                     toolState[toolType] = {
                         data: []
                     };
                 }
+
                 var toolData = toolState[toolType];
 
                 // finally, add this new tool to the state
                 toolData.data.push(data);
-            }
-            else {
+            } else {
                 // call the imageId specific tool state manager
                 return oldStateManager.add(element, toolType, data);
             }
@@ -35,44 +32,39 @@
 
         // here you can get state - used by tools as well as modules
         // that save state persistently
-        function getStackSpecificToolState(element, toolType)
-        {
+        function getStackSpecificToolState(element, toolType) {
             // if this is a tool type to apply to the stack, do so
-            if(toolTypes.indexOf(toolType) >= 0) {
+            if (toolTypes.indexOf(toolType) >= 0) {
                 // if we don't have tool state for this type of tool, add an empty object
-                if(toolState.hasOwnProperty(toolType) === false)
-                {
+                if (toolState.hasOwnProperty(toolType) === false) {
                     toolState[toolType] = {
                         data: []
                     };
                 }
+
                 var toolData = toolState[toolType];
                 return toolData;
-            }
-            else
-            {
+            } else {
                 // call the imageId specific tool state manager
                 return oldStateManager.get(element, toolType);
             }
         }
 
         var imageIdToolStateManager = {
-            get: getStackSpecificToolState,
-            add: addStackSpecificToolState
+            get: getStackSpecificToolState, add: addStackSpecificToolState
         };
         return imageIdToolStateManager;
     }
 
     var stackStateManagers = [];
 
-    function addStackStateManager(element)
-    {
+    function addStackStateManager(element) {
         var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
-        if(oldStateManager === undefined) {
+        if (oldStateManager === undefined) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = ['stack', 'stackPrefetch', 'stackScroll', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs'];
+        var stackTools = [ 'stack', 'stackPrefetch', 'stackScroll', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);

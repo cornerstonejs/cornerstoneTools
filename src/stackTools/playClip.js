@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -15,6 +15,7 @@
         if (element === undefined) {
             throw "playClip: element must not be undefined";
         }
+
         if (framesPerSecond === undefined) {
             framesPerSecond = 30;
         }
@@ -23,6 +24,7 @@
         if (stackToolData === undefined || stackToolData.data === undefined || stackToolData.data.length === 0) {
             return;
         }
+
         var stackData = stackToolData.data[0];
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
@@ -30,11 +32,7 @@
         
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
-                intervalId : undefined,
-                framesPerSecond: framesPerSecond,
-                lastFrameTimeStamp: undefined,
-                frameRate: 0,
-                loop: true
+                intervalId: undefined, framesPerSecond: framesPerSecond, lastFrameTimeStamp: undefined, frameRate: 0, loop: true
             };
             cornerstoneTools.addToolState(element, toolType, playClipData);
         } else {
@@ -62,7 +60,7 @@
                 var eventDetail = {
                     element: element
                 };
-                var event = jQuery.Event("CornerstoneToolsClipStopped", eventDetail);
+                var event = $.Event("CornerstoneToolsClipStopped", eventDetail);
                 $(element).trigger(event, eventDetail);
 
                 clearInterval(playClipData.intervalId);
@@ -76,7 +74,7 @@
             }
 
             if (newImageIdIndex < 0) {
-                newImageIdIndex = stackData.imageIds.length -1;
+                newImageIdIndex = stackData.imageIds.length - 1;
             }
 
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
@@ -103,8 +101,7 @@
      * Stops an already playing clip.
      * * @param element
      */
-    function stopClip(element)
-    {
+    function stopClip(element) {
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
@@ -116,7 +113,6 @@
         clearInterval(playClipData.intervalId);
         playClipData.intervalId = undefined;
     }
-
 
     // module/private exports
     cornerstoneTools.playClip = playClip;

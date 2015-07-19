@@ -1,15 +1,14 @@
-(function (cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 
     function loadHandlerManager() {
-        var defaultStartLoadHandler,
-            defaultEndLoadHandler;
+        var defaultStartLoadHandler, defaultEndLoadHandler;
 
         function setStartLoadHandler(handler){
             defaultStartLoadHandler = handler;
         }
-        
+
         function getStartLoadHandler(){
             return defaultStartLoadHandler;
         }
@@ -17,16 +16,13 @@
         function setEndLoadHandler(handler){
             defaultEndLoadHandler = handler;
         }
-        
+
         function getEndLoadHandler(){
             return defaultEndLoadHandler;
         }
-      
+
         var loadHandlers = {
-            setStartLoadHandler: setStartLoadHandler,
-            getStartLoadHandler: getStartLoadHandler,
-            setEndLoadHandler: setEndLoadHandler,
-            getEndLoadHandler: getEndLoadHandler
+            setStartLoadHandler: setStartLoadHandler, getStartLoadHandler: getStartLoadHandler, setEndLoadHandler: setEndLoadHandler, getEndLoadHandler: getEndLoadHandler
         };
 
         return loadHandlers;

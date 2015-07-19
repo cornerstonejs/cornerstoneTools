@@ -79,12 +79,56 @@ module.exports = function(grunt) {
         jshint: {
             files: [
                 'src/**/*.js'
-            ]
+            ],
+            options: {
+                strict: true,
+                curly: true,
+                eqeqeq: true,
+                immed: true,
+                latedef: true,
+                newcap: true,
+                noarg: true,
+                sub: true,
+                undef: true,
+                boss: true,
+                eqnull: true,
+                browser: true,
+                unused: true,
+                funcscope: false,
+                nonbsp: true,
+                nonew: true,
+                forin: true,
+                freeze: true,
+                futurehostile: true,
+                nocomma: true,
+
+                globals: {
+                    console: true,
+                    prompt: true, // only used in the Annotation tool
+                    $: true,
+                    Hammer: true,
+                    cornerstone: true,
+                    cornerstoneMath: true,
+                    cornerstoneTools: true,
+                }
+            }
+        },
+        jscs: {
+            src: [
+                'src/**/*.js'
+            ],
+            options: {
+                config: ".jscsrc",
+                fix: true,
+                esnext: true,
+                verbose: true,
+                requireCurlyBraces: ["if", "for"]
+            }
         },
         watch: {
             scripts: {
                 files: ['src/**/*.js', 'test/*.js'],
-                tasks: ['concat:build', 'concat:dist', 'uglify','jshint']
+                tasks: ['concat:build', 'concat:dist', 'uglify', 'jshint', 'jscs']
             }
         },
 
@@ -92,7 +136,7 @@ module.exports = function(grunt) {
 
     require('load-grunt-tasks')(grunt);
 
-    grunt.registerTask('buildAll', ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint']);
+    grunt.registerTask('buildAll', ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint', 'jscs']);
     grunt.registerTask('default', ['clean', 'buildAll']);
 };
 

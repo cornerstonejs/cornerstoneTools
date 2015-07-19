@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -22,12 +22,12 @@
             ignoreFiredEvents = false;
         }
 
-        function onEvent(e)
-        {
-            if(ignoreFiredEvents === true) {
+        function onEvent(e) {
+            if (ignoreFiredEvents === true) {
                 //console.log("event ignored");
                 return;
             }
+
             fireEvent(e.currentTarget);
         }
 
@@ -35,7 +35,7 @@
         this.addSource = function(element) {
             // Return if this element was previously added
             var index = sourceElements.indexOf(element);
-            if(index !== -1) {
+            if (index !== -1) {
                 return;
             }
 
@@ -53,7 +53,7 @@
         this.addTarget = function(element) {
             // Return if this element was previously added
             var index = targetElements.indexOf(element);
-            if(index !== -1) {
+            if (index !== -1) {
                 return;
             }
 
@@ -74,7 +74,7 @@
         this.removeSource = function(element) {
             // Find the index of this element
             var index = sourceElements.indexOf(element);
-            if(index === -1) {
+            if (index === -1) {
                 return;
             }
 
@@ -92,7 +92,7 @@
         this.removeTarget = function(element) {
             // Find the index of this element
             var index = targetElements.indexOf(element);
-            if(index === -1) {
+            if (index === -1) {
                 return;
             }
 

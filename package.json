@@ -1,30 +1,31 @@
 {
-    "name": "cornerstoneTools",
-    "version": "0.6.2",
-    "description": "Enabling the touch events for all tools",
-    "keywords": [
-        "DICOM",
-        "medical",
-        "imaging"
-    ],
-    "author": "Chris Hafey,Prasath",
-    "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
-    "license": "MIT",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/prasath-rasterimages/cornerstoneTools.git"
-    },
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "devDependencies": {
-        "grunt-contrib-copy": "0.4.x",
-        "grunt-contrib-qunit": "^0.4.0",
-        "grunt-contrib-concat": "^0.3.0",
-        "grunt-contrib-watch": "^0.6.1",
-        "grunt-contrib-uglify": "^0.4.0",
-        "grunt-contrib-jshint": "^0.8.0",
-        "grunt-contrib-clean": "^0.5.0",
-        "load-grunt-tasks": "^0.2.1"
-    }
+  "name": "cornerstoneTools",
+  "version": "0.6.2",
+  "description": "Enabling the touch events for all tools",
+  "keywords": [
+    "DICOM",
+    "medical",
+    "imaging"
+  ],
+  "author": "Chris Hafey,Prasath",
+  "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/prasath-rasterimages/cornerstoneTools.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "devDependencies": {
+    "grunt-contrib-copy": "0.4.x",
+    "grunt-contrib-qunit": "^0.4.0",
+    "grunt-contrib-concat": "^0.3.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-contrib-uglify": "^0.4.0",
+    "grunt-contrib-jshint": "^0.11.2",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-jscs": "~1.8.0",
+    "load-grunt-tasks": "^0.2.1"
+  }
 }

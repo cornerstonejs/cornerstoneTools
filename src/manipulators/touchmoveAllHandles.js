@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
@@ -8,12 +8,10 @@
         function touchDragCallback(e, eventData) {
             data.active = true;
             
-            var touchMoveData = eventData;
-            for (var property in data.handles) {
-                var handle = data.handles[property];
+            Object.keys(data.handles).forEach(function(handle) {
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
-            }
+            });
             cornerstone.updateImage(element);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -32,17 +30,14 @@
                 var image = eventData.image;
                 var handleOutsideImage = false;
                 var rect = {
-                    top: 0,
-                    left: 0,
-                    width: image.width,
-                    height: image.height
+                    top: 0, left: 0, width: image.width, height: image.height
                 };
-                for (var property in data.handles) {
-                    var handle = data.handles[property];
+                
+                Object.keys(data.handles).forEach(function(handle) {
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
                     }
-                }
+                });
 
                 if (handleOutsideImage) {
                     // find this tool data
@@ -52,11 +47,13 @@
                             indexOfData = i;
                         }
                     }
+
                     if (indexOfData !== -1) {
                         toolData.data.splice(indexOfData, 1);
                     }
                 }
             }
+
             cornerstone.updateImage(element);
         }
 

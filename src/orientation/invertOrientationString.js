@@ -1,4 +1,4 @@
-(function (cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 

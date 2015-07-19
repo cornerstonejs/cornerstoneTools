@@ -1,4 +1,4 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
@@ -13,21 +13,26 @@
                 if (handle.x < 0) {
                     handle.x = 0;
                 }
+
                 if (handle.x > eventData.image.width) {
                     handle.x = eventData.image.width;
                 }
+
                 if (handle.y < 0) {
                     handle.y = 0;
                 }
+
                 if (handle.y > eventData.image.height) {
                     handle.y = eventData.image.height;
                 }
             }
+
             cornerstone.updateImage(element);
         }
+
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
 
-        function mouseUpCallback(e, eventData) {
+        function mouseUpCallback() {
             handle.active = false;
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -35,6 +40,7 @@
 
             doneMovingCallback();
         }
+
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 

@@ -1,9 +1,8 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    var mouseX,
-        mouseY;
+    var mouseX, mouseY;
 
     function keyPress(e) {
         var element = e.currentTarget;
@@ -12,15 +11,7 @@
         e = window.event || e; // old IE support
 
         var keyPressData = {
-            element: element,
-            viewport: cornerstone.getViewport(element),
-            image: cornerstone.getEnabledElement(element).image,
-            pageX : mouseX,
-            pageY: mouseY,
-            imageX : startingCoords.x,
-            imageY : startingCoords.y,
-            keyCode: e.keyCode,
-            which: e.which
+            element: element, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, pageX: mouseX, pageY: mouseY, imageX: startingCoords.x, imageY: startingCoords.y, keyCode: e.keyCode, which: e.which
         };
 
         if (e.type === "keydown") {
@@ -50,8 +41,7 @@
 
     // module exports
     cornerstoneTools.keyboardInput = {
-        enable : enable,
-        disable : disable
+        enable: enable, disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

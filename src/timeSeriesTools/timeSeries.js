@@ -1,11 +1,8 @@
-(function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    var toolType = "timeSeriesScroll";
-
-    function incrementTimePoint(element, timePoints, wrap)
-    {
+    function incrementTimePoint(element, timePoints, wrap) {
         var toolData = cornerstoneTools.getToolState(element, 'timeSeries');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
@@ -19,13 +16,13 @@
         // loop around if we go outside the stack
         if (wrap) {
             if (newStackIndex >= timeSeriesData.stacks.length) {
-                newStackIndex =0;
+                newStackIndex = 0;
             }
+
             if (newStackIndex < 0) {
-                newStackIndex = timeSeriesData.stacks.length -1;
+                newStackIndex = timeSeriesData.stacks.length - 1;
             }
-        }
-        else {
+        } else {
             newStackIndex = Math.min(timeSeriesData.stacks.length - 1, newStackIndex);
             newStackIndex = Math.max(0, newStackIndex);
         }
