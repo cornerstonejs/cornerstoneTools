@@ -1,12 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    var toolType = "stackScroll";
 
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
@@ -17,8 +11,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
             var mouseDragEventData = {
-                deltaY : 0,
-                options: e.data.options
+                deltaY: 0, options: e.data.options
             };
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -36,6 +29,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
+
         var stackData = toolData.data[0];
 
         // The Math.max here makes it easier to mouseDrag-scroll small image stacks
@@ -71,7 +65,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             return;
         }
 
-        var stackData = toolData.data[0];
         if (eventData.deltaY >= 3 || eventData.deltaY <= -3) {
             var imageDelta = eventData.deltaY / 3;
             var imageDeltaMod = eventData.deltaY % 3;
@@ -89,5 +82,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

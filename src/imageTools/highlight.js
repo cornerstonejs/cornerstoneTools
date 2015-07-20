@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "highlight";
 
@@ -12,25 +8,17 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     function createNewMeasurement(mouseEventData) {
         //if already a highlight measurement, creating a new one will be useless
         var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
-        if (existingToolData && existingToolData.data && existingToolData.data.length > 0)
+        if (existingToolData && existingToolData.data && existingToolData.data.length > 0) {
             return;
+        }
     
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible : true,
-            active: true,
-            handles : {
-                start : {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: false
-                },
-                end: {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: true
+            visible: true, active: true, handles: {
+                start: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
+                }, end: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
                 }
             }
         };
@@ -44,17 +32,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width : Math.abs(startCanvas.x - endCanvas.x),
-            height : Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var insideBox = false;
-        if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) &&
-            coords.y >= rect.top && coords.y <= (rect.top + rect.height)) {
+        if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) && coords.y >= rect.top && coords.y <= (rect.top + rect.height)) {
             insideBox = true;
         }
+
         return insideBox;
     }
 
@@ -63,10 +48,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width : Math.abs(startCanvas.x - endCanvas.x),
-            height : Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -79,13 +61,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if(toolData === undefined) {
+        if (toolData === undefined) {
             return;
         }
 
         // we have tool data for this elemen
         var context = eventData.canvasContext.canvas.getContext("2d");
-        context.setTransform(1,0,0,1,0,0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
@@ -108,10 +90,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
         var rect = {
-            left : Math.min(handleStartCanvas.x, handleEndCanvas.x),
-            top : Math.min(handleStartCanvas.y, handleEndCanvas.y),
-            width : Math.abs(handleStartCanvas.x - handleEndCanvas.x),
-            height : Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+            left: Math.min(handleStartCanvas.x, handleEndCanvas.x), top: Math.min(handleStartCanvas.y, handleEndCanvas.y), width: Math.abs(handleStartCanvas.x - handleEndCanvas.x), height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
         };
 
         // draw dark fill outside the rectangle
@@ -130,7 +109,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
-        context.setLineDash([4]);
+        context.setLineDash([ 4 ]);
         context.strokeRect(rect.left, rect.top, rect.width, rect.height);
 
         // Strange fix, but restore doesn't seem to reset the line dashes?
@@ -142,25 +121,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
-
     // module exports
     var preventHandleOutsideImage = true;
 
     cornerstoneTools.highlight = cornerstoneTools.mouseButtonRectangleTool({
-        createNewMeasurement : createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool : pointNearTool,
-        pointInsideRect: pointInsideRect,
-        toolType : toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, pointInsideRect: pointInsideRect, toolType: toolType
     }, preventHandleOutsideImage);
     
     cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        pointInsideRect: pointInsideRect,
-        toolType: toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, pointInsideRect: pointInsideRect, toolType: toolType
     }, preventHandleOutsideImage);
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

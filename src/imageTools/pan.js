@@ -1,20 +1,14 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function mouseUpCallback(e, eventData)
-    {
+    function mouseUpCallback(e, eventData) {
         $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
         $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
     }
 
-    function mouseDownCallback(e, eventData)
-    {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    function mouseDownCallback(e, eventData) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
@@ -39,5 +33,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     cornerstoneTools.pan = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

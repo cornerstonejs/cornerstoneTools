@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // This function causes the image in the target stack to be set to the one closest
     // to the image in the source stack by image position
@@ -41,7 +37,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         }
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -62,5 +58,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.stackImagePositionSynchronizer = stackImagePositionSynchronizer;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

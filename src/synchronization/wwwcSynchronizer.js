@@ -1,16 +1,12 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // This function synchronizes the target element ww/wc to match the source element
     function wwwcSynchronizer(synchronizer, sourceElement, targetElement) {
 
         // ignore the case where the source and target are the same enabled element
-        if(targetElement === sourceElement) {
+        if (targetElement === sourceElement) {
             return;
         }
         // get the source and target viewports
@@ -18,9 +14,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var targetViewport = cornerstone.getViewport(targetElement);
 
         // do nothing if the ww/wc already match
-        if(targetViewport.voi.windowWidth === sourceViewport.voi.windowWidth &&
-            targetViewport.voi.windowCenter === sourceViewport.voi.windowCenter &&
-            targetViewport.invert === sourceViewport.invert) {
+        if (targetViewport.voi.windowWidth === sourceViewport.voi.windowWidth && targetViewport.voi.windowCenter === sourceViewport.voi.windowCenter && targetViewport.invert === sourceViewport.invert) {
             return;
         }
 
@@ -31,9 +25,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         synchronizer.setViewport(targetElement, targetViewport);
     }
 
-
     // module/private exports
     cornerstoneTools.wwwcSynchronizer = wwwcSynchronizer;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

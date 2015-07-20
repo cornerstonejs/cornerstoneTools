@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "angle";
 
@@ -12,32 +8,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var angleData = {
-            visible: true,
-            active: true,
-            handles: {
+            visible: true, active: true, handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x - 20,
-                    y: mouseEventData.currentPoints.image.y + 10,
-                    highlight: true,
-                    active: false
-                },
-                end: {
-                    x: mouseEventData.currentPoints.image.x,
-                    y: mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: true
-                },
-                start2: {
-                    x: mouseEventData.currentPoints.image.x - 20,
-                    y: mouseEventData.currentPoints.image.y + 10,
-                    highlight: true,
-                    active: false
-                },
-                end2: {
-                    x: mouseEventData.currentPoints.image.x,
-                    y: mouseEventData.currentPoints.image.y + 20,
-                    highlight: true,
-                    active: false
+                    x: mouseEventData.currentPoints.image.x - 20, y: mouseEventData.currentPoints.image.y + 10, highlight: true, active: false
+                }, end: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                }, start2: {
+                    x: mouseEventData.currentPoints.image.x - 20, y: mouseEventData.currentPoints.image.y + 10, highlight: true, active: false
+                }, end2: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y + 20, highlight: true, active: false
                 }
             }
         };
@@ -48,12 +27,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     function pointNearTool(element, data, coords) {
         var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start),
-            end: cornerstone.pixelToCanvas(element, data.handles.end)
+            start: cornerstone.pixelToCanvas(element, data.handles.start), end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
+        
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        if (distanceToPoint < 5)
+        if (distanceToPoint < 5) {
             return true;
+        }
 
         lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.start2);
         lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end2);
@@ -137,24 +117,16 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             cornerstoneTools.drawTextBox(context, text, textX, textY, color);
             context.restore();
         }
-
     }
     ///////// END IMAGE RENDERING ///////
 
-
     // module exports
     cornerstoneTools.angle = cornerstoneTools.mouseButtonTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        toolType: toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
-     cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        toolType: toolType
+    
+    cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
 
-    return cornerstoneTools;
-} ($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

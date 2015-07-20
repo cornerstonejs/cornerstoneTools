@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function touchRotateCallback(e, eventData) {
         eventData.viewport.rotation += eventData.rotation;
@@ -22,9 +18,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     cornerstoneTools.rotateTouch = {
-        activate: activate,
-        disable: disable
+        activate: activate, disable: disable
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

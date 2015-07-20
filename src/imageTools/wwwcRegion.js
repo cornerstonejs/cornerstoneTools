@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = 'wwwcRegion';
 
@@ -14,11 +10,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         if (numPixels < 2) {
             return {
-                min: globalMin,
-                max: globalMax,
+                min: globalMin, max: globalMax,
             };
         }
-        
+
         var min = globalMax;
         var max = globalMin;
 
@@ -29,8 +24,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         }
 
         return {
-            min: min,
-            max: max
+            min: min, max: max
         };
     }
 
@@ -50,8 +44,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // Update the endpoint as the mouse/touch is dragged
         var endPoint = {
-            x : eventData.currentPoints.image.x,
-            y : eventData.currentPoints.image.y
+            x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
         };
 
         toolData.data[0].endPoint = endPoint;
@@ -110,7 +103,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     /** Records the start point and attaches the drag event handler */
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", dragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             recordStartPoint(eventData);
@@ -127,8 +120,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         var measurementData = {
             startPoint: {
-                x : eventData.currentPoints.image.x,
-                y : eventData.currentPoints.image.y
+                x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
             }
         };
 
@@ -149,8 +141,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         // Update the endpoint as the mouse/touch is dragged
         var endPoint = {
-            x : eventData.currentPoints.image.x,
-            y : eventData.currentPoints.image.y
+            x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
         };
 
         toolData.data[0].endPoint = endPoint;
@@ -264,16 +255,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
     // module exports
     cornerstoneTools.wwwcRegion = {
-        activate: activate,
-        deactivate: disable,
-        disable: disable
+        activate: activate, deactivate: disable, disable: disable
     };
 
     cornerstoneTools.wwwcRegionTouch = {
-        activate: activateTouchDrag,
-        deactivate: disableTouchDrag,
-        disable: disableTouchDrag
+        activate: activateTouchDrag, deactivate: disableTouchDrag, disable: disableTouchDrag
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

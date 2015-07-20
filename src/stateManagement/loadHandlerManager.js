@@ -1,19 +1,14 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function loadHandlerManager() {
-        var defaultStartLoadHandler,
-            defaultEndLoadHandler;
+        var defaultStartLoadHandler, defaultEndLoadHandler;
 
         function setStartLoadHandler(handler){
             defaultStartLoadHandler = handler;
         }
-        
+
         function getStartLoadHandler(){
             return defaultStartLoadHandler;
         }
@@ -21,16 +16,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         function setEndLoadHandler(handler){
             defaultEndLoadHandler = handler;
         }
-        
+
         function getEndLoadHandler(){
             return defaultEndLoadHandler;
         }
-      
+
         var loadHandlers = {
-            setStartLoadHandler: setStartLoadHandler,
-            getStartLoadHandler: getStartLoadHandler,
-            setEndLoadHandler: setEndLoadHandler,
-            getEndLoadHandler: getEndLoadHandler
+            setStartLoadHandler: setStartLoadHandler, getStartLoadHandler: getStartLoadHandler, setEndLoadHandler: setEndLoadHandler, getEndLoadHandler: getEndLoadHandler
         };
 
         return loadHandlers;
@@ -39,5 +31,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.loadHandlerManager = loadHandlerManager();
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstoneTools);

@@ -1,13 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-    if (cornerstoneTools.referenceLines === undefined) {
-        cornerstoneTools.referenceLines = {};
-    }
 
     // renders the active reference line
     function renderActiveReferenceLine(context, eventData, targetElement, referenceElement) {
@@ -23,7 +16,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
 
         // the image planes must be in the same frame of reference
-        if (targetImagePlane.frameOfReferenceUID != referenceImagePlane.frameOfReferenceUID) {
+        if (targetImagePlane.frameOfReferenceUID !== referenceImagePlane.frameOfReferenceUID) {
             return;
         }
 
@@ -46,7 +39,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
 
         // draw the referenceLines
-        context.setTransform(1,0,0,1,0,0);
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         context.save();
         context.beginPath();
@@ -61,5 +54,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.referenceLines.renderActiveReferenceLine = renderActiveReferenceLine;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

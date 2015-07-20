@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function(cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function toolCoordinateManager(){
         var cooordsData = "";
@@ -12,13 +8,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         function setActiveToolCoords(eventData){
             cooordsData = eventData.currentPoints.canvas;
         }
+
         function getActiveToolCoords(){
             return cooordsData;
         }
-      
+
         var toolCoords = {
-            setCoords: setActiveToolCoords,
-            getCoords: getActiveToolCoords
+            setCoords: setActiveToolCoords, getCoords: getActiveToolCoords
         };
 
         return toolCoords;
@@ -27,5 +23,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.toolCoordinates = toolCoordinateManager();
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstoneTools);

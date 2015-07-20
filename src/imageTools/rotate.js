@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // --- Strategies --- //
     function defaultStrategy(eventData) {
@@ -12,8 +8,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var rect = eventData.element.getBoundingClientRect(eventData.element);
 
         var points = {
-            x: eventData.currentPoints.client.x,
-            y: eventData.currentPoints.client.y
+            x: eventData.currentPoints.client.x, y: eventData.currentPoints.client.y
         };
 
         var width = eventData.element.clientWidth;
@@ -46,7 +41,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
@@ -68,13 +63,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     cornerstoneTools.rotate = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.rotate.strategies = {
-        default : defaultStrategy,
-        horizontal : horizontalStrategy,
-        vertical : verticalStrategy
+        default: defaultStrategy, horizontal: horizontalStrategy, vertical: verticalStrategy
     };
+    
     cornerstoneTools.rotate.strategy = defaultStrategy;
 
     cornerstoneTools.rotateTouchDrag = cornerstoneTools.touchDragTool(onDrag);
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

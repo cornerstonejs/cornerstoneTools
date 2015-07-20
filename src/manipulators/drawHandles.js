@@ -1,20 +1,14 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function(cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles, color, fill)
-    {
+    function drawHandles(context, renderData, handles, color, fill) {
         context.strokeStyle = color;
 
-        for(var property in handles) {
-            var handle = handles[property];
-
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active || handle.highlight) {
                 context.beginPath();
 
@@ -23,7 +17,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 } else {
                     context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
                 }
-                
+
                 var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
                 context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
@@ -34,12 +28,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
                 context.stroke();
             }
-        }
+        });
     }
-
 
     // module/private exports
     cornerstoneTools.drawHandles = drawHandles;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})(cornerstone, cornerstoneTools);

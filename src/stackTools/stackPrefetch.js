@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "stackPrefetch";
     var defaultMaxRequests = 11;
@@ -40,12 +36,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
-        var arr = [],
-            c = highEnd - lowEnd + 1;
+        var arr = [], c = highEnd - lowEnd + 1;
 
         while ( c-- ) {
             arr[c] = highEnd--;
         }
+
         return arr;
     }
 
@@ -55,6 +51,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
             return;
         }
+
         var stack = stackData.data[0];
         var currentImageIdIndex = stack.currentImageIdIndex;
 
@@ -64,8 +61,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // should not happen
             return;
         }
-        var stackPrefetch = stackPrefetchData.data[0];
 
+        var stackPrefetch = stackPrefetchData.data[0];
 
         // If all the requests are complete, disable the stackPrefetch tool
         if (stackPrefetch.indicesToRequest.length === 0) {
@@ -127,7 +124,6 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var imageIdIndices = range(lastImageIdIndexFetched, maxImageIdIndex);
         stackPrefetch.lastImageIdIndexFetched = maxImageIdIndex + 1;
 
-
         // Loop through the images that should be requested in this batch
 
         var deferredList = [];
@@ -167,10 +163,10 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
-            if(imagePromise !== undefined) {
+            if (imagePromise !== undefined) {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
-                imagePromise.done(function(){
+                imagePromise.done(function() {
                     onLoadImageComplete(imageIdIndex);
                 });
                 return;
@@ -180,7 +176,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
 
             // When this is complete, remove the imageIdIndex from the list
-            loadImageDeferred.done(function(){
+            loadImageDeferred.done(function() {
                 onLoadImageComplete(imageIdIndex);
             });
 
@@ -193,7 +189,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         });
 
         // When this batch of images is loaded (all async requests have finished)
-        $.when.apply($, deferredList).done(function () {
+        $.when.apply($, deferredList).done(function() {
             // If there are still images that need to be requested, and the 
             // cache is not full, call this function again
             //console.log("Batch finished");
@@ -205,7 +201,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         });
 
         // If the entire batch of requests has failed, throw an error
-        $.when.apply($, deferredList).fail(function () {
+        $.when.apply($, deferredList).fail(function() {
             throw "stackPrefetch: batch failed for element: " + element.id;
         });
     }
@@ -222,13 +218,14 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
             return;
         }
+
         var stack = stackData.data[0];
 
         // The maximum simultaneous requests is capped at 
         // a rather arbitrary number of 11, since we don't want to overload any servers
         if (config === undefined || config.maxSimultaneousRequests === undefined) {
             config = {
-                "maxSimultaneousRequests" : Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
+                maxSimultaneousRequests: Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
             };
         }
 
@@ -236,8 +233,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
-            indicesToRequest : range(0, stack.imageIds.length - 1),
-            enabled: true
+            indicesToRequest: range(0, stack.imageIds.length - 1), enabled: true
         };
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
@@ -269,11 +265,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     // module/private exports
     cornerstoneTools.stackPrefetch = {
-        enable: enable,
-        disable: disable,
-        getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        enable: enable, disable: disable, getConfiguration: getConfiguration, setConfiguration: setConfiguration
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

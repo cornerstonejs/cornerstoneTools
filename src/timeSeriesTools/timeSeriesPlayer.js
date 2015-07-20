@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "timeSeriesPlayer";
 
@@ -15,12 +11,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
      * @param element
      * @param framesPerSecond
      */
-    function playClip(element, framesPerSecond)
-    {
-        if(element === undefined) {
+    function playClip(element, framesPerSecond) {
+        if (element === undefined) {
             throw "playClip: element must not be undefined";
         }
-        if(framesPerSecond === undefined) {
+
+        if (framesPerSecond === undefined) {
             framesPerSecond = 30;
         }
 
@@ -28,56 +24,43 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         if (timeSeriesToolData === undefined || timeSeriesToolData.data === undefined || timeSeriesToolData.data.length === 0) {
             return;
         }
-        var timeSeriesData = timeSeriesToolData.data[0];
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
-                intervalId : undefined,
-                framesPerSecond: framesPerSecond,
-                lastFrameTimeStamp: undefined,
-                frameRate: 0
+                intervalId: undefined, framesPerSecond: framesPerSecond, lastFrameTimeStamp: undefined, frameRate: 0
             };
             cornerstoneTools.addToolState(element, toolType, playClipData);
-        }
-        else {
+        } else {
             playClipData = playClipToolData.data[0];
             playClipData.framesPerSecond = framesPerSecond;
         }
 
         // if already playing, do not set a new interval
-        if(playClipData.intervalId !== undefined) {
+        if (playClipData.intervalId !== undefined) {
             return;
         }
 
         playClipData.intervalId = setInterval(function() {
-            var currentImageIdIndex = timeSeriesData.stacks[timeSeriesData.currentStackIndex].currentImageIdIndex;
-
-            var newStackIndex = timeSeriesData.currentStackIndex;
-            if(playClipData.framesPerSecond > 0) {
+            if (playClipData.framesPerSecond > 0) {
                 cornerstoneTools.incrementTimePoint(element, 1, true);
             } else {
-                cornerstoneTools.incrementTimePoint(element, -1,true);
+                cornerstoneTools.incrementTimePoint(element, -1, true);
             }
-
-
-
-        }, 1000/Math.abs(playClipData.framesPerSecond));
+        }, 1000 / Math.abs(playClipData.framesPerSecond));
     }
 
     /**
      * Stops an already playing clip.
      * * @param element
      */
-    function stopClip(element)
-    {
+    function stopClip(element) {
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             return;
-        }
-        else {
+        } else {
             playClipData = playClipToolData.data[0];
         }
 
@@ -85,12 +68,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         playClipData.intervalId = undefined;
     }
 
-
     // module/private exports
     cornerstoneTools.timeSeriesPlayer = {
-        start : playClip,
-        stop: stopClip
+        start: playClip, stop: stopClip
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = 'crosshairs';
 
@@ -37,14 +33,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             if (targetElement === sourceElement) {
                 return; // Same as 'continue' in a normal for loop
             }
+
             var minDistance = Number.MAX_VALUE;
             var newImageIdIndex = -1;
 
             var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
             if (stackToolDataSource === undefined) {
-                return;  // Same as 'continue' in a normal for loop
+                return; // Same as 'continue' in a normal for loop
             }
-            
+
             var stackData = stackToolDataSource.data[0];
 
             // Find within the element's stack the closest image plane to selected location
@@ -56,23 +53,23 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 var normal = column.clone().cross(row.clone());
                 var distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
                 //console.log(index + '=' + distance);
-                if(distance < minDistance) {
+                if (distance < minDistance) {
                     minDistance = distance;
                     newImageIdIndex = index;
                 }
             });
 
-            if(newImageIdIndex === stackData.currentImageIdIndex) {
+            if (newImageIdIndex === stackData.currentImageIdIndex) {
                 return;
             }
 
             // Switch the loaded image to the required image
-            if(newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
+            if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
                 if (startLoadingHandler) {
-                    startLoadingHandler(element);
+                    startLoadingHandler(targetElement);
                 }
 
                 cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
@@ -80,7 +77,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(targetElement, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(element);
+                        endLoadingHandler(targetElement);
                     }
                 });
             }
@@ -93,7 +90,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseDownCallback(e, eventData) {
-        if(cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
             chooseLocation(e, eventData);
@@ -112,7 +109,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         };
 
         cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext : synchronizationContext,
+            synchronizationContext: synchronizationContext,
         });
 
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
@@ -121,16 +118,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     // disables the reference line tool for the given element
-    function disable(element, synchronizationContext) {
+    function disable(element) {
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
     }
 
     // module/private exports
     cornerstoneTools.crosshairs = {
-        enable: enable,
-        disable: disable
+        enable: enable, disable: disable
     };
 
-
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

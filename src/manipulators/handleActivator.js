@@ -1,31 +1,35 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    var handleRadius = 6;
-
     function findHandleNear(element, handles, canvasPoint) {
-        for(var property in handles) {
-            var handle = handles[property];
+        var nearbyHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
             if (distance <= 36) {
-                return handle;
+                nearbyHandle = handle;
+                return;
             }
-        }
+        });
+
+        return nearbyHandle;
     }
 
     function getActiveHandle(handles) {
-        for(var property in handles) {
-            var handle = handles[property];
+        var activeHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active === true) {
-                return handle;
+                activeHandle = handle;
+                return;
             }
-        }
+        });
+
+        return activeHandle;
     }
 
     function handleActivator(element, handles, canvasPoint) {
@@ -35,16 +39,18 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             if (nearbyHandle !== undefined) {
                 nearbyHandle.active = true;
             }
+
             if (activeHandle !== undefined) {
                 activeHandle.active = false;
             }
+
             return true;
         }
+
         return false;
     }
 
     // module/private exports
     cornerstoneTools.handleActivator = handleActivator;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

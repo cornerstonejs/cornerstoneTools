@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     var toolType = "rectangleRoi";
 
@@ -12,20 +8,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible : true,
-            active: true,
-            handles : {
-                start : {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: false
-                },
-                end: {
-                    x : mouseEventData.currentPoints.image.x,
-                    y : mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: true
+            visible: true, active: true, handles: {
+                start: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
+                }, end: {
+                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
                 }
             }
         };
@@ -39,10 +26,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width : Math.abs(startCanvas.x - endCanvas.x),
-            height : Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -55,13 +39,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         // TODO: Get a real statistics library here that supports large counts
 
         var sum = 0;
-        var sumSquared =0;
+        var sumSquared = 0;
         var count = 0;
-        var index =0;
+        var index = 0;
 
-        for (var y=ellipse.top; y < ellipse.top + ellipse.height; y++) {
-            for (var x=ellipse.left; x < ellipse.left + ellipse.width; x++) {
-               sum += sp[index];
+        for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
+            for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
+                sum += sp[index];
                 sumSquared += sp[index] * sp[index];
                 count++;
                 index++;
@@ -70,10 +54,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
         if (count === 0) {
             return {
-                count: count,
-                mean: 0.0,
-                variance: 0.0,
-                stdDev: 0.0
+                count: count, mean: 0.0, variance: 0.0, stdDev: 0.0
             };
         }
 
@@ -81,13 +62,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var variance = sumSquared / count - mean * mean;
 
         return {
-            count: count,
-            mean: mean,
-            variance: variance,
-            stdDev: Math.sqrt(variance)
+            count: count, mean: mean, variance: variance, stdDev: Math.sqrt(variance)
         };
     }
-
 
     function onImageRendered(e, eventData) {
 
@@ -107,7 +84,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
         var font = cornerstoneTools.textStyle.getFont();
         var fontHeight = cornerstoneTools.textStyle.getFontSize();
         
-        for (var i=0; i < toolData.data.length; i++) {
+        for (var i = 0; i < toolData.data.length; i++) {
             context.save();
 
             var data = toolData.data[i];
@@ -137,7 +114,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             context.stroke();
 
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles,color);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
 
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
@@ -149,10 +126,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
             var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
 
             var ellipse = {
-                left: left,
-                top: top,
-                width: width,
-                height: height
+                left: left, top: top, width: width, height: height
             };
 
             var meanStdDev = calculateMeanStdDev(pixels, ellipse);
@@ -164,8 +138,8 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
 
             var textSize = context.measureText(area);
 
-            var textX  = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
-            var textY  = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
+            var textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
+            var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
             cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
@@ -176,20 +150,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneMath, cornerstoneTo
     }
     ///////// END IMAGE RENDERING ///////
 
-
     // module exports
     cornerstoneTools.rectangleRoi = cornerstoneTools.mouseButtonTool({
-        createNewMeasurement : createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool : pointNearTool,
-        toolType : toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
     cornerstoneTools.rectangleRoiTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        toolType: toolType
+        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
     });
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

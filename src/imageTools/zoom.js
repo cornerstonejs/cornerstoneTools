@@ -1,15 +1,11 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function correctShift(shift, viewport) {
         //Apply rotations
         if (viewport.rotation !== 0) {
-            var angle = viewport.rotation * Math.PI/180;
+            var angle = viewport.rotation * Math.PI / 180;
     
             var cosA = Math.cos(angle);
             var sinA = Math.sin(angle);
@@ -23,12 +19,13 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
         //Apply Flips        
         if (viewport.hflip) {
-            shift.x *=-1;
+            shift.x *= -1;
         }
-        
+
         if (viewport.vflip) {
-            shift.y *=-1;
+            shift.y *= -1;
         }
+
         return shift;
     }
 
@@ -64,14 +61,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     function mouseDragCallback(e, eventData) {
-        var ticks = eventData.deltaPoints.page.y/100;
+        var ticks = eventData.deltaPoints.page.y / 100;
         zoom(eventData.element, eventData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        var shift = {x: eventData.startPoints.image.x - newCoords.x,
-                     y: eventData.startPoints.image.y - newCoords.y};
+        var shift = {
+            x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, eventData.viewport);
         eventData.viewport.translation.x -= shift.x;
@@ -91,14 +89,15 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
     function zoomTouchDrag(e, eventData) {
         var dragData = eventData;
-        var ticks = dragData.deltaPoints.page.y/100;
+        var ticks = dragData.deltaPoints.page.y / 100;
         zoom(dragData.element, dragData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
-        var shift = {x: dragData.startPoints.image.x - newCoords.x,
-                     y: dragData.startPoints.image.y - newCoords.y};
+        var shift = {
+            x: dragData.startPoints.image.x - newCoords.x, y: dragData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, dragData.viewport);
         dragData.viewport.translation.x -= shift.x;
@@ -107,12 +106,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
 
-    return cornerstoneTools;
-
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

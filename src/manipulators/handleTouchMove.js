@@ -1,13 +1,8 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-    function touchMoveHandle(touchEventData, handle, doneMovingCallback)
-    {
+    function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
 
         function touchDragCallback(e, eventData) {
@@ -17,9 +12,10 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
             handle.y = touchMoveData.currentPoints.image.y;
             cornerstone.updateImage(element);
         }
+
         $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
 
-        function touchEndCallback(mouseMoveData) {
+        function touchEndCallback() {
             handle.active = false;
             $(element).off("CornerstoneToolsTouchDrag", touchDragCallback);
             $(element).off("CornerstoneToolsDragEnd", touchEndCallback);
@@ -27,11 +23,11 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
             doneMovingCallback();
         }
+
         $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
     }
 
     // module/private exports
     cornerstoneTools.touchMoveHandle = touchMoveHandle;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

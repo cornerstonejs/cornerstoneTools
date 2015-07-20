@@ -1,13 +1,8 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function getOrientationMarkers(element) {
-        var viewport = cornerstone.getViewport(element);
         var enabledElement = cornerstone.getEnabledElement(element);
         var imagePlaneMetaData = cornerstoneTools.metaData.get('imagePlane', enabledElement.image.imageId);
 
@@ -22,47 +17,36 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         var oppositeColumnString = cornerstoneTools.orientation.invertOrientationString(columnString);
 
         return {
-            top: oppositeColumnString,
-            bottom: columnString,
-            left: oppositeRowString,
-            right: rowString
+            top: oppositeColumnString, bottom: columnString, left: oppositeRowString, right: rowString
         };
     }
 
     function getOrientationMarkerPositions(element) {
-        var viewport = cornerstone.getViewport(element);
         var enabledElement = cornerstone.getEnabledElement(element);
         var coords;
 
         coords = {
-            x: enabledElement.image.width / 2,
-            y: 5
+            x: enabledElement.image.width / 2, y: 5
         };
         var topCoords = cornerstone.pixelToCanvas(element, coords);
 
         coords = {
-            x: enabledElement.image.width / 2,
-            y: enabledElement.image.height - 5
+            x: enabledElement.image.width / 2, y: enabledElement.image.height - 5
         };
         var bottomCoords = cornerstone.pixelToCanvas(element, coords);
 
         coords = {
-            x: 5,
-            y: enabledElement.image.height / 2
+            x: 5, y: enabledElement.image.height / 2
         };
         var leftCoords = cornerstone.pixelToCanvas(element, coords);
 
         coords = {
-            x: enabledElement.image.width - 10,
-            y: enabledElement.image.height / 2
+            x: enabledElement.image.width - 10, y: enabledElement.image.height / 2
         };
         var rightCoords = cornerstone.pixelToCanvas(element, coords);
 
         return {
-            top: topCoords,
-            bottom: bottomCoords,
-            left: leftCoords,
-            right: rightCoords
+            top: topCoords, bottom: bottomCoords, left: leftCoords, right: rightCoords
         };
     }
 
@@ -81,14 +65,9 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getToolColor();
-        var font = cornerstoneTools.textStyle.getFont();
-        var fontHeight = cornerstoneTools.textStyle.getFontSize();
 
         var textWidths = {
-            top: context.measureText(markers.top).width,
-            left: context.measureText(markers.left).width,
-            right: context.measureText(markers.right).width,
-            bottom: context.measureText(markers.bottom).width
+            top: context.measureText(markers.top).width, left: context.measureText(markers.left).width, right: context.measureText(markers.right).width, bottom: context.measureText(markers.bottom).width
         };
 
         cornerstoneTools.drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
@@ -102,9 +81,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
     ///////// END IMAGE RENDERING ///////
 
-
     // module exports
     cornerstoneTools.orientationMarkers = cornerstoneTools.displayTool(onImageRendered);
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

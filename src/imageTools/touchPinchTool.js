@@ -1,26 +1,17 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
     /*jshint newcap: false */
 
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
-
-    function touchPinchTool(touchPinchCallback)
-    {
+    function touchPinchTool(touchPinchCallback) {
         var toolInterface = {
             activate: function(element) {
                 $(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
                 var eventData = {
                 };
                 $(element).on("CornerstoneToolsTouchPinch", eventData, touchPinchCallback);
-            },
-            disable : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
-            enable : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
-            deactivate : function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
+            }, disable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, enable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
         };
         return toolInterface;
     }
@@ -28,5 +19,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module exports
     cornerstoneTools.touchPinchTool = touchPinchTool;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

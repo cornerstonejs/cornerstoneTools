@@ -1,22 +1,18 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
     function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage) {
         var element = touchEventData.element;
 
         function touchDragCallback(e, eventData) {
             data.active = true;
             
-            var touchMoveData = eventData;
-            for (var property in data.handles) {
-                var handle = data.handles[property];
+            Object.keys(data.handles).forEach(function(name) {
+                var handle = data.handles[name];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
-            }
+            });
             cornerstone.updateImage(element);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -35,17 +31,16 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                 var image = eventData.image;
                 var handleOutsideImage = false;
                 var rect = {
-                    top: 0,
-                    left: 0,
-                    width: image.width,
-                    height: image.height
+                    top: 0, left: 0, width: image.width, height: image.height
                 };
-                for (var property in data.handles) {
-                    var handle = data.handles[property];
+                
+                Object.keys(data.handles).forEach(function(name) {
+                    var handle = data.handles[name];
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
+                        return;
                     }
-                }
+                });
 
                 if (handleOutsideImage) {
                     // find this tool data
@@ -55,11 +50,13 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                             indexOfData = i;
                         }
                     }
+
                     if (indexOfData !== -1) {
                         toolData.data.splice(indexOfData, 1);
                     }
                 }
             }
+
             cornerstone.updateImage(element);
         }
 
@@ -70,5 +67,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     // module/private exports
     cornerstoneTools.touchMoveAllHandles = touchMoveAllHandles;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

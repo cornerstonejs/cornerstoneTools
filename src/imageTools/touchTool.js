@@ -1,10 +1,6 @@
-var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     "use strict";
-
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function touchTool(touchToolInterface) {
         ///////// BEGIN ACTIVE TOOL ///////
@@ -20,6 +16,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     // delete the measurement
                     cornerstoneTools.removeToolState(touchEventData.element, touchToolInterface.toolType, measurementData);
                 }
+
                 $(touchEventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
                 cornerstone.updateImage(touchEventData.element);
             });
@@ -70,6 +67,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
                     // delete the measurement
                     cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);
                 }
+
                 cornerstone.updateImage(eventData.element);
                 $(eventData.element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
             }
@@ -162,10 +160,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
         }
 
         var toolInterface = {
-            enable: enable,
-            disable: disable,
-            activate: activate,
-            deactivate: deactivate
+            enable: enable, disable: disable, activate: activate, deactivate: deactivate
         };
 
         return toolInterface;
@@ -174,5 +169,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneMath, cornerstoneToo
     // module exports
     cornerstoneTools.touchTool = touchTool;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneMath, cornerstoneTools));
+})($, cornerstone, cornerstoneMath, cornerstoneTools);

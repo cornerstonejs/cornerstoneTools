@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function touchPanCallback(e, eventData) {
         console.log("MultiTouchPan");
@@ -24,9 +20,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     }
 
     cornerstoneTools.panMultiTouch = {
-        activate: activate,
-        disable: disable
+        activate: activate, disable: disable
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

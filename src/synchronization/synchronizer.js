@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     // This object is responsible for synchronizing target elements when an event fires on a source
     // element
@@ -26,12 +22,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
             ignoreFiredEvents = false;
         }
 
-        function onEvent(e)
-        {
-            if(ignoreFiredEvents === true) {
+        function onEvent(e) {
+            if (ignoreFiredEvents === true) {
                 //console.log("event ignored");
                 return;
             }
+
             fireEvent(e.currentTarget);
         }
 
@@ -39,7 +35,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         this.addSource = function(element) {
             // Return if this element was previously added
             var index = sourceElements.indexOf(element);
-            if(index !== -1) {
+            if (index !== -1) {
                 return;
             }
 
@@ -57,7 +53,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         this.addTarget = function(element) {
             // Return if this element was previously added
             var index = targetElements.indexOf(element);
-            if(index !== -1) {
+            if (index !== -1) {
                 return;
             }
 
@@ -78,7 +74,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         this.removeSource = function(element) {
             // Find the index of this element
             var index = sourceElements.indexOf(element);
-            if(index === -1) {
+            if (index === -1) {
                 return;
             }
 
@@ -96,7 +92,7 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         this.removeTarget = function(element) {
             // Find the index of this element
             var index = targetElements.indexOf(element);
-            if(index === -1) {
+            if (index === -1) {
                 return;
             }
 
@@ -134,5 +130,4 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
     // module/private exports
     cornerstoneTools.Synchronizer = Synchronizer;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

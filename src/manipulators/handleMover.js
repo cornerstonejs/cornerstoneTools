@@ -1,10 +1,6 @@
-var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    if(cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
 
     function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
@@ -17,21 +13,26 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
                 if (handle.x < 0) {
                     handle.x = 0;
                 }
+
                 if (handle.x > eventData.image.width) {
                     handle.x = eventData.image.width;
                 }
+
                 if (handle.y < 0) {
                     handle.y = 0;
                 }
+
                 if (handle.y > eventData.image.height) {
                     handle.y = eventData.image.height;
                 }
             }
+
             cornerstone.updateImage(element);
         }
+
         $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
 
-        function mouseUpCallback(e, eventData) {
+        function mouseUpCallback() {
             handle.active = false;
             $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
             $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -39,12 +40,11 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
 
             doneMovingCallback();
         }
+
         $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
     }
-
 
     // module/private exports
     cornerstoneTools.moveHandle = moveHandle;
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);
