@@ -4853,7 +4853,7 @@ if (typeof cornerstoneTools === 'undefined') {
     "use strict";
 
     function correctShift(shift, viewport) {
-        //Apply rotations
+        // Apply rotations
         if (viewport.rotation !== 0) {
             var angle = viewport.rotation * Math.PI / 180;
     
@@ -4867,7 +4867,7 @@ if (typeof cornerstoneTools === 'undefined') {
             shift.y = newY;
         }
 
-        //Apply Flips        
+        // Apply Flips        
         if (viewport.hflip) {
             shift.x *= -1;
         }
@@ -4879,15 +4879,23 @@ if (typeof cornerstoneTools === 'undefined') {
         return shift;
     }
 
-    function zoom(element, viewport, ticks) {
+    function defaultStrategy(element, viewport, ticks) {
         // Calculate the new scale factor based on how far the mouse has changed
+        var config = cornerstoneTools.zoom.getConfiguration();
+
         var pow = 1.7;
         var oldFactor = Math.log(viewport.scale) / Math.log(pow);
-        var factor = oldFactor + ticks;
+
+        var factor;
+        if (config.invert === true) {
+            factor = oldFactor - ticks;
+        } else {
+            factor = oldFactor + ticks;
+        }
+        
         var scale = Math.pow(pow, factor);
         viewport.scale = scale;
         
-        var config = cornerstoneTools.zoom.getConfiguration();
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
         } else if (config.minScale && scale < config.minScale) {
@@ -4912,13 +4920,14 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseDragCallback(e, eventData) {
         var ticks = eventData.deltaPoints.page.y / 100;
-        zoom(eventData.element, eventData.viewport, ticks);
+        cornerstoneTools.zoom.strategy(eventData.element, eventData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
         var shift = {
-            x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y
+            x: eventData.startPoints.image.x - newCoords.x,
+            y: eventData.startPoints.image.y - newCoords.y
         };
 
         shift = correctShift(shift, eventData.viewport);
@@ -4930,17 +4939,34 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseWheelCallback(e, eventData) {
         var ticks = -eventData.direction / 4;
-        zoom(eventData.element, eventData.viewport, ticks);
+        cornerstoneTools.zoom.strategy(eventData.element, eventData.viewport, ticks);
     }
 
     function touchPinchCallback(e, eventData) {
-        zoom(eventData.element, eventData.viewport, eventData.direction / 4);
+        var ticks = eventData.direction / 4;
+        var viewport = eventData.viewport;
+        var config = cornerstoneTools.zoom.getConfiguration();
+        var pow = 1.7;
+        
+        var oldFactor = Math.log(viewport.scale) / Math.log(pow);
+        var factor = oldFactor + ticks;
+        
+        var scale = Math.pow(pow, factor);
+        viewport.scale = scale;
+        
+        if (config.maxScale && scale > config.maxScale) {
+            viewport.scale = config.maxScale;
+        } else if (config.minScale && scale < config.minScale) {
+            viewport.scale = config.minScale;
+        }
+
+        cornerstone.setViewport(eventData.element, viewport);
     }
 
     function zoomTouchDrag(e, eventData) {
         var dragData = eventData;
         var ticks = dragData.deltaPoints.page.y / 100;
-        zoom(dragData.element, dragData.viewport, ticks);
+        cornerstoneTools.zoom.strategy(dragData.element, dragData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
@@ -4957,6 +4983,11 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    cornerstoneTools.zoom.strategies = {
+        default: defaultStrategy
+    };
+    cornerstoneTools.zoom.strategy = defaultStrategy;
+
     cornerstoneTools.zoomWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
