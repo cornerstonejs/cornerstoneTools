@@ -31,7 +31,7 @@
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);

@@ -37,7 +37,7 @@
         }
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);

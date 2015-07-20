@@ -23,7 +23,7 @@
         // return the font size to use
         var scaledFontSize = fontSize / ee.viewport.scale / fontScale;
         // TODO: actually calculate this?
-        var lineHeight  = fontSize / ee.viewport.scale / fontScale;
+        var lineHeight = fontSize / ee.viewport.scale / fontScale;
         return {
             fontSize: scaledFontSize, lineHeight: lineHeight, fontScale: fontScale
         };

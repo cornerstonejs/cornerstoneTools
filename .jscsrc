@@ -29,6 +29,7 @@
     "requireLineFeedAtFileEnd": true,
     "disallowSpaceAfterObjectKeys": true,
     "disallowQuotedKeysInObjects": true,
+    "disallowMultipleSpaces": true,
     "validateLineBreaks": "LF",
     "validateIndentation": 4
 }

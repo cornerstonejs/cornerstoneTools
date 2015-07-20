@@ -39,7 +39,7 @@
 
             var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
             if (stackToolDataSource === undefined) {
-                return;  // Same as 'continue' in a normal for loop
+                return; // Same as 'continue' in a normal for loop
             }
 
             var stackData = stackToolDataSource.data[0];
@@ -66,7 +66,7 @@
             // Switch the loaded image to the required image
             if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(targetElement);

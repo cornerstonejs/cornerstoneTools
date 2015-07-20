@@ -7,10 +7,10 @@
         var kappa = 0.5522848,
             ox = (w / 2) * kappa, // control point offset horizontal
             oy = (h / 2) * kappa, // control point offset vertical
-            xe = x + w,           // x-end
-            ye = y + h,           // y-end
-            xm = x + w / 2,       // x-middle
-            ym = y + h / 2;       // y-middle
+            xe = x + w, // x-end
+            ye = y + h, // y-end
+            xm = x + w / 2, // x-middle
+            ym = y + h / 2; // y-middle
 
         context.beginPath();
         context.moveTo(x, ym);
