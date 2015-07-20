@@ -111,6 +111,4 @@
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
 
-    return cornerstoneTools;
-
 })($, cornerstone, cornerstoneTools);

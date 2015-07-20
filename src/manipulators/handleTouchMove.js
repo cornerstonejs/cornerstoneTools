@@ -2,10 +2,6 @@
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
 

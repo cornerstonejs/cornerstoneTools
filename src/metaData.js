@@ -1,14 +1,10 @@
-// this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
-// so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
-// NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
-
-var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
+    // this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
+    // so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
+    // NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
 
     var providers = [];
 
@@ -41,5 +37,4 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         addProvider: addProvider, removeProvider: removeProvider, get: getMetaData
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);

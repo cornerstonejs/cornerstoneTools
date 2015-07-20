@@ -4955,8 +4955,6 @@ if (typeof cornerstoneTools === 'undefined') {
     cornerstoneTools.zoomTouchPinch = cornerstoneTools.touchPinchTool(touchPinchCallback);
     cornerstoneTools.zoomTouchDrag = cornerstoneTools.touchDragTool(zoomTouchDrag);
 
-    return cornerstoneTools;
-
 })($, cornerstone, cornerstoneTools);
  
 // End Source; src/imageTools/zoom.js
@@ -5233,10 +5231,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
-
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
 
@@ -5503,17 +5497,13 @@ if (typeof cornerstoneTools === 'undefined') {
 // End Source; src/measurementManager/measurementManager.js
 
 // Begin Source: src/metaData.js
-// this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
-// so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
-// NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
-
-var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
+(function($, cornerstone, cornerstoneTools) {
 
     "use strict";
 
-    if (cornerstoneTools === undefined) {
-        cornerstoneTools = {};
-    }
+    // this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
+    // so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
+    // NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
 
     var providers = [];
 
@@ -5546,8 +5536,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         addProvider: addProvider, removeProvider: removeProvider, get: getMetaData
     };
 
-    return cornerstoneTools;
-}($, cornerstone, cornerstoneTools));
+})($, cornerstone, cornerstoneTools);
  
 // End Source; src/metaData.js
 
@@ -7495,8 +7484,6 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
     // module exports
     cornerstoneTools.roundToDecimal = roundToDecimal;
-
-    return cornerstoneTools;
 
 })($, cornerstone, cornerstoneTools);
  

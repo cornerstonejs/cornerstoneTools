@@ -10,6 +10,4 @@
     // module exports
     cornerstoneTools.roundToDecimal = roundToDecimal;
 
-    return cornerstoneTools;
-
 })($, cornerstone, cornerstoneTools);
