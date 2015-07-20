@@ -7,7 +7,8 @@
     function drawHandles(context, renderData, handles, color, fill) {
         context.strokeStyle = color;
 
-        handles.forEach(function(handle) {
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active || handle.highlight) {
                 context.beginPath();
 

@@ -9,7 +9,8 @@
         function mouseDragCallback(e, eventData) {
             data.active = true;
 
-            Object.keys(data.handles).forEach(function(handle) {
+            Object.keys(data.handles).forEach(function(name) {
+                var handle = data.handles[name];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
                 if (preventHandleOutsideImage) {
@@ -51,10 +52,12 @@
                     top: 0, left: 0, width: image.width, height: image.height
                 };
                 
-                Object.keys(data.handles).forEach(function(handle) {
+                Object.keys(data.handles).forEach(function(name) {
+                    var handle = data.handles[name];
                     handle.active = false;
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
+                        return;
                     }
                 });
 

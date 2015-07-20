@@ -1699,13 +1699,19 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function getHandleNearImagePointTouch(element, data, coords) {
-        Object.keys(data.handles).forEach(function(handle) {
-            var handleCanvas = cornerstone.pixelToCanvas(element, data.handles[handle]);
+        var nearbyHandle;
+
+        Object.keys(data.handles).forEach(function(name) {
+            var handle = data.handles[name];
+            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
             if (distanceSquared < 30) {
-                return data.handles[handle];
+                nearbyHandle = handle;
+                return;
             }
         });
+
+        return nearbyHandle;
     }
 
     function touchStartCallback(e, eventData){
@@ -1867,7 +1873,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
             if (stackToolDataSource === undefined) {
-                return;  // Same as 'continue' in a normal for loop
+                return; // Same as 'continue' in a normal for loop
             }
 
             var stackData = stackToolDataSource.data[0];
@@ -1894,7 +1900,7 @@ if (typeof cornerstoneTools === 'undefined') {
             // Switch the loaded image to the required image
             if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(targetElement);
@@ -3575,8 +3581,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var textSize = context.measureText(area);
 
-            var textX  = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
-            var textY  = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
+            var textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
+            var textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
             cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
@@ -5014,12 +5020,16 @@ if (typeof cornerstoneTools === 'undefined') {
     function anyHandlesOutsideImage(renderData, handles) {
         var image = renderData.image;
         var imageRect = {
-            left: 0, top: 0, width: image.width, height: image.height
+            left: 0,
+            top: 0,
+            width: image.width,
+            height: image.height
         };
 
         var handleOutsideImage = false;
 
-        handles.forEach(function(handle) {
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
                 handleOutsideImage = true;
             }
@@ -5045,7 +5055,8 @@ if (typeof cornerstoneTools === 'undefined') {
     function drawHandles(context, renderData, handles, color, fill) {
         context.strokeStyle = color;
 
-        handles.forEach(function(handle) {
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active || handle.highlight) {
                 context.beginPath();
 
@@ -5081,13 +5092,19 @@ if (typeof cornerstoneTools === 'undefined') {
     "use strict";
 
     function getHandleNearImagePoint(element, data, coords) {
-        Object.keys(data.handles).forEach(function(handle) {
-            var handleCanvas = cornerstone.pixelToCanvas(element, data.handles[handle]);
+        var nearbyHandle;
+
+        Object.keys(data.handles).forEach(function(name) {
+            var handle = data.handles[name];
+            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
             if (distanceSquared < 25) {
-                return data.handles[handle];
+                nearbyHandle = handle;
+                return;
             }
         });
+        
+        return nearbyHandle;
     }
 
     // module exports
@@ -5103,21 +5120,33 @@ if (typeof cornerstoneTools === 'undefined') {
     "use strict";
 
     function findHandleNear(element, handles, canvasPoint) {
-        Object.keys(handles).forEach(function(handle) {
+        var nearbyHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
             if (distance <= 36) {
-                return handle;
+                nearbyHandle = handle;
+                return;
             }
         });
+
+        return nearbyHandle;
     }
 
     function getActiveHandle(handles) {
-        Object.keys(handles).forEach(function(handle) {
+        var activeHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active === true) {
-                return handle;
+                activeHandle = handle;
+                return;
             }
         });
+
+        return activeHandle;
     }
 
     function handleActivator(element, handles, canvasPoint) {
@@ -5252,7 +5281,8 @@ if (typeof cornerstoneTools === 'undefined') {
         function mouseDragCallback(e, eventData) {
             data.active = true;
 
-            Object.keys(data.handles).forEach(function(handle) {
+            Object.keys(data.handles).forEach(function(name) {
+                var handle = data.handles[name];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
                 if (preventHandleOutsideImage) {
@@ -5294,10 +5324,12 @@ if (typeof cornerstoneTools === 'undefined') {
                     top: 0, left: 0, width: image.width, height: image.height
                 };
                 
-                Object.keys(data.handles).forEach(function(handle) {
+                Object.keys(data.handles).forEach(function(name) {
+                    var handle = data.handles[name];
                     handle.active = false;
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
+                        return;
                     }
                 });
 
@@ -5341,7 +5373,8 @@ if (typeof cornerstoneTools === 'undefined') {
         function touchDragCallback(e, eventData) {
             data.active = true;
             
-            Object.keys(data.handles).forEach(function(handle) {
+            Object.keys(data.handles).forEach(function(name) {
+                var handle = data.handles[name];
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
             });
@@ -5366,9 +5399,11 @@ if (typeof cornerstoneTools === 'undefined') {
                     top: 0, left: 0, width: image.width, height: image.height
                 };
                 
-                Object.keys(data.handles).forEach(function(handle) {
+                Object.keys(data.handles).forEach(function(name) {
+                    var handle = data.handles[name];
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
+                        return;
                     }
                 });
 
@@ -5820,7 +5855,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-                var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(element);
@@ -6842,7 +6877,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         }
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -6905,7 +6940,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         }
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-        var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -7257,7 +7292,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -7553,10 +7588,10 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         var kappa = 0.5522848,
             ox = (w / 2) * kappa, // control point offset horizontal
             oy = (h / 2) * kappa, // control point offset vertical
-            xe = x + w,           // x-end
-            ye = y + h,           // y-end
-            xm = x + w / 2,       // x-middle
-            ym = y + h / 2;       // y-middle
+            xe = x + w, // x-end
+            ye = y + h, // y-end
+            xm = x + w / 2, // x-middle
+            ym = y + h / 2; // y-middle
 
         context.beginPath();
         context.moveTo(x, ym);
@@ -7739,7 +7774,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
 
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler  = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -7793,7 +7828,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         // return the font size to use
         var scaledFontSize = fontSize / ee.viewport.scale / fontScale;
         // TODO: actually calculate this?
-        var lineHeight  = fontSize / ee.viewport.scale / fontScale;
+        var lineHeight = fontSize / ee.viewport.scale / fontScale;
         return {
             fontSize: scaledFontSize, lineHeight: lineHeight, fontScale: fontScale
         };

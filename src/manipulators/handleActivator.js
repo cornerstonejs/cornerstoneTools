@@ -3,21 +3,33 @@
     "use strict";
 
     function findHandleNear(element, handles, canvasPoint) {
-        Object.keys(handles).forEach(function(handle) {
+        var nearbyHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
             if (distance <= 36) {
-                return handle;
+                nearbyHandle = handle;
+                return;
             }
         });
+
+        return nearbyHandle;
     }
 
     function getActiveHandle(handles) {
-        Object.keys(handles).forEach(function(handle) {
+        var activeHandle;
+
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (handle.active === true) {
-                return handle;
+                activeHandle = handle;
+                return;
             }
         });
+
+        return activeHandle;
     }
 
     function handleActivator(element, handles, canvasPoint) {

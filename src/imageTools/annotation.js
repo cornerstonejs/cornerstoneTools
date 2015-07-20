@@ -440,13 +440,19 @@
     }
 
     function getHandleNearImagePointTouch(element, data, coords) {
-        Object.keys(data.handles).forEach(function(handle) {
-            var handleCanvas = cornerstone.pixelToCanvas(element, data.handles[handle]);
+        var nearbyHandle;
+
+        Object.keys(data.handles).forEach(function(name) {
+            var handle = data.handles[name];
+            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
             if (distanceSquared < 30) {
-                return data.handles[handle];
+                nearbyHandle = handle;
+                return;
             }
         });
+
+        return nearbyHandle;
     }
 
     function touchStartCallback(e, eventData){

@@ -5,12 +5,16 @@
     function anyHandlesOutsideImage(renderData, handles) {
         var image = renderData.image;
         var imageRect = {
-            left: 0, top: 0, width: image.width, height: image.height
+            left: 0,
+            top: 0,
+            width: image.width,
+            height: image.height
         };
 
         var handleOutsideImage = false;
 
-        handles.forEach(function(handle) {
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
             if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
                 handleOutsideImage = true;
             }
