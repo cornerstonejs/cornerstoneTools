@@ -26,7 +26,6 @@
     "grunt-contrib-jshint": "^0.11.2",
     "grunt-contrib-clean": "^0.5.0",
     "grunt-jscs": "~1.8.0",
-    "load-grunt-tasks": "^0.2.1",
-    "jscs": "git://github.com/jscs-dev/node-jscs"
+    "load-grunt-tasks": "^0.2.1"
   }
 }
