@@ -77,13 +77,17 @@ if (typeof cornerstoneTools === 'undefined') {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                x: e.clientX, y: e.clientY
+            }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var mouseEventDetail = {
-            event: e, which: e.which, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: { x: 0, y:0 }
+            event: e, which: e.which, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                x: 0, y: 0
+            }
         };
 
         var event = $.Event("CornerstoneToolsMouseDoubleClick", mouseEventDetail);
@@ -94,13 +98,17 @@ if (typeof cornerstoneTools === 'undefined') {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                x: e.clientX, y: e.clientY
+            }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var mouseEventDetail = {
-                event: e, which: e.which, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: { x: 0, y:0 }
+                event: e, which: e.which, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                    x: 0, y: 0
+                }
             };
 
         var event = $.Event("CornerstoneToolsMouseDown", mouseEventDetail);
@@ -118,7 +126,9 @@ if (typeof cornerstoneTools === 'undefined') {
         function onMouseMove(e) {
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+                page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                    x: e.clientX, y: e.clientY
+                }
             };
             currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -129,7 +139,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var eventData = {
                 which: whichMouseButton, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: currentPoints, deltaPoints: deltaPoints
-             };
+            };
 
             //element.dispatchEvent(event);
 
@@ -148,7 +158,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // calculate our current points in page and image coordinates
             var currentPoints = {
-                page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+                page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                    x: e.clientX, y: e.clientY
+                }
             };
             currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -179,7 +191,9 @@ if (typeof cornerstoneTools === 'undefined') {
         var element = e.currentTarget;
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                x: e.clientX, y: e.clientY
+            }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
@@ -189,7 +203,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // calculate our current points in page and image coordinates
         var currentPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: { x: e.clientX, y: e.clientY }
+            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
+                x: e.clientX, y: e.clientY
+            }
         };
         currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -259,12 +275,16 @@ if (typeof cornerstoneTools === 'undefined') {
 
             case 'panstart':
                 startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
                 eventData = {
-                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: { x: 0, y: 0 }
+                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                        x: 0, y: 0
+                    }
                 };
                 
                 if (e.pointers.length === 1) {
@@ -288,7 +308,9 @@ if (typeof cornerstoneTools === 'undefined') {
             case 'panmove':
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -315,7 +337,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
             case 'panend':
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -364,8 +388,12 @@ if (typeof cornerstoneTools === 'undefined') {
         };
 
         var pan = new Hammer.Pan(panOptions);
-        var pinch = new Hammer.Pinch({ threshold: 0.25 });
-        var rotate = new Hammer.Rotate({ threshold: 0.05 });
+        var pinch = new Hammer.Pinch({
+            threshold: 0.25
+        });
+        var rotate = new Hammer.Rotate({
+            threshold: 0.05
+        });
 
         // we want to detect both the same time
         pinch.recognizeWith(pan);
@@ -578,7 +606,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // visible, interactive and can create
         function activate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -596,7 +625,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // visible, interactive
         function deactivate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -794,7 +824,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // visible, interactive and can create
         function activate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -812,7 +843,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // visible, interactive
         function deactivate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -868,8 +900,6 @@ if (typeof cornerstoneTools === 'undefined') {
 (function($, cornerstone, cornerstoneTools) {
 
     "use strict";
-
-    /*jshint newcap: false */
 
     function touchDragTool(touchDragCallback) {
         var toolInterface = {
@@ -1240,7 +1270,10 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     var configuration = {
-        'getTextCallback': getTextCallback, 'drawHandles': false, 'drawHandlesOnHover': true, 'arrowFirst': true
+        getTextCallback: getTextCallback,
+        drawHandles: false,
+        drawHandlesOnHover: true,
+        arrowFirst: true
     };
 
     /// --- Mouse Tool --- ///
@@ -1504,7 +1537,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 };
 
                 vector = {
-                        x: handleEndCanvas.x - handleStartCanvas.x, y: handleEndCanvas.y - handleStartCanvas.y
+                    x: handleEndCanvas.x - handleStartCanvas.x, y: handleEndCanvas.y - handleStartCanvas.y
                 };
 
                 var textCoords;
@@ -1560,7 +1593,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive and can create
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -1578,7 +1612,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive
     function deactivate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -1898,10 +1933,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function enable(element, mouseButtonMask, synchronizationContext) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext: synchronizationContext, });
+            synchronizationContext: synchronizationContext,
+        });
 
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
 
@@ -2134,7 +2171,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
         for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, { x: x, y: y }) === true) {
+                if (pointInEllipse(ellipse, {
+                    x: x, y: y
+                }) === true) {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
                     count++;
@@ -2170,7 +2209,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var context = eventData.canvasContext.canvas.getContext("2d");
         context.setTransform(1, 0, 0, 1, 0, 0);
 
-         //activation color 
+        //activation color 
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
@@ -2293,7 +2332,8 @@ if (typeof cornerstoneTools === 'undefined') {
         mouseLocation: {
             handles: {
                 start: {
-                    highlight: true, active: true, }
+                    highlight: true, active: true,
+                }
             }
         }, freehand: false, modifying: false, currentHandle: 0, currentTool: -1
     };
@@ -2453,7 +2493,8 @@ if (typeof cornerstoneTools === 'undefined') {
         $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
 
         var measurementData = {
-            visible: true, active: true, handles: [], };
+            visible: true, active: true, handles: [],
+        };
 
         var config = cornerstoneTools.freehand.getConfiguration();
         config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
@@ -2639,7 +2680,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible and interactive
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
         $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
@@ -2962,7 +3004,8 @@ if (typeof cornerstoneTools === 'undefined') {
     "use strict";
 
     var configuration = {
-        magnifySize: 100, magnificationLevel: 2, };
+        magnifySize: 100, magnificationLevel: 2,
+    };
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -3085,7 +3128,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 
@@ -3438,7 +3482,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-               sum += sp[index];
+                sum += sp[index];
                 sumSquared += sp[index] * sp[index];
                 count++;
                 index++;
@@ -4036,7 +4080,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive and can create
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -4054,7 +4099,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive
     function deactivate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -4390,7 +4436,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive and can create
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -4410,7 +4457,8 @@ if (typeof cornerstoneTools === 'undefined') {
     // visible, interactive
     function deactivate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -4531,7 +4579,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
         if (numPixels < 2) {
             return {
-                min: globalMin, max: globalMax, };
+                min: globalMin, max: globalMax,
+            };
         }
 
         var min = globalMax;
@@ -4726,7 +4775,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         var toolData = cornerstoneTools.getToolState(element, toolType);
         if (toolData === undefined) {
@@ -4855,7 +4905,9 @@ if (typeof cornerstoneTools === 'undefined') {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        var shift = { x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y };
+        var shift = {
+            x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, eventData.viewport);
         eventData.viewport.translation.x -= shift.x;
@@ -4881,7 +4933,9 @@ if (typeof cornerstoneTools === 'undefined') {
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
-        var shift = { x: dragData.startPoints.image.x - newCoords.x, y: dragData.startPoints.image.y - newCoords.y };
+        var shift = {
+            x: dragData.startPoints.image.x - newCoords.x, y: dragData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, dragData.viewport);
         dragData.viewport.translation.x -= shift.x;
@@ -5536,11 +5590,17 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         var tlhcPatient = referenceImagePlane.imagePositionPatient;
         var tlhcImage = cornerstoneTools.projectPatientPointToImagePlane(tlhcPatient, targetImagePlane);
 
-        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({ x:referenceImagePlane.columns, y:referenceImagePlane.rows }, referenceImagePlane);
+        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({
+            x: referenceImagePlane.columns, y: referenceImagePlane.rows
+        }, referenceImagePlane);
         var brhcImage = cornerstoneTools.projectPatientPointToImagePlane(brhcPatient, targetImagePlane);
 
         var referenceLineSegment = {
-            start: { x:tlhcImage.x, y:tlhcImage.y }, end: { x:brhcImage.x, y:brhcImage.y }
+            start: {
+                x: tlhcImage.x, y: tlhcImage.y
+            }, end: {
+                x: brhcImage.x, y: brhcImage.y
+            }
         };
         return referenceLineSegment;
     }
@@ -6031,7 +6091,7 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         // a rather arbitrary number of 11, since we don't want to overload any servers
         if (config === undefined || config.maxSimultaneousRequests === undefined) {
             config = {
-                "maxSimultaneousRequests": Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
+                maxSimultaneousRequests: Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
             };
         }
 
@@ -7099,7 +7159,10 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         var measurementData = {
             timeSeries: timeSeries, lineSample: new cornerstoneTools.LineSampleMeasurement(), imageIdIndex: timeSeries.stacks[timeSeries.currentStackIndex].currentImageIdIndex, visible: true, handles: {
                 end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -7314,7 +7377,8 @@ var cornerstoneTools = (function($, cornerstone, cornerstoneTools) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
             var mouseDragEventData = {
-                deltaY: 0, options: e.data.options
+                deltaY: 0,
+                options: e.data.options
             };
             $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
             $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);

@@ -28,12 +28,16 @@
 
             case 'panstart':
                 startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
                 eventData = {
-                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: { x: 0, y: 0 }
+                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                        x: 0, y: 0
+                    }
                 };
                 
                 if (e.pointers.length === 1) {
@@ -57,7 +61,9 @@
             case 'panmove':
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -84,7 +90,9 @@
 
             case 'panend':
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: { x: e.pointers[0].clientX, y: e.pointers[0].clientY }
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
@@ -133,8 +141,12 @@
         };
 
         var pan = new Hammer.Pan(panOptions);
-        var pinch = new Hammer.Pinch({ threshold: 0.25 });
-        var rotate = new Hammer.Rotate({ threshold: 0.05 });
+        var pinch = new Hammer.Pinch({
+            threshold: 0.25
+        });
+        var rotate = new Hammer.Rotate({
+            threshold: 0.05
+        });
 
         // we want to detect both the same time
         pinch.recognizeWith(pan);

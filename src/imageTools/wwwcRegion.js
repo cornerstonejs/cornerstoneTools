@@ -10,7 +10,8 @@
 
         if (numPixels < 2) {
             return {
-                min: globalMin, max: globalMax, };
+                min: globalMin, max: globalMax,
+            };
         }
 
         var min = globalMax;
@@ -205,7 +206,8 @@
 
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         var toolData = cornerstoneTools.getToolState(element, toolType);
         if (toolData === undefined) {

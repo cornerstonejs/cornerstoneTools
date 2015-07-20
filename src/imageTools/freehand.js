@@ -7,7 +7,8 @@
         mouseLocation: {
             handles: {
                 start: {
-                    highlight: true, active: true, }
+                    highlight: true, active: true,
+                }
             }
         }, freehand: false, modifying: false, currentHandle: 0, currentTool: -1
     };
@@ -167,7 +168,8 @@
         $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
 
         var measurementData = {
-            visible: true, active: true, handles: [], };
+            visible: true, active: true, handles: [],
+        };
 
         var config = cornerstoneTools.freehand.getConfiguration();
         config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
@@ -353,7 +355,8 @@
     // visible and interactive
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
         $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);

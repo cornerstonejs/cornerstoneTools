@@ -155,7 +155,8 @@
         // visible, interactive and can create
         function activate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -173,7 +174,8 @@
         // visible, interactive
         function deactivate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask, };
+                mouseButtonMask: mouseButtonMask,
+            };
 
             $(element).off("CornerstoneImageRendered", mouseToolInterface.onImageRendered);
             $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);

@@ -105,10 +105,12 @@
 
     function enable(element, mouseButtonMask, synchronizationContext) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext: synchronizationContext, });
+            synchronizationContext: synchronizationContext,
+        });
 
         $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
 

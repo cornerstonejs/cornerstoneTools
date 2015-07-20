@@ -2,8 +2,6 @@
 
     "use strict";
 
-    /*jshint newcap: false */
-
     function touchDragTool(touchDragCallback) {
         var toolInterface = {
             activate: function(element) {

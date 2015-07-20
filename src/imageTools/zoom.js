@@ -67,7 +67,9 @@
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        var shift = { x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y };
+        var shift = {
+            x: eventData.startPoints.image.x - newCoords.x, y: eventData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, eventData.viewport);
         eventData.viewport.translation.x -= shift.x;
@@ -93,7 +95,9 @@
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(dragData.element, dragData.startPoints.page.x, dragData.startPoints.page.y);
-        var shift = { x: dragData.startPoints.image.x - newCoords.x, y: dragData.startPoints.image.y - newCoords.y };
+        var shift = {
+            x: dragData.startPoints.image.x - newCoords.x, y: dragData.startPoints.image.y - newCoords.y
+        };
 
         shift = correctShift(shift, dragData.viewport);
         dragData.viewport.translation.x -= shift.x;

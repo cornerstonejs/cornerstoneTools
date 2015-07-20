@@ -7,12 +7,17 @@
     "disallowSpacesInFunctionExpression": {
         "beforeOpeningRoundBrace": true
     },
+    "disallowKeywordsOnNewLine": ["else"],
     "disallowNewlineBeforeBlockStatements": true,
     "requirePaddingNewLinesAfterUseStrict": true,
+    "requirePaddingNewLinesInObjects": true,
     "requirePaddingNewLinesAfterBlocks": {
         "allExcept": ["inCallExpressions", "inArrayExpressions", "inProperties"]
     },
+    //"requireObjectKeysOnNewLine": true, // Not supported yet by grunt-jscs, still in node-jscs dev
+    "requireSemicolons": true,
     "requireSpaceAfterBinaryOperators": true,
+    "requireSpaceBeforeObjectValues": true,
     "requireSpacesInsideObjectBrackets": "all",
     "requireSpacesInsideArrayBrackets": "all",
     "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
@@ -23,5 +28,7 @@
     "disallowKeywordsOnNewLine": [ "else" ],
     "requireLineFeedAtFileEnd": true,
     "disallowSpaceAfterObjectKeys": true,
-    "validateLineBreaks": "LF"
+    "disallowQuotedKeysInObjects": true,
+    "validateLineBreaks": "LF",
+    "validateIndentation": 4
 }

@@ -225,7 +225,7 @@
         // a rather arbitrary number of 11, since we don't want to overload any servers
         if (config === undefined || config.maxSimultaneousRequests === undefined) {
             config = {
-                "maxSimultaneousRequests": Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
+                maxSimultaneousRequests: Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
             };
         }
 

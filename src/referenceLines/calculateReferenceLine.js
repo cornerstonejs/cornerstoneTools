@@ -9,11 +9,17 @@
         var tlhcPatient = referenceImagePlane.imagePositionPatient;
         var tlhcImage = cornerstoneTools.projectPatientPointToImagePlane(tlhcPatient, targetImagePlane);
 
-        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({ x:referenceImagePlane.columns, y:referenceImagePlane.rows }, referenceImagePlane);
+        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({
+            x: referenceImagePlane.columns, y: referenceImagePlane.rows
+        }, referenceImagePlane);
         var brhcImage = cornerstoneTools.projectPatientPointToImagePlane(brhcPatient, targetImagePlane);
 
         var referenceLineSegment = {
-            start: { x:tlhcImage.x, y:tlhcImage.y }, end: { x:brhcImage.x, y:brhcImage.y }
+            start: {
+                x: tlhcImage.x, y: tlhcImage.y
+            }, end: {
+                x: brhcImage.x, y: brhcImage.y
+            }
         };
         return referenceLineSegment;
     }

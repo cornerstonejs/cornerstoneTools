@@ -3,7 +3,8 @@
     "use strict";
 
     var configuration = {
-        magnifySize: 100, magnificationLevel: 2, };
+        magnifySize: 100, magnificationLevel: 2,
+    };
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -126,7 +127,8 @@
 
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 

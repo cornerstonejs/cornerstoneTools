@@ -11,7 +11,10 @@
     }
 
     var configuration = {
-        'getTextCallback': getTextCallback, 'drawHandles': false, 'drawHandlesOnHover': true, 'arrowFirst': true
+        getTextCallback: getTextCallback,
+        drawHandles: false,
+        drawHandlesOnHover: true,
+        arrowFirst: true
     };
 
     /// --- Mouse Tool --- ///
@@ -275,7 +278,7 @@
                 };
 
                 vector = {
-                        x: handleEndCanvas.x - handleStartCanvas.x, y: handleEndCanvas.y - handleStartCanvas.y
+                    x: handleEndCanvas.x - handleStartCanvas.x, y: handleEndCanvas.y - handleStartCanvas.y
                 };
 
                 var textCoords;
@@ -331,7 +334,8 @@
     // visible, interactive and can create
     function activate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
@@ -349,7 +353,8 @@
     // visible, interactive
     function deactivate(element, mouseButtonMask) {
         var eventData = {
-            mouseButtonMask: mouseButtonMask, };
+            mouseButtonMask: mouseButtonMask,
+        };
 
         $(element).off("CornerstoneImageRendered", onImageRendered);
         $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);

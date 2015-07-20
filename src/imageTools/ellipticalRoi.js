@@ -70,7 +70,9 @@
 
         for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, { x: x, y: y }) === true) {
+                if (pointInEllipse(ellipse, {
+                    x: x, y: y
+                }) === true) {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
                     count++;
@@ -106,7 +108,7 @@
         var context = eventData.canvasContext.canvas.getContext("2d");
         context.setTransform(1, 0, 0, 1, 0, 0);
 
-         //activation color 
+        //activation color 
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();

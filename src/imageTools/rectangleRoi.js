@@ -45,7 +45,7 @@
 
         for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-               sum += sp[index];
+                sum += sp[index];
                 sumSquared += sp[index] * sp[index];
                 count++;
                 index++;

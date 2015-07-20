@@ -31,7 +31,10 @@
         var measurementData = {
             timeSeries: timeSeries, lineSample: new cornerstoneTools.LineSampleMeasurement(), imageIdIndex: timeSeries.stacks[timeSeries.currentStackIndex].currentImageIdIndex, visible: true, handles: {
                 end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
