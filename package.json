@@ -7,12 +7,12 @@
     "medical",
     "imaging"
   ],
-  "author": "Chris Hafey,Prasath",
-  "homepage": "https://github.com/prasath-rasterimages/cornerstoneTools",
+  "author": "Chris Hafey, Prasath",
+  "homepage": "https://github.com/chafey/cornerstoneTools",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/prasath-rasterimages/cornerstoneTools.git"
+    "url": "https://github.com/chafey/cornerstoneTools.git"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
