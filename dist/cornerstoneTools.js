@@ -5333,6 +5333,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     toolData.data.forEach(function(thisToolData, index) {
                         if (thisToolData === data) {
                             indexOfData = index;
+                            return;
                         }
                     });
 
