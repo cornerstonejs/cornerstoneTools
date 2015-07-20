@@ -34,7 +34,9 @@
 
     // module/private exports
     cornerstoneTools.metaData = {
-        addProvider: addProvider, removeProvider: removeProvider, get: getMetaData
+        addProvider: addProvider,
+        removeProvider: removeProvider,
+        get: getMetaData
     };
 
 })($, cornerstone, cornerstoneTools);
