@@ -55,6 +55,7 @@
                     <li><a id="rotate" class="list-group-item">Rotate</a></li>
                     <li><a id="zoom" class="list-group-item">Zoom (pinch)</a></li>
                     <li><a id="zoomDrag" class="list-group-item">Zoom (drag)</a></li>
+                    <li><a id="stackScroll" class="list-group-item">Stack Scroll</a></li>
                     <li><a id="length" class="list-group-item">Length</a></li>
                     <li><a id="probe" class="list-group-item">Probe</a></li>
                     <li><a id="circleroi" class="list-group-item">Ellipse</a></li>
@@ -135,7 +136,15 @@ is used by our example image loader-->
 
     $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
 
-    var imageId = 'example://1';
+    var imageIds = [
+        'example://1',
+        'example://2'
+    ];
+
+    var stack = {
+        currentImageIdIndex : 0,
+        imageIds: imageIds
+    };
 
     var container = element.parentNode;
 
@@ -184,8 +193,12 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
 
-    cornerstone.loadImage(imageId).then(function(image) {
+    cornerstone.loadImage(imageIds[0]).then(function(image) {
         cornerstone.displayImage(element, image);
+
+        // Set the stack as tool state
+        cornerstoneTools.addStackStateManager(element, ['stack']);
+        cornerstoneTools.addToolState(element, 'stack', stack);
 
         cornerstoneTools.touchInput.enable(element);
       
@@ -210,6 +223,7 @@ is used by our example image loader-->
             cornerstoneTools.probeTouch.deactivate(element);
             cornerstoneTools.zoomTouchDrag.deactivate(element);
             cornerstoneTools.wwwcTouchDrag.deactivate(element);
+            cornerstoneTools.stackScrollTouchDrag.deactivate(element);
         }
 
         // Tool button event handlers that set the new active tool
@@ -237,6 +251,11 @@ is used by our example image loader-->
         $('#zoomDrag').click(function (e) {
             disableAllTools();
             cornerstoneTools.zoomTouchDrag.activate(element);
+            toolSelector.text(e.currentTarget.innerHTML)
+        });
+        $('#stackScroll').click(function (e) {
+            disableAllTools();
+            cornerstoneTools.stackScrollTouchDrag.activate(element);
             toolSelector.text(e.currentTarget.innerHTML)
         });
         $('#length').click(function (e) {

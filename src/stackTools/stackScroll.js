@@ -61,16 +61,12 @@ var cornerstoneTools = (function ($, cornerstone, cornerstoneTools) {
         cornerstoneTools.scroll(eventData.element, images);
     }
 
-    function onDrag(e) {
-        var mouseMoveData = e.originalEvent.detail;
-        var eventData = {
-            deltaY : 0
-        };
+    function onDrag(e, eventData) {
+        var element = eventData.element;
+        eventData.deltaY = eventData.deltaY || 0;
+        eventData.deltaY += eventData.deltaPoints.page.y;
 
-        var element = mouseMoveData.element;
-        eventData.deltaY += mouseMoveData.deltaPoints.page.y;
-
-        var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+        var toolData = cornerstoneTools.getToolState(eventData.element, 'stack');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
