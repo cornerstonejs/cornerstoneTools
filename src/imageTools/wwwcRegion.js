@@ -24,7 +24,8 @@
         }
 
         return {
-            min: min, max: max
+            min: min,
+            max: max
         };
     }
 
@@ -44,7 +45,8 @@
 
         // Update the endpoint as the mouse/touch is dragged
         var endPoint = {
-            x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
+            x: eventData.currentPoints.image.x,
+            y: eventData.currentPoints.image.y
         };
 
         toolData.data[0].endPoint = endPoint;
@@ -80,8 +82,8 @@
         left = Math.min(left, eventData.image.width);
         top = Math.max(top, 0);
         top = Math.min(top, eventData.image.height);
-        width = Math.min(width, Math.abs(eventData.image.width - left));
-        height = Math.min(height, Math.abs(eventData.image.height - top));
+        width = Math.floor(Math.min(width, Math.abs(eventData.image.width - left)));
+        height = Math.floor(Math.min(height, Math.abs(eventData.image.height - top)));
 
         // Get the pixel data in the rectangular region
         var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
@@ -120,7 +122,8 @@
 
         var measurementData = {
             startPoint: {
-                x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
+                x: eventData.currentPoints.image.x,
+                y: eventData.currentPoints.image.y
             }
         };
 
@@ -141,7 +144,8 @@
 
         // Update the endpoint as the mouse/touch is dragged
         var endPoint = {
-            x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y
+            x: eventData.currentPoints.image.x,
+            y: eventData.currentPoints.image.y
         };
 
         toolData.data[0].endPoint = endPoint;
@@ -221,8 +225,6 @@
         $(element).off('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-        $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).on("CornerstoneToolsMouseDrag", dragCallback);
         $(element).on('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
@@ -255,11 +257,15 @@
 
     // module exports
     cornerstoneTools.wwwcRegion = {
-        activate: activate, deactivate: disable, disable: disable
+        activate: activate,
+        deactivate: disable,
+        disable: disable
     };
 
     cornerstoneTools.wwwcRegionTouch = {
-        activate: activateTouchDrag, deactivate: disableTouchDrag, disable: disableTouchDrag
+        activate: activateTouchDrag,
+        deactivate: disableTouchDrag,
+        disable: disableTouchDrag
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
