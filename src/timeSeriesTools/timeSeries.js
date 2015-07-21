@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function incrementTimePoint(element, timePoints, wrap) {
         var toolData = cornerstoneTools.getToolState(element, 'timeSeries');

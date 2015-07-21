@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function mouseWheel(e) {
         // !!!HACK/NOTE/WARNING!!!
@@ -8,11 +8,11 @@
         // mac os x mavericks system when middle mouse button dragging.
         // I couldn't find any info about this so this might break other systems
         // webkit hack
-        if (e.originalEvent.type === "mousewheel" && e.originalEvent.wheelDeltaY === 0) {
+        if (e.originalEvent.type === 'mousewheel' && e.originalEvent.wheelDeltaY === 0) {
             return;
         }
         // firefox hack
-        if (e.originalEvent.type === "DOMMouseScroll" && e.originalEvent.axis === 1) {
+        if (e.originalEvent.type === 'DOMMouseScroll' && e.originalEvent.axis === 1) {
             return;
         }
 
@@ -27,10 +27,10 @@
             element: element, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, direction: direction, pageX: e.pageX || e.originalEvent.pageX, pageY: e.pageY || e.originalEvent.pageY, imageX: startingCoords.x, imageY: startingCoords.y
         };
 
-        $(element).trigger("CornerstoneToolsMouseWheel", mouseWheelData);
+        $(element).trigger('CornerstoneToolsMouseWheel', mouseWheelData);
     }
 
-    var mouseWheelEvents = "mousewheel DOMMouseScroll";
+    var mouseWheelEvents = 'mousewheel DOMMouseScroll';
 
     function enable(element) {
         $(element).on(mouseWheelEvents, mouseWheel);

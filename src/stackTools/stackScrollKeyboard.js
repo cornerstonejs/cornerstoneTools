@@ -1,6 +1,6 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var keys = {
         UP: 38, DOWN: 40

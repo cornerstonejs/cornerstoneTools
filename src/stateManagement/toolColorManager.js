@@ -1,9 +1,11 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function toolColorManager(){
-        var defaultColor = "white", activeColor = "greenyellow", fillColor = "transparent";
+        var defaultColor = 'white',
+            activeColor = 'greenyellow',
+            fillColor = 'transparent';
 
         function setFillColor(color){
             fillColor = color;
@@ -30,7 +32,12 @@
         }
 
         var toolColors = {
-            setFillColor: setFillColor, getFillColor: getFillColor, setToolColor: setToolColor, getToolColor: getToolColor, setActiveColor: setActiveToolColor, getActiveColor: getActiveToolColor
+            setFillColor: setFillColor,
+            getFillColor: getFillColor,
+            setToolColor: setToolColor,
+            getToolColor: getToolColor,
+            setActiveColor: setActiveToolColor,
+            getActiveColor: getActiveToolColor
         };
 
         return toolColors;

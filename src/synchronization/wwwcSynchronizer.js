@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This function synchronizes the target element ww/wc to match the source element
     function wwwcSynchronizer(synchronizer, sourceElement, targetElement) {

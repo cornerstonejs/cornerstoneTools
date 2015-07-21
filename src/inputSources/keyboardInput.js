@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var mouseX, mouseY;
 
@@ -14,12 +14,12 @@
             element: element, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, pageX: mouseX, pageY: mouseY, imageX: startingCoords.x, imageY: startingCoords.y, keyCode: e.keyCode, which: e.which
         };
 
-        if (e.type === "keydown") {
-            $(element).trigger("CornerstoneToolsKeyDown", keyPressData);
-        } else if (e.type === "keypress") {
-            $(element).trigger("CornerstoneToolsKeyPress", keyPressData);
-        } else if (e.type === "keyup") {
-            $(element).trigger("CornerstoneToolsKeyUp", keyPressData);
+        if (e.type === 'keydown') {
+            $(element).trigger('CornerstoneToolsKeyDown', keyPressData);
+        } else if (e.type === 'keypress') {
+            $(element).trigger('CornerstoneToolsKeyPress', keyPressData);
+        } else if (e.type === 'keyup') {
+            $(element).trigger('CornerstoneToolsKeyUp', keyPressData);
         }
     }
 
@@ -28,11 +28,11 @@
         mouseY = e.pageY || e.originalEvent.pageY;
     }
 
-    var keyboardEvent = "keydown keypress keyup";
+    var keyboardEvent = 'keydown keypress keyup';
 
     function enable(element) {
         $(element).bind(keyboardEvent, keyPress);
-        $(element).on("mousemove", mouseMove);
+        $(element).on('mousemove', mouseMove);
     }
 
     function disable(element) {

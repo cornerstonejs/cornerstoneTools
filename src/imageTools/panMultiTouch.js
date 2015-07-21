@@ -1,9 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function touchPanCallback(e, eventData) {
-        console.log("MultiTouchPan");
         eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
         eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
         cornerstone.setViewport(eventData.element, eventData.viewport);
@@ -11,12 +10,12 @@
     }
 
     function disable(element) {
-        $(element).off("CornerstoneToolsMultiTouchDrag", touchPanCallback);
+        $(element).off('CornerstoneToolsMultiTouchDrag', touchPanCallback);
     }
 
     function activate(element) {
-        $(element).off("CornerstoneToolsMultiTouchDrag", touchPanCallback);
-        $(element).on("CornerstoneToolsMultiTouchDrag", touchPanCallback);
+        $(element).off('CornerstoneToolsMultiTouchDrag', touchPanCallback);
+        $(element).on('CornerstoneToolsMultiTouchDrag', touchPanCallback);
     }
 
     cornerstoneTools.panMultiTouch = {

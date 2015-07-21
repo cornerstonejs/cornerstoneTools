@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function touchTool(touchToolInterface) {
         ///////// BEGIN ACTIVE TOOL ///////
@@ -110,7 +110,7 @@
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
+            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
@@ -120,25 +120,25 @@
 
         // visible but not interactive
         function enable(element) {
-            $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
+            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-            $(element).on("CornerstoneImageRendered", touchToolInterface.onImageRendered);
+            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
 
             cornerstone.updateImage(element);
         }
 
         // visible, interactive and can create
         function activate(element) {
-            $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
-            $(element).off("CornerstoneToolsTouchDrag", touchMoveCallback);
-            $(element).off("CornerstoneToolsDragStart", touchStartCallback);
+            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
+            $(element).off('CornerstoneToolsDragStart', touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-            $(element).on("CornerstoneImageRendered", touchToolInterface.onImageRendered);
-            $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
+            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            $(element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).on('CornerstoneToolsDragStart', touchStartCallback);
             $(element).on('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
@@ -147,13 +147,13 @@
 
         // visible, interactive
         function deactivate(element) {
-            $(element).off("CornerstoneImageRendered", touchToolInterface.onImageRendered);
+            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).off('CornerstoneToolsDragStart', touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-            $(element).on("CornerstoneImageRendered", touchToolInterface.onImageRendered);
-            $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
+            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            $(element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
             $(element).on('CornerstoneToolsDragStart', touchStartCallback);
 
             cornerstone.updateImage(element);

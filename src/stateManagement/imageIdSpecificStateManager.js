@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This implements an imageId specific tool state management strategy.  This means that
     // measurements data is tied to a specific imageId and only visible for enabled elements

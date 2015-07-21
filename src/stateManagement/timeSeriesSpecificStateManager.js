@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This implements an Stack specific tool state management strategy.  This means
     // that tool data is shared between all imageIds in a given stack

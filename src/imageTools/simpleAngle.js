@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "simpleAngle";
+    var toolType = 'simpleAngle';
     var configuration = {};
 
     ///////// BEGIN ACTIVE TOOL ///////
@@ -55,7 +55,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
         
         //activation color 
@@ -100,9 +100,9 @@
             // Default to isotropic pixel size, update suffix to reflect this
             var columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
             var rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-            var suffix = "";
+            var suffix = '';
             if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
-                suffix = " (isotropic)";
+                suffix = ' (isotropic)';
             }
 
             var sideA = {
@@ -128,7 +128,7 @@
             var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
 
             if (rAngle) {
-                var str = "00B0"; // degrees symbol
+                var str = '00B0'; // degrees symbol
                 var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
                 
                 var distance = 15;
@@ -187,7 +187,7 @@
         function stopMovingLastHandle(mouseEventData) {
             var handle = measurementData.handles.end;
             handle.active = false;
-            $(mouseEventData.element).off("CornerstoneToolsMouseMove", moveLastHandle);
+            $(mouseEventData.element).off('CornerstoneToolsMouseMove', moveLastHandle);
             $(mouseEventData.element).off('CornerstoneToolsMouseUp', stopMovingLastHandle);
             $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
         }
@@ -310,7 +310,7 @@
 
     // not visible, not interactive
     function disable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
@@ -320,12 +320,12 @@
 
     // visible but not interactive
     function enable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }
@@ -336,13 +336,13 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
 
@@ -355,13 +355,13 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
         cornerstone.updateImage(element);
@@ -376,7 +376,13 @@
     }
 
     cornerstoneTools.simpleAngle = {
-        enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration, pointNearTool: pointNearTool
+        enable: enable,
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

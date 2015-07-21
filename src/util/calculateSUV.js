@@ -1,6 +1,6 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function calculateSUV(image, storedPixelValue) {
         // if no dicom data set, return undefined
@@ -9,7 +9,7 @@
         }
         
         // image must be PET
-        if (image.data.string('x00080060') !== "PT") {
+        if (image.data.string('x00080060') !== 'PT') {
             return undefined;
         }
 

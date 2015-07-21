@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "highlight";
+    var toolType = 'highlight';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -66,7 +66,7 @@
         }
 
         // we have tool data for this elemen
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -95,13 +95,13 @@
 
         // draw dark fill outside the rectangle
         context.beginPath();
-        context.strokeStyle = "transparent";
+        context.strokeStyle = 'transparent';
 
         context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
 
         context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
         context.stroke();
-        context.fillStyle = "rgba(0,0,0,0.7)";
+        context.fillStyle = 'rgba(0,0,0,0.7)';
         context.fill();
         context.closePath();
 

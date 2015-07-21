@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function findHandleNear(element, handles, canvasPoint) {
         var nearbyHandle;

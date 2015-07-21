@@ -1,17 +1,27 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     /*jshint newcap: false */
 
-    var lastScale = 1.0, lastRotation = 0.0, startPoints, currentPoints, lastPoints, deltaPoints, eventData;
+    var lastScale = 1.0,
+        lastRotation = 0.0,
+        startPoints,
+        currentPoints,
+        lastPoints,
+        deltaPoints,
+        eventData;
     
     function activateMouseDown(eventData) {
-        $(eventData.element).trigger("CornerstoneToolsDragStartActive", eventData);
+        $(eventData.element).trigger('CornerstoneToolsDragStartActive', eventData);
     }
 
     function onTouch(e) {
-        var element = e.target.parentNode, event, eventType;
+        var element = e.target.parentNode,
+            event,
+            eventType;
+
+        console.log(e.type);
 
         switch (e.type) {
             case 'pinch':
@@ -19,17 +29,22 @@
                 lastScale = e.scale;
                 
                 eventData = {
-                    event: e, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, direction: scale < 0 ? 1 : -1
+                    event: e,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    direction: scale < 0 ? 1 : -1
                 };
 
-                event = $.Event("CornerstoneToolsTouchPinch", eventData);
+                event = $.Event('CornerstoneToolsTouchPinch', eventData);
                 $(element).trigger(event, eventData);
                 break;
 
             case 'panstart':
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
-                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                        x: e.pointers[0].clientX,
+                        y: e.pointers[0].clientY
                     }
                 };
                 startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
@@ -41,9 +56,9 @@
                 };
                 
                 if (e.pointers.length === 1) {
-                    eventType = "CornerstoneToolsDragStart";
+                    eventType = 'CornerstoneToolsDragStart';
                 } else {
-                    eventType = "CornerstoneToolsMultiTouchDragStart";
+                    eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
 
                 event = $.Event(eventType, eventData);
@@ -61,8 +76,11 @@
             case 'panmove':
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
-                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    client: {
+                        x: e.pointers[0].clientX,
+                        y: e.pointers[0].clientY
                     }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
@@ -77,9 +95,9 @@
                 };
 
                 if (e.pointers.length === 1) {
-                    eventType = "CornerstoneToolsTouchDrag";
+                    eventType = 'CornerstoneToolsTouchDrag';
                 } else {
-                    eventType = "CornerstoneToolsMultiTouchDrag";
+                    eventType = 'CornerstoneToolsMultiTouchDrag';
                 }
 
                 event = $.Event(eventType, eventData);
@@ -90,8 +108,11 @@
 
             case 'panend':
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
-                        x: e.pointers[0].clientX, y: e.pointers[0].clientY
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    client: {
+                        x: e.pointers[0].clientX,
+                        y: e.pointers[0].clientY
                     }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
@@ -106,9 +127,9 @@
                 };
 
                 if (e.pointers.length === 1) {
-                    eventType = "CornerstoneToolsDragEnd";
+                    eventType = 'CornerstoneToolsDragEnd';
                 } else {
-                    eventType = "CornerstoneToolsMultiTouchDragEnd";
+                    eventType = 'CornerstoneToolsMultiTouchDragEnd';
                 }
 
                 event = $.Event(eventType, eventData);
@@ -120,9 +141,13 @@
                 lastRotation = e.rotation;
 
                 eventData = {
-                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, rotation: rotation
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    rotation: rotation
                 };
-                event = $.Event("CornerstoneToolsTouchRotate", eventData);
+                event = $.Event('CornerstoneToolsTouchRotate', eventData);
                 $(element).trigger(event, eventData);
                 break;
         }
@@ -130,7 +155,11 @@
 
     function enable(element) {
         var hammerOptions = {
-            transform_always_block: true, transform_min_scale: 0.01, drag_block_horizontal: true, drag_block_vertical: true, drag_min_distance: 0
+            transform_always_block: true,
+            transform_min_scale: 0.01,
+            drag_block_horizontal: true,
+            drag_block_vertical: true,
+            drag_min_distance: 0
         };
 
         var mc = new Hammer(element);
@@ -157,11 +186,11 @@
 
         mc.on('panstart panmove panend pinch rotate', onTouch);
 
-        $(element).data("hammer", mc);
+        $(element).data('hammer', mc);
     }
 
     function disable(element) {
-        var mc = $(element).data("hammer");
+        var mc = $(element).data('hammer');
         mc.off('panstart panmove panend pinch rotate', onTouch);
     }
 

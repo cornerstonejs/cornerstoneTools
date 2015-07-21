@@ -1,9 +1,10 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function toolStyleManager() {
-        var defaultWidth = 1, activeWidth = 2;
+        var defaultWidth = 1,
+            activeWidth = 2;
 
         function setToolWidth(width){
             defaultWidth = width;
@@ -22,7 +23,10 @@
         }
 
         var toolStyle = {
-            setToolWidth: setToolWidth, getToolWidth: getToolWidth, setActiveWidth: setActiveToolWidth, getActiveWidth: getActiveToolWidth
+            setToolWidth: setToolWidth,
+            getToolWidth: getToolWidth,
+            setActiveWidth: setActiveToolWidth,
+            getActiveWidth: getActiveToolWidth
         };
 
         return toolStyle;

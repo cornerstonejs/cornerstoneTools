@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     /*jshint newcap: false */
 
@@ -10,7 +10,7 @@
                 $(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
                 var eventData = {
                 };
-                $(element).on("CornerstoneToolsTouchPinch", eventData, touchPinchCallback);
+                $(element).on('CornerstoneToolsTouchPinch', eventData, touchPinchCallback);
             }, disable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, enable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
         };
         return toolInterface;

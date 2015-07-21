@@ -1,12 +1,15 @@
 (function(cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function getOrientationString(vector) {
         // Thanks to David Clunie
         // https://sites.google.com/site/dicomnotes/
 
-        var orientation = "", orientationX = vector.x < 0 ? 'R' : 'L', orientationY = vector.y < 0 ? 'A' : 'P', orientationZ = vector.z < 0 ? 'F' : 'H';
+        var orientation = '',
+            orientationX = vector.x < 0 ? 'R' : 'L',
+            orientationY = vector.y < 0 ? 'A' : 'P',
+            orientationZ = vector.z < 0 ? 'F' : 'H';
 
         // Should probably make this a function vector3.abs
         var abs = new cornerstoneMath.Vector3(Math.abs(vector.x), Math.abs(vector.y), Math.abs(vector.z));

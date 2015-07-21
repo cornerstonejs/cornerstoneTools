@@ -1,10 +1,10 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     function mouseDownCallback(e, eventData) {
@@ -13,8 +13,8 @@
             var mouseDragEventData = {
                 deltaY: 0, options: e.data.options
             };
-            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragEventData, mouseDragCallback);
-            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, mouseDragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             e.stopImmediatePropagation();
             return false;
         }

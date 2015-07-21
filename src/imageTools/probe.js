@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "probe";
+    var toolType = 'probe';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -32,7 +32,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -71,10 +71,10 @@
             
             context.font = font;
             context.fillStyle = color;
-            var text = "" + x + ", " + y;
-            var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
+            var text = '' + x + ', ' + y;
+            var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
             if (suv) {
-                str += " SUV: " + parseFloat(suv.toFixed(3));
+                str += ' SUV: ' + parseFloat(suv.toFixed(3));
             }
 
             cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);

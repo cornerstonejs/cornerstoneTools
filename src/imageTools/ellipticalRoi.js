@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "ellipticalRoi";
+    var toolType = 'ellipticalRoi';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -105,7 +105,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         //activation color 
@@ -183,10 +183,10 @@
             }
             // Draw text
             if (area !== undefined) {
-                areaText = "Area: " + area.toFixed(2) + " mm" + String.fromCharCode(178);
+                areaText = 'Area: ' + area.toFixed(2) + ' mm' + String.fromCharCode(178);
                 textSize = context.measureText(areaText);
             } else {
-                var stdDevText = "StdDev: " + meanStdDev.stdDev.toFixed(2);
+                var stdDevText = 'StdDev: ' + meanStdDev.stdDev.toFixed(2);
                 textSize = context.measureText(stdDevText);
             }
 
@@ -195,8 +195,8 @@
 
             context.fillStyle = color;
             if (meanStdDev) {
-                cornerstoneTools.drawTextBox(context, "Mean: " + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
-                cornerstoneTools.drawTextBox(context, "StdDev: " + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+                cornerstoneTools.drawTextBox(context, 'Mean: ' + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
+                cornerstoneTools.drawTextBox(context, 'StdDev: ' + meanStdDev.stdDev.toFixed(2), textX, textY, color);
             }
             
             // Char code 178 is a superscript 2 for mm^2

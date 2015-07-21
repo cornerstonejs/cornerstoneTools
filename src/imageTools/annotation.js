@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "arrowAnnotate";
+    var toolType = 'arrowAnnotate';
 
     // Define a callback to get your text annotation
     // This could be used, e.g. to open a modal
@@ -228,7 +228,7 @@
         var config = cornerstoneTools.arrowAnnotate.getConfiguration();
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -265,7 +265,7 @@
             }
 
             // Draw the text
-            if (data.annotationText && data.annotationText !== "") {
+            if (data.annotationText && data.annotationText !== '') {
                 context.font = font;
                 
                 var distance = 13;
@@ -311,7 +311,7 @@
 
     // not visible, not interactive
     function disable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
@@ -321,12 +321,12 @@
 
     // visible but not interactive
     function enable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }
@@ -337,13 +337,13 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
 
@@ -356,13 +356,13 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
         cornerstone.updateImage(element);
@@ -503,7 +503,7 @@
 
     // not visible, not interactive
     function disableTouch(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
         $(element).off('CornerstoneToolsDragStart', touchStartCallback);
         $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
@@ -513,25 +513,25 @@
 
     // visible but not interactive
     function enableTouch(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
         $(element).off('CornerstoneToolsDragStart', touchStartCallback);
         $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }
 
     // visible, interactive and can create
     function activateTouch(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsTouchDrag", touchMoveCallback);
-        $(element).off("CornerstoneToolsDragStart", touchStartCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
+        $(element).off('CornerstoneToolsDragStart', touchStartCallback);
         $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
         $(element).on('CornerstoneToolsDragStart', touchStartCallback);
         $(element).on('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
@@ -540,13 +540,13 @@
 
     // visible, interactive
     function deactivateTouch(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsTouchDrag', touchMoveCallback);
         $(element).off('CornerstoneToolsDragStart', touchStartCallback);
         $(element).off('CornerstoneToolsDragStartActive', touchDownActivateCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsTouchDrag", touchMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsTouchDrag', touchMoveCallback);
         $(element).on('CornerstoneToolsDragStart', touchStartCallback);
 
         cornerstone.updateImage(element);
@@ -561,11 +561,20 @@
     }
 
     cornerstoneTools.arrowAnnotate = {
-        enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration, pointNearTool: pointNearTool
+        enable: enable,
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
 
     cornerstoneTools.arrowAnnotateTouch = {
-        enable: enableTouch, disable: disableTouch, activate: activateTouch, deactivate: deactivateTouch
+        enable: enableTouch,
+        disable: disableTouch,
+        activate: activateTouch,
+        deactivate: deactivateTouch
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

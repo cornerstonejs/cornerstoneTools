@@ -1,6 +1,6 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function loadHandlerManager() {
         var defaultStartLoadHandler, defaultEndLoadHandler;

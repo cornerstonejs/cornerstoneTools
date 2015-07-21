@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "stackPrefetch";
+    var toolType = 'stackPrefetch';
     var defaultMaxRequests = 11;
     var configuration = {};
     var reenablePrefetchTimeout;
@@ -26,7 +26,7 @@
 
             var stackPrefetch = stackPrefetchData.data[0];
             if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-                //console.log("Re-enabling prefetch");
+                //console.log('Re-enabling prefetch');
                 stackPrefetch.enabled = true;
                 prefetch(element);
             }
@@ -36,7 +36,8 @@
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
-        var arr = [], c = highEnd - lowEnd + 1;
+        var arr = [],
+            c = highEnd - lowEnd + 1;
 
         while ( c-- ) {
             arr[c] = highEnd--;
@@ -85,7 +86,7 @@
         
         // Throws an error if something has gone wrong
         function errorHandler(imageId) {
-            throw "stackPrefetch: image not retrieved: " + imageId;
+            throw 'stackPrefetch: image not retrieved: ' + imageId;
         }
 
         // remove all already cached images from the
@@ -101,7 +102,7 @@
 
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
-            if (imagePromise !== undefined && imagePromise.state() === "resolved"){
+            if (imagePromise !== undefined && imagePromise.state() === 'resolved'){
                 removeFromList(imageIdIndex);
             }
         });
@@ -141,7 +142,7 @@
 
             // Check if the cache is full
             if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
-                //console.log("Cache full, stopping");
+                //console.log('Cache full, stopping');
                 stackPrefetch.enabled = false;
             }
 
@@ -192,9 +193,9 @@
         $.when.apply($, deferredList).done(function() {
             // If there are still images that need to be requested, and the 
             // cache is not full, call this function again
-            //console.log("Batch finished");
+            //console.log('Batch finished');
             if (stackPrefetch.indicesToRequest.length > 0 && stackPrefetch.enabled) {
-                //console.log("Running prefetch again");
+                //console.log('Running prefetch again');
                 // Set a timeout here to prevent locking up the UI
                 setTimeout(prefetch(element), 1);
             }
@@ -202,7 +203,7 @@
 
         // If the entire batch of requests has failed, throw an error
         $.when.apply($, deferredList).fail(function() {
-            throw "stackPrefetch: batch failed for element: " + element.id;
+            throw 'stackPrefetch: batch failed for element: ' + element.id;
         });
     }
 
@@ -239,13 +240,13 @@
 
         prefetch(element);
 
-        $(element).off("CornerstoneNewImage", renablePrefetch);
+        $(element).off('CornerstoneNewImage', renablePrefetch);
 
-        $(element).on("CornerstoneNewImage", renablePrefetch);
+        $(element).on('CornerstoneNewImage', renablePrefetch);
     }
 
     function disable(element) {
-        $(element).off("CornerstoneNewImage", renablePrefetch);
+        $(element).off('CornerstoneNewImage', renablePrefetch);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it

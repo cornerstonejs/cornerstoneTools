@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function touchRotateCallback(e, eventData) {
         eventData.viewport.rotation += eventData.rotation;
@@ -9,12 +9,12 @@
     }
 
     function disable(element) {
-        $(element).off("CornerstoneToolsTouchRotate", touchRotateCallback);
+        $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
     }
 
     function activate(element) {
-        $(element).off("CornerstoneToolsTouchRotate", touchRotateCallback);
-        $(element).on("CornerstoneToolsTouchRotate", touchRotateCallback);
+        $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+        $(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
     }
 
     cornerstoneTools.rotateTouch = {

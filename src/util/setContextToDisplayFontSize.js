@@ -4,7 +4,7 @@
  */
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     /**
      * Sets the canvas context transformation matrix so it is scaled to show text

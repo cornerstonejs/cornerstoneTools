@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function getHandleNearImagePoint(element, data, coords) {
         var nearbyHandle;

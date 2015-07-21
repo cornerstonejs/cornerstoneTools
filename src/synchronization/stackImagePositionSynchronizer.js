@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This function causes the image in the target stack to be set to the one closest
     // to the image in the source stack by image position

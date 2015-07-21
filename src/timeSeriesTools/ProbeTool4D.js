@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "probe4D";
+    var toolType = 'probe4D';
 
     function updateLineSample(measurementData) {
         var samples = [];
@@ -55,9 +55,10 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
-        var color = "white";
+        var color = 'white';
+
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
             var data = toolData.data[i];
@@ -69,7 +70,7 @@
 
             // Draw text
             var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
-            context.font = "" + fontParameters.fontSize + "px Arial";
+            context.font = '' + fontParameters.fontSize + 'px Arial';
 
             // translate the x/y away from the cursor
             var x = Math.round(data.handles.end.x);
@@ -77,9 +78,9 @@
             var textX = data.handles.end.x + 3;
             var textY = data.handles.end.y - 3;
 
-            context.fillStyle = "white";
+            context.fillStyle = color;
 
-            context.fillText("" + x + "," + y, textX, textY);
+            context.fillText('' + x + ',' + y, textX, textY);
 
             context.restore();
         }

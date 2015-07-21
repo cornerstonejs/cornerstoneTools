@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "length";
+    var toolType = 'length';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -39,7 +39,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -75,9 +75,9 @@
             context.fillStyle = color;
             context.font = font;
 
-            var suffix = " mm";
+            var suffix = ' mm';
             if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
-                suffix = " pixels";
+                suffix = ' pixels';
             }
 
             // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
@@ -85,7 +85,7 @@
             var dy = (data.handles.start.y - data.handles.end.y) * (eventData.image.rowPixelSpacing || 1);
             
             var length = Math.sqrt(dx * dx + dy * dy);
-            var text = "" + length.toFixed(2) + suffix;
+            var text = '' + length.toFixed(2) + suffix;
 
             var textCoords = {
                 x: (handleStartCanvas.x + handleEndCanvas.x) / 2 + 5, y: (handleStartCanvas.y + handleEndCanvas.y) / 2

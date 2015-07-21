@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function getOrientationMarkers(element) {
         var enabledElement = cornerstone.getEnabledElement(element);
@@ -61,7 +61,7 @@
 
         var coords = getOrientationMarkerPositions(element, markers);
 
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getToolColor();

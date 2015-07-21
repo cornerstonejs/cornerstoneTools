@@ -1,6 +1,6 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // calculates a reference line between two planes by projecting the top left hand corner and bottom right hand corner
     // of the reference image onto the target image.  Ideally we would calculate the intersection between the planes but

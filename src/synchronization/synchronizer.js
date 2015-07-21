@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This object is responsible for synchronizing target elements when an event fires on a source
     // element

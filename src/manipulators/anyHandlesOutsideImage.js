@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function anyHandlesOutsideImage(renderData, handles) {
         var image = renderData.image;

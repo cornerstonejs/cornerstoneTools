@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var toolType = 'wwwcRegion';
 
@@ -31,8 +31,8 @@
 
     /** Applies the windowing procedure when the mouse drag ends */
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off("CornerstoneToolsMouseDrag", dragCallback);
-        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (toolData === undefined) {
@@ -53,7 +53,7 @@
 
         applyWWWCRegion(eventData);
 
-        $(eventData.element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
+        $(eventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
     }
 
     /** Calculates the minimum and maximum value in the given pixel array */
@@ -106,8 +106,8 @@
     /** Records the start point and attaches the drag event handler */
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on("CornerstoneToolsMouseDrag", dragCallback);
-            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             recordStartPoint(eventData);
             return false;
         }
@@ -170,8 +170,8 @@
         }
 
         // Get the current element's canvas
-        var canvas = $(eventData.element).find("canvas").get(0);
-        var context = canvas.getContext("2d");
+        var canvas = $(eventData.element).find('canvas').get(0);
+        var context = canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         // Set to the active tool color
@@ -219,9 +219,9 @@
             cornerstoneTools.addToolState(element, toolType, data);
         }
 
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
-        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).off("CornerstoneToolsMouseDrag", dragCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);

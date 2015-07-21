@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "freehand";
+    var toolType = 'freehand';
     var configuration = {
         mouseLocation: {
             handles: {
@@ -98,7 +98,7 @@
     // On each click, if it intersects with a current point, end drawing loop
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
 
         // Check if drawing is finished
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
@@ -164,8 +164,8 @@
     }
 
     function startDrawing(eventData) {
-        $(eventData.element).on("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
 
         var measurementData = {
             visible: true, active: true, handles: [],
@@ -207,7 +207,7 @@
         config.currentHandle = 0;
         config.currentTool = -1;
 
-        $(eventData.element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
+        $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
 
         cornerstone.updateImage(eventData.element);
     }
@@ -233,8 +233,8 @@
                     toolIndex = nearby.toolIndex;
                     // This means the user is trying to modify a point
                     if (handleNearby !== undefined) {
-                        $(eventData.element).on("CornerstoneToolsMouseMove", mouseMoveCallback);
-                        $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+                        $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                        $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
                         config.modifying = true;
                         config.currentHandle = handleNearby;
                         config.currentTool = toolIndex;
@@ -271,7 +271,7 @@
         var config = cornerstoneTools.freehand.getConfiguration();
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -334,21 +334,21 @@
     }
     ///////// END IMAGE RENDERING ///////
     function enable(element) {
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
-        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
     function disable(element) {
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
-        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -358,12 +358,12 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
-        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
         cornerstone.updateImage(element);
@@ -371,12 +371,12 @@
 
     // visible, but not interactive
     function deactivate(element) {
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
-        $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }

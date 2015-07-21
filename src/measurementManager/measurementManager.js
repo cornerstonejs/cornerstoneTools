@@ -1,6 +1,6 @@
 (function($, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This object manages a collection of measurements
     function MeasurementManager() {
@@ -15,7 +15,7 @@
             var eventDetail = {
                 index: index, measurement: measurement
             };
-            $(that).trigger("CornerstoneMeasurementAdded", eventDetail);
+            $(that).trigger('CornerstoneMeasurementAdded', eventDetail);
         };
 
         this.remove = function(index) {
@@ -25,7 +25,7 @@
             var eventDetail = {
                 index: index, measurement: measurement
             };
-            $(that).trigger("CornerstoneMeasurementRemoved", eventDetail);
+            $(that).trigger('CornerstoneMeasurementRemoved', eventDetail);
         };
 
     }

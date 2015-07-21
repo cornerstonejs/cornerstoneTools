@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function roundToDecimal(value, precision) {
         var multiplier = Math.pow(10, precision);

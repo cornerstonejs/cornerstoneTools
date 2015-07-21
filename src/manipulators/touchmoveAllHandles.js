@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage) {
         var element = touchEventData.element;
@@ -17,7 +17,7 @@
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
 
-        $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
+        $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
         function touchEndCallback(e, eventData) {
             data.active = false;
@@ -60,7 +60,7 @@
             cornerstone.updateImage(element);
         }
 
-        $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
+        $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         return true;
     }
 
