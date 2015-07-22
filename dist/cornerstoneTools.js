@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-09-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6972,6 +6972,25 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
+
+        function saveImageIdToolState(imageId) {
+            return toolState[imageId];
+        }
+
+        function restoreImageIdToolState(imageId, imageIdToolState) {
+            toolState[imageId] = imageIdToolState;
+        }
+
+        function saveToolState() {
+            return toolState;
+        }
+
+        function restoreToolState(savedToolState) {
+            toolState = savedToolState;
+        }
+
+        // here we add tool state, this is done by tools as well
+        // as modules that restore saved state
         function addImageIdSpecificToolState(element, toolType, data) {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
@@ -7025,7 +7044,14 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         var imageIdToolStateManager = {
-            get: getImageIdSpecificToolState, add: addImageIdSpecificToolState, clear: clearImageIdSpecificToolStateManager, toolState: toolState
+            get: getImageIdSpecificToolState,
+            add: addImageIdSpecificToolState,
+            clear: clearImageIdSpecificToolStateManager,
+            saveImageIdToolState: saveImageIdToolState,
+            restoreImageIdToolState: restoreImageIdToolState,
+            saveToolState: saveToolState,
+            restoreToolState: restoreToolState,
+            toolState: toolState
         };
         return imageIdToolStateManager;
     }
