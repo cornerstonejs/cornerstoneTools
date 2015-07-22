@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This function causes the target image to be drawn immediately
     function updateImageSynchronizer(synchronizer, sourceElement, targetElement) {

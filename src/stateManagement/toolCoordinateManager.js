@@ -1,9 +1,9 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function toolCoordinateManager(){
-        var cooordsData = "";
+        var cooordsData = '';
 
         function setActiveToolCoords(eventData){
             cooordsData = eventData.currentPoints.canvas;

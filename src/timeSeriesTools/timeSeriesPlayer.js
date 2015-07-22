@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "timeSeriesPlayer";
+    var toolType = 'timeSeriesPlayer';
 
     /**
      * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
@@ -13,7 +13,7 @@
      */
     function playClip(element, framesPerSecond) {
         if (element === undefined) {
-            throw "playClip: element must not be undefined";
+            throw 'playClip: element must not be undefined';
         }
 
         if (framesPerSecond === undefined) {

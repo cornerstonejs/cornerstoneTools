@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function scroll(element, images) {
         var toolData = cornerstoneTools.getToolState(element, 'stack');

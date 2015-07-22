@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
@@ -13,18 +13,18 @@
             cornerstone.updateImage(element);
         }
 
-        $(element).on("CornerstoneToolsTouchDrag", touchDragCallback);
+        $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
         function touchEndCallback() {
             handle.active = false;
-            $(element).off("CornerstoneToolsTouchDrag", touchDragCallback);
-            $(element).off("CornerstoneToolsDragEnd", touchEndCallback);
+            $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+            $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
 
-        $(element).on("CornerstoneToolsDragEnd", touchEndCallback);
+        $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
     }
 
     // module/private exports

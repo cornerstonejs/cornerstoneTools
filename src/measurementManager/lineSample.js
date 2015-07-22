@@ -1,6 +1,6 @@
 (function($, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This object manages a collection of measurements
     function LineSampleMeasurement() {
@@ -12,7 +12,7 @@
         this.set = function(samples) {
             that.samples = samples;
             // fire event
-            $(that).trigger("CornerstoneLineSampleUpdated");
+            $(that).trigger('CornerstoneLineSampleUpdated');
         };
     }
 

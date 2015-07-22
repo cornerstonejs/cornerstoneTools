@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     /**
      * This function is used to prevent selection from occuring when left click dragging on the image

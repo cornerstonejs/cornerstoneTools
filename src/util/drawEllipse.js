@@ -1,6 +1,6 @@
 (function(cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
     function drawEllipse(context, x, y, w, h) {

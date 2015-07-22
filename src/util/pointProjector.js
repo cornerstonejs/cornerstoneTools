@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // projects a patient point to an image point
     function projectPatientPointToImagePlane(patientPoint, imagePlane) {

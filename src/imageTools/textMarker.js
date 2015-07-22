@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "textMarker";
+    var toolType = 'textMarker';
     var configuration = {};
 
     ///////// BEGIN ACTIVE TOOL ///////
@@ -71,7 +71,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color;
@@ -278,7 +278,7 @@
 
     // not visible, not interactive
     function disable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
@@ -289,13 +289,13 @@
 
     // visible but not interactive
     function enable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
         $(element).off('CornerstoneToolsMouseDoubleClick', mouseDoubleClickCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }
@@ -306,14 +306,14 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
         $(element).off('CornerstoneToolsMouseDoubleClick', mouseDoubleClickCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
         $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseDoubleClickCallback);
@@ -327,14 +327,14 @@
             mouseButtonMask: mouseButtonMask,
         };
 
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-        $(element).off("CornerstoneToolsMouseMove", mouseMoveCallback);
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
         $(element).off('CornerstoneToolsMouseDoubleClick', mouseDoubleClickCallback);
 
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-        $(element).on("CornerstoneToolsMouseMove", eventData, mouseMoveCallback);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
+        $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseDoubleClickCallback);
 

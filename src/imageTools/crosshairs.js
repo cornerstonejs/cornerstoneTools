@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var toolType = 'crosshairs';
 
@@ -85,14 +85,14 @@
     }
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
-            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             chooseLocation(e, eventData);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
         }
@@ -112,14 +112,14 @@
             synchronizationContext: synchronizationContext,
         });
 
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 
-        $(element).on("CornerstoneToolsMouseDown", eventData, mouseDownCallback);
+        $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
     }
 
     // disables the reference line tool for the given element
     function disable(element) {
-        $(element).off("CornerstoneToolsMouseDown", mouseDownCallback);
+        $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     }
 
     // module/private exports

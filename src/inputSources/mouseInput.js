@@ -1,9 +1,9 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function activateMouseDown(mouseEventDetail) {
-        $(mouseEventDetail.element).trigger("CornerstoneToolsMouseDownActivate", mouseEventDetail);
+        $(mouseEventDetail.element).trigger('CornerstoneToolsMouseDownActivate', mouseEventDetail);
     }
 
     function mouseDoubleClick(e) {
@@ -23,7 +23,7 @@
             }
         };
 
-        var event = $.Event("CornerstoneToolsMouseDoubleClick", mouseEventDetail);
+        var event = $.Event('CornerstoneToolsMouseDoubleClick', mouseEventDetail);
         $(mouseEventDetail.element).trigger(event, mouseEventDetail);
     }
 
@@ -44,7 +44,7 @@
                 }
             };
 
-        var event = $.Event("CornerstoneToolsMouseDown", mouseEventDetail);
+        var event = $.Event('CornerstoneToolsMouseDown', mouseEventDetail);
         $(mouseEventDetail.element).trigger(event, mouseEventDetail);
 
         if (event.isImmediatePropagationStopped() === false) {
@@ -76,7 +76,7 @@
 
             //element.dispatchEvent(event);
 
-            $(mouseEventDetail.element).trigger("CornerstoneToolsMouseDrag", eventData);
+            $(mouseEventDetail.element).trigger('CornerstoneToolsMouseDrag', eventData);
 
             // update the last points
             lastPoints = cornerstoneTools.copyPoints(currentPoints);
@@ -107,15 +107,15 @@
             };
             //element.dispatchEvent(event);
 
-            var event = $.Event("CornerstoneToolsMouseUp", eventData);
+            var event = $.Event('CornerstoneToolsMouseUp', eventData);
             $(mouseEventDetail.element).trigger(event, eventData);
 
             $(document).off('mousemove', onMouseMove);
             $(document).off('mouseup', onMouseUp);
         }
 
-        $(document).on("mousemove", onMouseMove);
-        $(document).on("mouseup", onMouseUp);
+        $(document).on('mousemove', onMouseMove);
+        $(document).on('mouseup', onMouseUp);
 
         return cornerstoneTools.pauseEvent(e);
     }
@@ -150,22 +150,22 @@
         var mouseMoveEventData = {
             which: whichMouseButton, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: currentPoints, deltaPoints: deltaPoints
         };
-        $(element).trigger("CornerstoneToolsMouseMove", mouseMoveEventData);
+        $(element).trigger('CornerstoneToolsMouseMove', mouseMoveEventData);
 
         // update the last points
         lastPoints = cornerstoneTools.copyPoints(currentPoints);
     }
 
     function enable(element) {
-        $(element).on("mousedown", mouseDown);
-        $(element).on("mousemove", mouseMove);
-        $(element).on("dblclick", mouseDoubleClick);
+        $(element).on('mousedown', mouseDown);
+        $(element).on('mousemove', mouseMove);
+        $(element).on('dblclick', mouseDoubleClick);
     }
 
     function disable(element) {
-        $(element).off("mousedown", mouseDown);
-        $(element).off("mousemove", mouseMove);
-        $(element).off("dblclick", mouseDoubleClick);
+        $(element).off('mousedown', mouseDown);
+        $(element).off('mousemove', mouseMove);
+        $(element).off('dblclick', mouseDoubleClick);
     }
 
     // module exports

@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
@@ -30,18 +30,18 @@
             cornerstone.updateImage(element);
         }
 
-        $(element).on("CornerstoneToolsMouseDrag", mouseDragCallback);
+        $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
 
         function mouseUpCallback() {
             handle.active = false;
-            $(element).off("CornerstoneToolsMouseDrag", mouseDragCallback);
-            $(element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+            $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
 
-        $(element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     // module/private exports

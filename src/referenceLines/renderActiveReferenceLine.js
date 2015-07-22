@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // renders the active reference line
     function renderActiveReferenceLine(context, eventData, targetElement, referenceElement) {

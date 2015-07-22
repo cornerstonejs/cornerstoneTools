@@ -111,9 +111,6 @@ is used by our example image loader-->
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
-<!-- include the hammer.js library for touch gestures-->
-<!-- <script src="../jquery.hammer.js"></script> -->
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -290,7 +287,7 @@ is used by our example image loader-->
 
             toolSelector.html('Select tool <span class="caret"></span>')
 
-            var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+            var toolStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
             // Note that this only works on ImageId-specific tool state managers (for now)
             toolStateManager.clear(element)
             cornerstone.updateImage(element);

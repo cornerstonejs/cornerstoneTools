@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "playClip";
+    var toolType = 'playClip';
 
     /**
      * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
@@ -13,7 +13,7 @@
      */
     function playClip(element, framesPerSecond) {
         if (element === undefined) {
-            throw "playClip: element must not be undefined";
+            throw 'playClip: element must not be undefined';
         }
 
         if (framesPerSecond === undefined) {
@@ -60,7 +60,7 @@
                 var eventDetail = {
                     element: element
                 };
-                var event = $.Event("CornerstoneToolsClipStopped", eventDetail);
+                var event = $.Event('CornerstoneToolsClipStopped', eventDetail);
                 $(element).trigger(event, eventDetail);
 
                 clearInterval(playClipData.intervalId);

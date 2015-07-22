@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var handleRadius = 6;
 

@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function getElementToolStateManager(element) {
         var enabledImage = cornerstone.getEnabledElement(element);

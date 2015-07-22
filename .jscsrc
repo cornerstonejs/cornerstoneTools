@@ -20,6 +20,7 @@
     "requireSpaceBeforeObjectValues": true,
     "requireSpacesInsideObjectBrackets": "all",
     "requireSpacesInsideArrayBrackets": "all",
+    "requireLineBreakAfterVariableAssignment": true,
     "requireSpaceBeforeBinaryOperators": ["+", "-", "/", "*", "=", "==", "===", "!=", "!=="],
     "disallowSpaceAfterPrefixUnaryOperators": ["++", "--", "+", "-"],
     "disallowSpaceBeforePostfixUnaryOperators": ["++", "--"],
@@ -31,5 +32,7 @@
     "disallowQuotedKeysInObjects": true,
     "disallowMultipleSpaces": true,
     "validateLineBreaks": "LF",
-    "validateIndentation": 4
+    "validateIndentation": 4,
+    "validateQuoteMarks": { "mark": "'", "escape": true },
+    "validateParameterSeparator": ", "
 }

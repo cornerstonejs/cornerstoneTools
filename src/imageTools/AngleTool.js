@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "angle";
+    var toolType = 'angle';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -52,7 +52,7 @@
         }
 
         // we have tool data for this element - iterate over each one and draw it
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
         
         //activation color 
@@ -107,7 +107,7 @@
             angle = angle * (180 / Math.PI);
 
             var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
-            var str = "00B0"; // degrees symbol
+            var str = '00B0'; // degrees symbol
             var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
             var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;

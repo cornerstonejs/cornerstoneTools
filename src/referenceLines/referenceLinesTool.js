@@ -1,8 +1,8 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
-    var toolType = "referenceLines";
+    var toolType = 'referenceLines';
 
     function onImageRendered(e, eventData) {
         // if we have no toolData for this element, return immediately as there is nothing to do
@@ -18,7 +18,7 @@
         var renderer = toolData.data[0].renderer;
 
         // Create the canvas context and reset it to the pixel coordinate system
-        var context = eventData.canvasContext.canvas.getContext("2d");
+        var context = eventData.canvasContext.canvas.getContext('2d');
         cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
         // Iterate over each referenced element
@@ -42,13 +42,13 @@
         cornerstoneTools.addToolState(element, toolType, {
             synchronizationContext: synchronizationContext, renderer: renderer
         });
-        $(element).on("CornerstoneImageRendered", onImageRendered);
+        $(element).on('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
     function disable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
+        $(element).off('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 

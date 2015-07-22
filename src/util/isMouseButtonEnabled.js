@@ -1,6 +1,6 @@
 (function(cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function isMouseButtonEnabled(which, mouseButtonMask) {
         /*jshint bitwise: false*/

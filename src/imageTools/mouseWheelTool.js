@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function mouseWheelTool(mouseWheelCallback) {
         var toolInterface = {
@@ -8,7 +8,7 @@
                 $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
                 var eventData = {
                 };
-                $(element).on("CornerstoneToolsMouseWheel", eventData, mouseWheelCallback);
+                $(element).on('CornerstoneToolsMouseWheel', eventData, mouseWheelCallback);
             }, disable: function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);}, enable: function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);}
         };
         return toolInterface;

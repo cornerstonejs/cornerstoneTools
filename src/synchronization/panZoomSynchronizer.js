@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     // This function synchronizes the target zoom and pan to match the source
     function panZoomSynchronizer(synchronizer, sourceElement, targetElement) {

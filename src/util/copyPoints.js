@@ -1,6 +1,6 @@
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function copyPoints(points) {
         var page = cornerstoneMath.point.copy(points.page);

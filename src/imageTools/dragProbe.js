@@ -1,13 +1,13 @@
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     function defaultStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
 
         cornerstone.updateImage(eventData.element);
 
-        var context = enabledElement.canvas.getContext("2d");
+        var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getActiveColor();
@@ -33,10 +33,10 @@
         
         context.font = font;
         context.fillStyle = color;
-        var text = "" + x + "," + y;
-        var str = "SP: " + sp + " MO: " + parseFloat(mo.toFixed(3));
+        var text = '' + x + ',' + y;
+        var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
         if (suv) {
-            str += " SUV: " + parseFloat(suv.toFixed(3));
+            str += ' SUV: ' + parseFloat(suv.toFixed(3));
         }
 
         cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
@@ -49,7 +49,7 @@
 
         cornerstone.updateImage(eventData.element);
 
-        var context = enabledElement.canvas.getContext("2d");
+        var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getActiveColor();
@@ -78,15 +78,15 @@
     }
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off("CornerstoneToolsMouseDrag", onDrag);
-        $(eventData.element).off("CornerstoneToolsMouseUp", mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', onDrag);
+        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         cornerstone.updateImage(eventData.element);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on("CornerstoneToolsMouseDrag", onDrag);
-            $(eventData.element).on("CornerstoneToolsMouseUp", mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', onDrag);
+            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             cornerstoneTools.dragProbe.strategy(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
