@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -268,8 +268,6 @@ if (typeof cornerstoneTools === 'undefined') {
             event,
             eventType;
 
-        console.log(e.type);
-
         switch (e.type) {
             case 'pinch':
                 var scale = lastScale - e.scale;
@@ -409,7 +407,9 @@ if (typeof cornerstoneTools === 'undefined') {
             drag_min_distance: 0
         };
 
-        var mc = new Hammer(element);
+        var mc = new Hammer(element, {
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+        });
         mc.set(hammerOptions);
 
         var panOptions = {

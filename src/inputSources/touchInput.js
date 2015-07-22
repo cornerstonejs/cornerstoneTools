@@ -21,8 +21,6 @@
             event,
             eventType;
 
-        console.log(e.type);
-
         switch (e.type) {
             case 'pinch':
                 var scale = lastScale - e.scale;
@@ -162,7 +160,9 @@
             drag_min_distance: 0
         };
 
-        var mc = new Hammer(element);
+        var mc = new Hammer(element, {
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+        });
         mc.set(hammerOptions);
 
         var panOptions = {
