@@ -18,6 +18,7 @@
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
             var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -32,6 +33,11 @@
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
+                }
+            }, function() {
+                var imageId = stackData.imageIds[newImageIdIndex];
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }

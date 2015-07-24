@@ -3,17 +3,19 @@
     'use strict';
 
     function loadHandlerManager() {
-        var defaultStartLoadHandler, defaultEndLoadHandler;
+        var defaultStartLoadHandler,
+            defaultEndLoadHandler,
+            defaultErrorLoadingHandler;
 
-        function setStartLoadHandler(handler){
+        function setStartLoadHandler(handler) {
             defaultStartLoadHandler = handler;
         }
 
-        function getStartLoadHandler(){
+        function getStartLoadHandler() {
             return defaultStartLoadHandler;
         }
 
-        function setEndLoadHandler(handler){
+        function setEndLoadHandler(handler) {
             defaultEndLoadHandler = handler;
         }
 
@@ -21,8 +23,21 @@
             return defaultEndLoadHandler;
         }
 
+        function setErrorLoadingHandler(handler) {
+            defaultErrorLoadingHandler = handler;
+        }
+        
+        function getErrorLoadingHandler() {
+            return defaultErrorLoadingHandler;
+        }
+      
         var loadHandlers = {
-            setStartLoadHandler: setStartLoadHandler, getStartLoadHandler: getStartLoadHandler, setEndLoadHandler: setEndLoadHandler, getEndLoadHandler: getEndLoadHandler
+            setStartLoadHandler: setStartLoadHandler,
+            getStartLoadHandler: getStartLoadHandler,
+            setEndLoadHandler: setEndLoadHandler,
+            getEndLoadHandler: getEndLoadHandler,
+            setErrorLoadingHandler: setErrorLoadingHandler,
+            getErrorLoadingHandler: getErrorLoadingHandler
         };
 
         return loadHandlers;

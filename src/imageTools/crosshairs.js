@@ -7,7 +7,7 @@
     function chooseLocation(e, eventData) {
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             return;
         }
 
@@ -67,6 +67,7 @@
             if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
                 var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(targetElement);
@@ -78,6 +79,11 @@
                     cornerstone.displayImage(targetElement, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(targetElement);
+                    }
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
+                    if (errorLoadingHandler) {
+                        errorLoadingHandler(targetElement, imageId);
                     }
                 });
             }
@@ -124,7 +130,8 @@
 
     // module/private exports
     cornerstoneTools.crosshairs = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

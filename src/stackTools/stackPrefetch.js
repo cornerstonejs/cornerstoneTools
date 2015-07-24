@@ -84,11 +84,6 @@
             }
         }
         
-        // Throws an error if something has gone wrong
-        function errorHandler(imageId) {
-            throw 'stackPrefetch: image not retrieved: ' + imageId;
-        }
-
         // remove all already cached images from the
         // indicesToRequest array
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
@@ -181,8 +176,9 @@
                 onLoadImageComplete(imageIdIndex);
             });
 
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
             loadImageDeferred.fail(function() {
-                errorHandler(imageId);
+                errorLoadingHandler(element, imageId);
             });
 
             // Add the image promises to a list

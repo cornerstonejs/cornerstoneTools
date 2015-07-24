@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-24 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1879,7 +1879,7 @@ if (typeof cornerstoneTools === 'undefined') {
     function chooseLocation(e, eventData) {
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             return;
         }
 
@@ -1939,6 +1939,7 @@ if (typeof cornerstoneTools === 'undefined') {
             if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
                 var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(targetElement);
@@ -1950,6 +1951,11 @@ if (typeof cornerstoneTools === 'undefined') {
                     cornerstone.displayImage(targetElement, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(targetElement);
+                    }
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
+                    if (errorLoadingHandler) {
+                        errorLoadingHandler(targetElement, imageId);
                     }
                 });
             }
@@ -1996,7 +2002,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     // module/private exports
     cornerstoneTools.crosshairs = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);
@@ -5931,6 +5938,7 @@ if (typeof cornerstoneTools === 'undefined') {
             if (newImageIdIndex !== stackData.currentImageIdIndex) {
                 var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
                 var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+                var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
                 if (startLoadingHandler) {
                     startLoadingHandler(element);
@@ -5942,6 +5950,11 @@ if (typeof cornerstoneTools === 'undefined') {
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
+                    }
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
+                    if (errorLoadingHandler) {
+                        errorLoadingHandler(element, imageId);
                     }
                 });
             }
@@ -6060,11 +6073,6 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
         
-        // Throws an error if something has gone wrong
-        function errorHandler(imageId) {
-            throw 'stackPrefetch: image not retrieved: ' + imageId;
-        }
-
         // remove all already cached images from the
         // indicesToRequest array
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
@@ -6157,8 +6165,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 onLoadImageComplete(imageIdIndex);
             });
 
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
             loadImageDeferred.fail(function() {
-                errorHandler(imageId);
+                errorLoadingHandler(element, imageId);
             });
 
             // Add the image promises to a list
@@ -6559,17 +6568,19 @@ if (typeof cornerstoneTools === 'undefined') {
     'use strict';
 
     function loadHandlerManager() {
-        var defaultStartLoadHandler, defaultEndLoadHandler;
+        var defaultStartLoadHandler,
+            defaultEndLoadHandler,
+            defaultErrorLoadingHandler;
 
-        function setStartLoadHandler(handler){
+        function setStartLoadHandler(handler) {
             defaultStartLoadHandler = handler;
         }
 
-        function getStartLoadHandler(){
+        function getStartLoadHandler() {
             return defaultStartLoadHandler;
         }
 
-        function setEndLoadHandler(handler){
+        function setEndLoadHandler(handler) {
             defaultEndLoadHandler = handler;
         }
 
@@ -6577,8 +6588,21 @@ if (typeof cornerstoneTools === 'undefined') {
             return defaultEndLoadHandler;
         }
 
+        function setErrorLoadingHandler(handler) {
+            defaultErrorLoadingHandler = handler;
+        }
+        
+        function getErrorLoadingHandler() {
+            return defaultErrorLoadingHandler;
+        }
+      
         var loadHandlers = {
-            setStartLoadHandler: setStartLoadHandler, getStartLoadHandler: getStartLoadHandler, setEndLoadHandler: setEndLoadHandler, getEndLoadHandler: getEndLoadHandler
+            setStartLoadHandler: setStartLoadHandler,
+            getStartLoadHandler: getStartLoadHandler,
+            setEndLoadHandler: setEndLoadHandler,
+            getEndLoadHandler: getEndLoadHandler,
+            setErrorLoadingHandler: setErrorLoadingHandler,
+            getErrorLoadingHandler: getErrorLoadingHandler
         };
 
         return loadHandlers;
@@ -7073,6 +7097,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -7084,6 +7109,11 @@ if (typeof cornerstoneTools === 'undefined') {
             synchronizer.displayImage(targetElement, image, viewport);
             if (endLoadingHandler) {
                 endLoadingHandler(targetElement);
+            }
+        }, function() {
+            var imageId = targetStackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(targetElement, imageId);
             }
         });
     }
@@ -7136,6 +7166,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
         if (startLoadingHandler) {
             startLoadingHandler(targetElement);
@@ -7148,6 +7179,11 @@ if (typeof cornerstoneTools === 'undefined') {
                 synchronizer.displayImage(targetElement, image, viewport);
                 if (endLoadingHandler) {
                     endLoadingHandler(targetElement);
+                }
+            }, function() {
+                var imageId = stackData.imageIds[newImageIdIndex];
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(targetElement, imageId);
                 }
             });
         }
@@ -7487,8 +7523,10 @@ if (typeof cornerstoneTools === 'undefined') {
         if (newStackIndex !== timeSeriesData.currentStackIndex) {
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
+
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
             var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -7502,6 +7540,11 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
+                }
+            }, function() {
+                var imageId = newStack.imageIds[currentImageIdIndex];
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }
@@ -7972,6 +8015,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
             var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -7986,6 +8030,11 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
+                }
+            }, function() {
+                var imageId = stackData.imageIds[newImageIdIndex];
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }
