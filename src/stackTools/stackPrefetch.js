@@ -227,6 +227,8 @@
                 } else {
                     stackPrefetch.enabled = false;
                 }
+            }, function() {
+                errorLoadingHandler(element, imageId);
             });
         }
 

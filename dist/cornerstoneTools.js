@@ -6474,6 +6474,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 } else {
                     stackPrefetch.enabled = false;
                 }
+            }, function() {
+                errorLoadingHandler(element, imageId);
             });
         }
 
