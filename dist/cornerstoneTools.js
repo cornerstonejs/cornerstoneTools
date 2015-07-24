@@ -6451,8 +6451,8 @@ if (typeof cornerstoneTools === 'undefined') {
                         stackPrefetch.enabled = false;
                         return;
                     }
-                }, function() {
-                    errorLoadingHandler(element, imageId);
+                }, function(error) {
+                    errorLoadingHandler(element, imageId, error);
                 });
             }
 
@@ -6474,8 +6474,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function() {
-                errorLoadingHandler(element, imageId);
+            }, function(error) {
+                errorLoadingHandler(element, imageId, error);
             });
         }
 

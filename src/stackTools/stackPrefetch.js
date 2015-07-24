@@ -204,8 +204,8 @@
                         stackPrefetch.enabled = false;
                         return;
                     }
-                }, function() {
-                    errorLoadingHandler(element, imageId);
+                }, function(error) {
+                    errorLoadingHandler(element, imageId, error);
                 });
             }
 
@@ -227,8 +227,8 @@
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function() {
-                errorLoadingHandler(element, imageId);
+            }, function(error) {
+                errorLoadingHandler(element, imageId, error);
             });
         }
 
