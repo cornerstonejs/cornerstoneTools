@@ -29,6 +29,7 @@
 
     <div class="row">
         <div class="col-xs-6">
+            <div class="errorDescription"></div>
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image'
@@ -39,7 +40,6 @@
                      style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
                 </div>
             </div>
-            <span class=".errorDescription"></span>
         </div>
 
     </div>
@@ -69,7 +69,9 @@ is used by our example image loader-->
     function errorLoadingHandler(element, image) {
         var elem = $(element);
         elem.addClass("error");
-        elem.siblings('.errorDescription').text("Error occurred! " + image.imageId + " not loaded.");
+        $('.errorDescription').text("Error occurred! " + imageId + " not loaded.");
+        cornerstoneTools.mouseInput.disable(element);
+        cornerstone.disable(element);
     };
 
     cornerstoneTools.loadHandlerManager.setErrorLoadingHandler(errorLoadingHandler);
@@ -82,6 +84,9 @@ is used by our example image loader-->
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
+    }, function(image) {
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+        errorLoadingHandler(element, imageId);
     });
 
 </script>
