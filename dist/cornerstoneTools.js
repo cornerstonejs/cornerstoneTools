@@ -1952,9 +1952,10 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(targetElement);
                     }
-                }, function(image) {
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(targetElement, image);
+                        errorLoadingHandler(targetElement, imageId);
                     }
                 });
             }
@@ -5950,9 +5951,10 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
-                }, function(image) {
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(element, image);
+                        errorLoadingHandler(element, imageId);
                     }
                 });
             }
@@ -6071,11 +6073,6 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
         
-        // Throws an error if something has gone wrong
-        function errorHandler(imageId) {
-            throw 'stackPrefetch: image not retrieved: ' + imageId;
-        }
-
         // remove all already cached images from the
         // indicesToRequest array
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
@@ -6168,8 +6165,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 onLoadImageComplete(imageIdIndex);
             });
 
+            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
             loadImageDeferred.fail(function() {
-                errorHandler(imageId);
+                errorLoadingHandler(element, imageId);
             });
 
             // Add the image promises to a list
@@ -7112,9 +7110,10 @@ if (typeof cornerstoneTools === 'undefined') {
             if (endLoadingHandler) {
                 endLoadingHandler(targetElement);
             }
-        }, function(image) {
+        }, function() {
+            var imageId = targetStackData.imageIds[newImageIdIndex];
             if (errorLoadingHandler) {
-                errorLoadingHandler(targetElement, image);
+                errorLoadingHandler(targetElement, imageId);
             }
         });
     }
@@ -7181,9 +7180,10 @@ if (typeof cornerstoneTools === 'undefined') {
                 if (endLoadingHandler) {
                     endLoadingHandler(targetElement);
                 }
-            }, function(image) {
+            }, function() {
+                var imageId = stackData.imageIds[newImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(targetElement, image);
+                    errorLoadingHandler(targetElement, imageId);
                 }
             });
         }
@@ -7541,9 +7541,10 @@ if (typeof cornerstoneTools === 'undefined') {
                         endLoadingHandler(element);
                     }
                 }
-            }, function(image) {
+            }, function() {
+                var imageId = newStack.imageIds[currentImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, image);
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }
@@ -8030,9 +8031,10 @@ if (typeof cornerstoneTools === 'undefined') {
                         endLoadingHandler(element);
                     }
                 }
-            }, function(image) {
+            }, function() {
+                var imageId = stackData.imageIds[newImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, image);
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }

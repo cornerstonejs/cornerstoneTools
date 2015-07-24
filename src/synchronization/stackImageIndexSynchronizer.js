@@ -41,9 +41,10 @@
             if (endLoadingHandler) {
                 endLoadingHandler(targetElement);
             }
-        }, function(image) {
+        }, function() {
+            var imageId = targetStackData.imageIds[newImageIdIndex];
             if (errorLoadingHandler) {
-                errorLoadingHandler(targetElement, image);
+                errorLoadingHandler(targetElement, imageId);
             }
         });
     }

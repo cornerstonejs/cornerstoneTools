@@ -48,9 +48,10 @@
                         endLoadingHandler(element);
                     }
                 }
-            }, function(image) {
+            }, function() {
+                var imageId = newStack.imageIds[currentImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, image);
+                    errorLoadingHandler(element, imageId);
                 }
             });
         }

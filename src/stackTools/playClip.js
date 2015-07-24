@@ -93,9 +93,10 @@
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
-                }, function(image) {
+                }, function() {
+                    var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(element, image);
+                        errorLoadingHandler(element, imageId);
                     }
                 });
             }
