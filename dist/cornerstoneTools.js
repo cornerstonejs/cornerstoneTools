@@ -6412,6 +6412,18 @@ if (typeof cornerstoneTools === 'undefined') {
                 return;
             }
 
+            // Prevent errors while element is disabled
+            if (!$(element).find('canvas').length) {
+                return;
+            }
+
+            // We could use an "isElementEnabled" function in cornerstone core
+            try {
+                cornerstone.getEnabledElement(element);
+            } catch(error) {
+                return;
+            }
+
             // Get the stackPrefetch tool data
             var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
             if (!stackPrefetchData) {
@@ -6433,7 +6445,7 @@ if (typeof cornerstoneTools === 'undefined') {
             if (imagePromise) {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
-                imagePromise.done(function() {
+                imagePromise.then(function() {
                     // console.log('Already in Cache: ' + image.imageId);
                     stackPrefetch.numCurrentRequests -= 1;
 
