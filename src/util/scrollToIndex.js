@@ -30,7 +30,7 @@
             var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
             if (stackPrefetchData && stackPrefetchData.data && stackPrefetchData.data.length) {
                 var stackPrefetch = stackPrefetchData.data[0];
-                console.log('Pausing prefetching');
+                // console.log('Pausing prefetching');
                 stackPrefetch.enabled = false;
                 stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
             }
