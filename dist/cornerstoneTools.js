@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-24 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1952,10 +1952,10 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(targetElement);
                     }
-                }, function() {
+                }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(targetElement, imageId);
+                        errorLoadingHandler(targetElement, imageId, error);
                     }
                 });
             }
@@ -5951,10 +5951,10 @@ if (typeof cornerstoneTools === 'undefined') {
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
                     }
-                }, function() {
+                }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(element, imageId);
+                        errorLoadingHandler(element, imageId, error);
                     }
                 });
             }
@@ -6166,8 +6166,8 @@ if (typeof cornerstoneTools === 'undefined') {
             });
 
             var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
-            loadImageDeferred.fail(function() {
-                errorLoadingHandler(element, imageId);
+            loadImageDeferred.fail(function(error) {
+                errorLoadingHandler(element, imageId, error);
             });
 
             // Add the image promises to a list
@@ -7110,10 +7110,10 @@ if (typeof cornerstoneTools === 'undefined') {
             if (endLoadingHandler) {
                 endLoadingHandler(targetElement);
             }
-        }, function() {
+        }, function(error) {
             var imageId = targetStackData.imageIds[newImageIdIndex];
             if (errorLoadingHandler) {
-                errorLoadingHandler(targetElement, imageId);
+                errorLoadingHandler(targetElement, imageId, error);
             }
         });
     }
@@ -7180,10 +7180,10 @@ if (typeof cornerstoneTools === 'undefined') {
                 if (endLoadingHandler) {
                     endLoadingHandler(targetElement);
                 }
-            }, function() {
+            }, function(error) {
                 var imageId = stackData.imageIds[newImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(targetElement, imageId);
+                    errorLoadingHandler(targetElement, imageId, error);
                 }
             });
         }
@@ -7541,10 +7541,10 @@ if (typeof cornerstoneTools === 'undefined') {
                         endLoadingHandler(element);
                     }
                 }
-            }, function() {
+            }, function(error) {
                 var imageId = newStack.imageIds[currentImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId);
+                    errorLoadingHandler(element, imageId, error);
                 }
             });
         }
@@ -8031,10 +8031,10 @@ if (typeof cornerstoneTools === 'undefined') {
                         endLoadingHandler(element);
                     }
                 }
-            }, function() {
+            }, function(error) {
                 var imageId = stackData.imageIds[newImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId);
+                    errorLoadingHandler(element, imageId, error);
                 }
             });
         }

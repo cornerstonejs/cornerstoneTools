@@ -80,10 +80,10 @@
                     if (endLoadingHandler) {
                         endLoadingHandler(targetElement);
                     }
-                }, function() {
+                }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];
                     if (errorLoadingHandler) {
-                        errorLoadingHandler(targetElement, imageId);
+                        errorLoadingHandler(targetElement, imageId, error);
                     }
                 });
             }

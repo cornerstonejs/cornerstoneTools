@@ -34,10 +34,10 @@
                         endLoadingHandler(element);
                     }
                 }
-            }, function() {
+            }, function(error) {
                 var imageId = stackData.imageIds[newImageIdIndex];
                 if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId);
+                    errorLoadingHandler(element, imageId, error);
                 }
             });
         }

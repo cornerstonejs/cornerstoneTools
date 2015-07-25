@@ -177,8 +177,8 @@
             });
 
             var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
-            loadImageDeferred.fail(function() {
-                errorLoadingHandler(element, imageId);
+            loadImageDeferred.fail(function(error) {
+                errorLoadingHandler(element, imageId, error);
             });
 
             // Add the image promises to a list
