@@ -6417,7 +6417,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 return;
             }
 
-            // We could use an "isElementEnabled" function in cornerstone core
+            // We could use an 'isElementEnabled' function in cornerstone core
             try {
                 cornerstone.getEnabledElement(element);
             } catch(error) {
@@ -6464,7 +6464,7 @@ if (typeof cornerstoneTools === 'undefined') {
                         return;
                     }
                 }, function(error) {
-                    errorLoadingHandler(element, imageId, error);
+                    errorLoadingHandler(element, imageId, error, 'stackPrefetch');
                 });
             }
 
@@ -6487,7 +6487,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     stackPrefetch.enabled = false;
                 }
             }, function(error) {
-                errorLoadingHandler(element, imageId, error);
+                errorLoadingHandler(element, imageId, error, 'stackPrefetch');
             });
         }
 
