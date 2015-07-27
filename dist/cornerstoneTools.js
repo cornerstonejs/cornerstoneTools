@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -465,7 +465,12 @@ if (typeof cornerstoneTools === 'undefined') {
                     mouseButtonMask: mouseButtonMask, options: options
                 };
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
-            }, disable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, enable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, getConfiguration: function() { return configuration;}, setConfiguration: function(config) {configuration = config;}
+            },
+            disable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            enable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            deactivate: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            getConfiguration: function() { return configuration;},
+            setConfiguration: function(config) {configuration = config;}
         };
         return toolInterface;
     }
@@ -8023,8 +8028,19 @@ if (typeof cornerstoneTools === 'undefined') {
 
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
+            var newImageId = stackData.imageIds[newImageIdIndex];
 
-            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            // Retry image loading in cases where previous image promise
+            // was rejected, if the option is set
+            var config = cornerstoneTools.stackScroll.getConfiguration();
+            if (config && config.retryLoadOnScroll === true) {
+                var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+                if (newImagePromise && newImagePromise.state() === 'rejected') {
+                    cornerstone.imageCache.removeImagePromise(newImageId);
+                }
+            }
+
+            cornerstone.loadAndCacheImage(newImageId).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {

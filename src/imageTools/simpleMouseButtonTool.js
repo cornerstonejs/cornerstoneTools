@@ -12,7 +12,12 @@
                     mouseButtonMask: mouseButtonMask, options: options
                 };
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
-            }, disable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, enable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);}, getConfiguration: function() { return configuration;}, setConfiguration: function(config) {configuration = config;}
+            },
+            disable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            enable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            deactivate: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
+            getConfiguration: function() { return configuration;},
+            setConfiguration: function(config) {configuration = config;}
         };
         return toolInterface;
     }

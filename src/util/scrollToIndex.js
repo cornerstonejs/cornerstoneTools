@@ -26,8 +26,19 @@
 
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
+            var newImageId = stackData.imageIds[newImageIdIndex];
 
-            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            // Retry image loading in cases where previous image promise
+            // was rejected, if the option is set
+            var config = cornerstoneTools.stackScroll.getConfiguration();
+            if (config && config.retryLoadOnScroll === true) {
+                var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+                if (newImagePromise && newImagePromise.state() === 'rejected') {
+                    cornerstone.imageCache.removeImagePromise(newImageId);
+                }
+            }
+
+            cornerstone.loadAndCacheImage(newImageId).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
