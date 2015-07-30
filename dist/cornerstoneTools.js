@@ -1382,13 +1382,20 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var measurementData = createNewMeasurement(mouseEventData);
 
+        var eventData = {
+            mouseButtonMask: mouseEventData.which,
+        };
+        
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
        
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+        $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
@@ -1400,7 +1407,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 config.getTextCallback(doneChangingTextCallback);
             }
 
-            $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
         });
     }
 
