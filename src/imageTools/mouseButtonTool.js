@@ -9,14 +9,20 @@
         function addNewMeasurement(mouseEventData) {
             var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
 
+            var eventData = {
+                mouseButtonMask: mouseEventData.which,
+            };
+
             // associate this data with this imageId so we can render it and manipulate it
             cornerstoneTools.addToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
-           
+
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
             $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+            $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
             
-            cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+            cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
@@ -24,7 +30,9 @@
                     cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
                 }
 
-                $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
                 cornerstone.updateImage(mouseEventData.element);
             });
         }
@@ -32,9 +40,10 @@
         function mouseDownActivateCallback(e, eventData) {
             if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
                 addNewMeasurement(eventData);
-                return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+                return false; // false = causes jquery to preventDefault() and stopPropagation() this event
             }
         }
+
         ///////// END ACTIVE TOOL ///////
 
         ///////// BEGIN DEACTIVE TOOL ///////
@@ -88,7 +97,7 @@
                 }
 
                 cornerstone.updateImage(eventData.element);
-                $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
             }
 
             if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
@@ -120,7 +129,7 @@
                         if (mouseToolInterface.pointNearTool(eventData.element, data, coords)) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             cornerstoneTools.moveAllHandles(e, data, toolData, true);
-                            $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
                             e.stopImmediatePropagation();
                             return false;
                         }
@@ -198,7 +207,12 @@
         }
 
         var toolInterface = {
-            enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration
+            enable: enable,
+            disable: disable,
+            activate: activate,
+            deactivate: deactivate,
+            getConfiguration: getConfiguration,
+            setConfiguration: setConfiguration
         };
 
         // Expose pointNearTool if available

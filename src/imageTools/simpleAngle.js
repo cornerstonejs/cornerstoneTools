@@ -165,21 +165,11 @@
             var handle = measurementData.handles.end;
             handle.x = mouseEventData.currentPoints.image.x;
             handle.y = mouseEventData.currentPoints.image.y;
-            if (handle.x < 0) {
-                handle.x = 0;
-            }
+            handle.x = Math.max(handle.x, 0);
+            handle.x = Math.min(handle.x, mouseEventData.image.width);
 
-            if (handle.x > mouseEventData.image.width) {
-                handle.x = mouseEventData.image.width;
-            }
-
-            if (handle.y < 0) {
-                handle.y = 0;
-            }
-
-            if (handle.y > mouseEventData.image.height) {
-                handle.y = mouseEventData.image.height;
-            }
+            handle.y = Math.max(handle.y, 0);
+            handle.y = Math.min(handle.y, mouseEventData.image.height);
 
             cornerstone.updateImage(mouseEventData.element);
         }
