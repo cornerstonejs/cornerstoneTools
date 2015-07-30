@@ -4701,13 +4701,15 @@ if (typeof cornerstoneTools === 'undefined') {
         };
     }
 
-    /** Applies the windowing procedure when the mouse drag ends */
-    function mouseUpCallback(e, eventData) {
+    /* Applies the windowing procedure when the mouse drag ends */
+    function dragEndCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneToolsMouseMove', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
+        $(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
         
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             return;
         }
 
@@ -4725,7 +4727,11 @@ if (typeof cornerstoneTools === 'undefined') {
 
         applyWWWCRegion(eventData);
 
-        $(eventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+        var mouseData = {
+            mouseButtonMask: eventData.which
+        };
+
+        $(eventData.element).on('CornerstoneToolsMouseDown', mouseData, mouseDownCallback);
     }
 
     /** Calculates the minimum and maximum value in the given pixel array */
@@ -4775,11 +4781,29 @@ if (typeof cornerstoneTools === 'undefined') {
         cornerstone.updateImage(eventData.element);
     }
 
+    function whichMovement(e, eventData) {
+        var element = eventData.element;
+
+        $(element).off('CornerstoneToolsMouseMove');
+        $(element).off('CornerstoneToolsMouseDrag');
+
+        $(element).on('CornerstoneToolsMouseMove', dragCallback);
+        $(element).on('CornerstoneToolsMouseDrag', dragCallback);
+
+        $(element).on('CornerstoneToolsMouseClick', dragEndCallback);
+        if (e.type === "CornerstoneToolsMouseDrag") {
+            $(element).on('CornerstoneToolsMouseUp', dragEndCallback);
+        }
+    }
+
     /** Records the start point and attaches the drag event handler */
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, whichMovement);
+            $(eventData.element).on('CornerstoneToolsMouseMove', eventData, whichMovement);
+            $(eventData.element).on('CornerstoneToolsMouseUp', dragEndCallback);
+
+            $(eventData.element).off('CornerstoneToolsMouseDown');
             recordStartPoint(eventData);
             return false;
         }
@@ -4886,13 +4910,13 @@ if (typeof cornerstoneTools === 'undefined') {
         };
 
         var toolData = cornerstoneTools.getToolState(element, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             var data = [];
             cornerstoneTools.addToolState(element, toolType, data);
         }
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseUp', dragEndCallback);
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneImageRendered', onImageRendered);
 
@@ -5479,8 +5503,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function moveNewHandle(mouseEventData, handle, doneMoveCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
-        
-        var startedWithClick = false;
 
         function moveCallback(e, eventData) {
             handle.active = true;
@@ -5502,14 +5524,11 @@ if (typeof cornerstoneTools === 'undefined') {
             $(element).off('CornerstoneToolsMouseMove');
             $(element).off('CornerstoneToolsMouseDrag');
 
-            //console.log(e.type);
             if (e.type === "CornerstoneToolsMouseMove") {
-                startedWithClick = true;
                 $(element).on('CornerstoneToolsMouseMove', moveCallback);
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseClick', mouseClickCallback);
             } else {
-                startedWithClick = false;
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             }

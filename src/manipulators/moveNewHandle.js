@@ -4,8 +4,6 @@
 
     function moveNewHandle(mouseEventData, handle, doneMoveCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
-        
-        var startedWithClick = false;
 
         function moveCallback(e, eventData) {
             handle.active = true;
@@ -27,14 +25,11 @@
             $(element).off('CornerstoneToolsMouseMove');
             $(element).off('CornerstoneToolsMouseDrag');
 
-            //console.log(e.type);
             if (e.type === "CornerstoneToolsMouseMove") {
-                startedWithClick = true;
                 $(element).on('CornerstoneToolsMouseMove', moveCallback);
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseClick', mouseClickCallback);
             } else {
-                startedWithClick = false;
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             }
