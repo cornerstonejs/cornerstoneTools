@@ -4015,34 +4015,21 @@ if (typeof cornerstoneTools === 'undefined') {
     function addNewMeasurement(mouseEventData) {
         var measurementData = createNewMeasurement(mouseEventData);
 
+        var eventData = {
+            mouseButtonMask: mouseEventData.which,
+        };
+
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
-        
-        function moveLastHandle(e, mouseEventData) {
-            var handle = measurementData.handles.end;
-            handle.x = mouseEventData.currentPoints.image.x;
-            handle.y = mouseEventData.currentPoints.image.y;
-            handle.x = Math.max(handle.x, 0);
-            handle.x = Math.min(handle.x, mouseEventData.image.width);
-
-            handle.y = Math.max(handle.y, 0);
-            handle.y = Math.min(handle.y, mouseEventData.image.height);
-
-            cornerstone.updateImage(mouseEventData.element);
-        }
-
-        function stopMovingLastHandle(mouseEventData) {
-            var handle = measurementData.handles.end;
-            handle.active = false;
-            $(mouseEventData.element).off('CornerstoneToolsMouseMove', moveLastHandle);
-            $(mouseEventData.element).off('CornerstoneToolsMouseUp', stopMovingLastHandle);
-            $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
-        }
 
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.middle, function() {
+        $(mouseEventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
+        $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.middle, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
@@ -4050,8 +4037,18 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             measurementData.handles.end.active = true;
-            $(mouseEventData.element).on('CornerstoneToolsMouseMove', moveLastHandle);
-            $(mouseEventData.element).on('CornerstoneToolsMouseUp', stopMovingLastHandle);
+            cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
+                measurementData.active = false;
+                if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
+                    // delete the measurement
+                    cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
+                }
+
+                $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+                $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+            });
         });
     }
 
