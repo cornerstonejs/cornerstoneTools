@@ -59,9 +59,17 @@
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
+        var config = cornerstoneTools.angle.getConfiguration();
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
+
+            // configurable shadow
+            if (config && config.shadow) {
+                context.shadowColor = '#000000';
+                context.shadowOffsetX = +1;
+                context.shadowOffsetY = +1;
+            }
 
             var data = toolData.data[i];
 

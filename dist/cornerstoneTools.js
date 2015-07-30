@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1216,9 +1216,17 @@ if (typeof cornerstoneTools === 'undefined') {
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
+        var config = cornerstoneTools.angle.getConfiguration();
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
+
+            // configurable shadow
+            if (config && config.shadow) {
+                context.shadowColor = '#000000';
+                context.shadowOffsetX = +1;
+                context.shadowOffsetY = +1;
+            }
 
             var data = toolData.data[i];
 
@@ -2990,9 +2998,16 @@ if (typeof cornerstoneTools === 'undefined') {
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
+        var config = cornerstoneTools.length.getConfiguration();
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
+            // configurable shadow
+            if (config && config.shadow) {
+                context.shadowColor = '#000000';
+                context.shadowOffsetX = +1;
+                context.shadowOffsetY = +1;
+            }
             
             var data = toolData.data[i];
 
