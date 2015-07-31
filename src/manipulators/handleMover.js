@@ -10,21 +10,11 @@
             handle.x = eventData.currentPoints.image.x;
             handle.y = eventData.currentPoints.image.y;
             if (preventHandleOutsideImage) {
-                if (handle.x < 0) {
-                    handle.x = 0;
-                }
+                handle.x = Math.max(handle.x, 0);
+                handle.x = Math.min(handle.x, eventData.image.width);
 
-                if (handle.x > eventData.image.width) {
-                    handle.x = eventData.image.width;
-                }
-
-                if (handle.y < 0) {
-                    handle.y = 0;
-                }
-
-                if (handle.y > eventData.image.height) {
-                    handle.y = eventData.image.height;
-                }
+                handle.y = Math.max(handle.y, 0);
+                handle.y = Math.min(handle.y, eventData.image.height);
             }
 
             cornerstone.updateImage(element);
