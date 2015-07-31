@@ -126,7 +126,7 @@
         var eventData = {
             mouseButtonMask: mouseEventData.which,
         };
-        
+
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
        
@@ -135,6 +135,8 @@
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstone.updateImage(mouseEventData.element);
 
         cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;

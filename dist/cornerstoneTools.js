@@ -548,6 +548,7 @@ if (typeof cornerstoneTools === 'undefined') {
             $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
             
+            cornerstone.updateImage(mouseEventData.element);
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
@@ -1395,6 +1396,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
+        cornerstone.updateImage(mouseEventData.element);
         cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
@@ -1410,6 +1412,7 @@ if (typeof cornerstoneTools === 'undefined') {
             $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
             $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
             $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+            cornerstone.updateImage(mouseEventData.element);
         });
     }
 
@@ -4037,6 +4040,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(mouseEventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+        cornerstone.updateImage(mouseEventData.element);
 
         cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.middle, function() {
             measurementData.active = false;
@@ -4046,6 +4050,8 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             measurementData.handles.end.active = true;
+            cornerstone.updateImage(mouseEventData.element);
+
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
@@ -4057,6 +4063,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(mouseEventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
                 $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
                 $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+                cornerstone.updateImage(mouseEventData.element);
             });
         });
     }
@@ -4371,7 +4378,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var eventData = {
             mouseButtonMask: mouseEventData.which,
         };
-        
+
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
        
@@ -4380,6 +4387,8 @@ if (typeof cornerstoneTools === 'undefined') {
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstone.updateImage(mouseEventData.element);
 
         cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;

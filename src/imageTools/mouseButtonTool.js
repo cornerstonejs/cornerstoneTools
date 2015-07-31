@@ -22,6 +22,7 @@
             $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
             
+            cornerstone.updateImage(mouseEventData.element);
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
