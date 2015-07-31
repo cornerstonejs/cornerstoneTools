@@ -25,37 +25,25 @@
             $(element).off('CornerstoneToolsMouseMove');
             $(element).off('CornerstoneToolsMouseDrag');
 
-            if (e.type === 'CornerstoneToolsMouseMove') {
-                $(element).on('CornerstoneToolsMouseMove', moveCallback);
-                $(element).on('CornerstoneToolsMouseDrag', moveCallback);
-                $(element).on('CornerstoneToolsMouseClick', mouseClickCallback);
-            } else {
-                $(element).on('CornerstoneToolsMouseDrag', moveCallback);
-                $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+            $(element).on('CornerstoneToolsMouseMove', moveCallback);
+            $(element).on('CornerstoneToolsMouseDrag', moveCallback);
+            
+            $(element).on('CornerstoneToolsMouseClick', moveEndCallback);
+            if (e.type === 'CornerstoneToolsMouseDrag') {
+                $(element).on('CornerstoneToolsMouseUp', moveEndCallback);
             }
         }
 
         $(element).on('CornerstoneToolsMouseDrag', whichMovement);
         $(element).on('CornerstoneToolsMouseMove', whichMovement);
         
-        function mouseUpCallback() {
+        function moveEndCallback() {
+            $(element).off('CornerstoneToolsMouseMove', moveCallback);
+            $(element).off('CornerstoneToolsMouseDrag', moveCallback);
+            $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+            $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+
             handle.active = false;
-
-            $(element).off('CornerstoneToolsMouseDrag');
-            $(element).off('CornerstoneToolsMouseUp');
-
-            cornerstone.updateImage(element);
-
-            doneMoveCallback();
-        }
-
-        function mouseClickCallback() {
-            handle.active = false;
-
-            $(element).off('CornerstoneToolsMouseMove');
-            $(element).off('CornerstoneToolsMouseDrag');
-            $(element).off('CornerstoneToolsMouseClick');
-
             cornerstone.updateImage(element);
 
             doneMoveCallback();
