@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-07-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-07-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4262,7 +4262,10 @@ if (typeof cornerstoneTools === 'undefined') {
         var measurementData = {
             visible: true, active: true, text: config.current, handles: {
                 end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -4300,7 +4303,10 @@ if (typeof cornerstoneTools === 'undefined') {
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: endCanvas.x - data.textWidth / 2, top: endCanvas.y, width: data.textWidth, height: data.textHeight
+            left: endCanvas.x - data.textWidth / 2,
+            top: endCanvas.y,
+            width: data.textWidth,
+            height: data.textHeight
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -4308,10 +4314,9 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function onImageRendered(e, eventData) {
-
         // if we have no toolData for this element, return immediately as there is nothing to do
-        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        if (!toolData) {
             return;
         }
 
@@ -4343,7 +4348,8 @@ if (typeof cornerstoneTools === 'undefined') {
             data.textHeight = fontSize;
 
             var coords = {
-                x: data.handles.end.x - data.textWidth / 2, y: data.handles.end.y
+                x: data.handles.end.x - data.textWidth / 2,
+                y: data.handles.end.y
             };
 
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
@@ -4361,20 +4367,31 @@ if (typeof cornerstoneTools === 'undefined') {
         if (!measurementData) {
             return;
         }
+
+        var eventData = {
+            mouseButtonMask: mouseEventData.which,
+        };
+        
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
        
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+        $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
                 cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
             }
 
-            $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+            cornerstone.updateImage(mouseEventData.element);
         });
     }
 
@@ -4395,7 +4412,7 @@ if (typeof cornerstoneTools === 'undefined') {
             var i;
 
             // now check to see if there is a handle we can move
-            if (toolData !== undefined) {
+            if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     if (pointNearTool(eventData.element, data, coords)) {
@@ -4595,7 +4612,13 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     cornerstoneTools.textMarker = {
-        enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration, pointNearTool: pointNearTool
+        enable: enable,
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
     ///////// END IMAGE RENDERING ///////
 
@@ -4800,7 +4823,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).on('CornerstoneToolsMouseDrag', dragCallback);
 
         $(element).on('CornerstoneToolsMouseClick', dragEndCallback);
-        if (e.type === "CornerstoneToolsMouseDrag") {
+        if (e.type === 'CornerstoneToolsMouseDrag') {
             $(element).on('CornerstoneToolsMouseUp', dragEndCallback);
         }
     }
@@ -5533,7 +5556,7 @@ if (typeof cornerstoneTools === 'undefined') {
             $(element).off('CornerstoneToolsMouseMove');
             $(element).off('CornerstoneToolsMouseDrag');
 
-            if (e.type === "CornerstoneToolsMouseMove") {
+            if (e.type === 'CornerstoneToolsMouseMove') {
                 $(element).on('CornerstoneToolsMouseMove', moveCallback);
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseClick', mouseClickCallback);

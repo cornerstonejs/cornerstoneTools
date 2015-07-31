@@ -119,7 +119,7 @@
         $(element).on('CornerstoneToolsMouseDrag', dragCallback);
 
         $(element).on('CornerstoneToolsMouseClick', dragEndCallback);
-        if (e.type === "CornerstoneToolsMouseDrag") {
+        if (e.type === 'CornerstoneToolsMouseDrag') {
             $(element).on('CornerstoneToolsMouseUp', dragEndCallback);
         }
     }

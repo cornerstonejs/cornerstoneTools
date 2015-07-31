@@ -25,7 +25,7 @@
             $(element).off('CornerstoneToolsMouseMove');
             $(element).off('CornerstoneToolsMouseDrag');
 
-            if (e.type === "CornerstoneToolsMouseMove") {
+            if (e.type === 'CornerstoneToolsMouseMove') {
                 $(element).on('CornerstoneToolsMouseMove', moveCallback);
                 $(element).on('CornerstoneToolsMouseDrag', moveCallback);
                 $(element).on('CornerstoneToolsMouseClick', mouseClickCallback);

@@ -17,7 +17,10 @@
         var measurementData = {
             visible: true, active: true, text: config.current, handles: {
                 end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -55,7 +58,10 @@
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: endCanvas.x - data.textWidth / 2, top: endCanvas.y, width: data.textWidth, height: data.textHeight
+            left: endCanvas.x - data.textWidth / 2,
+            top: endCanvas.y,
+            width: data.textWidth,
+            height: data.textHeight
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -63,10 +69,9 @@
     }
 
     function onImageRendered(e, eventData) {
-
         // if we have no toolData for this element, return immediately as there is nothing to do
-        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        if (!toolData) {
             return;
         }
 
@@ -98,7 +103,8 @@
             data.textHeight = fontSize;
 
             var coords = {
-                x: data.handles.end.x - data.textWidth / 2, y: data.handles.end.y
+                x: data.handles.end.x - data.textWidth / 2,
+                y: data.handles.end.y
             };
 
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
@@ -116,20 +122,31 @@
         if (!measurementData) {
             return;
         }
+
+        var eventData = {
+            mouseButtonMask: mouseEventData.which,
+        };
+        
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
        
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+        $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+        $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+
+        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
                 cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
             }
 
-            $(mouseEventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+            $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+            cornerstone.updateImage(mouseEventData.element);
         });
     }
 
@@ -150,7 +167,7 @@
             var i;
 
             // now check to see if there is a handle we can move
-            if (toolData !== undefined) {
+            if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     if (pointNearTool(eventData.element, data, coords)) {
@@ -350,7 +367,13 @@
     }
 
     cornerstoneTools.textMarker = {
-        enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration, pointNearTool: pointNearTool
+        enable: enable,
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration,
+        pointNearTool: pointNearTool
     };
     ///////// END IMAGE RENDERING ///////
 
