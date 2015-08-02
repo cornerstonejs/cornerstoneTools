@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*! cornerstoneTools - v0.6.2 - 2015-08-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+=======
+/*! cornerstoneTools - v0.6.2 - 2015-07-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+>>>>>>> 8c0b693d648b67d20943c8e1c4519a2df14f5ad4
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
