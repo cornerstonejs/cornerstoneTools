@@ -6,12 +6,11 @@
     var configuration = {};
     var reenablePrefetchTimeout;
 
-    function reenablePrefetch(e, data) {
+    function reenablePrefetch(element) {
         // Use timeouts here to prevent this being called over and over
         // during scrolling
         clearTimeout(reenablePrefetchTimeout);
         reenablePrefetchTimeout = setTimeout(function() {
-            var element = data.element;
             var stackData = cornerstoneTools.getToolState(element, 'stack');
             if (!stackData || !stackData.data || !stackData.data.length) {
                 return;
@@ -26,7 +25,7 @@
 
             var stackPrefetch = stackPrefetchData.data[0];
             if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-                // console.log('Re-enabling prefetch');
+                console.log('Re-enabling prefetch');
                 stackPrefetch.enabled = true;
                 prefetch(element);
             }
@@ -189,7 +188,7 @@
             }
 
             stackPrefetch.numCurrentRequests += 1;
-            // console.log('numCurrentRequests: ' + stackPrefetch.numCurrentRequests);
+            //console.log('numCurrentRequests: ' + stackPrefetch.numCurrentRequests);
 
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
@@ -199,11 +198,11 @@
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
                 imagePromise.then(function() {
-                    // console.log('Already in Cache: ' + image.imageId);
+                    console.log('Already in Cache: ' + imageId);
                     stackPrefetch.numCurrentRequests -= 1;
 
                     if (stackPrefetch.indicesToRequest.length) {
-                        //// console.log(stackPrefetch.indicesToRequest);
+                        //console.log(stackPrefetch.indicesToRequest);
                         setTimeout(function() {
                             var nextImageId = getNextImage();
                             if (!nextImageId) {
@@ -223,11 +222,14 @@
 
             // Load and cache the image
             // console.log('fetchImage: ' + imageId);
-            cornerstone.loadAndCacheImage(imageId).then(function() {
+            var loadingDeferred = cornerstone.loadAndCacheImage(imageId);
+            stackPrefetch.deferredInProgress.push(loadingDeferred);
+
+            loadingDeferred.then(function() {
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
-                    //// console.log(stackPrefetch.indicesToRequest);
+                    //console.log(stackPrefetch.indicesToRequest);
                     setTimeout(function() {
                         var nextImageId = getNextImage();
                         if (!nextImageId) {
@@ -239,8 +241,16 @@
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function(error) {
+            }, function(error, manuallyAborted) {
+                if (manuallyAborted) {
+                    // console.log('manuallyAborted');
+                    return;
+                }
+
                 errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+            }).always(function() {
+                var loadingDeferredIndex = stackPrefetch.deferredInProgress.indexOf(loadingDeferred);
+                stackPrefetch.deferredInProgress.splice(loadingDeferredIndex, 1);
             });
         }
 
@@ -258,7 +268,7 @@
 
     function handleCacheFull(e) {
         // Stop prefetching if the ImageCacheFull event is fired from cornerstone
-        // console.log('CornerstoneImageCacheFull full, stopping');
+        console.log('CornerstoneImageCacheFull full, stopping');
         var element = e.data.element;
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
@@ -304,7 +314,8 @@
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
             indicesToRequest: range(0, stack.imageIds.length - 1),
-            enabled: true
+            enabled: true,
+            deferredInProgress: []
         };
 
         // Remove the currentImageIdIndex from the list to request
@@ -314,9 +325,6 @@
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
-
-        $(element).off('CornerstoneNewImage', reenablePrefetch);
-        $(element).on('CornerstoneNewImage', reenablePrefetch);
 
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).on('CornerstoneImageCacheFull', {
@@ -330,7 +338,6 @@
     }
 
     function disable(element) {
-        $(element).off('CornerstoneNewImage', reenablePrefetch);
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
@@ -355,7 +362,8 @@
         enable: enable,
         disable: disable,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        reenablePrefetch: reenablePrefetch
     };
 
 })($, cornerstone, cornerstoneTools);

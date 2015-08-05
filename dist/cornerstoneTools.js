@@ -6253,12 +6253,11 @@ if (typeof cornerstoneTools === 'undefined') {
     var configuration = {};
     var reenablePrefetchTimeout;
 
-    function reenablePrefetch(e, data) {
+    function reenablePrefetch(element) {
         // Use timeouts here to prevent this being called over and over
         // during scrolling
         clearTimeout(reenablePrefetchTimeout);
         reenablePrefetchTimeout = setTimeout(function() {
-            var element = data.element;
             var stackData = cornerstoneTools.getToolState(element, 'stack');
             if (!stackData || !stackData.data || !stackData.data.length) {
                 return;
@@ -6273,7 +6272,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var stackPrefetch = stackPrefetchData.data[0];
             if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-                // console.log('Re-enabling prefetch');
+                console.log('Re-enabling prefetch');
                 stackPrefetch.enabled = true;
                 prefetch(element);
             }
@@ -6436,7 +6435,7 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             stackPrefetch.numCurrentRequests += 1;
-            // console.log('numCurrentRequests: ' + stackPrefetch.numCurrentRequests);
+            //console.log('numCurrentRequests: ' + stackPrefetch.numCurrentRequests);
 
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
@@ -6446,11 +6445,11 @@ if (typeof cornerstoneTools === 'undefined') {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
                 imagePromise.then(function() {
-                    // console.log('Already in Cache: ' + image.imageId);
+                    console.log('Already in Cache: ' + imageId);
                     stackPrefetch.numCurrentRequests -= 1;
 
                     if (stackPrefetch.indicesToRequest.length) {
-                        //// console.log(stackPrefetch.indicesToRequest);
+                        //console.log(stackPrefetch.indicesToRequest);
                         setTimeout(function() {
                             var nextImageId = getNextImage();
                             if (!nextImageId) {
@@ -6470,11 +6469,14 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // Load and cache the image
             // console.log('fetchImage: ' + imageId);
-            cornerstone.loadAndCacheImage(imageId).then(function() {
+            var loadingDeferred = cornerstone.loadAndCacheImage(imageId);
+            stackPrefetch.deferredInProgress.push(loadingDeferred);
+
+            loadingDeferred.then(function() {
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
-                    //// console.log(stackPrefetch.indicesToRequest);
+                    //console.log(stackPrefetch.indicesToRequest);
                     setTimeout(function() {
                         var nextImageId = getNextImage();
                         if (!nextImageId) {
@@ -6486,8 +6488,16 @@ if (typeof cornerstoneTools === 'undefined') {
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function(error) {
+            }, function(error, manuallyAborted) {
+                if (manuallyAborted) {
+                    // console.log('manuallyAborted');
+                    return;
+                }
+
                 errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+            }).always(function() {
+                var loadingDeferredIndex = stackPrefetch.deferredInProgress.indexOf(loadingDeferred);
+                stackPrefetch.deferredInProgress.splice(loadingDeferredIndex, 1);
             });
         }
 
@@ -6505,7 +6515,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function handleCacheFull(e) {
         // Stop prefetching if the ImageCacheFull event is fired from cornerstone
-        // console.log('CornerstoneImageCacheFull full, stopping');
+        console.log('CornerstoneImageCacheFull full, stopping');
         var element = e.data.element;
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
@@ -6551,7 +6561,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
             indicesToRequest: range(0, stack.imageIds.length - 1),
-            enabled: true
+            enabled: true,
+            deferredInProgress: []
         };
 
         // Remove the currentImageIdIndex from the list to request
@@ -6561,9 +6572,6 @@ if (typeof cornerstoneTools === 'undefined') {
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
-
-        $(element).off('CornerstoneNewImage', reenablePrefetch);
-        $(element).on('CornerstoneNewImage', reenablePrefetch);
 
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).on('CornerstoneImageCacheFull', {
@@ -6577,7 +6585,6 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function disable(element) {
-        $(element).off('CornerstoneNewImage', reenablePrefetch);
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
@@ -6602,7 +6609,8 @@ if (typeof cornerstoneTools === 'undefined') {
         enable: enable,
         disable: disable,
         getConfiguration: getConfiguration,
-        setConfiguration: setConfiguration
+        setConfiguration: setConfiguration,
+        reenablePrefetch: reenablePrefetch
     };
 
 })($, cornerstone, cornerstoneTools);
@@ -8376,10 +8384,18 @@ if (typeof cornerstoneTools === 'undefined') {
             // This prevents the competition for bandwidth between user-controlled scroll actions
             // and the prefetcher
             var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
-            if (stackPrefetchData && stackPrefetchData.data && stackPrefetchData.data.length) {
+            var prefetchPaused = false;
+            if (stackPrefetchData && stackPrefetchData.data &&
+                stackPrefetchData.data.length && stackPrefetchData.data[0].enabled) {
                 var stackPrefetch = stackPrefetchData.data[0];
-                // console.log('Pausing prefetching');
+                prefetchPaused = true;
+                console.log('Pausing prefetching');
                 stackPrefetch.enabled = false;
+                stackPrefetch.deferredInProgress.forEach(function(deferred) {
+                    var error = false;
+                    var manuallyAborted = true;
+                    deferred.rejectWith(this, [ error, manuallyAborted ]);
+                });
                 stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
             }
 
@@ -8402,6 +8418,10 @@ if (typeof cornerstoneTools === 'undefined') {
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
+                    }
+
+                    if (stackPrefetch && prefetchPaused) {
+                        cornerstoneTools.stackPrefetch.reenablePrefetch(element);
                     }
                 }
             }, function(error) {
