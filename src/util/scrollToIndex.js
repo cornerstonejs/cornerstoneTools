@@ -24,6 +24,21 @@
                 startLoadingHandler(element);
             }
 
+            // Used to pause prefetching when image is changed
+            // This prevents the competition for bandwidth between user-controlled scroll actions
+            // and the prefetcher
+            var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
+            var prefetchPaused = false;
+            var stackPrefetch;
+            if (stackPrefetchData && stackPrefetchData.data &&
+                stackPrefetchData.data.length && stackPrefetchData.data[0].enabled) {
+                stackPrefetch = stackPrefetchData.data[0];
+                prefetchPaused = true;
+                console.log('Pausing prefetching');
+                stackPrefetch.enabled = false;
+                stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
+            }
+
             stackData.currentImageIdIndex = newImageIdIndex;
             var viewport = cornerstone.getViewport(element);
             var newImageId = stackData.imageIds[newImageIdIndex];
@@ -43,6 +58,10 @@
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
                         endLoadingHandler(element);
+                    }
+
+                    if (prefetchPaused) {
+                        cornerstoneTools.stackPrefetch.reenablePrefetch(element);
                     }
                 }
             }, function(error) {
