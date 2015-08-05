@@ -29,17 +29,13 @@
             // and the prefetcher
             var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
             var prefetchPaused = false;
+            var stackPrefetch;
             if (stackPrefetchData && stackPrefetchData.data &&
                 stackPrefetchData.data.length && stackPrefetchData.data[0].enabled) {
-                var stackPrefetch = stackPrefetchData.data[0];
+                stackPrefetch = stackPrefetchData.data[0];
                 prefetchPaused = true;
                 console.log('Pausing prefetching');
                 stackPrefetch.enabled = false;
-                stackPrefetch.deferredInProgress.forEach(function(deferred) {
-                    var error = false;
-                    var manuallyAborted = true;
-                    deferred.rejectWith(this, [ error, manuallyAborted ]);
-                });
                 stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
             }
 
@@ -64,7 +60,7 @@
                         endLoadingHandler(element);
                     }
 
-                    if (stackPrefetch && prefetchPaused) {
+                    if (prefetchPaused) {
                         cornerstoneTools.stackPrefetch.reenablePrefetch(element);
                     }
                 }

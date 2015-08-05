@@ -222,10 +222,7 @@
 
             // Load and cache the image
             // console.log('fetchImage: ' + imageId);
-            var loadingDeferred = cornerstone.loadAndCacheImage(imageId);
-            stackPrefetch.deferredInProgress.push(loadingDeferred);
-
-            loadingDeferred.then(function() {
+            cornerstone.loadAndCacheImage(imageId).then(function() {
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
@@ -241,16 +238,8 @@
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function(error, manuallyAborted) {
-                if (manuallyAborted) {
-                    // console.log('manuallyAborted');
-                    return;
-                }
-
+            }, function(error) {
                 errorLoadingHandler(element, imageId, error, 'stackPrefetch');
-            }).always(function() {
-                var loadingDeferredIndex = stackPrefetch.deferredInProgress.indexOf(loadingDeferred);
-                stackPrefetch.deferredInProgress.splice(loadingDeferredIndex, 1);
             });
         }
 

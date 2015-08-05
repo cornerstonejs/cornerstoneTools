@@ -6469,10 +6469,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // Load and cache the image
             // console.log('fetchImage: ' + imageId);
-            var loadingDeferred = cornerstone.loadAndCacheImage(imageId);
-            stackPrefetch.deferredInProgress.push(loadingDeferred);
-
-            loadingDeferred.then(function() {
+            cornerstone.loadAndCacheImage(imageId).then(function() {
                 stackPrefetch.numCurrentRequests -= 1;
 
                 if (stackPrefetch.indicesToRequest.length) {
@@ -6488,16 +6485,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 } else {
                     stackPrefetch.enabled = false;
                 }
-            }, function(error, manuallyAborted) {
-                if (manuallyAborted) {
-                    // console.log('manuallyAborted');
-                    return;
-                }
-
+            }, function(error) {
                 errorLoadingHandler(element, imageId, error, 'stackPrefetch');
-            }).always(function() {
-                var loadingDeferredIndex = stackPrefetch.deferredInProgress.indexOf(loadingDeferred);
-                stackPrefetch.deferredInProgress.splice(loadingDeferredIndex, 1);
             });
         }
 
@@ -8385,17 +8374,13 @@ if (typeof cornerstoneTools === 'undefined') {
             // and the prefetcher
             var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
             var prefetchPaused = false;
+            var stackPrefetch;
             if (stackPrefetchData && stackPrefetchData.data &&
                 stackPrefetchData.data.length && stackPrefetchData.data[0].enabled) {
-                var stackPrefetch = stackPrefetchData.data[0];
+                stackPrefetch = stackPrefetchData.data[0];
                 prefetchPaused = true;
                 console.log('Pausing prefetching');
                 stackPrefetch.enabled = false;
-                stackPrefetch.deferredInProgress.forEach(function(deferred) {
-                    var error = false;
-                    var manuallyAborted = true;
-                    deferred.rejectWith(this, [ error, manuallyAborted ]);
-                });
                 stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
             }
 
@@ -8420,7 +8405,7 @@ if (typeof cornerstoneTools === 'undefined') {
                         endLoadingHandler(element);
                     }
 
-                    if (stackPrefetch && prefetchPaused) {
+                    if (prefetchPaused) {
                         cornerstoneTools.stackPrefetch.reenablePrefetch(element);
                     }
                 }
