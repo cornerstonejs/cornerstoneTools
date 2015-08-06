@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-08-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4732,8 +4732,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
     var toolType = 'wwwcRegion';
 
-    /** Calculates the minimum and maximum value in the given pixel array */
-    function calculateMinMax(storedPixelData, globalMin, globalMax) {
+    var configuration = {
+        minWindowWidth: 10
+    };
+
+    /** Calculates the minimum, maximum, and mean value in the given pixel array */
+    function calculateMinMaxMean(storedPixelData, globalMin, globalMax) {
         var numPixels = storedPixelData.length;
 
         if (numPixels < 2) {
@@ -4744,16 +4748,19 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var min = globalMax;
         var max = globalMin;
+        var sum = 0;
 
         for (var index = 0; index < numPixels; index++) {
             var spv = storedPixelData[index];
             min = Math.min(min, spv);
             max = Math.max(max, spv);
+            sum += spv;
         }
 
         return {
             min: min,
-            max: max
+            max: max,
+            mean: sum / numPixels
         };
     }
 
@@ -4823,12 +4830,13 @@ if (typeof cornerstoneTools === 'undefined') {
         var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
 
         // Calculate the minimum and maximum pixel values
-        var minMax = calculateMinMax(pixels, eventData.image.minPixelValue, eventData.image.maxPixelValue);
+        var minMaxMean = calculateMinMaxMean(pixels, eventData.image.minPixelValue, eventData.image.maxPixelValue);
 
         // Adjust the viewport window width and center based on the calculated values
+        var config = cornerstoneTools.wwwcRegion.getConfiguration();
         var viewport = cornerstone.getViewport(eventData.element);
-        viewport.voi.windowWidth = Math.abs(minMax.max - minMax.min);
-        viewport.voi.windowCenter = (minMax.max - minMax.min) / 2;
+        viewport.voi.windowWidth = Math.max(Math.abs(minMaxMean.max - minMaxMean.min), config.minWindowWidth);
+        viewport.voi.windowCenter = minMaxMean.mean;
         cornerstone.setViewport(eventData.element, viewport);
 
         // Clear the toolData
@@ -5007,11 +5015,21 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).on('CornerstoneImageRendered', onImageRendered);
     }
 
+    function getConfiguration() {
+        return configuration;
+    }
+
+    function setConfiguration(config) {
+        configuration = config;
+    }
+
     // module exports
     cornerstoneTools.wwwcRegion = {
         activate: activate,
         deactivate: disable,
-        disable: disable
+        disable: disable,
+        setConfiguration: setConfiguration,
+        getConfiguration: getConfiguration
     };
 
     cornerstoneTools.wwwcRegionTouch = {
