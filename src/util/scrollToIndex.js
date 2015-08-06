@@ -15,6 +15,10 @@
             newImageIdIndex += stackData.imageIds.length;
         }
 
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
         function doneCallback(image) {
             //console.log('interaction done: ' + image.imageId);
             if (stackData.currentImageIdIndex === newImageIdIndex) {
@@ -32,43 +36,42 @@
             }
         }
 
-        if (newImageIdIndex !== stackData.currentImageIdIndex) {
-            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
-
-            if (startLoadingHandler) {
-                startLoadingHandler(element);
-            }
-
-            stackData.currentImageIdIndex = newImageIdIndex;
-            var viewport = cornerstone.getViewport(element);
-            var newImageId = stackData.imageIds[newImageIdIndex];
-
-            // Retry image loading in cases where previous image promise
-            // was rejected, if the option is set
-            var config = cornerstoneTools.stackScroll.getConfiguration();
-            if (config && config.retryLoadOnScroll === true) {
-                var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
-                if (newImagePromise && newImagePromise.state() === 'rejected') {
-                    cornerstone.imageCache.removeImagePromise(newImageId);
-                }
-            }
-
-            var eventData = {
-                newImageIdIndex: newImageIdIndex,
-                direction: stackData.currentImageIdIndex - newImageIdIndex
-            };
-
-            $(element).trigger('CornerstoneStackScroll', eventData);
-
-            var requestPoolManager = cornerstoneTools.requestPoolManager;
-            var type = 'interaction';
-
-            cornerstoneTools.requestPoolManager.clearRequestStack(type);
-
-            requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        if (newImageIdIndex === stackData.currentImageIdIndex) {
+            return;
         }
+
+        if (startLoadingHandler) {
+            startLoadingHandler(element);
+        }
+
+        stackData.currentImageIdIndex = newImageIdIndex;
+        var viewport = cornerstone.getViewport(element);
+        var newImageId = stackData.imageIds[newImageIdIndex];
+
+        // Retry image loading in cases where previous image promise
+        // was rejected, if the option is set
+        var config = cornerstoneTools.stackScroll.getConfiguration();
+        if (config && config.retryLoadOnScroll === true) {
+            var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+            if (newImagePromise && newImagePromise.state() === 'rejected') {
+                cornerstone.imageCache.removeImagePromise(newImageId);
+            }
+        }
+
+        var eventData = {
+            newImageIdIndex: newImageIdIndex,
+            direction: newImageIdIndex - stackData.currentImageIdIndex
+        };
+
+        $(element).trigger('CornerstoneStackScroll', eventData);
+
+        var requestPoolManager = cornerstoneTools.requestPoolManager;
+        var type = 'interaction';
+
+        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+
+        requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        requestPoolManager.startGrabbing();
     }
 
     // module exports

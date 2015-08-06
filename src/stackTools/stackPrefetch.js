@@ -149,6 +149,8 @@
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
             }
         }
+
+        requestPoolManager.startGrabbing();
     }
 
     function handleCacheFull(e) {
@@ -168,7 +170,7 @@
         // currentImageIdIndex is changed to an image nearby
         var element = e.data.element;
         var stackData = cornerstoneTools.getToolState(element, 'stack');
-        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+        if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
 
@@ -184,6 +186,7 @@
     }
 
     function onImageUpdated(e) {
+        //console.log("onImageUpdated");
         var element = e.currentTarget;
         var type = 'prefetch';
         cornerstoneTools.requestPoolManager.clearRequestStack(type);

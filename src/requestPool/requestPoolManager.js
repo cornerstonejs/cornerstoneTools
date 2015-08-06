@@ -19,6 +19,10 @@
                 throw 'Request type must be one of "interaction", "thumbnail", or "prefetch"';
             }
 
+            if (!element || !imageId) {
+                return;
+            }
+
             // Describe the request
             var requestDetails = {
                 imageId: imageId,
@@ -36,13 +40,10 @@
             if (type === 'interaction') {
                 lastElementInteracted = element;
             }
-
-            if (!awake) {
-                startGrabbing();
-            }
         }
 
         function clearRequestStack(type) {
+            console.log('clearRequestStack');
             if (!requestPool.hasOwnProperty(type)) {
                 throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
@@ -54,10 +55,11 @@
             if (!awake) {
                 return;
             }
-            
+
             setTimeout(function() {
                 var requestDetails = getNextRequest();
                 if (!requestDetails) {
+                    awake = false;
                     return;
                 }
 
@@ -67,13 +69,15 @@
 
         function sendRequest(requestDetails) {
             if (!requestDetails) {
+                awake = false;
                 return;
             }
-            
+
+            awake = true;
             var imageId = requestDetails.imageId;
             var doneCallback = requestDetails.doneCallback;
             var failCallback = requestDetails.failCallback;
-
+            
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             
@@ -99,11 +103,12 @@
 
         function startGrabbing() {
             // Begin by grabbing X images
-            awake = true;
-            var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
+            if (awake) {
+                return;
+            }
 
+            var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
             for (var i = 0; i < maxSimultaneousRequests; i++) {
-                // console.log('Starting branch: ' + i);
                 var requestDetails = getNextRequest();
                 sendRequest(requestDetails);
             }
@@ -122,15 +127,18 @@
                 return requestPool.prefetch.pop();
             }
 
-            // Nothing left to grab
-            awake = false;
             return false;
+        }
+
+        function getRequestPool() {
+            return requestPool;
         }
 
         var requestManager = {
             addRequest: addRequest,
             clearRequestStack: clearRequestStack,
-            requestPool: requestPool
+            startGrabbing: startGrabbing,
+            getRequestPool: getRequestPool
         };
 
         return requestManager;
