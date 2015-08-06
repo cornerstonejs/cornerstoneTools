@@ -15,6 +15,23 @@
             newImageIdIndex += stackData.imageIds.length;
         }
 
+        function doneCallback(image) {
+            //console.log('interaction done: ' + image.imageId);
+            if (stackData.currentImageIdIndex === newImageIdIndex) {
+                cornerstone.displayImage(element, image, viewport);
+                if (endLoadingHandler) {
+                    endLoadingHandler(element);
+                }
+            }
+        }
+
+        function failCallback(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error);
+            }
+        }
+
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
             var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
             var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
@@ -45,19 +62,12 @@
 
             $(element).trigger('CornerstoneStackScroll', eventData);
 
-            cornerstone.loadAndCacheImage(newImageId).then(function(image) {
-                if (stackData.currentImageIdIndex === newImageIdIndex) {
-                    cornerstone.displayImage(element, image, viewport);
-                    if (endLoadingHandler) {
-                        endLoadingHandler(element);
-                    }
-                }
-            }, function(error) {
-                var imageId = stackData.imageIds[newImageIdIndex];
-                if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId, error);
-                }
-            });
+            var requestPoolManager = cornerstoneTools.requestPoolManager;
+            var type = 'interaction';
+
+            cornerstoneTools.requestPoolManager.clearRequestStack(type);
+
+            requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
         }
     }
 
