@@ -119,15 +119,15 @@
 
         function getNextRequest() {
             if (requestPool.interaction.length) {
-                return requestPool.interaction.pop();
+                return requestPool.interaction.shift();
             }
 
             if (requestPool.thumbnail.length) {
-                return requestPool.thumbnail.pop();
+                return requestPool.thumbnail.shift();
             }
 
             if (requestPool.prefetch.length) {
-                return requestPool.prefetch.pop();
+                return requestPool.prefetch.shift();
             }
 
             return false;
