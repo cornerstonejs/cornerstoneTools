@@ -6062,7 +6062,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         function addRequest(element, imageId, type, doneCallback, failCallback) {
             if (!requestPool.hasOwnProperty(type)) {
-                throw 'Request type must be one of "interaction", "thumbnail", or "prefetch"';
+                throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
 
             if (!element || !imageId) {
@@ -6089,7 +6089,7 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         function clearRequestStack(type) {
-            console.log('clearRequestStack');
+            //console.log('clearRequestStack');
             if (!requestPool.hasOwnProperty(type)) {
                 throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
@@ -6126,7 +6126,6 @@ if (typeof cornerstoneTools === 'undefined') {
             
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            
             if (imagePromise) {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
@@ -6136,6 +6135,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 }, function(error) {
                     failCallback(error);
                 });
+                return;
             }
 
             // Load and cache the image
@@ -6158,6 +6158,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 var requestDetails = getNextRequest();
                 sendRequest(requestDetails);
             }
+
+            //console.log("startGrabbing");
+            //console.log(requestPool);
         }
 
         function getNextRequest() {
@@ -6336,6 +6339,9 @@ if (typeof cornerstoneTools === 'undefined') {
     var toolType = 'stackPrefetch';
     var configuration = {};
 
+    var resetPrefetchTimeout,
+        resetPrefetchDelay;
+
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
@@ -6400,7 +6406,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var stackPrefetch = stackPrefetchData.data[0];
 
         // If all the requests are complete, disable the stackPrefetch tool
-        if (stackPrefetch.indicesToRequest.length === 0) {
+        if (!stackPrefetch.indicesToRequest.length) {
             stackPrefetch.enabled = false;
         }
 
@@ -6435,33 +6441,6 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         });
 
-        // Get tool configuration
-        //var config = cornerstoneTools.stackPrefetch.getConfiguration();
-        stackPrefetch.numCurrentRequests = 0;
-
-        function getNextImage() {
-            // This gets the next image indices above and below the current stack imageIdIndex
-            var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
-            
-            // This is used to set the direction of prefetching.
-            // Default is to prefetch upwards in the stack
-            // If scrolling has been heading downwards, prefetching will choose the
-            // next lowest imageIdIndex below the current imageIdIndex
-
-            var nextImageIdIndex;
-            if (stackPrefetch.direction < 0) {
-                // console.log('Prefetching downward');
-                nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.low];
-            } else {
-                // console.log('Prefetching upward');
-                nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.high];
-            }
-
-            var nextImageId = stack.imageIds[nextImageIdIndex];
-            removeFromList(nextImageIdIndex);
-            return nextImageId;
-        }
-
         function doneCallback(image) {
             //console.log('prefetch done: ' + image.imageId);
             var imageIdIndex = stack.imageIds.indexOf(image.imageId);
@@ -6473,13 +6452,34 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         var requestPoolManager = cornerstoneTools.requestPoolManager;
-        for (var i = 0; i < stackPrefetch.indicesToRequest.length; i++) {
-            if (stackPrefetch.enabled && stackPrefetch.indicesToRequest.length) {
-                var imageId = getNextImage();
-                var type = 'prefetch';
+        var type = 'prefetch';
+        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+        console.log('readding prefetch requests to list');
+        console.log(stackPrefetch.indicesToRequest.length + 'left');
+        console.time('Pref');
+
+        var i,
+            imageId,
+            nextImageIdIndex;
+
+        var nearest = nearestIndex(indicesToRequestCopy, stack.currentImageIdIndex);
+        if (stackPrefetch.direction < 0) {
+            console.log('Prefetching downward');
+            for (i = 0; i < nearest.low; i++) {
+                nextImageIdIndex = indicesToRequestCopy[i];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
+            }
+        } else {
+            console.log('Prefetching upward');
+            for (i = nearest.high; i < indicesToRequestCopy.length; i++) {
+                nextImageIdIndex = indicesToRequestCopy[i];
+                imageId = stack.imageIds[nextImageIdIndex];
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
             }
         }
+
+        console.timeEnd('Pref');
 
         requestPoolManager.startGrabbing();
     }
@@ -6517,11 +6517,12 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function onImageUpdated(e) {
-        //console.log("onImageUpdated");
-        var element = e.currentTarget;
-        var type = 'prefetch';
-        cornerstoneTools.requestPoolManager.clearRequestStack(type);
-        prefetch(element);
+        //console.log('onImageUpdated');
+        clearTimeout(resetPrefetchTimeout);
+        resetPrefetchTimeout = setTimeout(function() {
+            var element = e.currentTarget;
+            prefetch(element);
+        }, resetPrefetchDelay);
     }
 
     function enable(element) {
@@ -8469,6 +8470,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
         if (startLoadingHandler) {
             startLoadingHandler(element);
+        }
+
+        // Check scrolling direction to inform prefetcher
+        var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
+        if (stackPrefetchData && stackPrefetchData.data && stackPrefetchData.data.length) {
+            var stackPrefetch = stackPrefetchData.data[0];
+            stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
         }
 
         stackData.currentImageIdIndex = newImageIdIndex;

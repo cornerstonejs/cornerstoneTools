@@ -5,6 +5,9 @@
     var toolType = 'stackPrefetch';
     var configuration = {};
 
+    var resetPrefetchTimeout,
+        resetPrefetchDelay;
+
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
@@ -69,7 +72,7 @@
         var stackPrefetch = stackPrefetchData.data[0];
 
         // If all the requests are complete, disable the stackPrefetch tool
-        if (stackPrefetch.indicesToRequest.length === 0) {
+        if (!stackPrefetch.indicesToRequest.length) {
             stackPrefetch.enabled = false;
         }
 
@@ -104,33 +107,6 @@
             }
         });
 
-        // Get tool configuration
-        //var config = cornerstoneTools.stackPrefetch.getConfiguration();
-        stackPrefetch.numCurrentRequests = 0;
-
-        function getNextImage() {
-            // This gets the next image indices above and below the current stack imageIdIndex
-            var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
-            
-            // This is used to set the direction of prefetching.
-            // Default is to prefetch upwards in the stack
-            // If scrolling has been heading downwards, prefetching will choose the
-            // next lowest imageIdIndex below the current imageIdIndex
-
-            var nextImageIdIndex;
-            if (stackPrefetch.direction < 0) {
-                // console.log('Prefetching downward');
-                nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.low];
-            } else {
-                // console.log('Prefetching upward');
-                nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.high];
-            }
-
-            var nextImageId = stack.imageIds[nextImageIdIndex];
-            removeFromList(nextImageIdIndex);
-            return nextImageId;
-        }
-
         function doneCallback(image) {
             //console.log('prefetch done: ' + image.imageId);
             var imageIdIndex = stack.imageIds.indexOf(image.imageId);
@@ -142,13 +118,34 @@
         }
 
         var requestPoolManager = cornerstoneTools.requestPoolManager;
-        for (var i = 0; i < stackPrefetch.indicesToRequest.length; i++) {
-            if (stackPrefetch.enabled && stackPrefetch.indicesToRequest.length) {
-                var imageId = getNextImage();
-                var type = 'prefetch';
+        var type = 'prefetch';
+        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+        console.log('readding prefetch requests to list');
+        console.log(stackPrefetch.indicesToRequest.length + 'left');
+        console.time('Pref');
+
+        var i,
+            imageId,
+            nextImageIdIndex;
+
+        var nearest = nearestIndex(indicesToRequestCopy, stack.currentImageIdIndex);
+        if (stackPrefetch.direction < 0) {
+            console.log('Prefetching downward');
+            for (i = 0; i < nearest.low; i++) {
+                nextImageIdIndex = indicesToRequestCopy[i];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
+            }
+        } else {
+            console.log('Prefetching upward');
+            for (i = nearest.high; i < indicesToRequestCopy.length; i++) {
+                nextImageIdIndex = indicesToRequestCopy[i];
+                imageId = stack.imageIds[nextImageIdIndex];
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
             }
         }
+
+        console.timeEnd('Pref');
 
         requestPoolManager.startGrabbing();
     }
@@ -186,11 +183,12 @@
     }
 
     function onImageUpdated(e) {
-        //console.log("onImageUpdated");
-        var element = e.currentTarget;
-        var type = 'prefetch';
-        cornerstoneTools.requestPoolManager.clearRequestStack(type);
-        prefetch(element);
+        //console.log('onImageUpdated');
+        clearTimeout(resetPrefetchTimeout);
+        resetPrefetchTimeout = setTimeout(function() {
+            var element = e.currentTarget;
+            prefetch(element);
+        }, resetPrefetchDelay);
     }
 
     function enable(element) {

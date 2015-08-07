@@ -44,6 +44,13 @@
             startLoadingHandler(element);
         }
 
+        // Check scrolling direction to inform prefetcher
+        var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
+        if (stackPrefetchData && stackPrefetchData.data && stackPrefetchData.data.length) {
+            var stackPrefetch = stackPrefetchData.data[0];
+            stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
+        }
+
         stackData.currentImageIdIndex = newImageIdIndex;
         var viewport = cornerstone.getViewport(element);
         var newImageId = stackData.imageIds[newImageIdIndex];

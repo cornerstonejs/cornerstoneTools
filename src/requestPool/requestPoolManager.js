@@ -16,7 +16,7 @@
 
         function addRequest(element, imageId, type, doneCallback, failCallback) {
             if (!requestPool.hasOwnProperty(type)) {
-                throw 'Request type must be one of "interaction", "thumbnail", or "prefetch"';
+                throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
 
             if (!element || !imageId) {
@@ -43,7 +43,7 @@
         }
 
         function clearRequestStack(type) {
-            console.log('clearRequestStack');
+            //console.log('clearRequestStack');
             if (!requestPool.hasOwnProperty(type)) {
                 throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
@@ -80,7 +80,6 @@
             
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            
             if (imagePromise) {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
@@ -90,6 +89,7 @@
                 }, function(error) {
                     failCallback(error);
                 });
+                return;
             }
 
             // Load and cache the image
@@ -112,6 +112,9 @@
                 var requestDetails = getNextRequest();
                 sendRequest(requestDetails);
             }
+
+            //console.log("startGrabbing");
+            //console.log(requestPool);
         }
 
         function getNextRequest() {
