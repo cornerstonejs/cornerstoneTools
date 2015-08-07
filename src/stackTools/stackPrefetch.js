@@ -72,7 +72,7 @@
         var stackPrefetch = stackPrefetchData.data[0];
 
         // If all the requests are complete, disable the stackPrefetch tool
-        if (!stackPrefetch.indicesToRequest.length) {
+        if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
             stackPrefetch.enabled = false;
         }
 
@@ -128,7 +128,7 @@
         var nearest = nearestIndex(indicesToRequestCopy, stack.currentImageIdIndex);
         if (stackPrefetch.direction < 0) {
             //  console.log('Prefetching downward');
-            for (i = 0; i < nearest.low; i++) {
+            for (i = 0; i <= nearest.low; i++) {
                 nextImageIdIndex = indicesToRequestCopy[i];
                 imageId = stack.imageIds[nextImageIdIndex];
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
