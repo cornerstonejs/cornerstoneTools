@@ -7,6 +7,18 @@
         thumbnail: [],
         prefetch: []
     };
+
+    var numRequests = {
+        interaction: 0,
+        thumbnail: 0,
+        prefetch: 0
+    };
+
+    var maxNumRequests = {
+        interaction: 6,
+        thumbnail: 6,
+        prefetch: 5
+    };
     
     var lastElementInteracted;
     var awake = false;
@@ -25,6 +37,7 @@
 
             // Describe the request
             var requestDetails = {
+                type: type,
                 imageId: imageId,
                 doneCallback: doneCallback,
                 failCallback: failCallback
@@ -68,10 +81,9 @@
         }
 
         function sendRequest(requestDetails) {
-            if (!requestDetails) {
-                awake = false;
-                return;
-            }
+            // Increment the number of current requests of this type
+            var type = requestDetails.type;
+            numRequests[type]++;
 
             awake = true;
             var imageId = requestDetails.imageId;
@@ -84,9 +96,14 @@
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
                 imagePromise.then(function(image) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
+
                     doneCallback(image);
                     startAgain();
                 }, function(error) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
                     failCallback(error);
                 });
                 return;
@@ -94,9 +111,13 @@
 
             // Load and cache the image
             cornerstone.loadAndCacheImage(imageId).then(function(image) {
+                numRequests[type]--;
+                // console.log(numRequests);
                 doneCallback(image);
                 startAgain();
             }, function(error) {
+                numRequests[type]--;
+                // console.log(numRequests);
                 failCallback(error);
             });
         }
@@ -108,9 +129,18 @@
             }
 
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
+            
+            maxNumRequests = {
+                interaction: maxSimultaneousRequests,
+                thumbnail: maxSimultaneousRequests - 2,
+                prefetch: maxSimultaneousRequests - 1
+            };
+
             for (var i = 0; i < maxSimultaneousRequests; i++) {
                 var requestDetails = getNextRequest();
-                sendRequest(requestDetails);
+                if (requestDetails) {
+                    sendRequest(requestDetails);
+                }
             }
 
             //console.log("startGrabbing");
@@ -118,16 +148,22 @@
         }
 
         function getNextRequest() {
-            if (requestPool.interaction.length) {
+            if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
                 return requestPool.interaction.shift();
             }
 
-            if (requestPool.thumbnail.length) {
+            if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
                 return requestPool.thumbnail.shift();
             }
 
-            if (requestPool.prefetch.length) {
+            if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
                 return requestPool.prefetch.shift();
+            }
+
+            if (!requestPool.interaction.length &&
+                !requestPool.thumbnail.length &&
+                !requestPool.prefetch.length) {
+                awake = false;
             }
 
             return false;

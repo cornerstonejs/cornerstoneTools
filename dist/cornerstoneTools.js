@@ -6053,6 +6053,18 @@ if (typeof cornerstoneTools === 'undefined') {
         thumbnail: [],
         prefetch: []
     };
+
+    var numRequests = {
+        interaction: 0,
+        thumbnail: 0,
+        prefetch: 0
+    };
+
+    var maxNumRequests = {
+        interaction: 6,
+        thumbnail: 6,
+        prefetch: 5
+    };
     
     var lastElementInteracted;
     var awake = false;
@@ -6071,6 +6083,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // Describe the request
             var requestDetails = {
+                type: type,
                 imageId: imageId,
                 doneCallback: doneCallback,
                 failCallback: failCallback
@@ -6114,10 +6127,9 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         function sendRequest(requestDetails) {
-            if (!requestDetails) {
-                awake = false;
-                return;
-            }
+            // Increment the number of current requests of this type
+            var type = requestDetails.type;
+            numRequests[type]++;
 
             awake = true;
             var imageId = requestDetails.imageId;
@@ -6130,9 +6142,14 @@ if (typeof cornerstoneTools === 'undefined') {
                 // If we do, remove from list (when resolved, as we could have
                 // pending prefetch requests) and stop processing this iteration
                 imagePromise.then(function(image) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
+
                     doneCallback(image);
                     startAgain();
                 }, function(error) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
                     failCallback(error);
                 });
                 return;
@@ -6140,9 +6157,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // Load and cache the image
             cornerstone.loadAndCacheImage(imageId).then(function(image) {
+                numRequests[type]--;
+                // console.log(numRequests);
                 doneCallback(image);
                 startAgain();
             }, function(error) {
+                numRequests[type]--;
+                // console.log(numRequests);
                 failCallback(error);
             });
         }
@@ -6154,9 +6175,18 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
+            
+            maxNumRequests = {
+                interaction: maxSimultaneousRequests,
+                thumbnail: maxSimultaneousRequests - 2,
+                prefetch: maxSimultaneousRequests - 1
+            };
+
             for (var i = 0; i < maxSimultaneousRequests; i++) {
                 var requestDetails = getNextRequest();
-                sendRequest(requestDetails);
+                if (requestDetails) {
+                    sendRequest(requestDetails);
+                }
             }
 
             //console.log("startGrabbing");
@@ -6164,16 +6194,22 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         function getNextRequest() {
-            if (requestPool.interaction.length) {
+            if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
                 return requestPool.interaction.shift();
             }
 
-            if (requestPool.thumbnail.length) {
+            if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
                 return requestPool.thumbnail.shift();
             }
 
-            if (requestPool.prefetch.length) {
+            if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
                 return requestPool.prefetch.shift();
+            }
+
+            if (!requestPool.interaction.length &&
+                !requestPool.thumbnail.length &&
+                !requestPool.prefetch.length) {
+                awake = false;
             }
 
             return false;
@@ -6477,27 +6513,34 @@ if (typeof cornerstoneTools === 'undefined') {
             imageId,
             nextImageIdIndex;
 
-        if (stackPrefetch.direction < 0) {
-            console.log('Prefetching downward');
-            // Add the images to the request pool in reverse order here
-            // This is because they are shifted off from the bottom of
-            // the stack when they are fetched.
-            // i.e. the first image added in the loop will be the first one retrieved
-            // and we want that to be the nearest image
-            for (i = nearest.low; i >= 0 ; i--) {
-                nextImageIdIndex = stackPrefetch.indicesToRequest[i];
-                imageId = stack.imageIds[nextImageIdIndex];
-                // console.log('Add Req Index: ' + nextImageIdIndex);
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
-            }
-        } else {
-            // console.log('Prefetching upward');
-            for (i = nearest.high; i < stackPrefetch.indicesToRequest.length; i++) {
-                nextImageIdIndex = stackPrefetch.indicesToRequest[i];
-                // console.log('Add Req Index: ' + nextImageIdIndex);
-                imageId = stack.imageIds[nextImageIdIndex];
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
-            }
+        // Nearest above current
+        if (nearest.high >= 0) {
+            nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.high];
+            imageId = stack.imageIds[nextImageIdIndex];
+            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+        }
+
+        // Nearest below current
+        if (nearest.low >= 0) {
+            nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.low];
+            imageId = stack.imageIds[nextImageIdIndex];
+            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+        }
+
+        // Prefetch upwards
+        for (i = nearest.high + 1; i < stackPrefetch.indicesToRequest.length; i++) {
+            nextImageIdIndex = stackPrefetch.indicesToRequest[i];
+            // console.log('Add Req Index: ' + nextImageIdIndex);
+            imageId = stack.imageIds[nextImageIdIndex];
+            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+        }
+
+        // Prefetch downwards
+        for (i = nearest.low - 1; i >= 0 ; i--) {
+            nextImageIdIndex = stackPrefetch.indicesToRequest[i];
+            imageId = stack.imageIds[nextImageIdIndex];
+            // console.log('Add Req Index: ' + nextImageIdIndex);
+            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
         }
 
         // Try to start the requestPool's grabbing procedure
@@ -6546,7 +6589,6 @@ if (typeof cornerstoneTools === 'undefined') {
             return;
         }
 
-        console.log('promiseRemovedHandler Index: ' + imageIdIndex);
         stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
     }
 
@@ -6576,7 +6618,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
             indicesToRequest: range(0, stack.imageIds.length - 1),
-            enabled: true
+            enabled: true,
+            direction: 1
         };
 
         // Remove the currentImageIdIndex from the list to request
@@ -8508,13 +8551,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
         if (startLoadingHandler) {
             startLoadingHandler(element);
-        }
-
-        // Check scrolling direction to inform prefetcher
-        var stackPrefetchData = cornerstoneTools.getToolState(element, 'stackPrefetch');
-        if (stackPrefetchData && stackPrefetchData.data && stackPrefetchData.data.length) {
-            var stackPrefetch = stackPrefetchData.data[0];
-            stackPrefetch.direction = newImageIdIndex - stackData.currentImageIdIndex;
         }
 
         stackData.currentImageIdIndex = newImageIdIndex;
