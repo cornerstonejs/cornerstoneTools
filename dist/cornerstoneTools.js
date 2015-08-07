@@ -6454,9 +6454,6 @@ if (typeof cornerstoneTools === 'undefined') {
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         var type = 'prefetch';
         cornerstoneTools.requestPoolManager.clearRequestStack(type);
-        console.log('readding prefetch requests to list');
-        console.log(stackPrefetch.indicesToRequest.length + 'left');
-        console.time('Pref');
 
         var i,
             imageId,
@@ -6464,22 +6461,20 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var nearest = nearestIndex(indicesToRequestCopy, stack.currentImageIdIndex);
         if (stackPrefetch.direction < 0) {
-            console.log('Prefetching downward');
+            //  console.log('Prefetching downward');
             for (i = 0; i < nearest.low; i++) {
                 nextImageIdIndex = indicesToRequestCopy[i];
                 imageId = stack.imageIds[nextImageIdIndex];
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
             }
         } else {
-            console.log('Prefetching upward');
+            // console.log('Prefetching upward');
             for (i = nearest.high; i < indicesToRequestCopy.length; i++) {
                 nextImageIdIndex = indicesToRequestCopy[i];
                 imageId = stack.imageIds[nextImageIdIndex];
                 requestPoolManager.addRequest(element, imageId, type, doneCallback, failCallback);
             }
         }
-
-        console.timeEnd('Pref');
 
         requestPoolManager.startGrabbing();
     }
