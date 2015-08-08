@@ -137,40 +137,24 @@
         // Identify the nearest imageIdIndex to the currentImageIdIndex 
         var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
 
-        // If scrolling upward (downwards), add requests to the pool for
-        // all images above (below) the current image in the stack
-        var i,
-            imageId,
+        var imageId,
             nextImageIdIndex;
 
-        // Nearest above current
-        if (nearest.high >= 0) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.high];
-            imageId = stack.imageIds[nextImageIdIndex];
-            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
-        }
+        // Prefetch images around the current image (before and after)
+        var lowerIndex = nearest.low;
+        var higherIndex = nearest.high;
+        while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+            if (lowerIndex >= 0 ) {
+                nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+            }
 
-        // Nearest below current
-        if (nearest.low >= 0) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[nearest.low];
-            imageId = stack.imageIds[nextImageIdIndex];
-            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
-        }
-
-        // Prefetch upwards
-        for (i = nearest.high + 1; i < stackPrefetch.indicesToRequest.length; i++) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[i];
-            // console.log('Add Req Index: ' + nextImageIdIndex);
-            imageId = stack.imageIds[nextImageIdIndex];
-            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
-        }
-
-        // Prefetch downwards
-        for (i = nearest.low - 1; i >= 0 ; i--) {
-            nextImageIdIndex = stackPrefetch.indicesToRequest[i];
-            imageId = stack.imageIds[nextImageIdIndex];
-            // console.log('Add Req Index: ' + nextImageIdIndex);
-            requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+            if (higherIndex < stackPrefetch.indicesToRequest.length) {
+                nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+            }
         }
 
         // Try to start the requestPool's grabbing procedure

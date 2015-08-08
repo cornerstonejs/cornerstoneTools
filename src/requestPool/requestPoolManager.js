@@ -43,6 +43,17 @@
                 failCallback: failCallback
             };
 
+            // If this imageId is in the cache, resolve it immediately
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            if (imagePromise) {
+                imagePromise.then(function(image) {
+                    doneCallback(image);
+                }, function(error) {
+                    failCallback(error);
+                });
+                return;
+            }
+
             // Add it to the end of the stack
             requestPool[type].push(requestDetails);
 
