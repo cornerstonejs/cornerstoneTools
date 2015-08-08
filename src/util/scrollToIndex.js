@@ -38,6 +38,13 @@
                 }
             }
 
+            var eventData = {
+                newImageIdIndex: newImageIdIndex,
+                direction: stackData.currentImageIdIndex - newImageIdIndex
+            };
+
+            $(element).trigger('CornerstoneStackScroll', eventData);
+
             cornerstone.loadAndCacheImage(newImageId).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);

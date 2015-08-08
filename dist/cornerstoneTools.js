@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-08-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4742,7 +4742,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
         if (numPixels < 2) {
             return {
-                min: globalMin, max: globalMax,
+                min: globalMin,
+                max: globalMax,
+                mean: globalMin
             };
         }
 
@@ -8221,6 +8223,13 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
             }
 
+            var eventData = {
+                newImageIdIndex: newImageIdIndex,
+                direction: stackData.currentImageIdIndex - newImageIdIndex
+            };
+
+            $(element).trigger('CornerstoneStackScroll', eventData);
+
             cornerstone.loadAndCacheImage(newImageId).then(function(image) {
                 if (stackData.currentImageIdIndex === newImageIdIndex) {
                     cornerstone.displayImage(element, image, viewport);
@@ -8283,3 +8292,46 @@ if (typeof cornerstoneTools === 'undefined') {
 })(cornerstone, cornerstoneTools);
  
 // End Source; src/util/setContextToDisplayFontSize.js
+
+// Begin Source: src/util/throttle.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    function throttle(fn, threshold, scope) {
+        // https://remysharp.com/2010/07/21/throttling-function-calls#comment-497362
+        threshold = threshold || 250;
+        var last;
+        //deferTimer;
+
+        return function() {
+            var context = scope || this;
+
+            var now = +new Date(),
+                args = arguments;
+
+            if (last && now < last + threshold) {
+                // hold on to it
+                //console.log('too fast, dropping');
+                return;
+                /*clearTimeout(deferTimer);
+                deferTimer = setTimeout(function() {
+                    last = now;
+                    console.log('throttled');
+                    fn.apply(context, args);
+                }, threshold);*/
+                
+            } else {
+                last = now;
+                //console.log('unthrottled');
+                fn.apply(context, args);
+            }
+        };
+    }
+
+    // module exports
+    cornerstoneTools.throttle = throttle;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/throttle.js
