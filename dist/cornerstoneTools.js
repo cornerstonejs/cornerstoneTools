@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-28 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-08-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -5117,17 +5117,38 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseDragCallback(e, eventData) {
         var ticks = eventData.deltaPoints.page.y / 100;
+        if (!ticks) {
+            return false;
+        }
+
         cornerstoneTools.zoom.strategy(eventData.element, eventData.viewport, ticks);
 
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
-        var newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        var shift = {
-            x: eventData.startPoints.image.x - newCoords.x,
-            y: eventData.startPoints.image.y - newCoords.y
-        };
+        var config = cornerstoneTools.zoom.getConfiguration();
+        var shift,
+            newCoords;
+        if (ticks < 0 && config && config.zoomOutFromCenter) {
+            newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+            // Zoom outwards from the image center
+            shift = {
+                x: eventData.viewport.translation.x * Math.abs(ticks),
+                y: eventData.viewport.translation.y * Math.abs(ticks)
+            };
+        } else {
+            newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+            // Zoom outwards from the current image point
+            shift = {
+                x: eventData.startPoints.image.x - newCoords.x,
+                y: eventData.startPoints.image.y - newCoords.y
+            };
+        }
 
         shift = correctShift(shift, eventData.viewport);
+        if (!shift.x && !shift.y) {
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+        }
+
         eventData.viewport.translation.x -= shift.x;
         eventData.viewport.translation.y -= shift.y;
         cornerstone.setViewport(eventData.element, eventData.viewport);
