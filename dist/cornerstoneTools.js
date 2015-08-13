@@ -5049,6 +5049,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
+    var startPoints;
+
     function correctShift(shift, viewport) {
         // Apply rotations
         if (viewport.rotation !== 0) {
@@ -5109,6 +5111,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            startPoints = eventData.startPoints;
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             return false; // false = cases jquery to preventDefault() and stopPropagation() this event
@@ -5128,19 +5131,20 @@ if (typeof cornerstoneTools === 'undefined') {
         var config = cornerstoneTools.zoom.getConfiguration();
         var shift,
             newCoords;
+
         if (ticks < 0 && config && config.zoomOutFromCenter) {
-            newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
             // Zoom outwards from the image center
+            startPoints = eventData.currentPoints;
             shift = {
                 x: eventData.viewport.translation.x * Math.abs(ticks),
                 y: eventData.viewport.translation.y * Math.abs(ticks)
             };
         } else {
-            newCoords = cornerstone.pageToPixel(eventData.element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+            newCoords = cornerstone.pageToPixel(eventData.element, startPoints.page.x, startPoints.page.y);
             // Zoom outwards from the current image point
             shift = {
-                x: eventData.startPoints.image.x - newCoords.x,
-                y: eventData.startPoints.image.y - newCoords.y
+                x: startPoints.image.x - newCoords.x,
+                y: startPoints.image.y - newCoords.y
             };
         }
 
