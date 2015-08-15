@@ -4,6 +4,14 @@
 
     var startPoints;
 
+    function boundPosition(position, width, height) {
+        position.x = Math.max(position.x, 0);
+        position.y = Math.max(position.y, 0);
+        position.x = Math.min(position.x, width);
+        position.y = Math.min(position.y, height);
+        return position;
+    }
+
     function correctShift(shift, viewport) {
         // Apply rotations
         if (viewport.rotation !== 0) {
@@ -39,7 +47,7 @@
         var oldFactor = Math.log(viewport.scale) / Math.log(pow);
 
         var factor;
-        if (config.invert === true) {
+        if (config && config.invert === true) {
             factor = oldFactor - ticks;
         } else {
             factor = oldFactor + ticks;
@@ -48,9 +56,9 @@
         var scale = Math.pow(pow, factor);
         viewport.scale = scale;
         
-        if (config.maxScale && scale > config.maxScale) {
+        if (config && config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
-        } else if (config.minScale && scale < config.minScale) {
+        } else if (config && config.minScale && scale < config.minScale) {
             viewport.scale = config.minScale;
         }
 
@@ -84,31 +92,74 @@
         var config = cornerstoneTools.zoom.getConfiguration();
         var shift,
             newCoords;
+        var viewport = eventData.viewport;
+
+        var outwardsTranslateSpeed = 10;
+        var inwardsTranslateSpeed = 10;
+        var outwardsMinScaleToTranslate = 5;
+        var minTranslation = 0.01;
 
         if (ticks < 0 && config && config.zoomOutFromCenter) {
             // Zoom outwards from the image center
-            startPoints = eventData.currentPoints;
             shift = {
-                x: eventData.viewport.translation.x * Math.abs(ticks),
-                y: eventData.viewport.translation.y * Math.abs(ticks)
+                x: viewport.scale < outwardsMinScaleToTranslate ? viewport.translation.x / outwardsTranslateSpeed : 0,
+                y: viewport.scale < outwardsMinScaleToTranslate ? viewport.translation.y / outwardsTranslateSpeed : 0
             };
+            
+            if (Math.abs(viewport.translation.x) < minTranslation) {
+                viewport.translation.x = 0;
+                shift.x = 0;
+            } else if (Math.abs(viewport.translation.y) < minTranslation) {
+                viewport.translation.y = 0;
+                shift.y = 0;
+            } else if (Math.abs(viewport.translation.x) < minTranslation &&
+                       Math.abs(viewport.translation.y) < minTranslation) {
+                cornerstone.setViewport(eventData.element, viewport);
+                return false;
+            }
         } else {
             newCoords = cornerstone.pageToPixel(eventData.element, startPoints.page.x, startPoints.page.y);
-            // Zoom outwards from the current image point
-            shift = {
-                x: startPoints.image.x - newCoords.x,
-                y: startPoints.image.y - newCoords.y
+            if (config && config.preventZoomOutsideImage) {
+                startPoints.image = boundPosition(startPoints.image, eventData.image.width, eventData.image.height);
+                newCoords = boundPosition(newCoords, eventData.image.width, eventData.image.height);
+            }
+            // Zoom inwards to the current image point
+            var desiredTranslation = {
+                x: eventData.image.width / 2 - startPoints.image.x,
+                y: eventData.image.height / 2 - startPoints.image.y
             };
+
+            var distanceToDesired = {
+                x: viewport.translation.x - desiredTranslation.x,
+                y: viewport.translation.y - desiredTranslation.y
+            };
+
+            shift = {
+                x: distanceToDesired.x / inwardsTranslateSpeed,
+                y: distanceToDesired.y / inwardsTranslateSpeed
+            };
+
+            if (Math.abs(distanceToDesired.x) < minTranslation) {
+                viewport.translation.x = desiredTranslation.x;
+                shift.x = 0;
+            } else if (Math.abs(distanceToDesired.y) < minTranslation) {
+                viewport.translation.y = desiredTranslation.y;
+                shift.y = 0;
+            } else if (Math.abs(distanceToDesired.x) < minTranslation &&
+                       Math.abs(distanceToDesired.y) < minTranslation) {
+                cornerstone.setViewport(eventData.element, viewport);
+                return false;
+            }
         }
 
-        shift = correctShift(shift, eventData.viewport);
+        shift = correctShift(shift, viewport);
         if (!shift.x && !shift.y) {
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
 
-        eventData.viewport.translation.x -= shift.x;
-        eventData.viewport.translation.y -= shift.y;
-        cornerstone.setViewport(eventData.element, eventData.viewport);
+        viewport.translation.x -= shift.x;
+        viewport.translation.y -= shift.y;
+        cornerstone.setViewport(eventData.element, viewport);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
