@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-08-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6355,7 +6355,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
             loadImageDeferred.fail(function(error) {
-                errorLoadingHandler(element, imageId, error);
+                if (errorLoadingHandler) {
+                    errorLoadingHandler(element, imageId, error);
+                }
             });
 
             // Add the image promises to a list
