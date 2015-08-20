@@ -5066,6 +5066,7 @@ if (typeof cornerstoneTools === 'undefined') {
         } else if (config.minScale && scale < config.minScale) {
             viewport.scale = config.minScale;
         }
+
         return viewport;
     }
 
@@ -5223,6 +5224,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (!eventData.deltaPoints.page.y) {
             return false;
         }
+
         var ticks = eventData.deltaPoints.page.y / 100;
         cornerstoneTools.zoom.strategy(eventData, ticks);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
@@ -5954,22 +5956,11 @@ if (typeof cornerstoneTools === 'undefined') {
     // of the reference image onto the target image.  Ideally we would calculate the intersection between the planes but
     // that requires a bit more math and this works fine for most cases
     function calculateReferenceLine(targetImagePlane, referenceImagePlane) {
-        var tlhcPatient = referenceImagePlane.imagePositionPatient;
-        var tlhcImage = cornerstoneTools.projectPatientPointToImagePlane(tlhcPatient, targetImagePlane);
-
-        var brhcPatient = cornerstoneTools.imagePointToPatientPoint({
-            x: referenceImagePlane.columns, y: referenceImagePlane.rows
-        }, referenceImagePlane);
-        var brhcImage = cornerstoneTools.projectPatientPointToImagePlane(brhcPatient, targetImagePlane);
-
-        var referenceLineSegment = {
-            start: {
-                x: tlhcImage.x, y: tlhcImage.y
-            }, end: {
-                x: brhcImage.x, y: brhcImage.y
-            }
+        var points = cornerstoneTools.planePlaneIntersection(targetImagePlane, referenceImagePlane);
+        return {
+            start: cornerstoneTools.projectPatientPointToImagePlane(points.start, targetImagePlane),
+            end: cornerstoneTools.projectPatientPointToImagePlane(points.end, targetImagePlane)
         };
-        return referenceLineSegment;
     }
 
     // module/private exports
@@ -8531,9 +8522,99 @@ if (typeof cornerstoneTools === 'undefined') {
         return patientPoint;
     }
 
+    function getRectangleFromImagePlane(imagePlane) {
+        // Get the points
+        var topLeft = imagePointToPatientPoint({
+            x: 0, y: 0
+        }, imagePlane);
+        var topRight = imagePointToPatientPoint({
+            x: imagePlane.columns, y: 0
+        }, imagePlane);
+        var bottomLeft = imagePointToPatientPoint({
+            x: 0, y: imagePlane.rows
+        }, imagePlane);
+        var bottomRight = imagePointToPatientPoint({
+            x: imagePlane.columns, y: imagePlane.rows
+        }, imagePlane);
+
+        // Get each side as a vector
+        var rect = {
+            top: new cornerstoneMath.Line3(topLeft, topRight),
+            left: new cornerstoneMath.Line3(topLeft, bottomLeft),
+            right: new cornerstoneMath.Line3(topRight, bottomRight),
+            bottom: new cornerstoneMath.Line3(bottomLeft, bottomRight),
+        };
+        return rect;
+    }
+
+    function rayRectangleIntersection(origin, direction, rect) {
+        var coplanarThreshold = 0.7;
+        var intersections = [];
+        var intersection;
+
+        Object.keys(rect).forEach(function(side) {
+            // https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
+            // https://www.codefull.org/2015/06/intersection-of-a-ray-and-a-line-segment-in-3d/
+            // http://mathworld.wolfram.com/Line-LineIntersection.html
+            var segment = rect[side];
+            var da = direction.clone().multiplyScalar(-1000);
+            var db = segment.end.clone().sub(segment.start);
+            var dc = segment.start.clone().sub(origin);
+
+            var daCrossDb = da.clone().cross(db);
+            var dcCrossDb = dc.clone().cross(db);
+
+            if (Math.abs(dc.dot(daCrossDb)) >= coplanarThreshold) {
+                // Lines are not coplanar, stop here
+                return;
+            }
+
+            var s = dcCrossDb.dot(daCrossDb) / daCrossDb.lengthSq();
+
+            // Make sure we have an intersection
+            if (s > 1.0 || isNaN(s)) {
+                return;
+            }
+
+            intersection = origin.clone().add(da.clone().multiplyScalar(s));
+            var distanceTest = intersection.clone().sub(segment.start).lengthSq() + intersection.clone().sub(segment.end).lengthSq();
+            if (distanceTest <= segment.distanceSq()) {
+                intersections.push(intersection);
+            }
+        });
+        var points = {
+            start: intersections[0],
+            end: intersections[1]
+        };
+        return points;
+    }
+
+    function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
+        // Gets the line of intersection between two planes in patient space
+
+        // First, get the normals of each image plane
+        var targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
+        var targetPlane = new cornerstoneMath.Plane();
+        targetPlane.setFromNormalAndCoplanarPoint(targetNormal, targetImagePlane.imagePositionPatient);
+
+        var referenceNormal = referenceImagePlane.rowCosines.clone().cross(referenceImagePlane.columnCosines);
+        var referencePlane = new cornerstoneMath.Plane();
+        referencePlane.setFromNormalAndCoplanarPoint(referenceNormal, referenceImagePlane.imagePositionPatient);
+
+        var originDirection = referencePlane.clone().intersectPlane(targetPlane);
+        var origin = originDirection.origin;
+        var direction = originDirection.direction;
+
+        var rect = getRectangleFromImagePlane(referenceImagePlane);
+        var points = rayRectangleIntersection(origin, direction, rect);
+        return points;
+
+    }
+
     // module/private exports
     cornerstoneTools.projectPatientPointToImagePlane = projectPatientPointToImagePlane;
     cornerstoneTools.imagePointToPatientPoint = imagePointToPatientPoint;
+    cornerstoneTools.planePlaneIntersection = planePlaneIntersection;
 
 })($, cornerstone, cornerstoneTools);
  
