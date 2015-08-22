@@ -31,6 +31,9 @@
         }
 
         var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
+        if (!referenceLine) {
+            return;
+        }
 
         var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.start);
         var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.end);

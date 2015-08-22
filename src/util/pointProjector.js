@@ -49,14 +49,12 @@
     }
 
     function rayRectangleIntersection(origin, direction, rect) {
-        var coplanarThreshold = 0.7;
         var intersections = [];
-        var intersection;
-
         Object.keys(rect).forEach(function(side) {
             // https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
             // https://www.codefull.org/2015/06/intersection-of-a-ray-and-a-line-segment-in-3d/
             // http://mathworld.wolfram.com/Line-LineIntersection.html
+            // http://stackoverflow.com/questions/2316490/the-algorithm-to-find-the-point-of-intersection-of-two-3d-line-segment/10288710#10288710
             var segment = rect[side];
             var da = direction.clone().multiplyScalar(-1000);
             var db = segment.end.clone().sub(segment.start);
@@ -65,7 +63,7 @@
             var daCrossDb = da.clone().cross(db);
             var dcCrossDb = dc.clone().cross(db);
 
-            if (Math.abs(dc.dot(daCrossDb)) >= coplanarThreshold) {
+            if (dc.dot(daCrossDb) === 0){
                 // Lines are not coplanar, stop here
                 return;
             }
@@ -77,12 +75,16 @@
                 return;
             }
 
-            intersection = origin.clone().add(da.clone().multiplyScalar(s));
+            var intersection = origin.clone().add(da.clone().multiplyScalar(s));
             var distanceTest = intersection.clone().sub(segment.start).lengthSq() + intersection.clone().sub(segment.end).lengthSq();
             if (distanceTest <= segment.distanceSq()) {
                 intersections.push(intersection);
             }
         });
+        if (intersections.length !== 2) {
+            return;
+        }
+
         var points = {
             start: intersections[0],
             end: intersections[1]

@@ -7,6 +7,10 @@
     // that requires a bit more math and this works fine for most cases
     function calculateReferenceLine(targetImagePlane, referenceImagePlane) {
         var points = cornerstoneTools.planePlaneIntersection(targetImagePlane, referenceImagePlane);
+        if (!points) {
+            return;
+        }
+
         return {
             start: cornerstoneTools.projectPatientPointToImagePlane(points.start, targetImagePlane),
             end: cornerstoneTools.projectPatientPointToImagePlane(points.end, targetImagePlane)
