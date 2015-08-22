@@ -8532,16 +8532,20 @@ if (typeof cornerstoneTools === 'undefined') {
     function getRectangleFromImagePlane(imagePlane) {
         // Get the points
         var topLeft = imagePointToPatientPoint({
-            x: 0, y: 0
+            x: 0,
+            y: 0
         }, imagePlane);
         var topRight = imagePointToPatientPoint({
-            x: imagePlane.columns, y: 0
+            x: imagePlane.columns,
+            y: 0
         }, imagePlane);
         var bottomLeft = imagePointToPatientPoint({
-            x: 0, y: imagePlane.rows
+            x: 0,
+            y: imagePlane.rows
         }, imagePlane);
         var bottomRight = imagePointToPatientPoint({
-            x: imagePlane.columns, y: imagePlane.rows
+            x: imagePlane.columns,
+            y: imagePlane.rows
         }, imagePlane);
 
         // Get each side as a vector
@@ -8554,48 +8558,16 @@ if (typeof cornerstoneTools === 'undefined') {
         return rect;
     }
 
-    function rayRectangleIntersection(origin, direction, rect) {
+    function lineRectangleIntersection(line, rect) {
         var intersections = [];
         Object.keys(rect).forEach(function(side) {
-            // https://rootllama.wordpress.com/2014/06/20/ray-line-segment-intersection-test-in-2d/
-            // https://www.codefull.org/2015/06/intersection-of-a-ray-and-a-line-segment-in-3d/
-            // http://mathworld.wolfram.com/Line-LineIntersection.html
-            // http://stackoverflow.com/questions/2316490/the-algorithm-to-find-the-point-of-intersection-of-two-3d-line-segment/10288710#10288710
             var segment = rect[side];
-            var da = direction.clone().multiplyScalar(-1000);
-            var db = segment.end.clone().sub(segment.start);
-            var dc = segment.start.clone().sub(origin);
-
-            var daCrossDb = da.clone().cross(db);
-            var dcCrossDb = dc.clone().cross(db);
-
-            if (dc.dot(daCrossDb) === 0){
-                // Lines are not coplanar, stop here
-                return;
-            }
-
-            var s = dcCrossDb.dot(daCrossDb) / daCrossDb.lengthSq();
-
-            // Make sure we have an intersection
-            if (s > 1.0 || isNaN(s)) {
-                return;
-            }
-
-            var intersection = origin.clone().add(da.clone().multiplyScalar(s));
-            var distanceTest = intersection.clone().sub(segment.start).lengthSq() + intersection.clone().sub(segment.end).lengthSq();
-            if (distanceTest <= segment.distanceSq()) {
+            var intersection = line.intersectLine(segment);
+            if (intersection) {
                 intersections.push(intersection);
             }
         });
-        if (intersections.length !== 2) {
-            return;
-        }
-
-        var points = {
-            start: intersections[0],
-            end: intersections[1]
-        };
-        return points;
+        return intersections;
     }
 
     function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
@@ -8614,8 +8586,22 @@ if (typeof cornerstoneTools === 'undefined') {
         var origin = originDirection.origin;
         var direction = originDirection.direction;
 
+        var distance = 1000;
+        var line = new cornerstoneMath.Line3();
+        line.start = origin;
+        line.end = origin.clone().add(direction.multiplyScalar(distance));
+
         var rect = getRectangleFromImagePlane(referenceImagePlane);
-        var points = rayRectangleIntersection(origin, direction, rect);
+        var intersections = lineRectangleIntersection(line, rect);
+
+        if (intersections.length !== 2) {
+            return;
+        }
+
+        var points = {
+            start: intersections[0],
+            end: intersections[1]
+        };
         return points;
 
     }

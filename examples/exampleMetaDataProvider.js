@@ -37,7 +37,7 @@
                     columns: 256,
                     rowCosines: new cornerstoneMath.Vector3(1, 0, 0),
                     columnCosines: new cornerstoneMath.Vector3(0, 0, -1),
-                    imagePositionPatient: new cornerstoneMath.Vector3(-100, -13, 102.4),
+                    imagePositionPatient: new cornerstoneMath.Vector3(-100, -13, 98),
                     columnPixelSpacing: 0.78,
                     rowPixelSpacing: 0.78
                 };
