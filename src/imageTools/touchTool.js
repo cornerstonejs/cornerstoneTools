@@ -89,6 +89,8 @@
             if (imageNeedsUpdate === true) {
                 cornerstone.updateImage(eventData.element);
             }
+
+            return false;
         }
 
         function touchStartCallback(e, eventData) {
@@ -139,6 +141,8 @@
                     }
                 }
             }
+
+            return false;
         }
         ///////// END INACTIVE TOOL ///////
 

@@ -309,6 +309,9 @@ if (typeof cornerstoneTools === 'undefined') {
             event,
             eventType;
 
+        // Prevent mouse events from occurring alongside touch events
+        e.preventDefault();
+
         switch (e.type) {
             case 'tap':
                 // calculate our current points in page and image coordinates
@@ -1255,6 +1258,8 @@ if (typeof cornerstoneTools === 'undefined') {
             if (imageNeedsUpdate === true) {
                 cornerstone.updateImage(eventData.element);
             }
+
+            return false;
         }
 
         function touchStartCallback(e, eventData) {
@@ -1305,6 +1310,8 @@ if (typeof cornerstoneTools === 'undefined') {
                     }
                 }
             }
+
+            return false;
         }
         ///////// END INACTIVE TOOL ///////
 
