@@ -4,6 +4,10 @@
 
     function getHandleNearImagePoint(element, data, coords) {
         var nearbyHandle;
+        
+        if (!data.handles) {
+            return;
+        }
 
         Object.keys(data.handles).forEach(function(name) {
             var handle = data.handles[name];

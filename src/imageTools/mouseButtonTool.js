@@ -7,7 +7,12 @@
 
         ///////// BEGIN ACTIVE TOOL ///////
         function addNewMeasurement(mouseEventData) {
+            var element = mouseEventData.element;
+
             var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
+            if (!measurementData) {
+                return;
+            }
 
             var eventData = {
                 mouseButtonMask: mouseEventData.which,
@@ -18,29 +23,34 @@
 
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
-            $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            $(mouseEventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-            $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
             
-            cornerstone.updateImage(mouseEventData.element);
+            cornerstone.updateImage(element);
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                     // delete the measurement
-                    cornerstoneTools.removeToolState(mouseEventData.element, mouseToolInterface.toolType, measurementData);
+                    cornerstoneTools.removeToolState(element, mouseToolInterface.toolType, measurementData);
                 }
 
-                $(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
-                $(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-                $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
-                cornerstone.updateImage(mouseEventData.element);
+                $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+                $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
+                $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+                cornerstone.updateImage(element);
             });
         }
 
         function mouseDownActivateCallback(e, eventData) {
             if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-                addNewMeasurement(eventData);
+                if (mouseToolInterface.addNewMeasurement) {
+                    mouseToolInterface.addNewMeasurement(eventData);
+                } else {
+                    addNewMeasurement(eventData);
+                }
+
                 return false; // false = causes jquery to preventDefault() and stopPropagation() this event
             }
         }
@@ -113,7 +123,7 @@
                         data = toolData.data[i];
                         var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
                         if (handle !== undefined) {
-                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             data.active = true;
                             cornerstoneTools.moveHandle(eventData, handle, handleDoneMove);
                             e.stopImmediatePropagation();
@@ -128,9 +138,9 @@
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         if (mouseToolInterface.pointNearTool(eventData.element, data, coords)) {
-                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             cornerstoneTools.moveAllHandles(e, data, toolData, true);
-                            $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+                            $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             e.stopImmediatePropagation();
                             return false;
                         }
@@ -143,9 +153,13 @@
         // not visible, not interactive
         function disable(element) {
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+            }
 
             cornerstone.updateImage(element);
         }
@@ -153,9 +167,13 @@
         // visible but not interactive
         function enable(element) {
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+            }
 
             $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
@@ -169,14 +187,19 @@
             };
 
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
             $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
-            $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-            $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+            $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+                $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
+            }
 
             cornerstone.updateImage(element);
         }
@@ -188,13 +211,18 @@
             };
 
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-            $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
+            $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
             $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
-            $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
-            $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+            $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+            $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+                $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
+            }
 
             cornerstone.updateImage(element);
         }
@@ -213,12 +241,23 @@
             activate: activate,
             deactivate: deactivate,
             getConfiguration: getConfiguration,
-            setConfiguration: setConfiguration
+            setConfiguration: setConfiguration,
+            mouseDownCallback: mouseDownCallback,
+            mouseMoveCallback: mouseMoveCallback,
+            mouseDownActivateCallback: mouseDownActivateCallback
         };
 
         // Expose pointNearTool if available
         if (mouseToolInterface.pointNearTool) {
             toolInterface.pointNearTool = mouseToolInterface.pointNearTool;
+        }
+
+        if (mouseToolInterface.mouseDoubleClickCallback) {
+            toolInterface.mouseDoubleClickCallback = mouseToolInterface.mouseDoubleClickCallback;
+        }
+
+        if (mouseToolInterface.addNewMeasurement) {
+            toolInterface.addNewMeasurement = mouseToolInterface.addNewMeasurement;
         }
 
         return toolInterface;

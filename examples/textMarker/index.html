@@ -22,6 +22,9 @@
             width: 200px;
             border: 1px black solid;
             border-radius: 5px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .relabelConfirm {
@@ -148,6 +151,7 @@
 <!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
 is used by our example image loader-->
 <script src="../jquery.min.js"></script>
+<script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
@@ -246,6 +250,7 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.touchInput.enable(element);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
@@ -255,6 +260,7 @@ is used by our example image loader-->
 
         // Enable all tools we want to use with this element
         cornerstoneTools.textMarker.activate(element, 1);
+        cornerstoneTools.textMarkerTouch.activate(element);
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
         activate("#activate");

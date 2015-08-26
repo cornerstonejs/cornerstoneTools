@@ -53,6 +53,8 @@
 is used by our example image loader-->
 <script src="../jquery.min.js"></script>
 
+<script src="../hammer.min.js"></script>
+
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -71,12 +73,14 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.touchInput.enable(element);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.simpleAngle.activate(element, 1);
+        cornerstoneTools.simpleAngleTouch.activate(element);
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
         
