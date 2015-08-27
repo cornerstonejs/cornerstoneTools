@@ -24,7 +24,7 @@
             border-radius: 5px;
             -webkit-user-select: none;
             -moz-user-select: none;
-            -ms-user-select: none;
+            -ms-user-select: none;            
         }
 
         .relabelConfirm {
@@ -140,8 +140,10 @@
                     <option value="L5">L5</option>
                 </select>
             </div>
-            
-            <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+            <div>
+                <a class="relabelRemove btn btn-sm btn-danger">Remove marker</a>
+                <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+            </div>
         </dialog>
 
     </div>
@@ -208,6 +210,7 @@ is used by our example image loader-->
         var dialog = $('.relabelDialog');
         var select = dialog.find('.relabelSelect');
         var confirm = dialog.find('.relabelConfirm');
+        var remove = dialog.find('.relabelRemove');
 
         dialog.get(0).show();
         select.val(data.text);
@@ -216,6 +219,13 @@ is used by our example image loader-->
         confirm.on('click', function() {
             dialog.get(0).close();
             doneChangingTextCallback(data, select.val());
+        });
+
+        // If the remove button is clicked, delete this marker
+        remove.off('click');
+        remove.on('click', function() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, undefined, true);
         });
 
         dialog.off("keypress");

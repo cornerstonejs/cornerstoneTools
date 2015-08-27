@@ -645,7 +645,11 @@ if (typeof cornerstoneTools === 'undefined') {
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
-            
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+            }
+
             cornerstone.updateImage(element);
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
@@ -658,6 +662,11 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                 $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+
+                if (mouseToolInterface.mouseDoubleClickCallback) {
+                    $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
+                }
+
                 cornerstone.updateImage(element);
             });
         }
@@ -4491,8 +4500,13 @@ if (typeof cornerstoneTools === 'undefined') {
     function doubleClickCallback(e, eventData) {
         var data;
 
-        function doneChangingTextCallback(data, updatedText) {
-            data.text = updatedText;
+        function doneChangingTextCallback(data, updatedText, deleteTool) {
+            if (deleteTool === true) {
+                cornerstoneTools.removeToolState(eventData.element, toolType, data);
+            } else {
+                data.text = updatedText;
+            }
+
             cornerstone.updateImage(eventData.element);
         }
 

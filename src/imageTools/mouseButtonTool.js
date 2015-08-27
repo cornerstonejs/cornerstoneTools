@@ -26,7 +26,11 @@
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
-            
+
+            if (mouseToolInterface.mouseDoubleClickCallback) {
+                $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
+            }
+
             cornerstone.updateImage(element);
             cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
@@ -39,6 +43,11 @@
                 $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                 $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
+
+                if (mouseToolInterface.mouseDoubleClickCallback) {
+                    $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
+                }
+
                 cornerstone.updateImage(element);
             });
         }

@@ -115,8 +115,13 @@
     function doubleClickCallback(e, eventData) {
         var data;
 
-        function doneChangingTextCallback(data, updatedText) {
-            data.text = updatedText;
+        function doneChangingTextCallback(data, updatedText, deleteTool) {
+            if (deleteTool === true) {
+                cornerstoneTools.removeToolState(eventData.element, toolType, data);
+            } else {
+                data.text = updatedText;
+            }
+
             cornerstone.updateImage(eventData.element);
         }
 
