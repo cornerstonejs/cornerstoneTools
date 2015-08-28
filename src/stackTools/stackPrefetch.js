@@ -30,7 +30,6 @@
 
         while ( c-- ) {
             arr[c] = highEnd--;
-            console.log(c);
         }
 
         return arr;
