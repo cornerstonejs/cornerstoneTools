@@ -36,7 +36,6 @@
     }
 
     function mouseDown(e) {
-
         preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
 
         var element = e.currentTarget;

@@ -113,26 +113,28 @@
     }
 
     function doubleClickCallback(e, eventData) {
+        var element = eventData.element;
         var data;
 
         function doneChangingTextCallback(data, updatedText, deleteTool) {
             if (deleteTool === true) {
-                cornerstoneTools.removeToolState(eventData.element, toolType, data);
+                cornerstoneTools.removeToolState(element, toolType, data);
             } else {
                 data.text = updatedText;
             }
 
-            cornerstone.updateImage(eventData.element);
+            data.active = false;
+            cornerstone.updateImage(element);
         }
 
         if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            return;
+            return false;
         }
 
         var config = cornerstoneTools.textMarker.getConfiguration();
 
         var coords = eventData.currentPoints.canvas;
-        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+        var toolData = cornerstoneTools.getToolState(element, toolType);
 
         // now check to see if there is a handle we can move
         if (!toolData) {
@@ -141,7 +143,9 @@
 
         for (var i = 0; i < toolData.data.length; i++) {
             data = toolData.data[i];
-            if (pointNearTool(eventData.element, data, coords)) {
+            if (pointNearTool(element, data, coords)) {
+                data.active = true;
+                cornerstone.updateImage(element);
                 // Allow relabelling via a callback
                 config.changeTextCallback(data, doneChangingTextCallback);
                 

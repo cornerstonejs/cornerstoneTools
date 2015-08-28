@@ -2,6 +2,29 @@
 
     'use strict';
 
+    function deactivateAllHandles(handles) {
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
+            handle.active = false;
+        });
+    }
+
+    function deactivateAllToolInstances(toolData) {
+        if (!toolData) {
+            return;
+        }
+
+        for (var i = 0; i < toolData.data.length; i++) {
+            var data = toolData.data[i];
+            data.active = false;
+            if (!data.handles) {
+                continue;
+            }
+
+            deactivateAllHandles(data.handles);
+        }
+    }
+
     function touchTool(touchToolInterface) {
         ///////// BEGIN ACTIVE TOOL ///////
 
@@ -29,10 +52,9 @@
                 return;
             }
 
-            $(element).off('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).off('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             cornerstone.updateImage(element);
             cornerstoneTools.moveNewHandleTouch(touchEventData, measurementData.handles.end, function() {
@@ -43,10 +65,9 @@
                     cornerstoneTools.removeToolState(element, touchToolInterface.toolType, measurementData);
                 }
 
-                $(element).on('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
                 $(element).on('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                 $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-                $(element).on('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                 cornerstone.updateImage(element);
             });
         }
@@ -93,35 +114,43 @@
             return false;
         }
 
-        function touchStartCallback(e, eventData) {
+        function tapCallback(e, eventData) {
+            var element = eventData.element;
+            var coords = eventData.currentPoints.canvas;
+            var toolData = cornerstoneTools.getToolState(e.currentTarget, touchToolInterface.toolType);
             var data;
+            var i;
 
-            function handleDoneMove() {
-                data.active = false;
-                data.invalidated = true;
+            // Deactivate everything
+            deactivateAllToolInstances(toolData);
+
+            function doneMovingCallback() {
+                deactivateAllToolInstances(toolData);
                 if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
                     // delete the measurement
-                    cornerstoneTools.removeToolState(eventData.element, touchToolInterface.toolType, data);
+                    cornerstoneTools.removeToolState(element, touchToolInterface.toolType, data);
                 }
 
-                cornerstone.updateImage(eventData.element);
-                $(eventData.element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                cornerstone.updateImage(element);
+                $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                $(element).on('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
             }
-
-            var coords = eventData.startPoints.canvas;
-            var toolData = cornerstoneTools.getToolState(e.currentTarget, touchToolInterface.toolType);
-            var i;
 
             // now check to see if there is a handle we can move
             if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
-
-                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords);
+                    var distanceSq = 75; // Should probably make this a settable property later
+                    var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
                     if (handle) {
-                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         data.active = true;
-                        cornerstoneTools.moveNewHandleTouch(e, handle, handleDoneMove);
+                        handle.active = true;
+                        cornerstone.updateImage(element);
+                        cornerstoneTools.touchMoveHandle(e, handle, doneMovingCallback);
                         e.stopImmediatePropagation();
                         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
                     }
@@ -129,17 +158,29 @@
             }
 
             // Now check to see if we have a tool that we can move
-            if (toolData !== undefined && touchToolInterface.pointNearTool !== undefined) {
+            if (toolData && touchToolInterface.pointNearTool) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
-                    if (touchToolInterface.pointNearTool(eventData.element, data, coords)) {
-                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-                        cornerstoneTools.touchMoveAllHandles(e, data, toolData, true);
-                        $(eventData.element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                    if (touchToolInterface.pointNearTool(element, data, coords)) {
+                        $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
+                        data.active = true;
+                        cornerstone.updateImage(element);
+                        cornerstoneTools.touchMoveAllHandles(e, data, toolData, true, doneMovingCallback);
                         e.stopImmediatePropagation();
                         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
                     }
                 }
+            }
+            // If there is nothing to move, add a new instance of the tool
+            
+            // Need to check here to see if activation is allowed!
+
+            if (touchToolInterface.touchDownActivateCallback) {
+                touchToolInterface.touchDownActivateCallback(e, eventData);
+            } else {
+                touchDownActivateCallback(e, eventData);
             }
 
             return false;
@@ -150,9 +191,8 @@
         function disable(element) {
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).off('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
-            $(element).off('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -169,9 +209,8 @@
         function enable(element) {
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).off('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
-            $(element).off('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
 
@@ -190,15 +229,13 @@
         function activate(element) {
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).off('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
-            $(element).off('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).on('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).on('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
-            $(element).on('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -217,13 +254,12 @@
         function deactivate(element) {
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).off('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
-            $(element).off('CornerstoneToolsTap', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
-            $(element).on('CornerstoneToolsDragStart', touchToolInterface.touchStartCallback || touchStartCallback);
+            //$(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -243,9 +279,9 @@
             disable: disable,
             activate: activate,
             deactivate: deactivate,
-            touchStartCallback: touchStartCallback,
             touchMoveCallback: touchMoveCallback,
-            touchDownActivateCallback: touchDownActivateCallback
+            touchDownActivateCallback: touchDownActivateCallback,
+            tapCallback: tapCallback
         };
 
         if (touchToolInterface.doubleTapCallback) {
@@ -258,6 +294,10 @@
 
         if (touchToolInterface.addNewMeasurement) {
             toolInterface.addNewMeasurement = touchToolInterface.addNewMeasurement;
+        }
+
+        if (touchToolInterface.touchStartCallback) {
+            toolInterface.touchStartCallback = touchToolInterface.touchStartCallback;
         }
 
         return toolInterface;

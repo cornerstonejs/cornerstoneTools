@@ -209,9 +209,8 @@
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(element).off('CornerstoneToolsTouchDrag', cornerstoneTools.simpleAngleTouch.touchMoveCallback);
-        $(element).off('CornerstoneToolsDragStart', cornerstoneTools.simpleAngleTouch.touchStartCallback);
         $(element).off('CornerstoneToolsDragStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
-        $(element).off('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
+        $(element).off('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.tapCallback);
         cornerstone.updateImage(element);
 
         cornerstoneTools.moveNewHandleTouch(touchEventData, measurementData.handles.middle, function() {
@@ -232,9 +231,8 @@
                 }
 
                 $(element).on('CornerstoneToolsTouchDrag', cornerstoneTools.simpleAngleTouch.touchMoveCallback);
-                $(element).on('CornerstoneToolsDragStart', cornerstoneTools.simpleAngleTouch.touchStartCallback);
                 $(element).on('CornerstoneToolsDragStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
-                $(element).on('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.tapCallback);
                 cornerstone.updateImage(element);
             });
         });

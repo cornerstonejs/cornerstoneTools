@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function getHandleNearImagePoint(element, data, coords) {
+    function getHandleNearImagePoint(element, data, coords, distanceSq) {
         var nearbyHandle;
         
         if (!data.handles) {
@@ -13,7 +13,7 @@
             var handle = data.handles[name];
             var handleCanvas = cornerstone.pixelToCanvas(element, handle);
             var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
-            if (distanceSquared < 25) {
+            if (distanceSquared < distanceSq) {
                 nearbyHandle = handle;
                 return;
             }

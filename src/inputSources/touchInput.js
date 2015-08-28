@@ -189,6 +189,12 @@
                 break;
 
             case 'panend':
+                // If lastPoints is not yet set, it means panend fired without panstart or pan,
+                // so we can ignore this event
+                if (!lastPoints) {
+                    return false;
+                }
+
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
@@ -242,6 +248,7 @@
                 $(element).trigger(event, eventData);
                 break;
         }
+        return false;
     }
 
     function enable(element) {
@@ -259,7 +266,8 @@
         mc.set(hammerOptions);
 
         var panOptions = {
-            threshold: 0, pointers: 0, direction: Hammer.DIRECTION_ALL
+            pointers: 0,
+            direction: Hammer.DIRECTION_ALL
         };
 
         var pan = new Hammer.Pan(panOptions);
@@ -269,17 +277,25 @@
         var rotate = new Hammer.Rotate({
             threshold: 0.05
         });
-
+        var press = new Hammer.Press({
+            threshold: 10
+        });
+        
+        /*var doubletap = new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2
+        });*/
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
-        mc.add([ pan, pinch, rotate ]);
+        mc.add([ press, pan, pinch, rotate ]);
 
         mc.on('press tap doubletap panstart panmove panend pinch rotate', onTouch);
 
         $(element).data('hammer', mc);
+        cornerstoneTools.preventGhostClick(element);
     }
 
     function disable(element) {
