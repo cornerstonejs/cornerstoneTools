@@ -18,15 +18,19 @@
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
-        lowEnd = lowEnd || 0;
-        highEnd = highEnd || 0;
+        lowEnd = Math.round(lowEnd) || 0;
+        highEnd = Math.round(highEnd) || 0;
 
         var arr = [],
             c = highEnd - lowEnd + 1;
 
-        c = c > 0 ? c : 0;
+        if (c <= 0) {
+            return arr;
+        }
+
         while ( c-- ) {
             arr[c] = highEnd--;
+            console.log(c);
         }
 
         return arr;
