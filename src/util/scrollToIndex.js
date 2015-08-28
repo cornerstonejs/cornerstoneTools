@@ -15,50 +15,63 @@
             newImageIdIndex += stackData.imageIds.length;
         }
 
-        if (newImageIdIndex !== stackData.currentImageIdIndex) {
-            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
-            if (startLoadingHandler) {
-                startLoadingHandler(element);
-            }
-
-            stackData.currentImageIdIndex = newImageIdIndex;
-            var viewport = cornerstone.getViewport(element);
-            var newImageId = stackData.imageIds[newImageIdIndex];
-
-            // Retry image loading in cases where previous image promise
-            // was rejected, if the option is set
-            var config = cornerstoneTools.stackScroll.getConfiguration();
-            if (config && config.retryLoadOnScroll === true) {
-                var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
-                if (newImagePromise && newImagePromise.state() === 'rejected') {
-                    cornerstone.imageCache.removeImagePromise(newImageId);
+        function doneCallback(image) {
+            //console.log('interaction done: ' + image.imageId);
+            if (stackData.currentImageIdIndex === newImageIdIndex) {
+                cornerstone.displayImage(element, image, viewport);
+                if (endLoadingHandler) {
+                    endLoadingHandler(element);
                 }
             }
-
-            var eventData = {
-                newImageIdIndex: newImageIdIndex,
-                direction: stackData.currentImageIdIndex - newImageIdIndex
-            };
-
-            $(element).trigger('CornerstoneStackScroll', eventData);
-
-            cornerstone.loadAndCacheImage(newImageId).then(function(image) {
-                if (stackData.currentImageIdIndex === newImageIdIndex) {
-                    cornerstone.displayImage(element, image, viewport);
-                    if (endLoadingHandler) {
-                        endLoadingHandler(element);
-                    }
-                }
-            }, function(error) {
-                var imageId = stackData.imageIds[newImageIdIndex];
-                if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId, error);
-                }
-            });
         }
+
+        function failCallback(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error);
+            }
+        }
+
+        if (newImageIdIndex === stackData.currentImageIdIndex) {
+            return;
+        }
+
+        if (startLoadingHandler) {
+            startLoadingHandler(element);
+        }
+
+        stackData.currentImageIdIndex = newImageIdIndex;
+        var viewport = cornerstone.getViewport(element);
+        var newImageId = stackData.imageIds[newImageIdIndex];
+
+        // Retry image loading in cases where previous image promise
+        // was rejected, if the option is set
+        var config = cornerstoneTools.stackScroll.getConfiguration();
+        if (config && config.retryLoadOnScroll === true) {
+            var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+            if (newImagePromise && newImagePromise.state() === 'rejected') {
+                cornerstone.imageCache.removeImagePromise(newImageId);
+            }
+        }
+
+        var eventData = {
+            newImageIdIndex: newImageIdIndex,
+            direction: newImageIdIndex - stackData.currentImageIdIndex
+        };
+
+        $(element).trigger('CornerstoneStackScroll', eventData);
+
+        var requestPoolManager = cornerstoneTools.requestPoolManager;
+        var type = 'interaction';
+
+        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+
+        requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        requestPoolManager.startGrabbing();
     }
 
     // module exports

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-08-28 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6043,6 +6043,210 @@ if (typeof cornerstoneTools === 'undefined') {
  
 // End Source; src/referenceLines/renderActiveReferenceLine.js
 
+// Begin Source: src/requestPool/requestPoolManager.js
+(function(cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    var requestPool = {
+        interaction: [],
+        thumbnail: [],
+        prefetch: []
+    };
+
+    var numRequests = {
+        interaction: 0,
+        thumbnail: 0,
+        prefetch: 0
+    };
+
+    var maxNumRequests = {
+        interaction: 6,
+        thumbnail: 6,
+        prefetch: 5
+    };
+    
+    var lastElementInteracted;
+    var awake = false;
+    var grabDelay = 20;
+
+    function requestPoolManager() {
+
+        function addRequest(element, imageId, type, doneCallback, failCallback) {
+            if (!requestPool.hasOwnProperty(type)) {
+                throw 'Request type must be one of interaction, thumbnail, or prefetch';
+            }
+
+            if (!element || !imageId) {
+                return;
+            }
+
+            // Describe the request
+            var requestDetails = {
+                type: type,
+                imageId: imageId,
+                doneCallback: doneCallback,
+                failCallback: failCallback
+            };
+
+            // If this imageId is in the cache, resolve it immediately
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            if (imagePromise) {
+                imagePromise.then(function(image) {
+                    doneCallback(image);
+                }, function(error) {
+                    failCallback(error);
+                });
+                return;
+            }
+
+            // Add it to the end of the stack
+            requestPool[type].push(requestDetails);
+
+            // Store the last element interacted with,
+            // So we know which images to prefetch
+            //
+            // ---- Not used for now ----
+            if (type === 'interaction') {
+                lastElementInteracted = element;
+            }
+        }
+
+        function clearRequestStack(type) {
+            //console.log('clearRequestStack');
+            if (!requestPool.hasOwnProperty(type)) {
+                throw 'Request type must be one of interaction, thumbnail, or prefetch';
+            }
+
+            requestPool[type] = [];
+        }
+
+        function startAgain() {
+            if (!awake) {
+                return;
+            }
+
+            setTimeout(function() {
+                var requestDetails = getNextRequest();
+                if (!requestDetails) {
+                    awake = false;
+                    return;
+                }
+
+                sendRequest(requestDetails);
+            }, grabDelay);
+        }
+
+        function sendRequest(requestDetails) {
+            // Increment the number of current requests of this type
+            var type = requestDetails.type;
+            numRequests[type]++;
+
+            awake = true;
+            var imageId = requestDetails.imageId;
+            var doneCallback = requestDetails.doneCallback;
+            var failCallback = requestDetails.failCallback;
+            
+            // Check if we already have this image promise in the cache
+            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+            if (imagePromise) {
+                // If we do, remove from list (when resolved, as we could have
+                // pending prefetch requests) and stop processing this iteration
+                imagePromise.then(function(image) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
+
+                    doneCallback(image);
+                    startAgain();
+                }, function(error) {
+                    numRequests[type]--;
+                    // console.log(numRequests);
+                    failCallback(error);
+                });
+                return;
+            }
+
+            // Load and cache the image
+            cornerstone.loadAndCacheImage(imageId).then(function(image) {
+                numRequests[type]--;
+                // console.log(numRequests);
+                doneCallback(image);
+                startAgain();
+            }, function(error) {
+                numRequests[type]--;
+                // console.log(numRequests);
+                failCallback(error);
+            });
+        }
+
+        function startGrabbing() {
+            // Begin by grabbing X images
+            if (awake) {
+                return;
+            }
+
+            var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
+            
+            maxNumRequests = {
+                interaction: maxSimultaneousRequests,
+                thumbnail: maxSimultaneousRequests - 2,
+                prefetch: maxSimultaneousRequests - 1
+            };
+
+            for (var i = 0; i < maxSimultaneousRequests; i++) {
+                var requestDetails = getNextRequest();
+                if (requestDetails) {
+                    sendRequest(requestDetails);
+                }
+            }
+
+            //console.log("startGrabbing");
+            //console.log(requestPool);
+        }
+
+        function getNextRequest() {
+            if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
+                return requestPool.interaction.shift();
+            }
+
+            if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
+                return requestPool.thumbnail.shift();
+            }
+
+            if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
+                return requestPool.prefetch.shift();
+            }
+
+            if (!requestPool.interaction.length &&
+                !requestPool.thumbnail.length &&
+                !requestPool.prefetch.length) {
+                awake = false;
+            }
+
+            return false;
+        }
+
+        function getRequestPool() {
+            return requestPool;
+        }
+
+        var requestManager = {
+            addRequest: addRequest,
+            clearRequestStack: clearRequestStack,
+            startGrabbing: startGrabbing,
+            getRequestPool: getRequestPool
+        };
+
+        return requestManager;
+    }
+
+    // module/private exports
+    cornerstoneTools.requestPoolManager = requestPoolManager();
+
+})(cornerstone, cornerstoneTools);
+ 
+// End Source; src/requestPool/requestPoolManager.js
+
 // Begin Source: src/stackTools/playClip.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -6180,42 +6384,28 @@ if (typeof cornerstoneTools === 'undefined') {
     'use strict';
 
     var toolType = 'stackPrefetch';
-    var defaultMaxRequests = 11;
+    var requestType = 'prefetch';
+
     var configuration = {};
-    var reenablePrefetchTimeout;
 
-    function renablePrefetch(e, data) {
-        // Use timeouts here to prevent this being called over and over
-        // during scrolling
-        clearTimeout(reenablePrefetchTimeout);
-        reenablePrefetchTimeout = setTimeout(function() {
-            var element = data.element;
-            var stackData = cornerstoneTools.getToolState(element, 'stack');
-            if (!stackData || !stackData.data || !stackData.data.length) {
-                return;
-            }
-            // Get the stackPrefetch tool data
-            var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-            if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-                // should not happen
-                return;
-            }
+    var resetPrefetchTimeout,
+        resetPrefetchDelay;
 
-            var stackPrefetch = stackPrefetchData.data[0];
-            if (stackPrefetch.indicesToRequest.length > 0 && !stackPrefetch.enabled) {
-                //console.log('Re-enabling prefetch');
-                stackPrefetch.enabled = true;
-                prefetch(element);
-            }
-        }, 50);
+    function sortNumber(a, b) {
+        // http://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly
+        return a - b;
     }
 
     function range(lowEnd, highEnd) {
         // Javascript version of Python's range function
         // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
+        lowEnd = lowEnd || 0;
+        highEnd = highEnd || 0;
+
         var arr = [],
             c = highEnd - lowEnd + 1;
 
+        c = c > 0 ? c : 0;
         while ( c-- ) {
             arr[c] = highEnd--;
         }
@@ -6223,27 +6413,53 @@ if (typeof cornerstoneTools === 'undefined') {
         return arr;
     }
 
+    var max = function(arr) {
+        return Math.max.apply(null, arr);
+    };
+
+    var min = function(arr) {
+        return Math.min.apply(null, arr);
+    };
+
+    function nearestIndex(arr, x) {
+        // Return index of nearest values in array
+        // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array        
+        var l = [],
+            h = [];
+
+        arr.forEach(function(v) {
+            if (v < x) {
+                l.push(v);
+            } else if (v > x) {
+                h.push(v);
+            }
+        });
+       
+        return {
+            low: arr.indexOf(max(l)),
+            high: arr.indexOf(min(h))
+        };
+    }
+
     function prefetch(element) {
         // Check to make sure stack data exists
         var stackData = cornerstoneTools.getToolState(element, 'stack');
-        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+        if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
 
         var stack = stackData.data[0];
-        var currentImageIdIndex = stack.currentImageIdIndex;
 
         // Get the stackPrefetch tool data
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if (stackPrefetchData === undefined) {
-            // should not happen
+        if (!stackPrefetchData) {
             return;
         }
 
         var stackPrefetch = stackPrefetchData.data[0];
 
         // If all the requests are complete, disable the stackPrefetch tool
-        if (stackPrefetch.indicesToRequest.length === 0) {
+        if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
             stackPrefetch.enabled = false;
         }
 
@@ -6256,13 +6472,14 @@ if (typeof cornerstoneTools === 'undefined') {
         // This fires when the individual image loading deferred is resolved        
         function removeFromList(imageIdIndex) {
             var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
-            if (index > -1){ // don't remove last element if imageIdIndex not found
+            if (index > -1) { // don't remove last element if imageIdIndex not found
                 stackPrefetch.indicesToRequest.splice(index, 1);
             }
         }
         
-        // remove all already cached images from the
+        // Remove all already cached images from the
         // indicesToRequest array
+        stackPrefetchData.data[0].indicesToRequest.sort(sortNumber);
         var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
 
         indicesToRequestCopy.forEach(function(imageIdIndex) {
@@ -6273,161 +6490,168 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            
-            if (imagePromise !== undefined && imagePromise.state() === 'resolved'){
+            if (imagePromise && imagePromise.state() === 'resolved'){
                 removeFromList(imageIdIndex);
             }
         });
 
-        // Get tool configuration
-        var config = cornerstoneTools.stackPrefetch.getConfiguration();
-
-        var stackLength = stack.imageIds.length;
-        
-        var lastImageIdIndexFetched = stackPrefetch.lastImageIdIndexFetched;
-        if (!lastImageIdIndexFetched) {
-            lastImageIdIndexFetched = currentImageIdIndex;
-        }
-
-        var maxImageIdIndex = lastImageIdIndexFetched + config.maxSimultaneousRequests;
-        if (maxImageIdIndex >= stackLength) {
-            maxImageIdIndex = stackLength - 1;
-        }
-
-        var imageIdIndices = range(lastImageIdIndexFetched, maxImageIdIndex);
-        stackPrefetch.lastImageIdIndexFetched = maxImageIdIndex + 1;
-
-        // Loop through the images that should be requested in this batch
-
-        var deferredList = [];
-        var lastCacheInfo;
-
-        if (imageIdIndices.length === 0) {
-            stackPrefetch.enabled = false;
+        // Stop here if there are no images left to request
+        // After those in the cache have been removed
+        if (!stackPrefetch.indicesToRequest.length) {
             return;
         }
 
-        function onLoadImageComplete(imageIdIndex){
+        function doneCallback(image) {
+            //console.log('prefetch done: ' + image.imageId);
+            var imageIdIndex = stack.imageIds.indexOf(image.imageId);
             removeFromList(imageIdIndex);
-
-            var cacheInfo = cornerstone.imageCache.getCacheInfo();
-
-            // Check if the cache is full
-            if (lastCacheInfo && cacheInfo.cacheSizeInBytes === lastCacheInfo.cacheSizeInBytes) {
-                //console.log('Cache full, stopping');
-                stackPrefetch.enabled = false;
-            }
-
-            lastCacheInfo = cacheInfo;
         }
 
-        //console.log(imageIdIndices);
-        imageIdIndices.forEach(function(imageIdIndex) {
-            var imageId = stack.imageIds[imageIdIndex];
+        function failCallback(error) {
+            console.log('prefetch errored: ' + error);
+        }
 
-            if (!stackPrefetch.enabled) {
-                return;
+        // Clear the requestPool of prefetch requests
+        var requestPoolManager = cornerstoneTools.requestPoolManager;
+        requestPoolManager.clearRequestStack(requestType);
+
+        // Identify the nearest imageIdIndex to the currentImageIdIndex 
+        var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
+
+        var imageId,
+            nextImageIdIndex;
+
+        // Prefetch images around the current image (before and after)
+        var lowerIndex = nearest.low;
+        var higherIndex = nearest.high;
+        while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+            if (lowerIndex >= 0 ) {
+                nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
             }
 
-            if (!imageId) {
-                return;
+            if (higherIndex < stackPrefetch.indicesToRequest.length) {
+                nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
+                imageId = stack.imageIds[nextImageIdIndex];
+                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
             }
+        }
 
-            // Check if we already have this image promise in the cache
-            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            
-            if (imagePromise !== undefined) {
-                // If we do, remove from list (when resolved, as we could have
-                // pending prefetch requests) and stop processing this iteration
-                imagePromise.done(function() {
-                    onLoadImageComplete(imageIdIndex);
-                });
-                return;
-            }
-            
-            // Load and cache the image
-            var loadImageDeferred = cornerstone.loadAndCacheImage(imageId);
+        // Try to start the requestPool's grabbing procedure
+        // in case it isn't already running
+        requestPoolManager.startGrabbing();
+    }
 
-            // When this is complete, remove the imageIdIndex from the list
-            loadImageDeferred.done(function() {
-                onLoadImageComplete(imageIdIndex);
-            });
+    function handleCacheFull(e) {
+        // Stop prefetching if the ImageCacheFull event is fired from cornerstone
+        // console.log('CornerstoneImageCacheFull full, stopping');
+        var element = e.data.element;
 
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
-            loadImageDeferred.fail(function(error) {
-                if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId, error);
-                }
-            });
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
+            return;
+        }
 
-            // Add the image promises to a list
-            deferredList.push(loadImageDeferred);
-        });
+        // Disable the stackPrefetch tool
+        // stackPrefetchData.data[0].enabled = false;
 
-        // When this batch of images is loaded (all async requests have finished)
-        $.when.apply($, deferredList).done(function() {
-            // If there are still images that need to be requested, and the 
-            // cache is not full, call this function again
-            //console.log('Batch finished');
-            if (stackPrefetch.indicesToRequest.length > 0 && stackPrefetch.enabled) {
-                //console.log('Running prefetch again');
-                // Set a timeout here to prevent locking up the UI
-                setTimeout(prefetch(element), 1);
-            }
-        });
+        // Clear current prefetch requests from the requestPool
+        cornerstoneTools.requestPoolManager.clearRequestStack(requestType);
+    }
 
-        // If the entire batch of requests has failed, throw an error
-        $.when.apply($, deferredList).fail(function() {
-            throw 'stackPrefetch: batch failed for element: ' + element.id;
-        });
+    function promiseRemovedHandler(e, eventData) {
+        // When an imagePromise has been pushed out of the cache, re-add its index
+        // it to the indicesToRequest list so that it will be retrieved later if the
+        // currentImageIdIndex is changed to an image nearby
+        var element = e.data.element;
+        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        if (!stackData || !stackData.data || !stackData.data.length) {
+            return;
+        }
+
+        var stack = stackData.data[0];
+        var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
+
+        // Make sure the image that was removed is actually in this stack
+        // before adding it to the indicesToRequest array
+        if (imageIdIndex < 0) {
+            return;
+        }
+        
+        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
+            return;
+        }
+
+        stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+    }
+
+    function onImageUpdated(e) {
+        // Start prefetching again (after a delay)
+        // When the user has scrolled to a new image
+        clearTimeout(resetPrefetchTimeout);
+        resetPrefetchTimeout = setTimeout(function() {
+            var element = e.currentTarget;
+            prefetch(element);
+        }, resetPrefetchDelay);
     }
 
     function enable(element) {
-        var config = cornerstoneTools.stackPrefetch.getConfiguration();
-
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         stackPrefetchData = [];
 
         // First check that there is stack data available
         var stackData = cornerstoneTools.getToolState(element, 'stack');
-        if (stackData === undefined || stackData.data === undefined || stackData.data.length === 0) {
+        if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
 
         var stack = stackData.data[0];
 
-        // The maximum simultaneous requests is capped at 
-        // a rather arbitrary number of 11, since we don't want to overload any servers
-        if (config === undefined || config.maxSimultaneousRequests === undefined) {
-            config = {
-                maxSimultaneousRequests: Math.min(Math.ceil(stack.imageIds.length / 5), defaultMaxRequests)
-            };
-        }
-
-        cornerstoneTools.stackPrefetch.setConfiguration(config);
-
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         stackPrefetchData = {
-            indicesToRequest: range(0, stack.imageIds.length - 1), enabled: true
+            indicesToRequest: range(0, stack.imageIds.length - 1),
+            enabled: true,
+            direction: 1
         };
+
+        // Remove the currentImageIdIndex from the list to request
+        var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
+        stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
+
         cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
 
         prefetch(element);
 
-        $(element).off('CornerstoneNewImage', renablePrefetch);
+        $(element).off('CornerstoneNewImage', onImageUpdated);
+        $(element).on('CornerstoneNewImage', onImageUpdated);
 
-        $(element).on('CornerstoneNewImage', renablePrefetch);
+        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
+        $(cornerstone).on('CornerstoneImageCacheFull', {
+            element: element
+        }, handleCacheFull);
+
+        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
+            element: element
+        }, promiseRemovedHandler);
     }
 
     function disable(element) {
-        $(element).off('CornerstoneNewImage', renablePrefetch);
+        $(element).off('CornerstoneNewImage', onImageUpdated);
+
+        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
+        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
         if (stackPrefetchData && stackPrefetchData.data.length) {
             stackPrefetchData.data[0].enabled = false;
-            clearTimeout(reenablePrefetchTimeout);
+
+            // Clear current prefetch requests from the requestPool
+            cornerstoneTools.requestPoolManager.clearRequestStack(requestType);
         }
     }
 
@@ -6441,7 +6665,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
     // module/private exports
     cornerstoneTools.stackPrefetch = {
-        enable: enable, disable: disable, getConfiguration: getConfiguration, setConfiguration: setConfiguration
+        enable: enable,
+        disable: disable,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration
     };
 
 })($, cornerstone, cornerstoneTools);
@@ -8073,6 +8300,96 @@ if (typeof cornerstoneTools === 'undefined') {
  
 // End Source; src/util/drawTextBox.js
 
+// Begin Source: src/util/getMaxSimultaneousRequests.js
+(function(cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    // Maximum concurrent connections to the same server
+    // Information from http://sgdev-blog.blogspot.fr/2014/01/maximum-concurrent-connection-to-same.html
+    var maxSimultaneousRequests = {
+        default: 6,
+        IE: {
+            9: 6,
+            10: 8,
+            default: 8
+        },
+        Firefox: {
+            default: 6
+        },
+        Opera: {
+            10: 8,
+            11: 6,
+            12: 6,
+            default: 6
+        },
+        Chrome: {
+            default: 6
+        },
+        Safari: {
+            default: 4
+        }
+    };
+
+    // Browser name / version detection
+    // http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+    function getBrowserInfo() {
+        var ua = navigator.userAgent,
+            M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [],
+            tem;
+        
+        if (/trident/i.test(M[1])) {
+            tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+            return 'IE ' + (tem[1] || '');
+        }
+
+        if (M[1] === 'Chrome') {
+            tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+            if (tem !== null) {
+                return tem.slice(1).join(' ').replace('OPR', 'Opera');
+            }
+        }
+
+        M = M[2]? [ M[1], M[2] ]: [ navigator.appName, navigator.appVersion, '-?' ];
+        if ((tem = ua.match(/version\/(\d+)/i)) !== null) {
+            M.splice(1, 1, tem[1]);
+        }
+
+        return M.join(' ');
+    }
+
+    function getMaxSimultaneousRequests() {
+        var config = cornerstoneTools.stackPrefetch.getConfiguration();
+
+        // Give preference to user-chosen values
+        if (config.maxSimultaneousRequests) {
+            return config.maxSimultaneousRequests;
+        }
+
+        var infoString = getBrowserInfo();
+        var info = infoString.split(' ');
+        var browserName = info[0];
+        var browserVersion = info[1];
+        var browserData = maxSimultaneousRequests[browserName];
+
+        if (!browserData) {
+            return maxSimultaneousRequests['default'];
+        }
+
+        if (!browserData[browserVersion]) {
+            return browserData['default'];
+        }
+
+        return browserData[browserVersion];
+    }
+
+    // module exports
+    cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
+
+})(cornerstone, cornerstoneTools);
+ 
+// End Source; src/util/getMaxSimultaneousRequests.js
+
 // Begin Source: src/util/isMouseButtonEnabled.js
 (function(cornerstone, cornerstoneTools) {
 
@@ -8202,50 +8519,63 @@ if (typeof cornerstoneTools === 'undefined') {
             newImageIdIndex += stackData.imageIds.length;
         }
 
-        if (newImageIdIndex !== stackData.currentImageIdIndex) {
-            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
-            if (startLoadingHandler) {
-                startLoadingHandler(element);
-            }
-
-            stackData.currentImageIdIndex = newImageIdIndex;
-            var viewport = cornerstone.getViewport(element);
-            var newImageId = stackData.imageIds[newImageIdIndex];
-
-            // Retry image loading in cases where previous image promise
-            // was rejected, if the option is set
-            var config = cornerstoneTools.stackScroll.getConfiguration();
-            if (config && config.retryLoadOnScroll === true) {
-                var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
-                if (newImagePromise && newImagePromise.state() === 'rejected') {
-                    cornerstone.imageCache.removeImagePromise(newImageId);
+        function doneCallback(image) {
+            //console.log('interaction done: ' + image.imageId);
+            if (stackData.currentImageIdIndex === newImageIdIndex) {
+                cornerstone.displayImage(element, image, viewport);
+                if (endLoadingHandler) {
+                    endLoadingHandler(element);
                 }
             }
-
-            var eventData = {
-                newImageIdIndex: newImageIdIndex,
-                direction: stackData.currentImageIdIndex - newImageIdIndex
-            };
-
-            $(element).trigger('CornerstoneStackScroll', eventData);
-
-            cornerstone.loadAndCacheImage(newImageId).then(function(image) {
-                if (stackData.currentImageIdIndex === newImageIdIndex) {
-                    cornerstone.displayImage(element, image, viewport);
-                    if (endLoadingHandler) {
-                        endLoadingHandler(element);
-                    }
-                }
-            }, function(error) {
-                var imageId = stackData.imageIds[newImageIdIndex];
-                if (errorLoadingHandler) {
-                    errorLoadingHandler(element, imageId, error);
-                }
-            });
         }
+
+        function failCallback(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error);
+            }
+        }
+
+        if (newImageIdIndex === stackData.currentImageIdIndex) {
+            return;
+        }
+
+        if (startLoadingHandler) {
+            startLoadingHandler(element);
+        }
+
+        stackData.currentImageIdIndex = newImageIdIndex;
+        var viewport = cornerstone.getViewport(element);
+        var newImageId = stackData.imageIds[newImageIdIndex];
+
+        // Retry image loading in cases where previous image promise
+        // was rejected, if the option is set
+        var config = cornerstoneTools.stackScroll.getConfiguration();
+        if (config && config.retryLoadOnScroll === true) {
+            var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+            if (newImagePromise && newImagePromise.state() === 'rejected') {
+                cornerstone.imageCache.removeImagePromise(newImageId);
+            }
+        }
+
+        var eventData = {
+            newImageIdIndex: newImageIdIndex,
+            direction: newImageIdIndex - stackData.currentImageIdIndex
+        };
+
+        $(element).trigger('CornerstoneStackScroll', eventData);
+
+        var requestPoolManager = cornerstoneTools.requestPoolManager;
+        var type = 'interaction';
+
+        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+
+        requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        requestPoolManager.startGrabbing();
     }
 
     // module exports
@@ -8294,46 +8624,3 @@ if (typeof cornerstoneTools === 'undefined') {
 })(cornerstone, cornerstoneTools);
  
 // End Source; src/util/setContextToDisplayFontSize.js
-
-// Begin Source: src/util/throttle.js
-(function(cornerstoneTools) {
-
-    'use strict';
-
-    function throttle(fn, threshold, scope) {
-        // https://remysharp.com/2010/07/21/throttling-function-calls#comment-497362
-        threshold = threshold || 250;
-        var last;
-        //deferTimer;
-
-        return function() {
-            var context = scope || this;
-
-            var now = +new Date(),
-                args = arguments;
-
-            if (last && now < last + threshold) {
-                // hold on to it
-                //console.log('too fast, dropping');
-                return;
-                /*clearTimeout(deferTimer);
-                deferTimer = setTimeout(function() {
-                    last = now;
-                    console.log('throttled');
-                    fn.apply(context, args);
-                }, threshold);*/
-                
-            } else {
-                last = now;
-                //console.log('unthrottled');
-                fn.apply(context, args);
-            }
-        };
-    }
-
-    // module exports
-    cornerstoneTools.throttle = throttle;
-
-})(cornerstoneTools);
- 
-// End Source; src/util/throttle.js
