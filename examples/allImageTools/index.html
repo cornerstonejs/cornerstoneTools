@@ -5,7 +5,7 @@
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
 
@@ -130,10 +130,12 @@ is used by our example image loader-->
     var config = {
         // invert: true,
         minScale: 0.25,
-        maxScale: 20.0
+        maxScale: 20.0,
+        preventZoomOutsideImage: true
     };
 
     cornerstoneTools.zoom.setConfiguration(config);
+
     $('#chkshadow').on('change', function(){
       cornerstoneTools.length.setConfiguration({shadow: this.checked});
       cornerstoneTools.angle.setConfiguration({shadow: this.checked});
