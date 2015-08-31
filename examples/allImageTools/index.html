@@ -131,11 +131,12 @@ is used by our example image loader-->
         // invert: true,
         minScale: 0.25,
         maxScale: 20.0,
-        preventZoomOutsideImage: true,
-        zoomOutFromCenter: true
+        preventZoomOutsideImage: true
     };
 
     cornerstoneTools.zoom.setConfiguration(config);
+    cornerstoneTools.zoom.strategy = cornerstoneTools.zoom.strategies.translate;
+
     $('#chkshadow').on('change', function(){
       cornerstoneTools.length.setConfiguration({shadow: this.checked});
       cornerstoneTools.angle.setConfiguration({shadow: this.checked});
