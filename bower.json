@@ -14,7 +14,7 @@
   ],
   "dependencies": {
     "cornerstone": "~0.8.0",
-     "cornerstoneMath": "~0.1.1",
+     "cornerstoneMath": "~0.1.2",
      "hammerjs": "~2.0.4",
      "jquery" : "~2.1.1"
   },
