@@ -8,7 +8,7 @@
         var referenceImage = cornerstone.getEnabledElement(referenceElement).image;
 
         // make sure the images are actually loaded for the target and reference
-        if (targetImage === undefined || referenceImage === undefined) {
+        if (!targetImage || !referenceImage) {
             return;
         }
 
@@ -31,6 +31,9 @@
         }
 
         var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
+        if (!referenceLine) {
+            return;
+        }
 
         var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.start);
         var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.end);
