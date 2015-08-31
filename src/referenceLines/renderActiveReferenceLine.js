@@ -8,7 +8,7 @@
         var referenceImage = cornerstone.getEnabledElement(referenceElement).image;
 
         // make sure the images are actually loaded for the target and reference
-        if (targetImage === undefined || referenceImage === undefined) {
+        if (!targetImage || !referenceImage) {
             return;
         }
 

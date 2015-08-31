@@ -80,14 +80,24 @@
         var origin = originDirection.origin;
         var direction = originDirection.direction;
 
-        var distance = 1000;
+        // Calculate the longest possible length in the reference image plane (the length of the diagonal)
+        var bottomRight = imagePointToPatientPoint({
+            x: referenceImagePlane.columns,
+            y: referenceImagePlane.rows
+        }, referenceImagePlane);
+        var distance = referenceImagePlane.imagePositionPatient.distanceTo(bottomRight);
+
+        // Use this distance to bound the ray intersecting the two planes
         var line = new cornerstoneMath.Line3();
         line.start = origin;
         line.end = origin.clone().add(direction.multiplyScalar(distance));
 
+        // Find the intersections between this line and the reference image plane's four sides
         var rect = getRectangleFromImagePlane(referenceImagePlane);
         var intersections = lineRectangleIntersection(line, rect);
 
+        // Return the intersections between this line and the reference image plane's sides
+        // in order to draw the reference line from the target image.
         if (intersections.length !== 2) {
             return;
         }
