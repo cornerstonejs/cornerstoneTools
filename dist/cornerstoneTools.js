@@ -7591,6 +7591,69 @@ if (typeof cornerstoneTools === 'undefined') {
  
 // End Source; src/synchronization/stackImagePositionSynchronizer.js
 
+// Begin Source: src/synchronization/stackScrollSynchronizer.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    // This function causes any scrolling actions within the stack to propagate to 
+    // all of the other viewports that are synced
+    function stackScrollSynchronizer(synchronizer, sourceElement, targetElement, eventData) {
+        // If the target and source are the same, stop
+        if (sourceElement === targetElement) {
+            return;
+        }
+
+        // If there is no event, or direction is 0, stop
+        if (!eventData || !eventData.direction) {
+            return;
+        }
+
+        // Get the stack of the target viewport
+        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var stackData = stackToolDataSource.data[0];
+
+        // Get the new index for the stack
+        var newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
+
+        // Ensure the index does not exceed the bounds of the stack
+        newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), stackData.imageIds.length - 1);
+
+        // If the index has not changed, stop here
+        if (stackData.currentImageIdIndex === newImageIdIndex) {
+            return;
+        }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
+        }
+
+        cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            var viewport = cornerstone.getViewport(targetElement);
+            stackData.currentImageIdIndex = newImageIdIndex;
+            synchronizer.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(targetElement);
+            }
+        }, function(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(targetElement, imageId, error);
+            }
+        });
+    }
+
+    // module/private exports
+    cornerstoneTools.stackScrollSynchronizer = stackScrollSynchronizer;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/synchronization/stackScrollSynchronizer.js
+
 // Begin Source: src/synchronization/synchronizer.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -7606,23 +7669,22 @@ if (typeof cornerstoneTools === 'undefined') {
 
         var ignoreFiredEvents = false;
 
-        function fireEvent(sourceEnabledElement) {
+        function fireEvent(sourceEnabledElement, eventData) {
 
             // Broadcast an event that something changed
             ignoreFiredEvents = true;
             $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement);
+                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
             });
             ignoreFiredEvents = false;
         }
 
-        function onEvent(e) {
+        function onEvent(e, eventData) {
             if (ignoreFiredEvents === true) {
-                //console.log("event ignored");
                 return;
             }
 
-            fireEvent(e.currentTarget);
+            fireEvent(e.currentTarget, eventData);
         }
 
         // adds an element as a source
@@ -8614,6 +8676,11 @@ if (typeof cornerstoneTools === 'undefined') {
             startLoadingHandler(element);
         }
 
+        var eventData = {
+            newImageIdIndex: newImageIdIndex,
+            direction: newImageIdIndex - stackData.currentImageIdIndex
+        };
+
         stackData.currentImageIdIndex = newImageIdIndex;
         var viewport = cornerstone.getViewport(element);
         var newImageId = stackData.imageIds[newImageIdIndex];
@@ -8628,13 +8695,6 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
 
-        var eventData = {
-            newImageIdIndex: newImageIdIndex,
-            direction: newImageIdIndex - stackData.currentImageIdIndex
-        };
-
-        $(element).trigger('CornerstoneStackScroll', eventData);
-
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         var type = 'interaction';
 
@@ -8642,6 +8702,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
         requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
         requestPoolManager.startGrabbing();
+
+        $(element).trigger('CornerstoneStackScroll', eventData);
     }
 
     // module exports

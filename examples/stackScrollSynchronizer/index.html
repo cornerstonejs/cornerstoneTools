@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!-- support for mobile touch devices -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../cornerstone.min.css" rel="stylesheet">
+    <style type="text/css">
+        .index {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: white;
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>
+                Stack Scroll Synchronizer Example
+            </h1>
+            <p>
+                This page contains an example of the scroll stack synchronizer tool.  It detects changes made 
+                to the index within a single viewport and syncronizes the offset with the sychronized elements.  
+                (e.g. Scrolling will increment / decrement the index of each viewport in the synchronizer).
+            </p>
+
+        </div>
+
+        <div class="row">
+            <div class="col-xs-2">
+                <ul class="list-group">
+                    <a href="#" id="add" class="list-group-item active">Add All</a>
+                    <a href="#" id="remove" class="list-group-item">Remove All</a>
+                    <a href="#" id="add3" class="list-group-item">Add 3rd</a>
+                    <a href="#" id="remove3" class="list-group-item">Remove 3rd</a>
+                </ul>
+            </div>
+            <div class="col-xs-10">
+                <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+                     oncontextmenu="return false"
+                     class='cornerstone-enabled-image'
+                     unselectable='on'
+                     onselectstart='return false;'
+                     onmousedown='return false;'>
+                    <div id="axial1"
+                         style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                    </div>
+                    <span class="index">0</span>
+                </div>
+                <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+                     oncontextmenu="return false"
+                     class='cornerstone-enabled-image'
+                     unselectable='on'
+                     onselectstart='return false;'
+                     onmousedown='return false;'>
+                    <div id="axial2"
+                         style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                    </div>
+                    <span class="index">1</span>
+                </div>
+                <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+                     oncontextmenu="return false"
+                     class='cornerstone-enabled-image'
+                     unselectable='on'
+                     onselectstart='return false;'
+                     onmousedown='return false;'>
+                    <div id="axial3"
+                         style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                    </div>
+                    <span class="index">2</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-2">
+                <b>Scroll Direction</b>
+            </div>
+            <div class="col-xs-10">
+                <span id="direction"></span>
+            </div>
+        </div>
+    </div>
+</body>
+
+<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
+is used by our example image loader-->
+<script src="../jquery.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="../cornerstone.min.js"></script>
+<script src="../cornerstoneMath.min.js"></script>
+
+<!-- include the cornerstone tools library -->
+<script src="../../dist/cornerstoneTools.js"></script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../exampleImageLoader.js"></script>
+<script src="../exampleMetaDataProvider.js"></script>
+
+<script>
+    var axialElement1 = $('#axial1').get(0);
+    var axialElement2 = $('#axial2').get(0);
+    var axialElement3 = $('#axial3').get(0);
+
+    var axialImageIds = [
+        'example://1',
+        'example://2',
+        'example://3'
+    ];
+
+    var axialStack1 = {
+        currentImageIdIndex : 0,
+        imageIds: axialImageIds
+    };
+    var axialStack2 = {
+        currentImageIdIndex : 1,
+        imageIds: axialImageIds
+    };
+    var axialStack3 = {
+        currentImageIdIndex : 2,
+        imageIds: axialImageIds
+    };
+
+    var stacks = [
+        { element: axialElement1, stack: axialStack1 },
+        { element: axialElement2, stack: axialStack2 },
+        { element: axialElement3, stack: axialStack3 }]
+    ;
+
+    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneStackScroll", cornerstoneTools.stackScrollSynchronizer);
+
+    // image enable the dicomImage element and the mouse inputs
+    cornerstone.enable(axialElement1);
+    cornerstone.enable(axialElement2);
+    cornerstone.enable(axialElement3);
+
+    cornerstoneTools.mouseInput.enable(axialElement1);
+    cornerstoneTools.mouseWheelInput.enable(axialElement1);
+    cornerstoneTools.mouseInput.enable(axialElement2);
+    cornerstoneTools.mouseWheelInput.enable(axialElement2);
+    cornerstoneTools.mouseInput.enable(axialElement3);
+    cornerstoneTools.mouseWheelInput.enable(axialElement3);
+
+    // Load the proper image in each view port
+    for (var s = 0; s < stacks.length; s++) {
+        var element = stacks[s].element;
+        var stack = stacks[s].stack;
+        cornerstone.loadImage(stack.imageIds[stack.currentImageIdIndex]).then(function(image) {
+            // display this image
+            cornerstone.displayImage(element, image);
+
+            // set the stack as tool state
+            cornerstoneTools.addStackStateManager(element, ['stack']);
+            cornerstoneTools.addToolState(element, 'stack', stack);
+
+            // Enable all tools we want to use with this element
+            cornerstoneTools.stackScroll.activate(element, 1);
+            cornerstoneTools.stackScrollWheel.activate(element);
+
+            synchronizer.add(element);
+        });
+    }
+   
+    function activate(id){
+            $('a').removeClass('active');
+            $(id).addClass('active');
+    }
+
+    $(function() {
+        $('#add').click(function () {
+            activate("#add");
+            synchronizer.add(axialElement1);
+            synchronizer.add(axialElement2);
+            synchronizer.add(axialElement3);
+            return false;
+        });
+        $('#remove').click(function () {
+            activate("#remove");
+            synchronizer.remove(axialElement1);
+            synchronizer.remove(axialElement2);
+            synchronizer.remove(axialElement3);
+            return false;
+        });
+        $('#add3').click(function () {
+            activate("#add3");
+            synchronizer.add(axialElement3);
+            return false;
+        });
+        $('#remove3').click(function () {
+            activate("#remove3");
+            synchronizer.remove(axialElement3);
+            return false;
+        });
+
+        // Listener for example purposes to demonstrate scroll direction
+        $(document).on('CornerstoneStackScroll', function (e, eventData) {
+            // Manually display direction
+            if (eventData.direction === 0) {
+                return;
+            }
+            $("#direction").html(eventData.direction > 0 ? "UP" : "DOWN");
+            // Update indices of each stack
+            $('[id^="axial"]').each(function () {
+                // Resolve the stack and get the current image index
+                var targetStackToolDataSource = cornerstoneTools.getToolState($(this).get(0), 'stack');
+                var targetStackData = targetStackToolDataSource.data[0];
+                $(this).siblings('.index').html(targetStackData.currentImageIdIndex);
+            });
+        });
+    });
+</script>
+</html>
