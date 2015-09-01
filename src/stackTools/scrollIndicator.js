@@ -3,7 +3,7 @@ Display scroll progress bar across bottom of image.
  */
 (function($, cornerstone, cornerstoneTools) {
 
-    "use strict";
+    'use strict';
 
     var scrollBarHeight = 6;
 
@@ -21,8 +21,7 @@ Display scroll progress bar across bottom of image.
             return false;
         }
 
-
-        var context = eventData.enabledElement.canvas.getContext("2d");
+        var context = eventData.enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.save();
 
@@ -37,6 +36,7 @@ Display scroll progress bar across bottom of image.
         if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
+
         var imageIds = stackData.data[0].imageIds;
         var currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
