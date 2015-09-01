@@ -44,6 +44,11 @@
             startLoadingHandler(element);
         }
 
+        var eventData = {
+            newImageIdIndex: newImageIdIndex,
+            direction: newImageIdIndex - stackData.currentImageIdIndex
+        };
+
         stackData.currentImageIdIndex = newImageIdIndex;
         var viewport = cornerstone.getViewport(element);
         var newImageId = stackData.imageIds[newImageIdIndex];
@@ -58,13 +63,6 @@
             }
         }
 
-        var eventData = {
-            newImageIdIndex: newImageIdIndex,
-            direction: newImageIdIndex - stackData.currentImageIdIndex
-        };
-
-        $(element).trigger('CornerstoneStackScroll', eventData);
-
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         var type = 'interaction';
 
@@ -72,6 +70,8 @@
 
         requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
         requestPoolManager.startGrabbing();
+
+        $(element).trigger('CornerstoneStackScroll', eventData);
     }
 
     // module exports

@@ -11,7 +11,7 @@
             position: absolute;
             bottom: 5px;
             right: 5px;
-            color: yellow;
+            color: white;
         }
     </style>
 
@@ -131,7 +131,7 @@ is used by our example image loader-->
         { element: axialElement3, stack: axialStack3 }]
     ;
 
-    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneImageScroll", cornerstoneTools.stackScrollSynchronizer);
+    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneStackScroll", cornerstoneTools.stackScrollSynchronizer);
 
     // image enable the dicomImage element and the mouse inputs
     cornerstone.enable(axialElement1);
@@ -197,9 +197,12 @@ is used by our example image loader-->
         });
 
         // Listener for example purposes to demonstrate scroll direction
-        $(document).on('CornerstoneImageScroll', function (e, x) {
+        $(document).on('CornerstoneStackScroll', function (e, eventData) {
             // Manually display direction
-            $("#direction").html(x.direction < 0 ? "UP" : "DOWN");
+            if (eventData.direction === 0) {
+                return;
+            }
+            $("#direction").html(eventData.direction > 0 ? "UP" : "DOWN");
             // Update indices of each stack
             $('[id^="axial"]').each(function () {
                 // Resolve the stack and get the current image index
