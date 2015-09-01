@@ -9,25 +9,23 @@
 
         Object.keys(handles).forEach(function(name) {
             var handle = handles[name];
-            if (handle.active || handle.highlight) {
-                context.beginPath();
+            context.beginPath();
 
-                if (handle.active) {
-                    context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
-                } else {
-                    context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-                }
-
-                var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
-                context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
-
-                if (fill) {
-                    context.fillStyle = fill;
-                    context.fill();
-                }
-
-                context.stroke();
+            if (handle.active) {
+                context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
+            } else {
+                context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
             }
+
+            var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
+            context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+
+            if (fill) {
+                context.fillStyle = fill;
+                context.fill();
+            }
+
+            context.stroke();
         });
     }
 

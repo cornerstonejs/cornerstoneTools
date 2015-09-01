@@ -22,6 +22,9 @@
             width: 200px;
             border: 1px black solid;
             border-radius: 5px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;            
         }
 
         .relabelConfirm {
@@ -101,7 +104,7 @@
                 </div>
             </div>
         </div>
-        <dialog class="relabelDialog">
+        <dialog class="relabelDialog" oncontextmenu="return false">
             <h5>Change spine label</h5>
             <div>
                 <label for="relabelSelect">New label</label>
@@ -137,8 +140,10 @@
                     <option value="L5">L5</option>
                 </select>
             </div>
-            
-            <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+            <div>
+                <a class="relabelRemove btn btn-sm btn-secondary">Remove marker</a>
+                <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+            </div>
         </dialog>
 
     </div>
@@ -148,6 +153,7 @@
 <!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
 is used by our example image loader-->
 <script src="../jquery.min.js"></script>
+<script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
@@ -204,6 +210,7 @@ is used by our example image loader-->
         var dialog = $('.relabelDialog');
         var select = dialog.find('.relabelSelect');
         var confirm = dialog.find('.relabelConfirm');
+        var remove = dialog.find('.relabelRemove');
 
         dialog.get(0).show();
         select.val(data.text);
@@ -212,6 +219,13 @@ is used by our example image loader-->
         confirm.on('click', function() {
             dialog.get(0).close();
             doneChangingTextCallback(data, select.val());
+        });
+
+        // If the remove button is clicked, delete this marker
+        remove.off('click');
+        remove.on('click', function() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, undefined, true);
         });
 
         dialog.off("keypress");
@@ -246,6 +260,7 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.touchInput.enable(element);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
@@ -255,6 +270,7 @@ is used by our example image loader-->
 
         // Enable all tools we want to use with this element
         cornerstoneTools.textMarker.activate(element, 1);
+        cornerstoneTools.textMarkerTouch.activate(element);
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
         activate("#activate");

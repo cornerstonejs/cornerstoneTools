@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage) {
+    function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage, doneMovingCallback) {
         var element = touchEventData.element;
 
         function touchDragCallback(e, eventData) {
@@ -25,6 +25,7 @@
 
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
+            $(element).off('CornerstoneToolsTap', touchEndCallback);
 
             // If any handle is outside the image, delete the tool data
             if (deleteIfHandleOutsideImage === true) {
@@ -57,10 +58,12 @@
                 }
             }
 
+            doneMovingCallback();
             cornerstone.updateImage(element);
         }
 
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
+        $(element).on('CornerstoneToolsTap', touchEndCallback);
         return true;
     }
 

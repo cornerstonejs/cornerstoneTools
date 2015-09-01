@@ -19,12 +19,14 @@
             handle.active = false;
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
+            $(element).off('CornerstoneToolsTap', touchEndCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
 
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
+        $(element).on('CornerstoneToolsTap', touchEndCallback);
     }
 
     // module/private exports
