@@ -7,6 +7,14 @@
     function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
         var toolState = {};
 
+        function saveToolState() {
+            return toolState;
+        }
+
+        function restoreToolState(stackToolState) {
+            toolState = stackToolState;
+        }
+
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
         function addStackSpecificToolState(element, toolType, data) {
@@ -50,21 +58,25 @@
             }
         }
 
-        var imageIdToolStateManager = {
-            get: getStackSpecificToolState, add: addStackSpecificToolState
+        var stackSpecificToolStateManager = {
+            get: getStackSpecificToolState,
+            add: addStackSpecificToolState,
+            saveToolState: saveToolState,
+            restoreToolState: restoreToolState,
+            toolState: toolState,
         };
-        return imageIdToolStateManager;
+        return stackSpecificToolStateManager;
     }
 
     var stackStateManagers = [];
 
     function addStackStateManager(element) {
         var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
-        if (oldStateManager === undefined) {
+        if (!oldStateManager) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = [ 'stack', 'stackPrefetch', 'stackScroll', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
+        var stackTools = [ 'stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);

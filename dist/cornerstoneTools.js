@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.6.2 - 2015-08-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.6.2 - 2015-09-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6857,6 +6857,81 @@ if (typeof cornerstoneTools === 'undefined') {
  
 // End Source; src/stackTools/stackScrollKeyboard.js
 
+// Begin Source: src/stateManagement/applicationState.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function saveApplicationState(elements) {
+        // Save imageId-specific tool state data
+        var appState = {
+            imageIdToolState: cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState(),
+            elementToolState: {},
+            elementViewport: {}
+        };
+
+        // For each of the given elements, save the viewport and any stack-specific tool data
+        elements.forEach(function(element) {
+            var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+            if (toolStateManager === cornerstoneTools.globalImageIdSpecificToolStateManager) {
+                return;
+            }
+
+            appState.elementToolState[element.id] = toolStateManager.saveToolState();
+
+            appState.elementViewport[element.id] = cornerstone.getViewport(element);
+        });
+        return appState;
+    }
+
+    function restoreApplicationState(appState) {
+        // Make sure t
+        if (!appState.hasOwnProperty('imageIdToolState') ||
+            !appState.hasOwnProperty('elementToolState') ||
+            !appState.hasOwnProperty('elementViewport')) {
+            return;
+        }
+
+        // Restore all the imageId specific tool data
+        cornerstoneTools.globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);
+
+        Object.keys(appState.elementViewport).forEach(function(elementId) {
+            // Restore any stack specific tool data
+            var element = document.getElementById(elementId);
+            if (!element) {
+                return;
+            }
+
+            if (!appState.elementToolState.hasOwnProperty(elementId)) {
+                return;
+            }
+            
+            var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
+            if (toolStateManager === cornerstoneTools.globalImageIdSpecificToolStateManager) {
+                return;
+            }
+
+            toolStateManager.restoreToolState(appState.elementToolState[elementId]);
+
+            // Restore the saved viewport information
+            var savedViewport = appState.elementViewport[elementId];
+            cornerstone.setViewport(element, savedViewport);
+
+            // Update the element to apply the viewport and tool changes
+            cornerstone.updateImage(element);
+        });
+        return appState;
+    }
+
+    cornerstoneTools.appState = {
+        save: saveApplicationState,
+        restore: restoreApplicationState
+    };
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/stateManagement/applicationState.js
+
 // Begin Source: src/stateManagement/frameOfReferenceStateManager.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -6972,6 +7047,25 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
+
+        function saveImageIdToolState(imageId) {
+            return toolState[imageId];
+        }
+
+        function restoreImageIdToolState(imageId, imageIdToolState) {
+            toolState[imageId] = imageIdToolState;
+        }
+
+        function saveToolState() {
+            return toolState;
+        }
+
+        function restoreToolState(savedToolState) {
+            toolState = savedToolState;
+        }
+
+        // here we add tool state, this is done by tools as well
+        // as modules that restore saved state
         function addImageIdSpecificToolState(element, toolType, data) {
             var enabledImage = cornerstone.getEnabledElement(element);
             // if we don't have any tool state for this imageId, add an empty object
@@ -7025,7 +7119,14 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         var imageIdToolStateManager = {
-            get: getImageIdSpecificToolState, add: addImageIdSpecificToolState, clear: clearImageIdSpecificToolStateManager, toolState: toolState
+            get: getImageIdSpecificToolState,
+            add: addImageIdSpecificToolState,
+            clear: clearImageIdSpecificToolStateManager,
+            saveImageIdToolState: saveImageIdToolState,
+            restoreImageIdToolState: restoreImageIdToolState,
+            saveToolState: saveToolState,
+            restoreToolState: restoreToolState,
+            toolState: toolState
         };
         return imageIdToolStateManager;
     }
@@ -7105,6 +7206,14 @@ if (typeof cornerstoneTools === 'undefined') {
     function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
         var toolState = {};
 
+        function saveToolState() {
+            return toolState;
+        }
+
+        function restoreToolState(stackToolState) {
+            toolState = stackToolState;
+        }
+
         // here we add tool state, this is done by tools as well
         // as modules that restore saved state
         function addStackSpecificToolState(element, toolType, data) {
@@ -7148,21 +7257,25 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
 
-        var imageIdToolStateManager = {
-            get: getStackSpecificToolState, add: addStackSpecificToolState
+        var stackSpecificToolStateManager = {
+            get: getStackSpecificToolState,
+            add: addStackSpecificToolState,
+            saveToolState: saveToolState,
+            restoreToolState: restoreToolState,
+            toolState: toolState,
         };
-        return imageIdToolStateManager;
+        return stackSpecificToolStateManager;
     }
 
     var stackStateManagers = [];
 
     function addStackStateManager(element) {
         var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
-        if (oldStateManager === undefined) {
+        if (!oldStateManager) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
-        var stackTools = [ 'stack', 'stackPrefetch', 'stackScroll', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
+        var stackTools = [ 'stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
