@@ -7,13 +7,17 @@ Display scroll progress bar across bottom of image.
 
     var scrollBarHeight = 6;
 
+    var configuration = {
+        backgroundColor: 'rgb(19, 63, 141)',
+        fillColor: 'white'
+    };
+
     function onImageRendered(e, eventData){
         var element = eventData.element;
         var width = eventData.enabledElement.canvas.width;
         var height = eventData.enabledElement.canvas.height;
 
         if (!width || !height) {
-             // image not actually rendered yet, not sure what's going on here
             return false;
         }
 
@@ -22,8 +26,10 @@ Display scroll progress bar across bottom of image.
         context.setTransform(1, 0, 0, 1, 0, 0);
         context.save();
 
+        var config = cornerstoneTools.scrollIndicator.getConfiguration();
+
         // draw indicator background
-        context.fillStyle = 'rgb(19, 63, 141)';
+        context.fillStyle = config.backgroundColor;
         context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
 
         // get current image index
@@ -38,24 +44,13 @@ Display scroll progress bar across bottom of image.
         var cursorWidth = width / imageIds.length;
         var xPosition = cursorWidth * currentImageIdIndex;
 
-        context.fillStyle = 'white';
+        context.fillStyle = config.fillColor;
         context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
 
         context.restore();
     }
 
-    function disable(element) {
-        $(element).off("CornerstoneImageRendered", onImageRendered);
-    }
-
-    function enable(element) {
-        cornerstoneTools.scrollIndicator.disable(element);
-        $(element).on("CornerstoneImageRendered", onImageRendered);
-    }
-    
-    cornerstoneTools.scrollIndicator = {
-        enable: enable,
-        disable: disable
-    };
+    cornerstoneTools.scrollIndicator = cornerstoneTools.displayTool(onImageRendered);
+    cornerstoneTools.scrollIndicator.setConfiguration(configuration);
 
 })($, cornerstone, cornerstoneTools);
