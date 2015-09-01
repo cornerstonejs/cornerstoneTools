@@ -120,7 +120,8 @@ is used by our example image loader-->
 
     var imageIds = [
         'example://1',
-        'example://2'
+        'example://2',
+        'example://3'
     ];
 
     var stack = {
@@ -181,6 +182,8 @@ is used by our example image loader-->
         // Enable all tools we want to use with this element
         cornerstoneTools.stackScroll.activate(element, 1);
         cornerstoneTools.stackScrollWheel.activate(element);
+
+        cornerstoneTools.scrollIndicator.enable(element);
 
         function activate(id)
         {
