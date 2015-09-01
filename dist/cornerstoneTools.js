@@ -539,6 +539,7 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function enable(element) {
+        disable(element);
         var hammerOptions = {
             transform_always_block: true,
             transform_min_scale: 0.01,
@@ -568,10 +569,6 @@ if (typeof cornerstoneTools === 'undefined') {
             threshold: 10
         });
         
-        /*var doubletap = new Hammer.Tap({
-            event: 'doubletap',
-            taps: 2
-        });*/
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
@@ -587,7 +584,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function disable(element) {
         var mc = $(element).data('hammer');
-        mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        if (mc) {
+            mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        }
     }
 
     // module exports

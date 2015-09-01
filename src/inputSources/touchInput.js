@@ -252,6 +252,7 @@
     }
 
     function enable(element) {
+        disable(element);
         var hammerOptions = {
             transform_always_block: true,
             transform_min_scale: 0.01,
@@ -281,10 +282,6 @@
             threshold: 10
         });
         
-        /*var doubletap = new Hammer.Tap({
-            event: 'doubletap',
-            taps: 2
-        });*/
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
@@ -300,7 +297,9 @@
 
     function disable(element) {
         var mc = $(element).data('hammer');
-        mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        if (mc) {
+            mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        }
     }
 
     // module exports
