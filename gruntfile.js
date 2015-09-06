@@ -10,7 +10,13 @@ module.exports = function(grunt) {
                 ]
             }
         },
-        copy: {
+      version: {
+        // options: {},
+        defaults: {
+          src: ['src/version.js', 'bower.json']
+        }
+      },
+      copy: {
             bower: {
                 src: [
                     'bower_components/jquery/dist/jquery.min.js',
@@ -143,6 +149,8 @@ module.exports = function(grunt) {
 
 // Release process:
 //  1) Update version numbers
+//     update version in package.json
+//     grunt version
 //  2) do a build (needed to update dist versions with correct build number)
 //  3) commit changes
 //      git commit -am "Changes...."
