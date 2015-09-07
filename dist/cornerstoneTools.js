@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.0 - 2015-09-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.1 - 2015-09-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6523,8 +6523,8 @@ Display scroll progress bar across bottom of image.
 
     function enable(element) {
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        stackPrefetchData = [];
+        var stackPrefetchDataArray = cornerstoneTools.getToolState(element, toolType).data;
+        stackPrefetchDataArray = [];
 
         // First check that there is stack data available
         var stackData = cornerstoneTools.getToolState(element, 'stack');
@@ -6535,7 +6535,7 @@ Display scroll progress bar across bottom of image.
         var stack = stackData.data[0];
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
-        stackPrefetchData = {
+        var stackPrefetchData = {
             indicesToRequest: range(0, stack.imageIds.length - 1),
             enabled: true,
             direction: 1

@@ -221,8 +221,8 @@
 
     function enable(element) {
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        stackPrefetchData = [];
+        var stackPrefetchDataArray = cornerstoneTools.getToolState(element, toolType).data;
+        stackPrefetchDataArray = [];
 
         // First check that there is stack data available
         var stackData = cornerstoneTools.getToolState(element, 'stack');
@@ -233,7 +233,7 @@
         var stack = stackData.data[0];
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
-        stackPrefetchData = {
+        var stackPrefetchData = {
             indicesToRequest: range(0, stack.imageIds.length - 1),
             enabled: true,
             direction: 1

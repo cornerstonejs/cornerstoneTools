@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Tools for use with the cornerstone HTML5 Medical Image Viewer Component",
   "main" : "dist/cornerstoneTools.js",
   "ignore": [
