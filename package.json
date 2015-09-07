@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.7.1",
+  "version": "0.7.2",
   "description": "Enabling the touch events for all tools",
   "keywords": [
     "DICOM",

@@ -221,8 +221,8 @@
 
     function enable(element) {
         // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-        var stackPrefetchDataArray = cornerstoneTools.getToolState(element, toolType).data;
-        stackPrefetchDataArray = [];
+        var stackPrefetchDataArray = cornerstoneTools.getToolState(element, toolType);
+        stackPrefetchDataArray.data = [];
 
         // First check that there is stack data available
         var stackData = cornerstoneTools.getToolState(element, 'stack');
