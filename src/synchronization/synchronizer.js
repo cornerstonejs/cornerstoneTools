@@ -11,13 +11,60 @@
         var targetElements = []; // target elements we want to synchronize to source elements
 
         var ignoreFiredEvents = false;
+        var initialData = {};
+
+        this.getDistances = function() {
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
+            sourceElements.forEach(function(sourceElement) {
+                var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+                var sourceImageId = sourceEnabledElement.image.imageId;
+                var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+                if (initialData.hasOwnProperty(sourceEnabledElement)) {
+                    return;
+                } else {
+                    initialData[sourceEnabledElement] = {};
+                }
+
+                targetElements.forEach(function(targetElement) {
+                    if (sourceElement === targetElement) {
+                        return;
+                    }
+                    
+                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    var targetImageId = targetEnabledElement.image.imageId;
+
+                    if (sourceImageId === targetImageId) {
+                        return;
+                    }
+
+                    if (initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+                        return;
+                    }
+
+                    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    var targetImagePosition = targetImagePlane.imagePositionPatient;
+
+                    initialData[sourceEnabledElement][targetEnabledElement] = sourceImagePosition.clone().sub(targetImagePosition);
+                });
+
+                if (!Object.keys(initialData[sourceEnabledElement]).length) {
+                    delete initialData[sourceEnabledElement];
+                }
+            });
+        };
 
         function fireEvent(sourceEnabledElement, eventData) {
 
             // Broadcast an event that something changed
             ignoreFiredEvents = true;
+            console.log(initialData);
             $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
+                handler(that, sourceEnabledElement, targetEnabledElement, eventData, initialData);
             });
             ignoreFiredEvents = false;
         }
@@ -44,6 +91,9 @@
             // subscribe to the event
             $(element).on(event, onEvent);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Update everyone listening for events
             fireEvent(element);
         };
@@ -58,6 +108,9 @@
 
             // Add to our list of enabled elements
             targetElements.push(element);
+
+            // Update the inital distances between elements
+            that.getDistances();
 
             // Invoke the handler for this new target element
             handler(that, element, element);
@@ -83,6 +136,9 @@
             // stop listening for the event
             $(element).off(event, onEvent);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Update everyone listening for events
             fireEvent(element);
         };
@@ -97,6 +153,9 @@
 
             // remove this element from the array
             targetElements.splice(index, 1);
+
+            // Update the inital distances between elements
+            that.getDistances();
 
             // Invoke the handler for the removed target
             handler(that, element, element);

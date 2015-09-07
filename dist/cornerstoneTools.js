@@ -7728,6 +7728,88 @@ Display scroll progress bar across bottom of image.
  
 // End Source; src/synchronization/stackImageIndexSynchronizer.js
 
+// Begin Source: src/synchronization/stackImagePositionOffsetSynchronizer.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    // This function causes the image in the target stack to be set to the one closest
+    // to the image in the source stack by image position
+
+    // In the future we will want to have a way to manually register links sets of the same orientation (e.g. an axial link set from a prior with an axial link set of a current).  The user could do this by scrolling the two stacks to a similar location and then doing a user action (e.g. right click link) at which point the system will capture the delta between the image position (patient) of both stacks and use that to sync them.  This offset will need to be adjustable.
+
+    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, initialData) {
+
+        // ignore the case where the source and target are the same enabled element
+        if (targetElement === sourceElement) {
+            return;
+        }
+
+        var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+        var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
+        var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var stackData = stackToolDataSource.data[0];
+
+        var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+
+        var minDistance = Number.MAX_VALUE;
+        var newImageIdIndex = -1;
+
+        if (!initialData || !initialData.hasOwnProperty(sourceEnabledElement) || !initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+            return;
+        }
+
+        var positionDifference = initialData[sourceEnabledElement][targetEnabledElement];
+        var finalPosition = sourceImagePosition.clone().add(positionDifference);
+
+        stackData.imageIds.forEach(function(imageId, index) {
+            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+            var imagePosition = imagePlane.imagePositionPatient;
+            var distance = finalPosition.distanceToSquared(imagePosition);
+            console.log(index + '=' + distance);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                newImageIdIndex = index;
+            }
+        });
+
+        if (newImageIdIndex === stackData.currentImageIdIndex || newImageIdIndex === -1) {
+            return;
+        }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
+        }
+
+        cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            var viewport = cornerstone.getViewport(targetElement);
+            stackData.currentImageIdIndex = newImageIdIndex;
+            synchronizer.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(targetElement);
+            }
+        }, function(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(targetElement, imageId, error);
+            }
+        });
+    }
+
+    // module/private exports
+    cornerstoneTools.stackImagePositionOffsetSynchronizer = stackImagePositionOffsetSynchronizer;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/synchronization/stackImagePositionOffsetSynchronizer.js
+
 // Begin Source: src/synchronization/stackImagePositionSynchronizer.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -7876,13 +7958,60 @@ Display scroll progress bar across bottom of image.
         var targetElements = []; // target elements we want to synchronize to source elements
 
         var ignoreFiredEvents = false;
+        var initialData = {};
+
+        this.getDistances = function() {
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
+            sourceElements.forEach(function(sourceElement) {
+                var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+                var sourceImageId = sourceEnabledElement.image.imageId;
+                var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+                if (initialData.hasOwnProperty(sourceEnabledElement)) {
+                    return;
+                } else {
+                    initialData[sourceEnabledElement] = {};
+                }
+
+                targetElements.forEach(function(targetElement) {
+                    if (sourceElement === targetElement) {
+                        return;
+                    }
+                    
+                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    var targetImageId = targetEnabledElement.image.imageId;
+
+                    if (sourceImageId === targetImageId) {
+                        return;
+                    }
+
+                    if (initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+                        return;
+                    }
+
+                    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    var targetImagePosition = targetImagePlane.imagePositionPatient;
+
+                    initialData[sourceEnabledElement][targetEnabledElement] = sourceImagePosition.clone().sub(targetImagePosition);
+                });
+
+                if (!Object.keys(initialData[sourceEnabledElement]).length) {
+                    delete initialData[sourceEnabledElement];
+                }
+            });
+        };
 
         function fireEvent(sourceEnabledElement, eventData) {
 
             // Broadcast an event that something changed
             ignoreFiredEvents = true;
+            console.log(initialData);
             $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
+                handler(that, sourceEnabledElement, targetEnabledElement, eventData, initialData);
             });
             ignoreFiredEvents = false;
         }
@@ -7909,6 +8038,9 @@ Display scroll progress bar across bottom of image.
             // subscribe to the event
             $(element).on(event, onEvent);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Update everyone listening for events
             fireEvent(element);
         };
@@ -7923,6 +8055,9 @@ Display scroll progress bar across bottom of image.
 
             // Add to our list of enabled elements
             targetElements.push(element);
+
+            // Update the inital distances between elements
+            that.getDistances();
 
             // Invoke the handler for this new target element
             handler(that, element, element);
@@ -7948,6 +8083,9 @@ Display scroll progress bar across bottom of image.
             // stop listening for the event
             $(element).off(event, onEvent);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Update everyone listening for events
             fireEvent(element);
         };
@@ -7962,6 +8100,9 @@ Display scroll progress bar across bottom of image.
 
             // remove this element from the array
             targetElements.splice(index, 1);
+
+            // Update the inital distances between elements
+            that.getDistances();
 
             // Invoke the handler for the removed target
             handler(that, element, element);
