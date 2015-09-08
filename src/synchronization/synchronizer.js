@@ -18,6 +18,12 @@
                 return;
             }
 
+            initialData.distances = {};
+            initialData.imageIds = {
+                sourceElements: [],
+                targetElements: []
+            };
+
             sourceElements.forEach(function(sourceElement) {
                 var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
                 var sourceImageId = sourceEnabledElement.image.imageId;
@@ -27,44 +33,70 @@
                 if (initialData.hasOwnProperty(sourceEnabledElement)) {
                     return;
                 } else {
-                    initialData[sourceEnabledElement] = {};
+                    initialData.distances[sourceImageId] = {};
                 }
 
+                initialData.imageIds.sourceElements.push(sourceImageId);
+
                 targetElements.forEach(function(targetElement) {
+                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    var targetImageId = targetEnabledElement.image.imageId;
+
+                    initialData.imageIds.targetElements.push(targetImageId);
+
                     if (sourceElement === targetElement) {
                         return;
                     }
-                    
-                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
-                    var targetImageId = targetEnabledElement.image.imageId;
 
                     if (sourceImageId === targetImageId) {
                         return;
                     }
 
-                    if (initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+                    if (initialData.distances[sourceImageId].hasOwnProperty(targetImageId)) {
                         return;
                     }
 
                     var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
                     var targetImagePosition = targetImagePlane.imagePositionPatient;
 
-                    initialData[sourceEnabledElement][targetEnabledElement] = sourceImagePosition.clone().sub(targetImagePosition);
+                    initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
                 });
 
-                if (!Object.keys(initialData[sourceEnabledElement]).length) {
-                    delete initialData[sourceEnabledElement];
+                if (!Object.keys(initialData.distances[sourceImageId]).length) {
+                    delete initialData.distances[sourceImageId];
                 }
             });
         };
 
-        function fireEvent(sourceEnabledElement, eventData) {
-
+        function fireEvent(sourceElement, eventData) {
             // Broadcast an event that something changed
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
             ignoreFiredEvents = true;
-            console.log(initialData);
-            $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement, eventData, initialData);
+            targetElements.forEach(function(targetElement) {
+                var targetIndex = targetElements.indexOf(targetElement);
+                if (targetIndex === -1) {
+                    return;
+                }
+
+                var targetImageId = initialData.imageIds.targetElements[targetIndex];
+                var sourceIndex = sourceElements.indexOf(sourceElement);
+                if (sourceIndex === -1) {
+                    return;
+                }
+
+                var sourceImageId = initialData.imageIds.sourceElements[sourceIndex];
+                
+                var positionDifference;
+                if (sourceImageId === targetImageId) {
+                    positionDifference = 0;
+                } else {
+                    positionDifference = initialData.distances[sourceImageId][targetImageId];
+                }
+                
+                handler(that, sourceElement, targetElement, eventData, positionDifference);
             });
             ignoreFiredEvents = false;
         }
@@ -113,7 +145,7 @@
             that.getDistances();
 
             // Invoke the handler for this new target element
-            handler(that, element, element);
+            handler(that, element, element, 0);
         };
 
         // adds an element as both a source and a target
@@ -158,7 +190,7 @@
             that.getDistances();
 
             // Invoke the handler for the removed target
-            handler(that, element, element);
+            handler(that, element, element, 0);
         };
 
         // removes an element as both a source and target

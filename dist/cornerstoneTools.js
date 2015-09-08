@@ -7738,7 +7738,7 @@ Display scroll progress bar across bottom of image.
 
     // In the future we will want to have a way to manually register links sets of the same orientation (e.g. an axial link set from a prior with an axial link set of a current).  The user could do this by scrolling the two stacks to a similar location and then doing a user action (e.g. right click link) at which point the system will capture the delta between the image position (patient) of both stacks and use that to sync them.  This offset will need to be adjustable.
 
-    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, initialData) {
+    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, positionDifference) {
 
         // ignore the case where the source and target are the same enabled element
         if (targetElement === sourceElement) {
@@ -7752,23 +7752,19 @@ Display scroll progress bar across bottom of image.
         var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
         var stackData = stackToolDataSource.data[0];
 
-        var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
-
         var minDistance = Number.MAX_VALUE;
         var newImageIdIndex = -1;
 
-        if (!initialData || !initialData.hasOwnProperty(sourceEnabledElement) || !initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+        if (!positionDifference) {
             return;
         }
 
-        var positionDifference = initialData[sourceEnabledElement][targetEnabledElement];
         var finalPosition = sourceImagePosition.clone().add(positionDifference);
 
         stackData.imageIds.forEach(function(imageId, index) {
             var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
             var imagePosition = imagePlane.imagePositionPatient;
             var distance = finalPosition.distanceToSquared(imagePosition);
-            console.log(index + '=' + distance);
 
             if (distance < minDistance) {
                 minDistance = distance;
@@ -7965,6 +7961,12 @@ Display scroll progress bar across bottom of image.
                 return;
             }
 
+            initialData.distances = {};
+            initialData.imageIds = {
+                sourceElements: [],
+                targetElements: []
+            };
+
             sourceElements.forEach(function(sourceElement) {
                 var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
                 var sourceImageId = sourceEnabledElement.image.imageId;
@@ -7974,44 +7976,70 @@ Display scroll progress bar across bottom of image.
                 if (initialData.hasOwnProperty(sourceEnabledElement)) {
                     return;
                 } else {
-                    initialData[sourceEnabledElement] = {};
+                    initialData.distances[sourceImageId] = {};
                 }
 
+                initialData.imageIds.sourceElements.push(sourceImageId);
+
                 targetElements.forEach(function(targetElement) {
+                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    var targetImageId = targetEnabledElement.image.imageId;
+
+                    initialData.imageIds.targetElements.push(targetImageId);
+
                     if (sourceElement === targetElement) {
                         return;
                     }
-                    
-                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
-                    var targetImageId = targetEnabledElement.image.imageId;
 
                     if (sourceImageId === targetImageId) {
                         return;
                     }
 
-                    if (initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+                    if (initialData.distances[sourceImageId].hasOwnProperty(targetImageId)) {
                         return;
                     }
 
                     var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
                     var targetImagePosition = targetImagePlane.imagePositionPatient;
 
-                    initialData[sourceEnabledElement][targetEnabledElement] = sourceImagePosition.clone().sub(targetImagePosition);
+                    initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
                 });
 
-                if (!Object.keys(initialData[sourceEnabledElement]).length) {
-                    delete initialData[sourceEnabledElement];
+                if (!Object.keys(initialData.distances[sourceImageId]).length) {
+                    delete initialData.distances[sourceImageId];
                 }
             });
         };
 
-        function fireEvent(sourceEnabledElement, eventData) {
-
+        function fireEvent(sourceElement, eventData) {
             // Broadcast an event that something changed
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
             ignoreFiredEvents = true;
-            console.log(initialData);
-            $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement, eventData, initialData);
+            targetElements.forEach(function(targetElement) {
+                var targetIndex = targetElements.indexOf(targetElement);
+                if (targetIndex === -1) {
+                    return;
+                }
+
+                var targetImageId = initialData.imageIds.targetElements[targetIndex];
+                var sourceIndex = sourceElements.indexOf(sourceElement);
+                if (sourceIndex === -1) {
+                    return;
+                }
+
+                var sourceImageId = initialData.imageIds.sourceElements[sourceIndex];
+                
+                var positionDifference;
+                if (sourceImageId === targetImageId) {
+                    positionDifference = 0;
+                } else {
+                    positionDifference = initialData.distances[sourceImageId][targetImageId];
+                }
+                
+                handler(that, sourceElement, targetElement, eventData, positionDifference);
             });
             ignoreFiredEvents = false;
         }
@@ -8060,7 +8088,7 @@ Display scroll progress bar across bottom of image.
             that.getDistances();
 
             // Invoke the handler for this new target element
-            handler(that, element, element);
+            handler(that, element, element, 0);
         };
 
         // adds an element as both a source and a target
@@ -8105,7 +8133,7 @@ Display scroll progress bar across bottom of image.
             that.getDistances();
 
             // Invoke the handler for the removed target
-            handler(that, element, element);
+            handler(that, element, element, 0);
         };
 
         // removes an element as both a source and target

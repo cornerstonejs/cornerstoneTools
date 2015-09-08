@@ -7,7 +7,7 @@
 
     // In the future we will want to have a way to manually register links sets of the same orientation (e.g. an axial link set from a prior with an axial link set of a current).  The user could do this by scrolling the two stacks to a similar location and then doing a user action (e.g. right click link) at which point the system will capture the delta between the image position (patient) of both stacks and use that to sync them.  This offset will need to be adjustable.
 
-    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, initialData) {
+    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, positionDifference) {
 
         // ignore the case where the source and target are the same enabled element
         if (targetElement === sourceElement) {
@@ -21,23 +21,19 @@
         var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
         var stackData = stackToolDataSource.data[0];
 
-        var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
-
         var minDistance = Number.MAX_VALUE;
         var newImageIdIndex = -1;
 
-        if (!initialData || !initialData.hasOwnProperty(sourceEnabledElement) || !initialData[sourceEnabledElement].hasOwnProperty(targetEnabledElement)) {
+        if (!positionDifference) {
             return;
         }
 
-        var positionDifference = initialData[sourceEnabledElement][targetEnabledElement];
         var finalPosition = sourceImagePosition.clone().add(positionDifference);
 
         stackData.imageIds.forEach(function(imageId, index) {
             var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
             var imagePosition = imagePlane.imagePositionPatient;
             var distance = finalPosition.distanceToSquared(imagePosition);
-            console.log(index + '=' + distance);
 
             if (distance < minDistance) {
                 minDistance = distance;
