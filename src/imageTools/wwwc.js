@@ -20,7 +20,9 @@
         // adjusts the same percentage of the dynamic range of the image.  This is needed to
         // provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
         // image will feel the same as a 16 bit image would)
-        var imageDynamicRange = eventData.image.maxPixelValue - eventData.image.minPixelValue;
+        var maxVOI = eventData.image.maxPixelValue * eventData.image.slope + eventData.image.intercept;
+        var minVOI = eventData.image.minPixelValue * eventData.image.slope + eventData.image.intercept;
+        var imageDynamicRange = maxVOI - minVOI;
         var multiplier = imageDynamicRange / 1024;
 
         var deltaX = eventData.deltaPoints.page.x * multiplier;
@@ -39,7 +41,9 @@
     function touchDragCallback(e, eventData) {
         var dragData = eventData;
 
-        var imageDynamicRange = dragData.image.maxPixelValue - dragData.image.minPixelValue;
+        var maxVOI = dragData.image.maxPixelValue * dragData.image.slope + dragData.image.intercept;
+        var minVOI = dragData.image.minPixelValue * dragData.image.slope + dragData.image.intercept;
+        var imageDynamicRange = maxVOI - minVOI;
         var multiplier = imageDynamicRange / 1024;
         var deltaX = dragData.deltaPoints.page.x * multiplier;
         var deltaY = dragData.deltaPoints.page.y * multiplier;
