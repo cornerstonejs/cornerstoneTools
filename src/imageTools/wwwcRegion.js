@@ -9,8 +9,8 @@
     };
 
     /** Calculates the minimum, maximum, and mean value in the given pixel array */
-    function calculateMinMaxMean(storedPixelData, globalMin, globalMax) {
-        var numPixels = storedPixelData.length;
+    function calculateMinMaxMean(storedPixelLuminanceData, globalMin, globalMax) {
+        var numPixels = storedPixelLuminanceData.length;
 
         if (numPixels < 2) {
             return {
@@ -25,7 +25,7 @@
         var sum = 0;
 
         for (var index = 0; index < numPixels; index++) {
-            var spv = storedPixelData[index];
+            var spv = storedPixelLuminanceData[index];
             min = Math.min(min, spv);
             max = Math.max(max, spv);
             sum += spv;
@@ -101,10 +101,10 @@
         height = Math.floor(Math.min(height, Math.abs(eventData.image.height - top)));
 
         // Get the pixel data in the rectangular region
-        var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
+        var pixelLuminanceData = cornerstoneTools.getLuminance(eventData.element, left, top, width, height);
 
         // Calculate the minimum and maximum pixel values
-        var minMaxMean = calculateMinMaxMean(pixels, eventData.image.minPixelValue, eventData.image.maxPixelValue);
+        var minMaxMean = calculateMinMaxMean(pixelLuminanceData, eventData.image.minPixelValue, eventData.image.maxPixelValue);
 
         // Adjust the viewport window width and center based on the calculated values
         var config = cornerstoneTools.wwwcRegion.getConfiguration();

@@ -55,13 +55,32 @@
 
             var x = Math.round(data.handles.end.x);
             var y = Math.round(data.handles.end.y);
+            var storedPixels;
 
-            var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-            var sp = storedPixels[0];
-            var mo = sp * eventData.image.slope + eventData.image.intercept;
-            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+            var text,
+                str;
 
-            // Draw text
+            if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+                return;
+            }
+
+            if (eventData.image.color) {
+                text = '' + x + ', ' + y;
+                storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+                str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+            } else {
+                storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+                var sp = storedPixels[0];
+                var mo = sp * eventData.image.slope + eventData.image.intercept;
+                var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+                // Draw text
+                text = '' + x + ', ' + y;
+                str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+                if (suv) {
+                    str += ' SUV: ' + parseFloat(suv.toFixed(3));
+                }
+            }
 
             var coords = {
                 // translate the x/y away from the cursor
@@ -71,11 +90,6 @@
             
             context.font = font;
             context.fillStyle = color;
-            var text = '' + x + ', ' + y;
-            var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-            if (suv) {
-                str += ' SUV: ' + parseFloat(suv.toFixed(3));
-            }
 
             cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
             cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);

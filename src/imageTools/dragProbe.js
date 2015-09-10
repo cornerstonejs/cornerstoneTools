@@ -19,10 +19,31 @@
         var x = Math.round(eventData.currentPoints.image.x);
         var y = Math.round(eventData.currentPoints.image.y);
 
-        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var sp = storedPixels[0];
-        var mo = sp * eventData.image.slope + eventData.image.intercept;
-        var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+        var storedPixels;
+        var text,
+            str;
+
+        if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+            return;
+        }
+
+        if (eventData.image.color) {
+            storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+            text = '' + x + ', ' + y;
+            str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
+        } else {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            var sp = storedPixels[0];
+            var mo = sp * eventData.image.slope + eventData.image.intercept;
+            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+            // Draw text
+            text = '' + x + ', ' + y;
+            str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+            if (suv) {
+                str += ' SUV: ' + parseFloat(suv.toFixed(3));
+            }
+        }
 
         // Draw text
         var coords = {
@@ -33,11 +54,6 @@
         
         context.font = font;
         context.fillStyle = color;
-        var text = '' + x + ',' + y;
-        var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-        if (suv) {
-            str += ' SUV: ' + parseFloat(suv.toFixed(3));
-        }
 
         cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
         cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
@@ -60,9 +76,21 @@
         var x = Math.round(eventData.currentPoints.image.x);
         var y = Math.round(eventData.currentPoints.image.y);
 
-        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var huValue = storedPixels[0] * eventData.image.slope + eventData.image.intercept;
-        huValue = parseFloat(huValue.toFixed(3));
+        var storedPixels;
+        var text;
+
+        if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+            return;
+        }
+        
+        if (eventData.image.color) {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 3, 1);
+            text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+        } else {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            var huValue = storedPixels[0] * eventData.image.slope + eventData.image.intercept;
+            text = parseFloat(huValue.toFixed(3));
+        }
 
         // Draw text
         var coords = {
@@ -73,7 +101,7 @@
         
         context.font = font;
         context.fillStyle = color;
-        cornerstoneTools.drawTextBox(context, huValue, textCoords.x, textCoords.y, color);
+        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
