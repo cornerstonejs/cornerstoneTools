@@ -2,7 +2,8 @@
 <html>
 <head>
     <!-- support for mobile touch devices -->
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
     <link href="../bootstrap.min.css" rel="stylesheet">
@@ -59,6 +60,9 @@
 is used by our example image loader-->
 <script src="../jquery.min.js"></script>
 
+<!-- include the hammer.js library for touch gestures-->
+<script src="../hammer.min.js"></script>
+
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -93,9 +97,11 @@ is used by our example image loader-->
 
     // Enable mouse inputs
     cornerstoneTools.mouseInput.enable(axialElement);
+    cornerstoneTools.touchInput.enable(axialElement);
     cornerstoneTools.mouseWheelInput.enable(axialElement);
 
     cornerstoneTools.mouseInput.enable(coronalElement);
+    cornerstoneTools.touchInput.enable(coronalElement);
 
     var axialDeferred = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
         // display this image
@@ -123,6 +129,9 @@ is used by our example image loader-->
         cornerstoneTools.crosshairs.enable(axialElement, 1, synchronizer);
         cornerstoneTools.crosshairs.enable(coronalElement, 1, synchronizer);
 
+        cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
+        cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
+
         function activate(id)
         {
             $('a').removeClass('active');
@@ -132,12 +141,16 @@ is used by our example image loader-->
             activate("#enable");
             cornerstoneTools.crosshairs.enable(coronalElement, 1, synchronizer);
             cornerstoneTools.crosshairs.enable(axialElement, 1, synchronizer);
+            cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
+            cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
             return false;
         });
         $('#disable').click(function() {
             activate("#disable");
             cornerstoneTools.crosshairs.disable(coronalElement);
             cornerstoneTools.crosshairs.disable(axialElement);
+            cornerstoneTools.crosshairsTouch.disable(coronalElement);
+            cornerstoneTools.crosshairsTouch.disable(axialElement);
             return false;
         });
     });
