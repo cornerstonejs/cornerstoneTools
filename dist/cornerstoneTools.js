@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.3 - 2015-09-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.3 - 2015-09-14 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2289,7 +2289,7 @@ if (typeof cornerstoneTools === 'undefined') {
             x: location.x - center.x, y: location.y - center.y
         };
 
-        var inEllipse = ((normalized.x * normalized.y) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
+        var inEllipse = ((normalized.x * normalized.x) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
         return inEllipse;
     }
 
