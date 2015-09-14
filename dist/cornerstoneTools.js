@@ -2169,10 +2169,31 @@ if (typeof cornerstoneTools === 'undefined') {
         var x = Math.round(eventData.currentPoints.image.x);
         var y = Math.round(eventData.currentPoints.image.y);
 
-        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var sp = storedPixels[0];
-        var mo = sp * eventData.image.slope + eventData.image.intercept;
-        var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+        var storedPixels;
+        var text,
+            str;
+
+        if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+            return;
+        }
+
+        if (eventData.image.color) {
+            storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+            text = '' + x + ', ' + y;
+            str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
+        } else {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            var sp = storedPixels[0];
+            var mo = sp * eventData.image.slope + eventData.image.intercept;
+            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+            // Draw text
+            text = '' + x + ', ' + y;
+            str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+            if (suv) {
+                str += ' SUV: ' + parseFloat(suv.toFixed(3));
+            }
+        }
 
         // Draw text
         var coords = {
@@ -2183,11 +2204,6 @@ if (typeof cornerstoneTools === 'undefined') {
         
         context.font = font;
         context.fillStyle = color;
-        var text = '' + x + ',' + y;
-        var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-        if (suv) {
-            str += ' SUV: ' + parseFloat(suv.toFixed(3));
-        }
 
         cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
         cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
@@ -2210,9 +2226,21 @@ if (typeof cornerstoneTools === 'undefined') {
         var x = Math.round(eventData.currentPoints.image.x);
         var y = Math.round(eventData.currentPoints.image.y);
 
-        var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-        var huValue = storedPixels[0] * eventData.image.slope + eventData.image.intercept;
-        huValue = parseFloat(huValue.toFixed(3));
+        var storedPixels;
+        var text;
+
+        if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+            return;
+        }
+        
+        if (eventData.image.color) {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 3, 1);
+            text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+        } else {
+            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            var huValue = storedPixels[0] * eventData.image.slope + eventData.image.intercept;
+            text = parseFloat(huValue.toFixed(3));
+        }
 
         // Draw text
         var coords = {
@@ -2223,7 +2251,7 @@ if (typeof cornerstoneTools === 'undefined') {
         
         context.font = font;
         context.fillStyle = color;
-        cornerstoneTools.drawTextBox(context, huValue, textCoords.x, textCoords.y, color);
+        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
         context.restore();
     }
 
@@ -3586,13 +3614,32 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var x = Math.round(data.handles.end.x);
             var y = Math.round(data.handles.end.y);
+            var storedPixels;
 
-            var storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-            var sp = storedPixels[0];
-            var mo = sp * eventData.image.slope + eventData.image.intercept;
-            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+            var text,
+                str;
 
-            // Draw text
+            if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+                return;
+            }
+
+            if (eventData.image.color) {
+                text = '' + x + ', ' + y;
+                storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+                str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+            } else {
+                storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+                var sp = storedPixels[0];
+                var mo = sp * eventData.image.slope + eventData.image.intercept;
+                var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+                // Draw text
+                text = '' + x + ', ' + y;
+                str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+                if (suv) {
+                    str += ' SUV: ' + parseFloat(suv.toFixed(3));
+                }
+            }
 
             var coords = {
                 // translate the x/y away from the cursor
@@ -3602,11 +3649,6 @@ if (typeof cornerstoneTools === 'undefined') {
             
             context.font = font;
             context.fillStyle = color;
-            var text = '' + x + ', ' + y;
-            var str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-            if (suv) {
-                str += ' SUV: ' + parseFloat(suv.toFixed(3));
-            }
 
             cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
             cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
@@ -4471,8 +4513,8 @@ if (typeof cornerstoneTools === 'undefined') {
     };
 
     /** Calculates the minimum, maximum, and mean value in the given pixel array */
-    function calculateMinMaxMean(storedPixelData, globalMin, globalMax) {
-        var numPixels = storedPixelData.length;
+    function calculateMinMaxMean(storedPixelLuminanceData, globalMin, globalMax) {
+        var numPixels = storedPixelLuminanceData.length;
 
         if (numPixels < 2) {
             return {
@@ -4487,7 +4529,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var sum = 0;
 
         for (var index = 0; index < numPixels; index++) {
-            var spv = storedPixelData[index];
+            var spv = storedPixelLuminanceData[index];
             min = Math.min(min, spv);
             max = Math.max(max, spv);
             sum += spv;
@@ -4563,10 +4605,10 @@ if (typeof cornerstoneTools === 'undefined') {
         height = Math.floor(Math.min(height, Math.abs(eventData.image.height - top)));
 
         // Get the pixel data in the rectangular region
-        var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
+        var pixelLuminanceData = cornerstoneTools.getLuminance(eventData.element, left, top, width, height);
 
         // Calculate the minimum and maximum pixel values
-        var minMaxMean = calculateMinMaxMean(pixels, eventData.image.minPixelValue, eventData.image.maxPixelValue);
+        var minMaxMean = calculateMinMaxMean(pixelLuminanceData, eventData.image.minPixelValue, eventData.image.maxPixelValue);
 
         // Adjust the viewport window width and center based on the calculated values
         var config = cornerstoneTools.wwwcRegion.getConfiguration();
@@ -8452,6 +8494,55 @@ Display scroll progress bar across bottom of image.
  
 // End Source; src/util/drawTextBox.js
 
+// Begin Source: src/util/getLuminance.js
+(function(cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function getLuminance(element, x, y, width, height) {
+        if (!element) {
+            throw 'getLuminance: parameter element must not be undefined';
+        }
+
+        x = Math.round(x);
+        y = Math.round(y);
+        var enabledElement = cornerstone.getEnabledElement(element);
+        var luminance = [];
+        var index = 0;
+        var pixelData = enabledElement.image.getPixelData();
+        var spIndex,
+            row,
+            column;
+
+        if (enabledElement.image.color) {
+            for (row = 0; row < height; row++) {
+                for (column = 0; column < width; column++) {
+                    spIndex = (((row + y) * enabledElement.image.columns) + (column + x)) * 4;
+                    var red = pixelData[spIndex];
+                    var green = pixelData[spIndex + 1];
+                    var blue = pixelData[spIndex + 2];
+                    luminance[index++] = 0.2126 * red + 0.7152 * green + 0.0722 * blue;
+                }
+            }
+        } else {
+            for (row = 0; row < height; row++) {
+                for (column = 0; column < width; column++) {
+                    spIndex = ((row + y) * enabledElement.image.columns) + (column + x);
+                    luminance[index++] = pixelData[spIndex];
+                }
+            }
+        }
+
+        return luminance;
+    }
+
+    // module exports
+    cornerstoneTools.getLuminance = getLuminance;
+
+})(cornerstone, cornerstoneTools);
+ 
+// End Source; src/util/getLuminance.js
+
 // Begin Source: src/util/getMaxSimultaneousRequests.js
 (function(cornerstone, cornerstoneTools) {
 
@@ -8541,6 +8632,52 @@ Display scroll progress bar across bottom of image.
 })(cornerstone, cornerstoneTools);
  
 // End Source; src/util/getMaxSimultaneousRequests.js
+
+// Begin Source: src/util/getRGBPixels.js
+(function(cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function getRGBPixels(element, x, y, width, height) {
+        if (!element) {
+            throw 'getRGBPixels: parameter element must not be undefined';
+        }
+
+        x = Math.round(x);
+        y = Math.round(y);
+        var enabledElement = cornerstone.getEnabledElement(element);
+        var storedPixelData = [];
+        var index = 0;
+        var pixelData = enabledElement.image.getPixelData();
+        var spIndex,
+            row,
+            column;
+
+        if (enabledElement.image.color) {
+            for (row = 0; row < height; row++) {
+                for (column = 0; column < width; column++) {
+                    spIndex = (((row + y) * enabledElement.image.columns) + (column + x)) * 4;
+                    var red = pixelData[spIndex];
+                    var green = pixelData[spIndex + 1];
+                    var blue = pixelData[spIndex + 2];
+                    var alpha = pixelData[spIndex + 3];
+                    storedPixelData[index++] = red;
+                    storedPixelData[index++] = green;
+                    storedPixelData[index++] = blue;
+                    storedPixelData[index++] = alpha;
+                }
+            }
+        }
+
+        return storedPixelData;
+    }
+
+    // module exports
+    cornerstoneTools.getRGBPixels = getRGBPixels;
+
+})(cornerstone, cornerstoneTools);
+ 
+// End Source; src/util/getRGBPixels.js
 
 // Begin Source: src/util/isMouseButtonEnabled.js
 (function(cornerstone, cornerstoneTools) {
