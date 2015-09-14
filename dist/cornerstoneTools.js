@@ -2047,6 +2047,10 @@ if (typeof cornerstoneTools === 'undefined') {
         var eventData = {
             mouseButtonMask: mouseButtonMask,
         };
+        
+        // Clear any currently existing toolData
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        toolData = [];
 
         cornerstoneTools.addToolState(element, toolType, {
             synchronizationContext: synchronizationContext,
@@ -2064,8 +2068,53 @@ if (typeof cornerstoneTools === 'undefined') {
 
     // module/private exports
     cornerstoneTools.crosshairs = {
+        activate: enable,
+        deactivate: disable,
         enable: enable,
         disable: disable
+    };
+
+    function dragEndCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneToolsTouchDrag', dragCallback);
+        $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
+    }
+
+    function dragStartCallback(e, eventData) {
+        $(eventData.element).on('CornerstoneToolsTouchDrag', dragCallback);
+        $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
+        chooseLocation(e, eventData);
+        return false;
+    }
+
+    function dragCallback(e, eventData) {
+        chooseLocation(e, eventData);
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+    }
+
+    function enableTouch(element, synchronizationContext) {
+        // Clear any currently existing toolData
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+        toolData = [];
+
+        cornerstoneTools.addToolState(element, toolType, {
+            synchronizationContext: synchronizationContext,
+        });
+
+        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+
+        $(element).on('CornerstoneToolsDragStart', dragStartCallback);
+    }
+
+    // disables the reference line tool for the given element
+    function disableTouch(element) {
+        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+    }
+
+    cornerstoneTools.crosshairsTouch = {
+        activate: enableTouch,
+        deactivate: disableTouch,
+        enable: enableTouch,
+        disable: disableTouch
     };
 
 })($, cornerstone, cornerstoneTools);
