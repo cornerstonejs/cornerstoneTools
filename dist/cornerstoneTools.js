@@ -7955,6 +7955,15 @@ Display scroll progress bar across bottom of image.
 
         var ignoreFiredEvents = false;
         var initialData = {};
+        var eventHandler = handler;
+
+        this.setHandler = function(handler) {
+            eventHandler = handler;
+        };
+
+        this.getHandler = function() {
+            return eventHandler;
+        };
 
         this.getDistances = function() {
             if (!sourceElements.length || !targetElements.length) {
@@ -8039,7 +8048,7 @@ Display scroll progress bar across bottom of image.
                     positionDifference = initialData.distances[sourceImageId][targetImageId];
                 }
                 
-                handler(that, sourceElement, targetElement, eventData, positionDifference);
+                eventHandler(that, sourceElement, targetElement, eventData, positionDifference);
             });
             ignoreFiredEvents = false;
         }
@@ -8069,8 +8078,7 @@ Display scroll progress bar across bottom of image.
             // Update the inital distances between elements
             that.getDistances();
 
-            // Update everyone listening for events
-            fireEvent(element);
+            that.updateDisableHandlers();
         };
 
         // adds an element as a target
@@ -8088,7 +8096,9 @@ Display scroll progress bar across bottom of image.
             that.getDistances();
 
             // Invoke the handler for this new target element
-            handler(that, element, element, 0);
+            eventHandler(that, element, element, 0);
+
+            that.updateDisableHandlers();
         };
 
         // adds an element as both a source and a target
@@ -8116,6 +8126,7 @@ Display scroll progress bar across bottom of image.
 
             // Update everyone listening for events
             fireEvent(element);
+            that.updateDisableHandlers();
         };
 
         // removes an element as a target
@@ -8133,7 +8144,8 @@ Display scroll progress bar across bottom of image.
             that.getDistances();
 
             // Invoke the handler for the removed target
-            handler(that, element, element, 0);
+            eventHandler(that, element, element, 0);
+            that.updateDisableHandlers();
         };
 
         // removes an element as both a source and target
@@ -8147,6 +8159,11 @@ Display scroll progress bar across bottom of image.
             return sourceElements;
         };
 
+        // returns the target elements
+        this.getTargetElements = function() {
+            return targetElements;
+        };
+
         this.displayImage = function(element, image, viewport) {
             ignoreFiredEvents = true;
             cornerstone.displayImage(element, image, viewport);
@@ -8157,6 +8174,20 @@ Display scroll progress bar across bottom of image.
             ignoreFiredEvents = true;
             cornerstone.setViewport(element, viewport);
             ignoreFiredEvents = false;
+        };
+
+        function disableHandler(e, eventData) {
+            console.log('disable, removing from sync');
+            var element = eventData.element;
+            that.remove(element);
+        }
+
+        this.updateDisableHandlers = function() {
+            var elements = $.unique(sourceElements.concat(targetElements));
+            elements.forEach(function(element) {
+                $(element).off('CornerstoneElementDisabled', disableHandler);
+                $(element).on('CornerstoneElementDisabled', disableHandler);
+            });
         };
     }
 
