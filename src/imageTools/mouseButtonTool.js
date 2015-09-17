@@ -32,7 +32,15 @@
             }
 
             cornerstone.updateImage(element);
-            cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
+
+            var handleMover;
+            if (Object.keys(measurementData.handles).length === 1) {
+                handleMover = cornerstoneTools.moveHandle;
+            } else {
+                handleMover = cornerstoneTools.moveNewHandle;
+            }
+
+            handleMover(mouseEventData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 measurementData.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
@@ -107,17 +115,18 @@
 
         function mouseDownCallback(e, eventData) {
             var data;
+            var element = eventData.element;
 
             function handleDoneMove() {
                 data.active = false;
                 data.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
                     // delete the measurement
-                    cornerstoneTools.removeToolState(eventData.element, mouseToolInterface.toolType, data);
+                    cornerstoneTools.removeToolState(element, mouseToolInterface.toolType, data);
                 }
 
-                cornerstone.updateImage(eventData.element);
-                $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
+                cornerstone.updateImage(element);
+                $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             }
 
             if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
@@ -127,13 +136,13 @@
                 var i;
 
                 // now check to see if there is a handle we can move
-                if (toolData !== undefined) {
+                if (toolData) {
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var distanceSq = 25;
-                        var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
-                        if (handle !== undefined) {
-                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+                        var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
+                        if (handle) {
+                            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             data.active = true;
                             cornerstoneTools.moveHandle(eventData, handle, handleDoneMove);
                             e.stopImmediatePropagation();
@@ -144,13 +153,17 @@
 
                 // Now check to see if there is a line we can move
                 // now check to see if we have a tool that we can move
-                if (toolData !== undefined && mouseToolInterface.pointNearTool !== undefined) {
+                if (toolData && mouseToolInterface.pointNearTool) {
+                    var options = {
+                        deleteIfHandleOutsideImage: true,
+                        preventHandleOutsideImage: false
+                    };
+
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
-                        if (mouseToolInterface.pointNearTool(eventData.element, data, coords)) {
-                            $(eventData.element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
-                            cornerstoneTools.moveAllHandles(e, data, toolData, true);
-                            $(eventData.element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+                        if (mouseToolInterface.pointNearTool(element, data, coords)) {
+                            $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
+                            cornerstoneTools.moveAllHandles(e, data, toolData, options, handleDoneMove);
                             e.stopImmediatePropagation();
                             return false;
                         }
