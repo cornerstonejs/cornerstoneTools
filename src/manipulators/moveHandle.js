@@ -26,12 +26,14 @@
             handle.active = false;
             $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+            $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
             cornerstone.updateImage(element);
 
             doneMovingCallback();
         }
 
         $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
     }
 
     // module/private exports
