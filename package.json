@@ -1,7 +1,7 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.7.4",
-  "description": "Enabling the touch events for all tools",
+  "version": "0.7.5",
+  "description": "Medical imaging tools for the Cornerstone library",
   "keywords": [
     "DICOM",
     "medical",
