@@ -8177,7 +8177,6 @@ Display scroll progress bar across bottom of image.
         };
 
         function disableHandler(e, eventData) {
-            console.log('disable, removing from sync');
             var element = eventData.element;
             that.remove(element);
         }
@@ -8187,6 +8186,13 @@ Display scroll progress bar across bottom of image.
             elements.forEach(function(element) {
                 $(element).off('CornerstoneElementDisabled', disableHandler);
                 $(element).on('CornerstoneElementDisabled', disableHandler);
+            });
+        };
+
+        this.destroy = function() {
+            var elements = $.unique(sourceElements.concat(targetElements));
+            elements.forEach(function(element) {
+                this.remove(element);
             });
         };
     }

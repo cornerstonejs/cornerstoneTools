@@ -234,7 +234,6 @@
         };
 
         function disableHandler(e, eventData) {
-            console.log('disable, removing from sync');
             var element = eventData.element;
             that.remove(element);
         }
@@ -244,6 +243,13 @@
             elements.forEach(function(element) {
                 $(element).off('CornerstoneElementDisabled', disableHandler);
                 $(element).on('CornerstoneElementDisabled', disableHandler);
+            });
+        };
+
+        this.destroy = function() {
+            var elements = $.unique(sourceElements.concat(targetElements));
+            elements.forEach(function(element) {
+                this.remove(element);
             });
         };
     }
