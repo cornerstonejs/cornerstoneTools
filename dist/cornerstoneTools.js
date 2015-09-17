@@ -7728,6 +7728,84 @@ Display scroll progress bar across bottom of image.
  
 // End Source; src/synchronization/stackImageIndexSynchronizer.js
 
+// Begin Source: src/synchronization/stackImagePositionOffsetSynchronizer.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    // This function causes the image in the target stack to be set to the one closest
+    // to the image in the source stack by image position
+
+    // In the future we will want to have a way to manually register links sets of the same orientation (e.g. an axial link set from a prior with an axial link set of a current).  The user could do this by scrolling the two stacks to a similar location and then doing a user action (e.g. right click link) at which point the system will capture the delta between the image position (patient) of both stacks and use that to sync them.  This offset will need to be adjustable.
+
+    function stackImagePositionOffsetSynchronizer(synchronizer, sourceElement, targetElement, eventData, positionDifference) {
+
+        // ignore the case where the source and target are the same enabled element
+        if (targetElement === sourceElement) {
+            return;
+        }
+
+        var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+        var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
+        var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var stackData = stackToolDataSource.data[0];
+
+        var minDistance = Number.MAX_VALUE;
+        var newImageIdIndex = -1;
+
+        if (!positionDifference) {
+            return;
+        }
+
+        var finalPosition = sourceImagePosition.clone().add(positionDifference);
+
+        stackData.imageIds.forEach(function(imageId, index) {
+            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+            var imagePosition = imagePlane.imagePositionPatient;
+            var distance = finalPosition.distanceToSquared(imagePosition);
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                newImageIdIndex = index;
+            }
+        });
+
+        if (newImageIdIndex === stackData.currentImageIdIndex || newImageIdIndex === -1) {
+            return;
+        }
+
+        var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
+        var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
+        if (startLoadingHandler) {
+            startLoadingHandler(targetElement);
+        }
+
+        cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            var viewport = cornerstone.getViewport(targetElement);
+            stackData.currentImageIdIndex = newImageIdIndex;
+            synchronizer.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(targetElement);
+            }
+        }, function(error) {
+            var imageId = stackData.imageIds[newImageIdIndex];
+            if (errorLoadingHandler) {
+                errorLoadingHandler(targetElement, imageId, error);
+            }
+        });
+    }
+
+    // module/private exports
+    cornerstoneTools.stackImagePositionOffsetSynchronizer = stackImagePositionOffsetSynchronizer;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/synchronization/stackImagePositionOffsetSynchronizer.js
+
 // Begin Source: src/synchronization/stackImagePositionSynchronizer.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -7876,13 +7954,101 @@ Display scroll progress bar across bottom of image.
         var targetElements = []; // target elements we want to synchronize to source elements
 
         var ignoreFiredEvents = false;
+        var initialData = {};
+        var eventHandler = handler;
 
-        function fireEvent(sourceEnabledElement, eventData) {
+        this.setHandler = function(handler) {
+            eventHandler = handler;
+        };
 
+        this.getHandler = function() {
+            return eventHandler;
+        };
+
+        this.getDistances = function() {
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
+            initialData.distances = {};
+            initialData.imageIds = {
+                sourceElements: [],
+                targetElements: []
+            };
+
+            sourceElements.forEach(function(sourceElement) {
+                var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+                var sourceImageId = sourceEnabledElement.image.imageId;
+                var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                var sourceImagePosition = sourceImagePlane.imagePositionPatient;
+
+                if (initialData.hasOwnProperty(sourceEnabledElement)) {
+                    return;
+                } else {
+                    initialData.distances[sourceImageId] = {};
+                }
+
+                initialData.imageIds.sourceElements.push(sourceImageId);
+
+                targetElements.forEach(function(targetElement) {
+                    var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    var targetImageId = targetEnabledElement.image.imageId;
+
+                    initialData.imageIds.targetElements.push(targetImageId);
+
+                    if (sourceElement === targetElement) {
+                        return;
+                    }
+
+                    if (sourceImageId === targetImageId) {
+                        return;
+                    }
+
+                    if (initialData.distances[sourceImageId].hasOwnProperty(targetImageId)) {
+                        return;
+                    }
+
+                    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    var targetImagePosition = targetImagePlane.imagePositionPatient;
+
+                    initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
+                });
+
+                if (!Object.keys(initialData.distances[sourceImageId]).length) {
+                    delete initialData.distances[sourceImageId];
+                }
+            });
+        };
+
+        function fireEvent(sourceElement, eventData) {
             // Broadcast an event that something changed
+            if (!sourceElements.length || !targetElements.length) {
+                return;
+            }
+
             ignoreFiredEvents = true;
-            $.each(targetElements, function(index, targetEnabledElement) {
-                handler(that, sourceEnabledElement, targetEnabledElement, eventData);
+            targetElements.forEach(function(targetElement) {
+                var targetIndex = targetElements.indexOf(targetElement);
+                if (targetIndex === -1) {
+                    return;
+                }
+
+                var targetImageId = initialData.imageIds.targetElements[targetIndex];
+                var sourceIndex = sourceElements.indexOf(sourceElement);
+                if (sourceIndex === -1) {
+                    return;
+                }
+
+                var sourceImageId = initialData.imageIds.sourceElements[sourceIndex];
+                
+                var positionDifference;
+                if (sourceImageId === targetImageId) {
+                    positionDifference = 0;
+                } else {
+                    positionDifference = initialData.distances[sourceImageId][targetImageId];
+                }
+                
+                eventHandler(that, sourceElement, targetElement, eventData, positionDifference);
             });
             ignoreFiredEvents = false;
         }
@@ -7909,8 +8075,10 @@ Display scroll progress bar across bottom of image.
             // subscribe to the event
             $(element).on(event, onEvent);
 
-            // Update everyone listening for events
-            fireEvent(element);
+            // Update the inital distances between elements
+            that.getDistances();
+
+            that.updateDisableHandlers();
         };
 
         // adds an element as a target
@@ -7924,8 +8092,13 @@ Display scroll progress bar across bottom of image.
             // Add to our list of enabled elements
             targetElements.push(element);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Invoke the handler for this new target element
-            handler(that, element, element);
+            eventHandler(that, element, element, 0);
+
+            that.updateDisableHandlers();
         };
 
         // adds an element as both a source and a target
@@ -7948,8 +8121,12 @@ Display scroll progress bar across bottom of image.
             // stop listening for the event
             $(element).off(event, onEvent);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Update everyone listening for events
             fireEvent(element);
+            that.updateDisableHandlers();
         };
 
         // removes an element as a target
@@ -7963,8 +8140,12 @@ Display scroll progress bar across bottom of image.
             // remove this element from the array
             targetElements.splice(index, 1);
 
+            // Update the inital distances between elements
+            that.getDistances();
+
             // Invoke the handler for the removed target
-            handler(that, element, element);
+            eventHandler(that, element, element, 0);
+            that.updateDisableHandlers();
         };
 
         // removes an element as both a source and target
@@ -7978,6 +8159,11 @@ Display scroll progress bar across bottom of image.
             return sourceElements;
         };
 
+        // returns the target elements
+        this.getTargetElements = function() {
+            return targetElements;
+        };
+
         this.displayImage = function(element, image, viewport) {
             ignoreFiredEvents = true;
             cornerstone.displayImage(element, image, viewport);
@@ -7988,6 +8174,26 @@ Display scroll progress bar across bottom of image.
             ignoreFiredEvents = true;
             cornerstone.setViewport(element, viewport);
             ignoreFiredEvents = false;
+        };
+
+        function disableHandler(e, eventData) {
+            var element = eventData.element;
+            that.remove(element);
+        }
+
+        this.updateDisableHandlers = function() {
+            var elements = $.unique(sourceElements.concat(targetElements));
+            elements.forEach(function(element) {
+                $(element).off('CornerstoneElementDisabled', disableHandler);
+                $(element).on('CornerstoneElementDisabled', disableHandler);
+            });
+        };
+
+        this.destroy = function() {
+            var elements = $.unique(sourceElements.concat(targetElements));
+            elements.forEach(function(element) {
+                this.remove(element);
+            });
         };
     }
 
