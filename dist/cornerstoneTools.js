@@ -2362,38 +2362,6 @@ if (typeof cornerstoneTools === 'undefined') {
     }
     ///////// END ACTIVE TOOL ///////
 
-    function pointNearTool(element, data, coords) {
-        // TODO: Find a formula for shortest distance between point and ellipse.  Rectangle is close enough
-        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
-        var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width: Math.abs(startCanvas.x - endCanvas.x),
-            height: Math.abs(startCanvas.y - endCanvas.y)
-        };
-
-        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
-        return (distanceToPoint < 5);
-    }
-
-    function pointNearToolTouch(element, data, coords) {
-        // TODO: Find a formula for shortest distance between point and ellipse.  Rectangle is close enough
-        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
-        var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width: Math.abs(startCanvas.x - endCanvas.x),
-            height: Math.abs(startCanvas.y - endCanvas.y)
-        };
-
-        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
-        return (distanceToPoint < 15);
-    }
-
     ///////// BEGIN IMAGE RENDERING ///////
     function pointInEllipse(ellipse, location) {
         var xRadius = ellipse.width / 2;
@@ -2454,6 +2422,42 @@ if (typeof cornerstoneTools === 'undefined') {
         return {
             count: count, mean: mean, variance: variance, stdDev: Math.sqrt(variance)
         };
+    }
+
+    function pointNearEllipse(element, data, coords, distance) {
+        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+
+        var minorEllipse = {
+            left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
+            top: Math.min(startCanvas.y, endCanvas.y) + distance / 2 ,
+            width: Math.abs(startCanvas.x - endCanvas.x) - distance,
+            height: Math.abs(startCanvas.y - endCanvas.y) - distance
+        };
+        
+        var majorEllipse = {
+            left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
+            top: Math.min(startCanvas.y, endCanvas.y) - distance / 2 ,
+            width: Math.abs(startCanvas.x - endCanvas.x) + distance,
+            height: Math.abs(startCanvas.y - endCanvas.y) + distance
+        };
+
+        var pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
+        var pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
+
+        if (pointInMajorEllipse && !pointInMinorEllipse) {
+            return true;
+        }
+
+        return false;
+    }
+
+    function pointNearTool(element, data, coords) {
+        return pointNearEllipse(element, data, coords, 15);
+    }
+
+    function pointNearToolTouch(element, data, coords) {
+        return pointNearEllipse(element, data, coords, 25);
     }
 
     function onImageRendered(e, eventData) {
@@ -2525,7 +2529,10 @@ if (typeof cornerstoneTools === 'undefined') {
                 var pixels = cornerstone.getPixels(eventData.element, left, top, width, height);
 
                 var ellipse = {
-                    left: left, top: top, width: width, height: height
+                    left: left,
+                    top: top,
+                    width: width,
+                    height: height
                 };
 
                 // Calculate the mean, stddev, and area
