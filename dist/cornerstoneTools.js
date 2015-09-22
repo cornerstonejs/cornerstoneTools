@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.5 - 2015-09-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.5 - 2015-09-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4753,7 +4753,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var startPoint = toolData.data[0].startPoint;
         var endPoint = toolData.data[0].endPoint;
 
-        if (!startPoint) {
+        if (!startPoint || !endPoint) {
             return;
         }
 
@@ -8192,7 +8192,7 @@ Display scroll progress bar across bottom of image.
         this.destroy = function() {
             var elements = $.unique(sourceElements.concat(targetElements));
             elements.forEach(function(element) {
-                this.remove(element);
+                that.remove(element);
             });
         };
     }

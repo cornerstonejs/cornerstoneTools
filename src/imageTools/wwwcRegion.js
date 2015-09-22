@@ -199,7 +199,7 @@
         var startPoint = toolData.data[0].startPoint;
         var endPoint = toolData.data[0].endPoint;
 
-        if (!startPoint) {
+        if (!startPoint || !endPoint) {
             return;
         }
 

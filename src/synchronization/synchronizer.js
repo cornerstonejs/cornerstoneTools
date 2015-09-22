@@ -249,7 +249,7 @@
         this.destroy = function() {
             var elements = $.unique(sourceElements.concat(targetElements));
             elements.forEach(function(element) {
-                this.remove(element);
+                that.remove(element);
             });
         };
     }
