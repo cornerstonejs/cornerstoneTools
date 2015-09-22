@@ -167,7 +167,7 @@
             context.closePath();
 
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
             
             context.font = font;
 

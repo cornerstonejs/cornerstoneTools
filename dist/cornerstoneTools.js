@@ -2508,7 +2508,7 @@ if (typeof cornerstoneTools === 'undefined') {
             context.closePath();
 
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
             
             context.font = font;
 
@@ -4130,7 +4130,7 @@ if (typeof cornerstoneTools === 'undefined') {
             context.stroke();
 
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
 
             // Draw the text
             context.fillStyle = color;
@@ -4400,13 +4400,13 @@ if (typeof cornerstoneTools === 'undefined') {
             data.textHeight = fontSize;
 
             var coords = {
-                x: data.handles.end.x - data.textWidth / 2,
+                x: data.handles.end.x,
                 y: data.handles.end.y
             };
 
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-            cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
+            cornerstoneTools.drawTextBox(context, data.text, textCoords.x - data.textWidth / 2, textCoords.y, color);
 
             context.restore();
         }
