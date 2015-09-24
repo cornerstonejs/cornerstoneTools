@@ -20,7 +20,7 @@
         .noIbar {
             cursor:default;
         }
-        #annotationDialog {
+        .annotationDialog, .relabelDialog {
             z-index: 1000;
             position: absolute;
             margin: 0px;
@@ -73,7 +73,7 @@
                      style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
             </div>
-            <dialog id="annotationDialog">
+            <dialog class="annotationDialog">
                 <h5>Enter your annotation</h5>
                 <div class="annotationTextInputOptions">
                     <label for="annotationTextInput">New label</label>
@@ -81,7 +81,17 @@
                 </div>
                 <a class="annotationDialogConfirm btn btn-sm btn-primary">OK</a>
             </dialog>
-
+            <dialog class="relabelDialog" oncontextmenu="return false">
+                <h5>Edit your annotation</h5>
+                <div class="annotationTextInputOptions">
+                    <label for="annotationTextInput">New label</label>
+                    <input name="annotationTextInput" class="annotationTextInput" type="text"/>
+                </div>
+                <div>
+                    <a class="relabelRemove btn btn-sm btn-secondary">Remove marker</a>
+                    <a class="relabelConfirm btn btn-sm btn-primary">OK</a>
+                </div>
+            </dialog>
         </div>
 
     </div>
@@ -115,8 +125,8 @@ is used by our example image loader-->
     // Define a callback to get your text annotation
     // This could be used, e.g. to open a modal
     function getTextCallback(doneChangingTextCallback) {
-        var dialog = $('#annotationDialog');
-        var getTextInput = $('.annotationTextInput');
+        var dialog = $('.annotationDialog');
+        var getTextInput = dialog.find('.annotationTextInput');
         var confirm = dialog.find('.annotationDialogConfirm');
 
         dialog.get(0).show();
@@ -144,11 +154,55 @@ is used by our example image loader-->
         }
     }
 
+    // Define a callback to edit your text annotation
+    // This could be used, e.g. to open a modal
+    function changeTextCallback(data, doneChangingTextCallback) {
+        var dialog = $('.relabelDialog');
+        var getTextInput = dialog.find('.annotationTextInput');
+        var confirm = dialog.find('.relabelConfirm');
+        var remove = dialog.find('.relabelRemove');
+
+        getTextInput.val(data.annotationText);
+        dialog.get(0).show();
+
+        confirm.off('click');
+        confirm.on('click', function() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, getTextInput.val());
+        });
+
+        // If the remove button is clicked, delete this marker
+        remove.off('click');
+        remove.on('click', function() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, undefined, true);
+        });
+
+        dialog.off("keypress");
+        dialog.on('keypress', keyPressHandler);
+
+        function keyPressHandler(e) {
+            // If Enter is pressed, close the dialog
+            if (e.which === 13) {
+                closeHandler();
+            }
+        }
+
+        function closeHandler() {
+            dialog.get(0).close();
+            doneChangingTextCallback(data, getTextInput.val());
+            // Reset the text value
+            getTextInput.val("");
+        }
+        
+    }
+
     var config = {
-        'getTextCallback' : getTextCallback,
-        'drawHandles' : false,
-        'drawHandlesOnHover' : true,
-        'arrowFirst' : true
+        getTextCallback : getTextCallback,
+        changeTextCallback : changeTextCallback,
+        drawHandles : false,
+        drawHandlesOnHover : true,
+        arrowFirst : true
     }
 
     // image enable the dicomImage element

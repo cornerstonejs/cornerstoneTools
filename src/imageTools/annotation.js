@@ -10,8 +10,13 @@
         doneChangingTextCallback(prompt('Enter your annotation:'));
     }
 
+    function changeTextCallback(data, doneChangingTextCallback) {
+        doneChangingTextCallback(prompt('Change your annotation:'));
+    }
+
     var configuration = {
         getTextCallback: getTextCallback,
+        changeTextCallback: changeTextCallback,
         drawHandles: false,
         drawHandlesOnHover: true,
         arrowFirst: true
@@ -22,9 +27,9 @@
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurement(mouseEventData) {
 
-        function doneChangingTextCallback(annotationText) {
-            if (annotationText !== null) {
-                measurementData.annotationText = annotationText;
+        function doneChangingTextCallback(text) {
+            if (text !== null) {
+                measurementData.text = text;
             } else {
                 cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
             }
@@ -56,7 +61,7 @@
             }
 
             var config = cornerstoneTools.arrowAnnotate.getConfiguration();
-            if (measurementData.annotationText === undefined) {
+            if (measurementData.text === undefined) {
                 config.getTextCallback(doneChangingTextCallback);
             }
 
@@ -179,7 +184,7 @@
             }
 
             // Draw the text
-            if (data.annotationText && data.annotationText !== '') {
+            if (data.text && data.text !== '') {
                 context.font = font;
                 
                 var distance = 13;
@@ -199,7 +204,7 @@
                 if (config.arrowFirst) {
                     // Fix text placement if arrow faces right
                     if (vector.x < 0) {
-                        displacement.x = -displacement.x - context.measureText(data.annotationText).width;
+                        displacement.x = -displacement.x - context.measureText(data.text).width;
                     }
 
                     textCoords = {
@@ -208,7 +213,7 @@
                 } else {
                     // Fix text placement if arrow faces right
                     if (vector.x > 0) {
-                        displacement.x = -displacement.x - context.measureText(data.annotationText).width;
+                        displacement.x = -displacement.x - context.measureText(data.text).width;
                     }
 
                     textCoords = {
@@ -216,7 +221,7 @@
                     };
                 }
 
-                cornerstoneTools.drawTextBox(context, data.annotationText, textCoords.x, textCoords.y, color);
+                cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
             }
 
             context.restore();
@@ -228,9 +233,9 @@
     function addNewMeasurementTouch(touchEventData) {
         var element = touchEventData.element;
 
-        function doneChangingTextCallback(annotationText) {
-            if (annotationText !== null) {
-                measurementData.annotationText = annotationText;
+        function doneChangingTextCallback(text) {
+            if (text !== null) {
+                measurementData.text = text;
             } else {
                 cornerstoneTools.removeToolState(element, toolType, measurementData);
             }
@@ -255,7 +260,7 @@
             }
 
             var config = cornerstoneTools.arrowAnnotate.getConfiguration();
-            if (measurementData.annotationText === undefined) {
+            if (measurementData.text === undefined) {
                 config.getTextCallback(doneChangingTextCallback);
             }
 
@@ -265,12 +270,58 @@
         });
     }
 
+    function doubleClickCallback(e, eventData) {
+        var element = eventData.element;
+        var data;
+
+        function doneChangingTextCallback(data, updatedText, deleteTool) {
+            if (deleteTool === true) {
+                cornerstoneTools.removeToolState(element, toolType, data);
+            } else {
+                data.text = updatedText;
+            }
+
+            data.active = false;
+            cornerstone.updateImage(element);
+        }
+
+        if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            return false;
+        }
+
+        var config = cornerstoneTools.arrowAnnotate.getConfiguration();
+
+        var coords = eventData.currentPoints.canvas;
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+
+        // now check to see if there is a handle we can move
+        if (!toolData) {
+            return false;
+        }
+
+        for (var i = 0; i < toolData.data.length; i++) {
+            data = toolData.data[i];
+            if (pointNearTool(element, data, coords)) {
+                data.active = true;
+                cornerstone.updateImage(element);
+                // Allow relabelling via a callback
+                config.changeTextCallback(data, doneChangingTextCallback);
+                
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }
+
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+    }
+
     cornerstoneTools.arrowAnnotate = cornerstoneTools.mouseButtonTool({
         addNewMeasurement: addNewMeasurement,
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        mouseDoubleClickCallback: doubleClickCallback
     });
 
     cornerstoneTools.arrowAnnotate.setConfiguration(configuration);
@@ -280,7 +331,8 @@
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
-        toolType: toolType
+        toolType: toolType,
+        pressCallback: doubleClickCallback
     });
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
