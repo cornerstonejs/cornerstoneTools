@@ -166,6 +166,34 @@
                 $(eventData.element).trigger(event, eventData);
                 break;
 
+            case 'touchend':
+                startPoints = {
+                    page: cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
+                    image: cornerstone.pageToPixel(element, e.originalEvent.changedTouches[0].pageX, e.originalEvent.changedTouches[0].pageY),
+                    client: {
+                        x: e.originalEvent.changedTouches[0].clientX,
+                        y: e.originalEvent.changedTouches[0].clientY
+                    }
+                };
+                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
+                eventType = 'CornerstoneToolsTouchEnd';
+
+                eventData = {
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    currentPoints: startPoints,
+                    type: eventType,
+                    isTouchEvent: true
+                };
+
+                event = $.Event(eventType, eventData);
+                $(eventData.element).trigger(event, eventData);
+                break;
+
             case 'panstart':
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
@@ -359,12 +387,12 @@
         mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
 
         $(element).data('hammer', mc);
-        $(element).on('touchstart', onTouch);
+        $(element).on('touchstart touchend', onTouch);
         cornerstoneTools.preventGhostClick(element);
     }
 
     function disable(element) {
-        $(element).off('touchstart', onTouch);
+        $(element).off('touchstart touchend', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
             mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);

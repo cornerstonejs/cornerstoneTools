@@ -131,21 +131,21 @@
     }
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', onDrag);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         cornerstone.updateImage(eventData.element);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneToolsMouseDrag', onDrag);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             cornerstoneTools.dragProbe.strategy(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function onDrag(e, eventData) {
+    function dragCallback(e, eventData) {
         cornerstoneTools.dragProbe.strategy(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
@@ -158,7 +158,9 @@
     };
     cornerstoneTools.dragProbe.strategy = defaultStrategy;
 
-    var fireOnTouchStart = true;
-    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(onDrag, fireOnTouchStart);
+    var options = {
+        fireOnTouchStart: true
+    };
+    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(dragCallback, options);
 
 })($, cornerstone, cornerstoneTools);
