@@ -106,16 +106,27 @@
             text = parseFloat(huValue.toFixed(3));
         }
 
-        // Draw text
-        var coords = {
-            // translate the x/y away from the cursor
-            x: eventData.currentPoints.image.x + 4, y: eventData.currentPoints.image.y - 4
-        };
-        var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-        
+        // Prepare text
+        var textCoords = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
         context.font = font;
         context.fillStyle = color;
-        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
+
+        // Translate the x/y away from the cursor
+        var translation;
+        if (eventData.isTouchEvent === true) {
+            var width = context.measureText(text).width;
+            translation = {
+                x: -width / 2 - 5,
+                y: -cornerstoneTools.textStyle.getFontSize() * 4
+            };
+        } else {
+            translation = {
+                x: 4,
+                y: -4
+            };
+        }
+
+        cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
         context.restore();
     }
 
@@ -142,10 +153,12 @@
     cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     
     cornerstoneTools.dragProbe.strategies = {
-        default: defaultStrategy, minimal: minimalStrategy
+        default: defaultStrategy,
+        minimal: minimalStrategy
     };
     cornerstoneTools.dragProbe.strategy = defaultStrategy;
 
-    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(onDrag);
+    var fireOnTouchStart = true;
+    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(onDrag, fireOnTouchStart);
 
 })($, cornerstone, cornerstoneTools);

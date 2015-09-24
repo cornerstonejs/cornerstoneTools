@@ -48,9 +48,13 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
 <script src="../jquery.min.js"></script>
+
+<script src="../touch-emulator.js"></script>
+<script> TouchEmulator(); </script>
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
@@ -70,12 +74,15 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.touchInput.enable(element);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.dragProbe.activate(element, 1);
+        cornerstoneTools.dragProbeTouch.activate(element);
+
         activate("#activate");
 
         function activate(id)
@@ -88,11 +95,13 @@ is used by our example image loader-->
         $('#disable').click(function() {
             activate("#disable");
             cornerstoneTools.dragProbe.disable(element);
+            cornerstoneTools.dragProbeTouch.disable(element);
             return false;
         });
         $('#activate').click(function() {
             activate("#activate");
             cornerstoneTools.dragProbe.activate(element, 1);
+            cornerstoneTools.dragProbeTouch.activate(element);
             return false;
         });
         $('#defaultStrategy').click(function() {

@@ -44,7 +44,8 @@
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
                     currentPoints: currentPoints,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -70,7 +71,8 @@
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
                     currentPoints: currentPoints,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -96,7 +98,8 @@
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
                     currentPoints: currentPoints,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -127,11 +130,40 @@
                     element: element,
                     direction: e.scale < 1 ? 1 : -1,
                     scaleChange: scaleChange,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
                 $(element).trigger(event, eventData);
+                break;
+
+            case 'touchstart':
+                startPoints = {
+                    page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+                    image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
+                    client: {
+                        x: e.originalEvent.touches[0].clientX,
+                        y: e.originalEvent.touches[0].clientY
+                    }
+                };
+                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
+                eventType = 'CornerstoneToolsTouchStart';
+
+                eventData = {
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    currentPoints: startPoints,
+                    type: eventType,
+                    isTouchEvent: true
+                };
+
+                event = $.Event(eventType, eventData);
+                $(eventData.element).trigger(event, eventData);
                 break;
 
             case 'panstart':
@@ -161,7 +193,8 @@
                     deltaPoints: {
                         x: 0, y: 0
                     },
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -209,7 +242,8 @@
                     lastPoints: lastPoints,
                     currentPoints: currentPoints,
                     deltaPoints: deltaPoints,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -257,7 +291,8 @@
                     lastPoints: lastPoints,
                     currentPoints: currentPoints,
                     deltaPoints: deltaPoints,
-                    type: eventType
+                    type: eventType,
+                    isTouchEvent: true
                 };
 
                 event = $.Event(eventType, eventData);
@@ -324,10 +359,12 @@
         mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
 
         $(element).data('hammer', mc);
+        $(element).on('touchstart', onTouch);
         cornerstoneTools.preventGhostClick(element);
     }
 
     function disable(element) {
+        $(element).off('touchstart', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
             mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
