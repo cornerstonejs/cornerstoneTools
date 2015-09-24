@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-10-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-11-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -328,7 +328,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     /*jshint newcap: false */
 
-    var lastScale = 1.0,
+    var initScale = 1.0,
         lastRotation = 0.0,
         startPoints,
         currentPoints,
@@ -427,17 +427,30 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(element).trigger(event, eventData);
                 break;
 
+            case 'pinchstart':
+                console.log('pinchstart');
+                var viewport = cornerstone.getViewport(element);
+                initScale = viewport.scale || 1;
+                break;
+
             case 'pinch':
-                var scale = lastScale - e.scale;
-                lastScale = e.scale;
+                var scaleChange = initScale * e.scale;
                 
+                startPoints = {
+                    page: e.center,
+                    image: cornerstone.pageToPixel(element, e.center.x, e.center.y),
+                };
+                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
                 eventType = 'CornerstoneToolsTouchPinch';
                 eventData = {
                     event: e,
+                    startPoints: startPoints,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
-                    direction: scale < 0 ? 1 : -1,
+                    direction: e.scale < 1 ? 1 : -1,
+                    scaleChange: scaleChange,
                     type: eventType
                 };
 
@@ -447,21 +460,29 @@ if (typeof cornerstoneTools === 'undefined') {
 
             case 'panstart':
                 startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    client: {
                         x: e.pointers[0].clientX,
                         y: e.pointers[0].clientY
                     }
                 };
                 startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-                if (e.pointers.length === 1) {
-                    eventType = 'CornerstoneToolsDragStart';
-                } else {
+                eventType = 'CornerstoneToolsDragStart';
+                if (e.pointers.length > 1) {
                     eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
 
                 eventData = {
-                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints,
+                    currentPoints: startPoints,
+                    deltaPoints: {
                         x: 0, y: 0
                     },
                     type: eventType
@@ -493,7 +514,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 // Calculate delta values in page and image coordinates
                 deltaPoints = {
-                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                    image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+                    client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+                    canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
               
                 eventType = 'CornerstoneToolsTouchDrag';
@@ -502,7 +526,13 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
 
                 eventData = {
-                    viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: currentPoints, deltaPoints: deltaPoints,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints,
+                    currentPoints: currentPoints,
+                    deltaPoints: deltaPoints,
                     type: eventType
                 };
 
@@ -531,7 +561,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 // Calculate delta values in page and image coordinates
                 deltaPoints = {
-                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                    image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+                    client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+                    canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
 
                 eventType = 'CornerstoneToolsDragEnd';
@@ -578,6 +611,7 @@ if (typeof cornerstoneTools === 'undefined') {
     function enable(element) {
         disable(element);
         var hammerOptions = {
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput,
             transform_always_block: true,
             transform_min_scale: 0.01,
             drag_block_horizontal: true,
@@ -585,19 +619,17 @@ if (typeof cornerstoneTools === 'undefined') {
             drag_min_distance: 0
         };
 
-        var mc = new Hammer(element, {
-            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
-        });
-        mc.set(hammerOptions);
+        var mc = new Hammer.Manager(element, hammerOptions);
 
         var panOptions = {
             pointers: 0,
-            direction: Hammer.DIRECTION_ALL
+            direction: Hammer.DIRECTION_ALL,
+            threshold: 0
         };
 
         var pan = new Hammer.Pan(panOptions);
         var pinch = new Hammer.Pinch({
-            threshold: 0.25
+            threshold: 0
         });
         var rotate = new Hammer.Rotate({
             threshold: 0.05
@@ -613,7 +645,7 @@ if (typeof cornerstoneTools === 'undefined') {
         // add to the Manager
         mc.add([ press, pan, pinch, rotate ]);
 
-        mc.on('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
 
         $(element).data('hammer', mc);
         cornerstoneTools.preventGhostClick(element);
@@ -628,7 +660,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     // module exports
     cornerstoneTools.touchInput = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
@@ -1235,7 +1268,10 @@ if (typeof cornerstoneTools === 'undefined') {
                 var eventData = {
                 };
                 $(element).on('CornerstoneToolsTouchPinch', eventData, touchPinchCallback);
-            }, disable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, enable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}, deactivate: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
+            },
+            disable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
+            enable: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);},
+            deactivate: function(element) {$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);}
         };
         return toolInterface;
     }
@@ -3640,7 +3676,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
@@ -3648,7 +3684,7 @@ if (typeof cornerstoneTools === 'undefined') {
         eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
         eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
         cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function onDrag(e, eventData) {
@@ -3656,7 +3692,7 @@ if (typeof cornerstoneTools === 'undefined') {
         dragData.viewport.translation.x += (dragData.deltaPoints.page.x / dragData.viewport.scale);
         dragData.viewport.translation.y += (dragData.deltaPoints.page.y / dragData.viewport.scale);
         cornerstone.setViewport(dragData.element, dragData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     cornerstoneTools.pan = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
@@ -3675,7 +3711,7 @@ if (typeof cornerstoneTools === 'undefined') {
         eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
         eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
         cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function disable(element) {
@@ -3688,7 +3724,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     cornerstoneTools.panMultiTouch = {
-        activate: activate, disable: disable
+        activate: activate,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);
@@ -4999,12 +5036,12 @@ if (typeof cornerstoneTools === 'undefined') {
         var factor = oldFactor + ticks;
         
         var scale = Math.pow(pow, factor);
-        viewport.scale = scale;
-        
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
         } else if (config.minScale && scale < config.minScale) {
             viewport.scale = config.minScale;
+        } else {
+            viewport.scale = scale;
         }
 
         return viewport;
@@ -5177,9 +5214,34 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function touchPinchCallback(e, eventData) {
-        var ticks = eventData.direction / 4;
-        var viewport = changeViewportScale(eventData.viewport, ticks);
-        cornerstone.setViewport(eventData.element, viewport);
+        var config = cornerstoneTools.zoom.getConfiguration();
+        var viewport = eventData.viewport;
+        var element = eventData.element;
+        var scale = eventData.scaleChange;
+        
+        // Change the scale based on the pinch gesture's scale change
+        if (config.maxScale && scale > config.maxScale) {
+            viewport.scale = config.maxScale;
+        } else if (config.minScale && scale < config.minScale) {
+            viewport.scale = config.minScale;
+        } else {
+            viewport.scale = scale;
+        }
+
+        cornerstone.setViewport(element, viewport);
+
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToPixel(element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+        var shift = {
+            x: eventData.startPoints.image.x - newCoords.x,
+            y: eventData.startPoints.image.y - newCoords.y
+        };
+
+        shift = correctShift(shift, viewport);
+        viewport.translation.x -= shift.x;
+        viewport.translation.y -= shift.y;
+        cornerstone.setViewport(element, viewport);
     }
 
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);

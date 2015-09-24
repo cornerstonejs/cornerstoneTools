@@ -12,12 +12,12 @@
         var factor = oldFactor + ticks;
         
         var scale = Math.pow(pow, factor);
-        viewport.scale = scale;
-        
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
         } else if (config.minScale && scale < config.minScale) {
             viewport.scale = config.minScale;
+        } else {
+            viewport.scale = scale;
         }
 
         return viewport;
@@ -190,9 +190,34 @@
     }
 
     function touchPinchCallback(e, eventData) {
-        var ticks = eventData.direction / 4;
-        var viewport = changeViewportScale(eventData.viewport, ticks);
-        cornerstone.setViewport(eventData.element, viewport);
+        var config = cornerstoneTools.zoom.getConfiguration();
+        var viewport = eventData.viewport;
+        var element = eventData.element;
+        var scale = eventData.scaleChange;
+        
+        // Change the scale based on the pinch gesture's scale change
+        if (config.maxScale && scale > config.maxScale) {
+            viewport.scale = config.maxScale;
+        } else if (config.minScale && scale < config.minScale) {
+            viewport.scale = config.minScale;
+        } else {
+            viewport.scale = scale;
+        }
+
+        cornerstone.setViewport(element, viewport);
+
+        // Now that the scale has been updated, determine the offset we need to apply to the center so we can
+        // keep the original start location in the same position
+        var newCoords = cornerstone.pageToPixel(element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+        var shift = {
+            x: eventData.startPoints.image.x - newCoords.x,
+            y: eventData.startPoints.image.y - newCoords.y
+        };
+
+        shift = correctShift(shift, viewport);
+        viewport.translation.x -= shift.x;
+        viewport.translation.y -= shift.y;
+        cornerstone.setViewport(element, viewport);
     }
 
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);

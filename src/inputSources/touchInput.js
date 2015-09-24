@@ -4,7 +4,7 @@
 
     /*jshint newcap: false */
 
-    var lastScale = 1.0,
+    var initScale = 1.0,
         lastRotation = 0.0,
         startPoints,
         currentPoints,
@@ -103,17 +103,30 @@
                 $(element).trigger(event, eventData);
                 break;
 
+            case 'pinchstart':
+                console.log('pinchstart');
+                var viewport = cornerstone.getViewport(element);
+                initScale = viewport.scale || 1;
+                break;
+
             case 'pinch':
-                var scale = lastScale - e.scale;
-                lastScale = e.scale;
+                var scaleChange = initScale * e.scale;
                 
+                startPoints = {
+                    page: e.center,
+                    image: cornerstone.pageToPixel(element, e.center.x, e.center.y),
+                };
+                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
                 eventType = 'CornerstoneToolsTouchPinch';
                 eventData = {
                     event: e,
+                    startPoints: startPoints,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
-                    direction: scale < 0 ? 1 : -1,
+                    direction: e.scale < 1 ? 1 : -1,
+                    scaleChange: scaleChange,
                     type: eventType
                 };
 
@@ -123,21 +136,29 @@
 
             case 'panstart':
                 startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]), image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY), client: {
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    client: {
                         x: e.pointers[0].clientX,
                         y: e.pointers[0].clientY
                     }
                 };
                 startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-                if (e.pointers.length === 1) {
-                    eventType = 'CornerstoneToolsDragStart';
-                } else {
+                eventType = 'CornerstoneToolsDragStart';
+                if (e.pointers.length > 1) {
                     eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
 
                 eventData = {
-                    event: e.srcEvent, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: startPoints, deltaPoints: {
+                    event: e.srcEvent,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints,
+                    currentPoints: startPoints,
+                    deltaPoints: {
                         x: 0, y: 0
                     },
                     type: eventType
@@ -169,7 +190,10 @@
 
                 // Calculate delta values in page and image coordinates
                 deltaPoints = {
-                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                    image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+                    client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+                    canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
               
                 eventType = 'CornerstoneToolsTouchDrag';
@@ -178,7 +202,13 @@
                 }
 
                 eventData = {
-                    viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, element: element, startPoints: startPoints, lastPoints: lastPoints, currentPoints: currentPoints, deltaPoints: deltaPoints,
+                    viewport: cornerstone.getViewport(element),
+                    image: cornerstone.getEnabledElement(element).image,
+                    element: element,
+                    startPoints: startPoints,
+                    lastPoints: lastPoints,
+                    currentPoints: currentPoints,
+                    deltaPoints: deltaPoints,
                     type: eventType
                 };
 
@@ -207,7 +237,10 @@
 
                 // Calculate delta values in page and image coordinates
                 deltaPoints = {
-                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+                    page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                    image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+                    client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+                    canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
 
                 eventType = 'CornerstoneToolsDragEnd';
@@ -254,6 +287,7 @@
     function enable(element) {
         disable(element);
         var hammerOptions = {
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput,
             transform_always_block: true,
             transform_min_scale: 0.01,
             drag_block_horizontal: true,
@@ -261,19 +295,17 @@
             drag_min_distance: 0
         };
 
-        var mc = new Hammer(element, {
-            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
-        });
-        mc.set(hammerOptions);
+        var mc = new Hammer.Manager(element, hammerOptions);
 
         var panOptions = {
             pointers: 0,
-            direction: Hammer.DIRECTION_ALL
+            direction: Hammer.DIRECTION_ALL,
+            threshold: 0
         };
 
         var pan = new Hammer.Pan(panOptions);
         var pinch = new Hammer.Pinch({
-            threshold: 0.25
+            threshold: 0
         });
         var rotate = new Hammer.Rotate({
             threshold: 0.05
@@ -289,7 +321,7 @@
         // add to the Manager
         mc.add([ press, pan, pinch, rotate ]);
 
-        mc.on('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+        mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
 
         $(element).data('hammer', mc);
         cornerstoneTools.preventGhostClick(element);
@@ -304,7 +336,8 @@
 
     // module exports
     cornerstoneTools.touchInput = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
