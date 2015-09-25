@@ -129,7 +129,7 @@ is used by our example image loader-->
         var getTextInput = dialog.find('.annotationTextInput');
         var confirm = dialog.find('.annotationDialogConfirm');
 
-        dialog.get(0).show();
+        dialog.get(0).showModal();
 
         confirm.off('click');
         confirm.on('click', function() {
@@ -163,7 +163,7 @@ is used by our example image loader-->
         var remove = dialog.find('.relabelRemove');
 
         getTextInput.val(data.annotationText);
-        dialog.get(0).show();
+        dialog.get(0).showModal();
 
         confirm.off('click');
         confirm.on('click', function() {

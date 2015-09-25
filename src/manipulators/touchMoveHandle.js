@@ -4,12 +4,13 @@
 
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
+        var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
 
         function touchDragCallback(e, eventData) {
             handle.active = true;
             var touchMoveData = eventData;
-            handle.x = touchMoveData.currentPoints.image.x;
-            handle.y = touchMoveData.currentPoints.image.y;
+            handle.x = touchMoveData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = touchMoveData.currentPoints.image.y + distanceFromTouch.y;
             cornerstone.updateImage(element);
         }
 

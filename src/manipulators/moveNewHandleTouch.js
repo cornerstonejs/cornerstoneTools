@@ -4,11 +4,12 @@
 
     function moveNewHandleTouch(eventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = eventData.element;
+        var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
 
         function moveCallback(e, eventData) {
             handle.active = true;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
@@ -27,8 +28,8 @@
             $(element).off('CornerstoneToolsDragEnd', moveEndCallback);
 
             handle.active = false;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
