@@ -194,7 +194,7 @@
         var viewport = eventData.viewport;
         var element = eventData.element;
         var scale = eventData.scaleChange;
-        
+
         // Change the scale based on the pinch gesture's scale change
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;

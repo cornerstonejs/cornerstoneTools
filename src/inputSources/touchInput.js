@@ -17,6 +17,7 @@
     }
 
     function onTouch(e) {
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -112,7 +113,7 @@
                 initScale = viewport.scale || 1;
                 break;
 
-            case 'pinch':
+            case 'pinchmove':
                 var scaleChange = initScale * e.scale;
                 
                 startPoints = {
@@ -270,6 +271,7 @@
                     lastPoints: lastPoints,
                     currentPoints: currentPoints,
                     deltaPoints: deltaPoints,
+                    numPointers: e.pointers.length,
                     type: eventType,
                     isTouchEvent: true
                 };
@@ -327,8 +329,9 @@
                 $(element).trigger(event, eventData);
                 return cornerstoneTools.pauseEvent(e);
 
-            case 'rotate':
+            case 'rotatemove':
                 var rotation = e.rotation - lastRotation;
+                console.log(rotation);
                 lastRotation = e.rotation;
 
                 eventType = 'CornerstoneToolsTouchRotate';
@@ -350,12 +353,7 @@
     function enable(element) {
         disable(element);
         var hammerOptions = {
-            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput,
-            transform_always_block: true,
-            transform_min_scale: 0.01,
-            drag_block_horizontal: true,
-            drag_block_vertical: true,
-            drag_min_distance: 0
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
         };
 
         var mc = new Hammer.Manager(element, hammerOptions);
@@ -371,20 +369,19 @@
             threshold: 0
         });
         var rotate = new Hammer.Rotate({
-            threshold: 0.05
+            threshold: 0
         });
         var press = new Hammer.Press({
             threshold: 10
         });
         
         // we want to detect both the same time
-        pinch.recognizeWith(pan);
+        pinch.requireFailure(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
-        mc.add([ press, pan, pinch, rotate ]);
-
-        mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
+        mc.add([ pan, press, rotate, pinch ]);
+        mc.on('press tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
         $(element).data('hammer', mc);
         $(element).on('touchstart touchend', onTouch);
@@ -395,7 +392,7 @@
         $(element).off('touchstart touchend', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
-            mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+            mc.off('press tap doubletap panstart panmove panend pinchmove rotatemove', onTouch);
         }
     }
 

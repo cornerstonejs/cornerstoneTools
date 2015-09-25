@@ -341,6 +341,7 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function onTouch(e) {
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -436,7 +437,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 initScale = viewport.scale || 1;
                 break;
 
-            case 'pinch':
+            case 'pinchmove':
                 var scaleChange = initScale * e.scale;
                 
                 startPoints = {
@@ -594,6 +595,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     lastPoints: lastPoints,
                     currentPoints: currentPoints,
                     deltaPoints: deltaPoints,
+                    numPointers: e.pointers.length,
                     type: eventType,
                     isTouchEvent: true
                 };
@@ -651,8 +653,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(element).trigger(event, eventData);
                 return cornerstoneTools.pauseEvent(e);
 
-            case 'rotate':
+            case 'rotatemove':
                 var rotation = e.rotation - lastRotation;
+                console.log(rotation);
                 lastRotation = e.rotation;
 
                 eventType = 'CornerstoneToolsTouchRotate';
@@ -674,12 +677,7 @@ if (typeof cornerstoneTools === 'undefined') {
     function enable(element) {
         disable(element);
         var hammerOptions = {
-            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput,
-            transform_always_block: true,
-            transform_min_scale: 0.01,
-            drag_block_horizontal: true,
-            drag_block_vertical: true,
-            drag_min_distance: 0
+            inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
         };
 
         var mc = new Hammer.Manager(element, hammerOptions);
@@ -695,20 +693,19 @@ if (typeof cornerstoneTools === 'undefined') {
             threshold: 0
         });
         var rotate = new Hammer.Rotate({
-            threshold: 0.05
+            threshold: 0
         });
         var press = new Hammer.Press({
             threshold: 10
         });
         
         // we want to detect both the same time
-        pinch.recognizeWith(pan);
+        pinch.requireFailure(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
-        mc.add([ press, pan, pinch, rotate ]);
-
-        mc.on('press tap doubletap panstart panmove panend pinchstart pinch rotate', onTouch);
+        mc.add([ pan, press, rotate, pinch ]);
+        mc.on('press tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
         $(element).data('hammer', mc);
         $(element).on('touchstart touchend', onTouch);
@@ -719,7 +716,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('touchstart touchend', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
-            mc.off('press tap doubletap panstart panmove panend pinch rotate', onTouch);
+            mc.off('press tap doubletap panstart panmove panend pinchmove rotatemove', onTouch);
         }
     }
 
@@ -3798,6 +3795,41 @@ if (typeof cornerstoneTools === 'undefined') {
  
 // End Source; src/imageTools/magnify.js
 
+// Begin Source: src/imageTools/multiTouchDragTool.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function multiTouchDragTool(touchDragCallback) {
+        var configuration = {};
+        var events = 'CornerstoneToolsMultiTouchDrag';
+        
+        var toolInterface = {
+            activate: function(element) {
+                $(element).off(events, touchDragCallback);
+                $(element).on(events, touchDragCallback);
+            }, disable: function(element) {
+                $(element).off(events, touchDragCallback);
+            }, enable: function(element) {
+                $(element).off(events, touchDragCallback);
+            }, deactivate: function(element) {
+                $(element).off(events, touchDragCallback);
+            }, getConfiguration: function() {
+                return configuration;
+            }, setConfiguration: function(config) {
+                configuration = config;
+            }
+        };
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.multiTouchDragTool = multiTouchDragTool;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/imageTools/multiTouchDragTool.js
+
 // Begin Source: src/imageTools/orientationMarkers.js
 (function($, cornerstone, cornerstoneTools) {
 
@@ -3895,35 +3927,27 @@ if (typeof cornerstoneTools === 'undefined') {
     'use strict';
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
-
-    function mouseDragCallback(e, eventData) {
+    
+    function dragCallback(e, eventData) {
         eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
         eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
         cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-    function onDrag(e, eventData) {
-        var dragData = eventData;
-        dragData.viewport.translation.x += (dragData.deltaPoints.page.x / dragData.viewport.scale);
-        dragData.viewport.translation.y += (dragData.deltaPoints.page.y / dragData.viewport.scale);
-        cornerstone.setViewport(dragData.element, dragData.viewport);
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-    }
-
     cornerstoneTools.pan = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-    cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+    cornerstoneTools.panTouchDrag = cornerstoneTools.touchDragTool(dragCallback);
 
 })($, cornerstone, cornerstoneTools);
  
@@ -3935,25 +3959,23 @@ if (typeof cornerstoneTools === 'undefined') {
     'use strict';
 
     function touchPanCallback(e, eventData) {
-        eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
-        eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
-        cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+        var config = cornerstoneTools.panMultiTouch.getConfiguration();
+        if (config && config.testPointers(eventData)) {
+            eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
+            eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+            cornerstone.setViewport(eventData.element, eventData.viewport);
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+        }
     }
 
-    function disable(element) {
-        $(element).off('CornerstoneToolsMultiTouchDrag', touchPanCallback);
-    }
-
-    function activate(element) {
-        $(element).off('CornerstoneToolsMultiTouchDrag', touchPanCallback);
-        $(element).on('CornerstoneToolsMultiTouchDrag', touchPanCallback);
-    }
-
-    cornerstoneTools.panMultiTouch = {
-        activate: activate,
-        disable: disable
+    var configuration = {
+        testPointers: function(eventData) {
+            return (eventData.numPointers >= 2);
+        }
     };
+
+    cornerstoneTools.panMultiTouch = cornerstoneTools.multiTouchDragTool(touchPanCallback);
+    cornerstoneTools.panMultiTouch.setConfiguration(configuration);
 
 })($, cornerstone, cornerstoneTools);
  
@@ -4264,38 +4286,34 @@ if (typeof cornerstoneTools === 'undefined') {
         var rotationDegrees = rotationRadians * (180 / Math.PI);
         var rotation = -1 * rotationDegrees + 90;
         eventData.viewport.rotation = rotation;
+        cornerstone.setViewport(eventData.element, eventData.viewport);
     }
 
     function horizontalStrategy(eventData) {
         eventData.viewport.rotation += (eventData.deltaPoints.page.x / eventData.viewport.scale);
+        cornerstone.setViewport(eventData.element, eventData.viewport);
     }
 
     function verticalStrategy(eventData) {
         eventData.viewport.rotation += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+        cornerstone.setViewport(eventData.element, eventData.viewport);
     }
 
     // --- Mouse event callbacks --- //
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function mouseDragCallback(e, eventData) {
-        cornerstoneTools.rotate.strategy(eventData);
-        cornerstone.setViewport(eventData.element, eventData.viewport);
-        e.stopPropagation();
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-    }
-
-    function onDrag(e, eventData) {
+    function dragCallback(e, eventData) {
         cornerstoneTools.rotate.strategy(eventData);
         cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
@@ -4303,12 +4321,14 @@ if (typeof cornerstoneTools === 'undefined') {
 
     cornerstoneTools.rotate = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.rotate.strategies = {
-        default: defaultStrategy, horizontal: horizontalStrategy, vertical: verticalStrategy
+        default: defaultStrategy,
+        horizontal: horizontalStrategy,
+        vertical: verticalStrategy
     };
     
     cornerstoneTools.rotate.strategy = defaultStrategy;
 
-    cornerstoneTools.rotateTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+    cornerstoneTools.rotateTouchDrag = cornerstoneTools.touchDragTool(dragCallback);
 
 })($, cornerstone, cornerstoneTools);
  
@@ -5445,7 +5465,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var viewport = eventData.viewport;
         var element = eventData.element;
         var scale = eventData.scaleChange;
-        
+
         // Change the scale based on the pinch gesture's scale change
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
