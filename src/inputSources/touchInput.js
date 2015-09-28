@@ -376,7 +376,7 @@
         });
         
         // we want to detect both the same time
-        pinch.requireFailure(pan);
+        pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
