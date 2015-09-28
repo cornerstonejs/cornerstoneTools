@@ -108,7 +108,6 @@
                 break;
 
             case 'pinchstart':
-                console.log('pinchstart');
                 var viewport = cornerstone.getViewport(element);
                 initScale = viewport.scale || 1;
                 break;
@@ -211,6 +210,8 @@
                     eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
 
+                console.log(eventType);
+
                 eventData = {
                     event: e.srcEvent,
                     viewport: cornerstone.getViewport(element),
@@ -230,7 +231,7 @@
                 $(eventData.element).trigger(event, eventData);
                 lastPoints = cornerstoneTools.copyPoints(startPoints);
 
-                if (event.isImmediatePropagationStopped() === false) {
+                if (e.pointers.length === 1 && event.isImmediatePropagationStopped() === false) {
                     // No current tools responded to the drag action.
                     // Create new tool measurement
                     activateMouseDown(eventData);

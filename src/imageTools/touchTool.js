@@ -210,14 +210,15 @@
             // now check to see if there is a handle we can move
             var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
             var distanceSq = Math.pow(Math.max(Math.abs(distanceFromTouch.x), Math.abs(distanceFromTouch.y)), 2);
-            console.log(distanceFromTouch);
             if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
                     var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
                     if (handle) {
-                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         data.active = true;
                         cornerstoneTools.touchMoveHandle(e, handle, doneMovingCallback);
                         e.stopImmediatePropagation();

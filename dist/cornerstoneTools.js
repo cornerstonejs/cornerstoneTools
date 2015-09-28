@@ -432,7 +432,6 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'pinchstart':
-                console.log('pinchstart');
                 var viewport = cornerstone.getViewport(element);
                 initScale = viewport.scale || 1;
                 break;
@@ -534,6 +533,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 if (e.pointers.length > 1) {
                     eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
+                console.log(eventType);
 
                 eventData = {
                     event: e.srcEvent,
@@ -554,7 +554,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(eventData.element).trigger(event, eventData);
                 lastPoints = cornerstoneTools.copyPoints(startPoints);
 
-                if (event.isImmediatePropagationStopped() === false) {
+                if (e.pointers.length === 1 && event.isImmediatePropagationStopped() === false) {
                     // No current tools responded to the drag action.
                     // Create new tool measurement
                     activateMouseDown(eventData);
@@ -1581,14 +1581,15 @@ if (typeof cornerstoneTools === 'undefined') {
             // now check to see if there is a handle we can move
             var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
             var distanceSq = Math.pow(Math.max(Math.abs(distanceFromTouch.x), Math.abs(distanceFromTouch.y)), 2);
-            console.log(distanceFromTouch);
             if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
                     var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
                     if (handle) {
-                        $(eventData.element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
+                        $(element).off('CornerstoneToolsDragStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         data.active = true;
                         cornerstoneTools.touchMoveHandle(e, handle, doneMovingCallback);
                         e.stopImmediatePropagation();
