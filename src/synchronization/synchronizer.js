@@ -37,6 +37,10 @@
                 var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
                 var sourceImageId = sourceEnabledElement.image.imageId;
                 var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
+                    return;
+                }
+
                 var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
                 if (initialData.hasOwnProperty(sourceEnabledElement)) {
@@ -66,6 +70,10 @@
                     }
 
                     var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
+                        return;
+                    }
+
                     var targetImagePosition = targetImagePlane.imagePositionPatient;
 
                     initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
