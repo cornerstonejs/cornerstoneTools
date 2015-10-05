@@ -3,51 +3,20 @@
     'use strict';
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-
             var mouseDragEventData = {
-                deltaY: 0, options: e.data.options
+                deltaY: 0
             };
-            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, mouseDragCallback);
+            $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             e.stopImmediatePropagation();
             return false;
         }
-    }
-
-    function mouseDragCallback(e, eventData) {
-        e.data.deltaY += eventData.deltaPoints.page.y;
-
-        var element = eventData.element;
-
-        var toolData = cornerstoneTools.getToolState(eventData.element, 'stack');
-        if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
-            return;
-        }
-
-        var stackData = toolData.data[0];
-
-        // The Math.max here makes it easier to mouseDrag-scroll small image stacks
-        var pixelsPerImage = $(eventData.element).height() / Math.max(stackData.imageIds.length, 8);
-        if (e.data.options !== undefined && e.data.options.stackScrollSpeed !== undefined) {
-            pixelsPerImage = e.data.options.stackScrollSpeed;
-        }
-
-        if (e.data.deltaY >= pixelsPerImage || e.data.deltaY <= -pixelsPerImage) {
-            var imageDelta = e.data.deltaY / pixelsPerImage;
-            var imageDeltaMod = e.data.deltaY % pixelsPerImage;
-            var imageIdIndexOffset = Math.round(imageDelta);
-            e.data.deltaY = imageDeltaMod;
-
-            cornerstoneTools.scroll(element, imageIdIndexOffset);
-        }
-
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     function mouseWheelCallback(e, eventData) {
@@ -55,31 +24,46 @@
         cornerstoneTools.scroll(eventData.element, images);
     }
 
-    function onDrag(e, eventData) {
+    function dragCallback(e, eventData) {
         var element = eventData.element;
-        eventData.deltaY = eventData.deltaY || 0;
-        eventData.deltaY += eventData.deltaPoints.page.y;
 
-        var toolData = cornerstoneTools.getToolState(eventData.element, 'stack');
-        if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+        var toolData = cornerstoneTools.getToolState(element, 'stack');
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
+        
+        var stackData = toolData.data[0];
 
-        if (eventData.deltaY >= 3 || eventData.deltaY <= -3) {
-            var imageDelta = eventData.deltaY / 3;
-            var imageDeltaMod = eventData.deltaY % 3;
+        var config = cornerstoneTools.stackScroll.getConfiguration();
+
+        // The Math.max here makes it easier to mouseDrag-scroll small image stacks
+        var pixelsPerImage = $(element).height() / Math.max(stackData.imageIds.length, 8);
+        if (config && config.stackScrollSpeed) {
+            pixelsPerImage = config.stackScrollSpeed;
+        }
+
+        e.data.deltaY = e.data.deltaY || 0;
+        e.data.deltaY += eventData.deltaPoints.page.y;
+        if (Math.abs(e.data.deltaY) >= pixelsPerImage) {
+            var imageDelta = e.data.deltaY / pixelsPerImage;
             var imageIdIndexOffset = Math.round(imageDelta);
-            eventData.deltaY = imageDeltaMod;
-
+            var imageDeltaMod = e.data.deltaY % pixelsPerImage;
+            e.data.deltaY = imageDeltaMod;
             cornerstoneTools.scroll(element, imageIdIndexOffset);
         }
 
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     // module/private exports
     cornerstoneTools.stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
-    cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+
+    var options = {
+        eventData: {
+            deltaY: 0
+        }
+    };
+    cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(dragCallback, options);
 
 })($, cornerstone, cornerstoneTools);

@@ -11,7 +11,13 @@
         var toolInterface = {
             activate: function(element) {
                 $(element).off(events, touchDragCallback);
-                $(element).on(events, touchDragCallback);
+
+                if (options && options.eventData) {
+                    $(element).on(events, options.eventData, touchDragCallback);
+                } else {
+                    $(element).on(events, touchDragCallback);
+                }
+
                 if (options && options.activateCallback) {
                     options.activateCallback(element);
                 }
