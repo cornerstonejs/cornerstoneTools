@@ -3,8 +3,11 @@
     'use strict';
 
     var configuration = {
-        magnifySize: 100, magnificationLevel: 2,
+        magnifySize: 100,
+        magnificationLevel: 2,
     };
+
+    var browserName;
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -84,19 +87,33 @@
         // Fill it with the pixels that the mouse is clicking on
         zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
         
-        var scaledMagnifySize = magnifySize * magnificationLevel;
         var getSize = magnifySize / magnificationLevel;
         var copyFrom = {
-            x: canvasLocation.x - 0.5 * getSize, y: canvasLocation.y - 0.5 * getSize
+            x: canvasLocation.x - 0.5 * getSize,
+            y: canvasLocation.y - 0.5 * getSize
         };
 
-        zoomCtx.drawImage(canvas, copyFrom.x, copyFrom.y, magnifySize, magnifySize, 0, 0, scaledMagnifySize, scaledMagnifySize);
+        if (browserName === 'Safari') {
+            // Safari breaks when trying to copy pixels with negative indices
+            // This prevents proper Magnify usage
+            copyFrom.x = Math.max(copyFrom.x, 0);
+            copyFrom.y = Math.max(copyFrom.y, 0);
+        }
 
-        // Place the magnification tool at the same location as the pointer
+        copyFrom.x = Math.min(copyFrom.x, canvas.width);
+        copyFrom.y = Math.min(copyFrom.y, canvas.height);
+
+        var scaledMagnify = {
+            x: (canvas.width - copyFrom.x) * magnificationLevel,
+            y: (canvas.height - copyFrom.y) * magnificationLevel
+        };
+        zoomCtx.drawImage(canvas, copyFrom.x, copyFrom.y, canvas.width - copyFrom.x, canvas.height - copyFrom.y, 0, 0, scaledMagnify.x, scaledMagnify.y);
+
         if (eventData.isTouchEvent === true) {
             magnify.style.top = canvasLocation.y - 1 * magnifySize + 'px';
             magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
         } else {
+            // Place the magnification tool at the same location as the pointer
             magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
             magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
         }
@@ -139,6 +156,13 @@
 
     function enable(element) {
         var config = cornerstoneTools.magnify.getConfiguration(config);
+
+        if (!browserName) {
+            var infoString = cornerstoneTools.getBrowserInfo();
+            var info = infoString.split(' ');
+            browserName = info[0];
+        }
+
         createMagnificationCanvas(element);
     }
 

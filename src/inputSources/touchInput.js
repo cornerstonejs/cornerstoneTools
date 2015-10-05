@@ -17,7 +17,6 @@
     }
 
     function onTouch(e) {
-        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -210,8 +209,6 @@
                     eventType = 'CornerstoneToolsMultiTouchDragStart';
                 }
 
-                console.log(eventType);
-
                 eventData = {
                     event: e.srcEvent,
                     viewport: cornerstone.getViewport(element),
@@ -332,7 +329,6 @@
 
             case 'rotatemove':
                 var rotation = e.rotation - lastRotation;
-                console.log(rotation);
                 lastRotation = e.rotation;
 
                 eventType = 'CornerstoneToolsTouchRotate';
