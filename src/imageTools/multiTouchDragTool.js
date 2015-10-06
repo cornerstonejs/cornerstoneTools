@@ -10,15 +10,20 @@
             activate: function(element) {
                 $(element).off(events, touchDragCallback);
                 $(element).on(events, touchDragCallback);
-            }, disable: function(element) {
+            },
+            disable: function(element) {
                 $(element).off(events, touchDragCallback);
-            }, enable: function(element) {
+            },
+            enable: function(element) {
                 $(element).off(events, touchDragCallback);
-            }, deactivate: function(element) {
+            },
+            deactivate: function(element) {
                 $(element).off(events, touchDragCallback);
-            }, getConfiguration: function() {
+            },
+            getConfiguration: function() {
                 return configuration;
-            }, setConfiguration: function(config) {
+            },
+            setConfiguration: function(config) {
                 configuration = config;
             }
         };

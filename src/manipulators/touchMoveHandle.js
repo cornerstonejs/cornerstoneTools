@@ -4,7 +4,10 @@
 
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
         var element = touchEventData.element;
-        var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
+        var distanceFromTouch = {
+            x: handle.x - touchEventData.currentPoints.image.x,
+            y: handle.y - touchEventData.currentPoints.image.y
+        };
 
         function touchDragCallback(e, eventData) {
             handle.active = true;
@@ -19,6 +22,7 @@
         function touchEndCallback() {
             handle.active = false;
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+            $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             $(element).off('CornerstoneToolsTap', touchEndCallback);
             cornerstone.updateImage(element);
@@ -28,6 +32,7 @@
             }
         }
 
+        $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         $(element).on('CornerstoneToolsTap', touchEndCallback);
     }

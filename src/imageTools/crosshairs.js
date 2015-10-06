@@ -166,14 +166,14 @@
             synchronizationContext: synchronizationContext,
         });
 
-        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
 
-        $(element).on('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).on('CornerstoneToolsTouchStart', dragStartCallback);
     }
 
     // disables the reference line tool for the given element
     function disableTouch(element) {
-        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
     }
 
     cornerstoneTools.crosshairsTouch = {

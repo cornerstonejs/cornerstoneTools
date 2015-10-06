@@ -14,11 +14,20 @@
     
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, handles: {
+            visible: true,
+            active: true,
+            handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
-                }, end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -32,7 +41,10 @@
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width: Math.abs(startCanvas.x - endCanvas.x),
+            height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var insideBox = false;
@@ -48,7 +60,10 @@
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x), top: Math.min(startCanvas.y, endCanvas.y), width: Math.abs(startCanvas.x - endCanvas.x), height: Math.abs(startCanvas.y - endCanvas.y)
+            left: Math.min(startCanvas.x, endCanvas.x),
+            top: Math.min(startCanvas.y, endCanvas.y),
+            width: Math.abs(startCanvas.x - endCanvas.x),
+            height: Math.abs(startCanvas.y - endCanvas.y)
         };
 
         var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
@@ -90,7 +105,10 @@
         var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
         var rect = {
-            left: Math.min(handleStartCanvas.x, handleEndCanvas.x), top: Math.min(handleStartCanvas.y, handleEndCanvas.y), width: Math.abs(handleStartCanvas.x - handleEndCanvas.x), height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+            left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
+            top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
+            width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+            height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
         };
 
         // draw dark fill outside the rectangle
@@ -125,11 +143,19 @@
     var preventHandleOutsideImage = true;
 
     cornerstoneTools.highlight = cornerstoneTools.mouseButtonRectangleTool({
-        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, pointInsideRect: pointInsideRect, toolType: toolType
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        pointInsideRect: pointInsideRect,
+        toolType: toolType
     }, preventHandleOutsideImage);
     
     cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, pointInsideRect: pointInsideRect, toolType: toolType
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        pointInsideRect: pointInsideRect,
+        toolType: toolType
     }, preventHandleOutsideImage);
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

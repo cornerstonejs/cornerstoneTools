@@ -14,7 +14,7 @@
     "requirePaddingNewLinesAfterBlocks": {
         "allExcept": ["inCallExpressions", "inArrayExpressions", "inProperties"]
     },
-    //"requireObjectKeysOnNewLine": true, // Not supported yet by grunt-jscs, still in node-jscs dev
+    "requireObjectKeysOnNewLine": true,
     "requireSemicolons": true,
     "requireSpaceAfterBinaryOperators": true,
     "requireSpaceBeforeObjectValues": true,

@@ -6,11 +6,14 @@
         var configuration = {};
 
         var toolInterface = {
-            disable: function(element) {$(element).off('CornerstoneImageRendered', onImageRendered);}, enable: function(element) {
+            disable: function(element) {$(element).off('CornerstoneImageRendered', onImageRendered);},
+            enable: function(element) {
                 $(element).off('CornerstoneImageRendered', onImageRendered);
                 $(element).on('CornerstoneImageRendered', onImageRendered);
                 cornerstone.updateImage(element);
-            }, getConfiguration: function() { return configuration; }, setConfiguration: function(config) {configuration = config;}
+            },
+            getConfiguration: function() { return configuration; },
+            setConfiguration: function(config) {configuration = config;}
         };
 
         return toolInterface;

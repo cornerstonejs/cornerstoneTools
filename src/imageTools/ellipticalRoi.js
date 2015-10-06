@@ -8,11 +8,21 @@
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, invalidated: true, handles: {
+            visible: true,
+            active: true,
+            invalidated: true,
+            handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
-                }, end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -31,7 +41,8 @@
         }
 
         var center = {
-            x: ellipse.left + xRadius, y: ellipse.top + yRadius
+            x: ellipse.left + xRadius,
+            y: ellipse.top + yRadius
         };
 
         /* This is a more general form of the circle equation
@@ -40,7 +51,8 @@
          */
 
         var normalized = {
-            x: location.x - center.x, y: location.y - center.y
+            x: location.x - center.x,
+            y: location.y - center.y
         };
 
         var inEllipse = ((normalized.x * normalized.x) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
@@ -58,7 +70,8 @@
         for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
             for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
                 if (pointInEllipse(ellipse, {
-                    x: x, y: y
+                    x: x,
+                    y: y
                 }) === true) {
                     sum += sp[index];
                     sumSquared += sp[index] * sp[index];
@@ -71,7 +84,10 @@
 
         if (count === 0) {
             return {
-                count: count, mean: 0.0, variance: 0.0, stdDev: 0.0
+                count: count,
+                mean: 0.0,
+                variance: 0.0,
+                stdDev: 0.0
             };
         }
 
@@ -79,7 +95,10 @@
         var variance = sumSquared / count - mean * mean;
 
         return {
-            count: count, mean: mean, variance: variance, stdDev: Math.sqrt(variance)
+            count: count,
+            mean: mean,
+            variance: variance,
+            stdDev: Math.sqrt(variance)
         };
     }
 

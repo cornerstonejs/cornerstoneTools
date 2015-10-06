@@ -7,10 +7,15 @@
         mouseLocation: {
             handles: {
                 start: {
-                    highlight: true, active: true,
+                    highlight: true,
+                    active: true,
                 }
             }
-        }, freehand: false, modifying: false, currentHandle: 0, currentTool: -1
+        },
+        freehand: false,
+        modifying: false,
+        currentHandle: 0,
+        currentTool: -1
     };
 
     ///////// BEGIN ACTIVE TOOL ///////
@@ -27,7 +32,11 @@
         var data = toolData.data[config.currentTool];
 
         var handleData = {
-            x: eventData.currentPoints.image.x, y: eventData.currentPoints.image.y, highlight: true, active: true, lines: []
+            x: eventData.currentPoints.image.x,
+            y: eventData.currentPoints.image.y,
+            highlight: true,
+            active: true,
+            lines: []
         };
 
         // If this is not the first handle
@@ -82,7 +91,8 @@
             handleNearby = pointNearHandle(eventData, toolIndex);
             if (handleNearby !== undefined) {
                 return {
-                    handleNearby: handleNearby, toolIndex: toolIndex
+                    handleNearby: handleNearby,
+                    toolIndex: toolIndex
                 };
             }
         }
@@ -168,7 +178,9 @@
         $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
 
         var measurementData = {
-            visible: true, active: true, handles: [],
+            visible: true,
+            active: true,
+            handles: [],
         };
 
         var config = cornerstoneTools.freehand.getConfiguration();
@@ -391,7 +403,12 @@
 
     // module/private exports
     cornerstoneTools.freehand = {
-        enable: enable, disable: disable, activate: activate, deactivate: deactivate, getConfiguration: getConfiguration, setConfiguration: setConfiguration
+        enable: enable,
+        disable: disable,
+        activate: activate,
+        deactivate: deactivate,
+        getConfiguration: getConfiguration,
+        setConfiguration: setConfiguration
     };
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

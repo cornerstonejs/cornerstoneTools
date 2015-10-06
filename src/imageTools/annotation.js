@@ -75,11 +75,20 @@
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, handles: {
+            visible: true,
+            active: true,
+            handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
-                }, end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
                 }
             }
         };
@@ -90,7 +99,8 @@
 
     function pointNearTool(element, data, coords) {
         var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start), end: cornerstone.pixelToCanvas(element, data.handles.end)
+            start: cornerstone.pixelToCanvas(element, data.handles.start),
+            end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
 
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
@@ -193,11 +203,13 @@
                 var vector;
                 
                 var displacement = {
-                    x: distance, y: distance / 2
+                    x: distance,
+                    y: distance / 2
                 };
 
                 vector = {
-                    x: handleEndCanvas.x - handleStartCanvas.x, y: handleEndCanvas.y - handleStartCanvas.y
+                    x: handleEndCanvas.x - handleStartCanvas.x,
+                    y: handleEndCanvas.y - handleStartCanvas.y
                 };
 
                 var textCoords;
@@ -208,7 +220,8 @@
                     }
 
                     textCoords = {
-                        x: vector.x + handleStartCanvas.x + displacement.x, y: vector.y + handleStartCanvas.y + displacement.y
+                        x: vector.x + handleStartCanvas.x + displacement.x,
+                        y: vector.y + handleStartCanvas.y + displacement.y
                     };
                 } else {
                     // Fix text placement if arrow faces right
@@ -217,7 +230,8 @@
                     }
 
                     textCoords = {
-                        x: -vector.x + handleEndCanvas.x + displacement.x, y: -vector.y + handleEndCanvas.y + displacement.y
+                        x: -vector.x + handleEndCanvas.x + displacement.x,
+                        y: -vector.y + handleEndCanvas.y + displacement.y
                     };
                 }
 

@@ -55,7 +55,8 @@
         // Draw text
         var coords = {
             // translate the x/y away from the cursor
-            x: eventData.currentPoints.image.x + 3, y: eventData.currentPoints.image.y - 3
+            x: eventData.currentPoints.image.x + 3,
+            y: eventData.currentPoints.image.y - 3
         };
         var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
         

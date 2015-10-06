@@ -277,7 +277,7 @@
     // --- Touch tool enable / disable --- //
     function disableTouchDrag(element) {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
-        $(element).off('CornerstoneToolsDragStart', recordStartPoint);
+        $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
         $(element).off('CornerstoneImageRendered', onImageRendered);
     }
@@ -290,12 +290,12 @@
         }
 
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
-        $(element).off('CornerstoneToolsDragStart', recordStartPoint);
+        $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
         $(element).off('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsTouchDrag', dragCallback);
-        $(element).on('CornerstoneToolsDragStart', recordStartPoint);
+        $(element).on('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
         $(element).on('CornerstoneImageRendered', onImageRendered);
     }

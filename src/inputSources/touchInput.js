@@ -12,11 +12,8 @@
         deltaPoints,
         eventData;
     
-    function activateMouseDown(eventData) {
-        $(eventData.element).trigger('CornerstoneToolsDragStartActive', eventData);
-    }
-
     function onTouch(e) {
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -163,6 +160,15 @@
 
                 event = $.Event(eventType, eventData);
                 $(eventData.element).trigger(event, eventData);
+
+                if (event.isImmediatePropagationStopped() === false) {
+                    // No current tools responded to the drag action.
+                    // Create new tool measurement
+                    eventType = 'CornerstoneToolsTouchStartActive';
+                    eventData.type = eventType;
+                    $(element).trigger(eventType, eventData);
+                }
+                lastPoints = cornerstoneTools.copyPoints(startPoints);
                 break;
 
             case 'touchend':
@@ -191,49 +197,6 @@
 
                 event = $.Event(eventType, eventData);
                 $(eventData.element).trigger(event, eventData);
-                break;
-
-            case 'panstart':
-                startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
-                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
-                    client: {
-                        x: e.pointers[0].clientX,
-                        y: e.pointers[0].clientY
-                    }
-                };
-                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
-
-                eventType = 'CornerstoneToolsDragStart';
-                if (e.pointers.length > 1) {
-                    eventType = 'CornerstoneToolsMultiTouchDragStart';
-                }
-
-                eventData = {
-                    event: e.srcEvent,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    startPoints: startPoints,
-                    lastPoints: lastPoints,
-                    currentPoints: startPoints,
-                    deltaPoints: {
-                        x: 0, y: 0
-                    },
-                    type: eventType,
-                    isTouchEvent: true
-                };
-
-                event = $.Event(eventType, eventData);
-                $(eventData.element).trigger(event, eventData);
-                lastPoints = cornerstoneTools.copyPoints(startPoints);
-
-                if (e.pointers.length === 1 && event.isImmediatePropagationStopped() === false) {
-                    // No current tools responded to the drag action.
-                    // Create new tool measurement
-                    activateMouseDown(eventData);
-                }
-
                 break;
 
             case 'panmove':
@@ -306,9 +269,6 @@
                 };
 
                 eventType = 'CornerstoneToolsDragEnd';
-                if (e.pointers.length > 1) {
-                    eventType = 'CornerstoneToolsMultiTouchDragEnd';
-                }
 
                 eventData = {
                     event: e.srcEvent,
