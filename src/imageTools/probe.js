@@ -9,13 +9,13 @@
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
             visible: true,
- active: true,
- handles: {
+            active: true,
+            handles: {
                 end: {
                     x: mouseEventData.currentPoints.image.x,
- y: mouseEventData.currentPoints.image.y,
- highlight: true,
- active: true
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -90,7 +90,7 @@
             var coords = {
                 // translate the x/y away from the cursor
                 x: data.handles.end.x + 3,
- y: data.handles.end.y - 3
+                y: data.handles.end.y - 3
             };
             var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
             
@@ -107,15 +107,15 @@
     // module exports
     cornerstoneTools.probe = cornerstoneTools.mouseButtonTool({
         createNewMeasurement: createNewMeasurement,
- onImageRendered: onImageRendered,
- pointNearTool: pointNearTool,
- toolType: toolType
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
     });
     cornerstoneTools.probeTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
- onImageRendered: onImageRendered,
- pointNearTool: pointNearTool,
- toolType: toolType
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
     });
 
 })($, cornerstone, cornerstoneTools);

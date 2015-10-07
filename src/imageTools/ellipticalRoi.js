@@ -197,7 +197,10 @@
             
             context.font = font;
 
-            var textX, textY, meanStdDev, area, areaText, textSize;
+            var textX,
+                textY,
+                area,
+                meanStdDev;
 
             if (!data.invalidated) {
                 textX = data.textX;
@@ -233,22 +236,31 @@
                     data.meanStdDev = meanStdDev;
                 }
             }
+
             // Draw text
+
+            var areaText,
+                areaTextWidth;
             if (area !== undefined) {
                 areaText = 'Area: ' + area.toFixed(2) + ' mm' + String.fromCharCode(178);
-                textSize = context.measureText(areaText);
-            } else {
-                var stdDevText = 'StdDev: ' + meanStdDev.stdDev.toFixed(2);
-                textSize = context.measureText(stdDevText);
+                areaTextWidth = context.measureText(areaText).width;
             }
 
-            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2): centerX - (widthCanvas / 2) - textSize.width;
+            var meanText = 'Mean: ' + meanStdDev.mean.toFixed(2);
+            var meanTextWidth = context.measureText(meanText).width;
+
+            var stdDevText = 'StdDev: ' + meanStdDev.stdDev.toFixed(2);
+            var stdDevTextWidth = context.measureText(stdDevText).width;
+
+            var longestTextWidth = Math.max(meanTextWidth, areaTextWidth, stdDevTextWidth);
+
+            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 5;
             textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
             if (meanStdDev) {
-                cornerstoneTools.drawTextBox(context, 'Mean: ' + meanStdDev.mean.toFixed(2), textX, textY - fontHeight - 5, color);
-                cornerstoneTools.drawTextBox(context, 'StdDev: ' + meanStdDev.stdDev.toFixed(2), textX, textY, color);
+                cornerstoneTools.drawTextBox(context, meanText, textX, textY - fontHeight - 5, color);
+                cornerstoneTools.drawTextBox(context, stdDevText, textX, textY, color);
             }
             
             // Char code 178 is a superscript 2 for mm^2
