@@ -19,8 +19,11 @@
         var eventType = 'CornerstoneToolsMouseDoubleClick';
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
-                x: e.clientX, y: e.clientY
+            page: cornerstoneMath.point.pageToPoint(e),
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {
+                x: e.clientX,
+                y: e.clientY
             }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
@@ -36,7 +39,8 @@
             lastPoints: lastPoints,
             currentPoints: startPoints,
             deltaPoints: {
-                x: 0, y: 0
+                x: 0,
+                y: 0
             },
             type: eventType
         };
@@ -55,8 +59,11 @@
         $(element).off('mousemove', mouseMove);
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
-                x: e.clientX, y: e.clientY
+            page: cornerstoneMath.point.pageToPoint(e),
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {
+                x: e.clientX,
+                y: e.clientY
             }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
@@ -72,7 +79,8 @@
             lastPoints: lastPoints,
             currentPoints: startPoints,
             deltaPoints: {
-                x: 0, y: 0
+                x: 0,
+                y: 0
             },
             type: eventType
         };
@@ -93,15 +101,21 @@
             // calculate our current points in page and image coordinates
             var eventType = 'CornerstoneToolsMouseDrag';
             var currentPoints = {
-                page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
-                    x: e.clientX, y: e.clientY
+                page: cornerstoneMath.point.pageToPoint(e),
+                image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+                client: {
+                    x: e.clientX,
+                    y: e.clientY
                 }
             };
             currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
             // Calculate delta values in page and image coordinates
             var deltaPoints = {
-                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+                page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+                image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+                client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+                canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
             };
 
             var eventData = {
@@ -160,7 +174,8 @@
                 which: whichMouseButton,
                 viewport: cornerstone.getViewport(element),
                 image: cornerstone.getEnabledElement(element).image,
-                element: element, startPoints: startPoints,
+                element: element,
+                startPoints: startPoints,
                 lastPoints: lastPoints,
                 currentPoints: currentPoints,
                 deltaPoints: deltaPoints,
@@ -189,8 +204,11 @@
         var eventType = 'CornerstoneToolsMouseMove';
 
         var startPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
-                x: e.clientX, y: e.clientY
+            page: cornerstoneMath.point.pageToPoint(e),
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {
+                x: e.clientX,
+                y: e.clientY
             }
         };
         startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
@@ -201,15 +219,21 @@
 
         // calculate our current points in page and image coordinates
         var currentPoints = {
-            page: cornerstoneMath.point.pageToPoint(e), image: cornerstone.pageToPixel(element, e.pageX, e.pageY), client: {
-                x: e.clientX, y: e.clientY
+            page: cornerstoneMath.point.pageToPoint(e),
+            image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+            client: {
+                x: e.clientX,
+                y: e.clientY
             }
         };
         currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
 
         // Calculate delta values in page and image coordinates
         var deltaPoints = {
-            page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page), image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image), client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client), canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+            page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+            image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+            client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+            canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
         };
 
         var eventData = {

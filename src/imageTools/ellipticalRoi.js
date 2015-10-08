@@ -240,7 +240,7 @@
             // Draw text
 
             var areaText,
-                areaTextWidth;
+                areaTextWidth = 0;
             if (area !== undefined) {
                 areaText = 'Area: ' + area.toFixed(2) + ' mm' + String.fromCharCode(178);
                 areaTextWidth = context.measureText(areaText).width;
@@ -254,7 +254,7 @@
 
             var longestTextWidth = Math.max(meanTextWidth, areaTextWidth, stdDevTextWidth);
 
-            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 5;
+            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 15;
             textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;

@@ -92,9 +92,11 @@
 
         var toolCoords;
         if (eventData.isTouchEvent === true) {
+            var ratio = image.height / enabledElement.canvas.height;
+            console.log ('Image to canvas height ratio: ' + ratio);
             toolCoords = {
                 x: eventData.currentPoints.image.x,
-                y: eventData.currentPoints.image.y - cornerstoneTools.textStyle.getFontSize() * 2
+                y: eventData.currentPoints.image.y - cornerstoneTools.textStyle.getFontSize() * 4 * ratio
             };
         } else {
             toolCoords = eventData.currentPoints.image;

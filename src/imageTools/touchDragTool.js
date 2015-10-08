@@ -21,17 +21,20 @@
                 if (options && options.activateCallback) {
                     options.activateCallback(element);
                 }
-            }, disable: function(element) {
+            },
+            disable: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.disableCallback) {
                     options.disableCallback(element);
                 }
-            }, enable: function(element) {
+            },
+            enable: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.enableCallback) {
                     options.enableCallback(element);
                 }
-            }, deactivate: function(element) {
+            },
+            deactivate: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.deactivateCallback) {
                     options.deactivateCallback(element);

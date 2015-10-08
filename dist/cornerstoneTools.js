@@ -1,8 +1,4 @@
-<<<<<<< HEAD
 /*! cornerstoneTools - v0.7.7 - 2015-11-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
-=======
-/*! cornerstoneTools - v0.7.6 - 2015-10-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
->>>>>>> dragProbe fixes for touch devices. JSCS cleanup
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -704,7 +700,8 @@ if (typeof cornerstoneTools === 'undefined') {
             activate: function(element, mouseButtonMask, options) {
                 $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
                 var eventData = {
-                    mouseButtonMask: mouseButtonMask, options: options
+                    mouseButtonMask: mouseButtonMask,
+                    options: options
                 };
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
             },
@@ -1286,17 +1283,20 @@ if (typeof cornerstoneTools === 'undefined') {
                 if (options && options.activateCallback) {
                     options.activateCallback(element);
                 }
-            }, disable: function(element) {
+            },
+            disable: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.disableCallback) {
                     options.disableCallback(element);
                 }
-            }, enable: function(element) {
+            },
+            enable: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.enableCallback) {
                     options.enableCallback(element);
                 }
-            }, deactivate: function(element) {
+            },
+            deactivate: function(element) {
                 $(element).off(events, touchDragCallback);
                 if (options && options.deactivateCallback) {
                     options.deactivateCallback(element);
@@ -2545,26 +2545,23 @@ if (typeof cornerstoneTools === 'undefined') {
         
         context.save();
 
-<<<<<<< HEAD
         if (config && config.shadow) {
             context.shadowColor = config.shadowColor || '#000000';
             context.shadowOffsetX = config.shadowOffsetX || 1;
             context.shadowOffsetY = config.shadowOffsetY || 1;
         }
 
-        var x = Math.round(eventData.currentPoints.image.x);
-        var y = Math.round(eventData.currentPoints.image.y);
-=======
         var toolCoords;
         if (eventData.isTouchEvent === true) {
+            var ratio = image.height / enabledElement.canvas.height;
+            console.log ('Image to canvas height ratio: ' + ratio);
             toolCoords = {
                 x: eventData.currentPoints.image.x,
-                y: eventData.currentPoints.image.y - cornerstoneTools.textStyle.getFontSize() * 2
+                y: eventData.currentPoints.image.y - cornerstoneTools.textStyle.getFontSize() * 4 * ratio
             };
         } else {
             toolCoords = eventData.currentPoints.image;
         }
->>>>>>> dragProbe fixes for touch devices. JSCS cleanup
 
         var storedPixels;
         var text;
@@ -2894,7 +2891,7 @@ if (typeof cornerstoneTools === 'undefined') {
             // Draw text
 
             var areaText,
-                areaTextWidth;
+                areaTextWidth = 0;
             if (area !== undefined) {
                 areaText = 'Area: ' + area.toFixed(2) + ' mm' + String.fromCharCode(178);
                 areaTextWidth = context.measureText(areaText).width;
@@ -2908,7 +2905,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var longestTextWidth = Math.max(meanTextWidth, areaTextWidth, stdDevTextWidth);
 
-            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 5;
+            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 15;
             textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
 
             context.fillStyle = color;
@@ -4466,7 +4463,8 @@ if (typeof cornerstoneTools === 'undefined') {
         var rect = eventData.element.getBoundingClientRect(eventData.element);
 
         var points = {
-            x: eventData.currentPoints.client.x, y: eventData.currentPoints.client.y
+            x: eventData.currentPoints.client.x,
+            y: eventData.currentPoints.client.y
         };
 
         var width = eventData.element.clientWidth;
@@ -4551,7 +4549,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     cornerstoneTools.rotateTouch = {
-        activate: activate, disable: disable
+        activate: activate,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);
@@ -4609,13 +4608,26 @@ if (typeof cornerstoneTools === 'undefined') {
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var angleData = {
-            visible: true, active: true, handles: {
+            visible: true,
+            active: true,
+            handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
-                }, middle: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
-                }, end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                middle: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
+                },
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
                 }
             }
         };
@@ -4626,7 +4638,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function pointNearTool(element, data, coords) {
         var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start), end: cornerstone.pixelToCanvas(element, data.handles.middle)
+            start: cornerstone.pixelToCanvas(element, data.handles.start),
+            end: cornerstone.pixelToCanvas(element, data.handles.middle)
         };
 
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
@@ -4713,15 +4726,18 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             var sideA = {
-                x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing, y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+                x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
             };
 
             var sideB = {
-                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing, y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
             };
 
             var sideC = {
-                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing, y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+                x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+                y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
             };
 
             var sideALength = length(sideA);
@@ -4883,7 +4899,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, text: config.current, handles: {
+            visible: true,
+            active: true,
+            text: config.current,
+            handles: {
                 end: {
                     x: mouseEventData.currentPoints.image.x,
                     y: mouseEventData.currentPoints.image.y,

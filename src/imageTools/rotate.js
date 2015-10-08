@@ -8,7 +8,8 @@
         var rect = eventData.element.getBoundingClientRect(eventData.element);
 
         var points = {
-            x: eventData.currentPoints.client.x, y: eventData.currentPoints.client.y
+            x: eventData.currentPoints.client.x,
+            y: eventData.currentPoints.client.y
         };
 
         var width = eventData.element.clientWidth;

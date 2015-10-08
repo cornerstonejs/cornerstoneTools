@@ -14,7 +14,10 @@
 
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, text: config.current, handles: {
+            visible: true,
+            active: true,
+            text: config.current,
+            handles: {
                 end: {
                     x: mouseEventData.currentPoints.image.x,
                     y: mouseEventData.currentPoints.image.y,
