@@ -74,6 +74,10 @@
         // Calculate the on-canvas location of the mouse pointer / touch
         var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
+        if (eventData.isTouchEvent === true) {
+            canvasLocation.y -= 0.5 * magnifySize;
+        }
+
         canvasLocation.x = Math.max(canvasLocation.x, 0);
         canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
 

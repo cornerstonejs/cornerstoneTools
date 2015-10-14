@@ -5,7 +5,7 @@
     function touchSettingsManager() {
         var defaultDistanceFromTouch = {
             x: 0,
-            y: -45
+            y: -55
         };
 
         function setToolDistanceFromTouch(distance){

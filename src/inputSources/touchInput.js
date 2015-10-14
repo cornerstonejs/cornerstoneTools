@@ -10,10 +10,11 @@
         currentPoints,
         lastPoints,
         deltaPoints,
-        eventData;
+        eventData,
+        touchStartDelay;
     
     function onTouch(e) {
-        console.log(e.type);
+        //console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -135,40 +136,53 @@
                 break;
 
             case 'touchstart':
-                startPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
-                    image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
-                    client: {
-                        x: e.originalEvent.touches[0].clientX,
-                        y: e.originalEvent.touches[0].clientY
+                clearTimeout(touchStartDelay);
+                touchStartDelay = setTimeout(function() {
+                    console.log('touchstart, touches: ' + e.originalEvent.touches.length);
+                    startPoints = {
+                        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+                        image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
+                        client: {
+                            x: e.originalEvent.touches[0].clientX,
+                            y: e.originalEvent.touches[0].clientY
+                        }
+                    };
+                    startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
+                    eventType = 'CornerstoneToolsTouchStart';
+                    if (e.originalEvent.touches.length > 1) {
+                        eventType = 'CornerstoneToolsMultiTouchStart';
                     }
-                };
-                startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-                eventType = 'CornerstoneToolsTouchStart';
+                    eventData = {
+                        event: e.srcEvent,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        startPoints: startPoints,
+                        currentPoints: startPoints,
+                        type: eventType,
+                        isTouchEvent: true
+                    };
 
-                eventData = {
-                    event: e.srcEvent,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    startPoints: startPoints,
-                    currentPoints: startPoints,
-                    type: eventType,
-                    isTouchEvent: true
-                };
+                    event = $.Event(eventType, eventData);
+                    $(eventData.element).trigger(event, eventData);
 
-                event = $.Event(eventType, eventData);
-                $(eventData.element).trigger(event, eventData);
+                    if (event.isImmediatePropagationStopped() === false) {
+                        // No current tools responded to the drag action.
+                        // Create new tool measurement
+                        eventType = 'CornerstoneToolsTouchStartActive';
+                        if (e.originalEvent.touches.length > 1) {
+                            eventType = 'CornerstoneToolsMultiTouchStartActive';
+                        }
 
-                if (event.isImmediatePropagationStopped() === false) {
-                    // No current tools responded to the drag action.
-                    // Create new tool measurement
-                    eventType = 'CornerstoneToolsTouchStartActive';
-                    eventData.type = eventType;
-                    $(element).trigger(eventType, eventData);
-                }
-                lastPoints = cornerstoneTools.copyPoints(startPoints);
+                        eventData.type = eventType;
+                        $(element).trigger(eventType, eventData);
+                    }
+
+                    console.log(eventType);
+                    lastPoints = cornerstoneTools.copyPoints(startPoints);
+                }, 20);
                 break;
 
             case 'touchend':
@@ -304,6 +318,8 @@
                 $(element).trigger(event, eventData);
                 break;
         }
+
+        console.log(eventType);
         return false;
     }
 

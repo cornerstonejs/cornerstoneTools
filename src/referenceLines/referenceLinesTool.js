@@ -40,7 +40,8 @@
         renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
 
         cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext: synchronizationContext, renderer: renderer
+            synchronizationContext: synchronizationContext,
+            renderer: renderer
         });
         $(element).on('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
@@ -54,7 +55,8 @@
 
     // module/private exports
     cornerstoneTools.referenceLines.tool = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
 
     };
 

@@ -8,7 +8,8 @@
         var x = imagePlane.rowCosines.dot(point) / imagePlane.columnPixelSpacing;
         var y = imagePlane.columnCosines.dot(point) / imagePlane.rowPixelSpacing;
         return {
-            x: x, y: y
+            x: x,
+            y: y
         };
     }
 

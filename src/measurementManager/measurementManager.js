@@ -13,7 +13,8 @@
             var index = that.measurements.push(measurement);
             // fire event
             var eventDetail = {
-                index: index, measurement: measurement
+                index: index,
+                measurement: measurement
             };
             $(that).trigger('CornerstoneMeasurementAdded', eventDetail);
         };
@@ -23,7 +24,8 @@
             that.measurements.splice(index, 1);
             // fire event
             var eventDetail = {
-                index: index, measurement: measurement
+                index: index,
+                measurement: measurement
             };
             $(that).trigger('CornerstoneMeasurementRemoved', eventDetail);
         };

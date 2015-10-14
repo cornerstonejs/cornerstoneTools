@@ -24,7 +24,14 @@
         var direction = Math.max(-1, Math.min(1, (wheelDelta)));
 
         var mouseWheelData = {
-            element: element, viewport: cornerstone.getViewport(element), image: cornerstone.getEnabledElement(element).image, direction: direction, pageX: e.pageX || e.originalEvent.pageX, pageY: e.pageY || e.originalEvent.pageY, imageX: startingCoords.x, imageY: startingCoords.y
+            element: element,
+            viewport: cornerstone.getViewport(element),
+            image: cornerstone.getEnabledElement(element).image,
+            direction: direction,
+            pageX: e.pageX || e.originalEvent.pageX,
+            pageY: e.pageY || e.originalEvent.pageY,
+            imageX: startingCoords.x,
+            imageY: startingCoords.y
         };
 
         $(element).trigger('CornerstoneToolsMouseWheel', mouseWheelData);
@@ -42,7 +49,8 @@
 
     // module exports
     cornerstoneTools.mouseWheelInput = {
-        enable: enable, disable: disable
+        enable: enable,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

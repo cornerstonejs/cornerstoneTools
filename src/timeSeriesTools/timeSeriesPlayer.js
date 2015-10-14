@@ -29,7 +29,10 @@
         var playClipData;
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
-                intervalId: undefined, framesPerSecond: framesPerSecond, lastFrameTimeStamp: undefined, frameRate: 0
+                intervalId: undefined,
+                framesPerSecond: framesPerSecond,
+                lastFrameTimeStamp: undefined,
+                frameRate: 0
             };
             cornerstoneTools.addToolState(element, toolType, playClipData);
         } else {
@@ -70,7 +73,8 @@
 
     // module/private exports
     cornerstoneTools.timeSeriesPlayer = {
-        start: playClip, stop: stopClip
+        start: playClip,
+        stop: stopClip
     };
 
 })($, cornerstone, cornerstoneTools);

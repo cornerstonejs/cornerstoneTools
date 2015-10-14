@@ -32,7 +32,10 @@
                 var image = eventData.image;
                 var handleOutsideImage = false;
                 var rect = {
-                    top: 0, left: 0, width: image.width, height: image.height
+                    top: 0,
+                    left: 0,
+                    width: image.width,
+                    height: image.height
                 };
                 
                 Object.keys(data.handles).forEach(function(name) {

@@ -32,7 +32,11 @@
         
         if (playClipToolData === undefined || playClipToolData.data.length === 0) {
             playClipData = {
-                intervalId: undefined, framesPerSecond: framesPerSecond, lastFrameTimeStamp: undefined, frameRate: 0, loop: true
+                intervalId: undefined,
+                framesPerSecond: framesPerSecond,
+                lastFrameTimeStamp: undefined,
+                frameRate: 0,
+                loop: true
             };
             cornerstoneTools.addToolState(element, toolType, playClipData);
         } else {

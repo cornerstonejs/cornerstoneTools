@@ -14,7 +14,8 @@
         }
 
         var toolCoords = {
-            setCoords: setActiveToolCoords, getCoords: getActiveToolCoords
+            setCoords: setActiveToolCoords,
+            getCoords: getActiveToolCoords
         };
 
         return toolCoords;
