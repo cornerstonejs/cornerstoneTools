@@ -495,7 +495,6 @@ if (typeof cornerstoneTools === 'undefined') {
             case 'touchstart':
                 clearTimeout(touchStartDelay);
                 touchStartDelay = setTimeout(function() {
-                    console.log('touchstart, touches: ' + e.originalEvent.touches.length);
                     startPoints = {
                         page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
                         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
@@ -3839,11 +3838,13 @@ if (typeof cornerstoneTools === 'undefined') {
         var zoomCtx = magnify.getContext('2d');
         zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
 
+        var getSize = magnifySize / magnificationLevel;
+
         // Calculate the on-canvas location of the mouse pointer / touch
         var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
         if (eventData.isTouchEvent === true) {
-            canvasLocation.y -= 0.5 * magnifySize;
+            canvasLocation.y -= 1.25 * getSize;
         }
 
         canvasLocation.x = Math.max(canvasLocation.x, 0);
@@ -3859,7 +3860,6 @@ if (typeof cornerstoneTools === 'undefined') {
         // Fill it with the pixels that the mouse is clicking on
         zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
         
-        var getSize = magnifySize / magnificationLevel;
         var copyFrom = {
             x: canvasLocation.x - 0.5 * getSize,
             y: canvasLocation.y - 0.5 * getSize
@@ -3881,14 +3881,9 @@ if (typeof cornerstoneTools === 'undefined') {
         };
         zoomCtx.drawImage(canvas, copyFrom.x, copyFrom.y, canvas.width - copyFrom.x, canvas.height - copyFrom.y, 0, 0, scaledMagnify.x, scaledMagnify.y);
 
-        if (eventData.isTouchEvent === true) {
-            magnify.style.top = canvasLocation.y - 1 * magnifySize + 'px';
-            magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
-        } else {
-            // Place the magnification tool at the same location as the pointer
-            magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
-            magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
-        }
+        // Place the magnification tool at the same location as the pointer
+        magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
+        magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
 
         magnify.style.display = 'block';
 
@@ -6325,9 +6320,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function moveNewHandleTouch(eventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = eventData.element;
+        var imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
         var distanceFromTouch = {
-            x: handle.x - eventData.currentPoints.image.x,
-            y: handle.y - eventData.currentPoints.image.y
+            x: handle.x - imageCoords.x,
+            y: handle.y - imageCoords.y
         };
 
         function moveCallback(e, eventData) {

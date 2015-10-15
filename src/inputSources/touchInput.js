@@ -138,7 +138,6 @@
             case 'touchstart':
                 clearTimeout(touchStartDelay);
                 touchStartDelay = setTimeout(function() {
-                    console.log('touchstart, touches: ' + e.originalEvent.touches.length);
                     startPoints = {
                         page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
                         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),

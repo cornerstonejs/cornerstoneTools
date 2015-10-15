@@ -71,11 +71,13 @@
         var zoomCtx = magnify.getContext('2d');
         zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
 
+        var getSize = magnifySize / magnificationLevel;
+
         // Calculate the on-canvas location of the mouse pointer / touch
         var canvasLocation = cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
         if (eventData.isTouchEvent === true) {
-            canvasLocation.y -= 0.5 * magnifySize;
+            canvasLocation.y -= 1.25 * getSize;
         }
 
         canvasLocation.x = Math.max(canvasLocation.x, 0);
@@ -91,7 +93,6 @@
         // Fill it with the pixels that the mouse is clicking on
         zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
         
-        var getSize = magnifySize / magnificationLevel;
         var copyFrom = {
             x: canvasLocation.x - 0.5 * getSize,
             y: canvasLocation.y - 0.5 * getSize
@@ -113,14 +114,9 @@
         };
         zoomCtx.drawImage(canvas, copyFrom.x, copyFrom.y, canvas.width - copyFrom.x, canvas.height - copyFrom.y, 0, 0, scaledMagnify.x, scaledMagnify.y);
 
-        if (eventData.isTouchEvent === true) {
-            magnify.style.top = canvasLocation.y - 1 * magnifySize + 'px';
-            magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
-        } else {
-            // Place the magnification tool at the same location as the pointer
-            magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
-            magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
-        }
+        // Place the magnification tool at the same location as the pointer
+        magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
+        magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
 
         magnify.style.display = 'block';
 
