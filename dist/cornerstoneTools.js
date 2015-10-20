@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.6 - 2015-09-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.6 - 2015-10-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6720,6 +6720,7 @@ Display scroll progress bar across bottom of image.
     }
 
     function disable(element) {
+        clearTimeout(resetPrefetchTimeout);
         $(element).off('CornerstoneNewImage', onImageUpdated);
 
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);

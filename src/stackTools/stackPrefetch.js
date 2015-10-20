@@ -262,6 +262,7 @@
     }
 
     function disable(element) {
+        clearTimeout(resetPrefetchTimeout);
         $(element).off('CornerstoneNewImage', onImageUpdated);
 
         $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
