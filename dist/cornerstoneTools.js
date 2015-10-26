@@ -368,7 +368,11 @@ if (typeof cornerstoneTools === 'undefined') {
         lastPoints,
         deltaPoints,
         eventData,
-        touchStartDelay;
+        touchStartDelay,
+        pressDelay = 500,
+        pressTimeout,
+        isPress = false,
+        pressMaxDistance = 10;
     
     function onTouch(e) {
         //console.log(e.type);
@@ -381,6 +385,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
         switch (e.type) {
             case 'tap':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 // calculate our current points in page and image coordinates
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
@@ -408,6 +415,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'doubletap':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 // calculate our current points in page and image coordinates
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
@@ -434,39 +444,18 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(element).trigger(event, eventData);
                 break;
 
-            case 'press':
-                // calculate our current points in page and image coordinates
-                currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
-                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
-                    client: {
-                        x: e.pointers[0].clientX,
-                        y: e.pointers[0].clientY
-                    }
-                };
-                currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
-
-                eventType = 'CornerstoneToolsTouchPress';
-                eventData = {
-                    event: e,
-                    viewport: cornerstone.getViewport(element),
-                    image: cornerstone.getEnabledElement(element).image,
-                    element: element,
-                    currentPoints: currentPoints,
-                    type: eventType,
-                    isTouchEvent: true
-                };
-
-                event = $.Event(eventType, eventData);
-                $(element).trigger(event, eventData);
-                break;
-
             case 'pinchstart':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 var viewport = cornerstone.getViewport(element);
                 initScale = viewport.scale || 1;
                 break;
 
             case 'pinchmove':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 var scaleChange = initScale * e.scale;
                 
                 startPoints = {
@@ -511,7 +500,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     }
 
                     eventData = {
-                        event: e.srcEvent,
+                        event: e,
                         viewport: cornerstone.getViewport(element),
                         image: cornerstone.getEnabledElement(element).image,
                         element: element,
@@ -522,9 +511,12 @@ if (typeof cornerstoneTools === 'undefined') {
                     };
 
                     event = $.Event(eventType, eventData);
-                    $(eventData.element).trigger(event, eventData);
+                    $(element).trigger(event, eventData);
 
                     if (event.isImmediatePropagationStopped() === false) {
+                        //isPress = false;
+                        //clearTimeout(pressTimeout);
+
                         // No current tools responded to the drag action.
                         // Create new tool measurement
                         eventType = 'CornerstoneToolsTouchStartActive';
@@ -536,12 +528,49 @@ if (typeof cornerstoneTools === 'undefined') {
                         $(element).trigger(eventType, eventData);
                     }
 
-                    console.log(eventType);
+                    // console.log(eventType);
                     lastPoints = cornerstoneTools.copyPoints(startPoints);
                 }, 20);
+
+                isPress = true;
+                clearTimeout(pressTimeout);
+                pressTimeout = setTimeout(function() {
+                    if (!isPress) {
+                        return;
+                    }
+
+                    currentPoints = {
+                        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+                        image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
+                        client: {
+                            x: e.originalEvent.touches[0].clientX,
+                            y: e.originalEvent.touches[0].clientY
+                        }
+                    };
+                    currentPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
+                    eventType = 'CornerstoneToolsTouchPress';
+                    eventData = {
+                        event: e,
+                        viewport: cornerstone.getViewport(element),
+                        image: cornerstone.getEnabledElement(element).image,
+                        element: element,
+                        currentPoints: currentPoints,
+                        type: eventType,
+                        isTouchEvent: true
+                    };
+
+                    event = $.Event(eventType, eventData);
+                    $(element).trigger(event, eventData);
+
+                    //console.log(eventType);
+                }, pressDelay);
                 break;
 
             case 'touchend':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 startPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
                     image: cornerstone.pageToPixel(element, e.originalEvent.changedTouches[0].pageX, e.originalEvent.changedTouches[0].pageY),
@@ -555,7 +584,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 eventType = 'CornerstoneToolsTouchEnd';
 
                 eventData = {
-                    event: e.srcEvent,
+                    event: e,
                     viewport: cornerstone.getViewport(element),
                     image: cornerstone.getEnabledElement(element).image,
                     element: element,
@@ -566,7 +595,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 };
 
                 event = $.Event(eventType, eventData);
-                $(eventData.element).trigger(event, eventData);
+                $(element).trigger(event, eventData);
                 break;
 
             case 'panmove':
@@ -588,6 +617,14 @@ if (typeof cornerstoneTools === 'undefined') {
                     client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
                     canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
+
+                var pageDistanceMoved = Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
+                //console.log("pageDistanceMoved: " + pageDistanceMoved);
+                if (pageDistanceMoved > pressMaxDistance) {
+                    //console.log('Press event aborted due to movement');
+                    isPress = false;
+                    clearTimeout(pressTimeout);
+                }
               
                 eventType = 'CornerstoneToolsTouchDrag';
                 if (e.pointers.length > 1) {
@@ -658,6 +695,9 @@ if (typeof cornerstoneTools === 'undefined') {
                 return cornerstoneTools.pauseEvent(e);
 
             case 'rotatemove':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 var rotation = e.rotation - lastRotation;
                 lastRotation = e.rotation;
 
@@ -675,7 +715,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
         }
 
-        console.log(eventType);
+        //console.log(eventType);
         return false;
     }
 
@@ -700,17 +740,14 @@ if (typeof cornerstoneTools === 'undefined') {
         var rotate = new Hammer.Rotate({
             threshold: 0
         });
-        var press = new Hammer.Press({
-            threshold: 10
-        });
         
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
         // add to the Manager
-        mc.add([ pan, press, rotate, pinch ]);
-        mc.on('press tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
+        mc.add([ pan, rotate, pinch ]);
+        mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
         $(element).data('hammer', mc);
         $(element).on('touchstart touchend', onTouch);
@@ -721,7 +758,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('touchstart touchend', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
-            mc.off('press tap doubletap panstart panmove panend pinchmove rotatemove', onTouch);
+            mc.off('tap doubletap panstart panmove panend pinchmove rotatemove', onTouch);
         }
     }
 
@@ -1628,7 +1665,6 @@ if (typeof cornerstoneTools === 'undefined') {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         cornerstoneTools.touchMoveAllHandles(e, data, toolData, true, doneMovingCallback);
-                        $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
                         e.stopImmediatePropagation();
                         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
                     }
@@ -2294,6 +2330,8 @@ if (typeof cornerstoneTools === 'undefined') {
     var toolType = 'crosshairs';
 
     function chooseLocation(e, eventData) {
+        e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
+        
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -4686,7 +4724,7 @@ if (typeof cornerstoneTools === 'undefined') {
         };
 
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        if (distanceToPoint < 5) {
+        if (distanceToPoint < 25) {
             return true;
         }
 
@@ -4694,7 +4732,7 @@ if (typeof cornerstoneTools === 'undefined') {
         lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
 
         distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 5);
+        return (distanceToPoint < 25);
     }
 
     function length(vector) {
@@ -4876,7 +4914,8 @@ if (typeof cornerstoneTools === 'undefined') {
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(element).off('CornerstoneToolsTouchDrag', cornerstoneTools.simpleAngleTouch.touchMoveCallback);
-        $(element).off('CornerstoneToolsDragStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
+        $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
+        $(element).off('CornerstoneToolsTouchStart', cornerstoneTools.simpleAngleTouch.touchStartCallback);
         $(element).off('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.tapCallback);
         cornerstone.updateImage(element);
 
@@ -4898,7 +4937,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
 
                 $(element).on('CornerstoneToolsTouchDrag', cornerstoneTools.simpleAngleTouch.touchMoveCallback);
-                $(element).on('CornerstoneToolsDragStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTouchStart', cornerstoneTools.simpleAngleTouch.touchStartCallback);
+                $(element).on('CornerstoneToolsTouchStartActive', cornerstoneTools.simpleAngleTouch.touchDownActivateCallback);
                 $(element).on('CornerstoneToolsTap', cornerstoneTools.simpleAngleTouch.tapCallback);
                 cornerstone.updateImage(element);
             });
@@ -5115,6 +5155,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
             data.active = false;
             cornerstone.updateImage(element);
+            $(element).off('CornerstoneToolsTouchDrag', cornerstoneTools.textMarkerTouch.touchMoveCallback);
+            $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.textMarkerTouch.touchDownActivateCallback);
+            $(element).off('CornerstoneToolsTouchStart', cornerstoneTools.textMarkerTouch.touchStartCallback);
+            $(element).off('CornerstoneToolsTap', cornerstoneTools.textMarkerTouch.tapCallback);
+            $(element).off('CornerstoneToolsTouchPress', cornerstoneTools.textMarkerTouch.pressCallback);
+
             $(element).on('CornerstoneToolsTouchDrag', cornerstoneTools.textMarkerTouch.touchMoveCallback);
             $(element).on('CornerstoneToolsTouchStartActive', cornerstoneTools.textMarkerTouch.touchDownActivateCallback);
             $(element).on('CornerstoneToolsTouchStart', cornerstoneTools.textMarkerTouch.touchStartCallback);
@@ -5222,6 +5268,7 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function touchDragCallback(e, eventData) {
+        e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
         var dragData = eventData;
 
         var maxVOI = dragData.image.maxPixelValue * dragData.image.slope + dragData.image.intercept;

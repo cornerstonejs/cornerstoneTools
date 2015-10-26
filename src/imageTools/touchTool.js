@@ -236,7 +236,6 @@
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         cornerstoneTools.touchMoveAllHandles(e, data, toolData, true, doneMovingCallback);
-                        $(element).on('CornerstoneToolsTouchDrag', touchToolInterface.touchMoveCallback || touchMoveCallback);
                         e.stopImmediatePropagation();
                         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
                     }
