@@ -361,7 +361,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     /*jshint newcap: false */
 
-    var initScale = 1.0,
+    var lastScale = 1.0,
         lastRotation = 0.0,
         startPoints,
         currentPoints,
@@ -373,10 +373,11 @@ if (typeof cornerstoneTools === 'undefined') {
         pressTimeout,
         isPress = false,
         pressMaxDistance = 5,
-        pageDistanceMoved;
+        pageDistanceMoved,
+        preventNextPinch = false;
     
     function onTouch(e) {
-        console.log(e.type);
+        //console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -455,17 +456,22 @@ if (typeof cornerstoneTools === 'undefined') {
             case 'pinchstart':
                 isPress = false;
                 clearTimeout(pressTimeout);
-
-                var viewport = cornerstone.getViewport(element);
-                initScale = viewport.scale || 1;
+                
+                lastScale = 1.0;
                 break;
 
             case 'pinchmove':
                 isPress = false;
                 clearTimeout(pressTimeout);
 
-                var scaleChange = initScale * e.scale;
-                
+                if (preventNextPinch === true) {
+                    lastScale = e.scale;
+                    preventNextPinch = false;
+                    break;
+                }
+
+                var scaleChange = (e.scale - lastScale) / lastScale;
+
                 startPoints = {
                     page: e.center,
                     image: cornerstone.pageToPixel(element, e.center.x, e.center.y),
@@ -487,9 +493,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 event = $.Event(eventType, eventData);
                 $(element).trigger(event, eventData);
+
+                lastScale = e.scale;
                 break;
 
             case 'touchstart':
+                lastScale = 1.0;
+
                 clearTimeout(pressTimeout);
 
                 clearTimeout(touchStartDelay);
@@ -578,6 +588,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'touchend':
+                lastScale = 1.0;
+
                 isPress = false;
                 clearTimeout(pressTimeout);
 
@@ -718,6 +730,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 event = $.Event(eventType, eventData);
                 $(element).trigger(event, eventData);
+
+                var remainingPointers = e.pointers.length - e.changedPointers.length;
+                if (remainingPointers === 2) {
+                    preventNextPinch = true;
+                }
+
                 return cornerstoneTools.pauseEvent(e);
 
             case 'rotatemove':
@@ -741,7 +759,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
         }
 
-        console.log(eventType);
+        //console.log(eventType);
         return false;
     }
 
@@ -5858,15 +5876,13 @@ if (typeof cornerstoneTools === 'undefined') {
         var config = cornerstoneTools.zoom.getConfiguration();
         var viewport = eventData.viewport;
         var element = eventData.element;
-        var scale = eventData.scaleChange;
 
         // Change the scale based on the pinch gesture's scale change
-        if (config.maxScale && scale > config.maxScale) {
+        viewport.scale += eventData.scaleChange * viewport.scale;
+        if (config.maxScale && viewport.scale > config.maxScale) {
             viewport.scale = config.maxScale;
-        } else if (config.minScale && scale < config.minScale) {
+        } else if (config.minScale && viewport.scale < config.minScale) {
             viewport.scale = config.minScale;
-        } else {
-            viewport.scale = scale;
         }
 
         cornerstone.setViewport(element, viewport);

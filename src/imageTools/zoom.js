@@ -193,15 +193,13 @@
         var config = cornerstoneTools.zoom.getConfiguration();
         var viewport = eventData.viewport;
         var element = eventData.element;
-        var scale = eventData.scaleChange;
 
         // Change the scale based on the pinch gesture's scale change
-        if (config.maxScale && scale > config.maxScale) {
+        viewport.scale += eventData.scaleChange * viewport.scale;
+        if (config.maxScale && viewport.scale > config.maxScale) {
             viewport.scale = config.maxScale;
-        } else if (config.minScale && scale < config.minScale) {
+        } else if (config.minScale && viewport.scale < config.minScale) {
             viewport.scale = config.minScale;
-        } else {
-            viewport.scale = scale;
         }
 
         cornerstone.setViewport(element, viewport);

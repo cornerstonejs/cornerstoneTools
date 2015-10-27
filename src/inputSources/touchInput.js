@@ -4,7 +4,7 @@
 
     /*jshint newcap: false */
 
-    var initScale = 1.0,
+    var lastScale = 1.0,
         lastRotation = 0.0,
         startPoints,
         currentPoints,
@@ -16,10 +16,11 @@
         pressTimeout,
         isPress = false,
         pressMaxDistance = 5,
-        pageDistanceMoved;
+        pageDistanceMoved,
+        preventNextPinch = false;
     
     function onTouch(e) {
-        console.log(e.type);
+        //console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -98,17 +99,22 @@
             case 'pinchstart':
                 isPress = false;
                 clearTimeout(pressTimeout);
-
-                var viewport = cornerstone.getViewport(element);
-                initScale = viewport.scale || 1;
+                
+                lastScale = 1.0;
                 break;
 
             case 'pinchmove':
                 isPress = false;
                 clearTimeout(pressTimeout);
 
-                var scaleChange = initScale * e.scale;
-                
+                if (preventNextPinch === true) {
+                    lastScale = e.scale;
+                    preventNextPinch = false;
+                    break;
+                }
+
+                var scaleChange = (e.scale - lastScale) / lastScale;
+
                 startPoints = {
                     page: e.center,
                     image: cornerstone.pageToPixel(element, e.center.x, e.center.y),
@@ -130,9 +136,13 @@
 
                 event = $.Event(eventType, eventData);
                 $(element).trigger(event, eventData);
+
+                lastScale = e.scale;
                 break;
 
             case 'touchstart':
+                lastScale = 1.0;
+
                 clearTimeout(pressTimeout);
 
                 clearTimeout(touchStartDelay);
@@ -221,6 +231,8 @@
                 break;
 
             case 'touchend':
+                lastScale = 1.0;
+
                 isPress = false;
                 clearTimeout(pressTimeout);
 
@@ -361,6 +373,12 @@
 
                 event = $.Event(eventType, eventData);
                 $(element).trigger(event, eventData);
+
+                var remainingPointers = e.pointers.length - e.changedPointers.length;
+                if (remainingPointers === 2) {
+                    preventNextPinch = true;
+                }
+
                 return cornerstoneTools.pauseEvent(e);
 
             case 'rotatemove':
@@ -384,7 +402,7 @@
                 break;
         }
 
-        console.log(eventType);
+        //console.log(eventType);
         return false;
     }
 
