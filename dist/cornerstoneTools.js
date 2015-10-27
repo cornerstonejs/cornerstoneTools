@@ -369,19 +369,27 @@ if (typeof cornerstoneTools === 'undefined') {
         deltaPoints,
         eventData,
         touchStartDelay,
-        pressDelay = 500,
+        pressDelay = 700,
         pressTimeout,
         isPress = false,
-        pressMaxDistance = 10;
+        pressMaxDistance = 5,
+        pageDistanceMoved;
     
     function onTouch(e) {
-        //console.log(e.type);
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
 
         // Prevent mouse events from occurring alongside touch events
         e.preventDefault();
+
+        // If more than one finger is placed on the element, stop the press timeout
+        if ((e.pointers && e.pointers.length > 1) ||
+            (e.originalEvent && e.originalEvent.touches && e.originalEvent.touches.length > 1)) {
+            isPress = false;
+            clearTimeout(pressTimeout);
+        }
 
         switch (e.type) {
             case 'tap':
@@ -482,6 +490,8 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'touchstart':
+                clearTimeout(pressTimeout);
+
                 clearTimeout(touchStartDelay);
                 touchStartDelay = setTimeout(function() {
                     startPoints = {
@@ -533,7 +543,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 }, 20);
 
                 isPress = true;
-                clearTimeout(pressTimeout);
+                pageDistanceMoved = 0;
                 pressTimeout = setTimeout(function() {
                     if (!isPress) {
                         return;
@@ -618,7 +628,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
                 };
 
-                var pageDistanceMoved = Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
+                pageDistanceMoved += Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
                 //console.log("pageDistanceMoved: " + pageDistanceMoved);
                 if (pageDistanceMoved > pressMaxDistance) {
                     //console.log('Press event aborted due to movement');
@@ -650,7 +660,23 @@ if (typeof cornerstoneTools === 'undefined') {
                 lastPoints = cornerstoneTools.copyPoints(currentPoints);
                 break;
 
+            case 'panstart':
+                currentPoints = {
+                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    client: {
+                        x: e.pointers[0].clientX,
+                        y: e.pointers[0].clientY
+                    }
+                };
+                currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+                lastPoints = cornerstoneTools.copyPoints(currentPoints);
+                break;
+
             case 'panend':
+                isPress = false;
+                clearTimeout(pressTimeout);
+
                 // If lastPoints is not yet set, it means panend fired without panstart or pan,
                 // so we can ignore this event
                 if (!lastPoints) {
@@ -715,7 +741,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
         }
 
-        //console.log(eventType);
+        console.log(eventType);
         return false;
     }
 
