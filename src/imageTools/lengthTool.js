@@ -8,11 +8,20 @@
     function createNewMeasurement(mouseEventData) {
         // create the measurement data for this tool with the end handle activated
         var measurementData = {
-            visible: true, active: true, handles: {
+            visible: true,
+            active: true,
+            handles: {
                 start: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: false
-                }, end: {
-                    x: mouseEventData.currentPoints.image.x, y: mouseEventData.currentPoints.image.y, highlight: true, active: true
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: false
+                },
+                end: {
+                    x: mouseEventData.currentPoints.image.x,
+                    y: mouseEventData.currentPoints.image.y,
+                    highlight: true,
+                    active: true
                 }
             }
         };
@@ -23,7 +32,8 @@
 
     function pointNearTool(element, data, coords) {
         var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start), end: cornerstone.pixelToCanvas(element, data.handles.end)
+            start: cornerstone.pixelToCanvas(element, data.handles.start),
+            end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         return (distanceToPoint < 25);
@@ -87,15 +97,46 @@
                 suffix = ' pixels';
             }
 
+            var vector = {
+                x: handleStartCanvas.x - handleEndCanvas.x,
+                y: handleStartCanvas.y - handleEndCanvas.y,
+            };
+
+            var midpoint = {
+                x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                y: (handleStartCanvas.y + handleEndCanvas.y) / 2
+            };
+
+            var magnitude = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+
+            var normal = {
+                x: -vector.y / magnitude,
+                y: vector.x / magnitude
+            };
+
             // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-            var dx = (data.handles.start.x - data.handles.end.x) * (eventData.image.columnPixelSpacing || 1);
-            var dy = (data.handles.start.y - data.handles.end.y) * (eventData.image.rowPixelSpacing || 1);
+            var dx = (data.handles.end.x - data.handles.start.x) * (eventData.image.columnPixelSpacing || 1);
+            var dy = (data.handles.end.y - data.handles.start.y) * (eventData.image.rowPixelSpacing || 1);
             
             var length = Math.sqrt(dx * dx + dy * dy);
             var text = '' + length.toFixed(2) + suffix;
 
+            var fontSize = cornerstoneTools.textStyle.getFontSize();
+            var textWidth = context.measureText(text).width;
+
+            var distance = {
+                x: Math.min(10, textWidth / 2),
+                y: Math.min(25, fontSize),
+            };
+
+            if (handleEndCanvas.y < handleStartCanvas.y) {
+                distance.x = -distance.x;
+                distance.y = -distance.y;
+            }
+        
             var textCoords = {
-                x: (handleStartCanvas.x + handleEndCanvas.x) / 2 + 5, y: (handleStartCanvas.y + handleEndCanvas.y) / 2
+                x: midpoint.x + normal.x * distance.x,
+                y: midpoint.y + normal.y * distance.y
             };
 
             cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
@@ -106,10 +147,16 @@
 
     // module exports
     cornerstoneTools.length = cornerstoneTools.mouseButtonTool({
-        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
     });
     cornerstoneTools.lengthTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement, onImageRendered: onImageRendered, pointNearTool: pointNearTool, toolType: toolType
+        createNewMeasurement: createNewMeasurement,
+        onImageRendered: onImageRendered,
+        pointNearTool: pointNearTool,
+        toolType: toolType
     });
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
