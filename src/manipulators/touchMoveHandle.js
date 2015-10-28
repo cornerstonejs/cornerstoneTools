@@ -3,6 +3,7 @@
     'use strict';
 
     function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
+        //console.log('touchMoveHandle');
         var element = touchEventData.element;
         var distanceFromTouch = {
             x: handle.x - touchEventData.currentPoints.image.x,

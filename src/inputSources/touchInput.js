@@ -20,7 +20,7 @@
         preventNextPinch = false;
     
     function onTouch(e) {
-        //console.log(e.type);
+        ///console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -191,7 +191,7 @@
                         $(element).trigger(eventType, eventData);
                     }
 
-                    // console.log(eventType);
+                    //console.log(eventType);
                     lastPoints = cornerstoneTools.copyPoints(startPoints);
                 }, 20);
 
@@ -408,6 +408,7 @@
 
     function enable(element) {
         disable(element);
+
         var hammerOptions = {
             inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
         };
@@ -436,17 +437,21 @@
         mc.add([ pan, rotate, pinch ]);
         mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
-        $(element).data('hammer', mc);
+        cornerstoneTools.preventGhostClick.enable(element);
         $(element).on('touchstart touchend', onTouch);
-        cornerstoneTools.preventGhostClick(element);
+        $(element).data('hammer', mc);
+        //console.log('touchInput enabled');
     }
 
     function disable(element) {
+        cornerstoneTools.preventGhostClick.disable(element);
         $(element).off('touchstart touchend', onTouch);
         var mc = $(element).data('hammer');
         if (mc) {
             mc.off('tap doubletap panstart panmove panend pinchmove rotatemove', onTouch);
         }
+
+        //console.log('touchInput disabled');
     }
 
     // module exports

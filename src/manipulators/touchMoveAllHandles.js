@@ -3,6 +3,7 @@
     'use strict';
 
     function touchMoveAllHandles(touchEventData, data, toolData, deleteIfHandleOutsideImage, doneMovingCallback) {
+        //console.log('touchMoveAllHandles');
         var element = touchEventData.element;
 
         function touchDragCallback(e, eventData) {
@@ -24,6 +25,7 @@
             data.invalidated = false;
 
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+            $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             $(element).off('CornerstoneToolsTap', touchEndCallback);
 
@@ -68,6 +70,7 @@
             cornerstone.updateImage(element);
         }
 
+        $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         $(element).on('CornerstoneToolsTap', touchEndCallback);
         return true;
