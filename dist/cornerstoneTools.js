@@ -6475,6 +6475,7 @@ if (typeof cornerstoneTools === 'undefined') {
         
         function moveEndCallback(e, eventData) {
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
+            $(element).off('CornerstoneToolsTouchPress', moveEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
             $(element).off('CornerstoneToolsDragEnd', moveEndCallback);
             $(element).off('CornerstoneToolsTap', moveEndCallback);
@@ -6499,6 +6500,7 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         $(element).on('CornerstoneToolsTouchDrag', moveCallback);
+        $(element).on('CornerstoneToolsTouchPress', moveEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
         $(element).on('CornerstoneToolsDragEnd', moveEndCallback);
         $(element).on('CornerstoneToolsTap', moveEndCallback);
@@ -6623,6 +6625,7 @@ if (typeof cornerstoneTools === 'undefined') {
         function touchEndCallback() {
             handle.active = false;
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+            $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             $(element).off('CornerstoneToolsTap', touchEndCallback);
@@ -6633,6 +6636,7 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
 
+        $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         $(element).on('CornerstoneToolsTap', touchEndCallback);
