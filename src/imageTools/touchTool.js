@@ -358,6 +358,11 @@
             tapCallback: touchToolInterface.tapCallback || tapCallback
         };
 
+        // Expose pointNearTool if available
+        if (touchToolInterface.pointNearTool) {
+            toolInterface.pointNearTool = touchToolInterface.pointNearTool;
+        }
+
         if (touchToolInterface.doubleTapCallback) {
             toolInterface.doubleTapCallback = touchToolInterface.doubleTapCallback;
         }
