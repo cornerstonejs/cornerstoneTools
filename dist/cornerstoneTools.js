@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.6 - 2015-10-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-10-31 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -5791,6 +5791,7 @@ if (typeof cornerstoneTools === 'undefined') {
             if (typeof doneMovingCallback === 'function') {
                 doneMovingCallback();
             }
+
             cornerstone.updateImage(element);
         }
 
