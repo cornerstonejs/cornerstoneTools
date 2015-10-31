@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveNewHandle(mouseEventData, handle, doneMoveCallback, preventHandleOutsideImage) {
+    function moveNewHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
 
         function moveCallback(e, eventData) {
@@ -46,7 +46,9 @@
             handle.active = false;
             cornerstone.updateImage(element);
 
-            doneMoveCallback();
+            if (typeof doneMovingCallback === 'function') {
+                doneMovingCallback();
+            }
         }
     }
 

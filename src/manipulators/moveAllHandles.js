@@ -69,7 +69,10 @@
             }
 
             cornerstone.updateImage(element);
-            doneMovingCallback();
+
+            if (typeof doneMovingCallback === 'function') {
+                doneMovingCallback();
+            }
         }
 
         $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);

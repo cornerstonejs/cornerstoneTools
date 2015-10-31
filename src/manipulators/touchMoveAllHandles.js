@@ -58,7 +58,10 @@
                 }
             }
 
-            doneMovingCallback();
+            if (typeof doneMovingCallback === 'function') {
+                doneMovingCallback();
+            }
+
             cornerstone.updateImage(element);
         }
 

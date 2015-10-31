@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveNewHandleTouch(eventData, handle, doneMoveCallback, preventHandleOutsideImage) {
+    function moveNewHandleTouch(eventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = eventData.element;
 
         function moveCallback(e, eventData) {
@@ -40,7 +40,9 @@
 
             cornerstone.updateImage(element);
 
-            doneMoveCallback();
+            if (typeof doneMovingCallback === 'function') {
+                doneMovingCallback();
+            }
         }
 
         $(element).on('CornerstoneToolsTouchDrag', moveCallback);
