@@ -29,7 +29,7 @@
         ///////// BEGIN ACTIVE TOOL ///////
 
         function addNewMeasurement(touchEventData) {
-            console.log('touchTool addNewMeasurement');
+            //console.log('touchTool addNewMeasurement');
             var element = touchEventData.element;
 
             var measurementData = touchToolInterface.createNewMeasurement(touchEventData);
@@ -72,7 +72,7 @@
         }
 
         function touchDownActivateCallback(e, eventData) {
-            console.log('touchTool touchDownActivateCallback');
+            //console.log('touchTool touchDownActivateCallback');
             if (touchToolInterface.addNewMeasurement) {
                 touchToolInterface.addNewMeasurement(eventData);
             } else {
@@ -85,7 +85,7 @@
 
         ///////// BEGIN INACTIVE TOOL ///////
         function tapCallback(e, eventData) {
-            console.log('touchTool tapCallback');
+            //console.log('touchTool tapCallback');
             var element = eventData.element;
             var coords = eventData.currentPoints.canvas;
             var toolData = cornerstoneTools.getToolState(e.currentTarget, touchToolInterface.toolType);
@@ -155,7 +155,7 @@
         }
 
         function touchStartCallback(e, eventData) {
-            console.log('touchTool touchStartCallback');
+            //console.log('touchTool touchStartCallback');
             var element = eventData.element;
             var coords = eventData.startPoints.canvas;
             var data;
@@ -163,7 +163,7 @@
             var i;
 
             function doneMovingCallback() {
-                console.log('touchTool touchStartCallback doneMovingCallback');
+                //console.log('touchTool touchStartCallback doneMovingCallback');
                 data.active = false;
                 data.invalidated = true;
                 if (cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
@@ -251,7 +251,7 @@
 
         // visible, interactive and can create
         function activate(element) {
-            console.log('activate touchTool');
+            //console.log('activate touchTool');
 
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
@@ -278,7 +278,7 @@
 
         // visible, interactive
         function deactivate(element) {
-            console.log('deactivate touchTool');
+            //console.log('deactivate touchTool');
             
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
