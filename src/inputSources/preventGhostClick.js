@@ -15,7 +15,6 @@
         lastInteractionTime;
 
     function handleTap(type, e) {
-        console.log('preventGhostClick handleTap, type: ' + type);
         var now = Date.now();
         if (type !== lastInteractionType) {
             if (now - lastInteractionTime <= antiGhostDelay) {
@@ -51,18 +50,16 @@
         });
     }
 
-    var mouseEvents = [ 'mousedown', 'mouseup', 'mousemove' ];
+    var mouseEvents = [ 'mousedown', 'mouseup' ];
     var touchEvents = [ 'touchstart', 'touchend' ];
 
     function disable(element) {
-        console.log('preventGhostClick disabled');
         removeEvents(element, mouseEvents, pointerType.mouse);
         removeEvents(element, touchEvents, pointerType.touch);
     }
 
     function enable(element) {
         disable(element);
-        console.log('preventGhostClick enabled');
         attachEvents(element, mouseEvents, pointerType.mouse);
         attachEvents(element, touchEvents, pointerType.touch);
     }

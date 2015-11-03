@@ -104,7 +104,24 @@
         };
 
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 25);
+        if (distanceToPoint < 25) {
+            return true;
+        }
+
+        if (data.textCoords) {
+            var padding = 5;
+            var fontSize = cornerstoneTools.textStyle.getFontSize();
+            
+            var rect = {
+                left: data.textCoords.x,
+                top: data.textCoords.y,
+                width: data.textWidth + (padding * 2),
+                height: fontSize + (padding * 2)
+            };
+
+            var distanceToTextRect = cornerstoneMath.rect.distanceToPoint(rect, coords);
+            return (distanceToTextRect < 25);
+        }
     }
 
     function drawArrow(context, start, end, color, lineWidth) {
@@ -212,11 +229,13 @@
                     y: handleEndCanvas.y - handleStartCanvas.y
                 };
 
+                var textWidth = context.measureText(data.text).width;
+
                 var textCoords;
                 if (config.arrowFirst) {
                     // Fix text placement if arrow faces right
                     if (vector.x < 0) {
-                        displacement.x = -displacement.x - context.measureText(data.text).width;
+                        displacement.x = -displacement.x - textWidth;
                     }
 
                     textCoords = {
@@ -226,7 +245,7 @@
                 } else {
                     // Fix text placement if arrow faces right
                     if (vector.x > 0) {
-                        displacement.x = -displacement.x - context.measureText(data.text).width;
+                        displacement.x = -displacement.x - textWidth;
                     }
 
                     textCoords = {
@@ -235,6 +254,8 @@
                     };
                 }
 
+                data.textCoords = textCoords;
+                data.textWidth = textWidth;
                 cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
             }
 
@@ -260,7 +281,6 @@
 
         var measurementData = createNewMeasurement(touchEventData);
         cornerstoneTools.addToolState(element, toolType, measurementData);
-        $(element).off('CornerstoneToolsTouchDrag', cornerstoneTools.arrowAnnotateTouch.touchMoveCallback);
         $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
         $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
         cornerstone.updateImage(element);
@@ -278,7 +298,6 @@
                 config.getTextCallback(doneChangingTextCallback);
             }
 
-            $(element).on('CornerstoneToolsTouchDrag', cornerstoneTools.arrowAnnotateTouch.touchMoveCallback);
             $(element).on('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
             $(element).on('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
         });
@@ -329,6 +348,55 @@
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
+    function pressCallback(e, eventData) {
+        var element = eventData.element;
+        var data;
+
+        function doneChangingTextCallback(data, updatedText, deleteTool) {
+            if (deleteTool === true) {
+                cornerstoneTools.removeToolState(element, toolType, data);
+            } else {
+                data.text = updatedText;
+            }
+
+            data.active = false;
+            cornerstone.updateImage(element);
+            $(element).on('CornerstoneToolsTouchStart', cornerstoneTools.arrowAnnotateTouch.touchStartCallback);
+            $(element).on('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
+        }
+
+        if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            return false;
+        }
+
+        var config = cornerstoneTools.arrowAnnotate.getConfiguration();
+
+        var coords = eventData.currentPoints.canvas;
+        var toolData = cornerstoneTools.getToolState(element, toolType);
+
+        // now check to see if there is a handle we can move
+        if (!toolData) {
+            return false;
+        }
+
+        for (var i = 0; i < toolData.data.length; i++) {
+            data = toolData.data[i];
+            if (pointNearTool(element, data, coords)) {
+                data.active = true;
+                cornerstone.updateImage(element);
+                // Allow relabelling via a callback
+                $(element).off('CornerstoneToolsTouchStart', cornerstoneTools.arrowAnnotateTouch.touchStartCallback);
+                $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
+                config.changeTextCallback(data, doneChangingTextCallback);
+                
+                e.stopImmediatePropagation();
+                return false;
+            }
+        }
+
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+    }
+
     cornerstoneTools.arrowAnnotate = cornerstoneTools.mouseButtonTool({
         addNewMeasurement: addNewMeasurement,
         createNewMeasurement: createNewMeasurement,
@@ -346,7 +414,7 @@
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
         toolType: toolType,
-        pressCallback: doubleClickCallback
+        pressCallback: pressCallback
     });
 
 })($, cornerstone, cornerstoneMath, cornerstoneTools);

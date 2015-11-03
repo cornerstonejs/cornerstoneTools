@@ -193,7 +193,7 @@
 
                     //console.log(eventType);
                     lastPoints = cornerstoneTools.copyPoints(startPoints);
-                }, 20);
+                }, 50);
 
                 isPress = true;
                 pageDistanceMoved = 0;

@@ -28,10 +28,18 @@
         
         function moveEndCallback(e, eventData) {
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
+            $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
             $(element).off('CornerstoneToolsTouchPress', moveEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
             $(element).off('CornerstoneToolsDragEnd', moveEndCallback);
             $(element).off('CornerstoneToolsTap', moveEndCallback);
+
+            if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
+                handle.active = false;
+                cornerstone.updateImage(element);
+                doneMovingCallback();
+                return;
+            }
 
             handle.active = false;
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
@@ -53,6 +61,7 @@
         }
 
         $(element).on('CornerstoneToolsTouchDrag', moveCallback);
+        $(element).on('CornerstoneToolsTouchPinch', moveEndCallback);
         $(element).on('CornerstoneToolsTouchPress', moveEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
         $(element).on('CornerstoneToolsDragEnd', moveEndCallback);
