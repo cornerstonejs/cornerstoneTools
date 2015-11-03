@@ -8977,8 +8977,16 @@ Display scroll progress bar across bottom of image.
 
             sourceElements.forEach(function(sourceElement) {
                 var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+                if (!sourceEnabledElement || !sourceEnabledElement.image) {
+                    return;
+                }
+
                 var sourceImageId = sourceEnabledElement.image.imageId;
                 var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
+                    return;
+                }
+
                 var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
                 if (initialData.hasOwnProperty(sourceEnabledElement)) {
@@ -8991,6 +8999,10 @@ Display scroll progress bar across bottom of image.
 
                 targetElements.forEach(function(targetElement) {
                     var targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+                    if (!targetEnabledElement || !targetEnabledElement.image) {
+                        return;
+                    }
+
                     var targetImageId = targetEnabledElement.image.imageId;
 
                     initialData.imageIds.targetElements.push(targetImageId);
@@ -9008,6 +9020,10 @@ Display scroll progress bar across bottom of image.
                     }
 
                     var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
+                        return;
+                    }
+
                     var targetImagePosition = targetImagePlane.imagePositionPatient;
 
                     initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
