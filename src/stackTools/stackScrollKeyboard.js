@@ -3,7 +3,8 @@
     'use strict';
 
     var keys = {
-        UP: 38, DOWN: 40
+        UP: 38,
+        DOWN: 40
     };
 
     function keyDownCallback(e, eventData) {

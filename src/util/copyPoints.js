@@ -8,7 +8,10 @@
         var client = cornerstoneMath.point.copy(points.client);
         var canvas = cornerstoneMath.point.copy(points.canvas);
         return {
-            page: page, image: image, client: client, canvas: canvas
+            page: page,
+            image: image,
+            client: client,
+            canvas: canvas
         };
     }
 

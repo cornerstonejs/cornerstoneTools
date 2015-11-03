@@ -9,7 +9,8 @@
             activate: function(element, mouseButtonMask, options) {
                 $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
                 var eventData = {
-                    mouseButtonMask: mouseButtonMask, options: options
+                    mouseButtonMask: mouseButtonMask,
+                    options: options
                 };
                 $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
             },

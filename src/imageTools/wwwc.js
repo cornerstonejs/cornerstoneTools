@@ -39,6 +39,7 @@
     }
 
     function touchDragCallback(e, eventData) {
+        e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
         var dragData = eventData;
 
         var maxVOI = dragData.image.maxPixelValue * dragData.image.slope + dragData.image.intercept;

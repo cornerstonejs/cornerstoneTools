@@ -4,11 +4,16 @@
 
     function moveNewHandleTouch(eventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = eventData.element;
+        var imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
+        var distanceFromTouch = {
+            x: handle.x - imageCoords.x,
+            y: handle.y - imageCoords.y
+        };
 
         function moveCallback(e, eventData) {
             handle.active = true;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
@@ -23,12 +28,22 @@
         
         function moveEndCallback(e, eventData) {
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
-            $(element).off('CornerstoneToolsTap', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchPress', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
             $(element).off('CornerstoneToolsDragEnd', moveEndCallback);
+            $(element).off('CornerstoneToolsTap', moveEndCallback);
+
+            if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
+                handle.active = false;
+                cornerstone.updateImage(element);
+                doneMovingCallback();
+                return;
+            }
 
             handle.active = false;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
@@ -46,6 +61,9 @@
         }
 
         $(element).on('CornerstoneToolsTouchDrag', moveCallback);
+        $(element).on('CornerstoneToolsTouchPinch', moveEndCallback);
+        $(element).on('CornerstoneToolsTouchPress', moveEndCallback);
+        $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
         $(element).on('CornerstoneToolsDragEnd', moveEndCallback);
         $(element).on('CornerstoneToolsTap', moveEndCallback);
     }

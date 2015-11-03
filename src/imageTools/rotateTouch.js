@@ -18,7 +18,8 @@
     }
 
     cornerstoneTools.rotateTouch = {
-        activate: activate, disable: disable
+        activate: activate,
+        disable: disable
     };
 
 })($, cornerstone, cornerstoneTools);

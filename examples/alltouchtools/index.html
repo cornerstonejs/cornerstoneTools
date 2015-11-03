@@ -106,7 +106,7 @@ is used by our example image loader-->
 
 <!-- include the hammer.fakemultitouch so we can test with a mouse -->
 <script src="../touch-emulator.js"></script>
-<script> TouchEmulator(); </script>
+<script>TouchEmulator();</script>
 
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
@@ -190,6 +190,13 @@ is used by our example image loader-->
     // image enable the dicomImage element
     cornerstone.enable(element);
 
+    var configuration = {
+        testPointers: function(eventData) {
+            return (eventData.numPointers >= 3);
+        }
+    };
+    cornerstoneTools.panMultiTouch.setConfiguration(configuration);
+
     cornerstone.loadImage(imageIds[0]).then(function(image) {
         cornerstone.displayImage(element, image);
 
@@ -200,9 +207,9 @@ is used by our example image loader-->
         cornerstoneTools.touchInput.enable(element);
       
         // Enable all tools we want to use with this element
-        cornerstoneTools.wwwcTouchDrag.activate(element);
         cornerstoneTools.zoomTouchPinch.activate(element);
-        cornerstoneTools.rotateTouch.activate(element);
+        //cornerstoneTools.rotateTouch.activate(element);
+        cornerstoneTools.wwwcTouchDrag.activate(element);
         cornerstoneTools.panMultiTouch.activate(element);
 
 

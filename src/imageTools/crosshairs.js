@@ -5,6 +5,8 @@
     var toolType = 'crosshairs';
 
     function chooseLocation(e, eventData) {
+        e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
+        
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -166,14 +168,14 @@
             synchronizationContext: synchronizationContext,
         });
 
-        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
 
-        $(element).on('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).on('CornerstoneToolsTouchStart', dragStartCallback);
     }
 
     // disables the reference line tool for the given element
     function disableTouch(element) {
-        $(element).off('CornerstoneToolsDragStart', dragStartCallback);
+        $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
     }
 
     cornerstoneTools.crosshairsTouch = {

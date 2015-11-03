@@ -25,7 +25,9 @@
         // TODO: actually calculate this?
         var lineHeight = fontSize / ee.viewport.scale / fontScale;
         return {
-            fontSize: scaledFontSize, lineHeight: lineHeight, fontScale: fontScale
+            fontSize: scaledFontSize,
+            lineHeight: lineHeight,
+            fontScale: fontScale
         };
     }
 

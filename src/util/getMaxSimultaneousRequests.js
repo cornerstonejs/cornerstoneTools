@@ -82,5 +82,6 @@
 
     // module exports
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
+    cornerstoneTools.getBrowserInfo = getBrowserInfo;
 
 })(cornerstone, cornerstoneTools);

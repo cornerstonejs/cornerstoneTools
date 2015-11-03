@@ -51,7 +51,8 @@
         }
 
         var imageIdToolStateManager = {
-            get: getStackSpecificToolState, add: addStackSpecificToolState
+            get: getStackSpecificToolState,
+            add: addStackSpecificToolState
         };
         return imageIdToolStateManager;
     }
