@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-11-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-11-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -997,7 +997,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var distanceSq = 25;
-                        var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
+                        var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                         if (handle) {
                             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             data.active = true;
@@ -1255,7 +1255,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 if (toolData !== undefined) {
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
-                        var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
+                        var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data.handles, coords, distanceSq);
                         if (handle !== undefined) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             data.active = true;
@@ -1591,7 +1591,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     var distanceSq = 75; // Should probably make this a settable property later
-                    var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                     if (handle) {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -1661,7 +1661,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
-                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data.handles, coords, distanceSq);
                     if (handle) {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -6173,20 +6173,27 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
-    function getHandleNearImagePoint(element, data, coords, distanceSq) {
+    function getHandleNearImagePoint(element, handles, coords, distanceThreshold) {
         var nearbyHandle;
         
-        if (!data.handles) {
+        if (!handles) {
             return;
         }
 
-        Object.keys(data.handles).forEach(function(name) {
-            var handle = data.handles[name];
-            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-            var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
-            if (distanceSquared < distanceSq) {
-                nearbyHandle = handle;
-                return;
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
+            if (handle.hasOwnProperty('pointNearHandle')) {
+                if (handle.pointNearHandle(element, handle, coords)) {
+                    nearbyHandle = handle;
+                    return;
+                }
+            } else {
+                var handleCanvas = cornerstone.pixelToCanvas(element, handle);
+                var distance = cornerstoneMath.point.distance(handleCanvas, coords);
+                if (distance <= distanceThreshold) {
+                    nearbyHandle = handle;
+                    return;
+                }
             }
         });
         
@@ -6204,22 +6211,6 @@ if (typeof cornerstoneTools === 'undefined') {
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
 
     'use strict';
-
-    function findHandleNear(element, handles, canvasPoint, distanceThreshold) {
-        var nearbyHandle;
-
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-            var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
-            if (distance <= distanceThreshold) {
-                nearbyHandle = handle;
-                return;
-            }
-        });
-
-        return nearbyHandle;
-    }
 
     function getActiveHandle(handles) {
         var activeHandle;
@@ -6241,7 +6232,7 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         var activeHandle = getActiveHandle(handles);
-        var nearbyHandle = findHandleNear(element, handles, canvasPoint, distanceThreshold);
+        var nearbyHandle = cornerstoneTools.getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
         if (activeHandle !== nearbyHandle) {
             if (nearbyHandle !== undefined) {
                 nearbyHandle.active = true;
@@ -6277,6 +6268,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
             Object.keys(data.handles).forEach(function(name) {
                 var handle = data.handles[name];
+                if (handle.movesIndependently === true) {
+                    return;
+                }
+
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
                 
@@ -6364,11 +6359,16 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
+        var distanceFromTool = {
+            x: handle.x - mouseEventData.currentPoints.image.x,
+            y: handle.y - mouseEventData.currentPoints.image.y
+        };
 
         function mouseDragCallback(e, eventData) {
             handle.active = true;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
+
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
                 handle.x = Math.min(handle.x, eventData.image.width);
@@ -6560,6 +6560,10 @@ if (typeof cornerstoneTools === 'undefined') {
             
             Object.keys(data.handles).forEach(function(name) {
                 var handle = data.handles[name];
+                if (handle.movesIndependently === true) {
+                    return;
+                }
+                
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
             });
