@@ -140,7 +140,7 @@
                     for (i = 0; i < toolData.data.length; i++) {
                         data = toolData.data[i];
                         var distanceSq = 25;
-                        var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
+                        var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                         if (handle) {
                             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
                             data.active = true;

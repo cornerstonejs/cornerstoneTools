@@ -113,7 +113,7 @@
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     var distanceSq = 75; // Should probably make this a settable property later
-                    var handle = cornerstoneTools.getHandleNearImagePoint(element, data, coords, distanceSq);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                     if (handle) {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -183,7 +183,7 @@
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
 
-                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data, coords, distanceSq);
+                    var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data.handles, coords, distanceSq);
                     if (handle) {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);

@@ -2,20 +2,27 @@
 
     'use strict';
 
-    function getHandleNearImagePoint(element, data, coords, distanceSq) {
+    function getHandleNearImagePoint(element, handles, coords, distanceThreshold) {
         var nearbyHandle;
         
-        if (!data.handles) {
+        if (!handles) {
             return;
         }
 
-        Object.keys(data.handles).forEach(function(name) {
-            var handle = data.handles[name];
-            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-            var distanceSquared = cornerstoneMath.point.distanceSquared(handleCanvas, coords);
-            if (distanceSquared < distanceSq) {
-                nearbyHandle = handle;
-                return;
+        Object.keys(handles).forEach(function(name) {
+            var handle = handles[name];
+            if (handle.hasOwnProperty('pointNearHandle')) {
+                if (handle.pointNearHandle(element, handle, coords)) {
+                    nearbyHandle = handle;
+                    return;
+                }
+            } else {
+                var handleCanvas = cornerstone.pixelToCanvas(element, handle);
+                var distance = cornerstoneMath.point.distance(handleCanvas, coords);
+                if (distance <= distanceThreshold) {
+                    nearbyHandle = handle;
+                    return;
+                }
             }
         });
         

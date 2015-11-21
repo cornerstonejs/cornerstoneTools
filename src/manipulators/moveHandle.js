@@ -4,11 +4,16 @@
 
     function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
+        var distanceFromTool = {
+            x: handle.x - mouseEventData.currentPoints.image.x,
+            y: handle.y - mouseEventData.currentPoints.image.y
+        };
 
         function mouseDragCallback(e, eventData) {
             handle.active = true;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
+            handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
+
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
                 handle.x = Math.min(handle.x, eventData.image.width);

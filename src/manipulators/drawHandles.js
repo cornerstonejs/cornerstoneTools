@@ -9,6 +9,10 @@
 
         Object.keys(handles).forEach(function(name) {
             var handle = handles[name];
+            if (handle.drawnIndependently === true) {
+                return;
+            }
+
             context.beginPath();
 
             if (handle.active) {

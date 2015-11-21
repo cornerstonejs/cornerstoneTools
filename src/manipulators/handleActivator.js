@@ -2,22 +2,6 @@
 
     'use strict';
 
-    function findHandleNear(element, handles, canvasPoint, distanceThreshold) {
-        var nearbyHandle;
-
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-            var distance = cornerstoneMath.point.distance(handleCanvas, canvasPoint);
-            if (distance <= distanceThreshold) {
-                nearbyHandle = handle;
-                return;
-            }
-        });
-
-        return nearbyHandle;
-    }
-
     function getActiveHandle(handles) {
         var activeHandle;
 
@@ -38,7 +22,7 @@
         }
 
         var activeHandle = getActiveHandle(handles);
-        var nearbyHandle = findHandleNear(element, handles, canvasPoint, distanceThreshold);
+        var nearbyHandle = cornerstoneTools.getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
         if (activeHandle !== nearbyHandle) {
             if (nearbyHandle !== undefined) {
                 nearbyHandle.active = true;
