@@ -197,7 +197,7 @@
         $(element).off('CornerstoneToolsMouseDownActivate', cornerstoneTools.simpleAngle.mouseDownActivateCallback);
         cornerstone.updateImage(element);
 
-        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.middle, function() {
+        cornerstoneTools.moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.middle, function() {
             measurementData.active = false;
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
@@ -207,7 +207,7 @@
             measurementData.handles.end.active = true;
             cornerstone.updateImage(element);
 
-            cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
+            cornerstoneTools.moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                     // delete the measurement

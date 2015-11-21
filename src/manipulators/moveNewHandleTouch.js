@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveNewHandleTouch(eventData, handle, doneMovingCallback, preventHandleOutsideImage) {
+    function moveNewHandleTouch(eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = eventData.element;
         var imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
         var distanceFromTouch = {
@@ -24,6 +24,14 @@
             }
 
             cornerstone.updateImage(element);
+
+            var eventType = 'CornerstoneToolsMeasurementModified';
+            var modifiedEventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, modifiedEventData);
         }
         
         function moveEndCallback(e, eventData) {

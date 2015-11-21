@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
+    function moveHandle(mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
         var distanceFromTool = {
             x: handle.x - mouseEventData.currentPoints.image.x,
@@ -23,6 +23,14 @@
             }
 
             cornerstone.updateImage(element);
+
+            var eventType = 'CornerstoneToolsMeasurementModified';
+            var modifiedEventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, modifiedEventData);
         }
 
         $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);

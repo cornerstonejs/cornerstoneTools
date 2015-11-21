@@ -18,6 +18,14 @@
     function addToolState(element, toolType, data) {
         var toolStateManager = getElementToolStateManager(element);
         toolStateManager.add(element, toolType, data);
+
+        var eventType = 'CornerstoneToolsMeasurementAdded';
+        var eventData = {
+            toolType: toolType,
+            element: element,
+            measurementData: data
+        };
+        $(element).trigger(eventType, eventData);
         // TODO: figure out how to broadcast this change to all enabled elements so they can update the image
         // if this change effects them
     }
@@ -43,6 +51,14 @@
         if (indexOfData !== -1) {
             toolData.data.splice(indexOfData, 1);
         }
+
+        var eventType = 'CornerstoneToolsMeasurementRemoved';
+        var eventData = {
+            toolType: toolType,
+            element: element,
+            measurementData: data
+        };
+        $(element).trigger(eventType, eventData);
     }
 
     function clearToolState(element, toolType) {

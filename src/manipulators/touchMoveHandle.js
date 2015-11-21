@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function touchMoveHandle(touchEventData, handle, doneMovingCallback) {
+    function touchMoveHandle(touchEventData, toolType, data, handle, doneMovingCallback) {
         //console.log('touchMoveHandle');
         var element = touchEventData.element;
         var distanceFromTouch = {
@@ -16,6 +16,14 @@
             handle.x = touchMoveData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = touchMoveData.currentPoints.image.y + distanceFromTouch.y;
             cornerstone.updateImage(element);
+
+            var eventType = 'CornerstoneToolsMeasurementModified';
+            var modifiedEventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, modifiedEventData);
         }
 
         $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
