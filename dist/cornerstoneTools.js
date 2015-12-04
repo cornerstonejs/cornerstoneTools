@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-11-26 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-12-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -7105,7 +7105,6 @@ if (typeof cornerstoneTools === 'undefined') {
             setTimeout(function() {
                 var requestDetails = getNextRequest();
                 if (!requestDetails) {
-                    awake = false;
                     return;
                 }
 
