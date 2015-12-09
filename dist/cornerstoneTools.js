@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-12-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-12-09 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -56,6 +56,9 @@ if (typeof cornerstoneTools === 'undefined') {
     var mouseWheelEvents = 'mousewheel DOMMouseScroll';
 
     function enable(element) {
+        // Prevent handlers from being attached multiple times
+        disable(element);
+        
         $(element).on(mouseWheelEvents, mouseWheel);
     }
 
