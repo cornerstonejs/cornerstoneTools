@@ -136,8 +136,13 @@
         var data = toolData.data[config.currentTool];
 
         // Set the mouseLocation handle
-        config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
-        config.mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+        var x = Math.max(eventData.currentPoints.image.x, 0);
+        x = Math.min(x, eventData.image.width);
+        config.mouseLocation.handles.start.x = x;
+
+        var y = Math.max(eventData.currentPoints.image.y, 0);
+        y = Math.min(y, eventData.image.height);
+        config.mouseLocation.handles.start.y = y;
 
         var currentHandle = config.currentHandle;
 
