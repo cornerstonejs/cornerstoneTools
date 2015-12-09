@@ -83,7 +83,6 @@
             setTimeout(function() {
                 var requestDetails = getNextRequest();
                 if (!requestDetails) {
-                    awake = false;
                     return;
                 }
 
