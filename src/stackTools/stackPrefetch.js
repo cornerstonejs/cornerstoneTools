@@ -141,7 +141,8 @@
         var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
 
         var imageId,
-            nextImageIdIndex;
+            nextImageIdIndex,
+            preventCache = false;
 
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;
@@ -150,13 +151,13 @@
             if (lowerIndex >= 0 ) {
                 nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
                 imageId = stack.imageIds[nextImageIdIndex];
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+                requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
             }
 
             if (higherIndex < stackPrefetch.indicesToRequest.length) {
                 nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
                 imageId = stack.imageIds[nextImageIdIndex];
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+                requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
             }
         }
 
@@ -231,6 +232,12 @@
         }
 
         var stack = stackData.data[0];
+
+        // Check if we are allowed to cache images in this stack
+        if (stack.preventCache === true) {
+            console.warn('A stack that should not be cached was given the stackPrefetch');
+            return;
+        }
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         var stackPrefetchData = {
