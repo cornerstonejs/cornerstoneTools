@@ -140,8 +140,8 @@ is used by our example image loader-->
             closeHandler();
         });
 
-        dialog.off("keypress");
-        dialog.on('keypress', keyPressHandler);
+        dialog.off("keydown");
+        dialog.on('keydown', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -160,7 +160,7 @@ is used by our example image loader-->
 
     // Define a callback to edit your text annotation
     // This could be used, e.g. to open a modal
-    function changeTextCallback(data, doneChangingTextCallback) {
+    function changeTextCallback(data, eventData, doneChangingTextCallback) {
         var dialog = $('.relabelDialog');
         var getTextInput = dialog.find('.annotationTextInput');
         var confirm = dialog.find('.relabelConfirm');
@@ -182,8 +182,8 @@ is used by our example image loader-->
             doneChangingTextCallback(data, undefined, true);
         });
 
-        dialog.off("keypress");
-        dialog.on('keypress', keyPressHandler);
+        dialog.off("keydown");
+        dialog.on('keydown', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog

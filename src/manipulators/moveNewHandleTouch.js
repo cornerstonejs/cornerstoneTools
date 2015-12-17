@@ -3,6 +3,7 @@
     'use strict';
 
     function moveNewHandleTouch(eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+        //console.log('moveNewHandleTouch');
         var element = eventData.element;
         var imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
         var distanceFromTouch = {
@@ -10,8 +11,10 @@
             y: handle.y - imageCoords.y
         };
 
+        handle.active = true;
+        data.active = true;
+
         function moveCallback(e, eventData) {
-            handle.active = true;
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
@@ -35,12 +38,12 @@
         }
         
         function moveEndCallback(e, eventData) {
+            console.log(e);
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
             $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
-            $(element).off('CornerstoneToolsTouchPress', moveEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
-            $(element).off('CornerstoneToolsDragEnd', moveEndCallback);
             $(element).off('CornerstoneToolsTap', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
 
             if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
                 handle.active = false;
@@ -50,6 +53,7 @@
             }
 
             handle.active = false;
+            data.active = false;
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
             
@@ -68,12 +72,19 @@
             }
         }
 
+        function stopImmediatePropagation(e) {
+            // Stop the CornerstoneToolsTouchStart event from 
+            // become a CornerstoneToolsTouchStartActive event when
+            // moveNewHandleTouch ends
+            e.stopImmediatePropagation();
+            return false;
+        }
+
         $(element).on('CornerstoneToolsTouchDrag', moveCallback);
         $(element).on('CornerstoneToolsTouchPinch', moveEndCallback);
-        $(element).on('CornerstoneToolsTouchPress', moveEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
-        $(element).on('CornerstoneToolsDragEnd', moveEndCallback);
         $(element).on('CornerstoneToolsTap', moveEndCallback);
+        $(element).on('CornerstoneToolsTouchStart', stopImmediatePropagation);
     }
 
     // module/private exports

@@ -22,6 +22,14 @@
                     y: mouseEventData.currentPoints.image.y,
                     highlight: true,
                     active: true
+                },
+                textBox: {
+                    active: false,
+                    hasMoved: false,
+                    movesIndependently: false,
+                    drawnIndependently: true,
+                    allowedOutsideImage: true,
+                    hasBoundingBox: true
                 }
             }
         };
@@ -81,7 +89,11 @@
             context.stroke();
 
             // Draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            var handleOptions = {
+                drawHandlesIfActive: (config && config.drawHandlesOnHover)
+            };
+
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
 
             // Draw the text
             context.fillStyle = color;
@@ -93,6 +105,9 @@
             // Calculate the length, and create the text variable with the millimeters or pixels suffix            
             var length = Math.sqrt(dx * dx + dy * dy);
 
+            // Store the length inside the tool for outside access
+            data.length = length;
+
             // Set the length text suffix depending on whether or not pixelSpacing is available
             var suffix = ' mm';
             if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
@@ -102,27 +117,88 @@
             // Store the length measurement text
             var text = '' + length.toFixed(2) + suffix;
 
-            // Place the length measurement text next to the right-most handle
-            var fontSize = cornerstoneTools.textStyle.getFontSize();
-            var textCoords = {
-                x: Math.max(handleStartCanvas.x, handleEndCanvas.x),
-            };
+            if (!data.handles.textBox.hasMoved) {
+                var coords = {
+                    x: Math.max(data.handles.start.x, data.handles.end.x),
+                };
 
-            // Depending on which handle has the largest x-value, 
-            // set the y-value for the text box
-            if (textCoords.x === handleStartCanvas.x) {
-                textCoords.y = handleStartCanvas.y;
-            } else {
-                textCoords.y = handleEndCanvas.y;
+                // Depending on which handle has the largest x-value, 
+                // set the y-value for the text box
+                if (coords.x === data.handles.start.x) {
+                    coords.y = data.handles.start.y;
+                } else {
+                    coords.y = data.handles.end.y;
+                }
+
+                data.handles.textBox.x = coords.x;
+                data.handles.textBox.y = coords.y;
             }
+            
+            var textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
 
             // Move the textbox slightly to the right and upwards
             // so that it sits beside the length tool handle
             textCoords.x += 10;
-            textCoords.y -= fontSize / 2 + 7;
+
+            var options = {
+                centering: {
+                    x: false,
+                    y: true
+                }
+            };
 
             // Draw the textbox
-            cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
+            var boundingBox = cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
+            data.handles.textBox.boundingBox = boundingBox;
+
+            if (data.handles.textBox.hasMoved) {
+                // Draw dashed link line between ellipse and text
+                var link = {
+                    start: {},
+                    end: {}
+                };
+
+                var midpointCanvas = {
+                    x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
+                    y: (handleStartCanvas.y + handleEndCanvas.y) / 2,
+                };
+
+                var points = [ handleStartCanvas, handleEndCanvas, midpointCanvas ];
+
+                link.end.x = textCoords.x;
+                link.end.y = textCoords.y;
+
+                link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
+
+                var boundingBoxPoints = [ {
+                    // Top middle point of bounding box
+                    x: boundingBox.left + boundingBox.width / 2,
+                    y: boundingBox.top
+                }, {
+                    // Left middle point of bounding box
+                    x: boundingBox.left,
+                    y: boundingBox.top + boundingBox.height / 2
+                }, {
+                    // Bottom middle point of bounding box
+                    x: boundingBox.left + boundingBox.width / 2,
+                    y: boundingBox.top + boundingBox.height
+                }, {
+                    // Right middle point of bounding box
+                    x: boundingBox.left + boundingBox.width,
+                    y: boundingBox.top + boundingBox.height / 2
+                },
+            ];
+
+                link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+
+                context.beginPath();
+                context.strokeStyle = color;
+                context.lineWidth = lineWidth;
+                context.setLineDash([ 2, 3 ]);
+                context.moveTo(link.start.x, link.start.y);
+                context.lineTo(link.end.x, link.end.y);
+                context.stroke();
+            }
 
             context.restore();
         }

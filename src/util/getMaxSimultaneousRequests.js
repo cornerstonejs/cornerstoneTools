@@ -24,7 +24,7 @@
             default: 6
         },
         Safari: {
-            default: 4
+            default: 6
         }
     };
 

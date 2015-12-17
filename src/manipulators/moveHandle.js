@@ -10,6 +10,10 @@
         };
 
         function mouseDragCallback(e, eventData) {
+            if (handle.hasMoved === false) {
+                handle.hasMoved = true;
+            }
+            
             handle.active = true;
             handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTool.y;

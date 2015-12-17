@@ -4,7 +4,7 @@
 
     function scrollToIndex(element, newImageIdIndex) {
         var toolData = cornerstoneTools.getToolState(element, 'stack');
-        if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
 
@@ -18,11 +18,9 @@
         var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
         var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
-
         var viewport = cornerstone.getViewport(element);
 
         function doneCallback(image) {
-            //console.log('interaction done: ' + image.imageId);
             if (stackData.currentImageIdIndex === newImageIdIndex) {
                 cornerstone.displayImage(element, image, viewport);
                 if (endLoadingHandler) {
@@ -52,7 +50,6 @@
         };
 
         stackData.currentImageIdIndex = newImageIdIndex;
-
         var newImageId = stackData.imageIds[newImageIdIndex];
 
         // Retry image loading in cases where previous image promise
@@ -66,9 +63,9 @@
         }
 
         var requestPoolManager = cornerstoneTools.requestPoolManager;
+        
         var type = 'interaction';
-
-        cornerstoneTools.requestPoolManager.clearRequestStack(type);
+        requestPoolManager.clearRequestStack(type);
 
         // Convert the preventCache value in stack data to a boolean
         var preventCache = !!stackData.preventCache;

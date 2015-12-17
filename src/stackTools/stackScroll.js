@@ -68,4 +68,20 @@
     };
     cornerstoneTools.stackScrollTouchDrag = cornerstoneTools.touchDragTool(dragCallback, options);
 
+    function multiTouchDragCallback(e, eventData) {
+        var config = cornerstoneTools.stackScrollMultiTouch.getConfiguration();
+        if (config && config.testPointers(eventData)) {
+            dragCallback(e, eventData);
+        }
+    }
+
+    var configuration = {
+        testPointers: function(eventData) {
+            return (eventData.numPointers >= 3);
+        }
+    };
+
+    cornerstoneTools.stackScrollMultiTouch = cornerstoneTools.multiTouchDragTool(multiTouchDragCallback, options);
+    cornerstoneTools.stackScrollMultiTouch.setConfiguration(configuration);
+
 })($, cornerstone, cornerstoneTools);

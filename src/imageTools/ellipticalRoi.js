@@ -23,6 +23,14 @@
                     y: mouseEventData.currentPoints.image.y,
                     highlight: true,
                     active: true
+                },
+                textBox: {
+                    active: false,
+                    hasMoved: false,
+                    movesIndependently: false,
+                    drawnIndependently: true,
+                    allowedOutsideImage: true,
+                    hasBoundingBox: true
                 }
             }
         };
@@ -108,14 +116,14 @@
 
         var minorEllipse = {
             left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
-            top: Math.min(startCanvas.y, endCanvas.y) + distance / 2 ,
+            top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
             width: Math.abs(startCanvas.x - endCanvas.x) - distance,
             height: Math.abs(startCanvas.y - endCanvas.y) - distance
         };
-        
+
         var majorEllipse = {
             left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
-            top: Math.min(startCanvas.y, endCanvas.y) - distance / 2 ,
+            top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
             width: Math.abs(startCanvas.x - endCanvas.x) + distance,
             height: Math.abs(startCanvas.y - endCanvas.y) + distance
         };
@@ -138,11 +146,18 @@
         return pointNearEllipse(element, data, coords, 25);
     }
 
+    function numberWithCommas(x) {
+        // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
+        var parts = x.toString().split('.');
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        return parts.join('.');
+    }
+
     function onImageRendered(e, eventData) {
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             return;
         }
 
@@ -151,15 +166,12 @@
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         //activation color 
-        var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-        var font = cornerstoneTools.textStyle.getFont();
-        var fontHeight = cornerstoneTools.textStyle.getFontSize();
         var config = cornerstoneTools.ellipticalRoi.getConfiguration();
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
-            
+
             if (config && config.shadow) {
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
@@ -169,11 +181,7 @@
             var data = toolData.data[i];
 
             //differentiate the color of activation tool
-            if (data.active) {
-                color = cornerstoneTools.toolColors.getActiveColor();
-            } else {
-                color = cornerstoneTools.toolColors.getToolColor();
-            }
+            var color = cornerstoneTools.toolColors.getColorIfActive(data.active);
 
             // draw the ellipse
             var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
@@ -183,8 +191,6 @@
             var heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
             var leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
             var topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
-            var centerX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
-            var centerY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
             context.beginPath();
             context.strokeStyle = color;
@@ -193,18 +199,16 @@
             context.closePath();
 
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-            
-            context.font = font;
+            var handleOptions = {
+                drawHandlesIfActive: (config && config.drawHandlesOnHover)
+            };
 
-            var textX,
-                textY,
-                area,
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
+
+            var area,
                 meanStdDev;
 
             if (!data.invalidated) {
-                textX = data.textX;
-                textY = data.textY;
                 meanStdDev = data.meanStdDev;
                 area = data.area;
             } else {
@@ -234,38 +238,105 @@
 
                 if (!isNaN(meanStdDev.mean) && !isNaN(meanStdDev.stdDev)) {
                     data.meanStdDev = meanStdDev;
+                    data.mean = meanStdDev.mean;
+                    data.stdev = meanStdDev.stdev;
                 }
             }
 
-            // Draw text
-
-            var areaText,
-                areaTextWidth = 0;
-            if (area !== undefined) {
-                areaText = 'Area: ' + area.toFixed(2) + ' mm' + String.fromCharCode(178);
-                areaTextWidth = context.measureText(areaText).width;
-            }
-
-            var meanText = 'Mean: ' + meanStdDev.mean.toFixed(2);
-            var meanTextWidth = context.measureText(meanText).width;
-
-            var stdDevText = 'StdDev: ' + meanStdDev.stdDev.toFixed(2);
-            var stdDevTextWidth = context.measureText(stdDevText).width;
-
-            var longestTextWidth = Math.max(meanTextWidth, areaTextWidth, stdDevTextWidth);
-
-            textX = centerX < (eventData.image.columns / 2) ? centerX + (widthCanvas / 2) + longestTextWidth: centerX - (widthCanvas / 2) - longestTextWidth - 15;
-            textY = centerY < (eventData.image.rows / 2) ? centerY + (heightCanvas / 2): centerY - (heightCanvas / 2);
-
-            context.fillStyle = color;
+            var textLines = [];
             if (meanStdDev) {
-                cornerstoneTools.drawTextBox(context, meanText, textX, textY - fontHeight - 5, color);
-                cornerstoneTools.drawTextBox(context, stdDevText, textX, textY, color);
+                var meanText = 'Mean: ' + numberWithCommas(meanStdDev.mean.toFixed(2));
+                textLines.push(meanText);
+
+                var stdDevText = 'StdDev: ' + numberWithCommas(meanStdDev.stdDev.toFixed(2));
+                textLines.push(stdDevText);
             }
-            
-            // Char code 178 is a superscript 2 for mm^2
+
             if (area !== undefined && !isNaN(area)) {
-                cornerstoneTools.drawTextBox(context, areaText, textX, textY + fontHeight + 5, color);
+                // Char code 178 is a superscript 2 for mm^2
+                var areaText = 'Area: ' + numberWithCommas(area.toFixed(2)) + ' mm' + String.fromCharCode(178);
+                textLines.push(areaText);
+            }
+
+            if (!data.handles.textBox.hasMoved) {
+                data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+                data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
+            }
+
+            var textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
+
+            // Draw text
+            var options = {
+                centering: {
+                    x: false,
+                    y: true
+                }
+            };
+
+            var boundingBox = cornerstoneTools.drawTextBox(context, textLines, textCoords.x,
+                textCoords.y, color, options);
+
+            data.handles.textBox.boundingBox = boundingBox;
+
+            if (data.handles.textBox.hasMoved) {
+                // Draw dashed link line between tool and text
+                var link = {
+                    start: {},
+                    end: {}
+                };
+
+                var ellipsePoints = [ {
+                    // Top middle point of ellipse
+                    x: leftCanvas + widthCanvas / 2,
+                    y: topCanvas
+                }, {
+                    // Left middle point of ellipse
+                    x: leftCanvas,
+                    y: topCanvas + heightCanvas / 2
+                }, {
+                    // Bottom middle point of ellipse
+                    x: leftCanvas + widthCanvas / 2,
+                    y: topCanvas + heightCanvas
+                }, {
+                    // Right middle point of ellipse
+                    x: leftCanvas + widthCanvas,
+                    y: topCanvas + heightCanvas / 2
+                },
+            ];
+
+                link.end.x = textCoords.x;
+                link.end.y = textCoords.y;
+
+                link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+
+                var boundingBoxPoints = [ {
+                    // Top middle point of bounding box
+                    x: boundingBox.left + boundingBox.width / 2,
+                    y: boundingBox.top
+                }, {
+                    // Left middle point of bounding box
+                    x: boundingBox.left,
+                    y: boundingBox.top + boundingBox.height / 2
+                }, {
+                    // Bottom middle point of bounding box
+                    x: boundingBox.left + boundingBox.width / 2,
+                    y: boundingBox.top + boundingBox.height
+                }, {
+                    // Right middle point of bounding box
+                    x: boundingBox.left + boundingBox.width,
+                    y: boundingBox.top + boundingBox.height / 2
+                },
+            ];
+
+                link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+
+                context.beginPath();
+                context.strokeStyle = color;
+                context.lineWidth = lineWidth;
+                context.setLineDash([ 2, 3 ]);
+                context.moveTo(link.start.x, link.start.y);
+                context.lineTo(link.end.x, link.end.y);
+                context.stroke();
             }
 
             context.restore();

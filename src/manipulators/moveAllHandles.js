@@ -42,7 +42,6 @@
         $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
 
         function mouseUpCallback(e, eventData) {
-            data.active = false;
             data.invalidated = true;
 
             $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
@@ -50,39 +49,9 @@
             $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 
             // If any handle is outside the image, delete the tool data
-            if (options.deleteIfHandleOutsideImage === true) {
-                var image = eventData.image;
-                var handleOutsideImage = false;
-                var rect = {
-                    top: 0,
-                    left: 0,
-                    width: image.width,
-                    height: image.height
-                };
-                
-                Object.keys(data.handles).forEach(function(name) {
-                    var handle = data.handles[name];
-                    handle.active = false;
-                    if (cornerstoneMath.point.insideRect(handle, rect) === false) {
-                        handleOutsideImage = true;
-                        return false;
-                    }
-                });
-
-                if (handleOutsideImage) {
-                    // find this tool data
-                    var indexOfData = -1;
-                    toolData.data.forEach(function(thisToolData, index) {
-                        if (thisToolData === data) {
-                            indexOfData = index;
-                            return false;
-                        }
-                    });
-
-                    if (indexOfData !== -1) {
-                        toolData.data.splice(indexOfData, 1);
-                    }
-                }
+            if (options.deleteIfHandleOutsideImage === true &&
+                cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
+                cornerstoneTools.removeToolState(element, toolType, data);
             }
 
             cornerstone.updateImage(element);

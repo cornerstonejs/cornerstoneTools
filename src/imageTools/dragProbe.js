@@ -123,13 +123,13 @@
         // Translate the x/y away from the cursor
         var translation;
         if (eventData.isTouchEvent === true) {
+            var handleRadius = 6;
             var width = context.measureText(text).width;
+            
             translation = {
                 x: -width / 2 - 5,
-                y: -cornerstoneTools.textStyle.getFontSize() * 1.5
+                y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
             };
-
-            var handleRadius = 6;
 
             context.beginPath();
             context.strokeStyle = color;

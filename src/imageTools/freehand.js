@@ -338,11 +338,15 @@
             }
             
             // If the tool is active, draw a handle at the cursor location
+            var options = {
+                fill: fillColor
+            };
+            
             if (data.active){
-                cornerstoneTools.drawHandles(context, eventData, config.mouseLocation.handles, color, fillColor);
+                cornerstoneTools.drawHandles(context, eventData, config.mouseLocation.handles, color, options);
             }
             // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color, fillColor);
+            cornerstoneTools.drawHandles(context, eventData, data.handles, color, options);
 
             context.restore();
         }

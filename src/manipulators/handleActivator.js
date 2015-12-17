@@ -18,7 +18,7 @@
 
     function handleActivator(element, handles, canvasPoint, distanceThreshold) {
         if (!distanceThreshold) {
-            distanceThreshold = 36;
+            distanceThreshold = 6;
         }
 
         var activeHandle = getActiveHandle(handles);

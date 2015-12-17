@@ -4,12 +4,16 @@
 
     var handleRadius = 6;
 
-    function drawHandles(context, renderData, handles, color, fill) {
+    function drawHandles(context, renderData, handles, color, options) {
         context.strokeStyle = color;
 
         Object.keys(handles).forEach(function(name) {
             var handle = handles[name];
             if (handle.drawnIndependently === true) {
+                return;
+            }
+
+            if (options && options.drawHandlesIfActive === true && !handle.active) {
                 return;
             }
 
@@ -24,8 +28,8 @@
             var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
             context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
-            if (fill) {
-                context.fillStyle = fill;
+            if (options && options.fill) {
+                context.fillStyle = options.fill;
                 context.fill();
             }
 

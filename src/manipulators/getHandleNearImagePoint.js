@@ -16,6 +16,11 @@
                     nearbyHandle = handle;
                     return;
                 }
+            } else if (handle.hasBoundingBox === true) {
+                if (cornerstoneTools.pointInsideBoundingBox(handle, coords)) {
+                    nearbyHandle = handle;
+                    return;
+                }
             } else {
                 var handleCanvas = cornerstone.pixelToCanvas(element, handle);
                 var distance = cornerstoneMath.point.distance(handleCanvas, coords);
