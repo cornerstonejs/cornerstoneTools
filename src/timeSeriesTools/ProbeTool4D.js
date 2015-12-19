@@ -8,7 +8,14 @@
         var samples = [];
 
         measurementData.timeSeries.stacks.forEach(function(stack) {
-            cornerstone.loadAndCacheImage(stack.imageIds[measurementData.imageIdIndex]).then(function(image) {
+            var loader;
+            if (stack.preventCache === true) {
+                loader = cornerstone.loadImage(stack.imageIds[measurementData.imageIdIndex]);
+            } else {
+                loader = cornerstone.loadAndCacheImage(stack.imageIds[measurementData.imageIdIndex]);
+            }
+
+            loader.then(function(image) {
                 var offset = Math.round(measurementData.handles.end.x) + Math.round(measurementData.handles.end.y) * image.width;
                 var sample = image.getPixelData()[offset];
                 samples.push(sample);

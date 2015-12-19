@@ -68,7 +68,10 @@
 
         cornerstoneTools.requestPoolManager.clearRequestStack(type);
 
-        requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        // Convert the preventCache value in stack data to a boolean
+        var preventCache = !!stackData.preventCache;
+
+        requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback);
         requestPoolManager.startGrabbing();
 
         $(element).trigger('CornerstoneStackScroll', eventData);

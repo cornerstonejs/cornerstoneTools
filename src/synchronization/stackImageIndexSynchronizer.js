@@ -34,7 +34,14 @@
             startLoadingHandler(targetElement);
         }
 
-        cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]).then(function(image) {
+        var loader;
+        if (targetStackData.preventCache === true) {
+            loader = cornerstone.loadImage(targetStackData.imageIds[newImageIdIndex]);
+        } else {
+            loader = cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]);
+        }
+
+        loader.then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             targetStackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);

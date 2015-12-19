@@ -2470,7 +2470,14 @@ if (typeof cornerstoneTools === 'undefined') {
                     startLoadingHandler(targetElement);
                 }
 
-                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                var loader;
+                if (stackData.preventCache === true) {
+                    loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+                } else {
+                    loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+                }
+
+                loader.then(function(image) {
                     var viewport = cornerstone.getViewport(targetElement);
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(targetElement, image, viewport);
@@ -7120,7 +7127,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function requestPoolManager() {
 
-        function addRequest(element, imageId, type, doneCallback, failCallback) {
+        function addRequest(element, imageId, type, preventCache, doneCallback, failCallback) {
             if (!requestPool.hasOwnProperty(type)) {
                 throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
@@ -7133,6 +7140,7 @@ if (typeof cornerstoneTools === 'undefined') {
             var requestDetails = {
                 type: type,
                 imageId: imageId,
+                preventCache: preventCache,
                 doneCallback: doneCallback,
                 failCallback: failCallback
             };
@@ -7213,8 +7221,15 @@ if (typeof cornerstoneTools === 'undefined') {
                 return;
             }
 
+            var loader;
+            if (requestDetails.preventCache === true) {
+                loader = cornerstone.loadImage(imageId);
+            } else {
+                loader = cornerstone.loadAndCacheImage(imageId);
+            }
+
             // Load and cache the image
-            cornerstone.loadAndCacheImage(imageId).then(function(image) {
+            loader.then(function(image) {
                 numRequests[type]--;
                 // console.log(numRequests);
                 doneCallback(image);
@@ -7388,7 +7403,15 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
 
                 var viewport = cornerstone.getViewport(element);
-                cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+
+                var loader;
+                if (stackData.preventCache === true) {
+                    loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+                } else {
+                    loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+                }
+
+                loader.then(function(image) {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
@@ -7633,7 +7656,8 @@ Display scroll progress bar across bottom of image.
         var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
 
         var imageId,
-            nextImageIdIndex;
+            nextImageIdIndex,
+            preventCache = false;
 
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;
@@ -7642,13 +7666,13 @@ Display scroll progress bar across bottom of image.
             if (lowerIndex >= 0 ) {
                 nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
                 imageId = stack.imageIds[nextImageIdIndex];
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+                requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
             }
 
             if (higherIndex < stackPrefetch.indicesToRequest.length) {
                 nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
                 imageId = stack.imageIds[nextImageIdIndex];
-                requestPoolManager.addRequest(element, imageId, requestType, doneCallback, failCallback);
+                requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
             }
         }
 
@@ -7723,6 +7747,12 @@ Display scroll progress bar across bottom of image.
         }
 
         var stack = stackData.data[0];
+
+        // Check if we are allowed to cache images in this stack
+        if (stack.preventCache === true) {
+            console.warn('A stack that should not be cached was given the stackPrefetch');
+            return;
+        }
 
         // Use the currentImageIdIndex from the stack as the initalImageIdIndex
         var stackPrefetchData = {
@@ -8787,7 +8817,14 @@ Display scroll progress bar across bottom of image.
             startLoadingHandler(targetElement);
         }
 
-        cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]).then(function(image) {
+        var loader;
+        if (targetStackData.preventCache === true) {
+            loader = cornerstone.loadImage(targetStackData.imageIds[newImageIdIndex]);
+        } else {
+            loader = cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]);
+        }
+
+        loader.then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             targetStackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
@@ -8865,7 +8902,14 @@ Display scroll progress bar across bottom of image.
             startLoadingHandler(targetElement);
         }
 
-        cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+        var loader;
+        if (stackData.preventCache === true) {
+            loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+        } else {
+            loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+        }
+
+        loader.then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             stackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
@@ -8935,7 +8979,14 @@ Display scroll progress bar across bottom of image.
         }
 
         if (newImageIdIndex !== -1) {
-            cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+            var loader;
+            if (stackData.preventCache === true) {
+                loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+            } else {
+                loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+            }
+
+            loader.then(function(image) {
                 var viewport = cornerstone.getViewport(targetElement);
                 stackData.currentImageIdIndex = newImageIdIndex;
                 synchronizer.displayImage(targetElement, image, viewport);
@@ -8999,7 +9050,14 @@ Display scroll progress bar across bottom of image.
             startLoadingHandler(targetElement);
         }
 
-        cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+        var loader;
+        if (stackData.preventCache === true) {
+            loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+        } else {
+            loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+        }
+
+        loader.then(function(image) {
             var viewport = cornerstone.getViewport(targetElement);
             stackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
@@ -9370,7 +9428,14 @@ Display scroll progress bar across bottom of image.
         var samples = [];
 
         measurementData.timeSeries.stacks.forEach(function(stack) {
-            cornerstone.loadAndCacheImage(stack.imageIds[measurementData.imageIdIndex]).then(function(image) {
+            var loader;
+            if (stack.preventCache === true) {
+                loader = cornerstone.loadImage(stack.imageIds[measurementData.imageIdIndex]);
+            } else {
+                loader = cornerstone.loadAndCacheImage(stack.imageIds[measurementData.imageIdIndex]);
+            }
+
+            loader.then(function(image) {
                 var offset = Math.round(measurementData.handles.end.x) + Math.round(measurementData.handles.end.y) * image.width;
                 var sample = image.getPixelData()[offset];
                 samples.push(sample);
@@ -9506,7 +9571,14 @@ Display scroll progress bar across bottom of image.
                 startLoadingHandler(element);
             }
 
-            cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]).then(function(image) {
+            var loader;
+            if (newStack.preventCache === true) {
+                loader = cornerstone.loadImage(newStack.imageIds[currentImageIdIndex]);
+            } else {
+                loader = cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]);
+            }
+
+            loader.then(function(image) {
                 if (timeSeriesData.currentImageIdIndex !== currentImageIdIndex) {
                     newStack.currentImageIdIndex = currentImageIdIndex;
                     timeSeriesData.currentStackIndex = newStackIndex;
@@ -10395,7 +10467,10 @@ Display scroll progress bar across bottom of image.
 
         cornerstoneTools.requestPoolManager.clearRequestStack(type);
 
-        requestPoolManager.addRequest(element, newImageId, type, doneCallback, failCallback);
+        // Convert the preventCache value in stack data to a boolean
+        var preventCache = !!stackData.preventCache;
+
+        requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback);
         requestPoolManager.startGrabbing();
 
         $(element).trigger('CornerstoneStackScroll', eventData);

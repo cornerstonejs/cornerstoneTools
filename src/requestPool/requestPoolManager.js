@@ -26,7 +26,7 @@
 
     function requestPoolManager() {
 
-        function addRequest(element, imageId, type, doneCallback, failCallback) {
+        function addRequest(element, imageId, type, preventCache, doneCallback, failCallback) {
             if (!requestPool.hasOwnProperty(type)) {
                 throw 'Request type must be one of interaction, thumbnail, or prefetch';
             }
@@ -39,6 +39,7 @@
             var requestDetails = {
                 type: type,
                 imageId: imageId,
+                preventCache: preventCache,
                 doneCallback: doneCallback,
                 failCallback: failCallback
             };
@@ -119,8 +120,15 @@
                 return;
             }
 
+            var loader;
+            if (requestDetails.preventCache === true) {
+                loader = cornerstone.loadImage(imageId);
+            } else {
+                loader = cornerstone.loadAndCacheImage(imageId);
+            }
+
             // Load and cache the image
-            cornerstone.loadAndCacheImage(imageId).then(function(image) {
+            loader.then(function(image) {
                 numRequests[type]--;
                 // console.log(numRequests);
                 doneCallback(image);

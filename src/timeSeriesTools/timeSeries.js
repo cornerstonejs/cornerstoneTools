@@ -39,7 +39,14 @@
                 startLoadingHandler(element);
             }
 
-            cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]).then(function(image) {
+            var loader;
+            if (newStack.preventCache === true) {
+                loader = cornerstone.loadImage(newStack.imageIds[currentImageIdIndex]);
+            } else {
+                loader = cornerstone.loadAndCacheImage(newStack.imageIds[currentImageIdIndex]);
+            }
+
+            loader.then(function(image) {
                 if (timeSeriesData.currentImageIdIndex !== currentImageIdIndex) {
                     newStack.currentImageIdIndex = currentImageIdIndex;
                     timeSeriesData.currentStackIndex = newStackIndex;
