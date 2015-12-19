@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveAllHandles(mouseEventData, data, toolData, options, doneMovingCallback) {
+    function moveAllHandles(mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
         var element = mouseEventData.element;
 
         function mouseDragCallback(e, eventData) {
@@ -25,7 +25,17 @@
                     handle.y = Math.min(handle.y, eventData.image.height);
                 }
             });
+
             cornerstone.updateImage(element);
+
+            var eventType = 'CornerstoneToolsMeasurementModified';
+            var modifiedEventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, modifiedEventData);
+
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
 
@@ -55,7 +65,7 @@
                     handle.active = false;
                     if (cornerstoneMath.point.insideRect(handle, rect) === false) {
                         handleOutsideImage = true;
-                        return;
+                        return false;
                     }
                 });
 
@@ -65,7 +75,7 @@
                     toolData.data.forEach(function(thisToolData, index) {
                         if (thisToolData === data) {
                             indexOfData = index;
-                            return;
+                            return false;
                         }
                     });
 

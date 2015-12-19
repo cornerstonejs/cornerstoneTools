@@ -18,7 +18,7 @@
             // since we are dragging to another place to drop the end point, we can just activate
             // the end point and let the moveHandle move it for us.
             $(mouseEventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-            cornerstoneTools.moveHandle(mouseEventData, measurementData.handles.end, function() {
+            cornerstoneTools.moveHandle(mouseEventData, mouseToolInterface.toolType, measurementData, measurementData.handles.end, function() {
                 measurementData.active = false;
                 if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                     // delete the measurement
@@ -106,7 +106,7 @@
                         if (handle !== undefined) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
                             data.active = true;
-                            cornerstoneTools.moveHandle(eventData, handle, handleDoneMove, preventHandleOutsideImage);
+                            cornerstoneTools.moveHandle(eventData, mouseToolInterface.toolType, data, handle, handleDoneMove, preventHandleOutsideImage);
                             e.stopImmediatePropagation();
                             return false;
                         }
@@ -125,7 +125,7 @@
                         data = toolData.data[i];
                         if (mouseToolInterface.pointInsideRect(eventData.element, data, coords)) {
                             $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-                            cornerstoneTools.moveAllHandles(e, data, toolData, options);
+                            cornerstoneTools.moveAllHandles(e, data, toolData, mouseToolInterface.toolType, options, handleDoneMove);
                             $(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
                             e.stopImmediatePropagation();
                             return false;
@@ -161,7 +161,7 @@
         // visible, interactive and can create
         function activate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask,
+                mouseButtonMask: mouseButtonMask
             };
 
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
@@ -180,7 +180,7 @@
         // visible, interactive
         function deactivate(element, mouseButtonMask) {
             var eventData = {
-                mouseButtonMask: mouseButtonMask,
+                mouseButtonMask: mouseButtonMask
             };
 
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);

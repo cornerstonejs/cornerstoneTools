@@ -2,7 +2,7 @@
 
     'use strict';
 
-    function moveNewHandle(mouseEventData, handle, doneMovingCallback, preventHandleOutsideImage) {
+    function moveNewHandle(mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
         var element = mouseEventData.element;
 
         function moveCallback(e, eventData) {
@@ -19,6 +19,14 @@
             }
 
             cornerstone.updateImage(element);
+
+            var eventType = 'CornerstoneToolsMeasurementModified';
+            var modifiedEventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, modifiedEventData);
         }
 
         function whichMovement(e) {

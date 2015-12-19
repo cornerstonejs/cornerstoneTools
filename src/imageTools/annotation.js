@@ -54,7 +54,7 @@
         $(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', cornerstoneTools.arrowAnnotate.mouseDownActivateCallback);
 
         cornerstone.updateImage(mouseEventData.element);
-        cornerstoneTools.moveNewHandle(mouseEventData, measurementData.handles.end, function() {
+        cornerstoneTools.moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.end, function() {
             if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
                 // delete the measurement
                 cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
