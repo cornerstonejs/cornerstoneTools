@@ -5973,29 +5973,33 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function keyPress(e) {
         var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToPixel(element, mouseX, mouseY);
-
-        e = window.event || e; // old IE support
 
         var keyPressData = {
+            event: window.event || e, // old IE support
             element: element,
             viewport: cornerstone.getViewport(element),
             image: cornerstone.getEnabledElement(element).image,
-            pageX: mouseX,
-            pageY: mouseY,
-            imageX: startingCoords.x,
-            imageY: startingCoords.y,
+            currentPoints: {
+                page: {
+                    x: mouseX,
+                    y: mouseY
+                },
+                image: cornerstone.pageToPixel(element, mouseX, mouseY),
+            },
             keyCode: e.keyCode,
             which: e.which
         };
 
-        if (e.type === 'keydown') {
-            $(element).trigger('CornerstoneToolsKeyDown', keyPressData);
-        } else if (e.type === 'keypress') {
-            $(element).trigger('CornerstoneToolsKeyPress', keyPressData);
-        } else if (e.type === 'keyup') {
-            $(element).trigger('CornerstoneToolsKeyUp', keyPressData);
-        }
+        keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
+
+        var keyPressEvents = {
+            keydown: 'CornerstoneToolsKeyDown',
+            keypress: 'CornerstoneToolsKeyPress',
+            keyup: 'CornerstoneToolsKeyUp',
+
+        };
+
+        $(element).trigger(keyPressEvents[e.type], keyPressData);
     }
 
     function mouseMove(e) {
@@ -6006,12 +6010,16 @@ if (typeof cornerstoneTools === 'undefined') {
     var keyboardEvent = 'keydown keypress keyup';
 
     function enable(element) {
-        $(element).bind(keyboardEvent, keyPress);
+        // Prevent handlers from being attached multiple times
+        disable(element);
+
+        $(element).on(keyboardEvent, keyPress);
         $(element).on('mousemove', mouseMove);
     }
 
     function disable(element) {
-        $(element).unbind(keyboardEvent, keyPress);
+        $(element).off(keyboardEvent, keyPress);
+        $(element).off('mousemove', mouseMove);
     }
 
     // module exports
