@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-12-18 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-12-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -901,7 +901,7 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             var preventHandleOutsideImage;
-            if (mouseToolInterface.options.preventHandleOutsideImage !== undefined) {
+            if (mouseToolInterface.options && mouseToolInterface.options.preventHandleOutsideImage !== undefined) {
                 preventHandleOutsideImage = mouseToolInterface.options.preventHandleOutsideImage;
             } else {
                 preventHandleOutsideImage = false;

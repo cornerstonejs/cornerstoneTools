@@ -41,7 +41,7 @@
             }
 
             var preventHandleOutsideImage;
-            if (mouseToolInterface.options.preventHandleOutsideImage !== undefined) {
+            if (mouseToolInterface.options && mouseToolInterface.options.preventHandleOutsideImage !== undefined) {
                 preventHandleOutsideImage = mouseToolInterface.options.preventHandleOutsideImage;
             } else {
                 preventHandleOutsideImage = false;
