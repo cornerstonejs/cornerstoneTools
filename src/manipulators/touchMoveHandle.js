@@ -32,7 +32,6 @@
             handle.active = false;
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
             $(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
-            $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             $(element).off('CornerstoneToolsTap', touchEndCallback);
@@ -44,7 +43,6 @@
         }
 
         $(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
-        $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         $(element).on('CornerstoneToolsTap', touchEndCallback);

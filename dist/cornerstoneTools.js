@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-12-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2015-12-28 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1608,7 +1608,7 @@ if (typeof cornerstoneTools === 'undefined') {
             if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
-                    var distanceSq = 75; // Should probably make this a settable property later
+                    var distanceSq = 25; // Should probably make this a settable property later
                     var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                     if (handle) {
                         $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
@@ -1674,7 +1674,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             // now check to see if there is a handle we can move
             var distanceFromTouch = cornerstoneTools.touchSettings.getToolDistanceFromTouch();
-            var distanceSq = Math.pow(Math.max(Math.abs(distanceFromTouch.x), Math.abs(distanceFromTouch.y)), 2);
+            var distanceSq = Math.max(Math.abs(distanceFromTouch.x), Math.abs(distanceFromTouch.y));
             if (toolData) {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
@@ -6739,7 +6739,6 @@ if (typeof cornerstoneTools === 'undefined') {
             handle.active = false;
             $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
             $(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
-            $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
             $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
             $(element).off('CornerstoneToolsTap', touchEndCallback);
@@ -6751,7 +6750,6 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         $(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
-        $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
         $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
         $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
         $(element).on('CornerstoneToolsTap', touchEndCallback);
