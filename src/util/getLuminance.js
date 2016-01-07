@@ -10,17 +10,18 @@
         x = Math.round(x);
         y = Math.round(y);
         var enabledElement = cornerstone.getEnabledElement(element);
+        var image = enabledElement.image;
         var luminance = [];
         var index = 0;
-        var pixelData = enabledElement.image.getPixelData();
+        var pixelData = image.getPixelData();
         var spIndex,
             row,
             column;
 
-        if (enabledElement.image.color) {
+        if (image.color) {
             for (row = 0; row < height; row++) {
                 for (column = 0; column < width; column++) {
-                    spIndex = (((row + y) * enabledElement.image.columns) + (column + x)) * 4;
+                    spIndex = (((row + y) * image.columns) + (column + x)) * 4;
                     var red = pixelData[spIndex];
                     var green = pixelData[spIndex + 1];
                     var blue = pixelData[spIndex + 2];
@@ -30,8 +31,8 @@
         } else {
             for (row = 0; row < height; row++) {
                 for (column = 0; column < width; column++) {
-                    spIndex = ((row + y) * enabledElement.image.columns) + (column + x);
-                    luminance[index++] = pixelData[spIndex];
+                    spIndex = ((row + y) * image.columns) + (column + x);
+                    luminance[index++] = pixelData[spIndex] * image.slope + image.intercept;
                 }
             }
         }

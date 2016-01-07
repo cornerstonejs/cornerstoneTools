@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2015-12-28 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2016-01-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -10029,17 +10029,18 @@ Display scroll progress bar across bottom of image.
         x = Math.round(x);
         y = Math.round(y);
         var enabledElement = cornerstone.getEnabledElement(element);
+        var image = enabledElement.image;
         var luminance = [];
         var index = 0;
-        var pixelData = enabledElement.image.getPixelData();
+        var pixelData = image.getPixelData();
         var spIndex,
             row,
             column;
 
-        if (enabledElement.image.color) {
+        if (image.color) {
             for (row = 0; row < height; row++) {
                 for (column = 0; column < width; column++) {
-                    spIndex = (((row + y) * enabledElement.image.columns) + (column + x)) * 4;
+                    spIndex = (((row + y) * image.columns) + (column + x)) * 4;
                     var red = pixelData[spIndex];
                     var green = pixelData[spIndex + 1];
                     var blue = pixelData[spIndex + 2];
@@ -10049,8 +10050,8 @@ Display scroll progress bar across bottom of image.
         } else {
             for (row = 0; row < height; row++) {
                 for (column = 0; column < width; column++) {
-                    spIndex = ((row + y) * enabledElement.image.columns) + (column + x);
-                    luminance[index++] = pixelData[spIndex];
+                    spIndex = ((row + y) * image.columns) + (column + x);
+                    luminance[index++] = pixelData[spIndex] * image.slope + image.intercept;
                 }
             }
         }
