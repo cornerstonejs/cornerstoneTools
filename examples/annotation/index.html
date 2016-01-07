@@ -118,6 +118,10 @@ is used by our example image loader-->
 <script src="../dialogPolyfill.js"></script>
 
 <script>
+    // Register the dialogs using the HTML5 Dialog Polyfill
+    var dialog = document.querySelector('dialog');
+    dialogPolyfill.registerDialog(dialog);
+    
     var element = $('#dicomImage').get(0);
 
     var imageId = 'example://1';
