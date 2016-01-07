@@ -5415,7 +5415,7 @@ if (typeof cornerstoneTools === 'undefined') {
             return {
                 min: globalMin,
                 max: globalMax,
-                mean: globalMin
+                mean: (globalMin + globalMax) / 2
             };
         }
 
