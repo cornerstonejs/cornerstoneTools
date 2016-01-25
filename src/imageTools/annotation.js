@@ -251,7 +251,7 @@
         $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
         cornerstone.updateImage(element);
 
-        cornerstoneTools.moveNewHandleTouch(touchEventData, measurementData.handles.end, function() {
+        cornerstoneTools.moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.end, function() {
             cornerstone.updateImage(element);
 
             if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles)) {

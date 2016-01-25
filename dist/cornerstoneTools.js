@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2016-01-07 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2016-01-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2256,7 +2256,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
         cornerstone.updateImage(element);
 
-        cornerstoneTools.moveNewHandleTouch(touchEventData, measurementData.handles.end, function() {
+        cornerstoneTools.moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.end, function() {
             cornerstone.updateImage(element);
 
             if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
