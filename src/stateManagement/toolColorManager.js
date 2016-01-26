@@ -2,33 +2,37 @@
 
     'use strict';
 
-    function toolColorManager(){
+    function toolColorManager() {
         var defaultColor = 'white',
             activeColor = 'greenyellow',
             fillColor = 'transparent';
 
-        function setFillColor(color){
+        function setFillColor(color) {
             fillColor = color;
         }
 
-        function getFillColor(){
+        function getFillColor() {
             return fillColor;
         }
 
-        function setToolColor(color){
+        function setToolColor(color) {
             defaultColor = color;
         }
 
-        function getToolColor(){
+        function getToolColor() {
             return defaultColor;
         }
 
-        function setActiveToolColor(color){
+        function setActiveToolColor(color) {
             activeColor = color;
         }
 
-        function getActiveToolColor(){
+        function getActiveToolColor() {
             return activeColor;
+        }
+
+        function getColorIfActive(active) {
+            return active ? activeColor : defaultColor;
         }
 
         var toolColors = {
@@ -37,7 +41,8 @@
             setToolColor: setToolColor,
             getToolColor: getToolColor,
             setActiveColor: setActiveToolColor,
-            getActiveColor: getActiveToolColor
+            getActiveColor: getActiveToolColor,
+            getColorIfActive: getColorIfActive
         };
 
         return toolColors;
