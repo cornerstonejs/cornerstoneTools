@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2016-01-26 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.7 - 2016-02-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -3864,7 +3864,8 @@ if (typeof cornerstoneTools === 'undefined') {
         toolType: toolType
     });
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools); 
+})($, cornerstone, cornerstoneMath, cornerstoneTools);
+ 
 // End Source; src/imageTools/lengthTool.js
 
 // Begin Source: src/imageTools/magnify.js
@@ -6471,14 +6472,22 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
 
+        function measurementRemovedCallback(e, eventData) {
+            if (eventData.measurementData === data) {
+                moveEndCallback();
+            }
+        }
+
         $(element).on('CornerstoneToolsMouseDrag', whichMovement);
         $(element).on('CornerstoneToolsMouseMove', whichMovement);
-        
+        $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+
         function moveEndCallback() {
             $(element).off('CornerstoneToolsMouseMove', moveCallback);
             $(element).off('CornerstoneToolsMouseDrag', moveCallback);
             $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
             $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+            $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
 
             handle.active = false;
             cornerstone.updateImage(element);
@@ -8536,7 +8545,8 @@ Display scroll progress bar across bottom of image.
     // module/private exports
     cornerstoneTools.toolColors = toolColorManager();
 
-})(cornerstoneTools); 
+})(cornerstoneTools);
+ 
 // End Source; src/stateManagement/toolColorManager.js
 
 // Begin Source: src/stateManagement/toolCoordinateManager.js
@@ -8623,15 +8633,15 @@ Display scroll progress bar across bottom of image.
 
         if (indexOfData !== -1) {
             toolData.data.splice(indexOfData, 1);
-        }
 
-        var eventType = 'CornerstoneToolsMeasurementRemoved';
-        var eventData = {
-            toolType: toolType,
-            element: element,
-            measurementData: data
-        };
-        $(element).trigger(eventType, eventData);
+            var eventType = 'CornerstoneToolsMeasurementRemoved';
+            var eventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, eventData);
+        }
     }
 
     function clearToolState(element, toolType) {

@@ -50,15 +50,15 @@
 
         if (indexOfData !== -1) {
             toolData.data.splice(indexOfData, 1);
-        }
 
-        var eventType = 'CornerstoneToolsMeasurementRemoved';
-        var eventData = {
-            toolType: toolType,
-            element: element,
-            measurementData: data
-        };
-        $(element).trigger(eventType, eventData);
+            var eventType = 'CornerstoneToolsMeasurementRemoved';
+            var eventData = {
+                toolType: toolType,
+                element: element,
+                measurementData: data
+            };
+            $(element).trigger(eventType, eventData);
+        }
     }
 
     function clearToolState(element, toolType) {
