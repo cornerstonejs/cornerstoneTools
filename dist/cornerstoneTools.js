@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.7 - 2016-02-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-02-12 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2032,6 +2032,8 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurement(mouseEventData) {
 
+        var measurementData = createNewMeasurement(mouseEventData);
+
         function doneChangingTextCallback(text) {
             if (text !== null) {
                 measurementData.text = text;
@@ -2042,8 +2044,6 @@ if (typeof cornerstoneTools === 'undefined') {
             measurementData.active = false;
             cornerstone.updateImage(mouseEventData.element);
         }
-
-        var measurementData = createNewMeasurement(mouseEventData);
 
         var eventData = {
             mouseButtonMask: mouseEventData.which,
@@ -2238,7 +2238,8 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurementTouch(touchEventData) {
         var element = touchEventData.element;
-
+        var measurementData = createNewMeasurement(touchEventData);
+        
         function doneChangingTextCallback(text) {
             if (text !== null) {
                 measurementData.text = text;
@@ -2249,8 +2250,7 @@ if (typeof cornerstoneTools === 'undefined') {
             measurementData.active = false;
             cornerstone.updateImage(element);
         }
-
-        var measurementData = createNewMeasurement(touchEventData);
+        
         cornerstoneTools.addToolState(element, toolType, measurementData);
         $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
         $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
@@ -10422,6 +10422,8 @@ Display scroll progress bar across bottom of image.
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
         var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
+        var viewport = cornerstone.getViewport(element);
+
         function doneCallback(image) {
             //console.log('interaction done: ' + image.imageId);
             if (stackData.currentImageIdIndex === newImageIdIndex) {
@@ -10453,7 +10455,7 @@ Display scroll progress bar across bottom of image.
         };
 
         stackData.currentImageIdIndex = newImageIdIndex;
-        var viewport = cornerstone.getViewport(element);
+
         var newImageId = stackData.imageIds[newImageIdIndex];
 
         // Retry image loading in cases where previous image promise

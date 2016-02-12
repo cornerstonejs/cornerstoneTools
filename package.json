@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "description": "Medical imaging tools for the Cornerstone library",
   "keywords": [
     "DICOM",
@@ -18,16 +18,16 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "grunt-contrib-copy": "0.4.x",
+    "grunt-contrib-copy": "0.8.2",
     "grunt-contrib-qunit": "^0.4.0",
-    "grunt-contrib-concat": "^0.3.0",
+    "grunt-contrib-concat": "^0.5.1",
     "grunt-contrib-watch": "^0.6.1",
     "grunt-contrib-uglify": "^0.4.0",
-    "grunt-contrib-jshint": "^0.11.2",
-    "grunt-contrib-clean": "^0.5.0",
-    "grunt-jscs": "~2.1.0",
+    "grunt-contrib-jshint": "^0.12.0",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-jscs": "~2.7.0",
     "grunt-version": "^1.0.0",
-    "load-grunt-tasks": "^0.2.1",
-    "jscs": "~2.2.1"
+    "load-grunt-tasks": "^3.4.0",
+    "jscs": "~2.9.0"
   }
 }

@@ -27,6 +27,8 @@
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurement(mouseEventData) {
 
+        var measurementData = createNewMeasurement(mouseEventData);
+
         function doneChangingTextCallback(text) {
             if (text !== null) {
                 measurementData.text = text;
@@ -37,8 +39,6 @@
             measurementData.active = false;
             cornerstone.updateImage(mouseEventData.element);
         }
-
-        var measurementData = createNewMeasurement(mouseEventData);
 
         var eventData = {
             mouseButtonMask: mouseEventData.which,
@@ -233,7 +233,8 @@
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurementTouch(touchEventData) {
         var element = touchEventData.element;
-
+        var measurementData = createNewMeasurement(touchEventData);
+        
         function doneChangingTextCallback(text) {
             if (text !== null) {
                 measurementData.text = text;
@@ -244,8 +245,7 @@
             measurementData.active = false;
             cornerstone.updateImage(element);
         }
-
-        var measurementData = createNewMeasurement(touchEventData);
+        
         cornerstoneTools.addToolState(element, toolType, measurementData);
         $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
         $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);

@@ -19,6 +19,8 @@
         var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
         var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
 
+        var viewport = cornerstone.getViewport(element);
+
         function doneCallback(image) {
             //console.log('interaction done: ' + image.imageId);
             if (stackData.currentImageIdIndex === newImageIdIndex) {
@@ -50,7 +52,7 @@
         };
 
         stackData.currentImageIdIndex = newImageIdIndex;
-        var viewport = cornerstone.getViewport(element);
+
         var newImageId = stackData.imageIds[newImageIdIndex];
 
         // Retry image loading in cases where previous image promise
