@@ -20,7 +20,7 @@
         preventNextPinch = false;
     
     function onTouch(e) {
-        //console.log(e.type);
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -435,8 +435,18 @@
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
+        var doubleTap = new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2,
+            interval: 1500,
+            threshold: 50,
+            posThreshold: 50
+        });
+
+        doubleTap.recognizeWith(pan);
+
         // add to the Manager
-        mc.add([ pan, rotate, pinch ]);
+        mc.add([ doubleTap, pan, rotate, pinch ]);
         mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
         cornerstoneTools.preventGhostClick.enable(element);

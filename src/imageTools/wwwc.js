@@ -13,7 +13,7 @@
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 

@@ -380,7 +380,7 @@ if (typeof cornerstoneTools === 'undefined') {
         preventNextPinch = false;
     
     function onTouch(e) {
-        //console.log(e.type);
+        console.log(e.type);
         var element = e.target.parentNode,
             event,
             eventType;
@@ -795,8 +795,18 @@ if (typeof cornerstoneTools === 'undefined') {
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
 
+        var doubleTap = new Hammer.Tap({
+            event: 'doubletap',
+            taps: 2,
+            interval: 1500,
+            threshold: 50,
+            posThreshold: 50
+        });
+
+        doubleTap.recognizeWith(pan);
+
         // add to the Manager
-        mc.add([ pan, rotate, pinch ]);
+        mc.add([ doubleTap, pan, rotate, pinch ]);
         mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
         cornerstoneTools.preventGhostClick.enable(element);
@@ -2710,6 +2720,56 @@ if (typeof cornerstoneTools === 'undefined') {
 })($, cornerstone, cornerstoneTools);
  
 // End Source; src/imageTools/displayTool.js
+
+// Begin Source: src/imageTools/doubleTapTool.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function doubleTapTool(doubleTapCallback) {
+        var toolInterface = {
+            activate: function(element) {
+                $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+                var eventData = {};
+                $(element).on('CornerstoneToolsDoubleTap', eventData, doubleTapCallback);
+            },
+            disable: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);},
+            enable: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);},
+            deactivate: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);}
+        };
+        return toolInterface;
+    }
+
+    // module exports
+    cornerstoneTools.doubleTapTool = doubleTapTool;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/imageTools/doubleTapTool.js
+
+// Begin Source: src/imageTools/doubleTapZoom.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function fitToWindowStrategy(eventData) {
+        cornerstone.fitToWindow(eventData.element);
+    }
+
+    function doubleTapCallback(e, eventData) {
+        cornerstoneTools.doubleTapZoom.strategy(eventData);
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+    }
+
+    cornerstoneTools.doubleTapZoom = cornerstoneTools.doubleTapTool(doubleTapCallback);
+    cornerstoneTools.doubleTapZoom.strategies = {
+        default: fitToWindowStrategy
+    };
+    cornerstoneTools.doubleTapZoom.strategy = fitToWindowStrategy;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/imageTools/doubleTapZoom.js
 
 // Begin Source: src/imageTools/dragProbe.js
 (function($, cornerstone, cornerstoneTools) {
@@ -5659,7 +5719,7 @@ if (typeof cornerstoneTools === 'undefined') {
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-            return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
