@@ -149,9 +149,9 @@
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
             
             maxNumRequests = {
-                interaction: maxSimultaneousRequests,
-                thumbnail: maxSimultaneousRequests - 2,
-                prefetch: maxSimultaneousRequests - 1
+                interaction: Math.max(maxSimultaneousRequests, 1),
+                thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
+                prefetch: Math.max(maxSimultaneousRequests - 1, 1)
             };
 
             for (var i = 0; i < maxSimultaneousRequests; i++) {

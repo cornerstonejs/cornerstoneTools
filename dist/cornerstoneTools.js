@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-02-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-03-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -7643,9 +7643,9 @@ if (typeof cornerstoneTools === 'undefined') {
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
             
             maxNumRequests = {
-                interaction: maxSimultaneousRequests,
-                thumbnail: maxSimultaneousRequests - 2,
-                prefetch: maxSimultaneousRequests - 1
+                interaction: Math.max(maxSimultaneousRequests, 1),
+                thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
+                prefetch: Math.max(maxSimultaneousRequests - 1, 1)
             };
 
             for (var i = 0; i < maxSimultaneousRequests; i++) {
@@ -8193,7 +8193,7 @@ Display scroll progress bar across bottom of image.
         }
     }
 
-    function getConfiguration () {
+    function getConfiguration() {
         return configuration;
     }
 
@@ -10544,9 +10544,15 @@ Display scroll progress bar across bottom of image.
         return browserData[browserVersion];
     }
 
+    function isMobileDevice() {
+        var pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
+        return !!pattern.test(navigator.userAgent);
+    }
+
     // module exports
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
     cornerstoneTools.getBrowserInfo = getBrowserInfo;
+    cornerstoneTools.isMobileDevice = isMobileDevice;
 
 })(cornerstone, cornerstoneTools);
  

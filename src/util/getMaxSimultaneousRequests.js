@@ -80,8 +80,14 @@
         return browserData[browserVersion];
     }
 
+    function isMobileDevice() {
+        var pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
+        return !!pattern.test(navigator.userAgent);
+    }
+
     // module exports
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
     cornerstoneTools.getBrowserInfo = getBrowserInfo;
+    cornerstoneTools.isMobileDevice = isMobileDevice;
 
 })(cornerstone, cornerstoneTools);

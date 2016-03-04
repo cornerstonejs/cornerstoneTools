@@ -285,7 +285,7 @@
         }
     }
 
-    function getConfiguration () {
+    function getConfiguration() {
         return configuration;
     }
 
