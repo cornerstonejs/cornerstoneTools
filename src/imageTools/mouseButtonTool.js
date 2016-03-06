@@ -254,6 +254,16 @@
                 mouseButtonMask: mouseButtonMask
             };
 
+            var eventType = 'CornerstoneToolsToolDeactivated';
+            var statusChangeEventData = {
+                mouseButtonMask: mouseButtonMask,
+                toolType: mouseToolInterface.toolType,
+                type: eventType
+            };
+
+            var event = $.Event(eventType, statusChangeEventData);
+            $(element).trigger(event, statusChangeEventData);
+
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);

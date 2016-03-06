@@ -38,12 +38,12 @@
         }
         
         function moveEndCallback(e, eventData) {
-            console.log(e);
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
             $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
             $(element).off('CornerstoneToolsTap', moveEndCallback);
             $(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
             if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
                 handle.active = false;
@@ -85,6 +85,32 @@
         $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
         $(element).on('CornerstoneToolsTap', moveEndCallback);
         $(element).on('CornerstoneToolsTouchStart', stopImmediatePropagation);
+
+        function toolDeactivatedCallback() {
+            $(element).off('CornerstoneToolsTouchDrag', moveCallback);
+            $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
+            $(element).off('CornerstoneToolsTap', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+
+            handle.active = false;
+            data.active = false;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
+            
+            if (preventHandleOutsideImage) {
+                handle.x = Math.max(handle.x, 0);
+                handle.x = Math.min(handle.x, eventData.image.width);
+
+                handle.y = Math.max(handle.y, 0);
+                handle.y = Math.min(handle.y, eventData.image.height);
+            }
+
+            cornerstone.updateImage(element);
+        }
+
+        $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
     }
 
     // module/private exports

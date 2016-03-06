@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-03-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-03-06 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1126,6 +1126,16 @@ if (typeof cornerstoneTools === 'undefined') {
                 mouseButtonMask: mouseButtonMask
             };
 
+            var eventType = 'CornerstoneToolsToolDeactivated';
+            var statusChangeEventData = {
+                mouseButtonMask: mouseButtonMask,
+                toolType: mouseToolInterface.toolType,
+                type: eventType
+            };
+
+            var event = $.Event(eventType, statusChangeEventData);
+            $(element).trigger(event, statusChangeEventData);
+
             $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
@@ -1818,8 +1828,15 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // visible, interactive
         function deactivate(element) {
-            //console.log('deactivate touchTool');
-            
+            var eventType = 'CornerstoneToolsToolDeactivated';
+            var statusChangeEventData = {
+                toolType: touchToolInterface.toolType,
+                type: eventType
+            };
+
+            var event = $.Event(eventType, statusChangeEventData);
+            $(element).trigger(event, statusChangeEventData);
+
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
@@ -6865,16 +6882,32 @@ if (typeof cornerstoneTools === 'undefined') {
             }
         }
 
+        function toolDeactivatedCallback(e, eventData) {
+            if (eventData.toolType === toolType) {
+                $(element).off('CornerstoneToolsMouseMove', moveCallback);
+                $(element).off('CornerstoneToolsMouseDrag', moveCallback);
+                $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+                $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+                $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+                $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+
+                handle.active = false;
+                cornerstone.updateImage(element);
+            }
+        }
+
         $(element).on('CornerstoneToolsMouseDrag', whichMovement);
         $(element).on('CornerstoneToolsMouseMove', whichMovement);
         $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-
+        $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+            
         function moveEndCallback() {
             $(element).off('CornerstoneToolsMouseMove', moveCallback);
             $(element).off('CornerstoneToolsMouseDrag', moveCallback);
             $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
             $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
             $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
             handle.active = false;
             cornerstone.updateImage(element);
@@ -6933,12 +6966,12 @@ if (typeof cornerstoneTools === 'undefined') {
         }
         
         function moveEndCallback(e, eventData) {
-            console.log(e);
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
             $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
             $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
             $(element).off('CornerstoneToolsTap', moveEndCallback);
             $(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
             if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
                 handle.active = false;
@@ -6980,6 +7013,32 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
         $(element).on('CornerstoneToolsTap', moveEndCallback);
         $(element).on('CornerstoneToolsTouchStart', stopImmediatePropagation);
+
+        function toolDeactivatedCallback() {
+            $(element).off('CornerstoneToolsTouchDrag', moveCallback);
+            $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
+            $(element).off('CornerstoneToolsTap', moveEndCallback);
+            $(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+
+            handle.active = false;
+            data.active = false;
+            handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
+            handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
+            
+            if (preventHandleOutsideImage) {
+                handle.x = Math.max(handle.x, 0);
+                handle.x = Math.min(handle.x, eventData.image.width);
+
+                handle.y = Math.max(handle.y, 0);
+                handle.y = Math.min(handle.y, eventData.image.height);
+            }
+
+            cornerstone.updateImage(element);
+        }
+
+        $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
     }
 
     // module/private exports

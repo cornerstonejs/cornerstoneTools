@@ -48,16 +48,32 @@
             }
         }
 
+        function toolDeactivatedCallback(e, eventData) {
+            if (eventData.toolType === toolType) {
+                $(element).off('CornerstoneToolsMouseMove', moveCallback);
+                $(element).off('CornerstoneToolsMouseDrag', moveCallback);
+                $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+                $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+                $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+                $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+
+                handle.active = false;
+                cornerstone.updateImage(element);
+            }
+        }
+
         $(element).on('CornerstoneToolsMouseDrag', whichMovement);
         $(element).on('CornerstoneToolsMouseMove', whichMovement);
         $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-
+        $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+            
         function moveEndCallback() {
             $(element).off('CornerstoneToolsMouseMove', moveCallback);
             $(element).off('CornerstoneToolsMouseDrag', moveCallback);
             $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
             $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
             $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+            $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
             handle.active = false;
             cornerstone.updateImage(element);

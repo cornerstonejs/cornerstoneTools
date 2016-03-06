@@ -304,8 +304,15 @@
 
         // visible, interactive
         function deactivate(element) {
-            //console.log('deactivate touchTool');
-            
+            var eventType = 'CornerstoneToolsToolDeactivated';
+            var statusChangeEventData = {
+                toolType: touchToolInterface.toolType,
+                type: eventType
+            };
+
+            var event = $.Event(eventType, statusChangeEventData);
+            $(element).trigger(event, statusChangeEventData);
+
             $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
