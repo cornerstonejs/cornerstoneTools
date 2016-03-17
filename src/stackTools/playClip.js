@@ -16,12 +16,8 @@
             throw 'playClip: element must not be undefined';
         }
 
-        if (framesPerSecond === undefined) {
-            framesPerSecond = 30;
-        }
-
         var stackToolData = cornerstoneTools.getToolState(element, 'stack');
-        if (stackToolData === undefined || stackToolData.data === undefined || stackToolData.data.length === 0) {
+        if (!stackToolData || !stackToolData.data || !stackToolData.data.length) {
             return;
         }
 
@@ -30,10 +26,10 @@
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
         
-        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+        if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
             playClipData = {
                 intervalId: undefined,
-                framesPerSecond: framesPerSecond,
+                framesPerSecond: framesPerSecond || 30,
                 lastFrameTimeStamp: undefined,
                 frameRate: 0,
                 loop: true
@@ -41,7 +37,6 @@
             cornerstoneTools.addToolState(element, toolType, playClipData);
         } else {
             playClipData = playClipToolData.data[0];
-            playClipData.framesPerSecond = framesPerSecond;
         }
 
         // if already playing, do not set a new interval
@@ -50,7 +45,6 @@
         }
 
         playClipData.intervalId = setInterval(function() {
-
             var newImageIdIndex = stackData.currentImageIdIndex;
 
             if (playClipData.framesPerSecond > 0) {
@@ -60,10 +54,10 @@
             }
 
             if (!playClipData.loop && (newImageIdIndex >= stackData.imageIds.length || newImageIdIndex < 0)) {
-                
                 var eventDetail = {
                     element: element
                 };
+
                 var event = $.Event('CornerstoneToolsClipStopped', eventDetail);
                 $(element).trigger(event, eventDetail);
 
@@ -121,13 +115,12 @@
      */
     function stopClip(element) {
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
-        var playClipData;
-        if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+        if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
             return;
-        } else {
-            playClipData = playClipToolData.data[0];
         }
 
+        var playClipData = playClipToolData.data[0];
+        
         clearInterval(playClipData.intervalId);
         playClipData.intervalId = undefined;
     }
