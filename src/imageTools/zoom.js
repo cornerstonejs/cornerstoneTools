@@ -187,6 +187,13 @@
 
     function mouseWheelCallback(e, eventData) {
         var ticks = -eventData.direction / 4;
+        
+        // Allow inversion of the mouse wheel scroll via a configuration option
+        var config = cornerstoneTools.zoom.getConfiguration();
+        if (config && config.invert) {
+            ticks *= -1;
+        }
+
         var viewport = changeViewportScale(eventData.viewport, ticks);
         cornerstone.setViewport(eventData.element, viewport);
     }

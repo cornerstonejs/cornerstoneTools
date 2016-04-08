@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-03-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-04-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6322,6 +6322,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseWheelCallback(e, eventData) {
         var ticks = -eventData.direction / 4;
+        
+        // Allow inversion of the mouse wheel scroll via a configuration option
+        var config = cornerstoneTools.zoom.getConfiguration();
+        if (config && config.invert) {
+            ticks *= -1;
+        }
+
         var viewport = changeViewportScale(eventData.viewport, ticks);
         cornerstone.setViewport(eventData.element, viewport);
     }
