@@ -137,8 +137,8 @@
             context.stroke();
         } else {
             translation = {
-                x: 4,
-                y: -4
+                x: 12,
+                y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
             };
         }
 

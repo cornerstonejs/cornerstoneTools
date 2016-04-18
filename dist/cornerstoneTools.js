@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-04-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-04-18 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2928,8 +2928,8 @@ if (typeof cornerstoneTools === 'undefined') {
             context.stroke();
         } else {
             translation = {
-                x: 4,
-                y: -4
+                x: 12,
+                y: -cornerstoneTools.textStyle.getFontSize() + 10 / 2
             };
         }
 
