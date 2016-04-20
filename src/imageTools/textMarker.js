@@ -27,6 +27,20 @@
             }
         };
 
+        // Create a rectangle representing the image
+        var imageRect = {
+            left: 0,
+            top: 0,
+            width: mouseEventData.image.width,
+            height: mouseEventData.image.height
+        };
+
+        // Check if the current handle is outside the image,
+        // If it is, prevent the handle creation
+        if (!cornerstoneMath.point.insideRect(measurementData.handles.end, imageRect)) {
+            return;
+        }
+
         // Update the current marker for the next marker
         var currentIndex = config.markers.indexOf(config.current);
         if (config.ascending) {
@@ -101,7 +115,14 @@
 
             var textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-            var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x - data.textWidth / 2, textCoords.y, color);
+            var options = {
+                centering: {
+                    x: true,
+                    y: true
+                }
+            };
+
+            var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
             data.textBoundingBox = boundingBox;
 
             context.restore();
