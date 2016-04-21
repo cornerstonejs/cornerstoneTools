@@ -186,7 +186,31 @@ is used by our example image loader-->
     ascending.on('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
         config.ascending = ascending.is(':checked');
-        config.current = startFrom.val();
+        var currentIndex = config.markers.indexOf(config.current);
+        
+        // If we change direction, modify the upcoming label as required
+        if (config.ascending) {
+            currentIndex += 2;
+            if (currentIndex >= config.markers.length) {
+                if (!config.loop) {
+                    currentIndex = -1;
+                } else {
+                    currentIndex -= config.markers.length;
+                }
+            }
+        } else {
+            currentIndex -= 2;
+            if (currentIndex < 0) {
+                if (!config.loop) {
+                    currentIndex = -1;
+                } else {
+                    currentIndex += config.markers.length;
+                }
+            }
+        }
+
+        config.current = config.markers[currentIndex];
+
         console.log("Changed ascending to: " + config.ascending)
     })
 
@@ -194,7 +218,6 @@ is used by our example image loader-->
     loop.on('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
         config.loop = loop.is(':checked');
-        config.current = startFrom.val();
         console.log("Changed loop to: " + config.loop)
     })
 
@@ -206,7 +229,7 @@ is used by our example image loader-->
     })
 
 
-    function changeTextCallback(data, doneChangingTextCallback) {
+    function changeTextCallback(data, eventData, doneChangingTextCallback) {
         var dialog = $('.relabelDialog');
         var select = dialog.find('.relabelSelect');
         var confirm = dialog.find('.relabelConfirm');

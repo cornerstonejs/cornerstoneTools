@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-04-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-04-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -5604,10 +5604,15 @@ if (typeof cornerstoneTools === 'undefined') {
 
             data.active = false;
             cornerstone.updateImage(element);
-            $(element).on('CornerstoneToolsMouseMove', eventData, cornerstoneTools.textMarker.mouseMoveCallback);
-            $(element).on('CornerstoneToolsMouseDown', eventData, cornerstoneTools.textMarker.mouseDownCallback);
-            $(element).on('CornerstoneToolsMouseDownActivate', eventData, cornerstoneTools.textMarker.mouseDownActivateCallback);
-            $(element).on('CornerstoneToolsMouseDoubleClick', eventData, cornerstoneTools.textMarker.mouseDoubleClickCallback);
+
+            var mouseButtonData = {
+                mouseButtonMask: e.data.mouseButtonMask
+            };
+
+            $(element).on('CornerstoneToolsMouseMove', mouseButtonData, cornerstoneTools.textMarker.mouseMoveCallback);
+            $(element).on('CornerstoneToolsMouseDown', mouseButtonData, cornerstoneTools.textMarker.mouseDownCallback);
+            $(element).on('CornerstoneToolsMouseDownActivate', mouseButtonData, cornerstoneTools.textMarker.mouseDownActivateCallback);
+            $(element).on('CornerstoneToolsMouseDoubleClick', mouseButtonData, cornerstoneTools.textMarker.mouseDoubleClickCallback);
         }
 
         if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
@@ -5664,10 +5669,6 @@ if (typeof cornerstoneTools === 'undefined') {
             $(element).on('CornerstoneToolsTouchStart', cornerstoneTools.textMarkerTouch.touchStartCallback);
             $(element).on('CornerstoneToolsTap', cornerstoneTools.textMarkerTouch.tapCallback);
             $(element).on('CornerstoneToolsTouchPress', cornerstoneTools.textMarkerTouch.pressCallback);
-        }
-
-        if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            return false;
         }
 
         var config = cornerstoneTools.textMarker.getConfiguration();
