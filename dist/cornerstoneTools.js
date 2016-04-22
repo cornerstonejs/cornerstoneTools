@@ -7884,7 +7884,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
             playClipData = {
                 intervalId: undefined,
-                framesPerSecond: framesPerSecond || 30,
+                framesPerSecond: 30,
                 lastFrameTimeStamp: undefined,
                 frameRate: 0,
                 loop: true
@@ -7892,6 +7892,11 @@ if (typeof cornerstoneTools === 'undefined') {
             cornerstoneTools.addToolState(element, toolType, playClipData);
         } else {
             playClipData = playClipToolData.data[0];
+        }
+
+        // If a framerate is specified, update the playClipData now
+        if (framesPerSecond) {
+            playClipData.framesPerSecond = framesPerSecond;
         }
 
         // if already playing, do not set a new interval
