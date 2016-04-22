@@ -123,16 +123,6 @@
             return;
         }
 
-        function doneCallback(image) {
-            //console.log('prefetch done: ' + image.imageId);
-            var imageIdIndex = stack.imageIds.indexOf(image.imageId);
-            removeFromList(imageIdIndex);
-        }
-
-        function failCallback(error) {
-            console.log('prefetch errored: ' + error);
-        }
-
         // Clear the requestPool of prefetch requests
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         requestPoolManager.clearRequestStack(requestType);
@@ -143,6 +133,22 @@
         var imageId,
             nextImageIdIndex,
             preventCache = false;
+
+        function doneCallback(image) {
+            //console.log('prefetch done: ' + image.imageId);
+            var imageIdIndex = stack.imageIds.indexOf(image.imageId);
+            removeFromList(imageIdIndex);
+        }
+
+        // Retrieve the errorLoadingHandler if one exists
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
+        function failCallback(error) {
+            console.log('prefetch errored: ' + error);
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+            }
+        }
 
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;

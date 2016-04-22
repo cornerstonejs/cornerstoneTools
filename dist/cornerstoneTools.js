@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-04-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-04-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -7758,6 +7758,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     numRequests[type]--;
                     // console.log(numRequests);
                     failCallback(error);
+                    startAgain();
                 });
                 return;
             }
@@ -7779,6 +7780,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 numRequests[type]--;
                 // console.log(numRequests);
                 failCallback(error);
+                startAgain();
             });
         }
 
@@ -8172,16 +8174,6 @@ Display scroll progress bar across bottom of image.
             return;
         }
 
-        function doneCallback(image) {
-            //console.log('prefetch done: ' + image.imageId);
-            var imageIdIndex = stack.imageIds.indexOf(image.imageId);
-            removeFromList(imageIdIndex);
-        }
-
-        function failCallback(error) {
-            console.log('prefetch errored: ' + error);
-        }
-
         // Clear the requestPool of prefetch requests
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         requestPoolManager.clearRequestStack(requestType);
@@ -8192,6 +8184,22 @@ Display scroll progress bar across bottom of image.
         var imageId,
             nextImageIdIndex,
             preventCache = false;
+
+        function doneCallback(image) {
+            //console.log('prefetch done: ' + image.imageId);
+            var imageIdIndex = stack.imageIds.indexOf(image.imageId);
+            removeFromList(imageIdIndex);
+        }
+
+        // Retrieve the errorLoadingHandler if one exists
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
+        function failCallback(error) {
+            console.log('prefetch errored: ' + error);
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+            }
+        }
 
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;

@@ -116,6 +116,7 @@
                     numRequests[type]--;
                     // console.log(numRequests);
                     failCallback(error);
+                    startAgain();
                 });
                 return;
             }
@@ -137,6 +138,7 @@
                 numRequests[type]--;
                 // console.log(numRequests);
                 failCallback(error);
+                startAgain();
             });
         }
 
