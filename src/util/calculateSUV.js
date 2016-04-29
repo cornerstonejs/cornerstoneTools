@@ -1,4 +1,4 @@
-(function(dicomParser, cornerstoneTools) {
+(function(cornerstoneTools) {
 
     'use strict';
 
@@ -56,4 +56,4 @@
     // module exports
     cornerstoneTools.calculateSUV = calculateSUV;
 
-})(dicomParser, cornerstoneTools);
+})(cornerstoneTools);

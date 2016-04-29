@@ -95,11 +95,12 @@
             toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
                 eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() * 4);
         } else {
-            toolCoords = eventData.currentPoints.image;
+            toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
+                eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() / 2);
         }
 
         var storedPixels;
-        var text;
+        var text = '';
 
         if (toolCoords.x < 0 || toolCoords.y < 0 ||
             toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
@@ -107,12 +108,29 @@
         }
         
         if (image.color) {
-            storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 3, 1);
+            storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
             text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
         } else {
             storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-            var huValue = storedPixels[0] * image.slope + image.intercept;
-            text = parseFloat(huValue.toFixed(3));
+            var sp = storedPixels[0];
+            var mo = sp * eventData.image.slope + eventData.image.intercept;
+            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+
+            var modalityTag = 'x00080060';
+            var modality;
+            if (eventData.image.data) {
+                modality = eventData.image.data.string(modalityTag);    
+            }
+            
+            if (modality === 'CT') {
+                text += 'HU: ';
+            }
+
+            // Draw text
+            text += parseFloat(mo.toFixed(2));
+            if (suv) {
+                text += ' SUV: ' + parseFloat(suv.toFixed(2));
+            }
         }
 
         // Prepare text
@@ -122,25 +140,25 @@
 
         // Translate the x/y away from the cursor
         var translation;
+        var handleRadius = 6;
+        var width = context.measureText(text).width;
+
         if (eventData.isTouchEvent === true) {
-            var handleRadius = 6;
-            var width = context.measureText(text).width;
-            
             translation = {
                 x: -width / 2 - 5,
                 y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
             };
-
-            context.beginPath();
-            context.strokeStyle = color;
-            context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-            context.stroke();
         } else {
             translation = {
                 x: 12,
                 y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
             };
         }
+
+        context.beginPath();
+        context.strokeStyle = color;
+        context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+        context.stroke();
 
         cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
         context.restore();
