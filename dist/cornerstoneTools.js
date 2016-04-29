@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-04-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-04-29 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -10326,45 +10326,54 @@ Display scroll progress bar across bottom of image.
 // End Source; src/util/RoundToDecimal.js
 
 // Begin Source: src/util/calculateSUV.js
-(function(cornerstoneTools) {
+(function(dicomParser, cornerstoneTools) {
 
     'use strict';
 
+    // Returns a decimal value given a fractional value
+    function fracToDec(fractionalValue) {
+        return parseFloat('.' + fractionalValue);
+    }
+
     function calculateSUV(image, storedPixelValue) {
-        // if no dicom data set, return undefined
+        if (!dicomParser) {
+            return;
+        }
+
+        // if no dicom data set, return
         if (image.data === undefined) {
-            return undefined;
+            return;
         }
         
         // image must be PET
         if (image.data.string('x00080060') !== 'PT') {
-            return undefined;
+            return;
         }
 
         var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
         var patientWeight = image.data.floatString('x00101030'); // in kg
         if (patientWeight === undefined) {
-            return undefined;
+            return;
         }
 
         var petSequence = image.data.elements.x00540016;
         if (petSequence === undefined) {
-            return undefined;
+            return;
         }
 
         petSequence = petSequence.items[0].dataSet;
-        var startTime = petSequence.time('x00181072');
+        var startTime = dicomParser.parseTM(petSequence.string('x00181072'));
         var totalDose = petSequence.floatString('x00181074');
         var halfLife = petSequence.floatString('x00181075');
-        var acquisitionTime = image.data.time('x00080032');
+        var seriesAcquisitionTime = dicomParser.parseTM(image.data.string('x00080031'));
         
-        if (!startTime || !totalDose || !halfLife || !acquisitionTime) {
-            return undefined;
+        if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
+            return;
         }
 
-        var acquisitionTimeInSeconds = acquisitionTime.fractionalSeconds + acquisitionTime.seconds + acquisitionTime.minutes * 60 + acquisitionTime.hours * 60 * 60;
-        var injectionStartTimeInSeconds = startTime.fractionalSeconds + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+        var acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
+        var injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
         var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
         var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
         var suv = modalityPixelValue * patientWeight / correctedDose * 1000;
@@ -10375,7 +10384,7 @@ Display scroll progress bar across bottom of image.
     // module exports
     cornerstoneTools.calculateSUV = calculateSUV;
 
-})(cornerstoneTools);
+})(dicomParser, cornerstoneTools);
  
 // End Source; src/util/calculateSUV.js
 

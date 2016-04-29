@@ -116,6 +116,7 @@ module.exports = function(grunt) {
                     cornerstone: true,
                     cornerstoneMath: true,
                     cornerstoneTools: true,
+                    dicomParser: true
                 }
             }
         },
