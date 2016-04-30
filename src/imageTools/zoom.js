@@ -68,94 +68,118 @@
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(element, eventData.startPoints.page.x, eventData.startPoints.page.y);
+        
+        // The shift we will use is the difference between the original image coordinates of the point we've selected
+        // and the image coordinates of the same point on the page after the viewport scaling above has been performed
+        // This shift is in image coordinates, and is designed to keep the target location fixed on the page.
         var shift = {
             x: eventData.startPoints.image.x - newCoords.x,
             y: eventData.startPoints.image.y - newCoords.y
         };
 
+        // Correct the required shift using the viewport rotation and flip parameters
         shift = correctShift(shift, viewport);
+        
+        // Apply the shift to the Viewport's translation setting
         viewport.translation.x -= shift.x;
         viewport.translation.y -= shift.y;
+
+        // Update the Viewport with the new translation value
         cornerstone.setViewport(element, viewport);
     }
 
     function translateStrategy(eventData, ticks) {
         var element = eventData.element;
         var image = eventData.image;
+        var config = cornerstoneTools.zoom.getConfiguration();
 
         // Calculate the new scale factor based on how far the mouse has changed
+        // Note that in this case we don't need to update the viewport after the initial
+        // zoom step since we aren't don't intend to keep the target position static on
+        // the page
         var viewport = changeViewportScale(eventData.viewport, ticks);
-        cornerstone.setViewport(element, viewport);
 
-        var config = cornerstoneTools.zoom.getConfiguration();
-        var shift,
-            newCoords;
+        // Define the default shift to take place during this zoom step
+        var shift = {
+            x: 0,
+            y: 0
+        };
 
-        var outwardsTranslateSpeed = 8;
-        var inwardsTranslateSpeed = 8;
+        // Define the parameters for the translate strategy
+        var translateSpeed = 8;
         var outwardsMinScaleToTranslate = 3;
         var minTranslation = 0.01;
 
         if (ticks < 0) {
             // Zoom outwards from the image center
-            shift = {
-                x: viewport.scale < outwardsMinScaleToTranslate ? viewport.translation.x / outwardsTranslateSpeed : 0,
-                y: viewport.scale < outwardsMinScaleToTranslate ? viewport.translation.y / outwardsTranslateSpeed : 0
-            };
-            
-            if (Math.abs(viewport.translation.x) < minTranslation) {
-                viewport.translation.x = 0;
-                shift.x = 0;
-            } else if (Math.abs(viewport.translation.y) < minTranslation) {
-                viewport.translation.y = 0;
-                shift.y = 0;
-            } else if (Math.abs(viewport.translation.x) < minTranslation &&
-                       Math.abs(viewport.translation.y) < minTranslation) {
-                cornerstone.setViewport(element, viewport);
-                return false;
+            if (viewport.scale < outwardsMinScaleToTranslate) {
+                // If the current translation is smaller than the minimum desired translation,
+                // set the translation to zero
+                if (Math.abs(viewport.translation.x) < minTranslation) {
+                    viewport.translation.x = 0;
+                } else {
+                    shift.x = viewport.translation.x / translateSpeed;
+                }
+
+                // If the current translation is smaller than the minimum desired translation,
+                // set the translation to zero
+                if (Math.abs(viewport.translation.y) < minTranslation) {
+                    viewport.translation.y = 0;
+                } else {
+                    shift.y = viewport.translation.y / translateSpeed;
+                }
             }
         } else {
-            newCoords = cornerstone.pageToPixel(element, startPoints.page.x, startPoints.page.y);
+            // Zoom inwards to the current image point
+
+            // Identify the coordinates of the point the user is trying to zoom into
+            // If we are not allowed to zoom outside the image, bound the user-selected position to
+            // a point inside the image
             if (config && config.preventZoomOutsideImage) {
                 startPoints.image = boundPosition(startPoints.image, image.width, image.height);
-                newCoords = boundPosition(newCoords, image.width, image.height);
             }
-            // Zoom inwards to the current image point
+
+            // Calculate the translation value that would place the desired image point in the center
+            // of the viewport
             var desiredTranslation = {
                 x: image.width / 2 - startPoints.image.x,
                 y: image.height / 2 - startPoints.image.y
             };
 
+            // Correct the target location using the viewport rotation and flip parameters
+            desiredTranslation = correctShift(desiredTranslation, viewport);
+
+            // Calculate the difference between the current viewport translation value and the
+            // final desired translation values
             var distanceToDesired = {
                 x: viewport.translation.x - desiredTranslation.x,
                 y: viewport.translation.y - desiredTranslation.y
             };
 
-            shift = {
-                x: distanceToDesired.x / inwardsTranslateSpeed,
-                y: distanceToDesired.y / inwardsTranslateSpeed
-            };
-
+            // If the current translation is smaller than the minimum desired translation,
+            // stop translating in the x-direction
             if (Math.abs(distanceToDesired.x) < minTranslation) {
                 viewport.translation.x = desiredTranslation.x;
-                shift.x = 0;
-            } else if (Math.abs(distanceToDesired.y) < minTranslation) {
+            } else {
+                // Otherwise, shift the viewport by one step
+                shift.x = distanceToDesired.x / translateSpeed;
+            }
+
+            // If the current translation is smaller than the minimum desired translation,
+            // stop translating in the y-direction
+            if (Math.abs(distanceToDesired.y) < minTranslation) {
                 viewport.translation.y = desiredTranslation.y;
-                shift.y = 0;
-            } else if (Math.abs(distanceToDesired.x) < minTranslation &&
-                       Math.abs(distanceToDesired.y) < minTranslation) {
-                cornerstone.setViewport(element, viewport);
-                return false;
+            } else {
+                // Otherwise, shift the viewport by one step
+                shift.y = distanceToDesired.y / translateSpeed;
             }
         }
 
-        shift = correctShift(shift, viewport);
-        if (!shift.x && !shift.y) {
-            return false;
-        }
-
+        // Apply the shift to the Viewport's translation setting
         viewport.translation.x -= shift.x;
         viewport.translation.y -= shift.y;
+
+        // Update the Viewport with the new translation value
         cornerstone.setViewport(element, viewport);
     }
 
