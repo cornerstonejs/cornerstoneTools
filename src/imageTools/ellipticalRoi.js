@@ -387,7 +387,7 @@
                 };
 
                 // First we calculate the ellipse points (top, left, right, and bottom)
-                var ellipsePoints = [{
+                var ellipsePoints = [ {
                     // Top middle point of ellipse
                     x: leftCanvas + widthCanvas / 2,
                     y: topCanvas
@@ -403,14 +403,14 @@
                     // Right middle point of ellipse
                     x: leftCanvas + widthCanvas,
                     y: topCanvas + heightCanvas / 2
-                }];
+                } ];
 
                 // We obtain the link starting point by finding the closest point on the ellipse to the
                 // center of the textbox
                 link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
 
                 // Next we calculate the corners of the textbox bounding box
-                var boundingBoxPoints = [{
+                var boundingBoxPoints = [ {
                     // Top middle point of bounding box
                     x: boundingBox.left + boundingBox.width / 2,
                     y: boundingBox.top
@@ -436,7 +436,7 @@
                 context.beginPath();
                 context.strokeStyle = color;
                 context.lineWidth = lineWidth;
-                context.setLineDash([2, 3]);
+                context.setLineDash([ 2, 3 ]);
                 context.moveTo(link.start.x, link.start.y);
                 context.lineTo(link.end.x, link.end.y);
                 context.stroke();

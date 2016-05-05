@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-04-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-05-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -37,7 +37,25 @@ if (typeof cornerstoneTools === 'undefined') {
         }
 
         var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToPixel(element, e.pageX || e.originalEvent.pageX, e.pageY || e.originalEvent.pageY);
+
+        var x;
+        var y;
+
+        if (e.pageX !== undefined && e.pageY !== undefined) {
+            x = e.pageX;
+            y = e.pageY;
+        } else if (e.originalEvent &&
+                   e.originalEvent.pageX !== undefined &&
+                   e.originalEvent.pageY !== undefined) {
+            x = e.originalEvent.pageX;
+            y = e.originalEvent.pageY;
+        } else {
+            // IE9 & IE10
+            x = e.x;
+            y = e.y;
+        }
+
+        var startingCoords = cornerstone.pageToPixel(element, x, y);
 
         e = window.event || e; // old IE support
         var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
@@ -48,8 +66,8 @@ if (typeof cornerstoneTools === 'undefined') {
             viewport: cornerstone.getViewport(element),
             image: cornerstone.getEnabledElement(element).image,
             direction: direction,
-            pageX: e.pageX || e.originalEvent.pageX,
-            pageY: e.pageY || e.originalEvent.pageY,
+            pageX: x,
+            pageY: y,
             imageX: startingCoords.x,
             imageY: startingCoords.y
         };
