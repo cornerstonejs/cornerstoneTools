@@ -22,7 +22,8 @@
                     x: mouseEventData.currentPoints.image.x,
                     y: mouseEventData.currentPoints.image.y,
                     highlight: true,
-                    active: true
+                    active: true,
+                    hasBoundingBox: true
                 }
             }
         };
@@ -71,12 +72,13 @@
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(element, data, coords) {
-        if (!data.textBoundingBox) {
+        if (!data.handles.end.boundingBox) {
             return;
         }
 
-        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(data.textBoundingBox, coords);
-        return (distanceToPoint < 10);
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(data.handles.end.boundingBox, coords);
+        var insideBoundingBox = cornerstoneTools.pointInsideBoundingBox(data.handles.end, coords);
+        return (distanceToPoint < 10) || insideBoundingBox;
     }
 
     function onImageRendered(e, eventData) {
@@ -119,11 +121,12 @@
                 centering: {
                     x: true,
                     y: true
-                }
+                },
+                debug: true
             };
 
             var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
-            data.textBoundingBox = boundingBox;
+            data.handles.end.boundingBox = boundingBox;
 
             context.restore();
         }

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-05-05 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-05-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -3406,7 +3406,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 };
 
                 // First we calculate the ellipse points (top, left, right, and bottom)
-                var ellipsePoints = [{
+                var ellipsePoints = [ {
                     // Top middle point of ellipse
                     x: leftCanvas + widthCanvas / 2,
                     y: topCanvas
@@ -3422,14 +3422,14 @@ if (typeof cornerstoneTools === 'undefined') {
                     // Right middle point of ellipse
                     x: leftCanvas + widthCanvas,
                     y: topCanvas + heightCanvas / 2
-                }];
+                } ];
 
                 // We obtain the link starting point by finding the closest point on the ellipse to the
                 // center of the textbox
                 link.start = cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
 
                 // Next we calculate the corners of the textbox bounding box
-                var boundingBoxPoints = [{
+                var boundingBoxPoints = [ {
                     // Top middle point of bounding box
                     x: boundingBox.left + boundingBox.width / 2,
                     y: boundingBox.top
@@ -3455,7 +3455,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 context.beginPath();
                 context.strokeStyle = color;
                 context.lineWidth = lineWidth;
-                context.setLineDash([2, 3]);
+                context.setLineDash([ 2, 3 ]);
                 context.moveTo(link.start.x, link.start.y);
                 context.lineTo(link.end.x, link.end.y);
                 context.stroke();
@@ -3480,7 +3480,8 @@ if (typeof cornerstoneTools === 'undefined') {
         toolType: toolType
     });
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools); 
+})($, cornerstone, cornerstoneMath, cornerstoneTools);
+ 
 // End Source; src/imageTools/ellipticalRoi.js
 
 // Begin Source: src/imageTools/freehand.js
@@ -5626,7 +5627,8 @@ if (typeof cornerstoneTools === 'undefined') {
                     x: mouseEventData.currentPoints.image.x,
                     y: mouseEventData.currentPoints.image.y,
                     highlight: true,
-                    active: true
+                    active: true,
+                    hasBoundingBox: true
                 }
             }
         };
@@ -5675,12 +5677,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
     ///////// BEGIN IMAGE RENDERING ///////
     function pointNearTool(element, data, coords) {
-        if (!data.textBoundingBox) {
+        if (!data.handles.end.boundingBox) {
             return;
         }
 
-        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(data.textBoundingBox, coords);
-        return (distanceToPoint < 10);
+        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(data.handles.end.boundingBox, coords);
+        var insideBoundingBox = cornerstoneTools.pointInsideBoundingBox(data.handles.end, coords);
+        return (distanceToPoint < 10) || insideBoundingBox;
     }
 
     function onImageRendered(e, eventData) {
@@ -5723,11 +5726,12 @@ if (typeof cornerstoneTools === 'undefined') {
                 centering: {
                     x: true,
                     y: true
-                }
+                },
+                debug: true
             };
 
             var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
-            data.textBoundingBox = boundingBox;
+            data.handles.end.boundingBox = boundingBox;
 
             context.restore();
         }
