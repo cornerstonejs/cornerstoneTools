@@ -49,8 +49,12 @@
         var target_height = 256;
 
         if (config){
-          target_width = config.target_width;
-          target_height = config.target_height;
+          if(config.target_width){
+            target_width = config.target_width;
+          }
+          if (config.target_height){
+            target_height = config.target_height;            
+          }
         }
         if ((eventData.image.height < (target_height*1.5)) && (eventData.image.width < (target_width*1.5))){
             var orig_data = {unchanged : true};
