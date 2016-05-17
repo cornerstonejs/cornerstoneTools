@@ -121,8 +121,7 @@
                 centering: {
                     x: true,
                     y: true
-                },
-                debug: true
+                }
             };
 
             var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
