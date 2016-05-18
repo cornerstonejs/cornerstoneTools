@@ -45,22 +45,28 @@
     function interactionStart(e, eventData) {
 
         var config = cornerstoneTools.wwwclod.getConfiguration();
+        var orig_data;
         var target_width = 256;
         var target_height = 256;
 
         if (config){
-          if(config.target_width){
-            target_width = config.target_width;
-          }
-          if (config.target_height){
-            target_height = config.target_height;            
-          }
+            if (config.target_width){
+                target_width = config.target_width;
+            }
+
+            if (config.target_height){
+                target_height = config.target_height;
+            }
         }
-        if ((eventData.image.height < (target_height*1.5)) && (eventData.image.width < (target_width*1.5))){
-            var orig_data = {unchanged : true};
-            cornerstoneTools.addToolState(eventData.element,"wwwclod",orig_data);
+
+        if ((eventData.image.height < (target_height * 1.5)) && (eventData.image.width < (target_width * 1.5))){
+            orig_data = {
+                unchanged: true
+            };
+            cornerstoneTools.addToolState(eventData.element,'wwwclod',orig_data);
             return;
         }
+
         var image = eventData.image;
         var viewport = eventData.viewport;
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
@@ -77,119 +83,124 @@
         bottom_right.y = Math.min(bottom_right.y, image.height);
 
         var top_left = i_transform.transformPoint(0, 0);
-        if (top_left.x<0){
-          translation_down_x = -1*top_left.x*viewport.scale;
+        if (top_left.x< 0){
+            translation_down_x = -1 * top_left.x * viewport.scale;
         }
-        if (top_left.y<0){
-          translation_down_y = -1*top_left.y*viewport.scale;
+
+        if (top_left.y< 0){
+            translation_down_y = -1 * top_left.y * viewport.scale;
         }
+
         top_left.x = Math.max(0, top_left.x);
         top_left.y = Math.max(0, top_left.y);
 
-        var orig_data = {image : image, scale : viewport.scale, translation: viewport.translation};
-        cornerstoneTools.addToolState(eventData.element,"wwwclod",orig_data);
+        orig_data = {
+            image: image,
+            scale: viewport.scale,
+            translation: viewport.translation
+        };
+        cornerstoneTools.addToolState(eventData.element,'wwwclod',orig_data);
 
         // console.log(top_left);
         // console.log(bottom_right);
-        var down_image=downsample_image(image, target_width, target_height, top_left, bottom_right);
+        var down_image = downsample_image(image, target_width, target_height, top_left, bottom_right);
 
         var cnst_element = cornerstone.getEnabledElement(eventData.element);
         cornerstone.displayImage(eventData.element, down_image, cnst_element.viewport);
-        if(down_image.rowPixelSpacing < down_image.columnPixelSpacing) {
-            viewport.scale = viewport.scale*((bottom_right.y - top_left.y) / (target_height));
-            translation_down_x += -1*(canvas_width-down_image.width*viewport.scale*down_image.columnPixelSpacing/down_image.rowPixelSpacing)/2;
-            translation_down_y += -1*(canvas_height-down_image.height*viewport.scale)/2;
-        }
-        else{;
-            viewport.scale = viewport.scale*((bottom_right.x - top_left.x) / (target_width));
-            translation_down_x += -1*(canvas_width-down_image.width*viewport.scale)/2;
-            translation_down_y += -1*(canvas_height-down_image.height*viewport.scale*down_image.rowPixelSpacing/down_image.columnPixelSpacing)/2;
+        if (down_image.rowPixelSpacing < down_image.columnPixelSpacing) {
+            viewport.scale = viewport.scale * ((bottom_right.y - top_left.y) / (target_height));
+            translation_down_x += -1 * (canvas_width - down_image.width * viewport.scale * down_image.columnPixelSpacing / down_image.rowPixelSpacing) / 2;
+            translation_down_y += -1 * (canvas_height - down_image.height * viewport.scale) / 2;
+        } else {
+            viewport.scale = viewport.scale * ((bottom_right.x - top_left.x) / (target_width));
+            translation_down_x += -1 * (canvas_width - down_image.width * viewport.scale) / 2;
+            translation_down_y += -1 * (canvas_height - down_image.height * viewport.scale * down_image.rowPixelSpacing / down_image.columnPixelSpacing) / 2;
         }
 
         viewport.translation = {
-          x : translation_down_x/viewport.scale,
-          y : translation_down_y/viewport.scale
+            x: translation_down_x / viewport.scale,
+            y: translation_down_y / viewport.scale
         };
         cornerstone.setViewport(eventData.element, viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     function interactionEnd(e, eventData){
-      var orig_data = cornerstoneTools.getToolState(eventData.element,"wwwclod").data[0];
-      if ('unchanged' in orig_data){
-        cornerstoneTools.clearToolState(eventData.element,"wwwclod");
-        return;
-      }
-      cornerstoneTools.clearToolState(eventData.element,"wwwclod");
-      var orig_image = orig_data.image;
-      var cnst_element = cornerstone.getEnabledElement(eventData.element);
-      var viewport = eventData.viewport;
-      viewport.scale = orig_data.scale;
-      viewport.translation = orig_data.translation;
-      cornerstone.displayImage(eventData.element, orig_image, cnst_element.viewport);
-      cornerstone.setViewport(eventData.element, viewport);
+        var orig_data = cornerstoneTools.getToolState(eventData.element,'wwwclod').data[0];
+        if ('unchanged' in orig_data){
+            cornerstoneTools.clearToolState(eventData.element,'wwwclod');
+            return;
+        }
+
+        cornerstoneTools.clearToolState(eventData.element,'wwwclod');
+        var orig_image = orig_data.image;
+        var cnst_element = cornerstone.getEnabledElement(eventData.element);
+        var viewport = eventData.viewport;
+        viewport.scale = orig_data.scale;
+        viewport.translation = orig_data.translation;
+        cornerstone.displayImage(eventData.element, orig_image, cnst_element.viewport);
+        cornerstone.setViewport(eventData.element, viewport);
     }
 
     function downsample_image(image, target_width, target_height, top_left, bottom_right){
-      var image_data=image.getPixelData();
-      var img_width = image.width;
-      var img_height = image.height;
-      var offset_y=top_left.y;
-      var offset_x=top_left.x;
-      var stride_y=(bottom_right.y - top_left.y)/target_height;
-      var stride_x=(bottom_right.x - top_left.x)/target_width;
+        var image_data = image.getPixelData();
+        var img_width = image.width;
+        var offset_y = top_left.y;
+        var offset_x = top_left.x;
+        var stride_y = (bottom_right.y - top_left.y) / target_height;
+        var stride_x = (bottom_right.x - top_left.x) / target_width;
 
-      function get_pixels(){
-        if (!image.color){
-          var arr = new image_data.constructor(target_height*target_width);
-          var i2,j2;
-          for (var i=0; i<target_height; i++){
-            for (var j=0; j < target_width; j++){
-              i2 =  Math.ceil(offset_y + (i+0.5)*stride_y);
-              j2 =  Math.ceil(offset_x + (j+0.5)*stride_x);
-              arr[i*target_width+j]=image_data[i2*img_width+j2];
+        function get_pixels(){
+            var arr, i, j, i2, j2;
+            if (!image.color){
+                arr = new image_data.constructor(target_height * target_width);
+                for (i = 0; i< target_height; i++){
+                    for (j = 0; j < target_width; j++){
+                        i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                        j2 = Math.ceil(offset_x + (j + 0.5) * stride_x);
+                        arr[i * target_width + j] = image_data[i2 * img_width + j2];
+                    }
+                }
+
+                return arr;
+            } else {
+                arr = new image_data.constructor(target_height * target_width * 4);
+                for (i = 0; i< target_height; i++){
+                    for (j = 0; j < target_width; j++){
+                        i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                        j2 = Math.ceil(offset_x + (j + 0.5) * stride_x);
+                        arr[4 * (i * target_width + j) + 0] = image_data[4 * (i2 * img_width + j2) + 0];
+                        arr[4 * (i * target_width + j) + 1] = image_data[4 * (i2 * img_width + j2) + 1];
+                        arr[4 * (i * target_width + j) + 2] = image_data[4 * (i2 * img_width + j2) + 2];
+                        arr[4 * (i * target_width + j) + 3] = image_data[4 * (i2 * img_width + j2) + 3];
+                    }
+                }
+
+                return arr;
             }
-          }
-          return arr;
         }
-      else{
-        var arr = new image_data.constructor(target_height*target_width*4);
-        var i2,j2;
-        for (var i=0; i<target_height; i++){
-          for (var j=0; j < target_width; j++){
-            i2 =  Math.ceil(offset_y + (i+0.5)*stride_y);
-            j2 =  Math.ceil(offset_x + (j+0.5)*stride_x);
-            arr[4*(i*target_width+j)+0]=image_data[4*(i2*img_width+j2)+0];
-            arr[4*(i*target_width+j)+1]=image_data[4*(i2*img_width+j2)+1];
-            arr[4*(i*target_width+j)+2]=image_data[4*(i2*img_width+j2)+2];
-            arr[4*(i*target_width+j)+3]=image_data[4*(i2*img_width+j2)+3];
-          }
-        }
-        return arr;
-        }
-      }
 
-      var image_2 = {
-        imageId: image.imageId+"_down",
-        minPixelValue: image.minPixelValue,
-        maxPixelValue: image.maxPixelValue,
-        rows: target_height,
-        columns: target_width,
-        height: target_height,
-        width: target_width,
-        getPixelData: get_pixels,
-        color: image.color,
-        columnPixelSpacing: (image.columnPixelSpacing?image.columnPixelSpacing:1)/stride_y,
-        rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1)/stride_x,
-        invert: false,
-        sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
-        render: image.render,
-        slope: image.slope,
-        intercept: image.intercept,
-        windowCenter: image.windowCenter,
-        windowWidth: image.windowWidth
-      }
-      return image_2;
+        var image_2 = {
+            imageId: image.imageId + '_down',
+            minPixelValue: image.minPixelValue,
+            maxPixelValue: image.maxPixelValue,
+            rows: target_height,
+            columns: target_width,
+            height: target_height,
+            width: target_width,
+            getPixelData: get_pixels,
+            color: image.color,
+            columnPixelSpacing: (image.columnPixelSpacing?image.columnPixelSpacing:1) / stride_y,
+            rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1) / stride_x,
+            invert: false,
+            sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
+            render: image.render,
+            slope: image.slope,
+            intercept: image.intercept,
+            windowCenter: image.windowCenter,
+            windowWidth: image.windowWidth
+        };
+        return image_2;
     }
 
     cornerstoneTools.wwwclod = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
