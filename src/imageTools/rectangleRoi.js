@@ -101,12 +101,20 @@
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
         var fontHeight = cornerstoneTools.textStyle.getFontSize();
+        var config = cornerstoneTools.rectangleRoi.getConfiguration();
         
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
 
             var data = toolData.data[i];
-
+            
+            // Apply any shadow settings defined in the tool configuration
+            if (config && config.shadow) {
+                context.shadowColor = config.shadowColor || '#000000';
+                context.shadowOffsetX = config.shadowOffsetX || 1;
+                context.shadowOffsetY = config.shadowOffsetY || 1;
+            }
+            
             //differentiate the color of activation tool
             if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
