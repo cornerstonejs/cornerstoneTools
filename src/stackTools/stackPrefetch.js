@@ -221,7 +221,7 @@
         // When the user has scrolled to a new image
         clearTimeout(resetPrefetchTimeout);
         resetPrefetchTimeout = setTimeout(function() {
-            var element = e.currentTarget;
+            var element = e.target;
             prefetch(element);
         }, resetPrefetchDelay);
     }
