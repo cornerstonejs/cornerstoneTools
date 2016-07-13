@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-05-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-07-13 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -823,6 +823,7 @@ if (typeof cornerstoneTools === 'undefined') {
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
+        rotate.recognizeWith(pan);
 
         var doubleTap = new Hammer.Tap({
             event: 'doubletap',
@@ -4355,6 +4356,7 @@ if (typeof cornerstoneTools === 'undefined') {
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
         hideTool(eventData);
     }
 
@@ -4369,6 +4371,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -5005,12 +5008,20 @@ if (typeof cornerstoneTools === 'undefined') {
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
         var fontHeight = cornerstoneTools.textStyle.getFontSize();
+        var config = cornerstoneTools.rectangleRoi.getConfiguration();
         
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
 
             var data = toolData.data[i];
-
+            
+            // Apply any shadow settings defined in the tool configuration
+            if (config && config.shadow) {
+                context.shadowColor = config.shadowColor || '#000000';
+                context.shadowOffsetX = config.shadowOffsetX || 1;
+                context.shadowOffsetY = config.shadowOffsetY || 1;
+            }
+            
             //differentiate the color of activation tool
             if (data.active) {
                 color = cornerstoneTools.toolColors.getActiveColor();
@@ -8431,7 +8442,7 @@ Display scroll progress bar across bottom of image.
         // When the user has scrolled to a new image
         clearTimeout(resetPrefetchTimeout);
         resetPrefetchTimeout = setTimeout(function() {
-            var element = e.currentTarget;
+            var element = e.target;
             prefetch(element);
         }, resetPrefetchDelay);
     }
