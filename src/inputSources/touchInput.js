@@ -434,6 +434,7 @@
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);
+        rotate.recognizeWith(pan);
 
         var doubleTap = new Hammer.Tap({
             event: 'doubletap',
