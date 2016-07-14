@@ -2,6 +2,8 @@
 
     'use strict';
 
+    var tool_data = null;
+
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
@@ -45,9 +47,9 @@
     function interactionStart(e, eventData) {
 
         var config = cornerstoneTools.wwwclod.getConfiguration();
-        var orig_data;
         var target_width = 256;
         var target_height = 256;
+        var orig_data;
 
         if (config){
             if (config.target_width){
@@ -63,83 +65,117 @@
             orig_data = {
                 unchanged: true
             };
-            cornerstoneTools.addToolState(eventData.element,'wwwclod',orig_data);
+            tool_data = orig_data;
+            return;
+        }
+
+        var viewport = eventData.viewport;
+        var rotation = viewport.rotation;
+        var valid_rotations = [ 0, 90, 180, 270 ];
+        if (valid_rotations.indexOf(rotation) < 0){
+            console.warn("Can't handle rotations which are not multiples of 90, falling back to standard mode");
+            orig_data = {
+                unchanged: true
+            };
+            tool_data = orig_data;
             return;
         }
 
         var image = eventData.image;
-        var viewport = eventData.viewport;
+        var orig_viewport = $.extend(true, {}, viewport);
+
+        orig_data = {
+            image: image,
+            viewport: orig_viewport
+        };
+        tool_data = orig_data;
+
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
         var canvas = $(eventData.element).find('canvas').get(0);
         var canvas_width = canvas.width;
         var canvas_height = canvas.height;
-        var translation_down_x = 0 ;
-        var translation_down_y = 0 ;
 
         var i_transform = cornerstone.internal.getTransform(enabledElement);
         i_transform.invert();
-        var bottom_right = i_transform.transformPoint(canvas_width, canvas_height);
+        var bottom_right;
+        var top_left;
+
+        if (rotation === 0){
+            bottom_right = i_transform.transformPoint(canvas_width, canvas_height);
+            top_left = i_transform.transformPoint(0, 0);
+        }else if (rotation === 270){
+            bottom_right = i_transform.transformPoint(canvas_width, 0);
+            top_left = i_transform.transformPoint(0, canvas_height);
+        }else if (rotation === 180){
+            bottom_right = i_transform.transformPoint(0, 0);
+            top_left = i_transform.transformPoint(canvas_width, canvas_height);
+        }else if (rotation === 90){
+            bottom_right = i_transform.transformPoint(0, canvas_height);
+            top_left = i_transform.transformPoint(canvas_width, 0);
+        }
+
         bottom_right.x = Math.min(bottom_right.x, image.width);
         bottom_right.y = Math.min(bottom_right.y, image.height);
-
-        var top_left = i_transform.transformPoint(0, 0);
-        if (top_left.x< 0){
-            translation_down_x = -1 * top_left.x * viewport.scale;
-        }
-
-        if (top_left.y< 0){
-            translation_down_y = -1 * top_left.y * viewport.scale;
-        }
 
         top_left.x = Math.max(0, top_left.x);
         top_left.y = Math.max(0, top_left.y);
 
-        orig_data = {
-            image: image,
-            scale: viewport.scale,
-            translation: viewport.translation
-        };
-        cornerstoneTools.addToolState(eventData.element,'wwwclod',orig_data);
-
-        // console.log(top_left);
-        // console.log(bottom_right);
         var down_image = downsample_image(image, target_width, target_height, top_left, bottom_right);
 
-        var cnst_element = cornerstone.getEnabledElement(eventData.element);
-        cornerstone.displayImage(eventData.element, down_image, cnst_element.viewport);
-        if (down_image.rowPixelSpacing < down_image.columnPixelSpacing) {
-            viewport.scale = viewport.scale * ((bottom_right.y - top_left.y) / (target_height));
-            translation_down_x += -1 * (canvas_width - down_image.width * viewport.scale * down_image.columnPixelSpacing / down_image.rowPixelSpacing) / 2;
-            translation_down_y += -1 * (canvas_height - down_image.height * viewport.scale) / 2;
-        } else {
-            viewport.scale = viewport.scale * ((bottom_right.x - top_left.x) / (target_width));
-            translation_down_x += -1 * (canvas_width - down_image.width * viewport.scale) / 2;
-            translation_down_y += -1 * (canvas_height - down_image.height * viewport.scale * down_image.rowPixelSpacing / down_image.columnPixelSpacing) / 2;
+        var relative_center = {
+            x: (top_left.x + bottom_right.x) / 2 - (image.width / 2),
+            y: (top_left.y + bottom_right.y) / 2 - (image.height / 2)
+        };
+
+        var translation2;
+        // translation is applied after rotation
+        if (rotation === 0){
+            translation2 = {
+                x: (viewport.translation.x + relative_center.x) / ((bottom_right.x - top_left.x) / (target_width)),
+                y: (viewport.translation.y + relative_center.y) / ((bottom_right.y - top_left.y) / (target_height))
+            };
+        }else if (rotation === 270){
+            translation2 = {
+                x: (viewport.translation.x + relative_center.y) / ((bottom_right.y - top_left.y) / (target_height)),
+                y: (viewport.translation.y - relative_center.x) / ((bottom_right.x - top_left.x) / (target_width))
+            };
+        }else if (rotation === 180){
+            translation2 = {
+                x: (viewport.translation.x - relative_center.x) / ((bottom_right.x - top_left.x) / (target_width)),
+                y: (viewport.translation.y - relative_center.y) / ((bottom_right.y - top_left.y) / (target_height))
+            };
+        }else if (rotation === 90){
+            translation2 = {
+                x: (viewport.translation.x - relative_center.y) / ((bottom_right.y - top_left.y) / (target_height)),
+                y: (viewport.translation.y + relative_center.x) / ((bottom_right.x - top_left.x) / (target_width))
+            };
         }
 
-        viewport.translation = {
-            x: translation_down_x / viewport.scale,
-            y: translation_down_y / viewport.scale
-        };
+        //viewport.translation = {x: 0, y:0};
+        viewport.translation = translation2;
+        if (down_image.rowPixelSpacing * target_width > down_image.columnPixelSpacing * target_height){
+            viewport.scale = viewport.scale * ((bottom_right.x - top_left.x) / (target_width));
+        }else {
+            viewport.scale = viewport.scale * ((bottom_right.y - top_left.y) / (target_height));
+        }
+
+        cornerstone.displayImage(eventData.element, down_image, viewport);
         cornerstone.setViewport(eventData.element, viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
     }
 
     function interactionEnd(e, eventData){
-        var orig_data = cornerstoneTools.getToolState(eventData.element,'wwwclod').data[0];
-        if ('unchanged' in orig_data){
+        var orig_data = tool_data;
+        if ( (!orig_data) || ('unchanged' in orig_data) ){
             cornerstoneTools.clearToolState(eventData.element,'wwwclod');
             return;
         }
 
         cornerstoneTools.clearToolState(eventData.element,'wwwclod');
         var orig_image = orig_data.image;
-        var cnst_element = cornerstone.getEnabledElement(eventData.element);
-        var viewport = eventData.viewport;
-        viewport.scale = orig_data.scale;
-        viewport.translation = orig_data.translation;
-        cornerstone.displayImage(eventData.element, orig_image, cnst_element.viewport);
+        var viewport = orig_data.viewport;
         cornerstone.setViewport(eventData.element, viewport);
+        cornerstone.displayImage(eventData.element, orig_image, viewport);
     }
 
     function downsample_image(image, target_width, target_height, top_left, bottom_right){
