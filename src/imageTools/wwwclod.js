@@ -171,9 +171,10 @@
             return;
         }
 
-        cornerstoneTools.clearToolState(eventData.element,'wwwclod');
+        var modified_vieport = cornerstone.getViewport(eventData.element);
         var orig_image = orig_data.image;
         var viewport = orig_data.viewport;
+        viewport.voi = modified_vieport.voi;
         cornerstone.setViewport(eventData.element, viewport);
         cornerstone.displayImage(eventData.element, orig_image, viewport);
     }
