@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-07-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-09-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2430,7 +2430,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // now check to see if there is a handle we can move
         if (!toolData) {
-            return false;
+            return;
         }
 
         for (var i = 0; i < toolData.data.length; i++) {
@@ -2446,8 +2446,6 @@ if (typeof cornerstoneTools === 'undefined') {
                 return false;
             }
         }
-
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function pressCallback(e, eventData) {
