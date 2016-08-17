@@ -118,7 +118,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
-    var isClickEvent;
+    var isClickEvent = true;
     var preventClickTimeout;
     var clickDelay = 200;
 
@@ -414,8 +414,9 @@ if (typeof cornerstoneTools === 'undefined') {
         isPress = false,
         pressMaxDistance = 5,
         pageDistanceMoved,
-        preventNextPinch = false;
-
+        preventNextPinch = false,
+        lastDelta;
+    
     function onTouch(e) {
         console.log(e.type);
         var element = e.target.parentNode,
@@ -663,13 +664,30 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'panmove':
+                // using the delta-value of HammerJS, because it takes all pointers into account
+                // this is very important when using panning in combination with pinch-zooming
+                // but HammerJS' delta is relative to the start of the pan event
+                // so it needs to be converted to a per-event-delta for CornerstoneTools
+                var delta = {
+                    x: e.deltaX - lastDelta.x,
+                    y: e.deltaY - lastDelta.y
+                };
+                
+                lastDelta = {
+                    x: e.deltaX,
+                    y: e.deltaY
+                };
+
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
-                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    page: {
+                        x: lastPoints.page.x + delta.x,
+                        y: lastPoints.page.y + delta.y
+                    },
+                    image: cornerstone.pageToPixel(element, lastPoints.page.x + delta.x, lastPoints.page.y + delta.y),
                     client: {
-                        x: e.pointers[0].clientX,
-                        y: e.pointers[0].clientY
+                        x: lastPoints.client.x + delta.x,
+                        y: lastPoints.client.y + delta.y
                     }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
@@ -715,6 +733,11 @@ if (typeof cornerstoneTools === 'undefined') {
                 break;
 
             case 'panstart':
+                lastDelta = {
+                    x: e.deltaX,
+                    y: e.deltaY
+                };
+
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
@@ -1668,7 +1691,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
 
                 cornerstone.updateImage(element);
-                $(element).on('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                 $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
             }
 
@@ -1679,7 +1702,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     var distanceSq = 25; // Should probably make this a settable property later
                     var handle = cornerstoneTools.getHandleNearImagePoint(element, data.handles, coords, distanceSq);
                     if (handle) {
-                        $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         data.active = true;
                         handle.active = true;
@@ -1696,7 +1719,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 for (i = 0; i < toolData.data.length; i++) {
                     data = toolData.data[i];
                     if (touchToolInterface.pointNearTool(element, data, coords)) {
-                        $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                        $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                         $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                         data.active = true;
                         cornerstone.updateImage(element);
@@ -1736,7 +1759,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 }
 
                 cornerstone.updateImage(eventData.element);
-                $(element).on('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                 $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
                 if (touchToolInterface.pressCallback) {
@@ -1763,7 +1786,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 var handle = cornerstoneTools.getHandleNearImagePoint(eventData.element, data.handles, coords, distance);
                 if (handle) {
-                    $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                    $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                     $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                     if (touchToolInterface.pressCallback) {
                         $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
@@ -1785,7 +1808,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 data = toolData.data[i];
 
                 if (touchToolInterface.pointNearTool(eventData.element, data, coords)) {
-                    $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
+                    $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
                     $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
                     if (touchToolInterface.pressCallback) {
                         $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
@@ -1881,6 +1904,7 @@ if (typeof cornerstoneTools === 'undefined') {
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             //$(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
             if (touchToolInterface.doubleTapCallback) {
@@ -3659,7 +3683,11 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // Connect the end of the drawing to the handle nearest to the click
         if (handleNearby !== undefined){
-            data.handles[config.currentHandle - 1].lines.push(data.handles[handleNearby]);
+            // only save x,y params from nearby handle to prevent circular reference
+            data.handles[config.currentHandle - 1].lines.push({
+                x: data.handles[handleNearby].x,
+                y: data.handles[handleNearby].y
+            });
         }
 
         if (config.modifying) {
@@ -8965,7 +8993,7 @@ Display scroll progress bar across bottom of image.
 
         // draw indicator background
         context.fillStyle = config.backgroundColor;
-        if(config.orientation === 'horizontal') {
+        if (config.orientation === 'horizontal') {
             context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
         } else {
             context.fillRect(0, 0, scrollBarHeight, height);
@@ -8987,7 +9015,7 @@ Display scroll progress bar across bottom of image.
         var yPosition = cursorHeight * currentImageIdIndex;
 
         context.fillStyle = config.fillColor;
-        if(config.orientation === 'horizontal') {
+        if (config.orientation === 'horizontal') {
             context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
         } else {
             context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
@@ -9183,7 +9211,15 @@ Display scroll progress bar across bottom of image.
         // it to the indicesToRequest list so that it will be retrieved later if the
         // currentImageIdIndex is changed to an image nearby
         var element = e.data.element;
-        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        var stackData;
+
+        try {
+            // It will throw an exception in some cases (eg: thumbnails)
+            stackData = cornerstoneTools.getToolState(element, 'stack');
+        } catch(error) {
+            return;
+        }
+
         if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
