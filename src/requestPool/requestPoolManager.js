@@ -116,11 +116,27 @@
                 return;
             }
 
+            function requestTypeToLoadPriority(requestDetails) {
+                if (requestDetails.type === 'prefetch') {
+                    return -5;
+                } else if (requestDetails.type === 'interactive') {
+                    return 0;
+                } else if (requestDetails.type === 'thumbnail') {
+                    return 5;
+                }
+            }
+
+            var priority = requestTypeToLoadPriority(requestDetails);
+
             var loader;
             if (requestDetails.preventCache === true) {
-                loader = cornerstone.loadImage(imageId);
+                loader = cornerstone.loadImage(imageId, {
+                    priority: priority
+                });
             } else {
-                loader = cornerstone.loadAndCacheImage(imageId);
+                loader = cornerstone.loadAndCacheImage(imageId, {
+                    priority: priority
+                });
             }
 
             // Load and cache the image

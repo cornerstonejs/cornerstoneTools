@@ -13,7 +13,7 @@
       ".gitignore"
   ],
   "dependencies": {
-    "cornerstone": "~0.9.0",
+    "cornerstone": "~0.10.0",
      "cornerstoneMath": "~0.1.3",
      "hammerjs": "~2.0.6",
      "jquery" : "~2.2.0"
