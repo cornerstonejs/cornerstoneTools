@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-08-22 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-08-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -7524,43 +7524,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
-    // this module defines a way for tools to access various metadata about an imageId.  This layer of abstraction exists
-    // so metadata can be provided to the tools in different ways (e.g. by parsing DICOM P10 or by a WADO-RS document)
-    // NOTE: We may want to push this function down into the cornerstone core library, not sure yet...
-
-    var providers = [];
-
-    function addProvider( provider) {
-        providers.push(provider);
-    }
-
-    function removeProvider( provider) {
-        var index = providers.indexOf(provider);
-        if (index === -1) {
-            return;
-        }
-
-        providers.splice(index, 1);
-    }
-
-    function getMetaData(type, imageId) {
-        var result;
-        $.each(providers, function(index, provider) {
-            result = provider(type, imageId);
-            if (result !== undefined) {
-                return true;
-            }
-        });
-        return result;
-    }
 
     // module/private exports
-    cornerstoneTools.metaData = {
-        addProvider: addProvider,
-        removeProvider: removeProvider,
-        get: getMetaData
-    };
-
+    cornerstoneTools.metaData = cornerstone.metaData;
 })($, cornerstone, cornerstoneTools);
  
 // End Source; src/metaData.js
@@ -7918,11 +7884,11 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             function requestTypeToLoadPriority(requestDetails) {
-                if(requestDetails.type === 'prefetch') {
+                if (requestDetails.type === 'prefetch') {
                     return -5;
-                } else if(requestDetails.type === 'interactive') {
+                } else if (requestDetails.type === 'interactive') {
                     return 0;
-                } else if(requestDetails.type === 'thumbnail') {
+                } else if (requestDetails.type === 'thumbnail') {
                     return 5;
                 }
             }
@@ -7931,9 +7897,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var loader;
             if (requestDetails.preventCache === true) {
-                loader = cornerstone.loadImage(imageId, {priority : priority});
+                loader = cornerstone.loadImage(imageId, {
+                    priority: priority
+                });
             } else {
-                loader = cornerstone.loadAndCacheImage(imageId, {priority : priority});
+                loader = cornerstone.loadAndCacheImage(imageId, {
+                    priority: priority
+                });
             }
 
             // Load and cache the image
