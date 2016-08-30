@@ -136,11 +136,13 @@
             var loader;
             if (requestDetails.preventCache === true) {
                 loader = cornerstone.loadImage(imageId, {
-                    priority: priority
+                    priority: priority,
+                    type: requestDetails.type
                 });
             } else {
                 loader = cornerstone.loadAndCacheImage(imageId, {
-                    priority: priority
+                    priority: priority,
+                    type: requestDetails.type
                 });
             }
 

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.8 - 2016-08-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.8 - 2016-08-30 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -7524,7 +7524,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
-
     // module/private exports
     cornerstoneTools.metaData = cornerstone.metaData;
 })($, cornerstone, cornerstoneTools);
@@ -7898,11 +7897,13 @@ if (typeof cornerstoneTools === 'undefined') {
             var loader;
             if (requestDetails.preventCache === true) {
                 loader = cornerstone.loadImage(imageId, {
-                    priority: priority
+                    priority: priority,
+                    type: requestDetails.type
                 });
             } else {
                 loader = cornerstone.loadAndCacheImage(imageId, {
-                    priority: priority
+                    priority: priority,
+                    type: requestDetails.type
                 });
             }
 
