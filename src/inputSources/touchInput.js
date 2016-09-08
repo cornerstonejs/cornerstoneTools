@@ -17,7 +17,8 @@
         isPress = false,
         pressMaxDistance = 5,
         pageDistanceMoved,
-        preventNextPinch = false;
+        preventNextPinch = false,
+        lastDelta;
     
     function onTouch(e) {
         console.log(e.type);
@@ -266,13 +267,30 @@
                 break;
 
             case 'panmove':
+                // using the delta-value of HammerJS, because it takes all pointers into account
+                // this is very important when using panning in combination with pinch-zooming
+                // but HammerJS' delta is relative to the start of the pan event
+                // so it needs to be converted to a per-event-delta for CornerstoneTools
+                var delta = {
+                    x: e.deltaX - lastDelta.x,
+                    y: e.deltaY - lastDelta.y
+                };
+                
+                lastDelta = {
+                    x: e.deltaX,
+                    y: e.deltaY
+                };
+
                 // calculate our current points in page and image coordinates
                 currentPoints = {
-                    page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
-                    image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+                    page: {
+                        x: lastPoints.page.x + delta.x,
+                        y: lastPoints.page.y + delta.y
+                    },
+                    image: cornerstone.pageToPixel(element, lastPoints.page.x + delta.x, lastPoints.page.y + delta.y),
                     client: {
-                        x: e.pointers[0].clientX,
-                        y: e.pointers[0].clientY
+                        x: lastPoints.client.x + delta.x,
+                        y: lastPoints.client.y + delta.y
                     }
                 };
                 currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
@@ -318,6 +336,11 @@
                 break;
 
             case 'panstart':
+                lastDelta = {
+                    x: e.deltaX,
+                    y: e.deltaY
+                };
+
                 currentPoints = {
                     page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
                     image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
