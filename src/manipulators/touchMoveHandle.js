@@ -74,7 +74,7 @@
         var targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
 
         function touchDragCallback(e, eventData) {
-            console.log('touchMoveHandle touchDragCallback: ' + e.type);
+            //console.log('touchMoveHandle touchDragCallback: ' + e.type);
             runAnimation.value = false;
 
             if (handle.hasMoved === false) {
@@ -107,7 +107,7 @@
         $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
         function touchEndCallback(e, eventData) {
-            console.log('touchMoveHandle touchEndCallback: ' + e.type);
+            //console.log('touchMoveHandle touchEndCallback: ' + e.type);
             runAnimation.value = false;
 
             handle.active = false;
