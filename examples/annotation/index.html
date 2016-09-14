@@ -119,8 +119,10 @@ is used by our example image loader-->
 
 <script>
     // Register the dialogs using the HTML5 Dialog Polyfill
-    var dialog = document.querySelector('dialog');
-    dialogPolyfill.registerDialog(dialog);
+    var annotationDialog = document.querySelector('.annotationDialog');
+    var relabelDialog = document.querySelector('.relabelDialog');
+    dialogPolyfill.registerDialog(annotationDialog);
+    dialogPolyfill.registerDialog(relabelDialog);
     
     var element = $('#dicomImage').get(0);
 
@@ -129,19 +131,19 @@ is used by our example image loader-->
     // Define a callback to get your text annotation
     // This could be used, e.g. to open a modal
     function getTextCallback(doneChangingTextCallback) {
-        var dialog = $('.annotationDialog');
-        var getTextInput = dialog.find('.annotationTextInput');
-        var confirm = dialog.find('.annotationDialogConfirm');
+        var annotationDialog  = $('.annotationDialog');
+        var getTextInput = annotationDialog .find('.annotationTextInput');
+        var confirm = annotationDialog .find('.annotationDialogConfirm');
 
-        dialog.get(0).showModal();
+        annotationDialog .get(0).showModal();
 
         confirm.off('click');
         confirm.on('click', function() {
             closeHandler();
         });
 
-        dialog.off("keydown");
-        dialog.on('keydown', keyPressHandler);
+        annotationDialog .off("keydown");
+        annotationDialog .on('keydown', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -151,7 +153,7 @@ is used by our example image loader-->
         }
 
         function closeHandler() {
-            dialog.get(0).close();
+            annotationDialog .get(0).close();
             doneChangingTextCallback(getTextInput.val());
             // Reset the text value
             getTextInput.val("");
@@ -161,29 +163,29 @@ is used by our example image loader-->
     // Define a callback to edit your text annotation
     // This could be used, e.g. to open a modal
     function changeTextCallback(data, eventData, doneChangingTextCallback) {
-        var dialog = $('.relabelDialog');
-        var getTextInput = dialog.find('.annotationTextInput');
-        var confirm = dialog.find('.relabelConfirm');
-        var remove = dialog.find('.relabelRemove');
+        var relabelDialog = $('.relabelDialog');
+        var getTextInput = relabelDialog.find('.annotationTextInput');
+        var confirm = relabelDialog.find('.relabelConfirm');
+        var remove = relabelDialog.find('.relabelRemove');
 
         getTextInput.val(data.annotationText);
-        dialog.get(0).showModal();
+        relabelDialog.get(0).showModal();
 
         confirm.off('click');
         confirm.on('click', function() {
-            dialog.get(0).close();
+            relabelDialog.get(0).close();
             doneChangingTextCallback(data, getTextInput.val());
         });
 
         // If the remove button is clicked, delete this marker
         remove.off('click');
         remove.on('click', function() {
-            dialog.get(0).close();
+            relabelDialog.get(0).close();
             doneChangingTextCallback(data, undefined, true);
         });
 
-        dialog.off("keydown");
-        dialog.on('keydown', keyPressHandler);
+        relabelDialog.off("keydown");
+        relabelDialog.on('keydown', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -193,7 +195,7 @@ is used by our example image loader-->
         }
 
         function closeHandler() {
-            dialog.get(0).close();
+            relabelDialog.get(0).close();
             doneChangingTextCallback(data, getTextInput.val());
             // Reset the text value
             getTextInput.val("");
