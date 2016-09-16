@@ -80,8 +80,8 @@
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
-        
-        //activation color 
+
+        //activation color
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
@@ -164,7 +164,7 @@
             if (rAngle) {
                 var str = '00B0'; // degrees symbol
                 var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
-                
+
                 var distance = 15;
 
                 var textCoords;

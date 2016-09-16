@@ -59,7 +59,7 @@
             y: eventData.currentPoints.image.y - 3
         };
         var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-        
+
         context.font = font;
         context.fillStyle = color;
 
@@ -81,7 +81,7 @@
         var color = cornerstoneTools.toolColors.getActiveColor();
         var font = cornerstoneTools.textStyle.getFont();
         var config = cornerstoneTools.dragProbe.getConfiguration();
-        
+
         context.save();
 
         if (config && config.shadow) {
@@ -106,7 +106,7 @@
             toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
             return;
         }
-        
+
         if (image.color) {
             storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
             text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
@@ -119,9 +119,9 @@
             var modalityTag = 'x00080060';
             var modality;
             if (eventData.image.data) {
-                modality = eventData.image.data.string(modalityTag);    
+                modality = eventData.image.data.string(modalityTag);
             }
-            
+
             if (modality === 'CT') {
                 text += 'HU: ';
             }
@@ -187,7 +187,7 @@
     }
 
     cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-    
+
     cornerstoneTools.dragProbe.strategies = {
         default: defaultStrategy,
         minimal: minimalStrategy

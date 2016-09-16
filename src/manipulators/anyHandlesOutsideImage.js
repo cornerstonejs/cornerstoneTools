@@ -18,7 +18,7 @@
             if (handle.allowedOutsideImage === true) {
                 return;
             }
-            
+
             if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
                 handleOutsideImage = true;
             }

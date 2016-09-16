@@ -47,7 +47,7 @@
             start: cornerstone.pixelToCanvas(element, data.handles.start),
             end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
-        
+
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
         if (distanceToPoint < 5) {
             return true;
@@ -72,8 +72,8 @@
         // we have tool data for this element - iterate over each one and draw it
         var context = eventData.canvasContext.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
-        
-        //activation color 
+
+        //activation color
         var color;
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var font = cornerstoneTools.textStyle.getFont();
@@ -123,7 +123,7 @@
             context.fillStyle = color;
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-            // where lines cross to measure angle. For now it will show smallest angle. 
+            // where lines cross to measure angle. For now it will show smallest angle.
             var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
             var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
             var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
@@ -153,7 +153,7 @@
         pointNearTool: pointNearTool,
         toolType: toolType
     });
-    
+
     cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,

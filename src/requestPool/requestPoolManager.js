@@ -19,7 +19,7 @@
         thumbnail: 6,
         prefetch: 5
     };
-    
+
     var lastElementInteracted;
     var awake = false;
     var grabDelay = 20;
@@ -100,7 +100,7 @@
             var imageId = requestDetails.imageId;
             var doneCallback = requestDetails.doneCallback;
             var failCallback = requestDetails.failCallback;
-            
+
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             if (imagePromise) {
@@ -149,7 +149,7 @@
             }
 
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
-            
+
             maxNumRequests = {
                 interaction: Math.max(maxSimultaneousRequests, 1),
                 thumbnail: Math.max(maxSimultaneousRequests - 2, 1),

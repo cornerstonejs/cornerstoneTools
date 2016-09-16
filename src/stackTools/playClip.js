@@ -25,7 +25,7 @@
 
         var playClipToolData = cornerstoneTools.getToolState(element, toolType);
         var playClipData;
-        
+
         if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
             playClipData = {
                 intervalId: undefined,
@@ -125,7 +125,7 @@
         }
 
         var playClipData = playClipToolData.data[0];
-        
+
         clearInterval(playClipData.intervalId);
         playClipData.intervalId = undefined;
     }

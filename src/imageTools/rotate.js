@@ -66,7 +66,7 @@
         horizontal: horizontalStrategy,
         vertical: verticalStrategy
     };
-    
+
     cornerstoneTools.rotate.strategy = defaultStrategy;
 
     cornerstoneTools.rotateTouchDrag = cornerstoneTools.touchDragTool(dragCallback);

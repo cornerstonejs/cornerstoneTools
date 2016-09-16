@@ -33,7 +33,7 @@
         if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
-        
+
         var stackData = toolData.data[0];
 
         var config = cornerstoneTools.stackScroll.getConfiguration();

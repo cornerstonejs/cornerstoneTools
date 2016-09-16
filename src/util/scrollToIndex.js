@@ -63,7 +63,7 @@
         }
 
         var requestPoolManager = cornerstoneTools.requestPoolManager;
-        
+
         var type = 'interaction';
         requestPoolManager.clearRequestStack(type);
 

@@ -261,7 +261,7 @@
                     meanStdDev = calculateMeanStdDev(pixels, ellipse);
 
                     if (modality === 'PT') {
-                        // If the image is from a PET scan, use the DICOM tags to 
+                        // If the image is from a PET scan, use the DICOM tags to
                         // calculate the SUV from the mean and standard deviation.
 
                         // Note that because we are using modality pixel values from getPixels, and
@@ -344,7 +344,7 @@
             }
 
             // If the textbox has not been moved by the user, it should be displayed on the right-most
-            // side of the tool. 
+            // side of the tool.
             if (!data.handles.textBox.hasMoved) {
                 // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
                 // Note that this calculates it in image coordinates

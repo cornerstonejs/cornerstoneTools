@@ -1,7 +1,7 @@
 (function(cornerstoneMath, cornerstoneTools) {
-    
+
     'use strict';
-    
+
     function pointInsideBoundingBox(handle, coords) {
         if (!handle.boundingBox) {
             return;

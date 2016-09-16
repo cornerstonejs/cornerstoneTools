@@ -44,7 +44,7 @@
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
-        
+
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (!toolData) {
             return;
@@ -214,7 +214,7 @@
 
         // Set to the active tool color
         var color = cornerstoneTools.toolColors.getActiveColor();
-        
+
         // Calculate the rectangle parameters
         var startPointCanvas = cornerstone.pixelToCanvas(eventData.element, startPoint);
         var endPointCanvas = cornerstone.pixelToCanvas(eventData.element, endPoint);

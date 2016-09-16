@@ -7,10 +7,10 @@
     function changeViewportScale(viewport, ticks) {
         var config = cornerstoneTools.zoom.getConfiguration();
         var pow = 1.7;
-        
+
         var oldFactor = Math.log(viewport.scale) / Math.log(pow);
         var factor = oldFactor + ticks;
-        
+
         var scale = Math.pow(pow, factor);
         if (config.maxScale && scale > config.maxScale) {
             viewport.scale = config.maxScale;
@@ -35,10 +35,10 @@
         // Apply rotations
         if (viewport.rotation !== 0) {
             var angle = viewport.rotation * Math.PI / 180;
-    
+
             var cosA = Math.cos(angle);
             var sinA = Math.sin(angle);
-    
+
             var newX = shift.x * cosA - shift.y * sinA;
             var newY = shift.x * sinA + shift.y * cosA;
 
@@ -46,7 +46,7 @@
             shift.y = newY;
         }
 
-        // Apply Flips        
+        // Apply Flips
         if (viewport.hflip) {
             shift.x *= -1;
         }
@@ -68,7 +68,7 @@
         // Now that the scale has been updated, determine the offset we need to apply to the center so we can
         // keep the original start location in the same position
         var newCoords = cornerstone.pageToPixel(element, eventData.startPoints.page.x, eventData.startPoints.page.y);
-        
+
         // The shift we will use is the difference between the original image coordinates of the point we've selected
         // and the image coordinates of the same point on the page after the viewport scaling above has been performed
         // This shift is in image coordinates, and is designed to keep the target location fixed on the page.
@@ -79,7 +79,7 @@
 
         // Correct the required shift using the viewport rotation and flip parameters
         shift = correctShift(shift, viewport);
-        
+
         // Apply the shift to the Viewport's translation setting
         viewport.translation.x -= shift.x;
         viewport.translation.y -= shift.y;
@@ -219,7 +219,7 @@
 
     function mouseWheelCallback(e, eventData) {
         var ticks = -eventData.direction / 4;
-        
+
         // Allow inversion of the mouse wheel scroll via a configuration option
         var config = cornerstoneTools.zoom.getConfiguration();
         if (config && config.invert) {

@@ -2,7 +2,7 @@
 
     'use strict';
 
-    // This function causes any scrolling actions within the stack to propagate to 
+    // This function causes any scrolling actions within the stack to propagate to
     // all of the other viewports that are synced
     function stackScrollSynchronizer(synchronizer, sourceElement, targetElement, eventData) {
         // If the target and source are the same, stop

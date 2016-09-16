@@ -4,7 +4,7 @@
 
     function getHandleNearImagePoint(element, handles, coords, distanceThreshold) {
         var nearbyHandle;
-        
+
         if (!handles) {
             return;
         }
@@ -30,7 +30,7 @@
                 }
             }
         });
-        
+
         return nearbyHandle;
     }
 

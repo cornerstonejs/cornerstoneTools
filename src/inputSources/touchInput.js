@@ -18,7 +18,7 @@
         pressMaxDistance = 5,
         pageDistanceMoved,
         preventNextPinch = false;
-    
+
     function onTouch(e) {
         console.log(e.type);
         var element = e.target.parentNode,
@@ -99,7 +99,7 @@
             case 'pinchstart':
                 isPress = false;
                 clearTimeout(pressTimeout);
-                
+
                 lastScale = 1.0;
                 break;
 
@@ -292,7 +292,7 @@
                     isPress = false;
                     clearTimeout(pressTimeout);
                 }
-              
+
                 eventType = 'CornerstoneToolsTouchDrag';
                 if (e.pointers.length > 1) {
                     eventType = 'CornerstoneToolsMultiTouchDrag';
@@ -430,7 +430,7 @@
         var rotate = new Hammer.Rotate({
             threshold: 0
         });
-        
+
         // we want to detect both the same time
         pinch.recognizeWith(pan);
         pinch.recognizeWith(rotate);

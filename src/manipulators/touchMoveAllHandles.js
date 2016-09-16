@@ -9,13 +9,13 @@
         function touchDragCallback(e, eventData) {
             //console.log('touchMoveAllHandles touchDragCallback');
             data.active = true;
-            
+
             Object.keys(data.handles).forEach(function(name) {
                 var handle = data.handles[name];
                 if (handle.movesIndependently === true) {
                     return;
                 }
-                
+
                 handle.x += eventData.deltaPoints.image.x;
                 handle.y += eventData.deltaPoints.image.y;
             });

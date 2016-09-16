@@ -64,7 +64,7 @@
     function clearToolState(element, toolType) {
         var toolStateManager = getElementToolStateManager(element);
         var toolData = toolStateManager.get(element, toolType);
-        
+
         // If any toolData actually exists, clear it
         if (toolData !== undefined) {
             toolData.data = [];

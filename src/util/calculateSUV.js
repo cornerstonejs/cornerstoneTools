@@ -16,7 +16,7 @@
         if (image.data === undefined) {
             return;
         }
-        
+
         // image must be PET
         if (image.data.string('x00080060') !== 'PT') {
             return;
@@ -39,7 +39,7 @@
         var totalDose = petSequence.floatString('x00181074');
         var halfLife = petSequence.floatString('x00181075');
         var seriesAcquisitionTime = dicomParser.parseTM(image.data.string('x00080031'));
-        
+
         if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
             return;
         }

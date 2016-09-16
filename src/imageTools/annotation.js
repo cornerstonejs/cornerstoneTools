@@ -31,7 +31,7 @@
         var eventData = {
             mouseButtonMask: mouseEventData.which,
         };
-        
+
         function doneChangingTextCallback(text) {
             if (text !== null) {
                 measurementData.text = text;
@@ -47,10 +47,10 @@
             $(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, cornerstoneTools.arrowAnnotate.mouseDownActivateCallback);
             $(mouseEventData.element).on('CornerstoneToolsMouseDoubleClick', eventData, cornerstoneTools.arrowAnnotate.mouseDoubleClickCallback);
         }
-        
+
         // associate this data with this imageId so we can render it and manipulate it
         cornerstoneTools.addToolState(mouseEventData.element, toolType, measurementData);
-       
+
         // since we are dragging to another place to drop the end point, we can just activate
         // the end point and let the moveHandle move it for us.
         $(mouseEventData.element).off('CornerstoneToolsMouseMove', cornerstoneTools.arrowAnnotate.mouseMoveCallback);
@@ -152,7 +152,7 @@
             } else {
                 color = cornerstoneTools.toolColors.getToolColor();
             }
-            
+
             // Draw the arrow
             var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
             var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
@@ -193,7 +193,7 @@
                             y: handleEndCanvas.y - textHeight / 2
                         };
                     } else {
-                        // If the arrow is at the End position, the text should 
+                        // If the arrow is at the End position, the text should
                         // be placed near the Start position
                         textCoords = {
                             x: handleStartCanvas.x - textWidth / 2 - distance,
@@ -208,7 +208,7 @@
                     data.handles.textBox.x = coords.x;
                     data.handles.textBox.y = coords.y;
                 }
-                
+
                 textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
 
                 var boundingBox = cornerstoneTools.drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
@@ -225,7 +225,7 @@
                         x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
                         y: (handleStartCanvas.y + handleEndCanvas.y) / 2,
                     };
-                    
+
                     var points = [ handleStartCanvas, handleEndCanvas, midpointCanvas ];
 
                     link.end.x = textCoords.x;
@@ -347,7 +347,7 @@
                 cornerstone.updateImage(element);
                 // Allow relabelling via a callback
                 config.changeTextCallback(data, eventData, doneChangingTextCallback);
-                
+
                 e.stopImmediatePropagation();
                 return false;
             }
@@ -392,10 +392,10 @@
             $(element).off('CornerstoneToolsTouchStart', cornerstoneTools.arrowAnnotateTouch.touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
-            
+
             // Allow relabelling via a callback
             config.changeTextCallback(eventData.handlePressed, eventData, doneChangingTextCallback);
-            
+
             e.stopImmediatePropagation();
             return false;
         }
@@ -410,10 +410,10 @@
                 $(element).off('CornerstoneToolsTouchStart', cornerstoneTools.arrowAnnotateTouch.touchStartCallback);
                 $(element).off('CornerstoneToolsTouchStartActive', cornerstoneTools.arrowAnnotateTouch.touchDownActivateCallback);
                 $(element).off('CornerstoneToolsTap', cornerstoneTools.arrowAnnotateTouch.tapCallback);
-                
+
                 // Allow relabelling via a callback
                 config.changeTextCallback(data, eventData, doneChangingTextCallback);
-                
+
                 e.stopImmediatePropagation();
                 return false;
             }

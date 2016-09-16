@@ -88,7 +88,7 @@
                 x: currentPoints.page.x,
                 y: currentPoints.page.y + fingerDistance
             };
-            
+
             targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
             handle.x = targetLocation.x;
             handle.y = targetLocation.y;
@@ -129,7 +129,7 @@
         }
 
         $(element).on(touchEndEvents, touchEndCallback);
-    
+
         animate(time, handle, runAnimation, enabledElement, targetLocation);
     }
 

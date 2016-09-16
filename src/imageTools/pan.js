@@ -16,7 +16,7 @@
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
-    
+
     function dragCallback(e, eventData) {
         eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
         eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);

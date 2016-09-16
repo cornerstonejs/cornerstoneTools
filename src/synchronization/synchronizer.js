@@ -113,14 +113,14 @@
                 }
 
                 var sourceImageId = initialData.imageIds.sourceElements[sourceIndex];
-                
+
                 var positionDifference;
                 if (sourceImageId === targetImageId) {
                     positionDifference = 0;
                 } else {
                     positionDifference = initialData.distances[sourceImageId][targetImageId];
                 }
-                
+
                 eventHandler(that, sourceElement, targetElement, eventData, positionDifference);
             });
             ignoreFiredEvents = false;

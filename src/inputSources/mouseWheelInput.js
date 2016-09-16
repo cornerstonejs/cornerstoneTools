@@ -67,7 +67,7 @@
     function enable(element) {
         // Prevent handlers from being attached multiple times
         disable(element);
-        
+
         $(element).on(mouseWheelEvents, mouseWheel);
     }
 

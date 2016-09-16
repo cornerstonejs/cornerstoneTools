@@ -188,7 +188,7 @@
             }
 
             // now check to see if there is a handle we can move
-            
+
             // Average pixel width of index finger is 45-57 pixels
             // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
             var distance = 28;
@@ -247,7 +247,7 @@
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
             }
-            
+
             if (touchToolInterface.pressCallback) {
                 $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
             }

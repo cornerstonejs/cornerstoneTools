@@ -45,7 +45,7 @@
 
     function nearestIndex(arr, x) {
         // Return index of nearest values in array
-        // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array        
+        // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
         var l = [],
             h = [];
 
@@ -56,7 +56,7 @@
                 h.push(v);
             }
         });
-       
+
         return {
             low: arr.indexOf(max(l)),
             high: arr.indexOf(min(h))
@@ -91,14 +91,14 @@
         }
 
         // Remove an imageIdIndex from the list of indices to request
-        // This fires when the individual image loading deferred is resolved        
+        // This fires when the individual image loading deferred is resolved
         function removeFromList(imageIdIndex) {
             var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
             if (index > -1) { // don't remove last element if imageIdIndex not found
                 stackPrefetch.indicesToRequest.splice(index, 1);
             }
         }
-        
+
         // Remove all already cached images from the
         // indicesToRequest array
         stackPrefetchData.data[0].indicesToRequest.sort(sortNumber);
@@ -127,7 +127,7 @@
         var requestPoolManager = cornerstoneTools.requestPoolManager;
         requestPoolManager.clearRequestStack(requestType);
 
-        // Identify the nearest imageIdIndex to the currentImageIdIndex 
+        // Identify the nearest imageIdIndex to the currentImageIdIndex
         var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
 
         var imageId,
@@ -207,7 +207,7 @@
         if (imageIdIndex < 0) {
             return;
         }
-        
+
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
             return;
