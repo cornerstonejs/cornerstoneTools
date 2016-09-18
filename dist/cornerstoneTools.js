@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-09-08 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-09-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -6503,6 +6503,14 @@ if (typeof cornerstoneTools === 'undefined') {
         cornerstone.setViewport(element, viewport);
     }
 
+    function zoomToCenterStrategy(eventData, ticks) {
+        var element = eventData.element;
+
+        // Calculate the new scale factor based on how far the mouse has changed
+        var viewport = changeViewportScale(eventData.viewport, ticks);
+        cornerstone.setViewport(element, viewport);
+    }
+
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
@@ -6574,7 +6582,8 @@ if (typeof cornerstoneTools === 'undefined') {
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoom.strategies = {
         default: defaultStrategy,
-        translate: translateStrategy
+        translate: translateStrategy,
+        zoomToCenter: zoomToCenterStrategy
     };
     cornerstoneTools.zoom.strategy = defaultStrategy;
 

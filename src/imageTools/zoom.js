@@ -183,6 +183,14 @@
         cornerstone.setViewport(element, viewport);
     }
 
+    function zoomToCenterStrategy(eventData, ticks) {
+        var element = eventData.element;
+
+        // Calculate the new scale factor based on how far the mouse has changed
+        var viewport = changeViewportScale(eventData.viewport, ticks);
+        cornerstone.setViewport(element, viewport);
+    }
+
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
@@ -254,7 +262,8 @@
     cornerstoneTools.zoom = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
     cornerstoneTools.zoom.strategies = {
         default: defaultStrategy,
-        translate: translateStrategy
+        translate: translateStrategy,
+        zoomToCenter: zoomToCenterStrategy
     };
     cornerstoneTools.zoom.strategy = defaultStrategy;
 
