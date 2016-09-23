@@ -28,39 +28,34 @@
 
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurement(mouseEventData) {
-        var element = mouseEventData.element;
-        var config = cornerstoneTools.seedAnnotate.getConfiguration();
-        var measurementData = createNewMeasurement(mouseEventData);
-      
-        function doneGetTextCallback(text) {
-            if (text !== null) {
-                measurementData.text = text;
-            } else {
-                cornerstoneTools.removeToolState(mouseEventData.element, toolType, measurementData);
-            }
-        
-            measurementData.active = false;
-            cornerstone.updateImage(mouseEventData.element);
-        }
-      
-        // associate this data with this imageId so we can render it and manipulate it
-        cornerstoneTools.addToolState(element, toolType, measurementData);
-      
-        cornerstone.updateImage(mouseEventData.element);
-
-        // Check if the current handle is outside the image,
-        // If it is, prevent the handle creation
-        if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
-            // delete the measurement
-            cornerstoneTools.removeToolState(element, toolType, measurementData);
-            cornerstone.updateImage(mouseEventData.element);
-        }
+      var element = mouseEventData.element;
+      var config = cornerstoneTools.seedAnnotate.getConfiguration();
+      var measurementData = createNewMeasurement(mouseEventData);
     
-        if (measurementData.text === undefined) {
-            config.getTextCallback(doneGetTextCallback);
-            cornerstone.updateImage(mouseEventData.element);
+      function doneGetTextCallback(text) {
+        if (text !== null) {
+          measurementData.text = text;
+        } else {
+          cornerstoneTools.removeToolState(element, toolType, measurementData);
         }
+        measurementData.active = false;
+        cornerstone.updateImage(element);
+      }
+    
+      // associate this data with this imageId so we can render it and manipulate it
+      cornerstoneTools.addToolState(element, toolType, measurementData);
       
+      cornerstone.updateImage(element);
+      cornerstoneTools.moveHandle(mouseEventData, toolType, measurementData, measurementData.handles.end, function() {
+        if (cornerstoneTools.anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
+          // delete the measurement
+          cornerstoneTools.removeToolState(element, toolType, measurementData);
+        }
+        if (measurementData.text === undefined) {
+          config.getTextCallback(doneGetTextCallback);
+        }
+        cornerstone.updateImage(element);
+      });
     }
 
     function createNewMeasurement(mouseEventData) {
@@ -245,24 +240,34 @@
 
     ///////// BEGIN ACTIVE TOOL ///////
     function addNewMeasurementTouch(touchEventData) {
-        var element = touchEventData.element;
-        var config = cornerstoneTools.seedAnnotate.getConfiguration();
-        var measurementData = createNewMeasurement(touchEventData);
+      var element = touchEventData.element;
+      var config = cornerstoneTools.seedAnnotate.getConfiguration();
+      var measurementData = createNewMeasurement(touchEventData);
       
-        // associate this data with this imageId so we can render it and manipulate it
-        cornerstoneTools.addToolState(element, toolType, measurementData);
-      
-        if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
-            // delete the measurement
-            cornerstoneTools.removeToolState(element, toolType, measurementData);
+      function doneGetTextCallback(text) {
+        if (text !== null) {
+          measurementData.text = text;
+        } else {
+          cornerstoneTools.removeToolState(element, toolType, measurementData);
         }
-
-        if (measurementData.text === undefined) {
-            measurementData.text = config.currentLetter + config.currentNumber;
-            config.currentNumber++;
-        }
-      
+        measurementData.active = false;
         cornerstone.updateImage(element);
+      }
+      
+      // associate this data with this imageId so we can render it and manipulate it
+      cornerstoneTools.addToolState(element, toolType, measurementData);
+      
+      cornerstone.updateImage(element);
+      cornerstoneTools.moveHandle(touchEventData, toolType, measurementData, measurementData.handles.end, function() {
+        if (cornerstoneTools.anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
+          // delete the measurement
+          cornerstoneTools.removeToolState(element, toolType, measurementData);
+        }
+        if (measurementData.text === undefined) {
+          config.getTextCallback(doneGetTextCallback);
+        }
+        cornerstone.updateImage(element);
+      });
     }
     
     function doubleClickCallback(e, eventData) {
