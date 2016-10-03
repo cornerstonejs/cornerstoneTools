@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-09-26 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-10-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -11715,11 +11715,21 @@ Display scroll progress bar across bottom of image.
         var viewport = cornerstone.getViewport(element);
 
         function doneCallback(image) {
-            if (stackData.currentImageIdIndex === newImageIdIndex) {
-                cornerstone.displayImage(element, image, viewport);
-                if (endLoadingHandler) {
-                    endLoadingHandler(element);
-                }
+            if (stackData.currentImageIdIndex !== newImageIdIndex) {
+                return;
+            }
+
+            // Check if the element is still enabled in Cornerstone, 
+            // if an error is thrown, stop here.
+            try {
+                cornerstone.getEnabledElement(element);
+            } catch(error) {
+                return;
+            }
+
+            cornerstone.displayImage(element, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(element);
             }
         }
 

@@ -21,11 +21,22 @@
         var viewport = cornerstone.getViewport(element);
 
         function doneCallback(image) {
-            if (stackData.currentImageIdIndex === newImageIdIndex) {
-                cornerstone.displayImage(element, image, viewport);
-                if (endLoadingHandler) {
-                    endLoadingHandler(element);
-                }
+            if (stackData.currentImageIdIndex !== newImageIdIndex) {
+                return;
+            }
+
+            // Check if the element is still enabled in Cornerstone,
+            // if an error is thrown, stop here.
+            try {
+                // TODO: Add 'isElementEnabled' to Cornerstone?
+                cornerstone.getEnabledElement(element);
+            } catch(error) {
+                return;
+            }
+
+            cornerstone.displayImage(element, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(element);
             }
         }
 
