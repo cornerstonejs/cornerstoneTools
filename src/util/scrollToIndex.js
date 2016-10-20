@@ -73,16 +73,19 @@
             }
         }
 
-        var requestPoolManager = cornerstoneTools.requestPoolManager;
-
-        var type = 'interaction';
-        requestPoolManager.clearRequestStack(type);
-
         // Convert the preventCache value in stack data to a boolean
         var preventCache = !!stackData.preventCache;
 
-        requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback);
-        requestPoolManager.startGrabbing();
+        var imagePromise;
+        if (preventCache) {
+            imagePromise = cornerstone.loadImage(newImageId);
+        } else {
+            imagePromise = cornerstone.loadAndCacheImage(newImageId);
+        }
+
+        imagePromise.then(doneCallback, failCallback);
+        // Make sure we kick off any changed download request pools
+        cornerstoneTools.requestPoolManager.startGrabbing();
 
         $(element).trigger('CornerstoneStackScroll', eventData);
     }

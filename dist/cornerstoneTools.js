@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-10-03 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-10-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -8382,12 +8382,7 @@ if (typeof cornerstoneTools === 'undefined') {
             }
 
             setTimeout(function() {
-                var requestDetails = getNextRequest();
-                if (!requestDetails) {
-                    return;
-                }
-
-                sendRequest(requestDetails);
+                startGrabbing();
             }, grabDelay);
         }
 
@@ -8444,10 +8439,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
         function startGrabbing() {
             // Begin by grabbing X images
-            if (awake) {
-                return;
-            }
-
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
 
             maxNumRequests = {
@@ -8456,7 +8447,11 @@ if (typeof cornerstoneTools === 'undefined') {
                 prefetch: Math.max(maxSimultaneousRequests - 1, 1)
             };
 
-            for (var i = 0; i < maxSimultaneousRequests; i++) {
+            var currentRequests = numRequests.interaction +
+                numRequests.thumbnail +
+                numRequests.prefetch;
+            var requestsToSend = maxSimultaneousRequests - currentRequests;
+            for (var i = 0; i < requestsToSend; i++) {
                 var requestDetails = getNextRequest();
                 if (requestDetails) {
                     sendRequest(requestDetails);
@@ -11369,6 +11364,10 @@ Display scroll progress bar across bottom of image.
             return config.maxSimultaneousRequests;
         }
 
+        return getDefaultSimultaneousRequests();
+    }
+
+    function getDefaultSimultaneousRequests() {
         var infoString = getBrowserInfo();
         var info = infoString.split(' ');
         var browserName = info[0];
@@ -11392,6 +11391,7 @@ Display scroll progress bar across bottom of image.
     }
 
     // module exports
+    cornerstoneTools.getDefaultSimultaneousRequests = getDefaultSimultaneousRequests;
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
     cornerstoneTools.getBrowserInfo = getBrowserInfo;
     cornerstoneTools.isMobileDevice = isMobileDevice;
@@ -11719,9 +11719,10 @@ Display scroll progress bar across bottom of image.
                 return;
             }
 
-            // Check if the element is still enabled in Cornerstone, 
+            // Check if the element is still enabled in Cornerstone,
             // if an error is thrown, stop here.
             try {
+                // TODO: Add 'isElementEnabled' to Cornerstone?
                 cornerstone.getEnabledElement(element);
             } catch(error) {
                 return;
@@ -11766,16 +11767,19 @@ Display scroll progress bar across bottom of image.
             }
         }
 
-        var requestPoolManager = cornerstoneTools.requestPoolManager;
-
-        var type = 'interaction';
-        requestPoolManager.clearRequestStack(type);
-
         // Convert the preventCache value in stack data to a boolean
         var preventCache = !!stackData.preventCache;
 
-        requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback);
-        requestPoolManager.startGrabbing();
+        var imagePromise;
+        if (preventCache) {
+            imagePromise = cornerstone.loadImage(newImageId);
+        } else {
+            imagePromise = cornerstone.loadAndCacheImage(newImageId);
+        }
+
+        imagePromise.then(doneCallback, failCallback);
+        // Make sure we kick off any changed download request pools
+        cornerstoneTools.requestPoolManager.startGrabbing();
 
         $(element).trigger('CornerstoneStackScroll', eventData);
     }

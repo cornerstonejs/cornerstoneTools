@@ -82,12 +82,7 @@
             }
 
             setTimeout(function() {
-                var requestDetails = getNextRequest();
-                if (!requestDetails) {
-                    return;
-                }
-
-                sendRequest(requestDetails);
+                startGrabbing();
             }, grabDelay);
         }
 
@@ -144,10 +139,6 @@
 
         function startGrabbing() {
             // Begin by grabbing X images
-            if (awake) {
-                return;
-            }
-
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
 
             maxNumRequests = {
@@ -156,7 +147,11 @@
                 prefetch: Math.max(maxSimultaneousRequests - 1, 1)
             };
 
-            for (var i = 0; i < maxSimultaneousRequests; i++) {
+            var currentRequests = numRequests.interaction +
+                numRequests.thumbnail +
+                numRequests.prefetch;
+            var requestsToSend = maxSimultaneousRequests - currentRequests;
+            for (var i = 0; i < requestsToSend; i++) {
                 var requestDetails = getNextRequest();
                 if (requestDetails) {
                     sendRequest(requestDetails);

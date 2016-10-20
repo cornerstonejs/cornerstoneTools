@@ -63,6 +63,10 @@
             return config.maxSimultaneousRequests;
         }
 
+        return getDefaultSimultaneousRequests();
+    }
+
+    function getDefaultSimultaneousRequests() {
         var infoString = getBrowserInfo();
         var info = infoString.split(' ');
         var browserName = info[0];
@@ -86,6 +90,7 @@
     }
 
     // module exports
+    cornerstoneTools.getDefaultSimultaneousRequests = getDefaultSimultaneousRequests;
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
     cornerstoneTools.getBrowserInfo = getBrowserInfo;
     cornerstoneTools.isMobileDevice = isMobileDevice;
