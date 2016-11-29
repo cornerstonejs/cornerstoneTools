@@ -5,9 +5,10 @@
     var toolType = 'timeSeriesPlayer';
 
     /**
-     * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
-     * optional and defaults to 30 if not specified.  A negative framesPerSecond will play the clip in reverse.
-     * The element must be a stack of images
+     * Starts playing a clip of different time series of the same image or adjusts the frame rate of an
+     * already playing clip. framesPerSecond is optional and defaults to 30 if not specified. A negative
+     * framesPerSecond will play the clip in reverse.
+     * The element must have time series
      * @param element
      * @param framesPerSecond
      */

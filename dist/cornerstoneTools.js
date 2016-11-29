@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-10-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2016-11-29 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -10798,9 +10798,10 @@ Display scroll progress bar across bottom of image.
     var toolType = 'timeSeriesPlayer';
 
     /**
-     * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
-     * optional and defaults to 30 if not specified.  A negative framesPerSecond will play the clip in reverse.
-     * The element must be a stack of images
+     * Starts playing a clip of different time series of the same image or adjusts the frame rate of an
+     * already playing clip. framesPerSecond is optional and defaults to 30 if not specified. A negative
+     * framesPerSecond will play the clip in reverse.
+     * The element must have time series
      * @param element
      * @param framesPerSecond
      */
