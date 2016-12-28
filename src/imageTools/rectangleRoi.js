@@ -139,8 +139,24 @@
             context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
             context.stroke();
 
-            // draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            // If the tool configuration specifies to only draw the handles on hover / active,
+            // follow this logic
+            if (config && config.drawHandlesOnHover) {
+                // Draw the handles if the tool is active
+                if (data.active === true) {
+                    cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+                } else {
+                    // If the tool is inactive, draw the handles only if each specific handle is being
+                    // hovered over
+                    var handleOptions = {
+                        drawHandlesIfActive: true
+                    };
+                    cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
+                }
+            } else {
+                // If the tool has no configuration settings, always draw the handles
+                cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            }
 
             // Calculate the mean, stddev, and area
             // TODO: calculate this in web worker for large pixel counts...
