@@ -194,7 +194,15 @@
         // it to the indicesToRequest list so that it will be retrieved later if the
         // currentImageIdIndex is changed to an image nearby
         var element = e.data.element;
-        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        var stackData;
+
+        try {
+            // It will throw an exception in some cases (eg: thumbnails)
+            stackData = cornerstoneTools.getToolState(element, 'stack');
+        } catch(error) {
+            return;
+        }
+
         if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
