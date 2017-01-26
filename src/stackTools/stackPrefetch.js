@@ -176,8 +176,14 @@
         // Stop prefetching if the ImageCacheFull event is fired from cornerstone
         // console.log('CornerstoneImageCacheFull full, stopping');
         var element = e.data.element;
+        var stackPrefetchData;
 
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        try {
+            stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+        } catch(error) {
+            return;
+        }
+
         if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
             return;
         }
