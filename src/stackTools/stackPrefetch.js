@@ -222,7 +222,15 @@
         clearTimeout(resetPrefetchTimeout);
         resetPrefetchTimeout = setTimeout(function() {
             var element = e.target;
-            prefetch(element);
+
+            // If playClip is enabled and the user loads a different series in the viewport
+            // an exception will be thrown because the element will not be enabled anymore
+            try {
+                prefetch(element);
+            } catch(error) {
+                return;
+            }
+
         }, resetPrefetchDelay);
     }
 
