@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2016-10-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.7.9 - 2017-02-01 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4750,8 +4750,20 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function dragCallback(e, eventData) {
-        eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
-        eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+
+        // FIXME: Copied from Cornerstone src/internal/calculateTransform.js, should be exposed from there.
+        var widthScale = eventData.viewport.scale;
+        var heightScale = eventData.viewport.scale;
+        if(eventData.image.rowPixelSpacing < eventData.image.columnPixelSpacing) {
+            widthScale = widthScale * (eventData.image.columnPixelSpacing / eventData.image.rowPixelSpacing);
+        }
+        else if(eventData.image.columnPixelSpacing < eventData.image.rowPixelSpacing) {
+            heightScale = heightScale * (eventData.image.rowPixelSpacing / eventData.image.columnPixelSpacing);
+        }
+
+
+        eventData.viewport.translation.x += (eventData.deltaPoints.page.x / widthScale);
+        eventData.viewport.translation.y += (eventData.deltaPoints.page.y / heightScale);
         cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
