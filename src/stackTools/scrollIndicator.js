@@ -9,7 +9,8 @@ Display scroll progress bar across bottom of image.
 
     var configuration = {
         backgroundColor: 'rgb(19, 63, 141)',
-        fillColor: 'white'
+        fillColor: 'white',
+        orientation: 'horizontal'
     };
 
     function onImageRendered(e, eventData){
@@ -29,7 +30,10 @@ Display scroll progress bar across bottom of image.
 
         // draw indicator background
         context.fillStyle = config.backgroundColor;
-        context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+        if(config.orientation === 'horizontal')
+            context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+        else
+            context.fillRect(0, 0, scrollBarHeight, height);
 
         // get current image index
         var stackData = cornerstoneTools.getToolState(element, 'stack');
@@ -45,7 +49,10 @@ Display scroll progress bar across bottom of image.
         var xPosition = cursorWidth * currentImageIdIndex;
 
         context.fillStyle = config.fillColor;
-        context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+        if(config.orientation === 'horizontal')
+            context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+        else
+            context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
 
         context.restore();
     }
