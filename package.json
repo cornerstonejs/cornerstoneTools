@@ -1,6 +1,6 @@
 {
   "name": "cornerstoneTools",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Medical imaging tools for the Cornerstone library",
   "keywords": [
     "DICOM",
