@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.7.9 - 2017-02-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.0 - 2017-02-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -69,7 +69,6 @@ if (typeof cornerstoneTools === 'undefined') {
         } else {
             wheelDelta = e.wheelDelta;
         }
-
 
         var direction = wheelDelta < 0 ? -1 : 1;
 
