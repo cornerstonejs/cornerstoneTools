@@ -8,7 +8,7 @@
     var configuration = {};
 
     var resetPrefetchTimeout,
-        resetPrefetchDelay;
+        resetPrefetchDelay = 300;
 
     function sortNumber(a, b) {
         // http://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly
@@ -222,7 +222,15 @@
         clearTimeout(resetPrefetchTimeout);
         resetPrefetchTimeout = setTimeout(function() {
             var element = e.target;
-            prefetch(element);
+
+            // If playClip is enabled and the user loads a different series in the viewport
+            // an exception will be thrown because the element will not be enabled anymore
+            try {
+                prefetch(element);
+            } catch(error) {
+                return;
+            }
+
         }, resetPrefetchDelay);
     }
 
