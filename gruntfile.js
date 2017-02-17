@@ -132,8 +132,8 @@ module.exports = function(grunt) {
         },
         watch: {
             scripts: {
-                files: ['src/**/*.js', 'test/*.js'],
-                tasks: ['concat:build', 'concat:dist', 'uglify', 'jshint']
+                files: ['src/**/*.js', 'test/*.js', 'bower_components/cornerstone/dist/*.js'],
+                tasks: ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint']
             }
         },
 
