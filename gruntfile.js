@@ -127,8 +127,6 @@ module.exports = function(grunt) {
             options: {
                 config: ".jscsrc",
                 fix: true,
-                esnext: true,
-                verbose: true,
                 requireCurlyBraces: ["if", "for"]
             }
         },
