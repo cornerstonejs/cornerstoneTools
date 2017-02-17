@@ -52,7 +52,7 @@
                     timeSeriesData.currentStackIndex = newStackIndex;
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(element);
+                        endLoadingHandler(element, image);
                     }
                 }
             }, function(error) {

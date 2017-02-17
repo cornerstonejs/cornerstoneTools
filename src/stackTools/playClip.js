@@ -102,7 +102,7 @@
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(element);
+                        endLoadingHandler(element, image);
                     }
                 }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];

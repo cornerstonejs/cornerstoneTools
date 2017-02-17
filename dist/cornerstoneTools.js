@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.1 - 2017-02-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.1 - 2017-02-17 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2634,7 +2634,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(targetElement, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(targetElement);
+                        endLoadingHandler(targetElement, image);
                     }
                 }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];
@@ -8822,7 +8822,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     stackData.currentImageIdIndex = newImageIdIndex;
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(element);
+                        endLoadingHandler(element, image);
                     }
                 }, function(error) {
                     var imageId = stackData.imageIds[newImageIdIndex];
@@ -10236,7 +10236,7 @@ Display scroll progress bar across bottom of image.
             targetStackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
             if (endLoadingHandler) {
-                endLoadingHandler(targetElement);
+                endLoadingHandler(targetElement, image);
             }
         }, function(error) {
             var imageId = targetStackData.imageIds[newImageIdIndex];
@@ -10321,7 +10321,7 @@ Display scroll progress bar across bottom of image.
             stackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
             if (endLoadingHandler) {
-                endLoadingHandler(targetElement);
+                endLoadingHandler(targetElement, image);
             }
         }, function(error) {
             var imageId = stackData.imageIds[newImageIdIndex];
@@ -10398,7 +10398,7 @@ Display scroll progress bar across bottom of image.
                 stackData.currentImageIdIndex = newImageIdIndex;
                 synchronizer.displayImage(targetElement, image, viewport);
                 if (endLoadingHandler) {
-                    endLoadingHandler(targetElement);
+                    endLoadingHandler(targetElement, image);
                 }
             }, function(error) {
                 var imageId = stackData.imageIds[newImageIdIndex];
@@ -10469,7 +10469,7 @@ Display scroll progress bar across bottom of image.
             stackData.currentImageIdIndex = newImageIdIndex;
             synchronizer.displayImage(targetElement, image, viewport);
             if (endLoadingHandler) {
-                endLoadingHandler(targetElement);
+                endLoadingHandler(targetElement, image);
             }
         }, function(error) {
             var imageId = stackData.imageIds[newImageIdIndex];
@@ -10991,7 +10991,7 @@ Display scroll progress bar across bottom of image.
                     timeSeriesData.currentStackIndex = newStackIndex;
                     cornerstone.displayImage(element, image, viewport);
                     if (endLoadingHandler) {
-                        endLoadingHandler(element);
+                        endLoadingHandler(element, image);
                     }
                 }
             }, function(error) {
@@ -11951,7 +11951,7 @@ Display scroll progress bar across bottom of image.
 
             cornerstone.displayImage(element, image, viewport);
             if (endLoadingHandler) {
-                endLoadingHandler(element);
+                endLoadingHandler(element, image);
             }
         }
 
