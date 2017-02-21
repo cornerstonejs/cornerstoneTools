@@ -48,7 +48,7 @@
         cornerstone.updateImage(enabledElement.element);
 
         // Request a new frame
-        cornerstoneTools.requestAnimFrame(function() {
+        cornerstone.requestAnimationFrame(function() {
             animate(time, handle, runAnimation, enabledElement, targetLocation);
         });
     }

@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.2 - 2017-02-20 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.2 - 2017-02-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -8092,7 +8092,7 @@ if (typeof cornerstoneTools === 'undefined') {
         cornerstone.updateImage(enabledElement.element);
 
         // Request a new frame
-        cornerstoneTools.requestAnimFrame(function() {
+        cornerstone.requestAnimationFrame(function() {
             animate(time, handle, runAnimation, enabledElement, targetLocation);
         });
     }
@@ -11182,23 +11182,6 @@ Display scroll progress bar across bottom of image.
  
 // End Source; src/timeSeriesTools/timeSeriesScroll.js
 
-// Begin Source: src/util/RoundToDecimal.js
-(function($, cornerstone, cornerstoneTools) {
-
-    'use strict';
-
-    function roundToDecimal(value, precision) {
-        var multiplier = Math.pow(10, precision);
-        return (Math.round(value * multiplier) / multiplier);
-    }
-
-    // module exports
-    cornerstoneTools.roundToDecimal = roundToDecimal;
-
-})($, cornerstone, cornerstoneTools);
- 
-// End Source; src/util/RoundToDecimal.js
-
 // Begin Source: src/util/calculateSUV.js
 (function(cornerstoneTools) {
 
@@ -11865,17 +11848,10 @@ Display scroll progress bar across bottom of image.
 
     'use strict';
 
-    function requestFrame(callback) {
-        window.setTimeout(callback, 1000 / 60);
-    }
-
     function requestAnimFrame(callback) {
-        return window.requestAnimationFrame(callback) ||
-               window.webkitRequestAnimationFrame(callback) ||
-               window.mozRequestAnimationFrame(callback) ||
-               window.oRequestAnimationFrame(callback) ||
-               window.msRequestAnimationFrame(callback) ||
-               requestFrame(callback);
+        // This functionality was moved to cornerstone.
+        console.warn("cornerstoneTools.requestAnimFrame() is deprecated, consider using cornerstone.requestAnimationFrame()");
+        cornerstone.requestAnimationFrame(callback);
     }
 
     // Module exports
@@ -11884,6 +11860,23 @@ Display scroll progress bar across bottom of image.
 })(cornerstoneTools);
  
 // End Source; src/util/requestAnimFrame.js
+
+// Begin Source: src/util/RoundToDecimal.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function roundToDecimal(value, precision) {
+        var multiplier = Math.pow(10, precision);
+        return (Math.round(value * multiplier) / multiplier);
+    }
+
+    // module exports
+    cornerstoneTools.roundToDecimal = roundToDecimal;
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/util/RoundToDecimal.js
 
 // Begin Source: src/util/scroll.js
 (function(cornerstone, cornerstoneTools) {

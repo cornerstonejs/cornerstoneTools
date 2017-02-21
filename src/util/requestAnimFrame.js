@@ -2,17 +2,10 @@
 
     'use strict';
 
-    function requestFrame(callback) {
-        window.setTimeout(callback, 1000 / 60);
-    }
-
     function requestAnimFrame(callback) {
-        return window.requestAnimationFrame(callback) ||
-               window.webkitRequestAnimationFrame(callback) ||
-               window.mozRequestAnimationFrame(callback) ||
-               window.oRequestAnimationFrame(callback) ||
-               window.msRequestAnimationFrame(callback) ||
-               requestFrame(callback);
+        // This functionality was moved to cornerstone.
+        console.warn('cornerstoneTools.requestAnimFrame() is deprecated, consider using cornerstone.requestAnimationFrame()');
+        cornerstone.requestAnimationFrame(callback);
     }
 
     // Module exports
