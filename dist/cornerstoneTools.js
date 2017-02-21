@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.2 - 2017-02-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.3 - 2017-02-21 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -11850,7 +11850,7 @@ Display scroll progress bar across bottom of image.
 
     function requestAnimFrame(callback) {
         // This functionality was moved to cornerstone.
-        console.warn("cornerstoneTools.requestAnimFrame() is deprecated, consider using cornerstone.requestAnimationFrame()");
+        console.warn('cornerstoneTools.requestAnimFrame() is deprecated, consider using cornerstone.requestAnimationFrame()');
         cornerstone.requestAnimationFrame(callback);
     }
 

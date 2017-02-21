@@ -195,9 +195,9 @@
                 if (data.handles.textBox.hasMoved) {
                     // Draw dashed link line between tool and text
                     var link = {
-                start: {},
-                end: {}
-            };
+                        start: {},
+                        end: {}
+                    };
 
                     link.end.x = textCoords.x;
                     link.end.y = textCoords.y;
@@ -206,22 +206,22 @@
 
                     var boundingBoxPoints = [
               {
-                  // Top middle point of bounding box
-                  x: boundingBox.left + boundingBox.width / 2,
-                  y: boundingBox.top
-              }, {
-                  // Left middle point of bounding box
-                  x: boundingBox.left,
-                  y: boundingBox.top + boundingBox.height / 2
-              }, {
-                  // Bottom middle point of bounding box
-                  x: boundingBox.left + boundingBox.width / 2,
-                  y: boundingBox.top + boundingBox.height
-              }, {
-                  // Right middle point of bounding box
-                  x: boundingBox.left + boundingBox.width,
-                  y: boundingBox.top + boundingBox.height / 2
-              },
+                        // Top middle point of bounding box
+                        x: boundingBox.left + boundingBox.width / 2,
+                        y: boundingBox.top
+                    }, {
+                        // Left middle point of bounding box
+                        x: boundingBox.left,
+                        y: boundingBox.top + boundingBox.height / 2
+                    }, {
+                        // Bottom middle point of bounding box
+                        x: boundingBox.left + boundingBox.width / 2,
+                        y: boundingBox.top + boundingBox.height
+                    }, {
+                        // Right middle point of bounding box
+                        x: boundingBox.left + boundingBox.width,
+                        y: boundingBox.top + boundingBox.height / 2
+                    },
             ];
 
                     link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
