@@ -113,12 +113,8 @@
             var sp = storedPixels[0];
             var mo = sp * eventData.image.slope + eventData.image.intercept;
             var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
-
-            var modalityTag = 'x00080060';
-            var modality;
-            if (eventData.image.data) {
-                modality = eventData.image.data.string(modalityTag);
-            }
+            var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+            var modality = seriesModule.modality;
 
             if (modality === 'CT') {
                 text += 'HU: ';

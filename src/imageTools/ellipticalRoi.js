@@ -95,14 +95,10 @@
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var config = cornerstoneTools.ellipticalRoi.getConfiguration();
         var context = eventData.canvasContext.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality = seriesModule.modality;
 
-        // Retrieve the image modality from its metadata, if available
-        var modalityTag = 'x00080060';
-        var modality;
-        if (image.data) {
-            modality = image.data.string(modalityTag);
-        }
+        context.setTransform(1, 0, 0, 1, 0, 0);
 
         // If we have tool data for this element - iterate over each set and draw it
         for (var i = 0; i < toolData.data.length; i++) {

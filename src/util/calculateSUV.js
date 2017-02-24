@@ -12,19 +12,18 @@
             return;
         }
 
-        // if no dicom data set, return
-        if (image.data === undefined) {
-            return;
-        }
+        var patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality = seriesModule.modality;
 
         // image must be PET
-        if (image.data.string('x00080060') !== 'PT') {
+        if (modality !== 'PT') {
             return;
         }
 
         var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
-        var patientWeight = image.data.floatString('x00101030'); // in kg
+        var patientWeight = patientStudyModule.patientWeight; // in kg
         if (patientWeight === undefined) {
             return;
         }
