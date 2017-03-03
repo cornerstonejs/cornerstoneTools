@@ -28,22 +28,22 @@
             return;
         }
 
-        var petSequence = image.data.elements.x00540016;
-        if (petSequence === undefined) {
+        var petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
+        if (petSequenceModule === undefined) {
             return;
         }
 
-        petSequence = petSequence.items[0].dataSet;
-        var startTime = dicomParser.parseTM(petSequence.string('x00181072'));
-        var totalDose = petSequence.floatString('x00181074');
-        var halfLife = petSequence.floatString('x00181075');
-        var seriesAcquisitionTime = dicomParser.parseTM(image.data.string('x00080031'));
+        var radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
+        var startTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
+        var totalDose = radiopharmaceuticalInfo.radionuclideTotalDose;
+        var halfLife = radiopharmaceuticalInfo.radionuclideHalfLife;
+        var seriesAcquisitionTime = seriesModule.seriesTime;
 
         if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
             return;
         }
 
-        var acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
+        var acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
         var injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
         var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
         var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
