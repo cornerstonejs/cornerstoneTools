@@ -326,7 +326,7 @@
         }
 
         if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            return false;
+            return;
         }
 
         var config = cornerstoneTools.arrowAnnotate.getConfiguration();
@@ -375,7 +375,7 @@
         }
 
         if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            return false;
+            return;
         }
 
         var config = cornerstoneTools.arrowAnnotate.getConfiguration();
@@ -385,7 +385,7 @@
 
         // now check to see if there is a handle we can move
         if (!toolData) {
-            return false;
+            return;
         }
 
         if (eventData.handlePressed) {
