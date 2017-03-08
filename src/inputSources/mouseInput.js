@@ -2,7 +2,7 @@
 
     'use strict';
 
-    var isClickEvent;
+    var isClickEvent = true;
     var preventClickTimeout;
     var clickDelay = 200;
 
