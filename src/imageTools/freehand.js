@@ -211,7 +211,11 @@
 
         // Connect the end of the drawing to the handle nearest to the click
         if (handleNearby !== undefined){
-            data.handles[config.currentHandle - 1].lines.push(data.handles[handleNearby]);
+            // only save x,y params from nearby handle to prevent circular reference
+            data.handles[config.currentHandle - 1].lines.push({
+                x: data.handles[handleNearby].x,
+                y: data.handles[handleNearby].y
+            });
         }
 
         if (config.modifying) {
