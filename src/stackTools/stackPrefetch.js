@@ -172,23 +172,6 @@
         requestPoolManager.startGrabbing();
     }
 
-    function handleCacheFull(e) {
-        // Stop prefetching if the ImageCacheFull event is fired from cornerstone
-        // console.log('CornerstoneImageCacheFull full, stopping');
-        var element = e.data.element;
-
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-            return;
-        }
-
-        // Disable the stackPrefetch tool
-        // stackPrefetchData.data[0].enabled = false;
-
-        // Clear current prefetch requests from the requestPool
-        cornerstoneTools.requestPoolManager.clearRequestStack(requestType);
-    }
-
     function promiseRemovedHandler(e, eventData) {
         // When an imagePromise has been pushed out of the cache, re-add its index
         // it to the indicesToRequest list so that it will be retrieved later if the
@@ -271,11 +254,6 @@
         $(element).off('CornerstoneNewImage', onImageUpdated);
         $(element).on('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
-        $(cornerstone).on('CornerstoneImageCacheFull', {
-            element: element
-        }, handleCacheFull);
-
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
         $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
             element: element
@@ -286,7 +264,6 @@
         clearTimeout(resetPrefetchTimeout);
         $(element).off('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
