@@ -8441,7 +8441,14 @@ if (typeof cornerstoneTools === 'undefined') {
         var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
 
         // Make sure the target and reference actually have image plane metadata
-        if (!targetImagePlane || !referenceImagePlane) {
+        if (!targetImagePlane ||
+            !referenceImagePlane ||
+            !targetImagePlane.rowCosines ||
+            !targetImagePlane.columnCosines ||
+            !targetImagePlane.imagePositionPatient ||
+            !referenceImagePlane.rowCosines ||
+            !referenceImagePlane.columnCosines ||
+            !referenceImagePlane.imagePositionPatient) {
             return;
         }
 
