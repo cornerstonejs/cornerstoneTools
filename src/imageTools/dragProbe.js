@@ -88,6 +88,12 @@
             context.shadowOffsetY = config.shadowOffsetY || 1;
         }
 
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality;
+        if (seriesModule) {
+            modality = seriesModule.modality;
+        }
+
         var toolCoords;
         if (eventData.isTouchEvent === true) {
             toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
@@ -112,18 +118,18 @@
             storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * eventData.image.slope + eventData.image.intercept;
-            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
-            var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-            var modality = seriesModule.modality;
 
+            var modalityPixelValueText = parseFloat(mo.toFixed(2));
             if (modality === 'CT') {
-                text += 'HU: ';
-            }
-
-            // Draw text
-            text += parseFloat(mo.toFixed(2));
-            if (suv) {
-                text += ' SUV: ' + parseFloat(suv.toFixed(2));
+                text += 'HU: ' + modalityPixelValueText;
+            } else if (modality === 'PT') {
+                text += modalityPixelValueText;
+                var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+                if (suv) {
+                    text += ' SUV: ' + parseFloat(suv.toFixed(2));
+                }
+            } else {
+                text += modalityPixelValueText;
             }
         }
 

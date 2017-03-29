@@ -96,7 +96,10 @@
         var config = cornerstoneTools.ellipticalRoi.getConfiguration();
         var context = eventData.canvasContext.canvas.getContext('2d');
         var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-        var modality = seriesModule.modality;
+        var modality;
+        if (seriesModule) {
+            modality = seriesModule.modality;
+        }
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -184,7 +187,7 @@
                     var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
                     // Calculate the mean & standard deviation from the pixels and the ellipse details
-                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse, image);
+                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse);
 
                     if (modality === 'PT') {
                         // If the image is from a PET scan, use the DICOM tags to
@@ -228,7 +231,7 @@
             var textLines = [];
 
             // If the mean and standard deviation values are present, display them
-            if (meanStdDev && meanStdDev.mean) {
+            if (meanStdDev && meanStdDev.mean !== undefined) {
                 // If the modality is CT, add HU to denote Hounsfield Units
                 var moSuffix = '';
                 if (modality === 'CT') {

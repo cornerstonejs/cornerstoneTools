@@ -14,6 +14,10 @@
 
         var patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
         var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        if (!patientStudyModule || !seriesModule) {
+            return;
+        }
+
         var modality = seriesModule.modality;
 
         // image must be PET
@@ -24,12 +28,12 @@
         var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
         var patientWeight = patientStudyModule.patientWeight; // in kg
-        if (patientWeight === undefined) {
+        if (!patientWeight) {
             return;
         }
 
         var petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
-        if (petSequenceModule === undefined) {
+        if (!petSequenceModule) {
             return;
         }
 
