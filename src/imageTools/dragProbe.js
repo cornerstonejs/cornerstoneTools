@@ -2,10 +2,10 @@
 
     'use strict';
 
+    var dragEventData;
+
     function defaultStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
-
-        cornerstone.updateImage(eventData.element);
 
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -72,8 +72,6 @@
         var element = eventData.element;
         var enabledElement = cornerstone.getEnabledElement(element);
         var image = enabledElement.image;
-
-        cornerstone.updateImage(element);
 
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -165,6 +163,7 @@
     }
 
     function mouseUpCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneImageRendered', imageRenderedCallback);
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -173,6 +172,7 @@
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on('CornerstoneImageRendered', imageRenderedCallback);
             $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -181,8 +181,22 @@
         }
     }
 
+    function imageRenderedCallback() {
+        if (dragEventData) {
+            cornerstoneTools.dragProbe.strategy(dragEventData);
+            dragEventData = null;
+        }
+    }
+
+    // The strategy can't be execute at this momento because the image is rendered asynchronously
+    // (requestAnimationFrame). Then the eventData that contains all information needed is being
+    // cached and the strategy will be executed once CornerstoneImageRendered is triggered.
     function dragCallback(e, eventData) {
-        cornerstoneTools.dragProbe.strategy(eventData);
+        var element = eventData.element;
+
+        dragEventData = eventData;
+        cornerstone.updateImage(element);
+
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 

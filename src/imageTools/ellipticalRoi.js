@@ -40,76 +40,6 @@
     ///////// END ACTIVE TOOL ///////
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function pointInEllipse(ellipse, location) {
-        var xRadius = ellipse.width / 2;
-        var yRadius = ellipse.height / 2;
-
-        if (xRadius <= 0.0 || yRadius <= 0.0) {
-            return false;
-        }
-
-        var center = {
-            x: ellipse.left + xRadius,
-            y: ellipse.top + yRadius
-        };
-
-        /* This is a more general form of the circle equation
-         *
-         * X^2/a^2 + Y^2/b^2 <= 1
-         */
-
-        var normalized = {
-            x: location.x - center.x,
-            y: location.y - center.y
-        };
-
-        var inEllipse = ((normalized.x * normalized.x) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
-        return inEllipse;
-    }
-
-    function calculateMeanStdDev(sp, ellipse) {
-        // TODO: Get a real statistics library here that supports large counts
-
-        var sum = 0;
-        var sumSquared = 0;
-        var count = 0;
-        var index = 0;
-
-        for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
-            for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, {
-                    x: x,
-                    y: y
-                }) === true) {
-                    sum += sp[index];
-                    sumSquared += sp[index] * sp[index];
-                    count++;
-                }
-
-                index++;
-            }
-        }
-
-        if (count === 0) {
-            return {
-                count: count,
-                mean: 0.0,
-                variance: 0.0,
-                stdDev: 0.0
-            };
-        }
-
-        var mean = sum / count;
-        var variance = sumSquared / count - mean * mean;
-
-        return {
-            count: count,
-            mean: mean,
-            variance: variance,
-            stdDev: Math.sqrt(variance)
-        };
-    }
-
     function pointNearEllipse(element, data, coords, distance) {
         var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
@@ -128,8 +58,8 @@
             height: Math.abs(startCanvas.y - endCanvas.y) + distance
         };
 
-        var pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
-        var pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
+        var pointInMinorEllipse = cornerstoneTools.pointInEllipse(minorEllipse, coords);
+        var pointInMajorEllipse = cornerstoneTools.pointInEllipse(majorEllipse, coords);
 
         if (pointInMajorEllipse && !pointInMinorEllipse) {
             return true;
@@ -245,10 +175,10 @@
 
                 // Retrieve the bounds of the ellipse in image coordinates
                 var ellipse = {
-                    left: Math.min(data.handles.start.x, data.handles.end.x),
-                    top: Math.min(data.handles.start.y, data.handles.end.y),
-                    width: Math.abs(data.handles.start.x - data.handles.end.x),
-                    height: Math.abs(data.handles.start.y - data.handles.end.y)
+                    left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+                    top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+                    width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+                    height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
                 };
 
                 // First, make sure this is not a color image, since no mean / standard
@@ -258,7 +188,7 @@
                     var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
                     // Calculate the mean & standard deviation from the pixels and the ellipse details
-                    meanStdDev = calculateMeanStdDev(pixels, ellipse);
+                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse, image);
 
                     if (modality === 'PT') {
                         // If the image is from a PET scan, use the DICOM tags to

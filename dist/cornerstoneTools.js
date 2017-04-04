@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.3 - 2017-03-25 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.3 - 2017-04-04 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -2827,10 +2827,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
+    var dragEventData;
+
     function defaultStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
-
-        cornerstone.updateImage(eventData.element);
 
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -2897,8 +2897,6 @@ if (typeof cornerstoneTools === 'undefined') {
         var element = eventData.element;
         var enabledElement = cornerstone.getEnabledElement(element);
         var image = enabledElement.image;
-
-        cornerstone.updateImage(element);
 
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -2990,6 +2988,7 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function mouseUpCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneImageRendered', imageRenderedCallback);
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -2998,6 +2997,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on('CornerstoneImageRendered', imageRenderedCallback);
             $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -3006,8 +3006,22 @@ if (typeof cornerstoneTools === 'undefined') {
         }
     }
 
+    function imageRenderedCallback() {
+        if (dragEventData) {
+            cornerstoneTools.dragProbe.strategy(dragEventData);
+            dragEventData = null;
+        }
+    }
+
+    // The strategy can't be execute at this momento because the image is rendered asynchronously
+    // (requestAnimationFrame). Then the eventData that contains all information needed is being
+    // cached and the strategy will be executed once CornerstoneImageRendered is triggered.
     function dragCallback(e, eventData) {
-        cornerstoneTools.dragProbe.strategy(eventData);
+        var element = eventData.element;
+
+        dragEventData = eventData;
+        cornerstone.updateImage(element);
+
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
@@ -3071,76 +3085,6 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// END ACTIVE TOOL ///////
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function pointInEllipse(ellipse, location) {
-        var xRadius = ellipse.width / 2;
-        var yRadius = ellipse.height / 2;
-
-        if (xRadius <= 0.0 || yRadius <= 0.0) {
-            return false;
-        }
-
-        var center = {
-            x: ellipse.left + xRadius,
-            y: ellipse.top + yRadius
-        };
-
-        /* This is a more general form of the circle equation
-         *
-         * X^2/a^2 + Y^2/b^2 <= 1
-         */
-
-        var normalized = {
-            x: location.x - center.x,
-            y: location.y - center.y
-        };
-
-        var inEllipse = ((normalized.x * normalized.x) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
-        return inEllipse;
-    }
-
-    function calculateMeanStdDev(sp, ellipse) {
-        // TODO: Get a real statistics library here that supports large counts
-
-        var sum = 0;
-        var sumSquared = 0;
-        var count = 0;
-        var index = 0;
-
-        for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
-            for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
-                if (pointInEllipse(ellipse, {
-                    x: x,
-                    y: y
-                }) === true) {
-                    sum += sp[index];
-                    sumSquared += sp[index] * sp[index];
-                    count++;
-                }
-
-                index++;
-            }
-        }
-
-        if (count === 0) {
-            return {
-                count: count,
-                mean: 0.0,
-                variance: 0.0,
-                stdDev: 0.0
-            };
-        }
-
-        var mean = sum / count;
-        var variance = sumSquared / count - mean * mean;
-
-        return {
-            count: count,
-            mean: mean,
-            variance: variance,
-            stdDev: Math.sqrt(variance)
-        };
-    }
-
     function pointNearEllipse(element, data, coords, distance) {
         var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
         var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
@@ -3159,8 +3103,8 @@ if (typeof cornerstoneTools === 'undefined') {
             height: Math.abs(startCanvas.y - endCanvas.y) + distance
         };
 
-        var pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
-        var pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
+        var pointInMinorEllipse = cornerstoneTools.pointInEllipse(minorEllipse, coords);
+        var pointInMajorEllipse = cornerstoneTools.pointInEllipse(majorEllipse, coords);
 
         if (pointInMajorEllipse && !pointInMinorEllipse) {
             return true;
@@ -3276,10 +3220,10 @@ if (typeof cornerstoneTools === 'undefined') {
 
                 // Retrieve the bounds of the ellipse in image coordinates
                 var ellipse = {
-                    left: Math.min(data.handles.start.x, data.handles.end.x),
-                    top: Math.min(data.handles.start.y, data.handles.end.y),
-                    width: Math.abs(data.handles.start.x - data.handles.end.x),
-                    height: Math.abs(data.handles.start.y - data.handles.end.y)
+                    left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+                    top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+                    width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+                    height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
                 };
 
                 // First, make sure this is not a color image, since no mean / standard
@@ -3289,7 +3233,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
                     // Calculate the mean & standard deviation from the pixels and the ellipse details
-                    meanStdDev = calculateMeanStdDev(pixels, ellipse);
+                    meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse, image);
 
                     if (modality === 'PT') {
                         // If the image is from a PET scan, use the DICOM tags to
@@ -11183,6 +11127,62 @@ Display scroll progress bar across bottom of image.
  
 // End Source; src/util/RoundToDecimal.js
 
+// Begin Source: src/util/calculateEllipseStatistics.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    function calculateEllipseStatistics(sp, ellipse) {
+        // TODO: Get a real statistics library here that supports large counts
+
+        var sum = 0;
+        var sumSquared = 0;
+        var count = 0;
+        var index = 0;
+
+        for (var y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
+            for (var x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
+                var point = {
+                    x: x,
+                    y: y
+                };
+
+                if (cornerstoneTools.pointInEllipse(ellipse, point)) {
+                    sum += sp[index];
+                    sumSquared += sp[index] * sp[index];
+                    count++;
+                }
+
+                index++;
+            }
+        }
+
+        if (count === 0) {
+            return {
+                count: count,
+                mean: 0.0,
+                variance: 0.0,
+                stdDev: 0.0
+            };
+        }
+
+        var mean = sum / count;
+        var variance = sumSquared / count - mean * mean;
+
+        return {
+            count: count,
+            mean: mean,
+            variance: variance,
+            stdDev: Math.sqrt(variance)
+        };
+    }
+
+    cornerstoneTools.calculateEllipseStatistics = calculateEllipseStatistics;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/calculateEllipseStatistics.js
+
 // Begin Source: src/util/calculateSUV.js
 (function(cornerstoneTools) {
 
@@ -11700,6 +11700,44 @@ Display scroll progress bar across bottom of image.
 })($, cornerstone, cornerstoneTools);
  
 // End Source; src/util/pauseEvent.js
+
+// Begin Source: src/util/pointInEllipse.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    function pointInEllipse(ellipse, location) {
+        var xRadius = ellipse.width / 2;
+        var yRadius = ellipse.height / 2;
+
+        if (xRadius <= 0.0 || yRadius <= 0.0) {
+            return false;
+        }
+
+        var center = {
+            x: ellipse.left + xRadius,
+            y: ellipse.top + yRadius
+        };
+
+        /* This is a more general form of the circle equation
+         *
+         * X^2/a^2 + Y^2/b^2 <= 1
+         */
+
+        var normalized = {
+            x: location.x - center.x,
+            y: location.y - center.y
+        };
+
+        var inEllipse = ((normalized.x * normalized.x) / (xRadius * xRadius)) + ((normalized.y * normalized.y) / (yRadius * yRadius)) <= 1.0;
+        return inEllipse;
+    }
+
+    cornerstoneTools.pointInEllipse = pointInEllipse;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/pointInEllipse.js
 
 // Begin Source: src/util/pointInsideBoundingBox.js
 (function(cornerstoneMath, cornerstoneTools) {
