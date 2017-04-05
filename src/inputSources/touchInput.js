@@ -21,8 +21,7 @@
         lastDelta;
 
     function onTouch(e) {
-        console.log(e.type);
-        var element = e.target.parentNode,
+        var element = e.currentTarget || e.srcEvent.currentTarget,
             event,
             eventType;
 

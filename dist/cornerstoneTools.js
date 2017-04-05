@@ -416,10 +416,9 @@ if (typeof cornerstoneTools === 'undefined') {
         pageDistanceMoved,
         preventNextPinch = false,
         lastDelta;
-    
+
     function onTouch(e) {
-        console.log(e.type);
-        var element = e.target.parentNode,
+        var element = e.currentTarget || e.srcEvent.currentTarget,
             event,
             eventType;
 
@@ -672,7 +671,7 @@ if (typeof cornerstoneTools === 'undefined') {
                     x: e.deltaX - lastDelta.x,
                     y: e.deltaY - lastDelta.y
                 };
-                
+
                 lastDelta = {
                     x: e.deltaX,
                     y: e.deltaY
