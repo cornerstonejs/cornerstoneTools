@@ -156,7 +156,7 @@
         }
 
         if (e.data && e.data.mouseButtonMask && !cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            return false;
+            return;
         }
 
         var config = cornerstoneTools.textMarker.getConfiguration();
@@ -166,7 +166,7 @@
 
         // now check to see if there is a handle we can move
         if (!toolData) {
-            return false;
+            return;
         }
 
         for (var i = 0; i < toolData.data.length; i++) {
