@@ -39,7 +39,7 @@ if (typeof cornerstoneTools === 'undefined') {
         if (e.originalEvent.type === 'DOMMouseScroll' && e.originalEvent.axis === 1) {
             return;
         }
-        
+
         e.preventDefault();
 
         var element = e.currentTarget;
@@ -7017,6 +7017,15 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function correctShift(shift, viewport) {
+        // Apply Flips
+        if (viewport.hflip) {
+            shift.x *= -1;
+        }
+
+        if (viewport.vflip) {
+            shift.y *= -1;
+        }
+
         // Apply rotations
         if (viewport.rotation !== 0) {
             var angle = viewport.rotation * Math.PI / 180;
@@ -7029,15 +7038,6 @@ if (typeof cornerstoneTools === 'undefined') {
 
             shift.x = newX;
             shift.y = newY;
-        }
-
-        // Apply Flips
-        if (viewport.hflip) {
-            shift.x *= -1;
-        }
-
-        if (viewport.vflip) {
-            shift.y *= -1;
         }
 
         return shift;
