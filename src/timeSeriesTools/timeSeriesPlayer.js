@@ -46,7 +46,7 @@
             return;
         }
 
-        playClipData.intervalId = setInterval(function() {
+        playClipData.intervalId = cornerstoneTools.requestInterval(function() {
             if (playClipData.framesPerSecond > 0) {
                 cornerstoneTools.incrementTimePoint(element, 1, true);
             } else {
@@ -68,7 +68,7 @@
             playClipData = playClipToolData.data[0];
         }
 
-        clearInterval(playClipData.intervalId);
+        cornerstoneTools.clearRequestInterval(playClipData.intervalId);
         playClipData.intervalId = undefined;
     }
 

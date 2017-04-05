@@ -8766,9 +8766,9 @@ if (typeof cornerstoneTools === 'undefined') {
         if (typeof id !== 'undefined') {
             playClipData.intervalId = undefined;
             if (playClipData.usingFrameTimeVector) {
-                clearTimeout(id);
+                cornerstoneTools.clearRequestTimeout(id);
             } else {
-                clearInterval(id);
+                cornerstoneTools.clearRequestInterval(id);
             }
         }
     }
@@ -8922,17 +8922,17 @@ if (typeof cornerstoneTools === 'undefined') {
         };
 
         // if playClipTimeouts array is available, not empty and its elements are NOT uniform ...
-        // ... (at least one timeout is different from the others), use alternate setTimeout implementation
+        // ... (at least one timeout is different from the others), use alternate requestTimeout implementation
         if (playClipTimeouts && playClipTimeouts.length > 0 && playClipTimeouts.isTimeVarying) {
             playClipData.usingFrameTimeVector = true;
-            playClipData.intervalId = setTimeout(function playClipTimeoutHandler() {
-                playClipData.intervalId = setTimeout(playClipTimeoutHandler, playClipTimeouts[stackData.currentImageIdIndex]);
+            playClipData.intervalId = cornerstoneTools.requestTimeout(function playClipTimeoutHandler() {
+                playClipData.intervalId = cornerstoneTools.requestTimeout(playClipTimeoutHandler, playClipTimeouts[stackData.currentImageIdIndex]);
                 playClipAction();
             }, 0);
         } else {
-            // ... otherwise user setInterval implementation which is much more efficient.
+            // ... otherwise user requestInterval implementation which is much more efficient.
             playClipData.usingFrameTimeVector = false;
-            playClipData.intervalId = setInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
+            playClipData.intervalId = cornerstoneTools.requestInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
         }
 
     }
@@ -11158,7 +11158,7 @@ Display scroll progress bar across bottom of image.
             return;
         }
 
-        playClipData.intervalId = setInterval(function() {
+        playClipData.intervalId = cornerstoneTools.requestInterval(function() {
             if (playClipData.framesPerSecond > 0) {
                 cornerstoneTools.incrementTimePoint(element, 1, true);
             } else {
@@ -11180,7 +11180,7 @@ Display scroll progress bar across bottom of image.
             playClipData = playClipToolData.data[0];
         }
 
-        clearInterval(playClipData.intervalId);
+        cornerstoneTools.clearRequestInterval(playClipData.intervalId);
         playClipData.intervalId = undefined;
     }
 
@@ -11419,6 +11419,74 @@ Display scroll progress bar across bottom of image.
 })(cornerstoneTools);
  
 // End Source; src/util/calculateSUV.js
+
+// Begin Source: src/util/clearRequestInterval.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    // Thanks to @joelambert
+    // https://gist.github.com/joelambert/1002116
+
+    /**
+	 * Behaves the same as clearInterval except uses cancelRequestAnimationFrame() where possible for better performance
+	 * @param {int|object} fn The callback function
+	 */
+    function clearRequestInterval(handle) {
+        // TODO: Make a cornerstone.cancelAnimationFrame
+        var cancelAnimationFrame = window.cancelAnimationFrame ? window.cancelAnimationFrame :
+            window.webkitCancelAnimationFrame ? window.webkitCancelAnimationFrame :
+            window.webkitCancelRequestAnimationFrame ? window.webkitCancelRequestAnimationFrame : /* Support for legacy API */
+            window.mozCancelRequestAnimationFrame ? window.mozCancelRequestAnimationFrame :
+            window.oCancelRequestAnimationFrame	? window.oCancelRequestAnimationFrame :
+            window.msCancelRequestAnimationFrame;
+
+        if (cancelAnimationFrame) {
+            cancelAnimationFrame(handle.value);
+        } else {
+            clearInterval(handle);
+        }
+    }
+
+    cornerstoneTools.clearRequestInterval = clearRequestInterval;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/clearRequestInterval.js
+
+// Begin Source: src/util/clearRequestTimeout.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    // Thanks to @joelambert
+    // https://gist.github.com/joelambert/1002116
+
+    /**
+        	 * Behaves the same as clearTimeout except uses cancelRequestAnimationFrame() where possible for better performance
+        	 * @param {int|object} fn The callback function
+        	 */
+    function clearRequestTimeout(handle) {
+        // TODO: Make a cornerstone.cancelAnimationFrame
+        var cancelAnimationFrame = window.cancelAnimationFrame ? window.cancelAnimationFrame :
+            window.webkitCancelAnimationFrame ? window.webkitCancelAnimationFrame :
+            window.webkitCancelRequestAnimationFrame ? window.webkitCancelRequestAnimationFrame : /* Support for legacy API */
+            window.mozCancelRequestAnimationFrame ? window.mozCancelRequestAnimationFrame :
+            window.oCancelRequestAnimationFrame	? window.oCancelRequestAnimationFrame :
+            window.msCancelRequestAnimationFrame;
+
+        if (cancelAnimationFrame) {
+            cancelAnimationFrame(handle.value);
+        } else {
+            clearTimeout(handle);
+        }
+    }
+
+    cornerstoneTools.clearRequestTimeout = clearRequestTimeout;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/clearRequestTimeout.js
 
 // Begin Source: src/util/copyPoints.js
 (function($, cornerstone, cornerstoneMath, cornerstoneTools) {
@@ -12055,6 +12123,100 @@ Display scroll progress bar across bottom of image.
 })($, cornerstone, cornerstoneTools);
  
 // End Source; src/util/pointProjector.js
+
+// Begin Source: src/util/requestInterval.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    // Thanks to @joelambert
+    // https://gist.github.com/joelambert/1002116
+
+    /**
+	 * Behaves the same as setInterval except uses requestAnimationFrame() where possible for better performance
+	 * @param {function} fn The callback function
+	 * @param {int} delay The delay in milliseconds
+	 */
+    function requestInterval(fn, delay) {
+        if ( !window.requestAnimationFrame &&
+			!window.webkitRequestAnimationFrame &&
+			!(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
+        	!window.oRequestAnimationFrame &&
+			!window.msRequestAnimationFrame) {
+            return window.setInterval(fn, delay);
+        }
+
+        var start = new Date().getTime(),
+            handle = {};
+
+        function loop() {
+            var current = new Date().getTime();
+            var delta = current - start;
+
+            if (delta >= delay) {
+                fn.call();
+                start = new Date().getTime();
+            }
+
+            handle.value = cornerstone.requestAnimationFrame(loop);
+        }
+
+        handle.value = cornerstone.requestAnimationFrame(loop);
+        return handle;
+    }
+
+    cornerstoneTools.requestInterval = requestInterval;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/requestInterval.js
+
+// Begin Source: src/util/requestTimeout.js
+(function(cornerstoneTools) {
+
+    'use strict';
+
+    // Thanks to @joelambert
+    // https://gist.github.com/joelambert/1002116
+
+    /**
+     * Behaves the same as setTimeout except uses requestAnimationFrame() where possible for better performance
+     * @param {function} fn The callback function
+     * @param {int} delay The delay in milliseconds
+     */
+
+    function requestTimeout(fn, delay) {
+        if ( !window.requestAnimationFrame &&
+            !window.webkitRequestAnimationFrame &&
+            !(window.mozRequestAnimationFrame && window.mozCancelRequestAnimationFrame) && // Firefox 5 ships without cancel support
+            !window.oRequestAnimationFrame &&
+            !window.msRequestAnimationFrame) {
+            return window.setTimeout(fn, delay);
+        }
+
+        var start = new Date().getTime(),
+            handle = {};
+
+        function loop(){
+            var current = new Date().getTime(),
+                delta = current - start;
+
+            if (delta >= delay) {
+                fn.call();
+            } else {
+                handle.value = cornerstone.requestAnimationFrame(loop);
+            }
+        }
+
+        handle.value = cornerstone.requestAnimationFrame(loop);
+        return handle;
+    }
+
+    cornerstoneTools.requestTimeout = requestTimeout;
+
+})(cornerstoneTools);
+ 
+// End Source; src/util/requestTimeout.js
 
 // Begin Source: src/util/scroll.js
 (function(cornerstone, cornerstoneTools) {
