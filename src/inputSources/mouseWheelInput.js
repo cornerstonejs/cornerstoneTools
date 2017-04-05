@@ -15,6 +15,8 @@
         if (e.originalEvent.type === 'DOMMouseScroll' && e.originalEvent.axis === 1) {
             return;
         }
+        
+        e.preventDefault();
 
         var element = e.currentTarget;
 
