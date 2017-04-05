@@ -30,10 +30,11 @@ Display scroll progress bar across bottom of image.
 
         // draw indicator background
         context.fillStyle = config.backgroundColor;
-        if(config.orientation === 'horizontal')
+        if (config.orientation === 'horizontal') {
             context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
-        else
+        } else {
             context.fillRect(0, 0, scrollBarHeight, height);
+        }
 
         // get current image index
         var stackData = cornerstoneTools.getToolState(element, 'stack');
@@ -46,13 +47,16 @@ Display scroll progress bar across bottom of image.
 
         // draw current image cursor
         var cursorWidth = width / imageIds.length;
+        var cursorHeight = height / imageIds.length;
         var xPosition = cursorWidth * currentImageIdIndex;
+        var yPosition = cursorHeight * currentImageIdIndex;
 
         context.fillStyle = config.fillColor;
-        if(config.orientation === 'horizontal')
+        if (config.orientation === 'horizontal') {
             context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
-        else
+        } else {
             context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+        }
 
         context.restore();
     }
