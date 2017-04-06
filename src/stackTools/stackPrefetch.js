@@ -157,10 +157,8 @@ function prefetch (element) {
   let lowerIndex = nearest.low;
   let higherIndex = nearest.high;
 
-  while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+  while (lowerIndex >= 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
     const currentIndex = stack.currentImageIdIndex;
-
-
     const shouldSkipLower = currentIndex - stackPrefetch.indicesToRequest[lowerIndex] > configuration.maxImagesToPrefetch;
     const shouldSkipHigher = stackPrefetch.indicesToRequest[higherIndex] - currentIndex > configuration.maxImagesToPrefetch;
 

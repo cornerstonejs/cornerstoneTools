@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.1 - 2017-11-04 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.1 - 2017-11-10 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -7515,10 +7515,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var toolType = 'stackPrefetch';
 var requestType = 'prefetch';
 
-var configuration = {};
+var configuration = {
+  maxImagesToPrefetch: Infinity
+};
 
 var resetPrefetchTimeout = void 0;
-var resetPrefetchDelay = 300;
+var resetPrefetchDelay = 10;
 
 function range(lowEnd, highEnd) {
   // Javascript version of Python's range function
@@ -7666,14 +7668,25 @@ function prefetch(element) {
   var lowerIndex = nearest.low;
   var higherIndex = nearest.high;
 
-  while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
-    if (lowerIndex >= 0) {
+  while (lowerIndex >= 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+    var currentIndex = stack.currentImageIdIndex;
+    var shouldSkipLower = currentIndex - stackPrefetch.indicesToRequest[lowerIndex] > configuration.maxImagesToPrefetch;
+    var shouldSkipHigher = stackPrefetch.indicesToRequest[higherIndex] - currentIndex > configuration.maxImagesToPrefetch;
+
+    var shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
+    var shouldLoadHigher = !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
+
+    if (!shouldLoadHigher && !shouldLoadLower) {
+      break;
+    }
+
+    if (shouldLoadLower) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
       imageId = stack.imageIds[nextImageIdIndex];
       _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
     }
 
-    if (higherIndex < stackPrefetch.indicesToRequest.length) {
+    if (shouldLoadHigher) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
       imageId = stack.imageIds[nextImageIdIndex];
       _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
