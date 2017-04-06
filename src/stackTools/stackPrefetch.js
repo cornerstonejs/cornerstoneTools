@@ -153,7 +153,7 @@
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;
         var higherIndex = nearest.high;
-        while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+        while (lowerIndex >= 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
             if (lowerIndex >= 0 ) {
                 nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
                 imageId = stack.imageIds[nextImageIdIndex];
