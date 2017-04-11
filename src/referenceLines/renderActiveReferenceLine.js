@@ -12,8 +12,8 @@
             return;
         }
 
-        var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImage.imageId);
-        var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
+        var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImage.imageId, targetElement);
+        var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId, referenceElement);
 
         // Make sure the target and reference actually have image plane metadata
         if (!targetImagePlane ||
@@ -50,8 +50,11 @@
         var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.start);
         var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.end);
 
-        var color = cornerstoneTools.toolColors.getActiveColor();
-        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        // var color = cornerstoneTools.toolColors.getActiveColor();
+        // var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        // TODO: Move this to configuration
+        var color = 'rgb(60, 60, 60)';
+        var lineWidth = 1;
 
         // draw the referenceLines
         context.setTransform(1, 0, 0, 1, 0, 0);

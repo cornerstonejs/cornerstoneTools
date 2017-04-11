@@ -3,22 +3,59 @@
     'use strict';
 
     var tool_data = null;
+    var interacting_mode = false;
+    var last_session = null;
 
     function mouseUpCallback(e, eventData) {
+        if (interacting_mode === false){
+            return;
+        }
+
         $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
         interactionEnd(e, eventData);
+        // reactivate mouseDownCallbacks
+        interacting_mode = false;
+        last_session = Date.now();
     }
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            // disable further mouseDownCallbacks
+            var ts = Date.now();
+            if (interacting_mode === true){
+                // sanity check, should not happen
+                return;
+            }
+
+            if (last_session !== null && (ts - last_session < 100)){
+                // rate limit to one session per 1/10 of second
+                return;
+            }
+
+            interacting_mode = true;
             interactionStart(e, eventData);
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
+    }
+
+    function touchEndCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneToolsTouchDrag', dragCallback);
+        $(eventData.element).off('CornerstoneToolsTouchEnd', touchEndCallback);
+        $(eventData.element).off('CornerstoneToolsTap', touchEndCallback);
+        interactionEnd(e, eventData);
+    }
+
+    function touchStartCallback(e, eventData) {
+        interactionStart(e, eventData);
+        $(eventData.element).on('CornerstoneToolsTouchDrag', dragCallback);
+        $(eventData.element).on('CornerstoneToolsTouchEnd', touchEndCallback);
+        $(eventData.element).on('CornerstoneToolsTap', touchEndCallback);
+        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     function defaultStrategy(eventData) {
@@ -39,6 +76,12 @@
     }
 
     function mouseDragCallback(e, eventData) {
+        cornerstoneTools.wwwclod.strategy(eventData);
+        cornerstone.setViewport(eventData.element, eventData.viewport);
+        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+    }
+
+    function dragCallback(e, eventData) {
         cornerstoneTools.wwwclod.strategy(eventData);
         cornerstone.setViewport(eventData.element, eventData.viewport);
         return false; // false = cases jquery to preventDefault() and stopPropagation() this event
@@ -186,35 +229,44 @@
         var offset_x = top_left.x;
         var stride_y = (bottom_right.y - top_left.y) / target_height;
         var stride_x = (bottom_right.x - top_left.x) / target_width;
+        var i,j,i2,j2,j2c;
+
+        var pixels_array;
+        if (!image.color){
+            pixels_array = new image_data.constructor(target_height * target_width);
+            j2c = new Array(target_width);
+            for (j = 0; j < target_width; j++){
+                j2c[j] = Math.ceil(offset_x + (j + 0.5) * stride_x);
+            }
+
+            for (i = 0; i< target_height; i++){
+                i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                for (j = 0; j < target_width; j++){
+                    j2 = j2c[j];
+                    pixels_array[i * target_width + j] = image_data[i2 * img_width + j2];
+                }
+            }
+        } else {
+            pixels_array = new image_data.constructor(target_height * target_width * 4);
+            j2c = new Array(target_width);
+            for (j = 0; j < target_width; j++){
+                j2c[j] = Math.ceil(offset_x + (j + 0.5) * stride_x);
+            }
+
+            for (i = 0; i< target_height; i++){
+                i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                for (j = 0; j < target_width; j++){
+                    j2 = j2c[j];
+                    pixels_array[4 * (i * target_width + j) + 0] = image_data[4 * (i2 * img_width + j2) + 0];
+                    pixels_array[4 * (i * target_width + j) + 1] = image_data[4 * (i2 * img_width + j2) + 1];
+                    pixels_array[4 * (i * target_width + j) + 2] = image_data[4 * (i2 * img_width + j2) + 2];
+                    pixels_array[4 * (i * target_width + j) + 3] = image_data[4 * (i2 * img_width + j2) + 3];
+                }
+            }
+        }
 
         function get_pixels(){
-            var arr, i, j, i2, j2;
-            if (!image.color){
-                arr = new image_data.constructor(target_height * target_width);
-                for (i = 0; i< target_height; i++){
-                    for (j = 0; j < target_width; j++){
-                        i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
-                        j2 = Math.ceil(offset_x + (j + 0.5) * stride_x);
-                        arr[i * target_width + j] = image_data[i2 * img_width + j2];
-                    }
-                }
-
-                return arr;
-            } else {
-                arr = new image_data.constructor(target_height * target_width * 4);
-                for (i = 0; i< target_height; i++){
-                    for (j = 0; j < target_width; j++){
-                        i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
-                        j2 = Math.ceil(offset_x + (j + 0.5) * stride_x);
-                        arr[4 * (i * target_width + j) + 0] = image_data[4 * (i2 * img_width + j2) + 0];
-                        arr[4 * (i * target_width + j) + 1] = image_data[4 * (i2 * img_width + j2) + 1];
-                        arr[4 * (i * target_width + j) + 2] = image_data[4 * (i2 * img_width + j2) + 2];
-                        arr[4 * (i * target_width + j) + 3] = image_data[4 * (i2 * img_width + j2) + 3];
-                    }
-                }
-
-                return arr;
-            }
+            return pixels_array;
         }
 
         var image_2 = {
@@ -241,6 +293,7 @@
     }
 
     cornerstoneTools.wwwclod = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+    cornerstoneTools.wwwclodTouchDrag = cornerstoneTools.touchDragStartTool(touchStartCallback);
     cornerstoneTools.wwwclod.strategies = {
         default: defaultStrategy
     };

@@ -17,6 +17,11 @@
         context.textBaseline = 'top';
         context.strokeStyle = color;
 
+        context.shadowColor = 'rgba(80,80,80,0.8)';
+        context.shadowOffsetX = 1;
+        context.shadowOffsetY = 1;
+        context.shadowBlur = 5;
+
         // Find the longest text width in the array of text data
         var maxWidth = 0;
         textLines.forEach(function(text) {

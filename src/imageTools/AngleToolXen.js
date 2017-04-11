@@ -2,7 +2,7 @@
 
     'use strict';
 
-    var toolType = 'angle';
+    var toolType = 'angleXen';
 
     ///////// BEGIN ACTIVE TOOL ///////
     function createNewMeasurement(mouseEventData) {
@@ -13,7 +13,7 @@
             handles: {
                 start: {
                     x: mouseEventData.currentPoints.image.x - 20,
-                    y: mouseEventData.currentPoints.image.y + 10,
+                    y: mouseEventData.currentPoints.image.y ,
                     highlight: true,
                     active: false
                 },
@@ -25,7 +25,7 @@
                 },
                 start2: {
                     x: mouseEventData.currentPoints.image.x - 20,
-                    y: mouseEventData.currentPoints.image.y + 10,
+                    y: mouseEventData.currentPoints.image.y + 20,
                     highlight: true,
                     active: false
                 },
@@ -87,6 +87,7 @@
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
                 context.shadowOffsetY = config.shadowOffsetY || 1;
+                context.shadowBlur = 5;
             }
 
             var data = toolData.data[i];
@@ -128,17 +129,25 @@
 
             // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
             // where lines cross to measure angle. For now it will show smallest angle.
-            var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-            var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
-            var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
-            var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
+
+            var columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+            var rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+            var suffix = '';
+            if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+                suffix = ' (isotropic)';
+            }
+
+            var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
+            var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
+            var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
+            var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
 
             var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
             angle = angle * (180 / Math.PI);
 
             var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
             var str = '00B0'; // degrees symbol
-            var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+            var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
 
             var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
             var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
@@ -151,14 +160,14 @@
     ///////// END IMAGE RENDERING ///////
 
     // module exports
-    cornerstoneTools.angle = cornerstoneTools.mouseButtonTool({
+    cornerstoneTools.angleXen = cornerstoneTools.mouseButtonTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,
         toolType: toolType
     });
 
-    cornerstoneTools.angleTouch = cornerstoneTools.touchTool({
+    cornerstoneTools.angleXenTouch = cornerstoneTools.touchTool({
         createNewMeasurement: createNewMeasurement,
         onImageRendered: onImageRendered,
         pointNearTool: pointNearTool,

@@ -71,6 +71,7 @@
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
                 context.shadowOffsetY = config.shadowOffsetY || 1;
+                context.shadowBlur = 5;
             }
 
             var data = toolData.data[i];
