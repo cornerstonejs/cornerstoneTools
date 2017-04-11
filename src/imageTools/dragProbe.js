@@ -2,10 +2,10 @@
 
     'use strict';
 
+    var dragEventData;
+
     function defaultStrategy(eventData) {
         var enabledElement = cornerstone.getEnabledElement(eventData.element);
-
-        cornerstone.updateImage(eventData.element);
 
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
@@ -59,7 +59,7 @@
             y: eventData.currentPoints.image.y - 3
         };
         var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-        
+
         context.font = font;
         context.fillStyle = color;
 
@@ -73,15 +73,13 @@
         var enabledElement = cornerstone.getEnabledElement(element);
         var image = enabledElement.image;
 
-        cornerstone.updateImage(element);
-
         var context = enabledElement.canvas.getContext('2d');
         context.setTransform(1, 0, 0, 1, 0, 0);
 
         var color = cornerstoneTools.toolColors.getActiveColor();
         var font = cornerstoneTools.textStyle.getFont();
         var config = cornerstoneTools.dragProbe.getConfiguration();
-        
+
         context.save();
 
         if (config && config.shadow) {
@@ -90,29 +88,49 @@
             context.shadowOffsetY = config.shadowOffsetY || 1;
         }
 
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality;
+        if (seriesModule) {
+            modality = seriesModule.modality;
+        }
+
         var toolCoords;
         if (eventData.isTouchEvent === true) {
             toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
                 eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() * 4);
         } else {
-            toolCoords = eventData.currentPoints.image;
+            toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
+                eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() / 2);
         }
 
         var storedPixels;
-        var text;
+        var text = '';
 
         if (toolCoords.x < 0 || toolCoords.y < 0 ||
             toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
             return;
         }
-        
+
         if (image.color) {
-            storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 3, 1);
+            storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
             text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
         } else {
             storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-            var huValue = storedPixels[0] * image.slope + image.intercept;
-            text = parseFloat(huValue.toFixed(3));
+            var sp = storedPixels[0];
+            var mo = sp * eventData.image.slope + eventData.image.intercept;
+
+            var modalityPixelValueText = parseFloat(mo.toFixed(2));
+            if (modality === 'CT') {
+                text += 'HU: ' + modalityPixelValueText;
+            } else if (modality === 'PT') {
+                text += modalityPixelValueText;
+                var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+                if (suv) {
+                    text += ' SUV: ' + parseFloat(suv.toFixed(2));
+                }
+            } else {
+                text += modalityPixelValueText;
+            }
         }
 
         // Prepare text
@@ -122,31 +140,32 @@
 
         // Translate the x/y away from the cursor
         var translation;
+        var handleRadius = 6;
+        var width = context.measureText(text).width;
+
         if (eventData.isTouchEvent === true) {
-            var handleRadius = 6;
-            var width = context.measureText(text).width;
-            
             translation = {
                 x: -width / 2 - 5,
                 y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
             };
-
-            context.beginPath();
-            context.strokeStyle = color;
-            context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-            context.stroke();
         } else {
             translation = {
-                x: 4,
-                y: -4
+                x: 12,
+                y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
             };
         }
+
+        context.beginPath();
+        context.strokeStyle = color;
+        context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+        context.stroke();
 
         cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
         context.restore();
     }
 
     function mouseUpCallback(e, eventData) {
+        $(eventData.element).off('CornerstoneImageRendered', imageRenderedCallback);
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -155,6 +174,7 @@
 
     function mouseDownCallback(e, eventData) {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+            $(eventData.element).on('CornerstoneImageRendered', imageRenderedCallback);
             $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -163,13 +183,27 @@
         }
     }
 
+    function imageRenderedCallback() {
+        if (dragEventData) {
+            cornerstoneTools.dragProbe.strategy(dragEventData);
+            dragEventData = null;
+        }
+    }
+
+    // The strategy can't be execute at this momento because the image is rendered asynchronously
+    // (requestAnimationFrame). Then the eventData that contains all information needed is being
+    // cached and the strategy will be executed once CornerstoneImageRendered is triggered.
     function dragCallback(e, eventData) {
-        cornerstoneTools.dragProbe.strategy(eventData);
+        var element = eventData.element;
+
+        dragEventData = eventData;
+        cornerstone.updateImage(element);
+
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
     cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-    
+
     cornerstoneTools.dragProbe.strategies = {
         default: defaultStrategy,
         minimal: minimalStrategy

@@ -45,7 +45,7 @@
             if (!appState.elementToolState.hasOwnProperty(elementId)) {
                 return;
             }
-            
+
             var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
             if (toolStateManager === cornerstoneTools.globalImageIdSpecificToolStateManager) {
                 return;

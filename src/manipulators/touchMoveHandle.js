@@ -48,7 +48,7 @@
         cornerstone.updateImage(enabledElement.element);
 
         // Request a new frame
-        cornerstoneTools.requestAnimFrame(function() {
+        cornerstone.requestAnimationFrame(function() {
             animate(time, handle, runAnimation, enabledElement, targetLocation);
         });
     }
@@ -74,7 +74,7 @@
         var targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
 
         function touchDragCallback(e, eventData) {
-            console.log('touchMoveHandle touchDragCallback: ' + e.type);
+            //console.log('touchMoveHandle touchDragCallback: ' + e.type);
             runAnimation.value = false;
 
             if (handle.hasMoved === false) {
@@ -88,7 +88,7 @@
                 x: currentPoints.page.x,
                 y: currentPoints.page.y + fingerDistance
             };
-            
+
             targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
             handle.x = targetLocation.x;
             handle.y = targetLocation.y;
@@ -107,7 +107,7 @@
         $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
         function touchEndCallback(e, eventData) {
-            console.log('touchMoveHandle touchEndCallback: ' + e.type);
+            //console.log('touchMoveHandle touchEndCallback: ' + e.type);
             runAnimation.value = false;
 
             handle.active = false;
@@ -129,7 +129,7 @@
         }
 
         $(element).on(touchEndEvents, touchEndCallback);
-    
+
         animate(time, handle, runAnimation, enabledElement, targetLocation);
     }
 

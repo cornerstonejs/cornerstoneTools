@@ -34,7 +34,7 @@
         var ua = navigator.userAgent,
             M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [],
             tem;
-        
+
         if (/trident/i.test(M[1])) {
             tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
             return 'IE ' + (tem[1] || '');
@@ -63,6 +63,10 @@
             return config.maxSimultaneousRequests;
         }
 
+        return getDefaultSimultaneousRequests();
+    }
+
+    function getDefaultSimultaneousRequests() {
         var infoString = getBrowserInfo();
         var info = infoString.split(' ');
         var browserName = info[0];
@@ -86,6 +90,7 @@
     }
 
     // module exports
+    cornerstoneTools.getDefaultSimultaneousRequests = getDefaultSimultaneousRequests;
     cornerstoneTools.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
     cornerstoneTools.getBrowserInfo = getBrowserInfo;
     cornerstoneTools.isMobileDevice = isMobileDevice;

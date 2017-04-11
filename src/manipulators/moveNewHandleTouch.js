@@ -17,7 +17,7 @@
         function moveCallback(e, eventData) {
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
-            
+
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
                 handle.x = Math.min(handle.x, eventData.image.width);
@@ -36,7 +36,7 @@
             };
             $(element).trigger(eventType, modifiedEventData);
         }
-        
+
         function moveEndCallback(e, eventData) {
             $(element).off('CornerstoneToolsTouchDrag', moveCallback);
             $(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
@@ -56,7 +56,7 @@
             data.active = false;
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
-            
+
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
                 handle.x = Math.min(handle.x, eventData.image.width);
@@ -73,7 +73,7 @@
         }
 
         function stopImmediatePropagation(e) {
-            // Stop the CornerstoneToolsTouchStart event from 
+            // Stop the CornerstoneToolsTouchStart event from
             // become a CornerstoneToolsTouchStartActive event when
             // moveNewHandleTouch ends
             e.stopImmediatePropagation();
@@ -98,7 +98,7 @@
             data.active = false;
             handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
             handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
-            
+
             if (preventHandleOutsideImage) {
                 handle.x = Math.max(handle.x, 0);
                 handle.x = Math.min(handle.x, eventData.image.width);

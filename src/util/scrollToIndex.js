@@ -21,11 +21,22 @@
         var viewport = cornerstone.getViewport(element);
 
         function doneCallback(image) {
-            if (stackData.currentImageIdIndex === newImageIdIndex) {
-                cornerstone.displayImage(element, image, viewport);
-                if (endLoadingHandler) {
-                    endLoadingHandler(element);
-                }
+            if (stackData.currentImageIdIndex !== newImageIdIndex) {
+                return;
+            }
+
+            // Check if the element is still enabled in Cornerstone,
+            // if an error is thrown, stop here.
+            try {
+                // TODO: Add 'isElementEnabled' to Cornerstone?
+                cornerstone.getEnabledElement(element);
+            } catch(error) {
+                return;
+            }
+
+            cornerstone.displayImage(element, image, viewport);
+            if (endLoadingHandler) {
+                endLoadingHandler(element, image);
             }
         }
 
@@ -62,16 +73,19 @@
             }
         }
 
-        var requestPoolManager = cornerstoneTools.requestPoolManager;
-        
-        var type = 'interaction';
-        requestPoolManager.clearRequestStack(type);
-
         // Convert the preventCache value in stack data to a boolean
         var preventCache = !!stackData.preventCache;
 
-        requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback);
-        requestPoolManager.startGrabbing();
+        var imagePromise;
+        if (preventCache) {
+            imagePromise = cornerstone.loadImage(newImageId);
+        } else {
+            imagePromise = cornerstone.loadAndCacheImage(newImageId);
+        }
+
+        imagePromise.then(doneCallback, failCallback);
+        // Make sure we kick off any changed download request pools
+        cornerstoneTools.requestPoolManager.startGrabbing();
 
         $(element).trigger('CornerstoneStackScroll', eventData);
     }

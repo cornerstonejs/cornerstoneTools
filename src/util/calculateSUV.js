@@ -2,41 +2,53 @@
 
     'use strict';
 
+    // Returns a decimal value given a fractional value
+    function fracToDec(fractionalValue) {
+        return parseFloat('.' + fractionalValue);
+    }
+
     function calculateSUV(image, storedPixelValue) {
-        // if no dicom data set, return undefined
-        if (image.data === undefined) {
-            return undefined;
+        if (!dicomParser) {
+            return;
         }
-        
+
+        var patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        if (!patientStudyModule || !seriesModule) {
+            return;
+        }
+
+        var modality = seriesModule.modality;
+
         // image must be PET
-        if (image.data.string('x00080060') !== 'PT') {
-            return undefined;
+        if (modality !== 'PT') {
+            return;
         }
 
         var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
-        var patientWeight = image.data.floatString('x00101030'); // in kg
-        if (patientWeight === undefined) {
-            return undefined;
+        var patientWeight = patientStudyModule.patientWeight; // in kg
+        if (!patientWeight) {
+            return;
         }
 
-        var petSequence = image.data.elements.x00540016;
-        if (petSequence === undefined) {
-            return undefined;
+        var petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
+        if (!petSequenceModule) {
+            return;
         }
 
-        petSequence = petSequence.items[0].dataSet;
-        var startTime = petSequence.time('x00181072');
-        var totalDose = petSequence.floatString('x00181074');
-        var halfLife = petSequence.floatString('x00181075');
-        var acquisitionTime = image.data.time('x00080032');
-        
-        if (!startTime || !totalDose || !halfLife || !acquisitionTime) {
-            return undefined;
+        var radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
+        var startTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
+        var totalDose = radiopharmaceuticalInfo.radionuclideTotalDose;
+        var halfLife = radiopharmaceuticalInfo.radionuclideHalfLife;
+        var seriesAcquisitionTime = seriesModule.seriesTime;
+
+        if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
+            return;
         }
 
-        var acquisitionTimeInSeconds = acquisitionTime.fractionalSeconds + acquisitionTime.seconds + acquisitionTime.minutes * 60 + acquisitionTime.hours * 60 * 60;
-        var injectionStartTimeInSeconds = startTime.fractionalSeconds + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+        var acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
+        var injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
         var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
         var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
         var suv = modalityPixelValue * patientWeight / correctedDose * 1000;

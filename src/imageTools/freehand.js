@@ -211,7 +211,11 @@
 
         // Connect the end of the drawing to the handle nearest to the click
         if (handleNearby !== undefined){
-            data.handles[config.currentHandle - 1].lines.push(data.handles[handleNearby]);
+            // only save x,y params from nearby handle to prevent circular reference
+            data.handles[config.currentHandle - 1].lines.push({
+                x: data.handles[handleNearby].x,
+                y: data.handles[handleNearby].y
+            });
         }
 
         if (config.modifying) {
@@ -328,7 +332,7 @@
                     var mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
                     if (j === (data.handles.length - 1)) {
                         if (data.active && !config.freehand && !config.modifying) {
-                            // If it's still being actively drawn, keep the last line to 
+                            // If it's still being actively drawn, keep the last line to
                             // the mouse location
                             context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
                             context.stroke();
@@ -336,12 +340,12 @@
                     }
                 }
             }
-            
+
             // If the tool is active, draw a handle at the cursor location
             var options = {
                 fill: fillColor
             };
-            
+
             if (data.active){
                 cornerstoneTools.drawHandles(context, eventData, config.mouseLocation.handles, color, options);
             }

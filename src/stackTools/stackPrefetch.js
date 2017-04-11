@@ -8,7 +8,7 @@
     var configuration = {};
 
     var resetPrefetchTimeout,
-        resetPrefetchDelay;
+        resetPrefetchDelay = 300;
 
     function sortNumber(a, b) {
         // http://stackoverflow.com/questions/1063007/how-to-sort-an-array-of-integers-correctly
@@ -45,7 +45,7 @@
 
     function nearestIndex(arr, x) {
         // Return index of nearest values in array
-        // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array        
+        // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
         var l = [],
             h = [];
 
@@ -56,7 +56,7 @@
                 h.push(v);
             }
         });
-       
+
         return {
             low: arr.indexOf(max(l)),
             high: arr.indexOf(min(h))
@@ -91,14 +91,14 @@
         }
 
         // Remove an imageIdIndex from the list of indices to request
-        // This fires when the individual image loading deferred is resolved        
+        // This fires when the individual image loading deferred is resolved
         function removeFromList(imageIdIndex) {
             var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
             if (index > -1) { // don't remove last element if imageIdIndex not found
                 stackPrefetch.indicesToRequest.splice(index, 1);
             }
         }
-        
+
         // Remove all already cached images from the
         // indicesToRequest array
         stackPrefetchData.data[0].indicesToRequest.sort(sortNumber);
@@ -123,26 +123,32 @@
             return;
         }
 
+        // Clear the requestPool of prefetch requests
+        var requestPoolManager = cornerstoneTools.requestPoolManager;
+        requestPoolManager.clearRequestStack(requestType);
+
+        // Identify the nearest imageIdIndex to the currentImageIdIndex
+        var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
+
+        var imageId,
+            nextImageIdIndex,
+            preventCache = false;
+
         function doneCallback(image) {
             //console.log('prefetch done: ' + image.imageId);
             var imageIdIndex = stack.imageIds.indexOf(image.imageId);
             removeFromList(imageIdIndex);
         }
 
+        // Retrieve the errorLoadingHandler if one exists
+        var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+
         function failCallback(error) {
             console.log('prefetch errored: ' + error);
+            if (errorLoadingHandler) {
+                errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+            }
         }
-
-        // Clear the requestPool of prefetch requests
-        var requestPoolManager = cornerstoneTools.requestPoolManager;
-        requestPoolManager.clearRequestStack(requestType);
-
-        // Identify the nearest imageIdIndex to the currentImageIdIndex 
-        var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
-
-        var imageId,
-            nextImageIdIndex,
-            preventCache = false;
 
         // Prefetch images around the current image (before and after)
         var lowerIndex = nearest.low;
@@ -166,29 +172,20 @@
         requestPoolManager.startGrabbing();
     }
 
-    function handleCacheFull(e) {
-        // Stop prefetching if the ImageCacheFull event is fired from cornerstone
-        // console.log('CornerstoneImageCacheFull full, stopping');
-        var element = e.data.element;
-
-        var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
-        if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-            return;
-        }
-
-        // Disable the stackPrefetch tool
-        // stackPrefetchData.data[0].enabled = false;
-
-        // Clear current prefetch requests from the requestPool
-        cornerstoneTools.requestPoolManager.clearRequestStack(requestType);
-    }
-
     function promiseRemovedHandler(e, eventData) {
         // When an imagePromise has been pushed out of the cache, re-add its index
         // it to the indicesToRequest list so that it will be retrieved later if the
         // currentImageIdIndex is changed to an image nearby
         var element = e.data.element;
-        var stackData = cornerstoneTools.getToolState(element, 'stack');
+        var stackData;
+
+        try {
+            // It will throw an exception in some cases (eg: thumbnails)
+            stackData = cornerstoneTools.getToolState(element, 'stack');
+        } catch(error) {
+            return;
+        }
+
         if (!stackData || !stackData.data || !stackData.data.length) {
             return;
         }
@@ -201,7 +198,7 @@
         if (imageIdIndex < 0) {
             return;
         }
-        
+
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
             return;
@@ -215,8 +212,16 @@
         // When the user has scrolled to a new image
         clearTimeout(resetPrefetchTimeout);
         resetPrefetchTimeout = setTimeout(function() {
-            var element = e.currentTarget;
-            prefetch(element);
+            var element = e.target;
+
+            // If playClip is enabled and the user loads a different series in the viewport
+            // an exception will be thrown because the element will not be enabled anymore
+            try {
+                prefetch(element);
+            } catch(error) {
+                return;
+            }
+
         }, resetPrefetchDelay);
     }
 
@@ -257,11 +262,6 @@
         $(element).off('CornerstoneNewImage', onImageUpdated);
         $(element).on('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
-        $(cornerstone).on('CornerstoneImageCacheFull', {
-            element: element
-        }, handleCacheFull);
-
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
         $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
             element: element
@@ -272,7 +272,6 @@
         clearTimeout(resetPrefetchTimeout);
         $(element).off('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCacheFull', handleCacheFull);
         $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);

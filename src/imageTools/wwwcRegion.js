@@ -8,6 +8,8 @@
         minWindowWidth: 10
     };
 
+    var currentMouseButtonMask;
+
     /** Calculates the minimum, maximum, and mean value in the given pixel array */
     function calculateMinMaxMean(storedPixelLuminanceData, globalMin, globalMax) {
         var numPixels = storedPixelLuminanceData.length;
@@ -38,47 +40,60 @@
         };
     }
 
-    /* Applies the windowing procedure when the mouse drag ends */
-    function dragEndCallback(e, eventData) {
+    /* Erases the toolData and rebinds the handlers when the image changes */
+    function newImageCallback(e, eventData) {
+        //console.log('newImageCallback: ' + e.type);
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        if (toolData && toolData.data) {
+            toolData.data = [];
+        }
+
         $(eventData.element).off('CornerstoneToolsMouseMove', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+
         $(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
-        
-        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (!toolData) {
-            return;
-        }
-
-        if (!toolData.data.length) {
-            return;
-        }
-
-        // Update the endpoint as the mouse/touch is dragged
-        var endPoint = {
-            x: eventData.currentPoints.image.x,
-            y: eventData.currentPoints.image.y
-        };
-
-        toolData.data[0].endPoint = endPoint;
-
-        applyWWWCRegion(eventData);
 
         var mouseData = {
-            mouseButtonMask: eventData.which
+            mouseButtonMask: currentMouseButtonMask
         };
 
         $(eventData.element).on('CornerstoneToolsMouseDown', mouseData, mouseDownCallback);
     }
 
-    /** Calculates the minimum and maximum value in the given pixel array */
-    function applyWWWCRegion(eventData) {
+    /* Applies the windowing procedure when the mouse drag ends */
+    function dragEndCallback(e, eventData) {
+        //console.log('dragEndCallback: ' + e.type);
+        $(eventData.element).off('CornerstoneToolsMouseMove', dragCallback);
+        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+
+        $(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
+        $(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
+
+        var mouseData = {
+            mouseButtonMask: currentMouseButtonMask
+        };
+
+        $(eventData.element).on('CornerstoneToolsMouseDown', mouseData, mouseDownCallback);
+
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (!toolData) {
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
 
-        if (!toolData.data.length) {
+        // Update the endpoint as the mouse/touch is dragged
+        toolData.data[0].endPoint = {
+            x: eventData.currentPoints.image.x,
+            y: eventData.currentPoints.image.y
+        };
+
+        applyWWWCRegion(eventData);
+    }
+
+    /** Calculates the minimum and maximum value in the given pixel array */
+    function applyWWWCRegion(eventData) {
+        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
 
@@ -124,6 +139,7 @@
     }
 
     function whichMovement(e, eventData) {
+        //console.log('whichMovement: ' + e.type);
         var element = eventData.element;
 
         $(element).off('CornerstoneToolsMouseMove');
@@ -140,12 +156,12 @@
 
     /** Records the start point and attaches the drag event handler */
     function mouseDownCallback(e, eventData) {
+        //console.log('mouseDownCallback: ' + e.type);
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, whichMovement);
             $(eventData.element).on('CornerstoneToolsMouseMove', eventData, whichMovement);
-            $(eventData.element).on('CornerstoneToolsMouseUp', dragEndCallback);
 
-            $(eventData.element).off('CornerstoneToolsMouseDown');
+            $(eventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             recordStartPoint(eventData);
             return false;
         }
@@ -170,13 +186,10 @@
 
     /** Draws the rectangular region while the touch or mouse event drag occurs */
     function dragCallback(e, eventData) {
+        //console.log('dragCallback: ' + e.type);
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (toolData === undefined) {
-            return;
-        }
-
-        if (!toolData.data.length) {
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
 
@@ -192,11 +205,7 @@
 
     function onImageRendered(e, eventData) {
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
-        if (!toolData) {
-            return;
-        }
-
-        if (!toolData.data.length) {
+        if (!toolData || !toolData.data || !toolData.data.length) {
             return;
         }
 
@@ -214,7 +223,7 @@
 
         // Set to the active tool color
         var color = cornerstoneTools.toolColors.getActiveColor();
-        
+
         // Calculate the rectangle parameters
         var startPointCanvas = cornerstone.pixelToCanvas(eventData.element, startPoint);
         var endPointCanvas = cornerstone.pixelToCanvas(eventData.element, endPoint);
@@ -248,7 +257,15 @@
     // --- Mouse tool enable / disable --- ///
     function disable(element) {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+
+        $(element).off('CornerstoneToolsMouseUp', dragEndCallback);
+        $(element).off('CornerstoneToolsMouseClick', dragEndCallback);
+
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseMove', dragCallback);
+
         $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneNewImage', newImageCallback);
 
         cornerstone.updateImage(element);
     }
@@ -258,6 +275,8 @@
             mouseButtonMask: mouseButtonMask,
         };
 
+        currentMouseButtonMask = mouseButtonMask;
+
         var toolData = cornerstoneTools.getToolState(element, toolType);
         if (!toolData) {
             var data = [];
@@ -265,12 +284,23 @@
         }
 
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+
         $(element).off('CornerstoneToolsMouseUp', dragEndCallback);
+        $(element).off('CornerstoneToolsMouseClick', dragEndCallback);
+
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseMove', dragCallback);
+
         $(element).off('CornerstoneImageRendered', onImageRendered);
+        $(element).off('CornerstoneNewImage', newImageCallback);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).on('CornerstoneImageRendered', onImageRendered);
+
+        // If the displayed image changes after the user has started clicking, we should
+        // cancel the handlers and prepare for another click
+        $(element).on('CornerstoneNewImage', newImageCallback);
+
         cornerstone.updateImage(element);
     }
 
@@ -284,7 +314,7 @@
 
     function activateTouchDrag(element) {
         var toolData = cornerstoneTools.getToolState(element, toolType);
-        if (toolData === undefined) {
+        if (!toolData) {
             var data = [];
             cornerstoneTools.addToolState(element, toolType, data);
         }

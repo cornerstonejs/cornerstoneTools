@@ -102,7 +102,7 @@
             var dx = (data.handles.end.x - data.handles.start.x) * (eventData.image.columnPixelSpacing || 1);
             var dy = (data.handles.end.y - data.handles.start.y) * (eventData.image.rowPixelSpacing || 1);
 
-            // Calculate the length, and create the text variable with the millimeters or pixels suffix            
+            // Calculate the length, and create the text variable with the millimeters or pixels suffix
             var length = Math.sqrt(dx * dx + dy * dy);
 
             // Store the length inside the tool for outside access
@@ -122,7 +122,7 @@
                     x: Math.max(data.handles.start.x, data.handles.end.x),
                 };
 
-                // Depending on which handle has the largest x-value, 
+                // Depending on which handle has the largest x-value,
                 // set the y-value for the text box
                 if (coords.x === data.handles.start.x) {
                     coords.y = data.handles.start.y;
@@ -133,7 +133,7 @@
                 data.handles.textBox.x = coords.x;
                 data.handles.textBox.y = coords.y;
             }
-            
+
             var textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
 
             // Move the textbox slightly to the right and upwards

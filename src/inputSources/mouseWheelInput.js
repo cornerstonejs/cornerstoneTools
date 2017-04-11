@@ -16,20 +16,51 @@
             return;
         }
 
+        e.preventDefault();
+
         var element = e.currentTarget;
-        var startingCoords = cornerstone.pageToPixel(element, e.pageX || e.originalEvent.pageX, e.pageY || e.originalEvent.pageY);
+
+        var x;
+        var y;
+
+        if (e.pageX !== undefined && e.pageY !== undefined) {
+            x = e.pageX;
+            y = e.pageY;
+        } else if (e.originalEvent &&
+                   e.originalEvent.pageX !== undefined &&
+                   e.originalEvent.pageY !== undefined) {
+            x = e.originalEvent.pageX;
+            y = e.originalEvent.pageY;
+        } else {
+            // IE9 & IE10
+            x = e.x;
+            y = e.y;
+        }
+
+        var startingCoords = cornerstone.pageToPixel(element, x, y);
 
         e = window.event || e; // old IE support
-        var wheelDelta = e.wheelDelta || -e.detail || -e.originalEvent.detail;
-        var direction = Math.max(-1, Math.min(1, (wheelDelta)));
+
+        var wheelDelta;
+        if (e.originalEvent && e.originalEvent.wheelDelta) {
+            wheelDelta = -e.originalEvent.wheelDelta;
+        } else if (e.originalEvent && e.originalEvent.deltaY) {
+            wheelDelta = -e.originalEvent.deltaY;
+        } else if (e.originalEvent && e.originalEvent.detail) {
+            wheelDelta = -e.originalEvent.detail;
+        } else {
+            wheelDelta = e.wheelDelta;
+        }
+
+        var direction = wheelDelta < 0 ? -1 : 1;
 
         var mouseWheelData = {
             element: element,
             viewport: cornerstone.getViewport(element),
             image: cornerstone.getEnabledElement(element).image,
             direction: direction,
-            pageX: e.pageX || e.originalEvent.pageX,
-            pageY: e.pageY || e.originalEvent.pageY,
+            pageX: x,
+            pageY: y,
             imageX: startingCoords.x,
             imageY: startingCoords.y
         };
@@ -42,7 +73,7 @@
     function enable(element) {
         // Prevent handlers from being attached multiple times
         disable(element);
-        
+
         $(element).on(mouseWheelEvents, mouseWheel);
     }
 

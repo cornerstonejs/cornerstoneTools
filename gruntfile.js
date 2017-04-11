@@ -23,6 +23,7 @@ module.exports = function(grunt) {
                     'bower_components/jquery/dist/jquery.min.map',
                     'bower_components/cornerstone/dist/cornerstone.min.css',
                     'bower_components/cornerstone/dist/cornerstone.min.js',
+                    'bower_components/cornerstone/dist/cornerstone.js',
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.css',
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.js',
                     'bower_components/hammerjs/hammer.min.js',
@@ -116,6 +117,7 @@ module.exports = function(grunt) {
                     cornerstone: true,
                     cornerstoneMath: true,
                     cornerstoneTools: true,
+                    dicomParser: true
                 }
             }
         },
@@ -126,15 +128,13 @@ module.exports = function(grunt) {
             options: {
                 config: ".jscsrc",
                 fix: true,
-                esnext: true,
-                verbose: true,
                 requireCurlyBraces: ["if", "for"]
             }
         },
         watch: {
             scripts: {
-                files: ['src/**/*.js', 'test/*.js'],
-                tasks: ['concat:build', 'concat:dist', 'uglify', 'jshint']
+                files: ['src/**/*.js', 'test/*.js', 'bower_components/cornerstone/dist/*.js'],
+                tasks: ['copy', 'concat:build', 'concat:dist', 'uglify', 'jshint']
             }
         },
 

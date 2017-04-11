@@ -19,7 +19,7 @@
         thumbnail: 6,
         prefetch: 5
     };
-    
+
     var lastElementInteracted;
     var awake = false;
     var grabDelay = 20;
@@ -82,12 +82,7 @@
             }
 
             setTimeout(function() {
-                var requestDetails = getNextRequest();
-                if (!requestDetails) {
-                    return;
-                }
-
-                sendRequest(requestDetails);
+                startGrabbing();
             }, grabDelay);
         }
 
@@ -100,7 +95,7 @@
             var imageId = requestDetails.imageId;
             var doneCallback = requestDetails.doneCallback;
             var failCallback = requestDetails.failCallback;
-            
+
             // Check if we already have this image promise in the cache
             var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
             if (imagePromise) {
@@ -116,15 +111,34 @@
                     numRequests[type]--;
                     // console.log(numRequests);
                     failCallback(error);
+                    startAgain();
                 });
                 return;
             }
 
+            function requestTypeToLoadPriority(requestDetails) {
+                if (requestDetails.type === 'prefetch') {
+                    return -5;
+                } else if (requestDetails.type === 'interactive') {
+                    return 0;
+                } else if (requestDetails.type === 'thumbnail') {
+                    return 5;
+                }
+            }
+
+            var priority = requestTypeToLoadPriority(requestDetails);
+
             var loader;
             if (requestDetails.preventCache === true) {
-                loader = cornerstone.loadImage(imageId);
+                loader = cornerstone.loadImage(imageId, {
+                    priority: priority,
+                    type: requestDetails.type
+                });
             } else {
-                loader = cornerstone.loadAndCacheImage(imageId);
+                loader = cornerstone.loadAndCacheImage(imageId, {
+                    priority: priority,
+                    type: requestDetails.type
+                });
             }
 
             // Load and cache the image
@@ -137,24 +151,25 @@
                 numRequests[type]--;
                 // console.log(numRequests);
                 failCallback(error);
+                startAgain();
             });
         }
 
         function startGrabbing() {
             // Begin by grabbing X images
-            if (awake) {
-                return;
-            }
-
             var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
-            
+
             maxNumRequests = {
                 interaction: Math.max(maxSimultaneousRequests, 1),
                 thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
                 prefetch: Math.max(maxSimultaneousRequests - 1, 1)
             };
 
-            for (var i = 0; i < maxSimultaneousRequests; i++) {
+            var currentRequests = numRequests.interaction +
+                numRequests.thumbnail +
+                numRequests.prefetch;
+            var requestsToSend = maxSimultaneousRequests - currentRequests;
+            for (var i = 0; i < requestsToSend; i++) {
                 var requestDetails = getNextRequest();
                 if (requestDetails) {
                     sendRequest(requestDetails);

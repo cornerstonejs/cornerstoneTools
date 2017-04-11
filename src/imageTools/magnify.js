@@ -9,10 +9,14 @@
 
     var browserName;
 
+    var currentPoints;
+
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 
@@ -27,19 +31,31 @@
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
+            $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+
+            currentPoints = eventData.currentPoints;
+            $(eventData.element).on('CornerstoneNewImage', eventData, newImageCallback);
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
+    function newImageCallback(e, eventData) {
+        eventData.currentPoints = currentPoints;
+        drawMagnificationTool(eventData);
+    }
+
     function dragEndCallback(e, eventData) {
         $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
         $(eventData.element).off('CornerstoneToolsTouchEnd', dragEndCallback);
+        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 
     /** Drag callback is triggered by both the touch and mouse magnify tools */
     function dragCallback(e, eventData) {
+        currentPoints = eventData.currentPoints;
+
         drawMagnificationTool(eventData);
         if (eventData.isTouchEvent === true) {
             $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
@@ -92,7 +108,7 @@
 
         // Fill it with the pixels that the mouse is clicking on
         zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
-        
+
         var copyFrom = {
             x: canvasLocation.x - 0.5 * getSize,
             y: canvasLocation.y - 0.5 * getSize

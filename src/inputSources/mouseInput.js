@@ -2,7 +2,7 @@
 
     'use strict';
 
-    var isClickEvent;
+    var isClickEvent = true;
     var preventClickTimeout;
     var clickDelay = 200;
 
@@ -262,7 +262,7 @@
     function enable(element) {
         // Prevent handlers from being attached multiple times
         disable(element);
-        
+
         $(element).on('mousedown', mouseDown);
         $(element).on('mousemove', mouseMove);
         $(element).on('dblclick', mouseDoubleClick);
