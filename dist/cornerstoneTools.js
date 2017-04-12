@@ -2046,6 +2046,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
                 context.shadowOffsetY = config.shadowOffsetY || 1;
+                context.shadowBlur = 5;
             }
 
             var data = toolData.data[i];
@@ -5409,6 +5410,13 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function get_value_str(element, image, x, y){
         var str, text, storedPixels;
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality = seriesModule.modality;
+        var moSuffix = '';
+        if (modality === 'CT') {
+            moSuffix = ' HU';
+        }
+
         if (image.color) {
             text = '' + x + ', ' + y;
 
@@ -5416,7 +5424,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var config = cornerstoneTools.probex.getConfiguration();
             if (config.valuesmap){
-                str = config.valuesmap(image.imageId, storedPixels);
+                str = config.valuesmap(image.imageId, storedPixels)+moSuffix;
             } else {
                 str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
             }
@@ -5424,7 +5432,7 @@ if (typeof cornerstoneTools === 'undefined') {
             storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * image.slope + image.intercept;
-            str = '' + mo;
+            str = '' + mo+moSuffix;
         }
 
         return str;
@@ -5634,6 +5642,7 @@ if (typeof cornerstoneTools === 'undefined') {
         var context = eventData.canvasContext.canvas.getContext('2d');
         var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
         var modality = seriesModule.modality;
+        console.log(modality);
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -6590,6 +6599,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
                 context.shadowOffsetY = config.shadowOffsetY || 1;
+                context.shadowBlur = 5;
             }
 
             var data = toolData.data[i];

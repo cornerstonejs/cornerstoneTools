@@ -114,6 +114,7 @@
         var context = eventData.canvasContext.canvas.getContext('2d');
         var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
         var modality = seriesModule.modality;
+        console.log(modality);
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 

@@ -31,6 +31,13 @@
 
     function get_value_str(element, image, x, y){
         var str, text, storedPixels;
+        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+        var modality = seriesModule.modality;
+        var moSuffix = '';
+        if (modality === 'CT') {
+            moSuffix = ' HU';
+        }
+
         if (image.color) {
             text = '' + x + ', ' + y;
 
@@ -38,7 +45,7 @@
 
             var config = cornerstoneTools.probex.getConfiguration();
             if (config.valuesmap){
-                str = config.valuesmap(image.imageId, storedPixels);
+                str = config.valuesmap(image.imageId, storedPixels) + moSuffix;
             } else {
                 str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
             }
@@ -46,7 +53,7 @@
             storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * image.slope + image.intercept;
-            str = '' + mo;
+            str = '' + mo + moSuffix;
         }
 
         return str;
