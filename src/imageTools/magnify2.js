@@ -9,6 +9,8 @@
 
     var browserName;
     var zoom_canvas = null;
+    var invalid = false;
+    var lastEventData;
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -22,8 +24,8 @@
         $(eventData.element).find('.magnifyTool').hide();
         // Re-enable the mouse cursor
         document.body.style.cursor = 'default';
-        //$("#other-canvas").empty();
         zoom_canvas = null;
+        lastEventData = undefined;
     }
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
@@ -32,6 +34,8 @@
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+            invalid = true;
+            lastEventData = eventData;
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -45,7 +49,9 @@
 
     /** Drag callback is triggered by both the touch and mouse magnify tools */
     function dragCallback(e, eventData) {
-        drawMagnificationTool(eventData);
+        //drawMagnificationTool(eventData);
+        invalid = true;
+        lastEventData = eventData;
         if (eventData.isTouchEvent === true) {
             $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
             $(eventData.element).on('CornerstoneToolsTouchEnd', dragEndCallback);
@@ -54,8 +60,7 @@
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-    /** Draws the magnifying glass */
-    function drawMagnificationTool(eventData) {
+    function doDrawMagnification(eventData){
         var magnify = $(eventData.element).find('.magnifyTool').get(0);
 
         if (!magnify) {
@@ -68,7 +73,10 @@
         var magnificationLevel = config.magnificationLevel;
 
         if (zoom_canvas === null){
-            draw_zoomed_canvas(eventData.element, magnificationLevel);
+            cornerstone.requestAnimationFrame(function() {
+                draw_zoomed_canvas(eventData.element, magnificationLevel);
+            });
+            return;
         }
 
         // The 'not' magnifyTool class here is necessary because cornerstone places
@@ -132,6 +140,22 @@
         document.body.style.cursor = 'none';
     }
 
+    /** Draws the magnifying glass */
+    function drawMagnificationTool() {
+        if (lastEventData === undefined){
+            // finished
+            return;
+        }
+
+        if (invalid){
+            // if zoom_canvas is null remain invalid
+            invalid = (zoom_canvas === null);
+            doDrawMagnification(lastEventData);
+        }
+
+        cornerstone.requestAnimationFrame(drawMagnificationTool);
+    }
+
     /** Creates the magnifying glass canvas */
     function createMagnificationCanvas(element) {
         // If the magnifying glass canvas doesn't already exist
@@ -162,14 +186,14 @@
         var enabled_element = cornerstone.getEnabledElement(element);
         var orig_canvas = enabled_element.canvas;
         var image = enabled_element.image;
-        var canvas = $('<canvas></canvas>');
-        canvas.attr('width', orig_canvas.width * magnificationLevel);
-        canvas.attr('height', orig_canvas.height * magnificationLevel);
-        //$("#other-canvas").append(canvas);
+        var canvas = document.createElement('canvas');
+        canvas.width = orig_canvas.width * magnificationLevel;
+        canvas.height = orig_canvas.height * magnificationLevel;
         var viewport = cornerstone.getViewport(element);
         viewport.scale*= magnificationLevel;
-        renderImage(canvas[0],image, viewport);
-        zoom_canvas = canvas[0];
+        // don't wait for animation frame, we already did
+        renderImage(canvas,image, viewport);
+        zoom_canvas = canvas;
     }
 
     function renderImage(canvas, image, viewport){
@@ -189,7 +213,10 @@
         fake_enabled_element.image = image;
         fake_enabled_element.canvas = canvas;
         fake_enabled_element.viewport = viewport;
-        cornerstone.drawImage(fake_enabled_element,false);
+        fake_enabled_element.invalid = true; // needs redraw
+        // render immediately, don't wait for animation frame
+        fake_enabled_element.image
+          .render(fake_enabled_element, fake_enabled_element.invalid);
     }
 
     // --- Mouse tool activate / disable --- //

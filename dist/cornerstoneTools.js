@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-11 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-04-12 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4744,6 +4744,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     var browserName;
     var zoom_canvas = null;
+    var invalid = false;
+    var lastEventData;
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
@@ -4757,8 +4759,8 @@ if (typeof cornerstoneTools === 'undefined') {
         $(eventData.element).find('.magnifyTool').hide();
         // Re-enable the mouse cursor
         document.body.style.cursor = 'default';
-        //$("#other-canvas").empty();
         zoom_canvas = null;
+        lastEventData = undefined;
     }
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
@@ -4767,6 +4769,8 @@ if (typeof cornerstoneTools === 'undefined') {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+            invalid = true;
+            lastEventData = eventData;
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -4780,7 +4784,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
     /** Drag callback is triggered by both the touch and mouse magnify tools */
     function dragCallback(e, eventData) {
-        drawMagnificationTool(eventData);
+        //drawMagnificationTool(eventData);
+        invalid = true;
+        lastEventData = eventData;
         if (eventData.isTouchEvent === true) {
             $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
             $(eventData.element).on('CornerstoneToolsTouchEnd', dragEndCallback);
@@ -4789,8 +4795,7 @@ if (typeof cornerstoneTools === 'undefined') {
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 
-    /** Draws the magnifying glass */
-    function drawMagnificationTool(eventData) {
+    function doDrawMagnification(eventData){
         var magnify = $(eventData.element).find('.magnifyTool').get(0);
 
         if (!magnify) {
@@ -4803,7 +4808,10 @@ if (typeof cornerstoneTools === 'undefined') {
         var magnificationLevel = config.magnificationLevel;
 
         if (zoom_canvas === null){
-            draw_zoomed_canvas(eventData.element, magnificationLevel);
+            cornerstone.requestAnimationFrame(function() {
+                draw_zoomed_canvas(eventData.element, magnificationLevel);
+            });
+            return;
         }
 
         // The 'not' magnifyTool class here is necessary because cornerstone places
@@ -4867,6 +4875,22 @@ if (typeof cornerstoneTools === 'undefined') {
         document.body.style.cursor = 'none';
     }
 
+    /** Draws the magnifying glass */
+    function drawMagnificationTool() {
+        if (lastEventData === undefined){
+            // finished
+            return;
+        }
+
+        if (invalid){
+            // if zoom_canvas is null remain invalid
+            invalid = (zoom_canvas === null);
+            doDrawMagnification(lastEventData);
+        }
+
+        cornerstone.requestAnimationFrame(drawMagnificationTool);
+    }
+
     /** Creates the magnifying glass canvas */
     function createMagnificationCanvas(element) {
         // If the magnifying glass canvas doesn't already exist
@@ -4897,14 +4921,14 @@ if (typeof cornerstoneTools === 'undefined') {
         var enabled_element = cornerstone.getEnabledElement(element);
         var orig_canvas = enabled_element.canvas;
         var image = enabled_element.image;
-        var canvas = $('<canvas></canvas>');
-        canvas.attr('width', orig_canvas.width * magnificationLevel);
-        canvas.attr('height', orig_canvas.height * magnificationLevel);
-        //$("#other-canvas").append(canvas);
+        var canvas = document.createElement('canvas');
+        canvas.width = orig_canvas.width * magnificationLevel;
+        canvas.height = orig_canvas.height * magnificationLevel;
         var viewport = cornerstone.getViewport(element);
         viewport.scale*= magnificationLevel;
-        renderImage(canvas[0],image, viewport);
-        zoom_canvas = canvas[0];
+        // don't wait for animation frame, we already did
+        renderImage(canvas,image, viewport);
+        zoom_canvas = canvas;
     }
 
     function renderImage(canvas, image, viewport){
@@ -4924,7 +4948,10 @@ if (typeof cornerstoneTools === 'undefined') {
         fake_enabled_element.image = image;
         fake_enabled_element.canvas = canvas;
         fake_enabled_element.viewport = viewport;
-        cornerstone.drawImage(fake_enabled_element,false);
+        fake_enabled_element.invalid = true; // needs redraw
+        // render immediately, don't wait for animation frame
+        fake_enabled_element.image
+          .render(fake_enabled_element, fake_enabled_element.invalid);
     }
 
     // --- Mouse tool activate / disable --- //
@@ -7215,8 +7242,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function mouseUpCallback(e, eventData) {
         if (interacting_mode === false){
-          return;
+            return;
         }
+
         $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
         $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -7230,14 +7258,16 @@ if (typeof cornerstoneTools === 'undefined') {
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             // disable further mouseDownCallbacks
             var ts = Date.now();
-            if(interacting_mode === true){
-              // sanity check, should not happen
-              return;
+            if (interacting_mode === true){
+                // sanity check, should not happen
+                return;
             }
+
             if (last_session !== null && (ts - last_session < 100)){
-              // rate limit to one session per 1/10 of second
-              return;
+                // rate limit to one session per 1/10 of second
+                return;
             }
+
             interacting_mode = true;
             interactionStart(e, eventData);
             $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
@@ -7261,7 +7291,6 @@ if (typeof cornerstoneTools === 'undefined') {
         $(eventData.element).on('CornerstoneToolsTap', touchEndCallback);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
-
 
     function defaultStrategy(eventData) {
         // here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -7413,90 +7442,92 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function interactionEnd(e, eventData){
-      var orig_data = tool_data;
-      if ( (!orig_data) || ('unchanged' in orig_data) ){
-        cornerstoneTools.clearToolState(eventData.element,"wwwclod");
-        return;
-      }
-      var modified_vieport = cornerstone.getViewport(eventData.element);
-      var orig_image = orig_data.image;
-      var viewport = orig_data.viewport;
-      viewport.voi = modified_vieport.voi;
-      cornerstone.setViewport(eventData.element, viewport);
-      cornerstone.displayImage(eventData.element, orig_image, viewport);
+        var orig_data = tool_data;
+        if ( (!orig_data) || ('unchanged' in orig_data) ){
+            cornerstoneTools.clearToolState(eventData.element,'wwwclod');
+            return;
+        }
+
+        var modified_vieport = cornerstone.getViewport(eventData.element);
+        var orig_image = orig_data.image;
+        var viewport = orig_data.viewport;
+        viewport.voi = modified_vieport.voi;
+        cornerstone.setViewport(eventData.element, viewport);
+        cornerstone.displayImage(eventData.element, orig_image, viewport);
     }
 
     function downsample_image(image, target_width, target_height, top_left, bottom_right){
-      var image_data=image.getPixelData();
-      var img_width = image.width;
-      var offset_y=top_left.y;
-      var offset_x=top_left.x;
-      var stride_y=(bottom_right.y - top_left.y)/target_height;
-      var stride_x=(bottom_right.x - top_left.x)/target_width;
-      var i,j,i2,j2,j2c;
+        var image_data = image.getPixelData();
+        var img_width = image.width;
+        var offset_y = top_left.y;
+        var offset_x = top_left.x;
+        var stride_y = (bottom_right.y - top_left.y) / target_height;
+        var stride_x = (bottom_right.x - top_left.x) / target_width;
+        var i,j,i2,j2,j2c;
 
-      var pixels_array;
-      if (!image.color){
-        pixels_array = new image_data.constructor(target_height*target_width);
-        j2c = new Array(target_width);
-        for (j=0; j < target_width; j++){
-          j2c[j] =  Math.ceil(offset_x + (j+0.5)*stride_x);
-        }
-        for (i=0; i<target_height; i++){
-          i2 =  Math.ceil(offset_y + (i+0.5)*stride_y);
-          for (j=0; j < target_width; j++){
-            j2 =  j2c[j];
-            pixels_array[i*target_width+j]=image_data[i2*img_width+j2];
-          }
-        }
-      }
-    else{
-      pixels_array = new image_data.constructor(target_height*target_width*4);
-      j2c = new Array(target_width);
-      for (j=0; j < target_width; j++){
-        j2c[j] =  Math.ceil(offset_x + (j+0.5)*stride_x);
-      }
-      for (i=0; i<target_height; i++){
-        i2 =  Math.ceil(offset_y + (i+0.5)*stride_y);
-        for (j=0; j < target_width; j++){
-          j2 =  j2c[j];
-          pixels_array[4*(i*target_width+j)+0]=image_data[4*(i2*img_width+j2)+0];
-          pixels_array[4*(i*target_width+j)+1]=image_data[4*(i2*img_width+j2)+1];
-          pixels_array[4*(i*target_width+j)+2]=image_data[4*(i2*img_width+j2)+2];
-          pixels_array[4*(i*target_width+j)+3]=image_data[4*(i2*img_width+j2)+3];
-        }
-      }
-    }
+        var pixels_array;
+        if (!image.color){
+            pixels_array = new image_data.constructor(target_height * target_width);
+            j2c = new Array(target_width);
+            for (j = 0; j < target_width; j++){
+                j2c[j] = Math.ceil(offset_x + (j + 0.5) * stride_x);
+            }
 
-      function get_pixels(){
-        return pixels_array;
-      }
+            for (i = 0; i< target_height; i++){
+                i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                for (j = 0; j < target_width; j++){
+                    j2 = j2c[j];
+                    pixels_array[i * target_width + j] = image_data[i2 * img_width + j2];
+                }
+            }
+        } else {
+            pixels_array = new image_data.constructor(target_height * target_width * 4);
+            j2c = new Array(target_width);
+            for (j = 0; j < target_width; j++){
+                j2c[j] = Math.ceil(offset_x + (j + 0.5) * stride_x);
+            }
 
-      var image_2 = {
-        imageId: image.imageId+"_down",
-        minPixelValue: image.minPixelValue,
-        maxPixelValue: image.maxPixelValue,
-        rows: target_height,
-        columns: target_width,
-        height: target_height,
-        width: target_width,
-        getPixelData: get_pixels,
-        color: image.color,
-        columnPixelSpacing: (image.columnPixelSpacing?image.columnPixelSpacing:1)/stride_y,
-        rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1)/stride_x,
-        invert: false,
-        sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
-        render: image.render,
-        slope: image.slope,
-        intercept: image.intercept,
-        windowCenter: image.windowCenter,
-        windowWidth: image.windowWidth
-      };
-      return image_2;
+            for (i = 0; i< target_height; i++){
+                i2 = Math.ceil(offset_y + (i + 0.5) * stride_y);
+                for (j = 0; j < target_width; j++){
+                    j2 = j2c[j];
+                    pixels_array[4 * (i * target_width + j) + 0] = image_data[4 * (i2 * img_width + j2) + 0];
+                    pixels_array[4 * (i * target_width + j) + 1] = image_data[4 * (i2 * img_width + j2) + 1];
+                    pixels_array[4 * (i * target_width + j) + 2] = image_data[4 * (i2 * img_width + j2) + 2];
+                    pixels_array[4 * (i * target_width + j) + 3] = image_data[4 * (i2 * img_width + j2) + 3];
+                }
+            }
+        }
+
+        function get_pixels(){
+            return pixels_array;
+        }
+
+        var image_2 = {
+            imageId: image.imageId + '_down',
+            minPixelValue: image.minPixelValue,
+            maxPixelValue: image.maxPixelValue,
+            rows: target_height,
+            columns: target_width,
+            height: target_height,
+            width: target_width,
+            getPixelData: get_pixels,
+            color: image.color,
+            columnPixelSpacing: (image.columnPixelSpacing?image.columnPixelSpacing:1) / stride_y,
+            rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1) / stride_x,
+            invert: false,
+            sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
+            render: image.render,
+            slope: image.slope,
+            intercept: image.intercept,
+            windowCenter: image.windowCenter,
+            windowWidth: image.windowWidth
+        };
+        return image_2;
     }
 
     cornerstoneTools.wwwclod = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-    cornerstoneTools.wwwclodTouchDrag = cornerstoneTools.touchDragStartTool(touchStartCallback);
+    cornerstoneTools.wwwclodTouchDrag = cornerstoneTools.touchDragTool(touchStartCallback);
     cornerstoneTools.wwwclod.strategies = {
         default: defaultStrategy
     };
@@ -8360,7 +8391,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
             context.arc(handleCanvasCoords.x, handleCanvasCoords.y, radius, 0, 2 * Math.PI);
-            context.shadowColor = "rgba(80,80,80,0.8)";
+            context.shadowColor = 'rgba(80,80,80,0.8)';
             context.shadowOffsetX = 1;
             context.shadowOffsetY = 1;
             context.shadowBlur = 5;
@@ -12442,11 +12473,11 @@ Display scroll progress bar across bottom of image.
         context.textBaseline = 'top';
         context.strokeStyle = color;
 
-        context.shadowColor = "rgba(80,80,80,0.8)";
+        context.shadowColor = 'rgba(80,80,80,0.8)';
         context.shadowOffsetX = 1;
         context.shadowOffsetY = 1;
         context.shadowBlur = 5;
-        
+
         // Find the longest text width in the array of text data
         var maxWidth = 0;
         textLines.forEach(function(text) {
@@ -12684,29 +12715,29 @@ Display scroll progress bar across bottom of image.
             column;
 
         var image_id = enabledElement.image.imageId;
-        if(rgb_pixels_cache === undefined || rgb_pixels_cache.id !== image_id){
-          pixelData = enabledElement.image.getPixelData();
-          rgb_pixels_cache = {
-            id: image_id,
-            pixels: pixelData
-          };
-        }else{
-          pixelData = rgb_pixels_cache.pixels;
+        if (rgb_pixels_cache === undefined || rgb_pixels_cache.id !== image_id){
+            pixelData = enabledElement.image.getPixelData();
+            rgb_pixels_cache = {
+                id: image_id,
+                pixels: pixelData
+            };
+        }else {
+            pixelData = rgb_pixels_cache.pixels;
         }
 
-
         if (enabledElement.image.color) {
-          // special case inside probe tool
-          if(width === 1 && height === 1){
-              spIndex = ((y * enabledElement.image.columns) + x) * 4;
-              return [
-                pixelData[spIndex],
-                pixelData[spIndex+1],
-                pixelData[spIndex+2],
-                pixelData[spIndex+3],
-              ];
+            // special case inside probe tool
+            if (width === 1 && height === 1){
+                spIndex = ((y * enabledElement.image.columns) + x) * 4;
+                return [
+                  pixelData[spIndex],
+                  pixelData[spIndex + 1],
+                  pixelData[spIndex + 2],
+                  pixelData[spIndex + 3],
+                ];
             }
-            storedPixelData = new Array(4*width*height);
+
+            storedPixelData = new Array(4 * width * height);
             var index = 0;
             for (row = 0; row < height; row++) {
                 for (column = 0; column < width; column++) {

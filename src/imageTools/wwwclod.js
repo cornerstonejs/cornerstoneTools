@@ -293,7 +293,7 @@
     }
 
     cornerstoneTools.wwwclod = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-    cornerstoneTools.wwwclodTouchDrag = cornerstoneTools.touchDragStartTool(touchStartCallback);
+    cornerstoneTools.wwwclodTouchDrag = cornerstoneTools.touchDragTool(touchStartCallback);
     cornerstoneTools.wwwclod.strategies = {
         default: defaultStrategy
     };
