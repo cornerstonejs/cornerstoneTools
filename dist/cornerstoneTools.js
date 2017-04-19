@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-12 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-04-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4321,12 +4321,16 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// END ACTIVE TOOL ///////
 
     function pointNearTool(element, data, coords) {
+       /*
         var lineSegment = {
             start: cornerstone.pixelToCanvas(element, data.handles.start),
             end: cornerstone.pixelToCanvas(element, data.handles.end)
         };
         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 25);
+        */
+        var ds1 = cornerstoneMath.point.distanceSquared(coords, data.handles.start);
+        var ds2 = cornerstoneMath.point.distanceSquared(coords, data.handles.end);
+        return ( (ds1<5) || (ds2<5) );
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -5424,7 +5428,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
             var config = cornerstoneTools.probex.getConfiguration();
             if (config.valuesmap){
-                str = config.valuesmap(image.imageId, storedPixels)+moSuffix;
+                str = config.valuesmap(image.imageId, storedPixels) + moSuffix;
             } else {
                 str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
             }
@@ -5432,7 +5436,7 @@ if (typeof cornerstoneTools === 'undefined') {
             storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
             var sp = storedPixels[0];
             var mo = sp * image.slope + image.intercept;
-            str = '' + mo+moSuffix;
+            str = '' + mo + moSuffix;
         }
 
         return str;
