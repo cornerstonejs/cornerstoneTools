@@ -31,7 +31,7 @@
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var eventData = {
             event: e,
-            which: e.which,
+            which: e.buttons,
             viewport: cornerstone.getViewport(element),
             image: cornerstone.getEnabledElement(element).image,
             element: element,
@@ -71,7 +71,7 @@
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
         var eventData = {
             event: e,
-            which: e.which,
+            which: e.buttons,
             viewport: cornerstone.getViewport(element),
             image: cornerstone.getEnabledElement(element).image,
             element: element,
@@ -95,7 +95,7 @@
             }
         }
 
-        var whichMouseButton = e.which;
+        var whichMouseButton = e.buttons;
 
         function onMouseMove(e) {
             // calculate our current points in page and image coordinates
@@ -215,7 +215,7 @@
 
         var lastPoints = cornerstoneTools.copyPoints(startPoints);
 
-        var whichMouseButton = e.which;
+        var whichMouseButton = e.buttons;
 
         // calculate our current points in page and image coordinates
         var currentPoints = {

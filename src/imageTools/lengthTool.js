@@ -39,12 +39,16 @@
     ///////// END ACTIVE TOOL ///////
 
     function pointNearTool(element, data, coords) {
-        var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start),
-            end: cornerstone.pixelToCanvas(element, data.handles.end)
-        };
-        var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        return (distanceToPoint < 25);
+        /*
+         var lineSegment = {
+             start: cornerstone.pixelToCanvas(element, data.handles.start),
+             end: cornerstone.pixelToCanvas(element, data.handles.end)
+         };
+         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+         */
+        var ds1 = cornerstoneMath.point.distanceSquared(coords, data.handles.start);
+        var ds2 = cornerstoneMath.point.distanceSquared(coords, data.handles.end);
+        return ( (ds1< 5) || (ds2< 5) );
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -71,6 +75,7 @@
                 context.shadowColor = config.shadowColor || '#000000';
                 context.shadowOffsetX = config.shadowOffsetX || 1;
                 context.shadowOffsetY = config.shadowOffsetY || 1;
+                context.shadowBlur = 5;
             }
 
             var data = toolData.data[i];

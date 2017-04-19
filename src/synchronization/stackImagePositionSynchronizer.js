@@ -12,7 +12,7 @@
         }
 
         var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-        var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImage.imageId);
+        var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImage.imageId, sourceElement);
         var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
         var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
@@ -22,7 +22,7 @@
         var newImageIdIndex = -1;
 
         $.each(stackData.imageIds, function(index, imageId) {
-            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId, targetElement);
             var imagePosition = imagePlane.imagePositionPatient;
             var distance = imagePosition.distanceToSquared(sourceImagePosition);
             //console.log(index + '=' + distance);

@@ -7,7 +7,7 @@
     function onImageRendered(e, eventData) {
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+        if ((toolData === undefined) || (toolData.data.length === 0)) {
             return;
         }
 

@@ -40,7 +40,7 @@
                 }
 
                 var sourceImageId = sourceEnabledElement.image.imageId;
-                var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+                var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId, sourceElement);
                 if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
                     return;
                 }
@@ -77,7 +77,7 @@
                         return;
                     }
 
-                    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId, targetElement);
                     if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
                         return;
                     }
