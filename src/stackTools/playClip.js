@@ -65,9 +65,9 @@
         if (typeof id !== 'undefined') {
             playClipData.intervalId = undefined;
             if (playClipData.usingFrameTimeVector) {
-                clearTimeout(id);
+                cornerstoneTools.clearRequestTimeout(id);
             } else {
-                clearInterval(id);
+                cornerstoneTools.clearRequestInterval(id);
             }
         }
     }
@@ -221,17 +221,17 @@
         };
 
         // if playClipTimeouts array is available, not empty and its elements are NOT uniform ...
-        // ... (at least one timeout is different from the others), use alternate setTimeout implementation
+        // ... (at least one timeout is different from the others), use alternate requestTimeout implementation
         if (playClipTimeouts && playClipTimeouts.length > 0 && playClipTimeouts.isTimeVarying) {
             playClipData.usingFrameTimeVector = true;
-            playClipData.intervalId = setTimeout(function playClipTimeoutHandler() {
-                playClipData.intervalId = setTimeout(playClipTimeoutHandler, playClipTimeouts[stackData.currentImageIdIndex]);
+            playClipData.intervalId = cornerstoneTools.requestTimeout(function playClipTimeoutHandler() {
+                playClipData.intervalId = cornerstoneTools.requestTimeout(playClipTimeoutHandler, playClipTimeouts[stackData.currentImageIdIndex]);
                 playClipAction();
             }, 0);
         } else {
-            // ... otherwise user setInterval implementation which is much more efficient.
+            // ... otherwise user requestInterval implementation which is much more efficient.
             playClipData.usingFrameTimeVector = false;
-            playClipData.intervalId = setInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
+            playClipData.intervalId = cornerstoneTools.requestInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
         }
 
     }
