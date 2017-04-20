@@ -70,13 +70,16 @@
 
     var stackStateManagers = [];
 
-    function addStackStateManager(element) {
+    function addStackStateManager(element, otherTools) {
         var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
         if (!oldStateManager) {
             oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
         }
 
         var stackTools = [ 'stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs' ];
+        if (otherTools) {
+          stackTools = stackTools.concat(otherTools)
+        }
         var stackSpecificStateManager = cornerstoneTools.newStackSpecificToolStateManager(stackTools, oldStateManager);
         stackStateManagers.push(stackSpecificStateManager);
         cornerstoneTools.setElementToolStateManager(element, stackSpecificStateManager);
