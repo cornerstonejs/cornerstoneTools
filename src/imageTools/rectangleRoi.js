@@ -113,7 +113,10 @@
         var config = cornerstoneTools.rectangleRoi.getConfiguration();
         var context = eventData.canvasContext.canvas.getContext('2d');
         var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-        var modality = seriesModule.modality;
+        var modality;
+        if (seriesModule) {
+            modality = seriesModule.modality;
+        }
 
         context.setTransform(1, 0, 0, 1, 0, 0);
 
