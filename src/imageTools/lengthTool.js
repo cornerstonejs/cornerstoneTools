@@ -62,6 +62,10 @@
 
         var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
         var config = cornerstoneTools.length.getConfiguration();
+        var cst = cornerstoneTools.metaData;
+        var imagePlane = cst.get('imagePlane', eventData.image.imageId);
+        var rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagerPixelSpacing;
+        var colPixelSpacing = imagePlane.colPixelSpacing || imagePlane.colImagerPixelSpacing;
 
         for (var i = 0; i < toolData.data.length; i++) {
             context.save();
@@ -99,8 +103,8 @@
             context.fillStyle = color;
 
             // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-            var dx = (data.handles.end.x - data.handles.start.x) * (eventData.image.columnPixelSpacing || 1);
-            var dy = (data.handles.end.y - data.handles.start.y) * (eventData.image.rowPixelSpacing || 1);
+            var dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
+            var dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
 
             // Calculate the length, and create the text variable with the millimeters or pixels suffix
             var length = Math.sqrt(dx * dx + dy * dy);
@@ -110,7 +114,7 @@
 
             // Set the length text suffix depending on whether or not pixelSpacing is available
             var suffix = ' mm';
-            if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+            if (!rowPixelSpacing|| !colPixelSpacing) {
                 suffix = ' pixels';
             }
 
