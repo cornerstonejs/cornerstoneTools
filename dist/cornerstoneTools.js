@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-23 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-04-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -4063,6 +4063,37 @@ if (typeof cornerstoneTools === 'undefined') {
 })($, cornerstone, cornerstoneMath, cornerstoneTools);
  
 // End Source; src/imageTools/highlight.js
+
+// Begin Source: src/imageTools/imageStats.js
+(function($, cornerstone, cornerstoneTools) {
+
+    'use strict';
+
+    function onImageRendered(e, eventData) {
+        var image = eventData.image;
+        var stats = image.stats;
+
+        var context = eventData.canvasContext.canvas.getContext('2d');
+        context.setTransform(1, 0, 0, 1, 0, 0);
+
+        var textLines = [];
+        Object.keys(stats).forEach(function(key) {
+            var text = key + ' : ' + stats[key];
+            textLines.push(text);
+        });
+
+        cornerstoneTools.drawTextBox(context, textLines, 0, 0, 'orange');
+
+        textLines.forEach(function(text) {
+            console.log(text);
+        });
+    }
+
+    cornerstoneTools.imageStats = cornerstoneTools.displayTool(onImageRendered);
+
+})($, cornerstone, cornerstoneTools);
+ 
+// End Source; src/imageTools/imageStats.js
 
 // Begin Source: src/imageTools/keyboardTool.js
 (function($, cornerstone, cornerstoneTools) {

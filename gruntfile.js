@@ -23,7 +23,6 @@ module.exports = function(grunt) {
                     'bower_components/jquery/dist/jquery.min.map',
                     'bower_components/cornerstone/dist/cornerstone.min.css',
                     'bower_components/cornerstone/dist/cornerstone.min.js',
-                    'bower_components/cornerstone/dist/cornerstone.js',
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.css',
                     'bower_components/cornerstoneMath/dist/cornerstoneMath.min.js',
                     'bower_components/hammerjs/hammer.min.js',
