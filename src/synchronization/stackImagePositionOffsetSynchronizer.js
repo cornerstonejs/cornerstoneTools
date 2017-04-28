@@ -11,10 +11,10 @@ export default function(synchronizer, sourceElement, targetElement, eventData, p
     }
 
     var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
-    var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
+    var sourceImagePlane = metaData.get('imagePlane', sourceEnabledElement.image.imageId);
     var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
-    var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+    var stackToolDataSource = getToolState(targetElement, 'stack');
     var stackData = stackToolDataSource.data[0];
 
     var minDistance = Number.MAX_VALUE;
@@ -27,7 +27,7 @@ export default function(synchronizer, sourceElement, targetElement, eventData, p
     var finalPosition = sourceImagePosition.clone().add(positionDifference);
 
     stackData.imageIds.forEach(function(imageId, index) {
-        var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+        var imagePlane = metaData.get('imagePlane', imageId);
         var imagePosition = imagePlane.imagePositionPatient;
         var distance = finalPosition.distanceToSquared(imagePosition);
 
@@ -41,9 +41,9 @@ export default function(synchronizer, sourceElement, targetElement, eventData, p
         return;
     }
 
-    var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
     if (startLoadingHandler) {
         startLoadingHandler(targetElement);

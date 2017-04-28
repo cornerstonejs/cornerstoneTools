@@ -1,101 +1,101 @@
-(function($, cornerstone, cornerstoneTools) {
+import orientation from '../orientation/index.js';
+import displayTool from './displayTool.js';
+import { metaData } from '../metaData.js';
 
-    'use strict';
+function getOrientationMarkers(element) {
+    var enabledElement = cornerstone.getEnabledElement(element);
+    var imagePlaneMetaData = metaData.get('imagePlane', enabledElement.image.imageId);
 
-    function getOrientationMarkers(element) {
-        var enabledElement = cornerstone.getEnabledElement(element);
-        var imagePlaneMetaData = cornerstoneTools.metaData.get('imagePlane', enabledElement.image.imageId);
-
-        if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
-            return;
-        }
-
-        var rowString = cornerstoneTools.orientation.getOrientationString(imagePlaneMetaData.rowCosines);
-        var columnString = cornerstoneTools.orientation.getOrientationString(imagePlaneMetaData.columnCosines);
-
-        var oppositeRowString = cornerstoneTools.orientation.invertOrientationString(rowString);
-        var oppositeColumnString = cornerstoneTools.orientation.invertOrientationString(columnString);
-
-        return {
-            top: oppositeColumnString,
-            bottom: columnString,
-            left: oppositeRowString,
-            right: rowString
-        };
+    if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
+        return;
     }
 
-    function getOrientationMarkerPositions(element) {
-        var enabledElement = cornerstone.getEnabledElement(element);
-        var coords;
+    var rowString = orientation.getOrientationString(imagePlaneMetaData.rowCosines);
+    var columnString = orientation.getOrientationString(imagePlaneMetaData.columnCosines);
 
-        coords = {
-            x: enabledElement.image.width / 2,
-            y: 5
-        };
-        var topCoords = cornerstone.pixelToCanvas(element, coords);
+    var oppositeRowString = orientation.invertOrientationString(rowString);
+    var oppositeColumnString = orientation.invertOrientationString(columnString);
 
-        coords = {
-            x: enabledElement.image.width / 2,
-            y: enabledElement.image.height - 5
-        };
-        var bottomCoords = cornerstone.pixelToCanvas(element, coords);
+    return {
+        top: oppositeColumnString,
+        bottom: columnString,
+        left: oppositeRowString,
+        right: rowString
+    };
+}
 
-        coords = {
-            x: 5,
-            y: enabledElement.image.height / 2
-        };
-        var leftCoords = cornerstone.pixelToCanvas(element, coords);
+function getOrientationMarkerPositions(element) {
+    var enabledElement = cornerstone.getEnabledElement(element);
+    var coords;
 
-        coords = {
-            x: enabledElement.image.width - 10,
-            y: enabledElement.image.height / 2
-        };
-        var rightCoords = cornerstone.pixelToCanvas(element, coords);
+    coords = {
+        x: enabledElement.image.width / 2,
+        y: 5
+    };
+    var topCoords = cornerstone.pixelToCanvas(element, coords);
 
-        return {
-            top: topCoords,
-            bottom: bottomCoords,
-            left: leftCoords,
-            right: rightCoords
-        };
+    coords = {
+        x: enabledElement.image.width / 2,
+        y: enabledElement.image.height - 5
+    };
+    var bottomCoords = cornerstone.pixelToCanvas(element, coords);
+
+    coords = {
+        x: 5,
+        y: enabledElement.image.height / 2
+    };
+    var leftCoords = cornerstone.pixelToCanvas(element, coords);
+
+    coords = {
+        x: enabledElement.image.width - 10,
+        y: enabledElement.image.height / 2
+    };
+    var rightCoords = cornerstone.pixelToCanvas(element, coords);
+
+    return {
+        top: topCoords,
+        bottom: bottomCoords,
+        left: leftCoords,
+        right: rightCoords
+    };
+}
+
+function onImageRendered(e) {
+    var eventData = e.detail;
+    var element = eventData.element;
+
+    var markers = getOrientationMarkers(element);
+
+    if (!markers) {
+        return;
     }
 
-    function onImageRendered(e) {
-        var eventData = e.detail;
-        var element = eventData.element;
+    var coords = getOrientationMarkerPositions(element, markers);
 
-        var markers = getOrientationMarkers(element);
+    var context = eventData.canvasContext.canvas.getContext('2d');
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
-        if (!markers) {
-            return;
-        }
+    var color = toolColors.getToolColor();
 
-        var coords = getOrientationMarkerPositions(element, markers);
+    var textWidths = {
+        top: context.measureText(markers.top).width,
+        left: context.measureText(markers.left).width,
+        right: context.measureText(markers.right).width,
+        bottom: context.measureText(markers.bottom).width
+    };
 
-        var context = eventData.canvasContext.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+    drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
+    drawTextBox(context, markers.left, coords.left.x - textWidths.left / 2, coords.left.y, color);
 
-        var color = cornerstoneTools.toolColors.getToolColor();
-
-        var textWidths = {
-            top: context.measureText(markers.top).width,
-            left: context.measureText(markers.left).width,
-            right: context.measureText(markers.right).width,
-            bottom: context.measureText(markers.bottom).width
-        };
-
-        cornerstoneTools.drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
-        cornerstoneTools.drawTextBox(context, markers.left, coords.left.x - textWidths.left / 2, coords.left.y, color);
-
-        var config = cornerstoneTools.orientationMarkers.getConfiguration();
-        if (config && config.drawAllMarkers) {
-            cornerstoneTools.drawTextBox(context, markers.right, coords.right.x - textWidths.right / 2, coords.right.y, color);
-            cornerstoneTools.drawTextBox(context, markers.bottom, coords.bottom.x - textWidths.bottom / 2, coords.bottom.y, color);
-        }
+    var config = orientationMarkers.getConfiguration();
+    if (config && config.drawAllMarkers) {
+        drawTextBox(context, markers.right, coords.right.x - textWidths.right / 2, coords.right.y, color);
+        drawTextBox(context, markers.bottom, coords.bottom.x - textWidths.bottom / 2, coords.bottom.y, color);
     }
-    ///////// END IMAGE RENDERING ///////
+}
+///////// END IMAGE RENDERING ///////
 
-    // module exports
-    cornerstoneTools.orientationMarkers = cornerstoneTools.displayTool(onImageRendered);
+// module exports
+const orientationMarkers = displayTool(onImageRendered);
 
-})($, cornerstone, cornerstoneTools);
+export default orientationMarkers;

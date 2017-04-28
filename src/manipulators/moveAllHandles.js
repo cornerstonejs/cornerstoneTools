@@ -46,8 +46,8 @@
 
         // If any handle is outside the image, delete the tool data
         if (options.deleteIfHandleOutsideImage === true &&
-            cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
-            cornerstoneTools.removeToolState(element, toolType, data);
+            anyHandlesOutsideImage(eventData, data.handles)) {
+            removeToolState(element, toolType, data);
         }
 
         cornerstone.updateImage(element);

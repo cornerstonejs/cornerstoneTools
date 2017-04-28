@@ -103,14 +103,14 @@ function playClip(element, framesPerSecond) {
         throw 'playClip: element must not be undefined';
     }
 
-    stackToolData = cornerstoneTools.getToolState(element, 'stack');
+    stackToolData = getToolState(element, 'stack');
     if (!stackToolData || !stackToolData.data || !stackToolData.data.length) {
         return;
     }
 
     stackData = stackToolData.data[0];
 
-    playClipToolData = cornerstoneTools.getToolState(element, toolType);
+    playClipToolData = getToolState(element, toolType);
     if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
         playClipData = {
             intervalId: undefined,
@@ -124,7 +124,7 @@ function playClip(element, framesPerSecond) {
             reverse: false,
             loop: true
         };
-        cornerstoneTools.addToolState(element, toolType, playClipData);
+        addToolState(element, toolType, playClipData);
     } else {
         playClipData = playClipToolData.data[0];
         // make sure the specified clip is not running before any property update
@@ -183,9 +183,9 @@ function playClip(element, framesPerSecond) {
 
         if (newImageIdIndex !== stackData.currentImageIdIndex) {
 
-            startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+            startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+            endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+            errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -238,7 +238,7 @@ function playClip(element, framesPerSecond) {
  */
 function stopClip(element) {
 
-    var playClipToolData = cornerstoneTools.getToolState(element, toolType);
+    var playClipToolData = getToolState(element, toolType);
 
     if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
         return;

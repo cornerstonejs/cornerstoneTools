@@ -5,7 +5,7 @@ function mouseUpCallback(e, eventData) {
 }
 
 function mouseDownCallback(e, eventData) {
-    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
 
         var mouseDragEventData = {
             deltaY: 0,
@@ -22,7 +22,7 @@ function mouseDownCallback(e, eventData) {
 function mouseDragCallback(e, eventData) {
     e.data.deltaY += eventData.deltaPoints.page.y;
 
-    var toolData = cornerstoneTools.getToolState(eventData.element, 'timeSeries');
+    var toolData = getToolState(eventData.element, 'timeSeries');
     if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
         return;
     }
@@ -37,7 +37,7 @@ function mouseDragCallback(e, eventData) {
     if (e.data.deltaY >= pixelsPerTimeSeries || e.data.deltaY <= -pixelsPerTimeSeries) {
         var timeSeriesDelta = Math.round(e.data.deltaY / pixelsPerTimeSeries);
         var timeSeriesDeltaMod = e.data.deltaY % pixelsPerTimeSeries;
-        cornerstoneTools.incrementTimePoint(eventData.element, timeSeriesDelta);
+        incrementTimePoint(eventData.element, timeSeriesDelta);
         e.data.deltaY = timeSeriesDeltaMod;
     }
 
@@ -46,7 +46,7 @@ function mouseDragCallback(e, eventData) {
 
 function mouseWheelCallback(e, eventData) {
     var images = -eventData.direction;
-    cornerstoneTools.incrementTimePoint(eventData.element, images);
+    incrementTimePoint(eventData.element, images);
 }
 
 function onDrag(e) {
@@ -56,7 +56,7 @@ function onDrag(e) {
     };
     eventData.deltaY += mouseMoveData.deltaPoints.page.y;
 
-    var toolData = cornerstoneTools.getToolState(mouseMoveData.element, 'stack');
+    var toolData = getToolState(mouseMoveData.element, 'stack');
     if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
         return;
     }
@@ -64,7 +64,7 @@ function onDrag(e) {
     if (eventData.deltaY >= 3 || eventData.deltaY <= -3) {
         var timeSeriesDelta = eventData.deltaY / 3;
         var timeSeriesDeltaMod = eventData.deltaY % 3;
-        cornerstoneTools.setTimePoint(eventData.element, timeSeriesDelta);
+        setTimePoint(eventData.element, timeSeriesDelta);
         eventData.deltaY = timeSeriesDeltaMod;
     }
 
@@ -72,9 +72,9 @@ function onDrag(e) {
 }
 
 // module/private exports
-const timeSeriesScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-const timeSeriesScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
-const timeSeriesScrollTouchDrag = cornerstoneTools.touchDragTool(onDrag);
+const timeSeriesScroll = simpleMouseButtonTool(mouseDownCallback);
+const timeSeriesScrollWheel = mouseWheelTool(mouseWheelCallback);
+const timeSeriesScrollTouchDrag = touchDragTool(onDrag);
 
 export {
   timeSeriesScroll,

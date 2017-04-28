@@ -3,11 +3,11 @@ function fitToWindowStrategy(eventData) {
 }
 
 function doubleTapCallback(e, eventData) {
-    cornerstoneTools.doubleTapZoom.strategy(eventData);
+    doubleTapZoom.strategy(eventData);
     return false; // false = causes jquery to preventDefault() and stopPropagation() this event
 }
 
-const doubleTapZoom = cornerstoneTools.doubleTapTool(doubleTapCallback);
+const doubleTapZoom = doubleTapTool(doubleTapCallback);
 doubleTapZoom.strategies = {
     default: fitToWindowStrategy
 };

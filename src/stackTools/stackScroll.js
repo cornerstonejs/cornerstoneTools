@@ -5,7 +5,7 @@ function mouseUpCallback(e, eventData) {
 }
 
 function mouseDownCallback(e, eventData) {
-    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
         var mouseDragEventData = {
             deltaY: 0
         };
@@ -19,20 +19,20 @@ function mouseDownCallback(e, eventData) {
 
 function mouseWheelCallback(e, eventData) {
     var images = -eventData.direction;
-    cornerstoneTools.scroll(eventData.element, images);
+    scroll(eventData.element, images);
 }
 
 function dragCallback(e, eventData) {
     var element = eventData.element;
 
-    var toolData = cornerstoneTools.getToolState(element, 'stack');
+    var toolData = getToolState(element, 'stack');
     if (!toolData || !toolData.data || !toolData.data.length) {
         return;
     }
 
     var stackData = toolData.data[0];
 
-    var config = cornerstoneTools.stackScroll.getConfiguration();
+    var config = stackScroll.getConfiguration();
 
     // The Math.max here makes it easier to mouseDrag-scroll small image stacks
     var pixelsPerImage = $(element).height() / Math.max(stackData.imageIds.length, 8);
@@ -47,25 +47,25 @@ function dragCallback(e, eventData) {
         var imageIdIndexOffset = Math.round(imageDelta);
         var imageDeltaMod = e.data.deltaY % pixelsPerImage;
         e.data.deltaY = imageDeltaMod;
-        cornerstoneTools.scroll(element, imageIdIndexOffset);
+        scroll(element, imageIdIndexOffset);
     }
 
     return false; // false = causes jquery to preventDefault() and stopPropagation() this event
 }
 
 // module/private exports
-const stackScroll = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
-const stackScrollWheel = cornerstoneTools.mouseWheelTool(mouseWheelCallback);
+const stackScroll = simpleMouseButtonTool(mouseDownCallback);
+const stackScrollWheel = mouseWheelTool(mouseWheelCallback);
 
 var options = {
     eventData: {
         deltaY: 0
     }
 };
-const stackScrollTouchDrag = cornerstoneTools.touchDragTool(dragCallback, options);
+const stackScrollTouchDrag = touchDragTool(dragCallback, options);
 
 function multiTouchDragCallback(e, eventData) {
-    var config = cornerstoneTools.stackScrollMultiTouch.getConfiguration();
+    var config = stackScrollMultiTouch.getConfiguration();
     if (config && config.testPointers(eventData)) {
         dragCallback(e, eventData);
     }
@@ -77,7 +77,7 @@ var configuration = {
     }
 };
 
-const stackScrollMultiTouch = cornerstoneTools.multiTouchDragTool(multiTouchDragCallback, options);
+const stackScrollMultiTouch = multiTouchDragTool(multiTouchDragCallback, options);
 stackScrollMultiTouch.setConfiguration(configuration);
 
 export {

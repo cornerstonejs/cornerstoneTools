@@ -8,17 +8,17 @@ export default function (synchronizer, sourceElement, targetElement) {
     }
 
     var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-    var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImage.imageId);
+    var sourceImagePlane = metaData.get('imagePlane', sourceImage.imageId);
     var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
-    var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+    var stackToolDataSource = getToolState(targetElement, 'stack');
     var stackData = stackToolDataSource.data[0];
 
     var minDistance = Number.MAX_VALUE;
     var newImageIdIndex = -1;
 
     $.each(stackData.imageIds, function(index, imageId) {
-        var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+        var imagePlane = metaData.get('imagePlane', imageId);
         var imagePosition = imagePlane.imagePositionPatient;
         var distance = imagePosition.distanceToSquared(sourceImagePosition);
         //console.log(index + '=' + distance);
@@ -32,9 +32,9 @@ export default function (synchronizer, sourceElement, targetElement) {
         return;
     }
 
-    var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
     if (startLoadingHandler) {
         startLoadingHandler(targetElement);

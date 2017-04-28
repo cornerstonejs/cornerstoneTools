@@ -15,7 +15,7 @@ module.exports = {
   },
   'rules': {
     'accessor-pairs': 'warn',
-    'array-bracket-spacing': 'warn',
+    //'array-bracket-spacing': 'warn',
     'array-callback-return': 'warn',
     'arrow-body-style': 'warn',
     'arrow-parens': 'warn',
@@ -27,7 +27,7 @@ module.exports = {
     //'camelcase': 'warn',
     //'capitalized-comments': 'warn',
     'class-methods-use-this': 'warn',
-    'comma-dangle': 'warn',
+    //'comma-dangle': 'warn',
     'comma-spacing': [
       'warn',
       {
@@ -36,7 +36,7 @@ module.exports = {
       }
     ],
     'comma-style': 'warn',
-    'complexity': 'warn',
+    //'complexity': 'warn',
     'computed-property-spacing': 'warn',
     //'consistent-return': 'warn',
     'consistent-this': 'warn',
@@ -44,14 +44,14 @@ module.exports = {
     //'default-case': 'warn',
     'dot-location': 'warn',
     'dot-notation': 'warn',
-    'eol-last': 'warn',
+    //'eol-last': 'warn',
     'eqeqeq': 'warn',
     'func-call-spacing': 'warn',
     'func-name-matching': 'warn',
-    'func-names': [
+    /*'func-names': [
       'warn',
       'never'
-    ],
+    ],*/
     //'func-style': 'warn',
     'generator-star-spacing': 'warn',
     'global-require': 'warn',
@@ -64,13 +64,13 @@ module.exports = {
     //'init-declarations': 'warn',
     'jsx-quotes': 'warn',
     'key-spacing': 'warn',
-    'keyword-spacing': [
+    /*'keyword-spacing': [
       'warn',
       {
         'after': true,
         'before': true
       }
-    ],
+    ],*/
     //'line-comment-position': 'warn',
     'linebreak-style': [
       'warn',
@@ -78,7 +78,7 @@ module.exports = {
     ],
     'lines-around-comment': 'warn',
     'lines-around-directive': 'warn',
-    'max-depth': 'warn',
+    //'max-depth': 'warn',
     /*'max-len': ['warn', {
         'code': 100,
         'tabWidth': 2,
@@ -98,11 +98,11 @@ module.exports = {
     //'new-cap': 'warn',
     'new-parens': 'warn',
     //'newline-after-var': 'warn',
-    'newline-before-return': 'warn',
-    'newline-per-chained-call': 'warn',
-    'no-alert': 'warn',
+    //'newline-before-return': 'warn',
+    //'newline-per-chained-call': 'warn',
+    //'no-alert': 'warn',
     'no-array-constructor': 'warn',
-    'no-bitwise': 'warn',
+    //'no-bitwise': 'warn',
     'no-caller': 'warn',
     'no-catch-shadow': 'warn',
     'no-confusing-arrow': 'warn',
@@ -110,7 +110,7 @@ module.exports = {
     //'no-continue': 'warn',
     'no-div-regex': 'warn',
     'no-duplicate-imports': 'warn',
-    'no-else-return': 'warn',
+    //'no-else-return': 'warn',
     'no-empty-function': 'off',
     'no-eq-null': 'warn',
     'no-eval': 'warn',
@@ -119,7 +119,7 @@ module.exports = {
     'no-extra-label': 'warn',
     'no-extra-parens': 'off',
     'no-floating-decimal': 'warn',
-    'no-implicit-coercion': 'warn',
+    //'no-implicit-coercion': 'warn',
     'no-implicit-globals': 'warn',
     'no-implied-eval': 'warn',
     //'no-inline-comments': 'warn',
@@ -137,7 +137,7 @@ module.exports = {
     'no-multi-str': 'warn',
     'no-multiple-empty-lines': 'warn',
     'no-native-reassign': 'warn',
-    'no-negated-condition': 'warn',
+    //'no-negated-condition': 'warn',
     'no-negated-in-lhs': 'warn',
     'no-nested-ternary': 'warn',
     //'no-new': 'warn',
@@ -172,9 +172,9 @@ module.exports = {
     'no-ternary': 'off',
     //'no-throw-literal': 'warn',
     'no-trailing-spaces': 'warn',
-    'no-undef': 'error',
+    //'no-undef': 'error',
     'no-undef-init': 'warn',
-    'no-undefined': 'off',
+    //'no-undefined': 'off',
     'no-unused-vars': 'warn',
     'no-underscore-dangle': 'warn',
     'no-unmodified-loop-condition': 'warn',
@@ -190,7 +190,7 @@ module.exports = {
     'no-useless-return': 'off',
     //'no-var': 'warn',
     'no-void': 'warn',
-    'no-warning-comments': 'warn',
+    //'no-warning-comments': 'warn',
     'no-whitespace-before-property': 'warn',
     'no-with': 'warn',
     'object-curly-spacing': [
@@ -198,10 +198,10 @@ module.exports = {
       'always'
     ],
     'object-property-newline': 'warn',
-    'object-shorthand': 'warn',
+    //'object-shorthand': 'warn',
     'one-var': 'off',
     'one-var-declaration-per-line': 'warn',
-    'operator-assignment': 'warn',
+    //'operator-assignment': 'warn',
     'operator-linebreak': 'warn',
     'padded-blocks': 'off',
     'prefer-arrow-callback': 'off',
@@ -210,7 +210,7 @@ module.exports = {
     //'prefer-reflect': 'warn',
     //'prefer-rest-params': 'warn',
     'prefer-spread': 'warn',
-    'prefer-template': 'warn',
+    //'prefer-template': 'warn',
     'quote-props': ['warn', 'as-needed'],
     'quotes': [
       'warn',
@@ -220,20 +220,20 @@ module.exports = {
     'require-await': 'warn',
     //'require-jsdoc': 'warn',
     'rest-spread-spacing': 'warn',
-    'semi': 'warn',
+    //'semi': 'warn',
     'semi-spacing': 'warn',
     'sort-imports': 'off',
     'sort-keys': 'off',
     'sort-vars': 'off',
-    'space-before-blocks': 'warn',
+    //'space-before-blocks': 'warn',
     //'space-before-function-paren': 'warn',
-    'space-in-parens': [
+    /*'space-in-parens': [
       'warn',
       'never'
-    ],
+    ],*/
     'space-infix-ops': 'warn',
     'space-unary-ops': 'warn',
-    'spaced-comment': 'warn',
+    //'spaced-comment': 'warn',
     'strict': 'warn',
     'symbol-description': 'warn',
     'template-curly-spacing': 'warn',

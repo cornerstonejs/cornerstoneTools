@@ -3,7 +3,7 @@ function getElementToolStateManager(element) {
     // if the enabledImage has no toolStateManager, create a default one for it
     // NOTE: This makes state management element specific
     if (enabledImage.toolStateManager === undefined) {
-        enabledImage.toolStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
+        enabledImage.toolStateManager = globalImageIdSpecificToolStateManager;
     }
 
     return enabledImage.toolStateManager;

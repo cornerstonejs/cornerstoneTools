@@ -4,9 +4,9 @@ export default function(context, textLines, x, y, color, options) {
     }
 
     var padding = 5,
-        font = cornerstoneTools.textStyle.getFont(),
-        fontSize = cornerstoneTools.textStyle.getFontSize(),
-        backgroundColor = cornerstoneTools.textStyle.getBackgroundColor();
+        font = textStyle.getFont(),
+        fontSize = textStyle.getFontSize(),
+        backgroundColor = textStyle.getBackgroundColor();
 
     context.save();
     context.font = font;

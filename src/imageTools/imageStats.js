@@ -12,13 +12,13 @@ function onImageRendered(e) {
         textLines.push(text);
     });
 
-    cornerstoneTools.drawTextBox(context, textLines, 0, 0, 'orange');
+    drawTextBox(context, textLines, 0, 0, 'orange');
 
     textLines.forEach(function(text) {
         console.log(text);
     });
 }
 
-const imageStats = cornerstoneTools.displayTool(onImageRendered);
+const imageStats = displayTool(onImageRendered);
 
 export default imageStats;

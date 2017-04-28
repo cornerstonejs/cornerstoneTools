@@ -61,7 +61,7 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (toolData === undefined) {
         return;
     }
@@ -72,9 +72,9 @@ function onImageRendered(e) {
 
     //activation color
     var color;
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-    var font = cornerstoneTools.textStyle.getFont();
-    var config = cornerstoneTools.angle.getConfiguration();
+    var lineWidth = toolStyle.getToolWidth();
+    var font = textStyle.getFont();
+    var config = angle.getConfiguration();
 
     for (var i = 0; i < toolData.data.length; i++) {
         context.save();
@@ -90,9 +90,9 @@ function onImageRendered(e) {
 
         //differentiate the color of activation tool
         if (data.active) {
-            color = cornerstoneTools.toolColors.getActiveColor();
+            color = toolColors.getActiveColor();
         } else {
-            color = cornerstoneTools.toolColors.getToolColor();
+            color = toolColors.getToolColor();
         }
 
         // draw the line
@@ -114,7 +114,7 @@ function onImageRendered(e) {
         context.stroke();
 
         // draw the handles
-        cornerstoneTools.drawHandles(context, eventData, data.handles);
+        drawHandles(context, eventData, data.handles);
 
         // Draw the text
         context.fillStyle = color;
@@ -129,7 +129,7 @@ function onImageRendered(e) {
         var angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
         angle = angle * (180 / Math.PI);
 
-        var rAngle = cornerstoneTools.roundToDecimal(angle, 2);
+        var rAngle = roundToDecimal(angle, 2);
         var str = '00B0'; // degrees symbol
         var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
@@ -137,21 +137,21 @@ function onImageRendered(e) {
         var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
         context.font = font;
-        cornerstoneTools.drawTextBox(context, text, textX, textY, color);
+        drawTextBox(context, text, textX, textY, color);
         context.restore();
     }
 }
 ///////// END IMAGE RENDERING ///////
 
 // module exports
-const angle = cornerstoneTools.mouseButtonTool({
+const angle = mouseButtonTool({
     createNewMeasurement: createNewMeasurement,
     onImageRendered: onImageRendered,
     pointNearTool: pointNearTool,
     toolType: toolType
 });
 
-const angleTouch = cornerstoneTools.touchTool({
+const angleTouch = touchTool({
     createNewMeasurement: createNewMeasurement,
     onImageRendered: onImageRendered,
     pointNearTool: pointNearTool,

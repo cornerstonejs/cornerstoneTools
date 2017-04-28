@@ -18,7 +18,7 @@ export default function(element, handles, canvasPoint, distanceThreshold) {
     }
 
     var activeHandle = getActiveHandle(handles);
-    var nearbyHandle = cornerstoneTools.getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
+    var nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
     if (activeHandle !== nearbyHandle) {
         if (nearbyHandle !== undefined) {
             nearbyHandle.active = true;

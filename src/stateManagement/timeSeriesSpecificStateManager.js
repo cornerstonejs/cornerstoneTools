@@ -57,14 +57,14 @@ var timeSeriesStateManagers = [];
 
 function addTimeSeriesStateManager(element, tools) {
     tools = tools || [ 'timeSeries' ];
-    var oldStateManager = cornerstoneTools.getElementToolStateManager(element);
+    var oldStateManager = getElementToolStateManager(element);
     if (oldStateManager === undefined) {
-        oldStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
+        oldStateManager = globalImageIdSpecificToolStateManager;
     }
 
-    var timeSeriesSpecificStateManager = cornerstoneTools.newTimeSeriesSpecificToolStateManager(tools, oldStateManager);
+    var timeSeriesSpecificStateManager = newTimeSeriesSpecificToolStateManager(tools, oldStateManager);
     timeSeriesStateManagers.push(timeSeriesSpecificStateManager);
-    cornerstoneTools.setElementToolStateManager(element, timeSeriesSpecificStateManager);
+    setElementToolStateManager(element, timeSeriesSpecificStateManager);
 }
 
 export {

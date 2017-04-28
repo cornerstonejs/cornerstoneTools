@@ -38,10 +38,3 @@ export default function() {
 
     return textStyle;
 }
-
-    textStyle
-
-    // module/private exports
-    cornerstoneTools.textStyle = textStyleManager();
-
-})(cornerstoneTools);

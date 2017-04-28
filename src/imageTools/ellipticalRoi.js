@@ -54,8 +54,8 @@ function pointNearEllipse(element, data, coords, distance) {
         height: Math.abs(startCanvas.y - endCanvas.y) + distance
     };
 
-    var pointInMinorEllipse = cornerstoneTools.pointInEllipse(minorEllipse, coords);
-    var pointInMajorEllipse = cornerstoneTools.pointInEllipse(majorEllipse, coords);
+    var pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
+    var pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
 
     if (pointInMajorEllipse && !pointInMinorEllipse) {
         return true;
@@ -83,15 +83,15 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (!toolData) {
         return;
     }
 
     var image = eventData.image;
     var element = eventData.element;
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-    var config = cornerstoneTools.ellipticalRoi.getConfiguration();
+    var lineWidth = toolStyle.getToolWidth();
+    var config = ellipticalRoi.getConfiguration();
     var context = eventData.canvasContext.canvas.getContext('2d');
     var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
     var modality;
@@ -115,7 +115,7 @@ function onImageRendered(e) {
         }
 
         // Check which color the rendered tool should be
-        var color = cornerstoneTools.toolColors.getColorIfActive(data.active);
+        var color = toolColors.getColorIfActive(data.active);
 
         // Convert Image coordinates to Canvas coordinates given the element
         var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
@@ -132,7 +132,7 @@ function onImageRendered(e) {
         context.beginPath();
         context.strokeStyle = color;
         context.lineWidth = lineWidth;
-        cornerstoneTools.drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
+        drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
         context.closePath();
 
         // If the tool configuration specifies to only draw the handles on hover / active,
@@ -140,18 +140,18 @@ function onImageRendered(e) {
         if (config && config.drawHandlesOnHover) {
             // Draw the handles if the tool is active
             if (data.active === true) {
-                cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+                drawHandles(context, eventData, data.handles, color);
             } else {
                 // If the tool is inactive, draw the handles only if each specific handle is being
                 // hovered over
                 var handleOptions = {
                     drawHandlesIfActive: true
                 };
-                cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
+                drawHandles(context, eventData, data.handles, color, handleOptions);
             }
         } else {
             // If the tool has no configuration settings, always draw the handles
-            cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+            drawHandles(context, eventData, data.handles, color);
         }
 
         // Define variables for the area and mean/standard deviation
@@ -185,7 +185,7 @@ function onImageRendered(e) {
                 var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
                 // Calculate the mean & standard deviation from the pixels and the ellipse details
-                meanStdDev = cornerstoneTools.calculateEllipseStatistics(pixels, ellipse);
+                meanStdDev = calculateEllipseStatistics(pixels, ellipse);
 
                 if (modality === 'PT') {
                     // If the image is from a PET scan, use the DICOM tags to
@@ -196,8 +196,8 @@ function onImageRendered(e) {
                     // returning the values to storedPixel values before calcuating SUV with them.
                     // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
                     meanStdDevSUV = {
-                        mean: cornerstoneTools.calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-                        stdDev: cornerstoneTools.calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+                        mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
+                        stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
                     };
                 }
 
@@ -291,7 +291,7 @@ function onImageRendered(e) {
         };
 
         // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
-        var boundingBox = cornerstoneTools.drawTextBox(context, textLines, textCoords.x,
+        var boundingBox = drawTextBox(context, textLines, textCoords.x,
             textCoords.y, color, options);
 
         // Store the bounding box data in the handle for mouse-dragging and highlighting
@@ -375,14 +375,14 @@ function onImageRendered(e) {
 ///////// END IMAGE RENDERING ///////
 
 // module exports
-const ellipticalRoi = cornerstoneTools.mouseButtonTool({
+const ellipticalRoi = mouseButtonTool({
     createNewMeasurement,
     onImageRendered,
     pointNearTool,
     toolType
 });
 
-const ellipticalRoiTouch = cornerstoneTools.touchTool({
+const ellipticalRoiTouch = touchTool({
     createNewMeasurement,
     onImageRendered,
     pointNearTool: pointNearToolTouch,

@@ -1,10 +1,13 @@
- var toolType = 'referenceLines';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import renderActiveReferenceLine from './renderActiveReferenceLine.js';
+
+var toolType = 'referenceLines';
 
 function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (toolData === undefined) {
         return;
     }
@@ -35,9 +38,9 @@ function onImageRendered(e) {
 // enables the reference line tool for a given element.  Note that a custom renderer
 // can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
 function enable(element, synchronizationContext, renderer) {
-    renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
+    renderer = renderer || renderActiveReferenceLine;
 
-    cornerstoneTools.addToolState(element, toolType, {
+    addToolState(element, toolType, {
         synchronizationContext: synchronizationContext,
         renderer: renderer
     });
@@ -52,7 +55,9 @@ function disable(element) {
 }
 
 // module/private exports
-export default tool = {
+const tool = {
     enable,
     disable
 };
+
+export default tool;

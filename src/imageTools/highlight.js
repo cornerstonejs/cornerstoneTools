@@ -3,7 +3,7 @@ var toolType = 'highlight';
 ///////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement(mouseEventData) {
     //if already a highlight measurement, creating a new one will be useless
-    var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
+    var existingToolData = getToolState(mouseEventData.event.currentTarget, toolType);
     if (existingToolData && existingToolData.data && existingToolData.data.length > 0) {
         return;
     }
@@ -72,7 +72,7 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (toolData === undefined) {
         return;
     }
@@ -82,7 +82,7 @@ function onImageRendered(e) {
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     var color;
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+    var lineWidth = toolStyle.getToolWidth();
 
     context.save();
 
@@ -93,9 +93,9 @@ function onImageRendered(e) {
     }
 
     if (data.active) {
-        color = cornerstoneTools.toolColors.getActiveColor();
+        color = toolColors.getActiveColor();
     } else {
-        color = cornerstoneTools.toolColors.getToolColor();
+        color = toolColors.getToolColor();
     }
 
     var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
@@ -131,7 +131,7 @@ function onImageRendered(e) {
     context.setLineDash([]);
 
     // draw the handles last, so they will be on top of the overlay
-    cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+    drawHandles(context, eventData, data.handles, color);
     context.restore();
 }
 ///////// END IMAGE RENDERING ///////
@@ -139,7 +139,7 @@ function onImageRendered(e) {
 // module exports
 var preventHandleOutsideImage = true;
 
-const highlight = cornerstoneTools.mouseButtonRectangleTool({
+const highlight = mouseButtonRectangleTool({
     createNewMeasurement: createNewMeasurement,
     onImageRendered: onImageRendered,
     pointNearTool: pointNearTool,
@@ -147,7 +147,7 @@ const highlight = cornerstoneTools.mouseButtonRectangleTool({
     toolType: toolType
 }, preventHandleOutsideImage);
 
-const highlightTouch = cornerstoneTools.touchTool({
+const highlightTouch = touchTool({
     createNewMeasurement: createNewMeasurement,
     onImageRendered: onImageRendered,
     pointNearTool: pointNearTool,

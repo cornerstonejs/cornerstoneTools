@@ -24,7 +24,7 @@ function mouseDoubleClick(e) {
     };
     startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-    var lastPoints = cornerstoneTools.copyPoints(startPoints);
+    var lastPoints = copyPoints(startPoints);
     var eventData = {
         event: e,
         which: e.which,
@@ -64,7 +64,7 @@ function mouseDown(e) {
     };
     startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-    var lastPoints = cornerstoneTools.copyPoints(startPoints);
+    var lastPoints = copyPoints(startPoints);
     var eventData = {
         event: e,
         which: e.which,
@@ -87,7 +87,7 @@ function mouseDown(e) {
     if (event.isImmediatePropagationStopped() === false) {
         // no tools responded to this event, give the active tool a chance
         if (activateMouseDown(eventData) === true) {
-            return cornerstoneTools.pauseEvent(e);
+            return pauseEvent(e);
         }
     }
 
@@ -129,10 +129,10 @@ function mouseDown(e) {
         $(eventData.element).trigger(eventType, eventData);
 
         // update the last points
-        lastPoints = cornerstoneTools.copyPoints(currentPoints);
+        lastPoints = copyPoints(currentPoints);
 
         // prevent left click selection of DOM elements
-        return cornerstoneTools.pauseEvent(e);
+        return pauseEvent(e);
     }
 
     // hook mouseup so we can unbind our event listeners
@@ -192,7 +192,7 @@ function mouseDown(e) {
     $(document).on('mousemove', onMouseMove);
     $(document).on('mouseup', onMouseUp);
 
-    return cornerstoneTools.pauseEvent(e);
+    return pauseEvent(e);
 }
 
 function mouseMove(e) {
@@ -209,7 +209,7 @@ function mouseMove(e) {
     };
     startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
 
-    var lastPoints = cornerstoneTools.copyPoints(startPoints);
+    var lastPoints = copyPoints(startPoints);
 
     var whichMouseButton = e.which;
 
@@ -246,7 +246,7 @@ function mouseMove(e) {
     $(element).trigger(eventType, eventData);
 
     // update the last points
-    lastPoints = cornerstoneTools.copyPoints(currentPoints);
+    lastPoints = copyPoints(currentPoints);
 }
 
 function disable(element) {

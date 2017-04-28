@@ -13,7 +13,7 @@
                 y: y
             };
 
-            if (cornerstoneTools.pointInEllipse(ellipse, point)) {
+            if (pointInEllipse(ellipse, point)) {
                 sum += sp[index];
                 sumSquared += sp[index] * sp[index];
                 count++;

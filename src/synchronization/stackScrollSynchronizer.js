@@ -12,7 +12,7 @@ export default function(synchronizer, sourceElement, targetElement, eventData) {
     }
 
     // Get the stack of the target viewport
-    var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+    var stackToolDataSource = getToolState(targetElement, 'stack');
     var stackData = stackToolDataSource.data[0];
 
     // Get the new index for the stack
@@ -26,9 +26,9 @@ export default function(synchronizer, sourceElement, targetElement, eventData) {
         return;
     }
 
-    var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
     if (startLoadingHandler) {
         startLoadingHandler(targetElement);

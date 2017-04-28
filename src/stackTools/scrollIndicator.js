@@ -23,7 +23,7 @@ function onImageRendered(e) {
     context.setTransform(1, 0, 0, 1, 0, 0);
     context.save();
 
-    var config = cornerstoneTools.scrollIndicator.getConfiguration();
+    var config = scrollIndicator.getConfiguration();
 
     // draw indicator background
     context.fillStyle = config.backgroundColor;
@@ -34,7 +34,7 @@ function onImageRendered(e) {
     }
 
     // get current image index
-    var stackData = cornerstoneTools.getToolState(element, 'stack');
+    var stackData = getToolState(element, 'stack');
     if (!stackData || !stackData.data || !stackData.data.length) {
         return;
     }
@@ -58,7 +58,7 @@ function onImageRendered(e) {
     context.restore();
 }
 
-const scrollIndicator = cornerstoneTools.displayTool(onImageRendered);
-cornerstoneTools.scrollIndicator.setConfiguration(configuration);
+const scrollIndicator = displayTool(onImageRendered);
+scrollIndicator.setConfiguration(configuration);
 
 export default scrollIndicator;

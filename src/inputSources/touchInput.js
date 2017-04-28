@@ -188,7 +188,7 @@ function onTouch(e) {
                 }
 
                 //console.log(eventType);
-                lastPoints = cornerstoneTools.copyPoints(startPoints);
+                lastPoints = copyPoints(startPoints);
             }, 50);
 
             isPress = true;
@@ -327,7 +327,7 @@ function onTouch(e) {
             event = $.Event(eventType, eventData);
             $(element).trigger(event, eventData);
 
-            lastPoints = cornerstoneTools.copyPoints(currentPoints);
+            lastPoints = copyPoints(currentPoints);
             break;
 
         case 'panstart':
@@ -345,7 +345,7 @@ function onTouch(e) {
                 }
             };
             currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
-            lastPoints = cornerstoneTools.copyPoints(currentPoints);
+            lastPoints = copyPoints(currentPoints);
             break;
 
         case 'panend':
@@ -399,7 +399,7 @@ function onTouch(e) {
                 preventNextPinch = true;
             }
 
-            return cornerstoneTools.pauseEvent(e);
+            return pauseEvent(e);
 
         case 'rotatemove':
             isPress = false;
@@ -468,14 +468,14 @@ function enable(element) {
     mc.add([ doubleTap, pan, rotate, pinch ]);
     mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
 
-    cornerstoneTools.preventGhostClick.enable(element);
+    preventGhostClick.enable(element);
     $(element).on('touchstart touchend', onTouch);
     $(element).data('hammer', mc);
     //console.log('touchInput enabled');
 }
 
 function disable(element) {
-    cornerstoneTools.preventGhostClick.disable(element);
+    preventGhostClick.disable(element);
     $(element).off('touchstart touchend', onTouch);
     var mc = $(element).data('hammer');
     if (mc) {

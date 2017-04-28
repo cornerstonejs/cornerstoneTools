@@ -7,9 +7,9 @@ export default function(synchronizer, sourceElement, targetElement) {
         return;
     }
 
-    var sourceStackToolDataSource = cornerstoneTools.getToolState(sourceElement, 'stack');
+    var sourceStackToolDataSource = getToolState(sourceElement, 'stack');
     var sourceStackData = sourceStackToolDataSource.data[0];
-    var targetStackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+    var targetStackToolDataSource = getToolState(targetElement, 'stack');
     var targetStackData = targetStackToolDataSource.data[0];
 
     var newImageIdIndex = sourceStackData.currentImageIdIndex;
@@ -22,9 +22,9 @@ export default function(synchronizer, sourceElement, targetElement) {
         return;
     }
 
-    var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
     if (startLoadingHandler) {
         startLoadingHandler(targetElement);

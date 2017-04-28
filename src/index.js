@@ -1,6 +1,6 @@
 // import cornerstone from 'cornerstone';
 
-export const metaData = cornerstone.metaData;
+export { metaData } from './metaData.js';
 
 export { referenceLines } from './referenceLines/index.js';
 export { orientation } from './orientation/index.js';
@@ -122,3 +122,31 @@ export { highlight, highlightTouch } from './imageTools/highlight.js';
 export { imageStats } from './imageTools/imageStats.js';
 export { keyboardTool } from './imageTools/imageStats.js';
 export { length, lengthTouch } from './imageTools/length.js';
+export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
+export { mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool.js';
+export { mouseButtonTool } from './imageTools/mouseButtonTool.js';
+export { mouseWheelTool } from './imageTools/mouseWheelTool.js';
+export { multiTouchDragTool } from './imageTools/multiTouchDragTool.js';
+export { orientationMarkers } from './imageTools/orientationMarkers.js';
+
+export { pan, panTouchDrag } from './imageTools/pan.js';
+export { panMultiTouch } from './imageTools/panMultiTouch.js';
+export { probe, probeTouch } from './imageTools/probe.js';
+export { rectangleRoi, rectangleRoiTouch } from './imageTools/rectangleRoi.js';
+export { rotate, rotateTouchDrag } from './imageTools/rotate.js';
+export { rotateTouch } from './imageTools/rotateTouch.js';
+export { saveAs } from './imageTools/saveAs.js';
+export { seedAnnotate, seedAnnotateTouch } from './imageTools/seedAnnotate.js';
+export { simpleAngle, simpleAngleTouch } from './imageTools/simpleAngle.js';
+export { simpleMouseButtonTool } from './imageTools/simpleMouseButtonTool.js';
+export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
+
+export { touchDragTool } from './imageTools/touchDragTool.js';
+export { touchPinchTool } from './imageTools/touchPinchTool.js';
+export { touchTool } from './imageTools/touchTool.js';
+export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
+export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
+export { zoom,
+         zoomWheel,
+         zoomTouchPinch,
+         zoomTouchDrag } from './imageTools/zoom.js';

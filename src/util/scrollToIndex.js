@@ -1,5 +1,5 @@
 export default function (element, newImageIdIndex) {
-    var toolData = cornerstoneTools.getToolState(element, 'stack');
+    var toolData = getToolState(element, 'stack');
     if (!toolData || !toolData.data || !toolData.data.length) {
         return;
     }
@@ -11,9 +11,9 @@ export default function (element, newImageIdIndex) {
         newImageIdIndex += stackData.imageIds.length;
     }
 
-    var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
     var viewport = cornerstone.getViewport(element);
 
     function doneCallback(image) {
@@ -61,7 +61,7 @@ export default function (element, newImageIdIndex) {
 
     // Retry image loading in cases where previous image promise
     // was rejected, if the option is set
-    var config = cornerstoneTools.stackScroll.getConfiguration();
+    var config = stackScroll.getConfiguration();
     if (config && config.retryLoadOnScroll === true) {
         var newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
         if (newImagePromise && newImagePromise.state() === 'rejected') {
@@ -81,7 +81,7 @@ export default function (element, newImageIdIndex) {
 
     imagePromise.then(doneCallback, failCallback);
     // Make sure we kick off any changed download request pools
-    cornerstoneTools.requestPoolManager.startGrabbing();
+    requestPoolManager.startGrabbing();
 
     $(element).trigger('CornerstoneStackScroll', eventData);
 }

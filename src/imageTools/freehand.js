@@ -16,12 +16,12 @@ var configuration = {
 
 ///////// BEGIN ACTIVE TOOL ///////
 function addPoint(eventData) {
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (toolData === undefined) {
         return;
     }
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
 
     // Get the toolData from the last-drawn drawing
     // (this should change when modification is added)
@@ -55,7 +55,7 @@ function addPoint(eventData) {
 }
 
 function pointNearHandle(eventData, toolIndex) {
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (toolData === undefined) {
         return;
     }
@@ -77,7 +77,7 @@ function pointNearHandle(eventData, toolIndex) {
 }
 
 function pointNearHandleAllTools(eventData) {
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (!toolData) {
         return;
     }
@@ -105,12 +105,12 @@ function mouseUpCallback(e, eventData) {
     $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
 
     // Check if drawing is finished
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (toolData === undefined) {
         return;
     }
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
 
     if (!eventData.event.shiftKey) {
         config.freehand = false;
@@ -120,12 +120,12 @@ function mouseUpCallback(e, eventData) {
 }
 
 function mouseMoveCallback(e, eventData) {
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (!toolData) {
         return;
     }
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
 
     var data = toolData.data[config.currentTool];
 
@@ -182,23 +182,23 @@ function startDrawing(eventData) {
         handles: []
     };
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
     config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
     config.mouseLocation.handles.start.y = eventData.currentPoints.image.y;
 
-    cornerstoneTools.addToolState(eventData.element, toolType, measurementData);
+    addToolState(eventData.element, toolType, measurementData);
 
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     config.currentTool = toolData.data.length - 1;
 }
 
 function endDrawing(eventData, handleNearby) {
-    var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    var toolData = getToolState(eventData.element, toolType);
     if (!toolData) {
         return;
     }
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
 
     var data = toolData.data[config.currentTool];
 
@@ -228,12 +228,12 @@ function endDrawing(eventData, handleNearby) {
 }
 
 function mouseDownCallback(e, eventData) {
-    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-        var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
+    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        var toolData = getToolState(eventData.element, toolType);
 
         var handleNearby, toolIndex;
 
-        var config = cornerstoneTools.freehand.getConfiguration();
+        var config = freehand.getConfiguration();
         var currentTool = config.currentTool;
 
         if (config.modifying) {
@@ -280,20 +280,20 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (toolData === undefined) {
         return;
     }
 
-    var config = cornerstoneTools.freehand.getConfiguration();
+    var config = freehand.getConfiguration();
 
     // we have tool data for this element - iterate over each one and draw it
     var context = eventData.canvasContext.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     var color;
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-    var fillColor = cornerstoneTools.toolColors.getFillColor();
+    var lineWidth = toolStyle.getToolWidth();
+    var fillColor = toolColors.getFillColor();
 
     for (var i = 0; i < toolData.data.length; i++) {
         context.save();
@@ -301,11 +301,11 @@ function onImageRendered(e) {
         var data = toolData.data[i];
 
         if (data.active) {
-            color = cornerstoneTools.toolColors.getActiveColor();
-            fillColor = cornerstoneTools.toolColors.getFillColor();
+            color = toolColors.getActiveColor();
+            fillColor = toolColors.getFillColor();
         } else {
-            color = cornerstoneTools.toolColors.getToolColor();
-            fillColor = cornerstoneTools.toolColors.getToolColor();
+            color = toolColors.getToolColor();
+            fillColor = toolColors.getToolColor();
         }
 
         var handleStart;
@@ -345,10 +345,10 @@ function onImageRendered(e) {
         };
 
         if (data.active){
-            cornerstoneTools.drawHandles(context, eventData, config.mouseLocation.handles, color, options);
+            drawHandles(context, eventData, config.mouseLocation.handles, color, options);
         }
         // draw the handles
-        cornerstoneTools.drawHandles(context, eventData, data.handles, color, options);
+        drawHandles(context, eventData, data.handles, color, options);
 
         context.restore();
     }

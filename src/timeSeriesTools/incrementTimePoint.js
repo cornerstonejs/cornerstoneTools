@@ -3,7 +3,7 @@
     'use strict';
 
     function incrementTimePoint(element, timePoints, wrap) {
-        var toolData = cornerstoneTools.getToolState(element, 'timeSeries');
+        var toolData = getToolState(element, 'timeSeries');
         if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
             return;
         }
@@ -31,9 +31,9 @@
             var viewport = cornerstone.getViewport(element);
             var newStack = timeSeriesData.stacks[newStackIndex];
 
-            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+            var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+            var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(element);
@@ -65,6 +65,6 @@
     }
 
     // module/private exports
-    cornerstoneTools.incrementTimePoint = incrementTimePoint;
+    incrementTimePoint = incrementTimePoint;
 
 })($, cornerstone, cornerstoneTools);

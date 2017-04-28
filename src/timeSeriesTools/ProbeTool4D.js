@@ -22,7 +22,7 @@ function updateLineSample(measurementData) {
 
 ///////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement(mouseEventData) {
-    var timeSeriestoolData = cornerstoneTools.getToolState(mouseEventData.element, 'timeSeries');
+    var timeSeriestoolData = getToolState(mouseEventData.element, 'timeSeries');
     if (timeSeriestoolData === undefined || timeSeriestoolData.data === undefined || timeSeriestoolData.data.length === 0) {
         return;
     }
@@ -32,7 +32,7 @@ function createNewMeasurement(mouseEventData) {
     // create the measurement data for this tool with the end handle activated
     var measurementData = {
         timeSeries: timeSeries,
-        lineSample: new cornerstoneTools.LineSampleMeasurement(),
+        lineSample: new LineSampleMeasurement(),
         imageIdIndex: timeSeries.stacks[timeSeries.currentStackIndex].currentImageIdIndex,
         visible: true,
         handles: {
@@ -45,7 +45,7 @@ function createNewMeasurement(mouseEventData) {
         }
     };
     updateLineSample(measurementData);
-    cornerstoneTools.MeasurementManager.add(measurementData);
+    MeasurementManager.add(measurementData);
     return measurementData;
 }
 ///////// END ACTIVE TOOL ///////
@@ -56,7 +56,7 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (!toolData) {
         return;
     }
@@ -72,11 +72,11 @@ function onImageRendered(e) {
 
         // draw the handles
         context.beginPath();
-        cornerstoneTools.drawHandles(context, eventData, data.handles, color);
+        drawHandles(context, eventData, data.handles, color);
         context.stroke();
 
         // Draw text
-        var fontParameters = cornerstoneTools.setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
+        var fontParameters = setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
         context.font = '' + fontParameters.fontSize + 'px Arial';
 
         // translate the x/y away from the cursor
@@ -95,7 +95,7 @@ function onImageRendered(e) {
 ///////// END IMAGE RENDERING ///////
 
 // module exports
-const probeTool4D = cornerstoneTools.mouseButtonTool({
+const probeTool4D = mouseButtonTool({
     createNewMeasurement: createNewMeasurement,
     onImageRendered: onImageRendered,
     toolType: toolType

@@ -6,10 +6,10 @@ function defaultStrategy(eventData) {
     var context = enabledElement.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
-    var color = cornerstoneTools.toolColors.getActiveColor();
-    var font = cornerstoneTools.textStyle.getFont();
-    var fontHeight = cornerstoneTools.textStyle.getFontSize();
-    var config = cornerstoneTools.dragProbe.getConfiguration();
+    var color = toolColors.getActiveColor();
+    var font = textStyle.getFont();
+    var fontHeight = textStyle.getFontSize();
+    var config = dragProbe.getConfiguration();
 
     context.save();
 
@@ -31,14 +31,14 @@ function defaultStrategy(eventData) {
     }
 
     if (eventData.image.color) {
-        storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+        storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
         text = '' + x + ', ' + y;
         str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
     } else {
         storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
         var sp = storedPixels[0];
         var mo = sp * eventData.image.slope + eventData.image.intercept;
-        var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+        var suv = calculateSUV(eventData.image, sp);
 
         // Draw text
         text = '' + x + ', ' + y;
@@ -59,8 +59,8 @@ function defaultStrategy(eventData) {
     context.font = font;
     context.fillStyle = color;
 
-    cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-    cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
+    drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+    drawTextBox(context, text, textCoords.x, textCoords.y, color);
     context.restore();
 }
 
@@ -72,9 +72,9 @@ function minimalStrategy(eventData) {
     var context = enabledElement.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
-    var color = cornerstoneTools.toolColors.getActiveColor();
-    var font = cornerstoneTools.textStyle.getFont();
-    var config = cornerstoneTools.dragProbe.getConfiguration();
+    var color = toolColors.getActiveColor();
+    var font = textStyle.getFont();
+    var config = dragProbe.getConfiguration();
 
     context.save();
 
@@ -93,10 +93,10 @@ function minimalStrategy(eventData) {
     var toolCoords;
     if (eventData.isTouchEvent === true) {
         toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-            eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() * 4);
+            eventData.currentPoints.page.y - textStyle.getFontSize() * 4);
     } else {
         toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-            eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() / 2);
+            eventData.currentPoints.page.y - textStyle.getFontSize() / 2);
     }
 
     var storedPixels;
@@ -108,7 +108,7 @@ function minimalStrategy(eventData) {
     }
 
     if (image.color) {
-        storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+        storedPixels = getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
         text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
     } else {
         storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
@@ -120,7 +120,7 @@ function minimalStrategy(eventData) {
             text += 'HU: ' + modalityPixelValueText;
         } else if (modality === 'PT') {
             text += modalityPixelValueText;
-            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+            var suv = calculateSUV(eventData.image, sp);
             if (suv) {
                 text += ' SUV: ' + parseFloat(suv.toFixed(2));
             }
@@ -142,12 +142,12 @@ function minimalStrategy(eventData) {
     if (eventData.isTouchEvent === true) {
         translation = {
             x: -width / 2 - 5,
-            y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
+            y: -textStyle.getFontSize() - 10 - 2 * handleRadius
         };
     } else {
         translation = {
             x: 12,
-            y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
+            y: -(textStyle.getFontSize() + 10) / 2
         };
     }
 
@@ -156,7 +156,7 @@ function minimalStrategy(eventData) {
     context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
     context.stroke();
 
-    cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
+    drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
     context.restore();
 }
 
@@ -171,19 +171,19 @@ function mouseUpCallback(e, eventData) {
 
 function mouseDownCallback(e, eventData) {
     var element = eventData.element;
-    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
         element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
         $(element).on('CornerstoneToolsMouseDrag', dragCallback);
         $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-        cornerstoneTools.dragProbe.strategy(eventData);
+        dragProbe.strategy(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
 }
 
 function imageRenderedCallback() {
     if (dragEventData) {
-        cornerstoneTools.dragProbe.strategy(dragEventData);
+        dragProbe.strategy(dragEventData);
         dragEventData = null;
     }
 }
@@ -200,7 +200,7 @@ function dragCallback(e, eventData) {
     return false; // false = causes jquery to preventDefault() and stopPropagation() this event
 }
 
-const dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+const dragProbe = simpleMouseButtonTool(mouseDownCallback);
 
 dragProbe.strategies = {
     default: defaultStrategy,
@@ -213,7 +213,7 @@ var options = {
     fireOnTouchStart: true
 };
 
-const dragProbeTouch = cornerstoneTools.touchDragTool(dragCallback, options);
+const dragProbeTouch = touchDragTool(dragCallback, options);
 
 export {
   dragProbe,

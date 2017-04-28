@@ -1,3 +1,5 @@
+import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
+
 var requestPool = {
     interaction: [],
     thumbnail: [],
@@ -16,7 +18,6 @@ var maxNumRequests = {
     prefetch: 5
 };
 
-var lastElementInteracted;
 var awake = false;
 var grabDelay = 20;
 
@@ -32,11 +33,11 @@ export default function() {
 
         // Describe the request
         var requestDetails = {
-            type: type,
-            imageId: imageId,
-            preventCache: preventCache,
-            doneCallback: doneCallback,
-            failCallback: failCallback
+            type,
+            imageId,
+            preventCache,
+            doneCallback,
+            failCallback
         };
 
         // If this imageId is in the cache, resolve it immediately
@@ -52,14 +53,6 @@ export default function() {
 
         // Add it to the end of the stack
         requestPool[type].push(requestDetails);
-
-        // Store the last element interacted with,
-        // So we know which images to prefetch
-        //
-        // ---- Not used for now ----
-        if (type === 'interaction') {
-            lastElementInteracted = element;
-        }
     }
 
     function clearRequestStack(type) {
@@ -152,7 +145,7 @@ export default function() {
 
     function startGrabbing() {
         // Begin by grabbing X images
-        var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
+        var maxSimultaneousRequests = getMaxSimultaneousRequests();
 
         maxNumRequests = {
             interaction: Math.max(maxSimultaneousRequests, 1),

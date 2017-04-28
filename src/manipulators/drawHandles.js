@@ -16,9 +16,9 @@ export default function (context, renderData, handles, color, options) {
         context.beginPath();
 
         if (handle.active) {
-            context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
+            context.lineWidth = toolStyle.getActiveWidth();
         } else {
-            context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+            context.lineWidth = toolStyle.getToolWidth();
         }
 
         var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);

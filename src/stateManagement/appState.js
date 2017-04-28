@@ -1,15 +1,15 @@
 function saveApplicationState(elements) {
     // Save imageId-specific tool state data
     var appState = {
-        imageIdToolState: cornerstoneTools.globalImageIdSpecificToolStateManager.saveToolState(),
+        imageIdToolState: globalImageIdSpecificToolStateManager.saveToolState(),
         elementToolState: {},
         elementViewport: {}
     };
 
     // For each of the given elements, save the viewport and any stack-specific tool data
     elements.forEach(function(element) {
-        var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
-        if (toolStateManager === cornerstoneTools.globalImageIdSpecificToolStateManager) {
+        var toolStateManager = getElementToolStateManager(element);
+        if (toolStateManager === globalImageIdSpecificToolStateManager) {
             return;
         }
 
@@ -28,7 +28,7 @@ function restoreApplicationState(appState) {
     }
 
     // Restore all the imageId specific tool data
-    cornerstoneTools.globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);
+    globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);
 
     Object.keys(appState.elementViewport).forEach(function(elementId) {
         // Restore any stack specific tool data
@@ -41,8 +41,8 @@ function restoreApplicationState(appState) {
             return;
         }
 
-        var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
-        if (toolStateManager === cornerstoneTools.globalImageIdSpecificToolStateManager) {
+        var toolStateManager = getElementToolStateManager(element);
+        if (toolStateManager === globalImageIdSpecificToolStateManager) {
             return;
         }
 

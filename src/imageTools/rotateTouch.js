@@ -1,25 +1,21 @@
-(function($, cornerstone, cornerstoneTools) {
+function touchRotateCallback(e, eventData) {
+    eventData.viewport.rotation += eventData.rotation;
+    cornerstone.setViewport(eventData.element, eventData.viewport);
+    return false;
+}
 
-    'use strict';
+function disable(element) {
+    $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+}
 
-    function touchRotateCallback(e, eventData) {
-        eventData.viewport.rotation += eventData.rotation;
-        cornerstone.setViewport(eventData.element, eventData.viewport);
-        return false;
-    }
+function activate(element) {
+    $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+    $(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
+}
 
-    function disable(element) {
-        $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
-    }
+const rotateTouch = {
+    activate,
+    disable
+};
 
-    function activate(element) {
-        $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
-        $(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
-    }
-
-    cornerstoneTools.rotateTouch = {
-        activate: activate,
-        disable: disable
-    };
-
-})($, cornerstone, cornerstoneTools);
+export default rotateTouch;

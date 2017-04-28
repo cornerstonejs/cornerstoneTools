@@ -61,7 +61,7 @@ function nearestIndex(arr, x) {
 
 function prefetch(element) {
     // Check to make sure stack data exists
-    var stackData = cornerstoneTools.getToolState(element, 'stack');
+    var stackData = getToolState(element, 'stack');
     if (!stackData || !stackData.data || !stackData.data.length) {
         return;
     }
@@ -69,7 +69,7 @@ function prefetch(element) {
     var stack = stackData.data[0];
 
     // Get the stackPrefetch tool data
-    var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+    var stackPrefetchData = getToolState(element, toolType);
     if (!stackPrefetchData) {
         return;
     }
@@ -120,7 +120,7 @@ function prefetch(element) {
     }
 
     // Clear the requestPool of prefetch requests
-    var requestPoolManager = cornerstoneTools.requestPoolManager;
+    var requestPoolManager = requestPoolManager;
     requestPoolManager.clearRequestStack(requestType);
 
     // Identify the nearest imageIdIndex to the currentImageIdIndex
@@ -137,7 +137,7 @@ function prefetch(element) {
     }
 
     // Retrieve the errorLoadingHandler if one exists
-    var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
     function failCallback(error) {
         console.log('prefetch errored: ' + error);
@@ -179,7 +179,7 @@ function promiseRemovedHandler(e) {
 
     try {
         // It will throw an exception in some cases (eg: thumbnails)
-        stackData = cornerstoneTools.getToolState(element, 'stack');
+        stackData = getToolState(element, 'stack');
     } catch(error) {
         return;
     }
@@ -197,7 +197,7 @@ function promiseRemovedHandler(e) {
         return;
     }
 
-    var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+    var stackPrefetchData = getToolState(element, toolType);
     if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
         return;
     }
@@ -225,11 +225,11 @@ function onImageUpdated(e) {
 
 function enable(element) {
     // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-    var stackPrefetchDataArray = cornerstoneTools.getToolState(element, toolType);
+    var stackPrefetchDataArray = getToolState(element, toolType);
     stackPrefetchDataArray.data = [];
 
     // First check that there is stack data available
-    var stackData = cornerstoneTools.getToolState(element, 'stack');
+    var stackData = getToolState(element, 'stack');
     if (!stackData || !stackData.data || !stackData.data.length) {
         return;
     }
@@ -253,7 +253,7 @@ function enable(element) {
     var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
     stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
 
-    cornerstoneTools.addToolState(element, toolType, stackPrefetchData);
+    addToolState(element, toolType, stackPrefetchData);
 
     prefetch(element);
 
@@ -272,13 +272,13 @@ function disable(element) {
 
     cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
-    var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
+    var stackPrefetchData = getToolState(element, toolType);
     // If there is actually something to disable, disable it
     if (stackPrefetchData && stackPrefetchData.data.length) {
         stackPrefetchData.data[0].enabled = false;
 
         // Clear current prefetch requests from the requestPool
-        cornerstoneTools.requestPoolManager.clearRequestStack(requestType);
+        requestPoolManager.clearRequestStack(requestType);
     }
 }
 

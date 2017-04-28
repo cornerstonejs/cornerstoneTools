@@ -1,4 +1,8 @@
- // renders the active reference line
+import calculateReferenceLine from './calculateReferenceLine.js';
+import toolColors from '../stateManagement/toolColors.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+
+// renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {
     var targetImage = cornerstone.getEnabledElement(targetElement).image;
     var referenceImage = cornerstone.getEnabledElement(referenceElement).image;
@@ -8,8 +12,8 @@ export default function (context, eventData, targetElement, referenceElement) {
         return;
     }
 
-    var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImage.imageId);
-    var referenceImagePlane = cornerstoneTools.metaData.get('imagePlane', referenceImage.imageId);
+    var targetImagePlane = cornerstone.metaData.get('imagePlane', targetImage.imageId);
+    var referenceImagePlane = cornerstone.metaData.get('imagePlane', referenceImage.imageId);
 
     // Make sure the target and reference actually have image plane metadata
     if (!targetImagePlane ||
@@ -38,7 +42,7 @@ export default function (context, eventData, targetElement, referenceElement) {
         return;
     }
 
-    var referenceLine = cornerstoneTools.referenceLines.calculateReferenceLine(targetImagePlane, referenceImagePlane);
+    var referenceLine = calculateReferenceLine(targetImagePlane, referenceImagePlane);
     if (!referenceLine) {
         return;
     }
@@ -46,8 +50,8 @@ export default function (context, eventData, targetElement, referenceElement) {
     var refLineStartCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.start);
     var refLineEndCanvas = cornerstone.pixelToCanvas(eventData.element, referenceLine.end);
 
-    var color = cornerstoneTools.toolColors.getActiveColor();
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+    var color = toolColors.getActiveColor();
+    var lineWidth = toolStyle.getToolWidth();
 
     // draw the referenceLines
     context.setTransform(1, 0, 0, 1, 0, 0);

@@ -14,10 +14,10 @@ function keyDownCallback(e, eventData) {
         images = -1;
     }
 
-    cornerstoneTools.scroll(eventData.element, images);
+    scroll(eventData.element, images);
 }
 
 // module/private exports
-const stackScrollKeyboard = cornerstoneTools.keyboardTool(keyDownCallback);
+const stackScrollKeyboard = keyboardTool(keyDownCallback);
 
 export default stackScrollKeyboard;

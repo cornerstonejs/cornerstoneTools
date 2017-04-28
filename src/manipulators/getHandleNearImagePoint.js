@@ -13,7 +13,7 @@
                 return;
             }
         } else if (handle.hasBoundingBox === true) {
-            if (cornerstoneTools.pointInsideBoundingBox(handle, coords)) {
+            if (pointInsideBoundingBox(handle, coords)) {
                 nearbyHandle = handle;
                 return;
             }

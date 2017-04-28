@@ -36,7 +36,7 @@ function Synchronizer(event, handler) {
             }
 
             var sourceImageId = sourceEnabledElement.image.imageId;
-            var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+            var sourceImagePlane = metaData.get('imagePlane', sourceImageId);
             if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
                 return;
             }
@@ -73,7 +73,7 @@ function Synchronizer(event, handler) {
                     return;
                 }
 
-                var targetImagePlane = cornerstoneTools.metaData.get('imagePlane', targetImageId);
+                var targetImagePlane = metaData.get('imagePlane', targetImageId);
                 if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
                     return;
                 }

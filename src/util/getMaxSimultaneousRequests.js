@@ -52,7 +52,7 @@ function getBrowserInfo() {
 }
 
 function getMaxSimultaneousRequests() {
-    var config = cornerstoneTools.stackPrefetch.getConfiguration();
+    var config = stackPrefetch.getConfiguration();
 
     // Give preference to user-chosen values
     if (config.maxSimultaneousRequests) {

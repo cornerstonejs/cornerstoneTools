@@ -48,7 +48,7 @@ function onImageRendered(e) {
     var eventData = e.detail;
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (!toolData) {
         return;
     }
@@ -57,8 +57,8 @@ function onImageRendered(e) {
     var context = eventData.canvasContext.canvas.getContext('2d');
     context.setTransform(1, 0, 0, 1, 0, 0);
 
-    var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-    var config = cornerstoneTools.length.getConfiguration();
+    var lineWidth = toolStyle.getToolWidth();
+    var config = length.getConfiguration();
 
     for (var i = 0; i < toolData.data.length; i++) {
         context.save();
@@ -71,7 +71,7 @@ function onImageRendered(e) {
         }
 
         var data = toolData.data[i];
-        var color = cornerstoneTools.toolColors.getColorIfActive(data.active);
+        var color = toolColors.getColorIfActive(data.active);
 
         // Get the handle positions in canvas coordinates
         var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
@@ -90,7 +90,7 @@ function onImageRendered(e) {
             drawHandlesIfActive: (config && config.drawHandlesOnHover)
         };
 
-        cornerstoneTools.drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data.handles, color, handleOptions);
 
         // Draw the text
         context.fillStyle = color;
@@ -145,7 +145,7 @@ function onImageRendered(e) {
         };
 
         // Draw the textbox
-        var boundingBox = cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
+        var boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
         data.handles.textBox.boundingBox = boundingBox;
 
         if (data.handles.textBox.hasMoved) {
@@ -203,14 +203,14 @@ function onImageRendered(e) {
 ///////// END IMAGE RENDERING ///////
 
 // module exports
-const length = cornerstoneTools.mouseButtonTool({
+const length = mouseButtonTool({
     createNewMeasurement,
     onImageRendered,
     pointNearTool,
     toolType
 });
 
-const lengthTouch = cornerstoneTools.touchTool({
+const lengthTouch = touchTool({
     createNewMeasurement,
     onImageRendered,
     pointNearTool,

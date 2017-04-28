@@ -4,7 +4,7 @@ function chooseLocation(e, eventData) {
     e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
 
     // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    var toolData = getToolState(e.currentTarget, toolType);
     if (!toolData) {
         return;
     }
@@ -13,13 +13,13 @@ function chooseLocation(e, eventData) {
     var sourceElement = e.currentTarget;
     var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
     var sourceImageId = sourceEnabledElement.image.imageId;
-    var sourceImagePlane = cornerstoneTools.metaData.get('imagePlane', sourceImageId);
+    var sourceImagePlane = metaData.get('imagePlane', sourceImageId);
 
     // Get currentPoints from mouse cursor on selected element
     var sourceImagePoint = eventData.currentPoints.image;
 
     // Transfer this to a patientPoint given imagePlane metadata
-    var patientPoint = cornerstoneTools.imagePointToPatientPoint(sourceImagePoint, sourceImagePlane);
+    var patientPoint = imagePointToPatientPoint(sourceImagePoint, sourceImagePlane);
 
     // Get the enabled elements associated with this synchronization context
     var syncContext = toolData.data[0].synchronizationContext;
@@ -35,7 +35,7 @@ function chooseLocation(e, eventData) {
         var minDistance = Number.MAX_VALUE;
         var newImageIdIndex = -1;
 
-        var stackToolDataSource = cornerstoneTools.getToolState(targetElement, 'stack');
+        var stackToolDataSource = getToolState(targetElement, 'stack');
         if (stackToolDataSource === undefined) {
             return; // Same as 'continue' in a normal for loop
         }
@@ -44,7 +44,7 @@ function chooseLocation(e, eventData) {
 
         // Find within the element's stack the closest image plane to selected location
         $.each(stackData.imageIds, function(index, imageId) {
-            var imagePlane = cornerstoneTools.metaData.get('imagePlane', imageId);
+            var imagePlane = metaData.get('imagePlane', imageId);
             var imagePosition = imagePlane.imagePositionPatient;
             var row = imagePlane.rowCosines.clone();
             var column = imagePlane.columnCosines.clone();
@@ -63,9 +63,9 @@ function chooseLocation(e, eventData) {
 
         // Switch the loaded image to the required image
         if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
-            var startLoadingHandler = cornerstoneTools.loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = cornerstoneTools.loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = cornerstoneTools.loadHandlerManager.getErrorLoadingHandler();
+            var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+            var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+            var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
             if (startLoadingHandler) {
                 startLoadingHandler(targetElement);
@@ -101,7 +101,7 @@ function mouseUpCallback(e, eventData) {
 }
 
 function mouseDownCallback(e, eventData) {
-    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
         $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
         $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
         chooseLocation(e, eventData);
@@ -120,10 +120,10 @@ function enable(element, mouseButtonMask, synchronizationContext) {
     };
 
     // Clear any currently existing toolData
-    var toolData = cornerstoneTools.getToolState(element, toolType);
+    var toolData = getToolState(element, toolType);
     toolData = [];
 
-    cornerstoneTools.addToolState(element, toolType, {
+    addToolState(element, toolType, {
         synchronizationContext: synchronizationContext,
     });
 
@@ -164,10 +164,10 @@ function dragCallback(e, eventData) {
 
 function enableTouch(element, synchronizationContext) {
     // Clear any currently existing toolData
-    var toolData = cornerstoneTools.getToolState(element, toolType);
+    var toolData = getToolState(element, toolType);
     toolData = [];
 
-    cornerstoneTools.addToolState(element, toolType, {
+    addToolState(element, toolType, {
         synchronizationContext: synchronizationContext,
     });
 
