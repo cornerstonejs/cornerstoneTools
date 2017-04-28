@@ -13,10 +13,11 @@
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
+        var element = eventData.element;
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 
@@ -28,27 +29,32 @@
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
     function mouseDownCallback(e, eventData) {
+        var element = eventData.element;
+
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
 
             currentPoints = eventData.currentPoints;
-            $(eventData.element).on('CornerstoneNewImage', eventData, newImageCallback);
+            element.addEventListener('CornerstoneNewImage', eventData, newImageCallback);
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function newImageCallback(e, eventData) {
+    function newImageCallback(e) {
+        var eventData = e.detail;
         eventData.currentPoints = currentPoints;
         drawMagnificationTool(eventData);
     }
 
     function dragEndCallback(e, eventData) {
+        var element = eventData.element;
+
         $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
         $(eventData.element).off('CornerstoneToolsTouchEnd', dragEndCallback);
-        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 

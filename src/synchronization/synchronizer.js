@@ -249,7 +249,8 @@
             ignoreFiredEvents = false;
         };
 
-        function disableHandler(e, eventData) {
+        function disableHandler(e) {
+            var eventData = e.detail;
             var element = eventData.element;
             that.remove(element);
         }
@@ -257,8 +258,8 @@
         this.updateDisableHandlers = function() {
             var elements = $.unique(sourceElements.concat(targetElements));
             elements.forEach(function(element) {
-                $(element).off('CornerstoneElementDisabled', disableHandler);
-                $(element).on('CornerstoneElementDisabled', disableHandler);
+                element.removeEventListener('CornerstoneElementDisabled', disableHandler);
+                element.addEventListener('CornerstoneElementDisabled', disableHandler);
             });
         };
 

@@ -165,19 +165,21 @@
     }
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneImageRendered', imageRenderedCallback);
-        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+        var element = eventData.element;
+        element.removeEventListener('CornerstoneImageRendered', imageRenderedCallback);
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
         cornerstone.updateImage(eventData.element);
     }
 
     function mouseDownCallback(e, eventData) {
+        var element = eventData.element;
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneImageRendered', imageRenderedCallback);
-            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-            $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+            element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
+            $(element).on('CornerstoneToolsMouseDrag', dragCallback);
+            $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+            $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
             cornerstoneTools.dragProbe.strategy(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }

@@ -2248,7 +2248,7 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// BEGIN IMAGE RENDERING ///////
     function onImageRendered(e) {
         var eventData = e.detail;
-        
+
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -3022,19 +3022,21 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneImageRendered', imageRenderedCallback);
-        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+        var element = eventData.element;
+        element.removeEventListener('CornerstoneImageRendered', imageRenderedCallback);
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
         cornerstone.updateImage(eventData.element);
     }
 
     function mouseDownCallback(e, eventData) {
+        var element = eventData.element;
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            $(eventData.element).on('CornerstoneImageRendered', imageRenderedCallback);
-            $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-            $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-            $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+            element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
+            $(element).on('CornerstoneToolsMouseDrag', dragCallback);
+            $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+            $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
             cornerstoneTools.dragProbe.strategy(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
@@ -3164,7 +3166,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function onImageRendered(e) {
         var eventData = e.detail;
-        
+
         // If we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -3760,7 +3762,7 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// BEGIN IMAGE RENDERING ///////
     function onImageRendered(e) {
         var eventData = e.detail;
-        
+
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -4377,10 +4379,11 @@ if (typeof cornerstoneTools === 'undefined') {
 
     /** Remove the magnifying glass when the mouse event ends */
     function mouseUpCallback(e, eventData) {
-        $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
+        var element = eventData.element;
+        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 
@@ -4392,27 +4395,32 @@ if (typeof cornerstoneTools === 'undefined') {
 
     /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
     function mouseDownCallback(e, eventData) {
+        var element = eventData.element;
+
         if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
             $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
             $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
             $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
 
             currentPoints = eventData.currentPoints;
-            $(eventData.element).on('CornerstoneNewImage', eventData, newImageCallback);
+            element.addEventListener('CornerstoneNewImage', eventData, newImageCallback);
             drawMagnificationTool(eventData);
             return false; // false = causes jquery to preventDefault() and stopPropagation() this event
         }
     }
 
-    function newImageCallback(e, eventData) {
+    function newImageCallback(e) {
+        var eventData = e.detail;
         eventData.currentPoints = currentPoints;
         drawMagnificationTool(eventData);
     }
 
     function dragEndCallback(e, eventData) {
+        var element = eventData.element;
+
         $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
         $(eventData.element).off('CornerstoneToolsTouchEnd', dragEndCallback);
-        $(eventData.element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
         hideTool(eventData);
     }
 
@@ -8391,7 +8399,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
     function onImageRendered(e) {
         var eventData = e.detail;
-        
+
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -10899,7 +10907,8 @@ Display scroll progress bar across bottom of image.
             ignoreFiredEvents = false;
         };
 
-        function disableHandler(e, eventData) {
+        function disableHandler(e) {
+            var eventData = e.detail;
             var element = eventData.element;
             that.remove(element);
         }
@@ -10907,8 +10916,8 @@ Display scroll progress bar across bottom of image.
         this.updateDisableHandlers = function() {
             var elements = $.unique(sourceElements.concat(targetElements));
             elements.forEach(function(element) {
-                $(element).off('CornerstoneElementDisabled', disableHandler);
-                $(element).on('CornerstoneElementDisabled', disableHandler);
+                element.removeEventListener('CornerstoneElementDisabled', disableHandler);
+                element.addEventListener('CornerstoneElementDisabled', disableHandler);
             });
         };
 
