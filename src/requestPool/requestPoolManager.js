@@ -1,222 +1,206 @@
-(function(cornerstone, cornerstoneTools) {
+import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
 
-    'use strict';
+const requestPool = {
+  interaction: [],
+  thumbnail: [],
+  prefetch: []
+};
 
-    var requestPool = {
-        interaction: [],
-        thumbnail: [],
-        prefetch: []
-    };
+const numRequests = {
+  interaction: 0,
+  thumbnail: 0,
+  prefetch: 0
+};
 
-    var numRequests = {
-        interaction: 0,
-        thumbnail: 0,
-        prefetch: 0
-    };
+let maxNumRequests = {
+  interaction: 6,
+  thumbnail: 6,
+  prefetch: 5
+};
 
-    var maxNumRequests = {
-        interaction: 6,
-        thumbnail: 6,
-        prefetch: 5
-    };
+let awake = false;
+const grabDelay = 20;
 
-    var lastElementInteracted;
-    var awake = false;
-    var grabDelay = 20;
+function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
+  if (!requestPool.hasOwnProperty(type)) {
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
+  }
 
-    function requestPoolManager() {
+  if (!element || !imageId) {
+    return;
+  }
 
-        function addRequest(element, imageId, type, preventCache, doneCallback, failCallback) {
-            if (!requestPool.hasOwnProperty(type)) {
-                throw 'Request type must be one of interaction, thumbnail, or prefetch';
-            }
+      // Describe the request
+  const requestDetails = {
+    type,
+    imageId,
+    preventCache,
+    doneCallback,
+    failCallback
+  };
 
-            if (!element || !imageId) {
-                return;
-            }
+      // If this imageId is in the cache, resolve it immediately
+  const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
-            // Describe the request
-            var requestDetails = {
-                type: type,
-                imageId: imageId,
-                preventCache: preventCache,
-                doneCallback: doneCallback,
-                failCallback: failCallback
-            };
+  if (imagePromise) {
+    imagePromise.then(function (image) {
+      doneCallback(image);
+    }, function (error) {
+      failCallback(error);
+    });
 
-            // If this imageId is in the cache, resolve it immediately
-            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            if (imagePromise) {
-                imagePromise.then(function(image) {
-                    doneCallback(image);
-                }, function(error) {
-                    failCallback(error);
-                });
-                return;
-            }
+    return;
+  }
 
-            // Add it to the end of the stack
-            requestPool[type].push(requestDetails);
+      // Add it to the end of the stack
+  requestPool[type].push(requestDetails);
+}
 
-            // Store the last element interacted with,
-            // So we know which images to prefetch
-            //
-            // ---- Not used for now ----
-            if (type === 'interaction') {
-                lastElementInteracted = element;
-            }
-        }
+function clearRequestStack (type) {
+      // Console.log('clearRequestStack');
+  if (!requestPool.hasOwnProperty(type)) {
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
+  }
 
-        function clearRequestStack(type) {
-            //console.log('clearRequestStack');
-            if (!requestPool.hasOwnProperty(type)) {
-                throw 'Request type must be one of interaction, thumbnail, or prefetch';
-            }
+  requestPool[type] = [];
+}
 
-            requestPool[type] = [];
-        }
+function startAgain () {
+  if (!awake) {
+    return;
+  }
 
-        function startAgain() {
-            if (!awake) {
-                return;
-            }
+  setTimeout(function () {
+    startGrabbing();
+  }, grabDelay);
+}
 
-            setTimeout(function() {
-                startGrabbing();
-            }, grabDelay);
-        }
+function sendRequest (requestDetails) {
+      // Increment the number of current requests of this type
+  const type = requestDetails.type;
 
-        function sendRequest(requestDetails) {
-            // Increment the number of current requests of this type
-            var type = requestDetails.type;
-            numRequests[type]++;
+  numRequests[type]++;
 
-            awake = true;
-            var imageId = requestDetails.imageId;
-            var doneCallback = requestDetails.doneCallback;
-            var failCallback = requestDetails.failCallback;
+  awake = true;
+  const imageId = requestDetails.imageId;
+  const doneCallback = requestDetails.doneCallback;
+  const failCallback = requestDetails.failCallback;
 
-            // Check if we already have this image promise in the cache
-            var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-            if (imagePromise) {
-                // If we do, remove from list (when resolved, as we could have
-                // pending prefetch requests) and stop processing this iteration
-                imagePromise.then(function(image) {
-                    numRequests[type]--;
-                    // console.log(numRequests);
+      // Check if we already have this image promise in the cache
+  const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
-                    doneCallback(image);
-                    startAgain();
-                }, function(error) {
-                    numRequests[type]--;
-                    // console.log(numRequests);
-                    failCallback(error);
-                    startAgain();
-                });
-                return;
-            }
+  if (imagePromise) {
+          // If we do, remove from list (when resolved, as we could have
+          // Pending prefetch requests) and stop processing this iteration
+    imagePromise.then(function (image) {
+      numRequests[type]--;
+              // Console.log(numRequests);
 
-            function requestTypeToLoadPriority(requestDetails) {
-                if (requestDetails.type === 'prefetch') {
-                    return -5;
-                } else if (requestDetails.type === 'interactive') {
-                    return 0;
-                } else if (requestDetails.type === 'thumbnail') {
-                    return 5;
-                }
-            }
+      doneCallback(image);
+      startAgain();
+    }, function (error) {
+      numRequests[type]--;
+              // Console.log(numRequests);
+      failCallback(error);
+      startAgain();
+    });
 
-            var priority = requestTypeToLoadPriority(requestDetails);
+    return;
+  }
 
-            var loader;
-            if (requestDetails.preventCache === true) {
-                loader = cornerstone.loadImage(imageId, {
-                    priority: priority,
-                    type: requestDetails.type
-                });
-            } else {
-                loader = cornerstone.loadAndCacheImage(imageId, {
-                    priority: priority,
-                    type: requestDetails.type
-                });
-            }
-
-            // Load and cache the image
-            loader.then(function(image) {
-                numRequests[type]--;
-                // console.log(numRequests);
-                doneCallback(image);
-                startAgain();
-            }, function(error) {
-                numRequests[type]--;
-                // console.log(numRequests);
-                failCallback(error);
-                startAgain();
-            });
-        }
-
-        function startGrabbing() {
-            // Begin by grabbing X images
-            var maxSimultaneousRequests = cornerstoneTools.getMaxSimultaneousRequests();
-
-            maxNumRequests = {
-                interaction: Math.max(maxSimultaneousRequests, 1),
-                thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
-                prefetch: Math.max(maxSimultaneousRequests - 1, 1)
-            };
-
-            var currentRequests = numRequests.interaction +
-                numRequests.thumbnail +
-                numRequests.prefetch;
-            var requestsToSend = maxSimultaneousRequests - currentRequests;
-            for (var i = 0; i < requestsToSend; i++) {
-                var requestDetails = getNextRequest();
-                if (requestDetails) {
-                    sendRequest(requestDetails);
-                }
-            }
-
-            //console.log("startGrabbing");
-            //console.log(requestPool);
-        }
-
-        function getNextRequest() {
-            if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
-                return requestPool.interaction.shift();
-            }
-
-            if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
-                return requestPool.thumbnail.shift();
-            }
-
-            if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
-                return requestPool.prefetch.shift();
-            }
-
-            if (!requestPool.interaction.length &&
-                !requestPool.thumbnail.length &&
-                !requestPool.prefetch.length) {
-                awake = false;
-            }
-
-            return false;
-        }
-
-        function getRequestPool() {
-            return requestPool;
-        }
-
-        var requestManager = {
-            addRequest: addRequest,
-            clearRequestStack: clearRequestStack,
-            startGrabbing: startGrabbing,
-            getRequestPool: getRequestPool
-        };
-
-        return requestManager;
+  function requestTypeToLoadPriority (requestDetails) {
+    if (requestDetails.type === 'prefetch') {
+      return -5;
+    } else if (requestDetails.type === 'interactive') {
+      return 0;
+    } else if (requestDetails.type === 'thumbnail') {
+      return 5;
     }
+  }
 
-    // module/private exports
-    cornerstoneTools.requestPoolManager = requestPoolManager();
+  const priority = requestTypeToLoadPriority(requestDetails);
 
-})(cornerstone, cornerstoneTools);
+  let loader;
+
+  if (requestDetails.preventCache === true) {
+    loader = cornerstone.loadImage(imageId, {
+      priority,
+      type: requestDetails.type
+    });
+  } else {
+    loader = cornerstone.loadAndCacheImage(imageId, {
+      priority,
+      type: requestDetails.type
+    });
+  }
+
+      // Load and cache the image
+  loader.then(function (image) {
+    numRequests[type]--;
+          // Console.log(numRequests);
+    doneCallback(image);
+    startAgain();
+  }, function (error) {
+    numRequests[type]--;
+          // Console.log(numRequests);
+    failCallback(error);
+    startAgain();
+  });
+}
+
+function startGrabbing () {
+      // Begin by grabbing X images
+  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+
+  maxNumRequests = {
+    interaction: Math.max(maxSimultaneousRequests, 1),
+    thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
+    prefetch: Math.max(maxSimultaneousRequests - 1, 1)
+  };
+
+  const currentRequests = numRequests.interaction +
+          numRequests.thumbnail +
+          numRequests.prefetch;
+  const requestsToSend = maxSimultaneousRequests - currentRequests;
+
+  for (let i = 0; i < requestsToSend; i++) {
+    const requestDetails = getNextRequest();
+
+    if (requestDetails) {
+      sendRequest(requestDetails);
+    }
+  }
+}
+
+function getNextRequest () {
+  if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
+    return requestPool.interaction.shift();
+  }
+
+  if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
+    return requestPool.thumbnail.shift();
+  }
+
+  if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
+    return requestPool.prefetch.shift();
+  }
+
+  if (!requestPool.interaction.length &&
+          !requestPool.thumbnail.length &&
+          !requestPool.prefetch.length) {
+    awake = false;
+  }
+
+  return false;
+}
+
+function getRequestPool () {
+  return requestPool;
+}
+
+export default {
+  addRequest,
+  clearRequestStack,
+  startGrabbing,
+  getRequestPool
+};

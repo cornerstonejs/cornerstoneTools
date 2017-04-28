@@ -1,67 +1,69 @@
+import displayTool from '../imageTools/displayTool';
+import { getToolState } from '../stateManagement/toolState';
+
 /*
 Display scroll progress bar across bottom of image.
  */
-(function($, cornerstone, cornerstoneTools) {
+const scrollBarHeight = 6;
 
-    'use strict';
+const configuration = {
+  backgroundColor: 'rgb(19, 63, 141)',
+  fillColor: 'white',
+  orientation: 'horizontal'
+};
 
-    var scrollBarHeight = 6;
+function onImageRendered (e, eventData) {
+  const element = eventData.element;
+  const width = eventData.enabledElement.canvas.width;
+  const height = eventData.enabledElement.canvas.height;
 
-    var configuration = {
-        backgroundColor: 'rgb(19, 63, 141)',
-        fillColor: 'white',
-        orientation: 'horizontal'
-    };
+  if (!width || !height) {
+    return false;
+  }
 
-    function onImageRendered(e, eventData){
-        var element = eventData.element;
-        var width = eventData.enabledElement.canvas.width;
-        var height = eventData.enabledElement.canvas.height;
+  const context = eventData.enabledElement.canvas.getContext('2d');
 
-        if (!width || !height) {
-            return false;
-        }
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  context.save();
 
-        var context = eventData.enabledElement.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
-        context.save();
+  const config = scrollIndicator.getConfiguration();
 
-        var config = cornerstoneTools.scrollIndicator.getConfiguration();
+    // Draw indicator background
+  context.fillStyle = config.backgroundColor;
+  if (config.orientation === 'horizontal') {
+    context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+  } else {
+    context.fillRect(0, 0, scrollBarHeight, height);
+  }
 
-        // draw indicator background
-        context.fillStyle = config.backgroundColor;
-        if (config.orientation === 'horizontal') {
-            context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
-        } else {
-            context.fillRect(0, 0, scrollBarHeight, height);
-        }
+    // Get current image index
+  const stackData = getToolState(element, 'stack');
 
-        // get current image index
-        var stackData = cornerstoneTools.getToolState(element, 'stack');
-        if (!stackData || !stackData.data || !stackData.data.length) {
-            return;
-        }
+  if (!stackData || !stackData.data || !stackData.data.length) {
+    return;
+  }
 
-        var imageIds = stackData.data[0].imageIds;
-        var currentImageIdIndex = stackData.data[0].currentImageIdIndex;
+  const imageIds = stackData.data[0].imageIds;
+  const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
-        // draw current image cursor
-        var cursorWidth = width / imageIds.length;
-        var cursorHeight = height / imageIds.length;
-        var xPosition = cursorWidth * currentImageIdIndex;
-        var yPosition = cursorHeight * currentImageIdIndex;
+    // Draw current image cursor
+  const cursorWidth = width / imageIds.length;
+  const cursorHeight = height / imageIds.length;
+  const xPosition = cursorWidth * currentImageIdIndex;
+  const yPosition = cursorHeight * currentImageIdIndex;
 
-        context.fillStyle = config.fillColor;
-        if (config.orientation === 'horizontal') {
-            context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
-        } else {
-            context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
-        }
+  context.fillStyle = config.fillColor;
+  if (config.orientation === 'horizontal') {
+    context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+  } else {
+    context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+  }
 
-        context.restore();
-    }
+  context.restore();
+}
 
-    cornerstoneTools.scrollIndicator = cornerstoneTools.displayTool(onImageRendered);
-    cornerstoneTools.scrollIndicator.setConfiguration(configuration);
+const scrollIndicator = displayTool(onImageRendered);
 
-})($, cornerstone, cornerstoneTools);
+scrollIndicator.setConfiguration(configuration);
+
+export default scrollIndicator;

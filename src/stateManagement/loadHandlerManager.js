@@ -1,49 +1,38 @@
-(function(cornerstoneTools) {
+let defaultStartLoadHandler;
+let defaultEndLoadHandler;
+let defaultErrorLoadingHandler;
 
-    'use strict';
+function setStartLoadHandler (handler) {
+  defaultStartLoadHandler = handler;
+}
 
-    function loadHandlerManager() {
-        var defaultStartLoadHandler,
-            defaultEndLoadHandler,
-            defaultErrorLoadingHandler;
+function getStartLoadHandler () {
+  return defaultStartLoadHandler;
+}
 
-        function setStartLoadHandler(handler) {
-            defaultStartLoadHandler = handler;
-        }
+function setEndLoadHandler (handler) {
+  defaultEndLoadHandler = handler;
+}
 
-        function getStartLoadHandler() {
-            return defaultStartLoadHandler;
-        }
+function getEndLoadHandler () {
+  return defaultEndLoadHandler;
+}
 
-        function setEndLoadHandler(handler) {
-            defaultEndLoadHandler = handler;
-        }
+function setErrorLoadingHandler (handler) {
+  defaultErrorLoadingHandler = handler;
+}
 
-        function getEndLoadHandler(){
-            return defaultEndLoadHandler;
-        }
+function getErrorLoadingHandler () {
+  return defaultErrorLoadingHandler;
+}
 
-        function setErrorLoadingHandler(handler) {
-            defaultErrorLoadingHandler = handler;
-        }
+const loadHandlerManager = {
+  setStartLoadHandler,
+  getStartLoadHandler,
+  setEndLoadHandler,
+  getEndLoadHandler,
+  setErrorLoadingHandler,
+  getErrorLoadingHandler
+};
 
-        function getErrorLoadingHandler() {
-            return defaultErrorLoadingHandler;
-        }
-
-        var loadHandlers = {
-            setStartLoadHandler: setStartLoadHandler,
-            getStartLoadHandler: getStartLoadHandler,
-            setEndLoadHandler: setEndLoadHandler,
-            getEndLoadHandler: getEndLoadHandler,
-            setErrorLoadingHandler: setErrorLoadingHandler,
-            getErrorLoadingHandler: getErrorLoadingHandler
-        };
-
-        return loadHandlers;
-    }
-
-    // module/private exports
-    cornerstoneTools.loadHandlerManager = loadHandlerManager();
-
-})(cornerstoneTools);
+export default loadHandlerManager;

@@ -1,27 +1,29 @@
-(function($, cornerstone, cornerstoneTools) {
+import displayTool from './displayTool.js';
+import drawTextBox from '../util/drawTextBox.js';
 
-    'use strict';
+function onImageRendered (e, eventData) {
+  const image = eventData.image;
+  const stats = image.stats;
 
-    function onImageRendered(e, eventData) {
-        var image = eventData.image;
-        var stats = image.stats;
+  const context = eventData.canvasContext.canvas.getContext('2d');
 
-        var context = eventData.canvasContext.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+  context.setTransform(1, 0, 0, 1, 0, 0);
 
-        var textLines = [];
-        Object.keys(stats).forEach(function(key) {
-            var text = key + ' : ' + stats[key];
-            textLines.push(text);
-        });
+  const textLines = [];
 
-        cornerstoneTools.drawTextBox(context, textLines, 0, 0, 'orange');
+  Object.keys(stats).forEach(function (key) {
+    const text = `${key} : ${stats[key]}`;
 
-        textLines.forEach(function(text) {
-            console.log(text);
-        });
-    }
+    textLines.push(text);
+  });
 
-    cornerstoneTools.imageStats = cornerstoneTools.displayTool(onImageRendered);
+  drawTextBox(context, textLines, 0, 0, 'orange');
 
-})($, cornerstone, cornerstoneTools);
+  textLines.forEach(function (text) {
+    console.log(text);
+  });
+}
+
+const imageStats = displayTool(onImageRendered);
+
+export default imageStats;

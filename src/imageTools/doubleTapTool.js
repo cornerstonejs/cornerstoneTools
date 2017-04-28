@@ -1,22 +1,22 @@
-(function($, cornerstone, cornerstoneTools) {
+export default function (doubleTapCallback) {
+  const toolInterface = {
+    activate (element) {
+      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+      const eventData = {};
 
-    'use strict';
-
-    function doubleTapTool(doubleTapCallback) {
-        var toolInterface = {
-            activate: function(element) {
-                $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
-                var eventData = {};
-                $(element).on('CornerstoneToolsDoubleTap', eventData, doubleTapCallback);
-            },
-            disable: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);},
-            enable: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);},
-            deactivate: function(element) {$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);}
-        };
-        return toolInterface;
+      $(element).on('CornerstoneToolsDoubleTap', eventData, doubleTapCallback);
+    },
+    disable (element) {
+      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+    },
+    enable (element) {
+      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+    },
+    deactivate (element) {
+      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
     }
+  };
 
-    // module exports
-    cornerstoneTools.doubleTapTool = doubleTapTool;
 
-})($, cornerstone, cornerstoneTools);
+  return toolInterface;
+}

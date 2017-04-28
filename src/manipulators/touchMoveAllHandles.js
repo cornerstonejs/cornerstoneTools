@@ -1,73 +1,68 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+import anyHandlesOutsideImage from './anyHandlesOutsideImage';
+import { removeToolState } from '../stateManagement/toolState';
 
-    'use strict';
+export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
+  const element = touchEventData.element;
 
-    function touchMoveAllHandles(touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
-        //console.log('touchMoveAllHandles');
-        var element = touchEventData.element;
+  function touchDragCallback (e, eventData) {
+    data.active = true;
 
-        function touchDragCallback(e, eventData) {
-            //console.log('touchMoveAllHandles touchDragCallback');
-            data.active = true;
+    Object.keys(data.handles).forEach(function (name) {
+      const handle = data.handles[name];
 
-            Object.keys(data.handles).forEach(function(name) {
-                var handle = data.handles[name];
-                if (handle.movesIndependently === true) {
-                    return;
-                }
+      if (handle.movesIndependently === true) {
+        return;
+      }
 
-                handle.x += eventData.deltaPoints.image.x;
-                handle.y += eventData.deltaPoints.image.y;
-            });
-            cornerstone.updateImage(element);
+      handle.x += eventData.deltaPoints.image.x;
+      handle.y += eventData.deltaPoints.image.y;
+    });
+    cornerstone.updateImage(element);
 
-            var eventType = 'CornerstoneToolsMeasurementModified';
-            var modifiedEventData = {
-                toolType: toolType,
-                element: element,
-                measurementData: data
-            };
-            $(element).trigger(eventType, modifiedEventData);
+    const eventType = 'CornerstoneToolsMeasurementModified';
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData: data
+    };
 
-            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-        }
+    $(element).trigger(eventType, modifiedEventData);
 
-        $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
+    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  }
 
-        function touchEndCallback(e, eventData) {
-            //console.log('touchMoveAllHandles touchEndCallback: ' + e.type);
-            data.active = false;
-            data.invalidated = false;
+  $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
-            $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
-            $(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
-            $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
-            $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
-            $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
-            $(element).off('CornerstoneToolsTap', touchEndCallback);
+  function touchEndCallback (e, eventData) {
+        // Console.log('touchMoveAllHandles touchEndCallback: ' + e.type);
+    data.active = false;
+    data.invalidated = false;
 
-            // If any handle is outside the image, delete the tool data
-            if (deleteIfHandleOutsideImage === true &&
-                cornerstoneTools.anyHandlesOutsideImage(eventData, data.handles)) {
-                cornerstoneTools.toolState.removeToolState(element, toolType, data);
-            }
+    $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+    $(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
+    $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
+    $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
+    $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
+    $(element).off('CornerstoneToolsTap', touchEndCallback);
 
-            cornerstone.updateImage(element);
-
-            if (typeof doneMovingCallback === 'function') {
-                doneMovingCallback(e, eventData);
-            }
-        }
-
-        $(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
-        $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
-        $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
-        $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
-        $(element).on('CornerstoneToolsTap', touchEndCallback);
-        return true;
+        // If any handle is outside the image, delete the tool data
+    if (deleteIfHandleOutsideImage === true &&
+            anyHandlesOutsideImage(eventData, data.handles)) {
+      removeToolState(element, toolType, data);
     }
 
-    // module/private exports
-    cornerstoneTools.touchMoveAllHandles = touchMoveAllHandles;
+    cornerstone.updateImage(element);
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+    if (typeof doneMovingCallback === 'function') {
+      doneMovingCallback(e, eventData);
+    }
+  }
+
+  $(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
+  $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
+  $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
+  $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
+  $(element).on('CornerstoneToolsTap', touchEndCallback);
+
+  return true;
+}

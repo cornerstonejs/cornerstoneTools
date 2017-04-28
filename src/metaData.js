@@ -1,7 +1,3 @@
-(function($, cornerstone, cornerstoneTools) {
+const metaData = cornerstone.metaData;
 
-    'use strict';
-
-    // module/private exports
-    cornerstoneTools.metaData = cornerstone.metaData;
-})($, cornerstone, cornerstoneTools);
+export default metaData;

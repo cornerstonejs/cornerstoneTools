@@ -1,50 +1,44 @@
-(function($, cornerstone, cornerstoneTools) {
+export default function (touchDragCallback, options) {
+  let events = 'CornerstoneToolsTouchDrag';
 
-    'use strict';
+  if (options && options.fireOnTouchStart === true) {
+    events += ' CornerstoneToolsTouchStart';
+  }
 
-    function touchDragTool(touchDragCallback, options) {
-        var events = 'CornerstoneToolsTouchDrag';
-        if (options && options.fireOnTouchStart === true) {
-            events += ' CornerstoneToolsTouchStart';
-        }
+  const toolInterface = {
+    activate (element) {
+      $(element).off(events, touchDragCallback);
 
-        var toolInterface = {
-            activate: function(element) {
-                $(element).off(events, touchDragCallback);
+      if (options && options.eventData) {
+        $(element).on(events, options.eventData, touchDragCallback);
+      } else {
+        $(element).on(events, touchDragCallback);
+      }
 
-                if (options && options.eventData) {
-                    $(element).on(events, options.eventData, touchDragCallback);
-                } else {
-                    $(element).on(events, touchDragCallback);
-                }
-
-                if (options && options.activateCallback) {
-                    options.activateCallback(element);
-                }
-            },
-            disable: function(element) {
-                $(element).off(events, touchDragCallback);
-                if (options && options.disableCallback) {
-                    options.disableCallback(element);
-                }
-            },
-            enable: function(element) {
-                $(element).off(events, touchDragCallback);
-                if (options && options.enableCallback) {
-                    options.enableCallback(element);
-                }
-            },
-            deactivate: function(element) {
-                $(element).off(events, touchDragCallback);
-                if (options && options.deactivateCallback) {
-                    options.deactivateCallback(element);
-                }
-            }
-        };
-        return toolInterface;
+      if (options && options.activateCallback) {
+        options.activateCallback(element);
+      }
+    },
+    disable (element) {
+      $(element).off(events, touchDragCallback);
+      if (options && options.disableCallback) {
+        options.disableCallback(element);
+      }
+    },
+    enable (element) {
+      $(element).off(events, touchDragCallback);
+      if (options && options.enableCallback) {
+        options.enableCallback(element);
+      }
+    },
+    deactivate (element) {
+      $(element).off(events, touchDragCallback);
+      if (options && options.deactivateCallback) {
+        options.deactivateCallback(element);
+      }
     }
+  };
 
-    // module exports
-    cornerstoneTools.touchDragTool = touchDragTool;
 
-})($, cornerstone, cornerstoneTools);
+  return toolInterface;
+}

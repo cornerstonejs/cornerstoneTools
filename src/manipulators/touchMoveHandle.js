@@ -1,139 +1,132 @@
-(function($, cornerstone, cornerstoneTools) {
+ /*
+ * Define the runAnimation boolean as an object
+ * so that it can be modified by reference
+ */
+const runAnimation = {
+  value: false
+};
 
-    'use strict';
+const touchEndEvents = ['CornerstoneToolsTouchEnd',
+  'CornerstoneToolsDragEnd',
+  'CornerstoneToolsTouchPinch',
+  'CornerstoneToolsTouchPress',
+  'CornerstoneToolsTap'
+].join(' ');
 
-    /*
-     * define the runAnimation boolean as an object
-     * so that it can be modified by reference
-     */
-    var runAnimation = {
-        value: false
+function animate (lastTime, handle, runAnimation, enabledElement, targetLocation) {
+    // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
+  if (!runAnimation.value) {
+    return;
+  }
+
+    // Update
+  const time = (new Date()).getTime();
+    // Var timeDiff = time - lastTime;
+
+    // Pixels / second
+  const distanceRemaining = Math.abs(handle.y - targetLocation.y);
+  const linearDistEachFrame = distanceRemaining / 10;
+
+  console.log(`distanceRemaining: ${distanceRemaining}`);
+  if (distanceRemaining < 1) {
+    handle.y = targetLocation.y;
+    runAnimation.value = false;
+
+    return;
+  }
+
+  if (handle.y > targetLocation.y) {
+    handle.y -= linearDistEachFrame;
+  } else if (handle.y < targetLocation.y) {
+    handle.y += linearDistEachFrame;
+  }
+
+    // Update the image
+  cornerstone.updateImage(enabledElement.element);
+
+    // Request a new frame
+  cornerstone.requestAnimationFrame(function () {
+    animate(time, handle, runAnimation, enabledElement, targetLocation);
+  });
+}
+
+export default function (touchEventData, toolType, data, handle, doneMovingCallback) {
+    // Console.log('touchMoveHandle');
+  runAnimation.value = true;
+
+  const element = touchEventData.element;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  const time = (new Date()).getTime();
+
+    // Average pixel width of index finger is 45-57 pixels
+    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
+  const fingerDistance = -57;
+
+  const aboveFinger = {
+    x: touchEventData.currentPoints.page.x,
+    y: touchEventData.currentPoints.page.y + fingerDistance
+  };
+
+  let targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+
+  function touchDragCallback (e, eventData) {
+        // Console.log('touchMoveHandle touchDragCallback: ' + e.type);
+    runAnimation.value = false;
+
+    if (handle.hasMoved === false) {
+      handle.hasMoved = true;
+    }
+
+    handle.active = true;
+
+    const currentPoints = eventData.currentPoints;
+    const aboveFinger = {
+      x: currentPoints.page.x,
+      y: currentPoints.page.y + fingerDistance
     };
 
-    var touchEndEvents = [ 'CornerstoneToolsTouchEnd',
-        'CornerstoneToolsDragEnd',
-        'CornerstoneToolsTouchPinch',
-        'CornerstoneToolsTouchPress',
-        'CornerstoneToolsTap'
-    ].join(' ');
+    targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+    handle.x = targetLocation.x;
+    handle.y = targetLocation.y;
 
-    function animate(lastTime, handle, runAnimation, enabledElement, targetLocation) {
-        // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
-        if (!runAnimation.value) {
-            return;
-        }
+    cornerstone.updateImage(element);
 
-        // update
-        var time = (new Date()).getTime();
-        //var timeDiff = time - lastTime;
+    const eventType = 'CornerstoneToolsMeasurementModified';
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData: data
+    };
 
-        // pixels / second
-        var distanceRemaining = Math.abs(handle.y - targetLocation.y);
-        var linearDistEachFrame = distanceRemaining / 10;
+    $(element).trigger(eventType, modifiedEventData);
+  }
 
-        console.log('distanceRemaining: ' + distanceRemaining);
-        if (distanceRemaining < 1) {
-            handle.y = targetLocation.y;
-            runAnimation.value = false;
-            return;
-        }
+  $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
-        if (handle.y > targetLocation.y) {
-            handle.y -= linearDistEachFrame;
-        } else if (handle.y < targetLocation.y) {
-            handle.y += linearDistEachFrame;
-        }
+  function touchEndCallback (e, eventData) {
+        // Console.log('touchMoveHandle touchEndCallback: ' + e.type);
+    runAnimation.value = false;
 
-        // Update the image
-        cornerstone.updateImage(enabledElement.element);
+    handle.active = false;
+    $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+    $(element).off(touchEndEvents, touchEndCallback);
 
-        // Request a new frame
-        cornerstone.requestAnimationFrame(function() {
-            animate(time, handle, runAnimation, enabledElement, targetLocation);
-        });
+    cornerstone.updateImage(element);
+
+    if (e.type === 'CornerstoneToolsTouchPress') {
+      eventData.handlePressed = data;
+
+      handle.x = touchEventData.currentPoints.image.x;
+      handle.y = touchEventData.currentPoints.image.y;
     }
 
-    function touchMoveHandle(touchEventData, toolType, data, handle, doneMovingCallback) {
-        //console.log('touchMoveHandle');
-        runAnimation.value = true;
-
-        var element = touchEventData.element;
-        var enabledElement = cornerstone.getEnabledElement(element);
-
-        var time = (new Date()).getTime();
-
-        // Average pixel width of index finger is 45-57 pixels
-        // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-        var fingerDistance = -57;
-
-        var aboveFinger = {
-            x: touchEventData.currentPoints.page.x,
-            y: touchEventData.currentPoints.page.y + fingerDistance
-        };
-
-        var targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
-
-        function touchDragCallback(e, eventData) {
-            //console.log('touchMoveHandle touchDragCallback: ' + e.type);
-            runAnimation.value = false;
-
-            if (handle.hasMoved === false) {
-                handle.hasMoved = true;
-            }
-
-            handle.active = true;
-
-            var currentPoints = eventData.currentPoints;
-            var aboveFinger = {
-                x: currentPoints.page.x,
-                y: currentPoints.page.y + fingerDistance
-            };
-
-            targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
-            handle.x = targetLocation.x;
-            handle.y = targetLocation.y;
-
-            cornerstone.updateImage(element);
-
-            var eventType = 'CornerstoneToolsMeasurementModified';
-            var modifiedEventData = {
-                toolType: toolType,
-                element: element,
-                measurementData: data
-            };
-            $(element).trigger(eventType, modifiedEventData);
-        }
-
-        $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
-
-        function touchEndCallback(e, eventData) {
-            //console.log('touchMoveHandle touchEndCallback: ' + e.type);
-            runAnimation.value = false;
-
-            handle.active = false;
-            $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
-            $(element).off(touchEndEvents, touchEndCallback);
-
-            cornerstone.updateImage(element);
-
-            if (e.type === 'CornerstoneToolsTouchPress') {
-                eventData.handlePressed = data;
-
-                handle.x = touchEventData.currentPoints.image.x;
-                handle.y = touchEventData.currentPoints.image.y;
-            }
-
-            if (typeof doneMovingCallback === 'function') {
-                doneMovingCallback(e, eventData);
-            }
-        }
-
-        $(element).on(touchEndEvents, touchEndCallback);
-
-        animate(time, handle, runAnimation, enabledElement, targetLocation);
+    if (typeof doneMovingCallback === 'function') {
+      doneMovingCallback(e, eventData);
     }
+  }
 
-    // module/private exports
-    cornerstoneTools.touchMoveHandle = touchMoveHandle;
+  $(element).on(touchEndEvents, touchEndCallback);
 
-})($, cornerstone, cornerstoneTools);
+  animate(time, handle, runAnimation, enabledElement, targetLocation);
+}
