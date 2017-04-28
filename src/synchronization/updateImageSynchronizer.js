@@ -1,19 +1,10 @@
-(function($, cornerstone, cornerstoneTools) {
+// This function causes the target image to be drawn immediately
+export default function(synchronizer, sourceElement, targetElement) {
 
-    'use strict';
-
-    // This function causes the target image to be drawn immediately
-    function updateImageSynchronizer(synchronizer, sourceElement, targetElement) {
-
-        // ignore the case where the source and target are the same enabled element
-        if (targetElement === sourceElement) {
-            return;
-        }
-
-        cornerstone.updateImage(targetElement);
+    // ignore the case where the source and target are the same enabled element
+    if (targetElement === sourceElement) {
+        return;
     }
 
-    // module/private exports
-    cornerstoneTools.updateImageSynchronizer = updateImageSynchronizer;
-
-})($, cornerstone, cornerstoneTools);
+    cornerstone.updateImage(targetElement);
+}

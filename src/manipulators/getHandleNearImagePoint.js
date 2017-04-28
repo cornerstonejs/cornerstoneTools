@@ -1,40 +1,31 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+ export default function(element, handles, coords, distanceThreshold) {
+    var nearbyHandle;
 
-    'use strict';
-
-    function getHandleNearImagePoint(element, handles, coords, distanceThreshold) {
-        var nearbyHandle;
-
-        if (!handles) {
-            return;
-        }
-
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            if (handle.hasOwnProperty('pointNearHandle')) {
-                if (handle.pointNearHandle(element, handle, coords)) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            } else if (handle.hasBoundingBox === true) {
-                if (cornerstoneTools.pointInsideBoundingBox(handle, coords)) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            } else {
-                var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-                var distance = cornerstoneMath.point.distance(handleCanvas, coords);
-                if (distance <= distanceThreshold) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            }
-        });
-
-        return nearbyHandle;
+    if (!handles) {
+        return;
     }
 
-    // module exports
-    cornerstoneTools.getHandleNearImagePoint = getHandleNearImagePoint;
+    Object.keys(handles).forEach(function(name) {
+        var handle = handles[name];
+        if (handle.hasOwnProperty('pointNearHandle')) {
+            if (handle.pointNearHandle(element, handle, coords)) {
+                nearbyHandle = handle;
+                return;
+            }
+        } else if (handle.hasBoundingBox === true) {
+            if (cornerstoneTools.pointInsideBoundingBox(handle, coords)) {
+                nearbyHandle = handle;
+                return;
+            }
+        } else {
+            var handleCanvas = cornerstone.pixelToCanvas(element, handle);
+            var distance = cornerstoneMath.point.distance(handleCanvas, coords);
+            if (distance <= distanceThreshold) {
+                nearbyHandle = handle;
+                return;
+            }
+        }
+    });
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+    return nearbyHandle;
+}

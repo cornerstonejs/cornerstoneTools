@@ -1,72 +1,68 @@
-(function(cornerstoneTools) {
+ // Functions to prevent ghost clicks following a touch
+// All credit to @kosich
+// https://gist.github.com/kosich/23188dd86633b6c2efb7
 
-    'use strict';
+var antiGhostDelay = 2000,
+    pointerType = {
+        mouse: 0,
+        touch: 1
+    },
+    lastInteractionType,
+    lastInteractionTime;
 
-    // Functions to prevent ghost clicks following a touch
-    // All credit to @kosich
-    // https://gist.github.com/kosich/23188dd86633b6c2efb7
-
-    var antiGhostDelay = 2000,
-        pointerType = {
-            mouse: 0,
-            touch: 1
-        },
-        lastInteractionType,
-        lastInteractionTime;
-
-    function handleTap(type, e) {
-        var now = Date.now();
-        if (type !== lastInteractionType) {
-            if (now - lastInteractionTime <= antiGhostDelay) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            }
-
-            lastInteractionType = type;
+function handleTap(type, e) {
+    var now = Date.now();
+    if (type !== lastInteractionType) {
+        if (now - lastInteractionTime <= antiGhostDelay) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            return false;
         }
 
-        lastInteractionTime = now;
+        lastInteractionType = type;
     }
 
-    // Cacheing the function references
-    // Necessary because a new function reference is created after .bind() is called
-    // http://stackoverflow.com/questions/11565471/removing-event-listener-which-was-added-with-bind
-    var handleTapMouse = handleTap.bind(null, pointerType.mouse);
-    var handleTapTouch = handleTap.bind(null, pointerType.touch);
+    lastInteractionTime = now;
+}
 
-    function attachEvents(element, eventList, interactionType) {
-        var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
-        eventList.forEach(function(eventName) {
-            element.addEventListener(eventName, tapHandler, true);
-        });
-    }
+// Cacheing the function references
+// Necessary because a new function reference is created after .bind() is called
+// http://stackoverflow.com/questions/11565471/removing-event-listener-which-was-added-with-bind
+var handleTapMouse = handleTap.bind(null, pointerType.mouse);
+var handleTapTouch = handleTap.bind(null, pointerType.touch);
 
-    function removeEvents(element, eventList, interactionType) {
-        var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
-        eventList.forEach(function(eventName) {
-            element.removeEventListener(eventName, tapHandler, true);
-        });
-    }
+function attachEvents(element, eventList, interactionType) {
+    var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
+    eventList.forEach(function(eventName) {
+        element.addEventListener(eventName, tapHandler, true);
+    });
+}
 
-    var mouseEvents = [ 'mousedown', 'mouseup' ];
-    var touchEvents = [ 'touchstart', 'touchend' ];
+function removeEvents(element, eventList, interactionType) {
+    var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
+    eventList.forEach(function(eventName) {
+        element.removeEventListener(eventName, tapHandler, true);
+    });
+}
 
-    function disable(element) {
-        removeEvents(element, mouseEvents, pointerType.mouse);
-        removeEvents(element, touchEvents, pointerType.touch);
-    }
+var mouseEvents = [ 'mousedown', 'mouseup' ];
+var touchEvents = [ 'touchstart', 'touchend' ];
 
-    function enable(element) {
-        disable(element);
-        attachEvents(element, mouseEvents, pointerType.mouse);
-        attachEvents(element, touchEvents, pointerType.touch);
-    }
+function disable(element) {
+    removeEvents(element, mouseEvents, pointerType.mouse);
+    removeEvents(element, touchEvents, pointerType.touch);
+}
 
-    cornerstoneTools.preventGhostClick = {
-        enable: enable,
-        disable: disable
-    };
+function enable(element) {
+    disable(element);
+    attachEvents(element, mouseEvents, pointerType.mouse);
+    attachEvents(element, touchEvents, pointerType.touch);
+}
 
-})(cornerstoneTools);
+const preventGhostClick = {
+    enable,
+    disable
+};
+
+export default preventGhostClick;

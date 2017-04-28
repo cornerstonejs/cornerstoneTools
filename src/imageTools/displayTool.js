@@ -1,25 +1,16 @@
-(function($, cornerstone, cornerstoneTools) {
+export default function(onImageRendered) {
+    var configuration = {};
 
-    'use strict';
+    var toolInterface = {
+        disable: function(element) {element.removeEventListener('CornerstoneImageRendered', onImageRendered);},
+        enable: function(element) {
+            element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', onImageRendered);
+            cornerstone.updateImage(element);
+        },
+        getConfiguration: function() { return configuration; },
+        setConfiguration: function(config) {configuration = config;}
+    };
 
-    function displayTool(onImageRendered) {
-        var configuration = {};
-
-        var toolInterface = {
-            disable: function(element) {element.removeEventListener('CornerstoneImageRendered', onImageRendered);},
-            enable: function(element) {
-                element.removeEventListener('CornerstoneImageRendered', onImageRendered);
-                element.addEventListener('CornerstoneImageRendered', onImageRendered);
-                cornerstone.updateImage(element);
-            },
-            getConfiguration: function() { return configuration; },
-            setConfiguration: function(config) {configuration = config;}
-        };
-
-        return toolInterface;
-    }
-
-    // module exports
-    cornerstoneTools.displayTool = displayTool;
-
-})($, cornerstone, cornerstoneTools);
+    return toolInterface;
+}

@@ -1,65 +1,58 @@
-(function($, cornerstone, cornerstoneTools) {
+ var toolType = 'referenceLines';
 
-    'use strict';
+function onImageRendered(e) {
+    var eventData = e.detail;
 
-    var toolType = 'referenceLines';
+    // if we have no toolData for this element, return immediately as there is nothing to do
+    var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
+    if (toolData === undefined) {
+        return;
+    }
 
-    function onImageRendered(e) {
-        var eventData = e.detail;
+    // Get the enabled elements associated with this synchronization context and draw them
+    var syncContext = toolData.data[0].synchronizationContext;
+    var enabledElements = syncContext.getSourceElements();
 
-        // if we have no toolData for this element, return immediately as there is nothing to do
-        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
+    var renderer = toolData.data[0].renderer;
+
+    // Create the canvas context and reset it to the pixel coordinate system
+    var context = eventData.canvasContext.canvas.getContext('2d');
+    cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+
+    // Iterate over each referenced element
+    $.each(enabledElements, function(index, referenceEnabledElement) {
+
+        // don't draw ourselves
+        if (referenceEnabledElement === e.currentTarget) {
             return;
         }
 
-        // Get the enabled elements associated with this synchronization context and draw them
-        var syncContext = toolData.data[0].synchronizationContext;
-        var enabledElements = syncContext.getSourceElements();
+        // render it
+        renderer(context, eventData, e.currentTarget, referenceEnabledElement);
+    });
+}
 
-        var renderer = toolData.data[0].renderer;
+// enables the reference line tool for a given element.  Note that a custom renderer
+// can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
+function enable(element, synchronizationContext, renderer) {
+    renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
 
-        // Create the canvas context and reset it to the pixel coordinate system
-        var context = eventData.canvasContext.canvas.getContext('2d');
-        cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+    cornerstoneTools.addToolState(element, toolType, {
+        synchronizationContext: synchronizationContext,
+        renderer: renderer
+    });
+    element.addEventListener('CornerstoneImageRendered', onImageRendered);
+    cornerstone.updateImage(element);
+}
 
-        // Iterate over each referenced element
-        $.each(enabledElements, function(index, referenceEnabledElement) {
+// disables the reference line tool for the given element
+function disable(element) {
+    element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+    cornerstone.updateImage(element);
+}
 
-            // don't draw ourselves
-            if (referenceEnabledElement === e.currentTarget) {
-                return;
-            }
-
-            // render it
-            renderer(context, eventData, e.currentTarget, referenceEnabledElement);
-        });
-    }
-
-    // enables the reference line tool for a given element.  Note that a custom renderer
-    // can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
-    function enable(element, synchronizationContext, renderer) {
-        renderer = renderer || cornerstoneTools.referenceLines.renderActiveReferenceLine;
-
-        cornerstoneTools.addToolState(element, toolType, {
-            synchronizationContext: synchronizationContext,
-            renderer: renderer
-        });
-        element.addEventListener('CornerstoneImageRendered', onImageRendered);
-        cornerstone.updateImage(element);
-    }
-
-    // disables the reference line tool for the given element
-    function disable(element) {
-        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
-        cornerstone.updateImage(element);
-    }
-
-    // module/private exports
-    cornerstoneTools.referenceLines.tool = {
-        enable: enable,
-        disable: disable
-
-    };
-
-})($, cornerstone, cornerstoneTools);
+// module/private exports
+export default tool = {
+    enable,
+    disable
+};

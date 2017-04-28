@@ -1,33 +1,24 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+export default function(renderData, handles) {
+    var image = renderData.image;
+    var imageRect = {
+        left: 0,
+        top: 0,
+        width: image.width,
+        height: image.height
+    };
 
-    'use strict';
+    var handleOutsideImage = false;
 
-    function anyHandlesOutsideImage(renderData, handles) {
-        var image = renderData.image;
-        var imageRect = {
-            left: 0,
-            top: 0,
-            width: image.width,
-            height: image.height
-        };
+    Object.keys(handles).forEach(function(name) {
+        var handle = handles[name];
+        if (handle.allowedOutsideImage === true) {
+            return;
+        }
 
-        var handleOutsideImage = false;
+        if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
+            handleOutsideImage = true;
+        }
+    });
 
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            if (handle.allowedOutsideImage === true) {
-                return;
-            }
-
-            if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
-                handleOutsideImage = true;
-            }
-        });
-
-        return handleOutsideImage;
-    }
-
-    // module/private exports
-    cornerstoneTools.anyHandlesOutsideImage = anyHandlesOutsideImage;
-
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+    return handleOutsideImage;
+}

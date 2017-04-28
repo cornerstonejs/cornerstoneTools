@@ -1,73 +1,51 @@
-(function($, cornerstone, cornerstoneTools) {
+ export default function(mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+    var element = mouseEventData.element;
 
-    'use strict';
+    function moveCallback(e, eventData) {
+        handle.active = true;
+        handle.x = eventData.currentPoints.image.x;
+        handle.y = eventData.currentPoints.image.y;
 
-    function moveNewHandle(mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-        var element = mouseEventData.element;
+        if (preventHandleOutsideImage) {
+            handle.x = Math.max(handle.x, 0);
+            handle.x = Math.min(handle.x, eventData.image.width);
 
-        function moveCallback(e, eventData) {
-            handle.active = true;
-            handle.x = eventData.currentPoints.image.x;
-            handle.y = eventData.currentPoints.image.y;
-
-            if (preventHandleOutsideImage) {
-                handle.x = Math.max(handle.x, 0);
-                handle.x = Math.min(handle.x, eventData.image.width);
-
-                handle.y = Math.max(handle.y, 0);
-                handle.y = Math.min(handle.y, eventData.image.height);
-            }
-
-            cornerstone.updateImage(element);
-
-            var eventType = 'CornerstoneToolsMeasurementModified';
-            var modifiedEventData = {
-                toolType: toolType,
-                element: element,
-                measurementData: data
-            };
-            $(element).trigger(eventType, modifiedEventData);
+            handle.y = Math.max(handle.y, 0);
+            handle.y = Math.min(handle.y, eventData.image.height);
         }
 
-        function whichMovement(e) {
-            $(element).off('CornerstoneToolsMouseMove');
-            $(element).off('CornerstoneToolsMouseDrag');
+        cornerstone.updateImage(element);
 
-            $(element).on('CornerstoneToolsMouseMove', moveCallback);
-            $(element).on('CornerstoneToolsMouseDrag', moveCallback);
+        var eventType = 'CornerstoneToolsMeasurementModified';
+        var modifiedEventData = {
+            toolType: toolType,
+            element: element,
+            measurementData: data
+        };
+        $(element).trigger(eventType, modifiedEventData);
+    }
 
-            $(element).on('CornerstoneToolsMouseClick', moveEndCallback);
-            if (e.type === 'CornerstoneToolsMouseDrag') {
-                $(element).on('CornerstoneToolsMouseUp', moveEndCallback);
-            }
+    function whichMovement(e) {
+        $(element).off('CornerstoneToolsMouseMove');
+        $(element).off('CornerstoneToolsMouseDrag');
+
+        $(element).on('CornerstoneToolsMouseMove', moveCallback);
+        $(element).on('CornerstoneToolsMouseDrag', moveCallback);
+
+        $(element).on('CornerstoneToolsMouseClick', moveEndCallback);
+        if (e.type === 'CornerstoneToolsMouseDrag') {
+            $(element).on('CornerstoneToolsMouseUp', moveEndCallback);
         }
+    }
 
-        function measurementRemovedCallback(e, eventData) {
-            if (eventData.measurementData === data) {
-                moveEndCallback();
-            }
+    function measurementRemovedCallback(e, eventData) {
+        if (eventData.measurementData === data) {
+            moveEndCallback();
         }
+    }
 
-        function toolDeactivatedCallback(e, eventData) {
-            if (eventData.toolType === toolType) {
-                $(element).off('CornerstoneToolsMouseMove', moveCallback);
-                $(element).off('CornerstoneToolsMouseDrag', moveCallback);
-                $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
-                $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
-                $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-                $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
-
-                handle.active = false;
-                cornerstone.updateImage(element);
-            }
-        }
-
-        $(element).on('CornerstoneToolsMouseDrag', whichMovement);
-        $(element).on('CornerstoneToolsMouseMove', whichMovement);
-        $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-        $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
-
-        function moveEndCallback() {
+    function toolDeactivatedCallback(e, eventData) {
+        if (eventData.toolType === toolType) {
             $(element).off('CornerstoneToolsMouseMove', moveCallback);
             $(element).off('CornerstoneToolsMouseDrag', moveCallback);
             $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
@@ -77,14 +55,27 @@
 
             handle.active = false;
             cornerstone.updateImage(element);
-
-            if (typeof doneMovingCallback === 'function') {
-                doneMovingCallback();
-            }
         }
     }
 
-    // module/private exports
-    cornerstoneTools.moveNewHandle = moveNewHandle;
+    $(element).on('CornerstoneToolsMouseDrag', whichMovement);
+    $(element).on('CornerstoneToolsMouseMove', whichMovement);
+    $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+    $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
-})($, cornerstone, cornerstoneTools);
+    function moveEndCallback() {
+        $(element).off('CornerstoneToolsMouseMove', moveCallback);
+        $(element).off('CornerstoneToolsMouseDrag', moveCallback);
+        $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+        $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+        $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+        $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+
+        handle.active = false;
+        cornerstone.updateImage(element);
+
+        if (typeof doneMovingCallback === 'function') {
+            doneMovingCallback();
+        }
+    }
+}

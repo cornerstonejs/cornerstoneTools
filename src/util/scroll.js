@@ -1,23 +1,17 @@
-(function(cornerstone, cornerstoneTools) {
+import scrollToIndex from './scrollToIndex.js';
+import { getToolState } from '../stateManagement/toolStateManager.js';
 
-    'use strict';
-
-    function scroll(element, images) {
-        var toolData = cornerstoneTools.getToolState(element, 'stack');
-        if (toolData === undefined || toolData.data === undefined || toolData.data.length === 0) {
-            return;
-        }
-
-        var stackData = toolData.data[0];
-
-        var newImageIdIndex = stackData.currentImageIdIndex + images;
-        newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
-        newImageIdIndex = Math.max(0, newImageIdIndex);
-
-        cornerstoneTools.scrollToIndex(element, newImageIdIndex);
+export default function (element, images) {
+    const toolData = getToolState(element, 'stack');
+    if (!toolData || !toolData.data || !toolData.data.length) {
+        return;
     }
 
-    // module exports
-    cornerstoneTools.scroll = scroll;
+    const stackData = toolData.data[0];
 
-})(cornerstone, cornerstoneTools);
+    let newImageIdIndex = stackData.currentImageIdIndex + images;
+    newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
+    newImageIdIndex = Math.max(0, newImageIdIndex);
+
+    scrollToIndex(element, newImageIdIndex);
+}

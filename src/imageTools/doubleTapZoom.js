@@ -1,20 +1,17 @@
-(function($, cornerstone, cornerstoneTools) {
+function fitToWindowStrategy(eventData) {
+    cornerstone.fitToWindow(eventData.element);
+}
 
-    'use strict';
+function doubleTapCallback(e, eventData) {
+    cornerstoneTools.doubleTapZoom.strategy(eventData);
+    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+}
 
-    function fitToWindowStrategy(eventData) {
-        cornerstone.fitToWindow(eventData.element);
-    }
+const doubleTapZoom = cornerstoneTools.doubleTapTool(doubleTapCallback);
+doubleTapZoom.strategies = {
+    default: fitToWindowStrategy
+};
 
-    function doubleTapCallback(e, eventData) {
-        cornerstoneTools.doubleTapZoom.strategy(eventData);
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-    }
+doubleTapZoom.strategy = fitToWindowStrategy;
 
-    cornerstoneTools.doubleTapZoom = cornerstoneTools.doubleTapTool(doubleTapCallback);
-    cornerstoneTools.doubleTapZoom.strategies = {
-        default: fitToWindowStrategy
-    };
-    cornerstoneTools.doubleTapZoom.strategy = fitToWindowStrategy;
-
-})($, cornerstone, cornerstoneTools);
+export default doubleTapZoom;

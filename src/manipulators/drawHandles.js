@@ -1,43 +1,34 @@
-(function(cornerstone, cornerstoneTools) {
+ var handleRadius = 6;
 
-    'use strict';
+export default function (context, renderData, handles, color, options) {
+    context.strokeStyle = color;
 
-    var handleRadius = 6;
+    Object.keys(handles).forEach(function(name) {
+        var handle = handles[name];
+        if (handle.drawnIndependently === true) {
+            return;
+        }
 
-    function drawHandles(context, renderData, handles, color, options) {
-        context.strokeStyle = color;
+        if (options && options.drawHandlesIfActive === true && !handle.active) {
+            return;
+        }
 
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            if (handle.drawnIndependently === true) {
-                return;
-            }
+        context.beginPath();
 
-            if (options && options.drawHandlesIfActive === true && !handle.active) {
-                return;
-            }
+        if (handle.active) {
+            context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
+        } else {
+            context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+        }
 
-            context.beginPath();
+        var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
+        context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
-            if (handle.active) {
-                context.lineWidth = cornerstoneTools.toolStyle.getActiveWidth();
-            } else {
-                context.lineWidth = cornerstoneTools.toolStyle.getToolWidth();
-            }
+        if (options && options.fill) {
+            context.fillStyle = options.fill;
+            context.fill();
+        }
 
-            var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
-            context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
-
-            if (options && options.fill) {
-                context.fillStyle = options.fill;
-                context.fill();
-            }
-
-            context.stroke();
-        });
-    }
-
-    // module/private exports
-    cornerstoneTools.drawHandles = drawHandles;
-
-})(cornerstone, cornerstoneTools);
+        context.stroke();
+    });
+}

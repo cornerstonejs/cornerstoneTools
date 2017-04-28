@@ -1,220 +1,221 @@
-(function($, cornerstone, cornerstoneTools) {
+var dragEventData;
 
-    'use strict';
+function defaultStrategy(eventData) {
+    var enabledElement = cornerstone.getEnabledElement(eventData.element);
 
-    var dragEventData;
+    var context = enabledElement.canvas.getContext('2d');
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
-    function defaultStrategy(eventData) {
-        var enabledElement = cornerstone.getEnabledElement(eventData.element);
+    var color = cornerstoneTools.toolColors.getActiveColor();
+    var font = cornerstoneTools.textStyle.getFont();
+    var fontHeight = cornerstoneTools.textStyle.getFontSize();
+    var config = cornerstoneTools.dragProbe.getConfiguration();
 
-        var context = enabledElement.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+    context.save();
 
-        var color = cornerstoneTools.toolColors.getActiveColor();
-        var font = cornerstoneTools.textStyle.getFont();
-        var fontHeight = cornerstoneTools.textStyle.getFontSize();
-        var config = cornerstoneTools.dragProbe.getConfiguration();
+    if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
 
-        context.save();
+    var x = Math.round(eventData.currentPoints.image.x);
+    var y = Math.round(eventData.currentPoints.image.y);
 
-        if (config && config.shadow) {
-            context.shadowColor = config.shadowColor || '#000000';
-            context.shadowOffsetX = config.shadowOffsetX || 1;
-            context.shadowOffsetY = config.shadowOffsetY || 1;
-        }
+    var storedPixels;
+    var text,
+        str;
 
-        var x = Math.round(eventData.currentPoints.image.x);
-        var y = Math.round(eventData.currentPoints.image.y);
+    if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
+        return;
+    }
 
-        var storedPixels;
-        var text,
-            str;
-
-        if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
-            return;
-        }
-
-        if (eventData.image.color) {
-            storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
-            text = '' + x + ', ' + y;
-            str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
-        } else {
-            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-            var sp = storedPixels[0];
-            var mo = sp * eventData.image.slope + eventData.image.intercept;
-            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
-
-            // Draw text
-            text = '' + x + ', ' + y;
-            str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-            if (suv) {
-                str += ' SUV: ' + parseFloat(suv.toFixed(3));
-            }
-        }
+    if (eventData.image.color) {
+        storedPixels = cornerstoneTools.getRGBPixels(eventData.element, x, y, 1, 1);
+        text = '' + x + ', ' + y;
+        str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
+    } else {
+        storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+        var sp = storedPixels[0];
+        var mo = sp * eventData.image.slope + eventData.image.intercept;
+        var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
 
         // Draw text
-        var coords = {
-            // translate the x/y away from the cursor
-            x: eventData.currentPoints.image.x + 3,
-            y: eventData.currentPoints.image.y - 3
-        };
-        var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-        context.font = font;
-        context.fillStyle = color;
-
-        cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-        cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
-        context.restore();
+        text = '' + x + ', ' + y;
+        str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+        if (suv) {
+            str += ' SUV: ' + parseFloat(suv.toFixed(3));
+        }
     }
 
-    function minimalStrategy(eventData) {
-        var element = eventData.element;
-        var enabledElement = cornerstone.getEnabledElement(element);
-        var image = enabledElement.image;
+    // Draw text
+    var coords = {
+        // translate the x/y away from the cursor
+        x: eventData.currentPoints.image.x + 3,
+        y: eventData.currentPoints.image.y - 3
+    };
+    var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-        var context = enabledElement.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+    context.font = font;
+    context.fillStyle = color;
 
-        var color = cornerstoneTools.toolColors.getActiveColor();
-        var font = cornerstoneTools.textStyle.getFont();
-        var config = cornerstoneTools.dragProbe.getConfiguration();
+    cornerstoneTools.drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+    cornerstoneTools.drawTextBox(context, text, textCoords.x, textCoords.y, color);
+    context.restore();
+}
 
-        context.save();
+function minimalStrategy(eventData) {
+    var element = eventData.element;
+    var enabledElement = cornerstone.getEnabledElement(element);
+    var image = enabledElement.image;
 
-        if (config && config.shadow) {
-            context.shadowColor = config.shadowColor || '#000000';
-            context.shadowOffsetX = config.shadowOffsetX || 1;
-            context.shadowOffsetY = config.shadowOffsetY || 1;
-        }
+    var context = enabledElement.canvas.getContext('2d');
+    context.setTransform(1, 0, 0, 1, 0, 0);
 
-        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-        var modality;
-        if (seriesModule) {
-            modality = seriesModule.modality;
-        }
+    var color = cornerstoneTools.toolColors.getActiveColor();
+    var font = cornerstoneTools.textStyle.getFont();
+    var config = cornerstoneTools.dragProbe.getConfiguration();
 
-        var toolCoords;
-        if (eventData.isTouchEvent === true) {
-            toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-                eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() * 4);
-        } else {
-            toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-                eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() / 2);
-        }
+    context.save();
 
-        var storedPixels;
-        var text = '';
+    if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
 
-        if (toolCoords.x < 0 || toolCoords.y < 0 ||
-            toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
-            return;
-        }
+    var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+    var modality;
+    if (seriesModule) {
+        modality = seriesModule.modality;
+    }
 
-        if (image.color) {
-            storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-            text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
-        } else {
-            storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-            var sp = storedPixels[0];
-            var mo = sp * eventData.image.slope + eventData.image.intercept;
+    var toolCoords;
+    if (eventData.isTouchEvent === true) {
+        toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
+            eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() * 4);
+    } else {
+        toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
+            eventData.currentPoints.page.y - cornerstoneTools.textStyle.getFontSize() / 2);
+    }
 
-            var modalityPixelValueText = parseFloat(mo.toFixed(2));
-            if (modality === 'CT') {
-                text += 'HU: ' + modalityPixelValueText;
-            } else if (modality === 'PT') {
-                text += modalityPixelValueText;
-                var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
-                if (suv) {
-                    text += ' SUV: ' + parseFloat(suv.toFixed(2));
-                }
-            } else {
-                text += modalityPixelValueText;
+    var storedPixels;
+    var text = '';
+
+    if (toolCoords.x < 0 || toolCoords.y < 0 ||
+        toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
+        return;
+    }
+
+    if (image.color) {
+        storedPixels = cornerstoneTools.getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+        text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+    } else {
+        storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+        var sp = storedPixels[0];
+        var mo = sp * eventData.image.slope + eventData.image.intercept;
+
+        var modalityPixelValueText = parseFloat(mo.toFixed(2));
+        if (modality === 'CT') {
+            text += 'HU: ' + modalityPixelValueText;
+        } else if (modality === 'PT') {
+            text += modalityPixelValueText;
+            var suv = cornerstoneTools.calculateSUV(eventData.image, sp);
+            if (suv) {
+                text += ' SUV: ' + parseFloat(suv.toFixed(2));
             }
-        }
-
-        // Prepare text
-        var textCoords = cornerstone.pixelToCanvas(element, toolCoords);
-        context.font = font;
-        context.fillStyle = color;
-
-        // Translate the x/y away from the cursor
-        var translation;
-        var handleRadius = 6;
-        var width = context.measureText(text).width;
-
-        if (eventData.isTouchEvent === true) {
-            translation = {
-                x: -width / 2 - 5,
-                y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
-            };
         } else {
-            translation = {
-                x: 12,
-                y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
-            };
-        }
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-        context.stroke();
-
-        cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
-        context.restore();
-    }
-
-    function mouseUpCallback(e, eventData) {
-        var element = eventData.element;
-        element.removeEventListener('CornerstoneImageRendered', imageRenderedCallback);
-        $(element).off('CornerstoneToolsMouseDrag', dragCallback);
-        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-        cornerstone.updateImage(eventData.element);
-    }
-
-    function mouseDownCallback(e, eventData) {
-        var element = eventData.element;
-        if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-            element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
-            $(element).on('CornerstoneToolsMouseDrag', dragCallback);
-            $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-            $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-            cornerstoneTools.dragProbe.strategy(eventData);
-            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+            text += modalityPixelValueText;
         }
     }
 
-    function imageRenderedCallback() {
-        if (dragEventData) {
-            cornerstoneTools.dragProbe.strategy(dragEventData);
-            dragEventData = null;
-        }
+    // Prepare text
+    var textCoords = cornerstone.pixelToCanvas(element, toolCoords);
+    context.font = font;
+    context.fillStyle = color;
+
+    // Translate the x/y away from the cursor
+    var translation;
+    var handleRadius = 6;
+    var width = context.measureText(text).width;
+
+    if (eventData.isTouchEvent === true) {
+        translation = {
+            x: -width / 2 - 5,
+            y: -cornerstoneTools.textStyle.getFontSize() - 10 - 2 * handleRadius
+        };
+    } else {
+        translation = {
+            x: 12,
+            y: -(cornerstoneTools.textStyle.getFontSize() + 10) / 2
+        };
     }
 
-    // The strategy can't be execute at this momento because the image is rendered asynchronously
-    // (requestAnimationFrame). Then the eventData that contains all information needed is being
-    // cached and the strategy will be executed once CornerstoneImageRendered is triggered.
-    function dragCallback(e, eventData) {
-        var element = eventData.element;
+    context.beginPath();
+    context.strokeStyle = color;
+    context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+    context.stroke();
 
-        dragEventData = eventData;
-        cornerstone.updateImage(element);
+    cornerstoneTools.drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
+    context.restore();
+}
 
+function mouseUpCallback(e, eventData) {
+    var element = eventData.element;
+    element.removeEventListener('CornerstoneImageRendered', imageRenderedCallback);
+    $(element).off('CornerstoneToolsMouseDrag', dragCallback);
+    $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+    $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    cornerstone.updateImage(eventData.element);
+}
+
+function mouseDownCallback(e, eventData) {
+    var element = eventData.element;
+    if (cornerstoneTools.isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+        element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
+        $(element).on('CornerstoneToolsMouseDrag', dragCallback);
+        $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+        $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+        cornerstoneTools.dragProbe.strategy(eventData);
         return false; // false = causes jquery to preventDefault() and stopPropagation() this event
     }
+}
 
-    cornerstoneTools.dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+function imageRenderedCallback() {
+    if (dragEventData) {
+        cornerstoneTools.dragProbe.strategy(dragEventData);
+        dragEventData = null;
+    }
+}
 
-    cornerstoneTools.dragProbe.strategies = {
-        default: defaultStrategy,
-        minimal: minimalStrategy
-    };
-    cornerstoneTools.dragProbe.strategy = defaultStrategy;
+// The strategy can't be execute at this moment because the image is rendered asynchronously
+// (requestAnimationFrame). Then the eventData that contains all information needed is being
+// cached and the strategy will be executed once CornerstoneImageRendered is triggered.
+function dragCallback(e, eventData) {
+    var element = eventData.element;
 
-    var options = {
-        fireOnTouchStart: true
-    };
-    cornerstoneTools.dragProbeTouch = cornerstoneTools.touchDragTool(dragCallback, options);
+    dragEventData = eventData;
+    cornerstone.updateImage(element);
 
-})($, cornerstone, cornerstoneTools);
+    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+const dragProbe = cornerstoneTools.simpleMouseButtonTool(mouseDownCallback);
+
+dragProbe.strategies = {
+    default: defaultStrategy,
+    minimal: minimalStrategy
+};
+
+dragProbe.strategy = defaultStrategy;
+
+var options = {
+    fireOnTouchStart: true
+};
+
+const dragProbeTouch = cornerstoneTools.touchDragTool(dragCallback, options);
+
+export {
+  dragProbe,
+  dragProbeTouch
+};
