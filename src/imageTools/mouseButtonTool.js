@@ -196,7 +196,7 @@
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -210,7 +210,7 @@
 
         // visible but not interactive
         function enable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -219,7 +219,7 @@
                 $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
             }
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
             cornerstone.updateImage(element);
         }
@@ -230,12 +230,12 @@
                 mouseButtonMask: mouseButtonMask
             };
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -264,12 +264,12 @@
             var event = $.Event(eventType, statusChangeEventData);
             $(element).trigger(event, statusChangeEventData);
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
 

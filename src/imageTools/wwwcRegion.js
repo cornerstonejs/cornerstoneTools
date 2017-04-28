@@ -41,7 +41,9 @@
     }
 
     /* Erases the toolData and rebinds the handlers when the image changes */
-    function newImageCallback(e, eventData) {
+    function newImageCallback(e) {
+        var eventData = e.detail;
+
         //console.log('newImageCallback: ' + e.type);
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (toolData && toolData.data) {
@@ -203,7 +205,8 @@
         cornerstone.updateImage(eventData.element);
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (!toolData || !toolData.data || !toolData.data.length) {
             return;
@@ -264,8 +267,8 @@
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-        $(element).off('CornerstoneImageRendered', onImageRendered);
-        $(element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
 
         cornerstone.updateImage(element);
     }
@@ -291,15 +294,15 @@
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-        $(element).off('CornerstoneImageRendered', onImageRendered);
-        $(element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
 
         // If the displayed image changes after the user has started clicking, we should
         // cancel the handlers and prepare for another click
-        $(element).on('CornerstoneNewImage', newImageCallback);
+        element.addEventListener('CornerstoneNewImage', newImageCallback);
 
         cornerstone.updateImage(element);
     }
@@ -309,7 +312,7 @@
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
     }
 
     function activateTouchDrag(element) {
@@ -322,12 +325,12 @@
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsTouchDrag', dragCallback);
         $(element).on('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
     }
 
     function getConfiguration() {

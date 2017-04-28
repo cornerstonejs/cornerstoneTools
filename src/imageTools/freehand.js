@@ -280,7 +280,9 @@
     ///////// END ACTIVE TOOL ///////
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -360,9 +362,9 @@
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -371,7 +373,7 @@
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -384,9 +386,9 @@
         $(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
         cornerstone.updateImage(element);
@@ -397,9 +399,9 @@
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }

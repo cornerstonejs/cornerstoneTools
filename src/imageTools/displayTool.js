@@ -6,10 +6,10 @@
         var configuration = {};
 
         var toolInterface = {
-            disable: function(element) {$(element).off('CornerstoneImageRendered', onImageRendered);},
+            disable: function(element) {element.removeEventListener('CornerstoneImageRendered', onImageRendered);},
             enable: function(element) {
-                $(element).off('CornerstoneImageRendered', onImageRendered);
-                $(element).on('CornerstoneImageRendered', onImageRendered);
+                element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+                element.addEventListener('CornerstoneImageRendered', onImageRendered);
                 cornerstone.updateImage(element);
             },
             getConfiguration: function() { return configuration; },

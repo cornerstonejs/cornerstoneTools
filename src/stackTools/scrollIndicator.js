@@ -13,7 +13,8 @@ Display scroll progress bar across bottom of image.
         orientation: 'horizontal'
     };
 
-    function onImageRendered(e, eventData){
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var element = eventData.element;
         var width = eventData.enabledElement.canvas.width;
         var height = eventData.enabledElement.canvas.height;

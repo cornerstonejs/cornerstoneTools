@@ -123,7 +123,7 @@ is used by our example image loader-->
         $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
     };
 
-    $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
+    element.addEventListener("CornerstoneImageRendered", onViewportUpdated);
 
     var imageId = 'example://1';
 

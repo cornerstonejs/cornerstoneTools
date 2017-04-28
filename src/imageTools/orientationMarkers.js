@@ -60,7 +60,8 @@
         };
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var element = eventData.element;
 
         var markers = getOrientationMarkers(element);

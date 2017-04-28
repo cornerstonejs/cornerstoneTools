@@ -2,7 +2,8 @@
 
     'use strict';
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var image = eventData.image;
         var stats = image.stats;
 

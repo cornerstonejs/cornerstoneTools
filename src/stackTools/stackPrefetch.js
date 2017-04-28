@@ -172,7 +172,9 @@
         requestPoolManager.startGrabbing();
     }
 
-    function promiseRemovedHandler(e, eventData) {
+    function promiseRemovedHandler(e) {
+        var eventData = e.detail;
+
         // When an imagePromise has been pushed out of the cache, re-add its index
         // it to the indicesToRequest list so that it will be retrieved later if the
         // currentImageIdIndex is changed to an image nearby
@@ -259,20 +261,20 @@
 
         prefetch(element);
 
-        $(element).off('CornerstoneNewImage', onImageUpdated);
-        $(element).on('CornerstoneNewImage', onImageUpdated);
+        element.removeEventListener('CornerstoneNewImage', onImageUpdated);
+        element.addEventListener('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-        $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
+        cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        cornerstone.addEventListener('CornerstoneImageCachePromiseRemoved', {
             element: element
         }, promiseRemovedHandler);
     }
 
     function disable(element) {
         clearTimeout(resetPrefetchTimeout);
-        $(element).off('CornerstoneNewImage', onImageUpdated);
+        element.removeEventListener('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it

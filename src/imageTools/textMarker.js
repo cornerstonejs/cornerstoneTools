@@ -81,7 +81,8 @@
         return (distanceToPoint < 10) || insideBoundingBox;
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (!toolData) {

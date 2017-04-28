@@ -4,7 +4,9 @@
 
     var toolType = 'referenceLines';
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -43,13 +45,13 @@
             synchronizationContext: synchronizationContext,
             renderer: renderer
         });
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
     function disable(element) {
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 

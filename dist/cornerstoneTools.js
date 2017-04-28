@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-27 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-04-28 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -1130,7 +1130,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -1144,7 +1144,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // visible but not interactive
         function enable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -1153,7 +1153,7 @@ if (typeof cornerstoneTools === 'undefined') {
                 $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
             }
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
             cornerstone.updateImage(element);
         }
@@ -1164,12 +1164,12 @@ if (typeof cornerstoneTools === 'undefined') {
                 mouseButtonMask: mouseButtonMask
             };
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -1198,12 +1198,12 @@ if (typeof cornerstoneTools === 'undefined') {
             var event = $.Event(eventType, statusChangeEventData);
             $(element).trigger(event, statusChangeEventData);
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
 
@@ -1399,7 +1399,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
@@ -1409,12 +1409,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // visible but not interactive
         function enable(element) {
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
             cornerstone.updateImage(element);
         }
@@ -1425,12 +1425,12 @@ if (typeof cornerstoneTools === 'undefined') {
                 mouseButtonMask: mouseButtonMask
             };
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
             $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
@@ -1444,12 +1444,12 @@ if (typeof cornerstoneTools === 'undefined') {
                 mouseButtonMask: mouseButtonMask
             };
 
-            $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
             $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
             $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-            $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
             $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
@@ -1825,7 +1825,7 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -1843,12 +1843,12 @@ if (typeof cornerstoneTools === 'undefined') {
 
         // visible but not interactive
         function enable(element) {
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
 
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -1865,12 +1865,12 @@ if (typeof cornerstoneTools === 'undefined') {
         function activate(element) {
             //console.log('activate touchTool');
 
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).on('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -1899,12 +1899,12 @@ if (typeof cornerstoneTools === 'undefined') {
             var event = $.Event(eventType, statusChangeEventData);
             $(element).trigger(event, statusChangeEventData);
 
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             //$(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
@@ -2020,7 +2020,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -2245,7 +2246,9 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -2781,10 +2784,10 @@ if (typeof cornerstoneTools === 'undefined') {
         var configuration = {};
 
         var toolInterface = {
-            disable: function(element) {$(element).off('CornerstoneImageRendered', onImageRendered);},
+            disable: function(element) {element.removeEventListener('CornerstoneImageRendered', onImageRendered);},
             enable: function(element) {
-                $(element).off('CornerstoneImageRendered', onImageRendered);
-                $(element).on('CornerstoneImageRendered', onImageRendered);
+                element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+                element.addEventListener('CornerstoneImageRendered', onImageRendered);
                 cornerstone.updateImage(element);
             },
             getConfiguration: function() { return configuration; },
@@ -3159,7 +3162,9 @@ if (typeof cornerstoneTools === 'undefined') {
         return parts.join('.');
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        
         // If we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -3753,7 +3758,9 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// END ACTIVE TOOL ///////
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -3833,9 +3840,9 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -3844,7 +3851,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -3857,9 +3864,9 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
         cornerstone.updateImage(element);
@@ -3870,9 +3877,9 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
         $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
         $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
 
         cornerstone.updateImage(element);
     }
@@ -3974,7 +3981,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     ///////// BEGIN IMAGE RENDERING ///////
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -4069,7 +4077,8 @@ if (typeof cornerstoneTools === 'undefined') {
 
     'use strict';
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var image = eventData.image;
         var stats = image.stats;
 
@@ -4175,7 +4184,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -4701,7 +4711,8 @@ if (typeof cornerstoneTools === 'undefined') {
         };
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var element = eventData.element;
 
         var markers = getOrientationMarkers(element);
@@ -4846,7 +4857,8 @@ if (typeof cornerstoneTools === 'undefined') {
         return cornerstoneMath.point.distance(endCanvas, coords) < 5;
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -5042,7 +5054,8 @@ if (typeof cornerstoneTools === 'undefined') {
         return parts.join('.');
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -5601,7 +5614,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (!toolData) {
@@ -5988,7 +6002,8 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
@@ -6373,7 +6388,8 @@ if (typeof cornerstoneTools === 'undefined') {
         return (distanceToPoint < 10) || insideBoundingBox;
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (!toolData) {
@@ -6700,7 +6716,9 @@ if (typeof cornerstoneTools === 'undefined') {
     }
 
     /* Erases the toolData and rebinds the handlers when the image changes */
-    function newImageCallback(e, eventData) {
+    function newImageCallback(e) {
+        var eventData = e.detail;
+
         //console.log('newImageCallback: ' + e.type);
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (toolData && toolData.data) {
@@ -6862,7 +6880,8 @@ if (typeof cornerstoneTools === 'undefined') {
         cornerstone.updateImage(eventData.element);
     }
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var toolData = cornerstoneTools.getToolState(eventData.element, toolType);
         if (!toolData || !toolData.data || !toolData.data.length) {
             return;
@@ -6923,8 +6942,8 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-        $(element).off('CornerstoneImageRendered', onImageRendered);
-        $(element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
 
         cornerstone.updateImage(element);
     }
@@ -6950,15 +6969,15 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsMouseDrag', dragCallback);
         $(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-        $(element).off('CornerstoneImageRendered', onImageRendered);
-        $(element).off('CornerstoneNewImage', newImageCallback);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneNewImage', newImageCallback);
 
         $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
 
         // If the displayed image changes after the user has started clicking, we should
         // cancel the handlers and prepare for another click
-        $(element).on('CornerstoneNewImage', newImageCallback);
+        element.addEventListener('CornerstoneNewImage', newImageCallback);
 
         cornerstone.updateImage(element);
     }
@@ -6968,7 +6987,7 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
     }
 
     function activateTouchDrag(element) {
@@ -6981,12 +7000,12 @@ if (typeof cornerstoneTools === 'undefined') {
         $(element).off('CornerstoneToolsTouchDrag', dragCallback);
         $(element).off('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
 
         $(element).on('CornerstoneToolsTouchDrag', dragCallback);
         $(element).on('CornerstoneToolsTouchStart', recordStartPoint);
         $(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
     }
 
     function getConfiguration() {
@@ -8370,7 +8389,9 @@ if (typeof cornerstoneTools === 'undefined') {
 
     var toolType = 'referenceLines';
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
         if (toolData === undefined) {
@@ -8409,13 +8430,13 @@ if (typeof cornerstoneTools === 'undefined') {
             synchronizationContext: synchronizationContext,
             renderer: renderer
         });
-        $(element).on('CornerstoneImageRendered', onImageRendered);
+        element.addEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
     // disables the reference line tool for the given element
     function disable(element) {
-        $(element).off('CornerstoneImageRendered', onImageRendered);
+        element.removeEventListener('CornerstoneImageRendered', onImageRendered);
         cornerstone.updateImage(element);
     }
 
@@ -9011,7 +9032,8 @@ Display scroll progress bar across bottom of image.
         orientation: 'horizontal'
     };
 
-    function onImageRendered(e, eventData){
+    function onImageRendered(e) {
+        var eventData = e.detail;
         var element = eventData.element;
         var width = eventData.enabledElement.canvas.width;
         var height = eventData.enabledElement.canvas.height;
@@ -9241,7 +9263,9 @@ Display scroll progress bar across bottom of image.
         requestPoolManager.startGrabbing();
     }
 
-    function promiseRemovedHandler(e, eventData) {
+    function promiseRemovedHandler(e) {
+        var eventData = e.detail;
+
         // When an imagePromise has been pushed out of the cache, re-add its index
         // it to the indicesToRequest list so that it will be retrieved later if the
         // currentImageIdIndex is changed to an image nearby
@@ -9328,20 +9352,20 @@ Display scroll progress bar across bottom of image.
 
         prefetch(element);
 
-        $(element).off('CornerstoneNewImage', onImageUpdated);
-        $(element).on('CornerstoneNewImage', onImageUpdated);
+        element.removeEventListener('CornerstoneNewImage', onImageUpdated);
+        element.addEventListener('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-        $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
+        cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        cornerstone.addEventListener('CornerstoneImageCachePromiseRemoved', {
             element: element
         }, promiseRemovedHandler);
     }
 
     function disable(element) {
         clearTimeout(resetPrefetchTimeout);
-        $(element).off('CornerstoneNewImage', onImageUpdated);
+        element.removeEventListener('CornerstoneNewImage', onImageUpdated);
 
-        $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+        cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
         var stackPrefetchData = cornerstoneTools.getToolState(element, toolType);
         // If there is actually something to disable, disable it
@@ -11021,7 +11045,8 @@ Display scroll progress bar across bottom of image.
 
     ///////// BEGIN IMAGE RENDERING ///////
 
-    function onImageRendered(e, eventData) {
+    function onImageRendered(e) {
+        var eventData = e.detail;
 
         // if we have no toolData for this element, return immediately as there is nothing to do
         var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);

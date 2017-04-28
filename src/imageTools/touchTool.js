@@ -239,7 +239,7 @@
 
         // not visible, not interactive
         function disable(element) {
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -257,12 +257,12 @@
 
         // visible but not interactive
         function enable(element) {
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
 
             if (touchToolInterface.doubleTapCallback) {
                 $(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -279,12 +279,12 @@
         function activate(element) {
             //console.log('activate touchTool');
 
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).on('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -313,12 +313,12 @@
             var event = $.Event(eventType, statusChangeEventData);
             $(element).trigger(event, statusChangeEventData);
 
-            $(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.removeEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             $(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
             $(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-            $(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+            element.addEventListener('CornerstoneImageRendered', touchToolInterface.onImageRendered);
             $(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
             //$(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
