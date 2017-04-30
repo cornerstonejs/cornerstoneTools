@@ -23,7 +23,7 @@ const grabDelay = 20;
 
 function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
   if (!requestPool.hasOwnProperty(type)) {
-    throw 'Request type must be one of interaction, thumbnail, or prefetch';
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
 
   if (!element || !imageId) {
@@ -59,7 +59,7 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
 function clearRequestStack (type) {
       // Console.log('clearRequestStack');
   if (!requestPool.hasOwnProperty(type)) {
-    throw 'Request type must be one of interaction, thumbnail, or prefetch';
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
 
   requestPool[type] = [];

@@ -2289,7 +2289,7 @@ var grabDelay = 20;
 
 function addRequest(element, imageId, type, preventCache, doneCallback, failCallback) {
   if (!requestPool.hasOwnProperty(type)) {
-    throw 'Request type must be one of interaction, thumbnail, or prefetch';
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
 
   if (!element || !imageId) {
@@ -2325,7 +2325,7 @@ function addRequest(element, imageId, type, preventCache, doneCallback, failCall
 function clearRequestStack(type) {
   // Console.log('clearRequestStack');
   if (!requestPool.hasOwnProperty(type)) {
-    throw 'Request type must be one of interaction, thumbnail, or prefetch';
+    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
 
   requestPool[type] = [];
@@ -2728,7 +2728,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (element, x, y, width, height) {
   if (!element) {
-    throw 'getRGBPixels: parameter element must not be undefined';
+    throw new Error('getRGBPixels: parameter element must not be undefined');
   }
 
   x = Math.round(x);
@@ -4273,7 +4273,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (element, x, y, width, height) {
   if (!element) {
-    throw 'getLuminance: parameter element must not be undefined';
+    throw new Error('getLuminance: parameter element must not be undefined');
   }
 
   x = Math.round(x);
@@ -4890,10 +4890,10 @@ function addNewMeasurement(mouseEventData) {
   };
 
   function doneChangingTextCallback(text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       (0, _toolState.removeToolState)(mouseEventData.element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;
@@ -5142,10 +5142,10 @@ function addNewMeasurementTouch(touchEventData) {
   var measurementData = createNewMeasurement(touchEventData);
 
   function doneChangingTextCallback(text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       (0, _toolState.removeToolState)(element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;
@@ -6076,7 +6076,7 @@ function onImageRendered(e) {
     // Perform a check to see if the tool has been invalidated. This is to prevent
     // Unnecessary re-calculation of the area, mean, and standard deviation if the
     // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (!data.invalidated) {
+    if (data.invalidated === false) {
       // If the data is not invalidated, retrieve it from the toolData
       meanStdDev = data.meanStdDev;
       meanStdDevSUV = data.meanStdDevSUV;
@@ -8200,7 +8200,7 @@ function onImageRendered(e) {
     // Perform a check to see if the tool has been invalidated. This is to prevent
     // Unnecessary re-calculation of the area, mean, and standard deviation if the
     // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (!data.invalidated) {
+    if (data.invalidated === false) {
       // If the data is not invalidated, retrieve it from the toolData
       meanStdDev = data.meanStdDev;
       meanStdDevSUV = data.meanStdDevSUV;
@@ -8704,10 +8704,10 @@ function addNewMeasurement(mouseEventData) {
   var measurementData = createNewMeasurement(mouseEventData);
 
   function doneGetTextCallback(text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       (0, _toolState.removeToolState)(element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;
@@ -8926,10 +8926,10 @@ function addNewMeasurementTouch(touchEventData) {
   var measurementData = createNewMeasurement(touchEventData);
 
   function doneGetTextCallback(text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       (0, _toolState.removeToolState)(element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;
@@ -9327,7 +9327,9 @@ function onImageRendered(e) {
 
       var textCoords = void 0;
 
-      if (!data.handles.textBox.hasMoved) {
+      if (data.handles.textBox.hasMoved) {
+        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
+      } else {
         textCoords = {
           x: handleMiddleCanvas.x,
           y: handleMiddleCanvas.y
@@ -9350,8 +9352,6 @@ function onImageRendered(e) {
 
         data.handles.textBox.x = coords.x;
         data.handles.textBox.y = coords.y;
-      } else {
-        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
       }
 
       var options = {
@@ -9616,19 +9616,19 @@ function createNewMeasurement(mouseEventData) {
   if (config.ascending) {
     currentIndex += 1;
     if (currentIndex >= config.markers.length) {
-      if (!config.loop) {
-        currentIndex = -1;
-      } else {
+      if (config.loop) {
         currentIndex -= config.markers.length;
+      } else {
+        currentIndex = -1;
       }
     }
   } else {
     currentIndex -= 1;
     if (currentIndex < 0) {
-      if (!config.loop) {
-        currentIndex = -1;
-      } else {
+      if (config.loop) {
         currentIndex += config.markers.length;
+      } else {
+        currentIndex = -1;
       }
     }
   }
@@ -11854,7 +11854,7 @@ function playClip(element, framesPerSecond) {
   var playClipTimeouts = void 0;
 
   if (element === undefined) {
-    throw 'playClip: element must not be undefined';
+    throw new Error('playClip: element must not be undefined');
   }
 
   var stackToolData = (0, _toolState.getToolState)(element, 'stack');
@@ -12384,13 +12384,11 @@ function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
         };
       }
 
-      var toolData = toolState[toolType];
-
-      return toolData;
-    } else {
-      // Call the imageId specific tool state manager
-      return oldStateManager.get(element, toolType);
+      return toolState[toolType];
     }
+
+    // Call the imageId specific tool state manager
+    return oldStateManager.get(element, toolType);
   }
 
   var stackSpecificToolStateManager = {
@@ -12484,13 +12482,11 @@ function newTimeSeriesSpecificToolStateManager(toolTypes, oldStateManager) {
         };
       }
 
-      var toolData = toolState[toolType];
-
-      return toolData;
-    } else {
-      // Call the imageId specific tool state manager
-      return oldStateManager.get(element, toolType);
+      return toolState[toolType];
     }
+
+    // Call the imageId specific tool state manager
+    return oldStateManager.get(element, toolType);
   }
 
   var imageIdToolStateManager = {
@@ -12579,9 +12575,8 @@ function Synchronizer(event, handler) {
 
       if (initialData.hasOwnProperty(sourceEnabledElement)) {
         return;
-      } else {
-        initialData.distances[sourceImageId] = {};
       }
+      initialData.distances[sourceImageId] = {};
 
       initialData.imageIds.sourceElements.push(sourceImageId);
 
@@ -13410,7 +13405,7 @@ var toolType = 'timeSeriesPlayer';
  */
 function playClip(element, framesPerSecond) {
   if (element === undefined) {
-    throw 'playClip: element must not be undefined';
+    throw new Error('playClip: element must not be undefined');
   }
 
   if (framesPerSecond === undefined) {
@@ -13459,13 +13454,11 @@ function playClip(element, framesPerSecond) {
  */
 function stopClip(element) {
   var playClipToolData = (0, _toolState.getToolState)(element, toolType);
-  var playClipData = void 0;
 
-  if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+  if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
     return;
-  } else {
-    playClipData = playClipToolData.data[0];
   }
+  var playClipData = playClipToolData.data[0];
 
   clearInterval(playClipData.intervalId);
   playClipData.intervalId = undefined;

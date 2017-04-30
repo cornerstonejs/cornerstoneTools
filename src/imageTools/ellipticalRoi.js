@@ -179,7 +179,7 @@ function onImageRendered (e) {
         // Perform a check to see if the tool has been invalidated. This is to prevent
         // Unnecessary re-calculation of the area, mean, and standard deviation if the
         // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (!data.invalidated) {
+    if (data.invalidated === false) {
             // If the data is not invalidated, retrieve it from the toolData
       meanStdDev = data.meanStdDev;
       meanStdDevSUV = data.meanStdDevSUV;

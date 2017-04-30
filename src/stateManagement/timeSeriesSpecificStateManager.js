@@ -41,14 +41,11 @@ function newTimeSeriesSpecificToolStateManager (toolTypes, oldStateManager) {
         };
       }
 
-      const toolData = toolState[toolType];
-
-
-      return toolData;
-    } else {
-            // Call the imageId specific tool state manager
-      return oldStateManager.get(element, toolType);
+      return toolState[toolType];
     }
+
+    // Call the imageId specific tool state manager
+    return oldStateManager.get(element, toolType);
   }
 
   const imageIdToolStateManager = {

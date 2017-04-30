@@ -13,7 +13,7 @@ const toolType = 'timeSeriesPlayer';
  */
 function playClip (element, framesPerSecond) {
   if (element === undefined) {
-    throw 'playClip: element must not be undefined';
+    throw new Error('playClip: element must not be undefined');
   }
 
   if (framesPerSecond === undefined) {
@@ -62,13 +62,12 @@ function playClip (element, framesPerSecond) {
  */
 function stopClip (element) {
   const playClipToolData = getToolState(element, toolType);
-  let playClipData;
 
-  if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+  if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
     return;
-  } else {
-    playClipData = playClipToolData.data[0];
   }
+  const playClipData = playClipToolData.data[0];
+
 
   clearInterval(playClipData.intervalId);
   playClipData.intervalId = undefined;

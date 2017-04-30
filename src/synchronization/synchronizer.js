@@ -47,9 +47,9 @@ function Synchronizer (event, handler) {
 
       if (initialData.hasOwnProperty(sourceEnabledElement)) {
         return;
-      } else {
-        initialData.distances[sourceImageId] = {};
       }
+      initialData.distances[sourceImageId] = {};
+
 
       initialData.imageIds.sourceElements.push(sourceImageId);
 

@@ -46,10 +46,10 @@ function addNewMeasurement (mouseEventData) {
   };
 
   function doneChangingTextCallback (text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       removeToolState(mouseEventData.element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;
@@ -300,10 +300,10 @@ function addNewMeasurementTouch (touchEventData) {
   const measurementData = createNewMeasurement(touchEventData);
 
   function doneChangingTextCallback (text) {
-    if (text !== null) {
-      measurementData.text = text;
-    } else {
+    if (text === null) {
       removeToolState(element, toolType, measurementData);
+    } else {
+      measurementData.text = text;
     }
 
     measurementData.active = false;

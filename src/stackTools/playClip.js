@@ -101,7 +101,7 @@ function playClip (element, framesPerSecond) {
   let playClipTimeouts;
 
   if (element === undefined) {
-    throw 'playClip: element must not be undefined';
+    throw new Error('playClip: element must not be undefined');
   }
 
   const stackToolData = getToolState(element, 'stack');

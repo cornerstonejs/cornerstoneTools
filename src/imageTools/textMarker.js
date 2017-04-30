@@ -52,19 +52,19 @@ function createNewMeasurement (mouseEventData) {
   if (config.ascending) {
     currentIndex += 1;
     if (currentIndex >= config.markers.length) {
-      if (!config.loop) {
-        currentIndex = -1;
-      } else {
+      if (config.loop) {
         currentIndex -= config.markers.length;
+      } else {
+        currentIndex = -1;
       }
     }
   } else {
     currentIndex -= 1;
     if (currentIndex < 0) {
-      if (!config.loop) {
-        currentIndex = -1;
-      } else {
+      if (config.loop) {
         currentIndex += config.markers.length;
+      } else {
+        currentIndex = -1;
       }
     }
   }

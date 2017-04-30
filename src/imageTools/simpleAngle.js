@@ -186,7 +186,9 @@ function onImageRendered (e) {
 
       let textCoords;
 
-      if (!data.handles.textBox.hasMoved) {
+      if (data.handles.textBox.hasMoved) {
+        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
+      } else {
         textCoords = {
           x: handleMiddleCanvas.x,
           y: handleMiddleCanvas.y
@@ -209,9 +211,6 @@ function onImageRendered (e) {
 
         data.handles.textBox.x = coords.x;
         data.handles.textBox.y = coords.y;
-
-      } else {
-        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
       }
 
       const options = {

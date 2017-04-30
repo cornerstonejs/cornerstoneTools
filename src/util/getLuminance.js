@@ -1,6 +1,6 @@
 export default function (element, x, y, width, height) {
   if (!element) {
-    throw 'getLuminance: parameter element must not be undefined';
+    throw new Error('getLuminance: parameter element must not be undefined');
   }
 
   x = Math.round(x);
