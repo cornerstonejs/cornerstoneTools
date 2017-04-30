@@ -10,15 +10,18 @@
  * @returns {{fontSize: number, lineHeight: number, fontScale: number}}
  */
 export default function (enabledElement, context, fontSize) {
-    const fontScale = 0.1;
-    cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
-    // return the font size to use
-    const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
+  const fontScale = 0.1;
+
+  cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
+    // Return the font size to use
+  const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
     // TODO: actually calculate this?
-    const lineHeight = fontSize / enabledElement.viewport.scale / fontScale;
-    return {
-        fontSize: scaledFontSize,
-        lineHeight,
-        fontScale
-    };
+  const lineHeight = fontSize / enabledElement.viewport.scale / fontScale;
+
+
+  return {
+    fontSize: scaledFontSize,
+    lineHeight,
+    fontScale
+  };
 }

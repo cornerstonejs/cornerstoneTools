@@ -4,16 +4,17 @@
  * Based on: http://stackoverflow.com/questions/5429827/how-can-i-prevent-text-element-selection-with-cursor-drag
  * @returns {boolean}
  */
-export default function(e) {
-    if (e.stopPropagation) {
-        e.stopPropagation();
-    }
+export default function (e) {
+  if (e.stopPropagation) {
+    e.stopPropagation();
+  }
 
-    if (e.preventDefault) {
-        e.preventDefault();
-    }
+  if (e.preventDefault) {
+    e.preventDefault();
+  }
 
-    e.cancelBubble = true;
-    e.returnValue = false;
-    return false;
+  e.cancelBubble = true;
+  e.returnValue = false;
+
+  return false;
 }

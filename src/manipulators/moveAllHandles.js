@@ -1,63 +1,69 @@
- export default function(mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
-    var element = mouseEventData.element;
+import anyHandlesOutsideImage from './anyHandlesOutsideImage';
+import { removeToolState } from '../stateManagement/toolState';
 
-    function mouseDragCallback(e, eventData) {
-        data.active = true;
+export default function (mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
+  const element = mouseEventData.element;
 
-        Object.keys(data.handles).forEach(function(name) {
-            var handle = data.handles[name];
-            if (handle.movesIndependently === true) {
-                return;
-            }
+  function mouseDragCallback (e, eventData) {
+    data.active = true;
 
-            handle.x += eventData.deltaPoints.image.x;
-            handle.y += eventData.deltaPoints.image.y;
+    Object.keys(data.handles).forEach(function (name) {
+      const handle = data.handles[name];
 
-            if (options.preventHandleOutsideImage === true) {
-                handle.x = Math.max(handle.x, 0);
-                handle.x = Math.min(handle.x, eventData.image.width);
+      if (handle.movesIndependently === true) {
+        return;
+      }
 
-                handle.y = Math.max(handle.y, 0);
-                handle.y = Math.min(handle.y, eventData.image.height);
-            }
-        });
+      handle.x += eventData.deltaPoints.image.x;
+      handle.y += eventData.deltaPoints.image.y;
 
-        cornerstone.updateImage(element);
+      if (options.preventHandleOutsideImage === true) {
+        handle.x = Math.max(handle.x, 0);
+        handle.x = Math.min(handle.x, eventData.image.width);
 
-        var eventType = 'CornerstoneToolsMeasurementModified';
-        var modifiedEventData = {
-            toolType: toolType,
-            element: element,
-            measurementData: data
-        };
-        $(element).trigger(eventType, modifiedEventData);
+        handle.y = Math.max(handle.y, 0);
+        handle.y = Math.min(handle.y, eventData.image.height);
+      }
+    });
 
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-    }
+    cornerstone.updateImage(element);
 
-    $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+    const eventType = 'CornerstoneToolsMeasurementModified';
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData: data
+    };
 
-    function mouseUpCallback(e, eventData) {
-        data.invalidated = true;
+    $(element).trigger(eventType, modifiedEventData);
 
-        $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-        $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  }
+
+  $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+
+  function mouseUpCallback (e, eventData) {
+    data.invalidated = true;
+
+    $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+    $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+    $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 
         // If any handle is outside the image, delete the tool data
-        if (options.deleteIfHandleOutsideImage === true &&
+    if (options.deleteIfHandleOutsideImage === true &&
             anyHandlesOutsideImage(eventData, data.handles)) {
-            removeToolState(element, toolType, data);
-        }
-
-        cornerstone.updateImage(element);
-
-        if (typeof doneMovingCallback === 'function') {
-            doneMovingCallback();
-        }
+      removeToolState(element, toolType, data);
     }
 
-    $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-    return true;
+    cornerstone.updateImage(element);
+
+    if (typeof doneMovingCallback === 'function') {
+      doneMovingCallback();
+    }
+  }
+
+  $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+
+  return true;
 }

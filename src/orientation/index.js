@@ -1,7 +1,9 @@
 import getOrientationString from './getOrientationString';
 import invertOrientationString from './invertOrientationString';
 
-export const orientation = {
+const orientation = {
   getOrientationString,
   invertOrientationString
 };
+
+export default orientation;

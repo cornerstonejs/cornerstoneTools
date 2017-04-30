@@ -1,7 +1,7 @@
 export default function (handle, coords) {
-    if (!handle.boundingBox) {
-        return;
-    }
+  if (!handle.boundingBox) {
+    return;
+  }
 
-    return cornerstoneMath.point.insideRect(coords, handle.boundingBox);
+  return cornerstoneMath.point.insideRect(coords, handle.boundingBox);
 }

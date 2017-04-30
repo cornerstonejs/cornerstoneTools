@@ -1,60 +1,60 @@
-var mouseX, mouseY;
+let mouseX, mouseY;
 
-function keyPress(e) {
-    var element = e.currentTarget;
+function keyPress (e) {
+  const element = e.currentTarget;
 
-    var keyPressData = {
-        event: window.event || e, // old IE support
-        element: element,
-        viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
-        currentPoints: {
-            page: {
-                x: mouseX,
-                y: mouseY
-            },
-            image: cornerstone.pageToPixel(element, mouseX, mouseY),
-        },
-        keyCode: e.keyCode,
-        which: e.which
-    };
+  const keyPressData = {
+    event: window.event || e, // Old IE support
+    element,
+    viewport: cornerstone.getViewport(element),
+    image: cornerstone.getEnabledElement(element).image,
+    currentPoints: {
+      page: {
+        x: mouseX,
+        y: mouseY
+      },
+      image: cornerstone.pageToPixel(element, mouseX, mouseY)
+    },
+    keyCode: e.keyCode,
+    which: e.which
+  };
 
-    keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
+  keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
 
-    var keyPressEvents = {
-        keydown: 'CornerstoneToolsKeyDown',
-        keypress: 'CornerstoneToolsKeyPress',
-        keyup: 'CornerstoneToolsKeyUp',
+  const keyPressEvents = {
+    keydown: 'CornerstoneToolsKeyDown',
+    keypress: 'CornerstoneToolsKeyPress',
+    keyup: 'CornerstoneToolsKeyUp'
 
-    };
+  };
 
-    $(element).trigger(keyPressEvents[e.type], keyPressData);
+  $(element).trigger(keyPressEvents[e.type], keyPressData);
 }
 
-function mouseMove(e) {
-    mouseX = e.pageX || e.originalEvent.pageX;
-    mouseY = e.pageY || e.originalEvent.pageY;
+function mouseMove (e) {
+  mouseX = e.pageX || e.originalEvent.pageX;
+  mouseY = e.pageY || e.originalEvent.pageY;
 }
 
-var keyboardEvent = 'keydown keypress keyup';
+const keyboardEvent = 'keydown keypress keyup';
 
-function enable(element) {
+function enable (element) {
     // Prevent handlers from being attached multiple times
-    disable(element);
+  disable(element);
 
-    $(element).on(keyboardEvent, keyPress);
-    $(element).on('mousemove', mouseMove);
+  $(element).on(keyboardEvent, keyPress);
+  $(element).on('mousemove', mouseMove);
 }
 
-function disable(element) {
-    $(element).off(keyboardEvent, keyPress);
-    $(element).off('mousemove', mouseMove);
+function disable (element) {
+  $(element).off(keyboardEvent, keyPress);
+  $(element).off('mousemove', mouseMove);
 }
 
-// module exports
+// Module exports
 const keyboardInput = {
-    enable,
-    disable
+  enable,
+  disable
 };
 
 export default keyboardInput;

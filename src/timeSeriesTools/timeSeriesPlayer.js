@@ -1,4 +1,7 @@
-var toolType = 'timeSeriesPlayer';
+import { addToolState, getToolState } from '../stateManagement/toolState';
+import incrementTimePoint from './incrementTimePoint';
+
+const toolType = 'timeSeriesPlayer';
 
 /**
  * Starts playing a clip of different time series of the same image or adjusts the frame rate of an
@@ -8,70 +11,73 @@ var toolType = 'timeSeriesPlayer';
  * @param element
  * @param framesPerSecond
  */
-function playClip(element, framesPerSecond) {
-    if (element === undefined) {
-        throw 'playClip: element must not be undefined';
-    }
+function playClip (element, framesPerSecond) {
+  if (element === undefined) {
+    throw 'playClip: element must not be undefined';
+  }
 
-    if (framesPerSecond === undefined) {
-        framesPerSecond = 30;
-    }
+  if (framesPerSecond === undefined) {
+    framesPerSecond = 30;
+  }
 
-    var timeSeriesToolData = getToolState(element, 'timeSeries');
-    if (timeSeriesToolData === undefined || timeSeriesToolData.data === undefined || timeSeriesToolData.data.length === 0) {
-        return;
-    }
+  const timeSeriesToolData = getToolState(element, 'timeSeries');
 
-    var playClipToolData = getToolState(element, toolType);
-    var playClipData;
-    if (playClipToolData === undefined || playClipToolData.data.length === 0) {
-        playClipData = {
-            intervalId: undefined,
-            framesPerSecond: framesPerSecond,
-            lastFrameTimeStamp: undefined,
-            frameRate: 0
-        };
-        addToolState(element, toolType, playClipData);
+  if (timeSeriesToolData === undefined || timeSeriesToolData.data === undefined || timeSeriesToolData.data.length === 0) {
+    return;
+  }
+
+  const playClipToolData = getToolState(element, toolType);
+  let playClipData;
+
+  if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+    playClipData = {
+      intervalId: undefined,
+      framesPerSecond,
+      lastFrameTimeStamp: undefined,
+      frameRate: 0
+    };
+    addToolState(element, toolType, playClipData);
+  } else {
+    playClipData = playClipToolData.data[0];
+    playClipData.framesPerSecond = framesPerSecond;
+  }
+
+    // If already playing, do not set a new interval
+  if (playClipData.intervalId !== undefined) {
+    return;
+  }
+
+  playClipData.intervalId = setInterval(function () {
+    if (playClipData.framesPerSecond > 0) {
+      incrementTimePoint(element, 1, true);
     } else {
-        playClipData = playClipToolData.data[0];
-        playClipData.framesPerSecond = framesPerSecond;
+      incrementTimePoint(element, -1, true);
     }
-
-    // if already playing, do not set a new interval
-    if (playClipData.intervalId !== undefined) {
-        return;
-    }
-
-    playClipData.intervalId = setInterval(function() {
-        if (playClipData.framesPerSecond > 0) {
-            incrementTimePoint(element, 1, true);
-        } else {
-            incrementTimePoint(element, -1, true);
-        }
-    }, 1000 / Math.abs(playClipData.framesPerSecond));
+  }, 1000 / Math.abs(playClipData.framesPerSecond));
 }
 
 /**
  * Stops an already playing clip.
  * * @param element
  */
-function stopClip(element) {
-    var playClipToolData = getToolState(element, toolType);
-    var playClipData;
-    if (playClipToolData === undefined || playClipToolData.data.length === 0) {
-        return;
-    } else {
-        playClipData = playClipToolData.data[0];
-    }
+function stopClip (element) {
+  const playClipToolData = getToolState(element, toolType);
+  let playClipData;
 
-    clearInterval(playClipData.intervalId);
-    playClipData.intervalId = undefined;
+  if (playClipToolData === undefined || playClipToolData.data.length === 0) {
+    return;
+  } else {
+    playClipData = playClipToolData.data[0];
+  }
+
+  clearInterval(playClipData.intervalId);
+  playClipData.intervalId = undefined;
 }
 
-// module/private exports
+// Module/private exports
 const timeSeriesPlayer = {
-    start: playClip,
-    stop: stopClip
+  start: playClip,
+  stop: stopClip
 };
 
 export default timeSeriesPlayer;

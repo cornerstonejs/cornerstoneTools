@@ -1,83 +1,98 @@
-function mouseUpCallback(e, eventData) {
-    $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-    $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+import touchDragTool from '../imageTools/touchDragTool';
+import multiTouchDragTool from '../imageTools/multiTouchDragTool';
+import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool';
+import mouseWheelTool from '../imageTools/mouseWheelTool';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import { getToolState } from '../stateManagement/toolState';
+
+function mouseUpCallback (e, eventData) {
+  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
-function mouseDownCallback(e, eventData) {
-    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-        var mouseDragEventData = {
-            deltaY: 0
-        };
-        $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, dragCallback);
-        $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-        e.stopImmediatePropagation();
-        return false;
-    }
+function mouseDownCallback (e, eventData) {
+  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    const mouseDragEventData = {
+      deltaY: 0
+    };
+
+    $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, dragCallback);
+    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    e.stopImmediatePropagation();
+
+    return false;
+  }
 }
 
-function mouseWheelCallback(e, eventData) {
-    var images = -eventData.direction;
-    scroll(eventData.element, images);
+function mouseWheelCallback (e, eventData) {
+  const images = -eventData.direction;
+
+  scroll(eventData.element, images);
 }
 
-function dragCallback(e, eventData) {
-    var element = eventData.element;
+function dragCallback (e, eventData) {
+  const element = eventData.element;
 
-    var toolData = getToolState(element, 'stack');
-    if (!toolData || !toolData.data || !toolData.data.length) {
-        return;
-    }
+  const toolData = getToolState(element, 'stack');
 
-    var stackData = toolData.data[0];
+  if (!toolData || !toolData.data || !toolData.data.length) {
+    return;
+  }
 
-    var config = stackScroll.getConfiguration();
+  const stackData = toolData.data[0];
+
+  const config = stackScroll.getConfiguration();
 
     // The Math.max here makes it easier to mouseDrag-scroll small image stacks
-    var pixelsPerImage = $(element).height() / Math.max(stackData.imageIds.length, 8);
-    if (config && config.stackScrollSpeed) {
-        pixelsPerImage = config.stackScrollSpeed;
-    }
+  let pixelsPerImage = $(element).height() / Math.max(stackData.imageIds.length, 8);
 
-    e.data.deltaY = e.data.deltaY || 0;
-    e.data.deltaY += eventData.deltaPoints.page.y;
-    if (Math.abs(e.data.deltaY) >= pixelsPerImage) {
-        var imageDelta = e.data.deltaY / pixelsPerImage;
-        var imageIdIndexOffset = Math.round(imageDelta);
-        var imageDeltaMod = e.data.deltaY % pixelsPerImage;
-        e.data.deltaY = imageDeltaMod;
-        scroll(element, imageIdIndexOffset);
-    }
+  if (config && config.stackScrollSpeed) {
+    pixelsPerImage = config.stackScrollSpeed;
+  }
 
-    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+  e.data.deltaY = e.data.deltaY || 0;
+  e.data.deltaY += eventData.deltaPoints.page.y;
+  if (Math.abs(e.data.deltaY) >= pixelsPerImage) {
+    const imageDelta = e.data.deltaY / pixelsPerImage;
+    const imageIdIndexOffset = Math.round(imageDelta);
+    const imageDeltaMod = e.data.deltaY % pixelsPerImage;
+
+    e.data.deltaY = imageDeltaMod;
+    scroll(element, imageIdIndexOffset);
+  }
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
 
-// module/private exports
+// Module/private exports
 const stackScroll = simpleMouseButtonTool(mouseDownCallback);
 const stackScrollWheel = mouseWheelTool(mouseWheelCallback);
 
-var options = {
-    eventData: {
-        deltaY: 0
-    }
+const options = {
+  eventData: {
+    deltaY: 0
+  }
 };
 const stackScrollTouchDrag = touchDragTool(dragCallback, options);
 
-function multiTouchDragCallback(e, eventData) {
-    var config = stackScrollMultiTouch.getConfiguration();
-    if (config && config.testPointers(eventData)) {
-        dragCallback(e, eventData);
-    }
+function multiTouchDragCallback (e, eventData) {
+  const config = stackScrollMultiTouch.getConfiguration();
+
+  if (config && config.testPointers(eventData)) {
+    dragCallback(e, eventData);
+  }
 }
 
-var configuration = {
-    testPointers: function(eventData) {
-        return (eventData.numPointers >= 3);
-    }
+const configuration = {
+  testPointers (eventData) {
+    return (eventData.numPointers >= 3);
+  }
 };
 
 const stackScrollMultiTouch = multiTouchDragTool(multiTouchDragCallback, options);
+
 stackScrollMultiTouch.setConfiguration(configuration);
 
 export {

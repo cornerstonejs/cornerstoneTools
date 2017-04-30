@@ -1,35 +1,40 @@
-function getActiveHandle(handles) {
-    var activeHandle;
+import getHandleNearImagePoint from './getHandleNearImagePoint';
 
-    Object.keys(handles).forEach(function(name) {
-        var handle = handles[name];
-        if (handle.active === true) {
-            activeHandle = handle;
-            return;
-        }
-    });
+function getActiveHandle (handles) {
+  let activeHandle;
 
-    return activeHandle;
+  Object.keys(handles).forEach(function (name) {
+    const handle = handles[name];
+
+    if (handle.active === true) {
+      activeHandle = handle;
+
+      return;
+    }
+  });
+
+  return activeHandle;
 }
 
-export default function(element, handles, canvasPoint, distanceThreshold) {
-    if (!distanceThreshold) {
-        distanceThreshold = 6;
+export default function (element, handles, canvasPoint, distanceThreshold) {
+  if (!distanceThreshold) {
+    distanceThreshold = 6;
+  }
+
+  const activeHandle = getActiveHandle(handles);
+  const nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
+
+  if (activeHandle !== nearbyHandle) {
+    if (nearbyHandle !== undefined) {
+      nearbyHandle.active = true;
     }
 
-    var activeHandle = getActiveHandle(handles);
-    var nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
-    if (activeHandle !== nearbyHandle) {
-        if (nearbyHandle !== undefined) {
-            nearbyHandle.active = true;
-        }
-
-        if (activeHandle !== undefined) {
-            activeHandle.active = false;
-        }
-
-        return true;
+    if (activeHandle !== undefined) {
+      activeHandle.active = false;
     }
 
-    return false;
+    return true;
+  }
+
+  return false;
 }

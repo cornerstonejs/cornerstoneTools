@@ -1,57 +1,63 @@
- // This function causes any scrolling actions within the stack to propagate to
-// all of the other viewports that are synced
-export default function(synchronizer, sourceElement, targetElement, eventData) {
+import { getToolState } from '../stateManagement/toolState';
+import loadHandlerManager from '../stateManagement/loadHandlerManager';
+
+// This function causes any scrolling actions within the stack to propagate to
+// All of the other viewports that are synced
+export default function (synchronizer, sourceElement, targetElement, eventData) {
     // If the target and source are the same, stop
-    if (sourceElement === targetElement) {
-        return;
-    }
+  if (sourceElement === targetElement) {
+    return;
+  }
 
     // If there is no event, or direction is 0, stop
-    if (!eventData || !eventData.direction) {
-        return;
-    }
+  if (!eventData || !eventData.direction) {
+    return;
+  }
 
     // Get the stack of the target viewport
-    var stackToolDataSource = getToolState(targetElement, 'stack');
-    var stackData = stackToolDataSource.data[0];
+  const stackToolDataSource = getToolState(targetElement, 'stack');
+  const stackData = stackToolDataSource.data[0];
 
     // Get the new index for the stack
-    var newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
+  let newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
 
     // Ensure the index does not exceed the bounds of the stack
-    newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), stackData.imageIds.length - 1);
+  newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), stackData.imageIds.length - 1);
 
     // If the index has not changed, stop here
-    if (stackData.currentImageIdIndex === newImageIdIndex) {
-        return;
+  if (stackData.currentImageIdIndex === newImageIdIndex) {
+    return;
+  }
+
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+
+  if (startLoadingHandler) {
+    startLoadingHandler(targetElement);
+  }
+
+  let loader;
+
+  if (stackData.preventCache === true) {
+    loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+  } else {
+    loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+  }
+
+  loader.then(function (image) {
+    const viewport = cornerstone.getViewport(targetElement);
+
+    stackData.currentImageIdIndex = newImageIdIndex;
+    synchronizer.displayImage(targetElement, image, viewport);
+    if (endLoadingHandler) {
+      endLoadingHandler(targetElement, image);
     }
+  }, function (error) {
+    const imageId = stackData.imageIds[newImageIdIndex];
 
-    var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-    var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-    var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
-
-    if (startLoadingHandler) {
-        startLoadingHandler(targetElement);
+    if (errorLoadingHandler) {
+      errorLoadingHandler(targetElement, imageId, error);
     }
-
-    var loader;
-    if (stackData.preventCache === true) {
-        loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
-    } else {
-        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
-    }
-
-    loader.then(function(image) {
-        var viewport = cornerstone.getViewport(targetElement);
-        stackData.currentImageIdIndex = newImageIdIndex;
-        synchronizer.displayImage(targetElement, image, viewport);
-        if (endLoadingHandler) {
-            endLoadingHandler(targetElement, image);
-        }
-    }, function(error) {
-        var imageId = stackData.imageIds[newImageIdIndex];
-        if (errorLoadingHandler) {
-            errorLoadingHandler(targetElement, imageId, error);
-        }
-    });
+  });
 }

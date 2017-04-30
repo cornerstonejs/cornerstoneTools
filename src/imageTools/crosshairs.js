@@ -1,194 +1,207 @@
-var toolType = 'crosshairs';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { imagePointToPatientPoint } from '../util/pointProjector.js';
 
-function chooseLocation(e, eventData) {
-    e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
+const toolType = 'crosshairs';
 
-    // if we have no toolData for this element, return immediately as there is nothing to do
-    var toolData = getToolState(e.currentTarget, toolType);
-    if (!toolData) {
-        return;
-    }
+function chooseLocation (e, eventData) {
+  e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
+
+    // If we have no toolData for this element, return immediately as there is nothing to do
+  const toolData = getToolState(e.currentTarget, toolType);
+
+  if (!toolData) {
+    return;
+  }
 
     // Get current element target information
-    var sourceElement = e.currentTarget;
-    var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
-    var sourceImageId = sourceEnabledElement.image.imageId;
-    var sourceImagePlane = metaData.get('imagePlane', sourceImageId);
+  const sourceElement = e.currentTarget;
+  const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
+  const sourceImageId = sourceEnabledElement.image.imageId;
+  const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImageId);
 
     // Get currentPoints from mouse cursor on selected element
-    var sourceImagePoint = eventData.currentPoints.image;
+  const sourceImagePoint = eventData.currentPoints.image;
 
     // Transfer this to a patientPoint given imagePlane metadata
-    var patientPoint = imagePointToPatientPoint(sourceImagePoint, sourceImagePlane);
+  const patientPoint = imagePointToPatientPoint(sourceImagePoint, sourceImagePlane);
 
     // Get the enabled elements associated with this synchronization context
-    var syncContext = toolData.data[0].synchronizationContext;
-    var enabledElements = syncContext.getSourceElements();
+  const syncContext = toolData.data[0].synchronizationContext;
+  const enabledElements = syncContext.getSourceElements();
 
     // Iterate over each synchronized element
-    $.each(enabledElements, function(index, targetElement) {
-        // don't do anything if the target is the same as the source
-        if (targetElement === sourceElement) {
-            return; // Same as 'continue' in a normal for loop
-        }
+  enabledElements.forEach(function (targetElement) {
+        // Don't do anything if the target is the same as the source
+    if (targetElement === sourceElement) {
+      return;
+    }
 
-        var minDistance = Number.MAX_VALUE;
-        var newImageIdIndex = -1;
+    let minDistance = Number.MAX_VALUE;
+    let newImageIdIndex = -1;
 
-        var stackToolDataSource = getToolState(targetElement, 'stack');
-        if (stackToolDataSource === undefined) {
-            return; // Same as 'continue' in a normal for loop
-        }
+    const stackToolDataSource = getToolState(targetElement, 'stack');
 
-        var stackData = stackToolDataSource.data[0];
+    if (stackToolDataSource === undefined) {
+      return;
+    }
+
+    const stackData = stackToolDataSource.data[0];
 
         // Find within the element's stack the closest image plane to selected location
-        $.each(stackData.imageIds, function(index, imageId) {
-            var imagePlane = metaData.get('imagePlane', imageId);
-            var imagePosition = imagePlane.imagePositionPatient;
-            var row = imagePlane.rowCosines.clone();
-            var column = imagePlane.columnCosines.clone();
-            var normal = column.clone().cross(row.clone());
-            var distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
-            //console.log(index + '=' + distance);
-            if (distance < minDistance) {
-                minDistance = distance;
-                newImageIdIndex = index;
-            }
-        });
+    stackData.imageIds.forEach(function (imageId, index) {
+      const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+      const imagePosition = imagePlane.imagePositionPatient;
+      const row = imagePlane.rowCosines.clone();
+      const column = imagePlane.columnCosines.clone();
+      const normal = column.clone().cross(row.clone());
+      const distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
+            // Console.log(index + '=' + distance);
 
-        if (newImageIdIndex === stackData.currentImageIdIndex) {
-            return;
-        }
+      if (distance < minDistance) {
+        minDistance = distance;
+        newImageIdIndex = index;
+      }
+    });
+
+    if (newImageIdIndex === stackData.currentImageIdIndex) {
+      return;
+    }
 
         // Switch the loaded image to the required image
-        if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
-            var startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-            var endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-            var errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+    if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
+      const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+      const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+      const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
-            if (startLoadingHandler) {
-                startLoadingHandler(targetElement);
-            }
+      if (startLoadingHandler) {
+        startLoadingHandler(targetElement);
+      }
 
-            var loader;
-            if (stackData.preventCache === true) {
-                loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
-            } else {
-                loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
-            }
+      let loader;
 
-            loader.then(function(image) {
-                var viewport = cornerstone.getViewport(targetElement);
-                stackData.currentImageIdIndex = newImageIdIndex;
-                cornerstone.displayImage(targetElement, image, viewport);
-                if (endLoadingHandler) {
-                    endLoadingHandler(targetElement, image);
-                }
-            }, function(error) {
-                var imageId = stackData.imageIds[newImageIdIndex];
-                if (errorLoadingHandler) {
-                    errorLoadingHandler(targetElement, imageId, error);
-                }
-            });
+      if (stackData.preventCache === true) {
+        loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+      } else {
+        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+      }
+
+      loader.then(function (image) {
+        const viewport = cornerstone.getViewport(targetElement);
+
+        stackData.currentImageIdIndex = newImageIdIndex;
+        cornerstone.displayImage(targetElement, image, viewport);
+        if (endLoadingHandler) {
+          endLoadingHandler(targetElement, image);
         }
-    });
-}
+      }, function (error) {
+        const imageId = stackData.imageIds[newImageIdIndex];
 
-function mouseUpCallback(e, eventData) {
-    $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-    $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-}
-
-function mouseDownCallback(e, eventData) {
-    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-        $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
-        $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-        chooseLocation(e, eventData);
-        return false; // false = cases jquery to preventDefault() and stopPropagation() this event
+        if (errorLoadingHandler) {
+          errorLoadingHandler(targetElement, imageId, error);
+        }
+      });
     }
+  });
 }
 
-function mouseDragCallback(e, eventData) {
+function mouseUpCallback (e, eventData) {
+  $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+}
+
+function mouseDownCallback (e, eventData) {
+  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
     chooseLocation(e, eventData);
-    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+
+    return false; // False = cases jquery to preventDefault() and stopPropagation() this event
+  }
 }
 
-function enable(element, mouseButtonMask, synchronizationContext) {
-    var eventData = {
-        mouseButtonMask: mouseButtonMask,
-    };
+function mouseDragCallback (e, eventData) {
+  chooseLocation(e, eventData);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+function enable (element, mouseButtonMask, synchronizationContext) {
+  const eventData = {
+    mouseButtonMask
+  };
 
     // Clear any currently existing toolData
-    var toolData = getToolState(element, toolType);
-    toolData = [];
+  clearToolState(element, toolType);
 
-    addToolState(element, toolType, {
-        synchronizationContext: synchronizationContext,
-    });
+  addToolState(element, toolType, {
+    synchronizationContext
+  });
 
-    $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 
-    $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+  $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 }
 
-// disables the reference line tool for the given element
-function disable(element) {
-    $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+// Disables the reference line tool for the given element
+function disable (element) {
+  $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
 }
 
-// module/private exports
+// Module/private exports
 const crosshairs = {
-    activate: enable,
-    deactivate: disable,
-    enable,
-    disable
+  activate: enable,
+  deactivate: disable,
+  enable,
+  disable
 };
 
-function dragEndCallback(e, eventData) {
-    $(eventData.element).off('CornerstoneToolsTouchDrag', dragCallback);
-    $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
+function dragEndCallback (e, eventData) {
+  $(eventData.element).off('CornerstoneToolsTouchDrag', dragCallback);
+  $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
 }
 
-function dragStartCallback(e, eventData) {
-    $(eventData.element).on('CornerstoneToolsTouchDrag', dragCallback);
-    $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
-    chooseLocation(e, eventData);
-    return false;
+function dragStartCallback (e, eventData) {
+  $(eventData.element).on('CornerstoneToolsTouchDrag', dragCallback);
+  $(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
+  chooseLocation(e, eventData);
+
+  return false;
 }
 
-function dragCallback(e, eventData) {
-    chooseLocation(e, eventData);
-    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+function dragCallback (e, eventData) {
+  chooseLocation(e, eventData);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
 
-function enableTouch(element, synchronizationContext) {
+function enableTouch (element, synchronizationContext) {
     // Clear any currently existing toolData
-    var toolData = getToolState(element, toolType);
-    toolData = [];
+  clearToolState(element, toolType);
 
-    addToolState(element, toolType, {
-        synchronizationContext: synchronizationContext,
-    });
+  addToolState(element, toolType, {
+    synchronizationContext
+  });
 
-    $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
+  $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
 
-    $(element).on('CornerstoneToolsTouchStart', dragStartCallback);
+  $(element).on('CornerstoneToolsTouchStart', dragStartCallback);
 }
 
-// disables the reference line tool for the given element
-function disableTouch(element) {
-    $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
+// Disables the reference line tool for the given element
+function disableTouch (element) {
+  $(element).off('CornerstoneToolsTouchStart', dragStartCallback);
 }
 
 const crosshairsTouch = {
-    activate: enableTouch,
-    deactivate: disableTouch,
-    enable: enableTouch,
-    disable: disableTouch
+  activate: enableTouch,
+  deactivate: disableTouch,
+  enable: enableTouch,
+  disable: disableTouch
 };
 
 export {
   crosshairs,
-  crosshairsTouch,
+  crosshairsTouch
 };

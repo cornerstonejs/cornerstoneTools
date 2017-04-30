@@ -1,1 +1,3 @@
-export const metaData = cornerstone.metaData;
+const metaData = cornerstone.metaData;
+
+export default metaData;

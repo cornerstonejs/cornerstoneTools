@@ -1,34 +1,38 @@
- var handleRadius = 6;
+import toolStyle from '../stateManagement/toolStyle';
+
+const handleRadius = 6;
 
 export default function (context, renderData, handles, color, options) {
-    context.strokeStyle = color;
+  context.strokeStyle = color;
 
-    Object.keys(handles).forEach(function(name) {
-        var handle = handles[name];
-        if (handle.drawnIndependently === true) {
-            return;
-        }
+  Object.keys(handles).forEach(function (name) {
+    const handle = handles[name];
 
-        if (options && options.drawHandlesIfActive === true && !handle.active) {
-            return;
-        }
+    if (handle.drawnIndependently === true) {
+      return;
+    }
 
-        context.beginPath();
+    if (options && options.drawHandlesIfActive === true && !handle.active) {
+      return;
+    }
 
-        if (handle.active) {
-            context.lineWidth = toolStyle.getActiveWidth();
-        } else {
-            context.lineWidth = toolStyle.getToolWidth();
-        }
+    context.beginPath();
 
-        var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
-        context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+    if (handle.active) {
+      context.lineWidth = toolStyle.getActiveWidth();
+    } else {
+      context.lineWidth = toolStyle.getToolWidth();
+    }
 
-        if (options && options.fill) {
-            context.fillStyle = options.fill;
-            context.fill();
-        }
+    const handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
 
-        context.stroke();
-    });
+    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+
+    if (options && options.fill) {
+      context.fillStyle = options.fill;
+      context.fill();
+    }
+
+    context.stroke();
+  });
 }

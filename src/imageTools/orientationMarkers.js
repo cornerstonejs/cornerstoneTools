@@ -1,101 +1,104 @@
 import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
-import { metaData } from '../metaData.js';
+import toolColors from '../stateManagement/toolColors.js';
+import drawTextBox from '../util/drawTextBox.js';
 
-function getOrientationMarkers(element) {
-    var enabledElement = cornerstone.getEnabledElement(element);
-    var imagePlaneMetaData = metaData.get('imagePlane', enabledElement.image.imageId);
+function getOrientationMarkers (element) {
+  const enabledElement = cornerstone.getEnabledElement(element);
+  const imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
 
-    if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
-        return;
-    }
+  if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
+    return;
+  }
 
-    var rowString = orientation.getOrientationString(imagePlaneMetaData.rowCosines);
-    var columnString = orientation.getOrientationString(imagePlaneMetaData.columnCosines);
+  const rowString = orientation.getOrientationString(imagePlaneMetaData.rowCosines);
+  const columnString = orientation.getOrientationString(imagePlaneMetaData.columnCosines);
 
-    var oppositeRowString = orientation.invertOrientationString(rowString);
-    var oppositeColumnString = orientation.invertOrientationString(columnString);
+  const oppositeRowString = orientation.invertOrientationString(rowString);
+  const oppositeColumnString = orientation.invertOrientationString(columnString);
 
-    return {
-        top: oppositeColumnString,
-        bottom: columnString,
-        left: oppositeRowString,
-        right: rowString
-    };
+  return {
+    top: oppositeColumnString,
+    bottom: columnString,
+    left: oppositeRowString,
+    right: rowString
+  };
 }
 
-function getOrientationMarkerPositions(element) {
-    var enabledElement = cornerstone.getEnabledElement(element);
-    var coords;
+function getOrientationMarkerPositions (element) {
+  const enabledElement = cornerstone.getEnabledElement(element);
+  let coords;
 
-    coords = {
-        x: enabledElement.image.width / 2,
-        y: 5
-    };
-    var topCoords = cornerstone.pixelToCanvas(element, coords);
+  coords = {
+    x: enabledElement.image.width / 2,
+    y: 5
+  };
+  const top = cornerstone.pixelToCanvas(element, coords);
 
-    coords = {
-        x: enabledElement.image.width / 2,
-        y: enabledElement.image.height - 5
-    };
-    var bottomCoords = cornerstone.pixelToCanvas(element, coords);
+  coords = {
+    x: enabledElement.image.width / 2,
+    y: enabledElement.image.height - 5
+  };
+  const bottom = cornerstone.pixelToCanvas(element, coords);
 
-    coords = {
-        x: 5,
-        y: enabledElement.image.height / 2
-    };
-    var leftCoords = cornerstone.pixelToCanvas(element, coords);
+  coords = {
+    x: 5,
+    y: enabledElement.image.height / 2
+  };
+  const left = cornerstone.pixelToCanvas(element, coords);
 
-    coords = {
-        x: enabledElement.image.width - 10,
-        y: enabledElement.image.height / 2
-    };
-    var rightCoords = cornerstone.pixelToCanvas(element, coords);
+  coords = {
+    x: enabledElement.image.width - 10,
+    y: enabledElement.image.height / 2
+  };
+  const right = cornerstone.pixelToCanvas(element, coords);
 
-    return {
-        top: topCoords,
-        bottom: bottomCoords,
-        left: leftCoords,
-        right: rightCoords
-    };
+  return {
+    top,
+    bottom,
+    left,
+    right
+  };
 }
 
-function onImageRendered(e) {
-    var eventData = e.detail;
-    var element = eventData.element;
+function onImageRendered (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
 
-    var markers = getOrientationMarkers(element);
+  const markers = getOrientationMarkers(element);
 
-    if (!markers) {
-        return;
-    }
+  if (!markers) {
+    return;
+  }
 
-    var coords = getOrientationMarkerPositions(element, markers);
+  const coords = getOrientationMarkerPositions(element, markers);
 
-    var context = eventData.canvasContext.canvas.getContext('2d');
-    context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = eventData.canvasContext.canvas.getContext('2d');
 
-    var color = toolColors.getToolColor();
+  context.setTransform(1, 0, 0, 1, 0, 0);
 
-    var textWidths = {
-        top: context.measureText(markers.top).width,
-        left: context.measureText(markers.left).width,
-        right: context.measureText(markers.right).width,
-        bottom: context.measureText(markers.bottom).width
-    };
+  const color = toolColors.getToolColor();
 
-    drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
-    drawTextBox(context, markers.left, coords.left.x - textWidths.left / 2, coords.left.y, color);
+  const textWidths = {
+    top: context.measureText(markers.top).width,
+    left: context.measureText(markers.left).width,
+    right: context.measureText(markers.right).width,
+    bottom: context.measureText(markers.bottom).width
+  };
 
-    var config = orientationMarkers.getConfiguration();
-    if (config && config.drawAllMarkers) {
-        drawTextBox(context, markers.right, coords.right.x - textWidths.right / 2, coords.right.y, color);
-        drawTextBox(context, markers.bottom, coords.bottom.x - textWidths.bottom / 2, coords.bottom.y, color);
-    }
+  drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
+  drawTextBox(context, markers.left, coords.left.x - textWidths.left / 2, coords.left.y, color);
+
+  const config = orientationMarkers.getConfiguration();
+
+  if (config && config.drawAllMarkers) {
+    drawTextBox(context, markers.right, coords.right.x - textWidths.right / 2, coords.right.y, color);
+    drawTextBox(context, markers.bottom, coords.bottom.x - textWidths.bottom / 2, coords.bottom.y, color);
+  }
 }
-///////// END IMAGE RENDERING ///////
+// /////// END IMAGE RENDERING ///////
 
-// module exports
+// Module exports
 const orientationMarkers = displayTool(onImageRendered);
 
 export default orientationMarkers;

@@ -1,86 +1,87 @@
-function mouseWheel(e) {
+function mouseWheel (e) {
     // !!!HACK/NOTE/WARNING!!!
-    // for some reason I am getting mousewheel and DOMMouseScroll events on my
-    // mac os x mavericks system when middle mouse button dragging.
+    // For some reason I am getting mousewheel and DOMMouseScroll events on my
+    // Mac os x mavericks system when middle mouse button dragging.
     // I couldn't find any info about this so this might break other systems
-    // webkit hack
-    if (e.originalEvent.type === 'mousewheel' && e.originalEvent.wheelDeltaY === 0) {
-        return;
-    }
-    // firefox hack
-    if (e.originalEvent.type === 'DOMMouseScroll' && e.originalEvent.axis === 1) {
-        return;
-    }
+    // Webkit hack
+  if (e.originalEvent.type === 'mousewheel' && e.originalEvent.wheelDeltaY === 0) {
+    return;
+  }
+    // Firefox hack
+  if (e.originalEvent.type === 'DOMMouseScroll' && e.originalEvent.axis === 1) {
+    return;
+  }
 
-    e.preventDefault();
+  e.preventDefault();
 
-    var element = e.currentTarget;
+  const element = e.currentTarget;
 
-    var x;
-    var y;
+  let x;
+  let y;
 
-    if (e.pageX !== undefined && e.pageY !== undefined) {
-        x = e.pageX;
-        y = e.pageY;
-    } else if (e.originalEvent &&
+  if (e.pageX !== undefined && e.pageY !== undefined) {
+    x = e.pageX;
+    y = e.pageY;
+  } else if (e.originalEvent &&
                e.originalEvent.pageX !== undefined &&
                e.originalEvent.pageY !== undefined) {
-        x = e.originalEvent.pageX;
-        y = e.originalEvent.pageY;
-    } else {
+    x = e.originalEvent.pageX;
+    y = e.originalEvent.pageY;
+  } else {
         // IE9 & IE10
-        x = e.x;
-        y = e.y;
-    }
+    x = e.x;
+    y = e.y;
+  }
 
-    var startingCoords = cornerstone.pageToPixel(element, x, y);
+  const startingCoords = cornerstone.pageToPixel(element, x, y);
 
-    e = window.event || e; // old IE support
+  e = window.event || e; // Old IE support
 
-    var wheelDelta;
-    if (e.originalEvent && e.originalEvent.wheelDelta) {
-        wheelDelta = -e.originalEvent.wheelDelta;
-    } else if (e.originalEvent && e.originalEvent.deltaY) {
-        wheelDelta = -e.originalEvent.deltaY;
-    } else if (e.originalEvent && e.originalEvent.detail) {
-        wheelDelta = -e.originalEvent.detail;
-    } else {
-        wheelDelta = e.wheelDelta;
-    }
+  let wheelDelta;
 
-    var direction = wheelDelta < 0 ? -1 : 1;
+  if (e.originalEvent && e.originalEvent.wheelDelta) {
+    wheelDelta = -e.originalEvent.wheelDelta;
+  } else if (e.originalEvent && e.originalEvent.deltaY) {
+    wheelDelta = -e.originalEvent.deltaY;
+  } else if (e.originalEvent && e.originalEvent.detail) {
+    wheelDelta = -e.originalEvent.detail;
+  } else {
+    wheelDelta = e.wheelDelta;
+  }
 
-    var mouseWheelData = {
-        element: element,
-        viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
-        direction: direction,
-        pageX: x,
-        pageY: y,
-        imageX: startingCoords.x,
-        imageY: startingCoords.y
-    };
+  const direction = wheelDelta < 0 ? -1 : 1;
 
-    $(element).trigger('CornerstoneToolsMouseWheel', mouseWheelData);
+  const mouseWheelData = {
+    element,
+    viewport: cornerstone.getViewport(element),
+    image: cornerstone.getEnabledElement(element).image,
+    direction,
+    pageX: x,
+    pageY: y,
+    imageX: startingCoords.x,
+    imageY: startingCoords.y
+  };
+
+  $(element).trigger('CornerstoneToolsMouseWheel', mouseWheelData);
 }
 
-var mouseWheelEvents = 'mousewheel DOMMouseScroll';
+const mouseWheelEvents = 'mousewheel DOMMouseScroll';
 
-function enable(element) {
+function enable (element) {
     // Prevent handlers from being attached multiple times
-    disable(element);
+  disable(element);
 
-    $(element).on(mouseWheelEvents, mouseWheel);
+  $(element).on(mouseWheelEvents, mouseWheel);
 }
 
-function disable(element) {
-    $(element).unbind(mouseWheelEvents, mouseWheel);
+function disable (element) {
+  $(element).unbind(mouseWheelEvents, mouseWheel);
 }
 
-// module exports
+// Module exports
 const mouseWheelInput = {
-    enable,
-    disable
+  enable,
+  disable
 };
 
 export default mouseWheelInput;

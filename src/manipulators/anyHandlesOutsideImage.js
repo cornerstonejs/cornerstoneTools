@@ -1,24 +1,25 @@
-export default function(renderData, handles) {
-    var image = renderData.image;
-    var imageRect = {
-        left: 0,
-        top: 0,
-        width: image.width,
-        height: image.height
-    };
+export default function (renderData, handles) {
+  const image = renderData.image;
+  const imageRect = {
+    left: 0,
+    top: 0,
+    width: image.width,
+    height: image.height
+  };
 
-    var handleOutsideImage = false;
+  let handleOutsideImage = false;
 
-    Object.keys(handles).forEach(function(name) {
-        var handle = handles[name];
-        if (handle.allowedOutsideImage === true) {
-            return;
-        }
+  Object.keys(handles).forEach(function (name) {
+    const handle = handles[name];
 
-        if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
-            handleOutsideImage = true;
-        }
-    });
+    if (handle.allowedOutsideImage === true) {
+      return;
+    }
 
-    return handleOutsideImage;
+    if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
+      handleOutsideImage = true;
+    }
+  });
+
+  return handleOutsideImage;
 }

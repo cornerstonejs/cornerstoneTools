@@ -1,66 +1,74 @@
+import simpleMouseButtonTool from './simpleMouseButtonTool.js';
+import touchDragTool from './touchDragTool';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+
 // --- Strategies --- //
-function defaultStrategy(eventData) {
+function defaultStrategy (eventData) {
     // Calculate distance from the center of the image
-    var rect = eventData.element.getBoundingClientRect(eventData.element);
+  const rect = eventData.element.getBoundingClientRect(eventData.element);
 
-    var points = {
-        x: eventData.currentPoints.client.x,
-        y: eventData.currentPoints.client.y
-    };
+  const points = {
+    x: eventData.currentPoints.client.x,
+    y: eventData.currentPoints.client.y
+  };
 
-    var width = eventData.element.clientWidth;
-    var height = eventData.element.clientHeight;
+  const width = eventData.element.clientWidth;
+  const height = eventData.element.clientHeight;
 
-    var pointsFromCenter = {
-        x: points.x - rect.left - width / 2,
+  const pointsFromCenter = {
+    x: points.x - rect.left - width / 2,
         // Invert the coordinate system so that up is positive
-        y: -1 * (points.y - rect.top - height / 2)
-    };
+    y: -1 * (points.y - rect.top - height / 2)
+  };
 
-    var rotationRadians = Math.atan2(pointsFromCenter.y, pointsFromCenter.x);
-    var rotationDegrees = rotationRadians * (180 / Math.PI);
-    var rotation = -1 * rotationDegrees + 90;
-    eventData.viewport.rotation = rotation;
-    cornerstone.setViewport(eventData.element, eventData.viewport);
+  const rotationRadians = Math.atan2(pointsFromCenter.y, pointsFromCenter.x);
+  const rotationDegrees = rotationRadians * (180 / Math.PI);
+  const rotation = -1 * rotationDegrees + 90;
+
+  eventData.viewport.rotation = rotation;
+  cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
-function horizontalStrategy(eventData) {
-    eventData.viewport.rotation += (eventData.deltaPoints.page.x / eventData.viewport.scale);
-    cornerstone.setViewport(eventData.element, eventData.viewport);
+function horizontalStrategy (eventData) {
+  eventData.viewport.rotation += (eventData.deltaPoints.page.x / eventData.viewport.scale);
+  cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
-function verticalStrategy(eventData) {
-    eventData.viewport.rotation += (eventData.deltaPoints.page.y / eventData.viewport.scale);
-    cornerstone.setViewport(eventData.element, eventData.viewport);
+function verticalStrategy (eventData) {
+  eventData.viewport.rotation += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+  cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
 // --- Mouse event callbacks --- //
-function mouseUpCallback(e, eventData) {
-    $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-    $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseUpCallback (e, eventData) {
+  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
-function mouseDownCallback(e, eventData) {
-    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-        $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-        $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-        $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-        return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-    }
+function mouseDownCallback (e, eventData) {
+  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
+    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+
+    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  }
 }
 
-function dragCallback(e, eventData) {
-    rotate.strategy(eventData);
-    cornerstone.setViewport(eventData.element, eventData.viewport);
-    return false; // false = causes jquery to preventDefault() and stopPropagation() this event
+function dragCallback (e, eventData) {
+  rotate.strategy(eventData);
+  cornerstone.setViewport(eventData.element, eventData.viewport);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
 
 const rotate = simpleMouseButtonTool(mouseDownCallback);
+
 rotate.strategies = {
-    default: defaultStrategy,
-    horizontal: horizontalStrategy,
-    vertical: verticalStrategy
+  default: defaultStrategy,
+  horizontal: horizontalStrategy,
+  vertical: verticalStrategy
 };
 
 rotate.strategy = defaultStrategy;

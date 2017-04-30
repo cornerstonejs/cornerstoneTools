@@ -2,67 +2,72 @@
 // All credit to @kosich
 // https://gist.github.com/kosich/23188dd86633b6c2efb7
 
-var antiGhostDelay = 2000,
-    pointerType = {
-        mouse: 0,
-        touch: 1
-    },
-    lastInteractionType,
-    lastInteractionTime;
+const antiGhostDelay = 2000,
+  pointerType = {
+    mouse: 0,
+    touch: 1
+  };
 
-function handleTap(type, e) {
-    var now = Date.now();
-    if (type !== lastInteractionType) {
-        if (now - lastInteractionTime <= antiGhostDelay) {
-            e.preventDefault();
-            e.stopPropagation();
-            e.stopImmediatePropagation();
-            return false;
-        }
+let lastInteractionType,
+  lastInteractionTime;
 
-        lastInteractionType = type;
+function handleTap (type, e) {
+  const now = Date.now();
+
+  if (type !== lastInteractionType) {
+    if (now - lastInteractionTime <= antiGhostDelay) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+
+      return false;
     }
 
-    lastInteractionTime = now;
+    lastInteractionType = type;
+  }
+
+  lastInteractionTime = now;
 }
 
 // Cacheing the function references
 // Necessary because a new function reference is created after .bind() is called
 // http://stackoverflow.com/questions/11565471/removing-event-listener-which-was-added-with-bind
-var handleTapMouse = handleTap.bind(null, pointerType.mouse);
-var handleTapTouch = handleTap.bind(null, pointerType.touch);
+const handleTapMouse = handleTap.bind(null, pointerType.mouse);
+const handleTapTouch = handleTap.bind(null, pointerType.touch);
 
-function attachEvents(element, eventList, interactionType) {
-    var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
-    eventList.forEach(function(eventName) {
-        element.addEventListener(eventName, tapHandler, true);
-    });
+function attachEvents (element, eventList, interactionType) {
+  const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
+
+  eventList.forEach(function (eventName) {
+    element.addEventListener(eventName, tapHandler, true);
+  });
 }
 
-function removeEvents(element, eventList, interactionType) {
-    var tapHandler = interactionType ? handleTapMouse : handleTapTouch;
-    eventList.forEach(function(eventName) {
-        element.removeEventListener(eventName, tapHandler, true);
-    });
+function removeEvents (element, eventList, interactionType) {
+  const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
+
+  eventList.forEach(function (eventName) {
+    element.removeEventListener(eventName, tapHandler, true);
+  });
 }
 
-var mouseEvents = [ 'mousedown', 'mouseup' ];
-var touchEvents = [ 'touchstart', 'touchend' ];
+const mouseEvents = ['mousedown', 'mouseup'];
+const touchEvents = ['touchstart', 'touchend'];
 
-function disable(element) {
-    removeEvents(element, mouseEvents, pointerType.mouse);
-    removeEvents(element, touchEvents, pointerType.touch);
+function disable (element) {
+  removeEvents(element, mouseEvents, pointerType.mouse);
+  removeEvents(element, touchEvents, pointerType.touch);
 }
 
-function enable(element) {
-    disable(element);
-    attachEvents(element, mouseEvents, pointerType.mouse);
-    attachEvents(element, touchEvents, pointerType.touch);
+function enable (element) {
+  disable(element);
+  attachEvents(element, mouseEvents, pointerType.mouse);
+  attachEvents(element, touchEvents, pointerType.touch);
 }
 
 const preventGhostClick = {
-    enable,
-    disable
+  enable,
+  disable
 };
 
 export default preventGhostClick;
