@@ -63,6 +63,8 @@
                     $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
                 }
 
+                $(element).trigger('measurementAdded');
+                //console.log('event triggered');
                 cornerstone.updateImage(element);
             }, preventHandleOutsideImage);
         }

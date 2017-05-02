@@ -1,4 +1,4 @@
-/*! cornerstoneTools - v0.8.4 - 2017-04-19 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstoneTools - v0.8.4 - 2017-05-02 | (c) 2014 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 // Begin Source: src/header.js
 if (typeof cornerstone === 'undefined') {
     cornerstone = {};
@@ -997,6 +997,8 @@ if (typeof cornerstoneTools === 'undefined') {
                     $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
                 }
 
+                $(element).trigger('measurementAdded');
+                //console.log('event triggered');
                 cornerstone.updateImage(element);
             }, preventHandleOutsideImage);
         }
@@ -4321,16 +4323,16 @@ if (typeof cornerstoneTools === 'undefined') {
     ///////// END ACTIVE TOOL ///////
 
     function pointNearTool(element, data, coords) {
-       /*
-        var lineSegment = {
-            start: cornerstone.pixelToCanvas(element, data.handles.start),
-            end: cornerstone.pixelToCanvas(element, data.handles.end)
-        };
-        var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-        */
+        /*
+         var lineSegment = {
+             start: cornerstone.pixelToCanvas(element, data.handles.start),
+             end: cornerstone.pixelToCanvas(element, data.handles.end)
+         };
+         var distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+         */
         var ds1 = cornerstoneMath.point.distanceSquared(coords, data.handles.start);
         var ds2 = cornerstoneMath.point.distanceSquared(coords, data.handles.end);
-        return ( (ds1<5) || (ds2<5) );
+        return ( (ds1< 5) || (ds2< 5) );
     }
 
     ///////// BEGIN IMAGE RENDERING ///////
@@ -7531,12 +7533,18 @@ if (typeof cornerstoneTools === 'undefined') {
             rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1) / stride_x,
             invert: false,
             sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
-            render: image.render,
             slope: image.slope,
             intercept: image.intercept,
             windowCenter: image.windowCenter,
             windowWidth: image.windowWidth
         };
+        // don´t use renderWebImage
+        if (image_2.color === true){
+            image_2.render = cornerstone.renderColorImage;
+        }else {
+            image_2.render = cornerstone.renderGrayscaleImage;
+        }
+
         return image_2;
     }
 
