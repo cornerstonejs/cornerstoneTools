@@ -283,12 +283,18 @@
             rowPixelSpacing: (image.rowPixelSpacing?image.rowPixelSpacing:1) / stride_x,
             invert: false,
             sizeInBytes: target_width * target_height * 2 * (image.color?1:4),
-            render: image.render,
             slope: image.slope,
             intercept: image.intercept,
             windowCenter: image.windowCenter,
             windowWidth: image.windowWidth
         };
+        // don´t use renderWebImage
+        if (image_2.color === true){
+            image_2.render = cornerstone.renderColorImage;
+        }else {
+            image_2.render = cornerstone.renderGrayscaleImage;
+        }
+
         return image_2;
     }
 
