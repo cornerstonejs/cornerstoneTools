@@ -82,6 +82,9 @@
 
         // If all the requests are complete, disable the stackPrefetch tool
         if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
+            if ( stackPrefetch === undefined ) {
+                stackPrefetch = {};
+            }
             stackPrefetch.enabled = false;
         }
 
