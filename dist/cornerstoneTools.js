@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.8.6 - 2017-05-22 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.8.6 - 2017-05-29 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("Hammer"));
@@ -3725,10 +3725,10 @@ function prefetch(element) {
     return;
   }
 
-  var stackPrefetch = stackPrefetchData.data[0];
+  var stackPrefetch = stackPrefetchData.data[0] || {};
 
   // If all the requests are complete, disable the stackPrefetch tool
-  if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
+  if (!stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
     stackPrefetch.enabled = false;
   }
 

@@ -75,10 +75,10 @@ function prefetch (element) {
     return;
   }
 
-  const stackPrefetch = stackPrefetchData.data[0];
+  const stackPrefetch = stackPrefetchData.data[0] || {};
 
     // If all the requests are complete, disable the stackPrefetch tool
-  if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
+  if (!stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
     stackPrefetch.enabled = false;
   }
 
