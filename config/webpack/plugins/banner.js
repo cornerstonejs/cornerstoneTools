@@ -16,7 +16,7 @@ const getCurrentDate = () => {
 const getBanner = () => {
   return `/*! ${pkg.name} - ${pkg.version} - ` +
          `${getCurrentDate()} ` +
-         `| (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */`
+         `| (c) 2017 Chris Hafey | ${pkg.homepage} */`
 }
 
 module.exports = () => {
