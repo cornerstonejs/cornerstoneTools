@@ -79,10 +79,8 @@ function length (vector) {
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered (e) {
-  const eventData = e.detail;
-
-    // If we have no toolData for this element, return immediately as there is nothing to do
+function onImageRendered (e, eventData) {
+  // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
   if (!toolData) {

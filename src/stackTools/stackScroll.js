@@ -3,6 +3,7 @@ import multiTouchDragTool from '../imageTools/multiTouchDragTool';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool';
 import mouseWheelTool from '../imageTools/mouseWheelTool';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import scroll from '../util/scroll';
 import { getToolState } from '../stateManagement/toolState';
 
 function mouseUpCallback (e, eventData) {

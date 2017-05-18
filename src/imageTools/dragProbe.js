@@ -179,7 +179,7 @@ function minimalStrategy (eventData) {
 function mouseUpCallback (e, eventData) {
   const element = eventData.element;
 
-  element.removeEventListener('CornerstoneImageRendered', imageRenderedCallback);
+  $(element).off('CornerstoneImageRendered', imageRenderedCallback);
   $(element).off('CornerstoneToolsMouseDrag', dragCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -190,7 +190,7 @@ function mouseDownCallback (e, eventData) {
   const element = eventData.element;
 
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    element.addEventListener('CornerstoneImageRendered', imageRenderedCallback);
+    $(element).on('CornerstoneImageRendered', imageRenderedCallback);
     $(element).on('CornerstoneToolsMouseDrag', dragCallback);
     $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
     $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);

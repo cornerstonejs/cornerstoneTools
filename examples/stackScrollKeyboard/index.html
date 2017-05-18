@@ -76,24 +76,22 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
-    function onViewportUpdated(e) {
-        var data = e.detail;
+    function onViewportUpdated(e, data) {
         var viewport = data.viewport;
         $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
         $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
     };
 
-    element.addEventListener("CornerstoneImageRendered", onViewportUpdated);
+    $(element).on("CornerstoneImageRendered", onViewportUpdated);
 
-    function onNewImage(e) {
-        var data = e.detail;
+    function onNewImage(e, data) {
         var newImageIdIndex = stack.currentImageIdIndex;
 
         // Populate the current slice span
         var currentValueSpan = document.getElementById("sliceText");
         currentValueSpan.textContent = "Image " + (newImageIdIndex + 1) + "/" + imageIds.length;
     }
-    element.addEventListener("CornerstoneNewImage", onNewImage);
+    $(element).on("CornerstoneNewImage", onNewImage);
 
     function onKeyPress(e, data) {
         var keyCode = data.keyCode;

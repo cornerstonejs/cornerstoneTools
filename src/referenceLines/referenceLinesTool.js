@@ -3,10 +3,8 @@ import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
 const toolType = 'referenceLines';
 
-function onImageRendered (e) {
-  const eventData = e.detail;
-
-    // If we have no toolData for this element, return immediately as there is nothing to do
+function onImageRendered (e, eventData) {
+  // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
   if (toolData === undefined) {
@@ -46,13 +44,13 @@ function enable (element, synchronizationContext, renderer) {
     synchronizationContext,
     renderer
   });
-  element.addEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).on('CornerstoneImageRendered', onImageRendered);
   cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).off('CornerstoneImageRendered', onImageRendered);
   cornerstone.updateImage(element);
 }
 

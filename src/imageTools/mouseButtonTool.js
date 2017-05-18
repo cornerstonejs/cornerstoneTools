@@ -213,7 +213,7 @@ export default function (mouseToolInterface) {
 
     // Not visible, not interactive
   function disable (element) {
-    element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
     $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -227,7 +227,7 @@ export default function (mouseToolInterface) {
 
     // Visible but not interactive
   function enable (element) {
-    element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
     $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -236,7 +236,7 @@ export default function (mouseToolInterface) {
       $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
     cornerstone.updateImage(element);
   }
@@ -247,12 +247,12 @@ export default function (mouseToolInterface) {
       mouseButtonMask
     };
 
-    element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
     $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-    element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
     $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
@@ -282,12 +282,12 @@ export default function (mouseToolInterface) {
 
     $(element).trigger(event, statusChangeEventData);
 
-    element.removeEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).off('CornerstoneToolsMouseDown', mouseToolInterface.mouseDownCallback || mouseDownCallback);
     $(element).off('CornerstoneToolsMouseDownActivate', mouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback);
 
-    element.addEventListener('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     $(element).on('CornerstoneToolsMouseDown', eventData, mouseToolInterface.mouseDownCallback || mouseDownCallback);
 
