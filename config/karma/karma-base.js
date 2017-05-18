@@ -20,7 +20,8 @@ module.exports = {
   frameworks: ['mocha'],
   reporters: ['progress', 'coverage'],
   files: [
-    'test/*_test.js',
+    // Pointint to examples folder for now until it's registered in NPM
+    'examples/cornerstoneMath.min.js',
     'test/**/*_test.js'
   ],
 

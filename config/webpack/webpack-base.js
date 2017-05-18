@@ -27,7 +27,7 @@ module.exports = {
     rules: [{
       enforce: 'pre',
       test: /\.js$/,
-      exclude: /(node_modules)/,
+      exclude: /(node_modules|test)/,
       loader: 'eslint-loader',
       options: {
         failOnError: false
