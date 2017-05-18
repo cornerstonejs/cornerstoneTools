@@ -1,8 +1,7 @@
 import displayTool from './displayTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 
-function onImageRendered (e) {
-  const eventData = e.detail;
+function onImageRendered (e, eventData) {
   const image = eventData.image;
   const stats = image.stats;
 

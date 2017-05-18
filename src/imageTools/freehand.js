@@ -299,9 +299,7 @@ function mouseDownCallback (e, eventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered (e) {
-  const eventData = e.detail;
-
+function onImageRendered (e, eventData) {
     // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -385,9 +383,9 @@ function enable (element) {
   $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).off('CornerstoneImageRendered', onImageRendered);
 
-  element.addEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).on('CornerstoneImageRendered', onImageRendered);
   cornerstone.updateImage(element);
 }
 
@@ -396,7 +394,7 @@ function disable (element) {
   $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).off('CornerstoneImageRendered', onImageRendered);
   cornerstone.updateImage(element);
 }
 
@@ -409,9 +407,9 @@ function activate (element, mouseButtonMask) {
   $(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).off('CornerstoneImageRendered', onImageRendered);
 
-  element.addEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).on('CornerstoneImageRendered', onImageRendered);
   $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
   cornerstone.updateImage(element);
@@ -422,9 +420,9 @@ function deactivate (element) {
   $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).off('CornerstoneImageRendered', onImageRendered);
 
-  element.addEventListener('CornerstoneImageRendered', onImageRendered);
+  $(element).on('CornerstoneImageRendered', onImageRendered);
 
   cornerstone.updateImage(element);
 }

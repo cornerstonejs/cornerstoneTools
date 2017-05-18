@@ -3,11 +3,11 @@ export default function (onImageRendered) {
 
   const toolInterface = {
     disable (element) {
-      element.removeEventListener('CornerstoneImageRendered', onImageRendered);
+      $(element).off('CornerstoneImageRendered', onImageRendered);
     },
     enable (element) {
-      element.removeEventListener('CornerstoneImageRendered', onImageRendered);
-      element.addEventListener('CornerstoneImageRendered', onImageRendered);
+      $(element).off('CornerstoneImageRendered', onImageRendered);
+      $(element).on('CornerstoneImageRendered', onImageRendered);
       cornerstone.updateImage(element);
     },
     getConfiguration () {

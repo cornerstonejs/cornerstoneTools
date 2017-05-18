@@ -39,7 +39,7 @@ function attachEvents (element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
   eventList.forEach(function (eventName) {
-    element.addEventListener(eventName, tapHandler, true);
+    $(element).on(eventName, tapHandler);
   });
 }
 
@@ -47,7 +47,7 @@ function removeEvents (element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
   eventList.forEach(function (eventName) {
-    element.removeEventListener(eventName, tapHandler, true);
+    $(element).off(eventName, tapHandler);
   });
 }
 

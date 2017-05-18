@@ -172,9 +172,7 @@ function prefetch (element) {
   requestPoolManager.startGrabbing();
 }
 
-function promiseRemovedHandler (e) {
-  const eventData = e.detail;
-
+function promiseRemovedHandler (e, eventData) {
     // When an imagePromise has been pushed out of the cache, re-add its index
     // It to the indicesToRequest list so that it will be retrieved later if the
     // CurrentImageIdIndex is changed to an image nearby
@@ -266,20 +264,20 @@ function enable (element) {
 
   prefetch(element);
 
-  element.removeEventListener('CornerstoneNewImage', onImageUpdated);
-  element.addEventListener('CornerstoneNewImage', onImageUpdated);
+  $(element).off('CornerstoneNewImage', onImageUpdated);
+  $(element).on('CornerstoneNewImage', onImageUpdated);
 
-  cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  cornerstone.addEventListener('CornerstoneImageCachePromiseRemoved', {
+  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
     element
   }, promiseRemovedHandler);
 }
 
 function disable (element) {
   clearTimeout(resetPrefetchTimeout);
-  element.removeEventListener('CornerstoneNewImage', onImageUpdated);
+  $(element).off('CornerstoneNewImage', onImageUpdated);
 
-  cornerstone.removeEventListener('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
   const stackPrefetchData = getToolState(element, toolType);
     // If there is actually something to disable, disable it

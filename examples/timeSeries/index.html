@@ -100,7 +100,7 @@ is used by our example image loader-->
         $("#imageNumAndCount").text("Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length);
         $("#timePoint").text("Timepoint #" + (timeSeriesData.currentStackIndex + 1) + "/" + timeSeriesData.stacks.length);
     }
-    element.addEventListener("CornerstoneNewImage", onNewImage);
+    $(element).on("CornerstoneNewImage", onNewImage);
 
     var imageIds = [
         'example://1',

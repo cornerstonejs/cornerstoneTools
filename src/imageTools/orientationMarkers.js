@@ -61,8 +61,7 @@ function getOrientationMarkerPositions (element) {
   };
 }
 
-function onImageRendered (e) {
-  const eventData = e.detail;
+function onImageRendered (e, eventData) {
   const element = eventData.element;
 
   const markers = getOrientationMarkers(element);

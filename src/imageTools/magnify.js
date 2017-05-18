@@ -18,7 +18,7 @@ function mouseUpCallback (e, eventData) {
   $(element).off('CornerstoneToolsMouseDrag', dragCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-  element.removeEventListener('CornerstoneNewImage', newImageCallback);
+  $(element).off('CornerstoneNewImage', newImageCallback);
   hideTool(eventData);
 }
 
@@ -33,21 +33,19 @@ function mouseDownCallback (e, eventData) {
   const element = eventData.element;
 
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    $(eventData.element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
-    $(eventData.element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
-    $(eventData.element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+    $(element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
+    $(element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
+    $(element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
 
     currentPoints = eventData.currentPoints;
-    element.addEventListener('CornerstoneNewImage', eventData, newImageCallback);
+    $(element).on('CornerstoneNewImage', eventData, newImageCallback);
     drawMagnificationTool(eventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
 }
 
-function newImageCallback (e) {
-  const eventData = e.detail;
-
+function newImageCallback (e, eventData) {
   eventData.currentPoints = currentPoints;
   drawMagnificationTool(eventData);
 }
@@ -57,7 +55,7 @@ function dragEndCallback (e, eventData) {
 
   $(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
   $(eventData.element).off('CornerstoneToolsTouchEnd', dragEndCallback);
-  element.removeEventListener('CornerstoneNewImage', newImageCallback);
+  $(element).off('CornerstoneNewImage', newImageCallback);
   hideTool(eventData);
 }
 
