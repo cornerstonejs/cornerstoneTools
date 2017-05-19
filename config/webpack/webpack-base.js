@@ -14,17 +14,18 @@ module.exports = {
   output: {
     filename: '[name].js',
     library: '[name]',
-    libraryTarget: 'var',
-    path: outputPath
+    libraryTarget: 'umd',
+    path: outputPath,
+    umdNamedDefine: true
   },
   devtool: 'source-map',
   externals: {
     jquery: {
       root: '$'
     },
-    'cornerstone-math': {
-      root: 'cornerstoneMath'
-    }
+    'hammerjs': 'Hammer',
+    'cornerstone-core': 'cornerstone',
+    'cornerstone-math': 'cornerstoneMath'
   },
   module: {
     rules: [{
