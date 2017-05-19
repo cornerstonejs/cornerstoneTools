@@ -21,6 +21,9 @@ module.exports = {
   externals: {
     jquery: {
       root: '$'
+    },
+    'cornerstone-math': {
+      root: 'cornerstoneMath'
     }
   },
   module: {

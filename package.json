@@ -1,6 +1,6 @@
 {
-  "name": "cornerstoneTools",
-  "version": "0.8.4",
+  "name": "cornerstone-tools",
+  "version": "0.8.5",
   "description": "Medical imaging tools for the Cornerstone library",
   "keywords": [
     "DICOM",
@@ -30,6 +30,7 @@
     "webpack:dev": "ENV=dev webpack --progress --config ./config/webpack",
     "webpack:prod": "ENV=prod webpack --progress --config ./config/webpack",
     "webpack:watch": "webpack --progress --debug --watch  --config ./config/webpack",
+    "start": "npm run webpack",
     "watch": "npm run webpack:watch",
     "test": "npm run test:phantom",
     "test:watch": "karma start config/karma/karma-watch.js",
@@ -61,7 +62,9 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "hammerjs": "^2.0.8",
-    "dicom-parser": "1.7.4"
+    "cornerstone-core": "^0.10.9",
+    "cornerstone-math": "^0.1.4",
+    "dicom-parser": "1.7.4",
+    "hammerjs": "^2.0.8"
   }
 }
