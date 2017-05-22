@@ -1,11 +1,11 @@
-/*! cornerstone-tools - 0.8.5 - 2017-05-22 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.8.6 - 2017-05-22 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require(undefined));
+		module.exports = factory(require("Hammer"));
 	else if(typeof define === 'function' && define.amd)
-		define("cornerstoneTools", [], factory);
+		define("cornerstoneTools", ["Hammer"], factory);
 	else if(typeof exports === 'object')
-		exports["cornerstoneTools"] = factory(require(undefined));
+		exports["cornerstoneTools"] = factory(require("Hammer"));
 	else
 		root["cornerstoneTools"] = factory(root["Hammer"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_111__) {
@@ -13606,7 +13606,7 @@ exports.timeSeriesScrollTouchDrag = timeSeriesScrollTouchDrag;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '0.8.4';
+exports.default = '0.8.6';
 
 /***/ }),
 /* 104 */
