@@ -1,3 +1,6 @@
+[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url]
+[![Coverage Status][coverage-image]][coverage-url]
+
 cornerstoneTools
 ================
 
@@ -134,3 +137,16 @@ Backlog
 Copyright
 ============
 Copyright 2015 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)
+
+[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
+[license-url]: LICENSE
+
+[npm-url]: https://npmjs.org/package/cornerstone-tools
+[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
+[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
+
+[travis-url]: http://travis-ci.org/chafey/cornerstoneTools
+[travis-image]: https://travis-ci.org/chafey/cornerstoneTools.svg?branch=master
+
+[coverage-url]: https://coveralls.io/github/chafey/cornerstoneTools?branch=master
+[coverage-image]: https://coveralls.io/repos/github/chafey/cornerstoneTools/badge.svg?branch=master

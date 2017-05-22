@@ -12,8 +12,8 @@ module.exports = {
   },
   'globals': {
     'cornerstone': true,
-    'cornerstoneTools': true,
-    'cornerstoneMath': true
+    'cornerstoneMath': true,
+    'Hammer': true,
   },
   'rules': {
     'accessor-pairs': 'warn',
