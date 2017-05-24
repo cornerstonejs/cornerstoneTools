@@ -66,4 +66,4 @@ function unthrottledScroll(element, images) {
   scrollToIndex(element, newImageIdIndex);
 }
 
-export default = throttle(unthrottledScroll, 50);
+export default = throttle(unthrottledScroll, 25);
