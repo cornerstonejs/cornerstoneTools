@@ -1,3 +1,4 @@
+import scroll from '../util/scroll';
 import keyboardTool from '../imageTools/keyboardTool';
 
 const keys = {
