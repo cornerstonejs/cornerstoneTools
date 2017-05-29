@@ -1,161 +1,172 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
+import touchTool from './touchTool';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
+import drawHandles from '../manipulators/drawHandles';
+import { getToolState } from '../stateManagement/toolState.js';
 
-    'use strict';
+const toolType = 'highlight';
 
-    var toolType = 'highlight';
+// /////// BEGIN ACTIVE TOOL ///////
+function createNewMeasurement (mouseEventData) {
+    // If already a highlight measurement, creating a new one will be useless
+  const existingToolData = getToolState(mouseEventData.event.currentTarget, toolType);
 
-    ///////// BEGIN ACTIVE TOOL ///////
-    function createNewMeasurement(mouseEventData) {
-        //if already a highlight measurement, creating a new one will be useless
-        var existingToolData = cornerstoneTools.getToolState(mouseEventData.event.currentTarget, toolType);
-        if (existingToolData && existingToolData.data && existingToolData.data.length > 0) {
-            return;
-        }
+  if (existingToolData && existingToolData.data && existingToolData.data.length > 0) {
+    return;
+  }
 
-        // create the measurement data for this tool with the end handle activated
-        var measurementData = {
-            visible: true,
-            active: true,
-            handles: {
-                start: {
-                    x: mouseEventData.currentPoints.image.x,
-                    y: mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: false
-                },
-                end: {
-                    x: mouseEventData.currentPoints.image.x,
-                    y: mouseEventData.currentPoints.image.y,
-                    highlight: true,
-                    active: true
-                }
-            }
-        };
-
-        return measurementData;
+    // Create the measurement data for this tool with the end handle activated
+  const measurementData = {
+    visible: true,
+    active: true,
+    handles: {
+      start: {
+        x: mouseEventData.currentPoints.image.x,
+        y: mouseEventData.currentPoints.image.y,
+        highlight: true,
+        active: false
+      },
+      end: {
+        x: mouseEventData.currentPoints.image.x,
+        y: mouseEventData.currentPoints.image.y,
+        highlight: true,
+        active: true
+      }
     }
-    ///////// END ACTIVE TOOL ///////
+  };
 
-    function pointInsideRect(element, data, coords) {
-        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+  return measurementData;
+}
+// /////// END ACTIVE TOOL ///////
 
-        var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width: Math.abs(startCanvas.x - endCanvas.x),
-            height: Math.abs(startCanvas.y - endCanvas.y)
-        };
+function pointInsideRect (element, data, coords) {
+  const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+  const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-        var insideBox = false;
-        if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) && coords.y >= rect.top && coords.y <= (rect.top + rect.height)) {
-            insideBox = true;
-        }
+  const rect = {
+    left: Math.min(startCanvas.x, endCanvas.x),
+    top: Math.min(startCanvas.y, endCanvas.y),
+    width: Math.abs(startCanvas.x - endCanvas.x),
+    height: Math.abs(startCanvas.y - endCanvas.y)
+  };
 
-        return insideBox;
-    }
+  let insideBox = false;
 
-    function pointNearTool(element, data, coords) {
-        var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+  if ((coords.x >= rect.left && coords.x <= (rect.left + rect.width)) && coords.y >= rect.top && coords.y <= (rect.top + rect.height)) {
+    insideBox = true;
+  }
 
-        var rect = {
-            left: Math.min(startCanvas.x, endCanvas.x),
-            top: Math.min(startCanvas.y, endCanvas.y),
-            width: Math.abs(startCanvas.x - endCanvas.x),
-            height: Math.abs(startCanvas.y - endCanvas.y)
-        };
+  return insideBox;
+}
 
-        var distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
-        return (distanceToPoint < 5);
-    }
+function pointNearTool (element, data, coords) {
+  const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+  const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-    ///////// BEGIN IMAGE RENDERING ///////
+  const rect = {
+    left: Math.min(startCanvas.x, endCanvas.x),
+    top: Math.min(startCanvas.y, endCanvas.y),
+    width: Math.abs(startCanvas.x - endCanvas.x),
+    height: Math.abs(startCanvas.y - endCanvas.y)
+  };
 
-    function onImageRendered(e, eventData) {
+  const distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
 
-        // if we have no toolData for this element, return immediately as there is nothing to do
-        var toolData = cornerstoneTools.getToolState(e.currentTarget, toolType);
-        if (toolData === undefined) {
-            return;
-        }
 
-        // we have tool data for this elemen
-        var context = eventData.canvasContext.canvas.getContext('2d');
-        context.setTransform(1, 0, 0, 1, 0, 0);
+  return (distanceToPoint < 5);
+}
 
-        var color;
-        var lineWidth = cornerstoneTools.toolStyle.getToolWidth();
+// /////// BEGIN IMAGE RENDERING ///////
 
-        context.save();
+function onImageRendered (e, eventData) {
+    // If we have no toolData for this element, return immediately as there is nothing to do
+  const toolData = getToolState(e.currentTarget, toolType);
 
-        var data = toolData.data[0];
+  if (toolData === undefined) {
+    return;
+  }
 
-        if (!data) {
-            return;
-        }
+    // We have tool data for this elemen
+  const context = eventData.canvasContext.canvas.getContext('2d');
 
-        if (data.active) {
-            color = cornerstoneTools.toolColors.getActiveColor();
-        } else {
-            color = cornerstoneTools.toolColors.getToolColor();
-        }
+  context.setTransform(1, 0, 0, 1, 0, 0);
 
-        var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-        var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+  let color;
+  const lineWidth = toolStyle.getToolWidth();
 
-        var rect = {
-            left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
-            top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
-            width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
-            height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
-        };
+  context.save();
 
-        // draw dark fill outside the rectangle
-        context.beginPath();
-        context.strokeStyle = 'transparent';
+  const data = toolData.data[0];
 
-        context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+  if (!data) {
+    return;
+  }
 
-        context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-        context.stroke();
-        context.fillStyle = 'rgba(0,0,0,0.7)';
-        context.fill();
-        context.closePath();
+  if (data.active) {
+    color = toolColors.getActiveColor();
+  } else {
+    color = toolColors.getToolColor();
+  }
 
-        // draw dashed stroke rectangle
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.setLineDash([ 4 ]);
-        context.strokeRect(rect.left, rect.top, rect.width, rect.height);
+  const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+  const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-        // Strange fix, but restore doesn't seem to reset the line dashes?
-        context.setLineDash([]);
+  const rect = {
+    left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
+    top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
+    width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+    height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+  };
 
-        // draw the handles last, so they will be on top of the overlay
-        cornerstoneTools.drawHandles(context, eventData, data.handles, color);
-        context.restore();
-    }
-    ///////// END IMAGE RENDERING ///////
+    // Draw dark fill outside the rectangle
+  context.beginPath();
+  context.strokeStyle = 'transparent';
 
-    // module exports
-    var preventHandleOutsideImage = true;
+  context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
 
-    cornerstoneTools.highlight = cornerstoneTools.mouseButtonRectangleTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        pointInsideRect: pointInsideRect,
-        toolType: toolType
-    }, preventHandleOutsideImage);
+  context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+  context.stroke();
+  context.fillStyle = 'rgba(0,0,0,0.7)';
+  context.fill();
+  context.closePath();
 
-    cornerstoneTools.highlightTouch = cornerstoneTools.touchTool({
-        createNewMeasurement: createNewMeasurement,
-        onImageRendered: onImageRendered,
-        pointNearTool: pointNearTool,
-        pointInsideRect: pointInsideRect,
-        toolType: toolType
-    }, preventHandleOutsideImage);
+    // Draw dashed stroke rectangle
+  context.beginPath();
+  context.strokeStyle = color;
+  context.lineWidth = lineWidth;
+  context.setLineDash([4]);
+  context.strokeRect(rect.left, rect.top, rect.width, rect.height);
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+    // Strange fix, but restore doesn't seem to reset the line dashes?
+  context.setLineDash([]);
+
+    // Draw the handles last, so they will be on top of the overlay
+  drawHandles(context, eventData, data.handles, color);
+  context.restore();
+}
+// /////// END IMAGE RENDERING ///////
+
+// Module exports
+const preventHandleOutsideImage = true;
+
+const highlight = mouseButtonRectangleTool({
+  createNewMeasurement,
+  onImageRendered,
+  pointNearTool,
+  pointInsideRect,
+  toolType
+}, preventHandleOutsideImage);
+
+const highlightTouch = touchTool({
+  createNewMeasurement,
+  onImageRendered,
+  pointNearTool,
+  pointInsideRect,
+  toolType
+}, preventHandleOutsideImage);
+
+export {
+  highlight,
+  highlightTouch
+};

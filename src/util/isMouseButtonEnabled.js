@@ -1,14 +1,8 @@
-(function(cornerstone, cornerstoneTools) {
+/* eslint no-bitwise:0 */
 
-    'use strict';
+export default function (which, mouseButtonMask) {
+  const mouseButton = (1 << (which - 1));
 
-    function isMouseButtonEnabled(which, mouseButtonMask) {
-        /*jshint bitwise: false*/
-        var mouseButton = (1 << (which - 1));
-        return ((mouseButtonMask & mouseButton) !== 0);
-    }
 
-    // module exports
-    cornerstoneTools.isMouseButtonEnabled = isMouseButtonEnabled;
-
-})(cornerstone, cornerstoneTools);
+  return ((mouseButtonMask & mouseButton) !== 0);
+}

@@ -1,62 +1,52 @@
-(function(cornerstoneTools) {
+ // Returns a decimal value given a fractional value
+function fracToDec (fractionalValue) {
+  return parseFloat(`.${fractionalValue}`);
+}
 
-    'use strict';
+export default function (image, storedPixelValue) {
+  const patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
+  const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
 
-    // Returns a decimal value given a fractional value
-    function fracToDec(fractionalValue) {
-        return parseFloat('.' + fractionalValue);
-    }
+  if (!patientStudyModule || !seriesModule) {
+    return;
+  }
 
-    function calculateSUV(image, storedPixelValue) {
-        if (!dicomParser) {
-            return;
-        }
+  const modality = seriesModule.modality;
 
-        var patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
-        var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-        if (!patientStudyModule || !seriesModule) {
-            return;
-        }
+    // Image must be PET
+  if (modality !== 'PT') {
+    return;
+  }
 
-        var modality = seriesModule.modality;
+  const modalityPixelValue = storedPixelValue * image.slope + image.intercept;
 
-        // image must be PET
-        if (modality !== 'PT') {
-            return;
-        }
+  const patientWeight = patientStudyModule.patientWeight; // In kg
 
-        var modalityPixelValue = storedPixelValue * image.slope + image.intercept;
+  if (!patientWeight) {
+    return;
+  }
 
-        var patientWeight = patientStudyModule.patientWeight; // in kg
-        if (!patientWeight) {
-            return;
-        }
+  const petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
 
-        var petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
-        if (!petSequenceModule) {
-            return;
-        }
+  if (!petSequenceModule) {
+    return;
+  }
 
-        var radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
-        var startTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
-        var totalDose = radiopharmaceuticalInfo.radionuclideTotalDose;
-        var halfLife = radiopharmaceuticalInfo.radionuclideHalfLife;
-        var seriesAcquisitionTime = seriesModule.seriesTime;
+  const radiopharmaceuticalInfo = petSequenceModule.radiopharmaceuticalInfo;
+  const startTime = radiopharmaceuticalInfo.radiopharmaceuticalStartTime;
+  const totalDose = radiopharmaceuticalInfo.radionuclideTotalDose;
+  const halfLife = radiopharmaceuticalInfo.radionuclideHalfLife;
+  const seriesAcquisitionTime = seriesModule.seriesTime;
 
-        if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
-            return;
-        }
+  if (!startTime || !totalDose || !halfLife || !seriesAcquisitionTime) {
+    return;
+  }
 
-        var acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
-        var injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
-        var durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
-        var correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
-        var suv = modalityPixelValue * patientWeight / correctedDose * 1000;
+  const acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
+  const injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+  const durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
+  const correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
+  const suv = modalityPixelValue * patientWeight / correctedDose * 1000;
 
-        return suv;
-    }
-
-    // module exports
-    cornerstoneTools.calculateSUV = calculateSUV;
-
-})(cornerstoneTools);
+  return suv;
+}

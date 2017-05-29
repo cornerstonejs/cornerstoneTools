@@ -1,64 +1,60 @@
-(function($, cornerstone, cornerstoneTools) {
+let mouseX, mouseY;
 
-    'use strict';
+function keyPress (e) {
+  const element = e.currentTarget;
 
-    var mouseX, mouseY;
+  const keyPressData = {
+    event: window.event || e, // Old IE support
+    element,
+    viewport: cornerstone.getViewport(element),
+    image: cornerstone.getEnabledElement(element).image,
+    currentPoints: {
+      page: {
+        x: mouseX,
+        y: mouseY
+      },
+      image: cornerstone.pageToPixel(element, mouseX, mouseY)
+    },
+    keyCode: e.keyCode,
+    which: e.which
+  };
 
-    function keyPress(e) {
-        var element = e.currentTarget;
+  keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
 
-        var keyPressData = {
-            event: window.event || e, // old IE support
-            element: element,
-            viewport: cornerstone.getViewport(element),
-            image: cornerstone.getEnabledElement(element).image,
-            currentPoints: {
-                page: {
-                    x: mouseX,
-                    y: mouseY
-                },
-                image: cornerstone.pageToPixel(element, mouseX, mouseY),
-            },
-            keyCode: e.keyCode,
-            which: e.which
-        };
+  const keyPressEvents = {
+    keydown: 'CornerstoneToolsKeyDown',
+    keypress: 'CornerstoneToolsKeyPress',
+    keyup: 'CornerstoneToolsKeyUp'
 
-        keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
+  };
 
-        var keyPressEvents = {
-            keydown: 'CornerstoneToolsKeyDown',
-            keypress: 'CornerstoneToolsKeyPress',
-            keyup: 'CornerstoneToolsKeyUp',
+  $(element).trigger(keyPressEvents[e.type], keyPressData);
+}
 
-        };
+function mouseMove (e) {
+  mouseX = e.pageX || e.originalEvent.pageX;
+  mouseY = e.pageY || e.originalEvent.pageY;
+}
 
-        $(element).trigger(keyPressEvents[e.type], keyPressData);
-    }
+const keyboardEvent = 'keydown keypress keyup';
 
-    function mouseMove(e) {
-        mouseX = e.pageX || e.originalEvent.pageX;
-        mouseY = e.pageY || e.originalEvent.pageY;
-    }
+function enable (element) {
+    // Prevent handlers from being attached multiple times
+  disable(element);
 
-    var keyboardEvent = 'keydown keypress keyup';
+  $(element).on(keyboardEvent, keyPress);
+  $(element).on('mousemove', mouseMove);
+}
 
-    function enable(element) {
-        // Prevent handlers from being attached multiple times
-        disable(element);
+function disable (element) {
+  $(element).off(keyboardEvent, keyPress);
+  $(element).off('mousemove', mouseMove);
+}
 
-        $(element).on(keyboardEvent, keyPress);
-        $(element).on('mousemove', mouseMove);
-    }
+// Module exports
+const keyboardInput = {
+  enable,
+  disable
+};
 
-    function disable(element) {
-        $(element).off(keyboardEvent, keyPress);
-        $(element).off('mousemove', mouseMove);
-    }
-
-    // module exports
-    cornerstoneTools.keyboardInput = {
-        enable: enable,
-        disable: disable
-    };
-
-})($, cornerstone, cornerstoneTools);
+export default keyboardInput;

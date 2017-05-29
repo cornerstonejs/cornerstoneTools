@@ -1,44 +1,40 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+import getHandleNearImagePoint from './getHandleNearImagePoint';
 
-    'use strict';
+function getActiveHandle (handles) {
+  let activeHandle;
 
-    function getActiveHandle(handles) {
-        var activeHandle;
+  Object.keys(handles).forEach(function (name) {
+    const handle = handles[name];
 
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            if (handle.active === true) {
-                activeHandle = handle;
-                return;
-            }
-        });
+    if (handle.active === true) {
+      activeHandle = handle;
 
-        return activeHandle;
+      return;
+    }
+  });
+
+  return activeHandle;
+}
+
+export default function (element, handles, canvasPoint, distanceThreshold) {
+  if (!distanceThreshold) {
+    distanceThreshold = 6;
+  }
+
+  const activeHandle = getActiveHandle(handles);
+  const nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
+
+  if (activeHandle !== nearbyHandle) {
+    if (nearbyHandle !== undefined) {
+      nearbyHandle.active = true;
     }
 
-    function handleActivator(element, handles, canvasPoint, distanceThreshold) {
-        if (!distanceThreshold) {
-            distanceThreshold = 6;
-        }
-
-        var activeHandle = getActiveHandle(handles);
-        var nearbyHandle = cornerstoneTools.getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
-        if (activeHandle !== nearbyHandle) {
-            if (nearbyHandle !== undefined) {
-                nearbyHandle.active = true;
-            }
-
-            if (activeHandle !== undefined) {
-                activeHandle.active = false;
-            }
-
-            return true;
-        }
-
-        return false;
+    if (activeHandle !== undefined) {
+      activeHandle.active = false;
     }
 
-    // module/private exports
-    cornerstoneTools.handleActivator = handleActivator;
+    return true;
+  }
 
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+  return false;
+}

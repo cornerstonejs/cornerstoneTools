@@ -131,7 +131,7 @@ is used by our example image loader-->
         $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
     };
 
-    $('#dicomImage').on("CornerstoneImageRendered", onViewportUpdated);
+    $(element).on("CornerstoneImageRendered", onViewportUpdated);
 
     var imageIds = [
         'example://1',

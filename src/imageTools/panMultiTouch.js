@@ -1,24 +1,25 @@
-(function($, cornerstone, cornerstoneTools) {
+import multiTouchDragTool from './multiTouchDragTool';
 
-    'use strict';
+function touchPanCallback (e, eventData) {
+  const config = panMultiTouch.getConfiguration();
 
-    function touchPanCallback(e, eventData) {
-        var config = cornerstoneTools.panMultiTouch.getConfiguration();
-        if (config && config.testPointers(eventData)) {
-            eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
-            eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
-            cornerstone.setViewport(eventData.element, eventData.viewport);
-            return false; // false = causes jquery to preventDefault() and stopPropagation() this event
-        }
-    }
+  if (config && config.testPointers(eventData)) {
+    eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
+    eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
+    cornerstone.setViewport(eventData.element, eventData.viewport);
 
-    var configuration = {
-        testPointers: function(eventData) {
-            return (eventData.numPointers >= 2);
-        }
-    };
+    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  }
+}
 
-    cornerstoneTools.panMultiTouch = cornerstoneTools.multiTouchDragTool(touchPanCallback);
-    cornerstoneTools.panMultiTouch.setConfiguration(configuration);
+const configuration = {
+  testPointers (eventData) {
+    return (eventData.numPointers >= 2);
+  }
+};
 
-})($, cornerstone, cornerstoneTools);
+const panMultiTouch = multiTouchDragTool(touchPanCallback);
+
+panMultiTouch.setConfiguration(configuration);
+
+export default panMultiTouch;

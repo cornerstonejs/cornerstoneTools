@@ -1,40 +1,38 @@
-(function($, cornerstone, cornerstoneMath, cornerstoneTools) {
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
 
-    'use strict';
+export default function (element, handles, coords, distanceThreshold) {
+  let nearbyHandle;
 
-    function getHandleNearImagePoint(element, handles, coords, distanceThreshold) {
-        var nearbyHandle;
+  if (!handles) {
+    return;
+  }
 
-        if (!handles) {
-            return;
-        }
+  Object.keys(handles).forEach(function (name) {
+    const handle = handles[name];
 
-        Object.keys(handles).forEach(function(name) {
-            var handle = handles[name];
-            if (handle.hasOwnProperty('pointNearHandle')) {
-                if (handle.pointNearHandle(element, handle, coords)) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            } else if (handle.hasBoundingBox === true) {
-                if (cornerstoneTools.pointInsideBoundingBox(handle, coords)) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            } else {
-                var handleCanvas = cornerstone.pixelToCanvas(element, handle);
-                var distance = cornerstoneMath.point.distance(handleCanvas, coords);
-                if (distance <= distanceThreshold) {
-                    nearbyHandle = handle;
-                    return;
-                }
-            }
-        });
+    if (handle.hasOwnProperty('pointNearHandle')) {
+      if (handle.pointNearHandle(element, handle, coords)) {
+        nearbyHandle = handle;
 
-        return nearbyHandle;
+        return;
+      }
+    } else if (handle.hasBoundingBox === true) {
+      if (pointInsideBoundingBox(handle, coords)) {
+        nearbyHandle = handle;
+
+        return;
+      }
+    } else {
+      const handleCanvas = cornerstone.pixelToCanvas(element, handle);
+      const distance = cornerstoneMath.point.distance(handleCanvas, coords);
+
+      if (distance <= distanceThreshold) {
+        nearbyHandle = handle;
+
+        return;
+      }
     }
+  });
 
-    // module exports
-    cornerstoneTools.getHandleNearImagePoint = getHandleNearImagePoint;
-
-})($, cornerstone, cornerstoneMath, cornerstoneTools);
+  return nearbyHandle;
+}

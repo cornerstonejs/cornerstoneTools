@@ -1,29 +1,33 @@
-(function($, cornerstone, cornerstoneTools) {
+export default function (mouseDownCallback) {
+  let configuration = {};
 
-    'use strict';
+  const toolInterface = {
+    activate (element, mouseButtonMask, options) {
+      $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+      const eventData = {
+        mouseButtonMask,
+        options
+      };
 
-    function simpleMouseButtonTool(mouseDownCallback) {
-        var configuration = {};
-
-        var toolInterface = {
-            activate: function(element, mouseButtonMask, options) {
-                $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
-                var eventData = {
-                    mouseButtonMask: mouseButtonMask,
-                    options: options
-                };
-                $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
-            },
-            disable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
-            enable: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
-            deactivate: function(element) {$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);},
-            getConfiguration: function() { return configuration;},
-            setConfiguration: function(config) {configuration = config;}
-        };
-        return toolInterface;
+      $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
+    },
+    disable (element) {
+      $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+    },
+    enable (element) {
+      $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+    },
+    deactivate (element) {
+      $(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+    },
+    getConfiguration () {
+      return configuration;
+    },
+    setConfiguration (config) {
+      configuration = config;
     }
+  };
 
-    // module exports
-    cornerstoneTools.simpleMouseButtonTool = simpleMouseButtonTool;
 
-})($, cornerstone, cornerstoneTools);
+  return toolInterface;
+}

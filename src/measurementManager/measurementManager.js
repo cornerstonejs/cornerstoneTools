@@ -1,38 +1,37 @@
-(function($, cornerstoneTools) {
+// This object manages a collection of measurements
+function MeasurementManager () {
+  const that = this;
 
-    'use strict';
+  that.measurements = [];
 
-    // This object manages a collection of measurements
-    function MeasurementManager() {
+  // Adds an element as both a source and a target
+  this.add = function (measurement) {
+    const index = that.measurements.push(measurement);
+    // Fire event
+    const eventDetail = {
+      index,
+      measurement
+    };
 
-        var that = this;
-        that.measurements = [];
+    $(that).trigger('CornerstoneMeasurementAdded', eventDetail);
+  };
 
-        // adds an element as both a source and a target
-        this.add = function(measurement) {
-            var index = that.measurements.push(measurement);
-            // fire event
-            var eventDetail = {
-                index: index,
-                measurement: measurement
-            };
-            $(that).trigger('CornerstoneMeasurementAdded', eventDetail);
-        };
+  this.remove = function (index) {
+    const measurement = that.measurements[index];
 
-        this.remove = function(index) {
-            var measurement = that.measurements[index];
-            that.measurements.splice(index, 1);
-            // fire event
-            var eventDetail = {
-                index: index,
-                measurement: measurement
-            };
-            $(that).trigger('CornerstoneMeasurementRemoved', eventDetail);
-        };
+    that.measurements.splice(index, 1);
+    // Fire event
+    const eventDetail = {
+      index,
+      measurement
+    };
 
-    }
+    $(that).trigger('CornerstoneMeasurementRemoved', eventDetail);
+  };
 
-    // module/private exports
-    cornerstoneTools.MeasurementManager = new MeasurementManager();
+}
 
-})($, cornerstoneTools);
+// Module/private exports
+const manager = new MeasurementManager();
+
+export default manager;
