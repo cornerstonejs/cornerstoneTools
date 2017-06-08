@@ -23,7 +23,6 @@ export default function (mouseToolInterface) {
 
     const eventData = {
       mouseButtonMask: mouseEventData.which,
-      canCreate: true
     };
 
         // Associate this data with this imageId so we can render it and manipulate it
@@ -78,7 +77,7 @@ export default function (mouseToolInterface) {
   }
 
   function mouseDownActivateCallback (e, eventData) {
-    if (!e.data.canCreate) return false;
+    if (e.data.canCreate===false) return false;
 
     if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
       if (mouseToolInterface.addNewMeasurement) {
