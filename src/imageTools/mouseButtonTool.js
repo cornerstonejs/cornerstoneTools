@@ -22,7 +22,7 @@ export default function (mouseToolInterface) {
     }
 
     const eventData = {
-      mouseButtonMask: mouseEventData.which,
+      mouseButtonMask: mouseEventData.which
     };
 
         // Associate this data with this imageId so we can render it and manipulate it
