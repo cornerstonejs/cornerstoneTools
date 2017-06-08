@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import multiTouchDragTool from './multiTouchDragTool';
 
 function touchPanCallback (e, eventData) {

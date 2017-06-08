@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 // This function causes the target image to be drawn immediately
 export default function (synchronizer, sourceElement, targetElement) {
 

@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import { getToolState } from '../stateManagement/toolState';
 import loadHandlerManager from '../stateManagement/loadHandlerManager';
 

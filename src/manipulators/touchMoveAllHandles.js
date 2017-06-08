@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage';
 import { removeToolState } from '../stateManagement/toolState';
 

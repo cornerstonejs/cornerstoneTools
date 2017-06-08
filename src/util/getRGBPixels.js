@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 export default function (element, x, y, width, height) {
   if (!element) {
     throw new Error('getRGBPixels: parameter element must not be undefined');

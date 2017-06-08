@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
 function Synchronizer (event, handler) {

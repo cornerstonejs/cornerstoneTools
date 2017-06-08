@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
  /*
  * Define the runAnimation boolean as an object
  * so that it can be modified by reference

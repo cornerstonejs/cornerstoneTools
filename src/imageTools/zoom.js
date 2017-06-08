@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import simpleMouseButtonTool from './simpleMouseButtonTool';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
 import mouseWheelTool from './mouseWheelTool';

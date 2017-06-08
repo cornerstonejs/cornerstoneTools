@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
  /**
  * Sets the canvas context transformation matrix so it is scaled to show text
  * more cleanly even if the image is scaled up.  See

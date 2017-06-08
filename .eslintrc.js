@@ -10,11 +10,7 @@ module.exports = {
   'parserOptions': {
     'sourceType': 'module'
   },
-  'globals': {
-    'cornerstone': true,
-    'cornerstoneMath': true,
-    'Hammer': true,
-  },
+  'globals': {},
   'rules': {
     'accessor-pairs': 'warn',
     'array-bracket-spacing': 'warn',

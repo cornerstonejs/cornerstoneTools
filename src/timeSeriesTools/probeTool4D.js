@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import mouseButtonTool from '../imageTools/mouseButtonTool';
 import drawHandles from '../manipulators/drawHandles';
 import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize';

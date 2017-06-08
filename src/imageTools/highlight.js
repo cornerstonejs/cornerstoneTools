@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool';
 import toolStyle from '../stateManagement/toolStyle.js';

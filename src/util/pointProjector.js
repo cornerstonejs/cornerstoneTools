@@ -1,3 +1,5 @@
+import * as cornerstoneMath from 'cornerstone-math';
+
 // Projects a patient point to an image point
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
   const point = patientPoint.clone().sub(imagePlane.imagePositionPatient);

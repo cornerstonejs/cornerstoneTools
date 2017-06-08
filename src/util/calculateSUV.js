@@ -1,4 +1,6 @@
- // Returns a decimal value given a fractional value
+import * as cornerstone from 'cornerstone-core';
+
+// Returns a decimal value given a fractional value
 function fracToDec (fractionalValue) {
   return parseFloat(`.${fractionalValue}`);
 }

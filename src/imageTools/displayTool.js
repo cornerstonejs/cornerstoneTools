@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 export default function (onImageRendered) {
   let configuration = {};
 

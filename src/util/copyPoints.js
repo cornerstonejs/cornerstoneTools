@@ -1,3 +1,5 @@
+import * as cornerstoneMath from 'cornerstone-math';
+
 export default function (points) {
   const page = cornerstoneMath.point.copy(points.page);
   const image = cornerstoneMath.point.copy(points.image);

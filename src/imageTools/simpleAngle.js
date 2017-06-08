@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';

@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager';
 
 function getElementToolStateManager (element) {

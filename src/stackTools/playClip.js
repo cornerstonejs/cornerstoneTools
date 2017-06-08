@@ -1,5 +1,5 @@
 /* eslint no-bitwise:0 */
-
+import * as cornerstone from 'cornerstone-core';
 import loadHandlerManager from '../stateManagement/loadHandlerManager';
 import { addToolState, getToolState } from '../stateManagement/toolState';
 

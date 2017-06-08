@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   const element = mouseEventData.element;

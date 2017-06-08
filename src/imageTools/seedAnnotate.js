@@ -1,5 +1,6 @@
 /* eslint no-alert:0 */
-
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool';
 import drawTextBox from '../util/drawTextBox.js';

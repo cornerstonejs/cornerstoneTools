@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 // This implements an imageId specific tool state management strategy.  This means that
 // Measurements data is tied to a specific imageId and only visible for enabled elements
 // That are displaying that imageId.

@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 function mouseWheel (e) {
     // !!!HACK/NOTE/WARNING!!!
     // For some reason I am getting mousewheel and DOMMouseScroll events on my

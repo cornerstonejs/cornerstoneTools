@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
 
 export default function (element, handles, coords, distanceThreshold) {

@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import toolStyle from '../stateManagement/toolStyle';
 
 const handleRadius = 6;

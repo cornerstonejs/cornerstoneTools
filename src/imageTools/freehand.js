@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles';
