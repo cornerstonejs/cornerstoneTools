@@ -67,7 +67,7 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "cornerstone-core": "^0.10.10",
+    "cornerstone-core": "^0.11.0",
     "cornerstone-math": "^0.1.5",
     "dicom-parser": "1.7.4",
     "hammerjs": "^2.0.8",

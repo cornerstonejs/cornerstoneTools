@@ -139,7 +139,7 @@ var cornerstoneWADOImageLoader = (function ($, cornerstone, cornerstoneWADOImage
                 var total = oProgress.total;
                 var percentComplete = Math.round((loaded / total)*100);
 
-                $(cornerstone).trigger('CornerstoneImageLoadProgress', {
+                $(cornerstone.events).trigger('CornerstoneImageLoadProgress', {
                     imageId: imageId,
                     loaded: loaded,
                     total: total,

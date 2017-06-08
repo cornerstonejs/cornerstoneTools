@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.8.6 - 2017-06-02 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.8.6 - 2017-06-08 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
@@ -3955,8 +3955,8 @@ function enable(element) {
   $(element).off('CornerstoneNewImage', onImageUpdated);
   $(element).on('CornerstoneNewImage', onImageUpdated);
 
-  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
+  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
     element: element
   }, promiseRemovedHandler);
 }
@@ -3965,7 +3965,7 @@ function disable(element) {
   clearTimeout(resetPrefetchTimeout);
   $(element).off('CornerstoneNewImage', onImageUpdated);
 
-  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
   var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
   // If there is actually something to disable, disable it
