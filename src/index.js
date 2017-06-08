@@ -117,7 +117,7 @@ export { freehand } from './imageTools/freehand';
 
 export { highlight, highlightTouch } from './imageTools/highlight';
 export { default as imageStats } from './imageTools/imageStats';
-export { default as keyboardTool } from './imageTools/imageStats';
+export { default as keyboardTool } from './imageTools/keyboardTool';
 export { length, lengthTouch } from './imageTools/length';
 export { magnify, magnifyTouchDrag } from './imageTools/magnify';
 export { default as mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool';
