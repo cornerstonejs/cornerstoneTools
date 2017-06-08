@@ -1,8 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
-const rootPath = process.env.PWD;
-const context = path.resolve(rootPath, "src");
-const outputPath = path.resolve(rootPath, 'dist');
+const rootPath = process.cwd();
+const context = path.join(rootPath, "src");
+const outputPath = path.join(rootPath, 'dist');
 const bannerPlugin = require('./plugins/banner');
 
 module.exports = {
