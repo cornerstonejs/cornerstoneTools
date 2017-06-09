@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.8.8 - 2017-06-08 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.8.9 - 2017-06-09 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
@@ -14118,7 +14118,7 @@ exports.timeSeriesScrollTouchDrag = timeSeriesScrollTouchDrag;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '0.8.8';
+exports.default = '0.8.9';
 
 /***/ }),
 /* 107 */
