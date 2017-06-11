@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import multiTouchDragTool from './multiTouchDragTool.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import multiTouchDragTool from './multiTouchDragTool';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 function touchPanCallback (e, eventData) {
   const config = panMultiTouch.getConfiguration();

@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import anyHandlesOutsideImage from './anyHandlesOutsideImage';
+import { removeToolState } from '../stateManagement/toolState';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const element = touchEventData.element;

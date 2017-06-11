@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 // This function synchronizes the target zoom and pan to match the source
 export default function (synchronizer, sourceElement, targetElement) {
 

@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 

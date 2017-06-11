@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 function getElementToolStateManager (element) {
   const enabledImage = cornerstone.getEnabledElement(element);

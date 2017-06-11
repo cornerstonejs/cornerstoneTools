@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import toolStyle from '../stateManagement/toolStyle.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import toolStyle from '../stateManagement/toolStyle';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 const handleRadius = 6;
 

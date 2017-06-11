@@ -1,7 +1,15 @@
+<<<<<<< HEAD
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { stackScroll } from '../stackTools/stackScroll.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import { getToolState } from '../stateManagement/toolState';
+import requestPoolManager from '../requestPool/requestPoolManager';
+import loadHandlerManager from '../stateManagement/loadHandlerManager';
+import { stackScroll } from '../stackTools/stackScroll';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 export default function (element, newImageIdIndex) {
   const toolData = getToolState(element, 'stack');

@@ -1,7 +1,8 @@
 {
   "name": "cornerstone-tools",
-  "version": "0.8.5",
+  "version": "0.8.9",
   "description": "Medical imaging tools for the Cornerstone library",
+  "main": "./dist/cornerstoneTools.min.js",
   "keywords": [
     "DICOM",
     "medical",
@@ -10,6 +11,7 @@
   "author": "Chris Hafey, Prasath",
   "homepage": "https://github.com/chafey/cornerstoneTools",
   "license": "MIT",
+  "module": "src/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/chafey/cornerstoneTools.git"
@@ -27,8 +29,8 @@
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js",
     "build": "npm run test && npm run version && npm run webpack && npm run doc:generate",
     "webpack": "npm run clean:dist && npm run webpack:prod && npm run webpack:dev",
-    "webpack:dev": "ENV=dev webpack --progress --config ./config/webpack",
-    "webpack:prod": "ENV=prod webpack --progress --config ./config/webpack",
+    "webpack:dev": "webpack --progress --config ./config/webpack/webpack-dev",
+    "webpack:prod": "webpack --progress --config ./config/webpack/webpack-prod",
     "webpack:watch": "webpack --progress --debug --watch  --config ./config/webpack",
     "start": "npm run webpack",
     "watch": "npm run webpack:watch",
@@ -44,9 +46,11 @@
     "babel-loader": "^6.4.1",
     "babel-preset-env": "^1.3.2",
     "chai": "^3.5.0",
+    "coveralls": "^2.13.1",
     "docdash": "^0.4.0",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
+    "istanbul": "^0.4.5",
     "istanbul-instrumenter-loader": "^2.0.0",
     "jsdoc": "^3.4.3",
     "karma": "^1.6.0",
@@ -56,15 +60,17 @@
     "karma-mocha": "^1.3.0",
     "karma-phantomjs-launcher": "^1.0.4",
     "karma-webpack": "^2.0.3",
+    "lodash": "^4.17.4",
     "mocha": "^3.2.0",
     "opn-cli": "^3.1.0",
     "shx": "^0.2.2",
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "cornerstone-core": "^0.10.9",
-    "cornerstone-math": "^0.1.4",
-    "dicom-parser": "1.7.4",
-    "hammerjs": "^2.0.8"
+    "cornerstone-core": "^0.11.0",
+    "cornerstone-math": "^0.1.6",
+    "dicom-parser": "1.7.5",
+    "hammerjs": "^2.0.8",
+    "jquery": "^2.2.4"
   }
 }

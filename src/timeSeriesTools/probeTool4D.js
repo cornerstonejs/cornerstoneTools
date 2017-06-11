@@ -1,9 +1,19 @@
+<<<<<<< HEAD:src/timeSeriesTools/ProbeTool4D.js
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import MeasurementManager from '../measurementManager/measurementManager.js';
 import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import mouseButtonTool from '../imageTools/mouseButtonTool';
+import drawHandles from '../manipulators/drawHandles';
+import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize';
+import { getToolState } from '../stateManagement/toolState';
+import MeasurementManager from '../measurementManager/measurementManager';
+import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702:src/timeSeriesTools/probeTool4D.js
 
 const toolType = 'probe4D';
 

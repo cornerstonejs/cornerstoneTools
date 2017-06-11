@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';

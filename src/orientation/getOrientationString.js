@@ -1,3 +1,5 @@
+import * as cornerstoneMath from 'cornerstone-math';
+
 export default function (vector) {
     // Thanks to David Clunie
     // https://sites.google.com/site/dicomnotes/

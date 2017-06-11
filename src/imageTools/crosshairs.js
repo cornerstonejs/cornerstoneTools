@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';

@@ -1,4 +1,7 @@
-let mouseX, mouseY;
+import * as cornerstone from 'cornerstone-core';
+
+let mouseX;
+let mouseY;
 
 function keyPress (e) {
   const element = e.currentTarget;

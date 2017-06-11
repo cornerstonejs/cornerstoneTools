@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 // This function synchronizes the target element ww/wc to match the source element
 export default function (synchronizer, sourceElement, targetElement) {
 

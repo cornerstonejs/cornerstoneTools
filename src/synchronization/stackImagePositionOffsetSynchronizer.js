@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import { getToolState } from '../stateManagement/toolState';
+import loadHandlerManager from '../stateManagement/loadHandlerManager';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position

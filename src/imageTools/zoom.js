@@ -1,8 +1,17 @@
+<<<<<<< HEAD
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import mouseWheelTool from './mouseWheelTool.js';
 import touchPinchTool from './touchPinchTool.js';
 import touchDragTool from './touchDragTool.js';
+=======
+import * as cornerstone from 'cornerstone-core';
+import simpleMouseButtonTool from './simpleMouseButtonTool';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import mouseWheelTool from './mouseWheelTool';
+import touchPinchTool from './touchPinchTool';
+import touchDragTool from './touchDragTool';
+>>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 
 let startPoints;

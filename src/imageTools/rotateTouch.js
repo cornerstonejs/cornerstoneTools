@@ -1,3 +1,5 @@
+import * as cornerstone from 'cornerstone-core';
+
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;
   cornerstone.setViewport(eventData.element, eventData.viewport);

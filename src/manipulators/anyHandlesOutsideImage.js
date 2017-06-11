@@ -1,3 +1,5 @@
+import * as cornerstoneMath from 'cornerstone-math';
+
 export default function (renderData, handles) {
   const image = renderData.image;
   const imageRect = {

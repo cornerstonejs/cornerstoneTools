@@ -1,3 +1,4 @@
+import * as cornerstone from 'cornerstone-core';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';
