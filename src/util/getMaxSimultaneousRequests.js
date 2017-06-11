@@ -1,4 +1,4 @@
-import stackPrefetch from '../stackTools/stackPrefetch';
+import stackPrefetch from '../stackTools/stackPrefetch.js';
 
 // Maximum concurrent connections to the same server
 // Information from http://sgdev-blog.blogspot.fr/2014/01/maximum-concurrent-connection-to-same.html

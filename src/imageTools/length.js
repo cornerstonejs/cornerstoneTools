@@ -1,9 +1,9 @@
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles';
+import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'length';

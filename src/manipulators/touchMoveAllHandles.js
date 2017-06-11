@@ -1,5 +1,5 @@
-import anyHandlesOutsideImage from './anyHandlesOutsideImage';
-import { removeToolState } from '../stateManagement/toolState';
+import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
+import { removeToolState } from '../stateManagement/toolState.js';
 
 export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const element = touchEventData.element;

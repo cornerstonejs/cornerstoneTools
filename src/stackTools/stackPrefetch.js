@@ -1,6 +1,6 @@
-import requestPoolManager from '../requestPool/requestPoolManager';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
-import { addToolState, getToolState } from '../stateManagement/toolState';
+import requestPoolManager from '../requestPool/requestPoolManager.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';

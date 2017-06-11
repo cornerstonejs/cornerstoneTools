@@ -1,4 +1,4 @@
-import toolStyle from '../stateManagement/toolStyle';
+import toolStyle from '../stateManagement/toolStyle.js';
 
 const handleRadius = 6;
 

@@ -1,10 +1,10 @@
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles';
-import drawTextBox from '../util/drawTextBox';
-import calculateSUV from '../util/calculateSUV';
+import drawHandles from '../manipulators/drawHandles.js';
+import drawTextBox from '../util/drawTextBox.js';
+import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'rectangleRoi';

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import copyPoints from '../../src/util/copyPoints';
+import copyPoints from '../../src/util/copyPoints.js';
 
 describe('#copyPoints', function () {
   let points;

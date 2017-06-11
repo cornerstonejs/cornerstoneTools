@@ -1,7 +1,7 @@
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import drawHandles from '../manipulators/drawHandles.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'freehand';

@@ -1,5 +1,5 @@
-import { getToolState } from '../stateManagement/toolState';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
+import { getToolState } from '../stateManagement/toolState.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
 export default function (element, timePoints, wrap) {
   const toolData = getToolState(element, 'timeSeries');

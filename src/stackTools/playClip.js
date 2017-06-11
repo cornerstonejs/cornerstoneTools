@@ -1,7 +1,7 @@
 /* eslint no-bitwise:0 */
 
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
-import { addToolState, getToolState } from '../stateManagement/toolState';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'playClip';
 

@@ -1,9 +1,9 @@
-import mouseButtonTool from '../imageTools/mouseButtonTool';
-import drawHandles from '../manipulators/drawHandles';
-import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize';
-import { getToolState } from '../stateManagement/toolState';
-import MeasurementManager from '../measurementManager/measurementManager';
-import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement';
+import mouseButtonTool from '../imageTools/mouseButtonTool.js';
+import drawHandles from '../manipulators/drawHandles.js';
+import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import MeasurementManager from '../measurementManager/measurementManager.js';
+import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
 
 const toolType = 'probe4D';
 

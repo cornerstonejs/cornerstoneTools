@@ -1,4 +1,4 @@
-import keyboardTool from '../imageTools/keyboardTool';
+import keyboardTool from '../imageTools/keyboardTool.js';
 
 const keys = {
   UP: 38,

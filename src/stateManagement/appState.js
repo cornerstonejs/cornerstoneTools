@@ -1,5 +1,5 @@
-import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager';
-import { getElementToolStateManager } from './toolState';
+import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
+import { getElementToolStateManager } from './toolState.js';
 
 function saveApplicationState (elements) {
     // Save imageId-specific tool state data

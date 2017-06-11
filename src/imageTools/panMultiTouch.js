@@ -1,4 +1,4 @@
-import multiTouchDragTool from './multiTouchDragTool';
+import multiTouchDragTool from './multiTouchDragTool.js';
 
 function touchPanCallback (e, eventData) {
   const config = panMultiTouch.getConfiguration();

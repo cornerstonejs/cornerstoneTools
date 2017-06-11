@@ -1,4 +1,4 @@
-import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
+import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
 const requestPool = {
   interaction: [],

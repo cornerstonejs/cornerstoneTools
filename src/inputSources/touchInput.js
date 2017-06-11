@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
-import copyPoints from '../util/copyPoints';
-import pauseEvent from '../util/pauseEvent';
-import preventGhostClick from '../inputSources/preventGhostClick';
+import copyPoints from '../util/copyPoints.js';
+import pauseEvent from '../util/pauseEvent.js';
+import preventGhostClick from '../inputSources/preventGhostClick.js';
 
 let startPoints,
   currentPoints,

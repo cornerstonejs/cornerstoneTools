@@ -1,4 +1,4 @@
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 
 export default function (element, handles, coords, distanceThreshold) {
   let nearbyHandle;
