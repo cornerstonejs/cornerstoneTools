@@ -1,9 +1,5 @@
-<<<<<<< HEAD
+import scroll from '../util/scroll.js';
 import keyboardTool from '../imageTools/keyboardTool.js';
-=======
-import scroll from '../util/scroll';
-import keyboardTool from '../imageTools/keyboardTool';
->>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 const keys = {
   UP: 38,

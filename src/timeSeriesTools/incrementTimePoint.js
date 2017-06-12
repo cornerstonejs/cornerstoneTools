@@ -1,11 +1,6 @@
-<<<<<<< HEAD
+import * as cornerstone from 'cornerstone-core';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-=======
-import * as cornerstone from 'cornerstone-core';
-import { getToolState } from '../stateManagement/toolState';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
->>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 export default function (element, timePoints, wrap) {
   const toolData = getToolState(element, 'timeSeries');

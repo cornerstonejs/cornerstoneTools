@@ -80,7 +80,6 @@ export { default as stackScrollKeyboard } from './stackTools/stackScrollKeyboard
 export { stackScroll,
          stackScrollWheel,
          stackScrollTouchDrag,
-<<<<<<< HEAD
          stackScrollMultiTouch } from './stackTools/stackScroll.js';
 
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
@@ -118,7 +117,7 @@ export { freehand } from './imageTools/freehand.js';
 
 export { highlight, highlightTouch } from './imageTools/highlight.js';
 export { default as imageStats } from './imageTools/imageStats.js';
-export { default as keyboardTool } from './imageTools/imageStats.js';
+export { default as keyboardTool } from './imageTools/keyboardTool.js';
 export { length, lengthTouch } from './imageTools/length.js';
 export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
 export { default as mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool.js';
@@ -144,71 +143,6 @@ export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
 export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
 export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
-=======
-         stackScrollMultiTouch } from './stackTools/stackScroll';
-
-export { default as stackPrefetch } from './stackTools/stackPrefetch';
-export { default as scrollIndicator } from './stackTools/scrollIndicator';
-export { playClip, stopClip } from './stackTools/playClip';
-
-export { default as anyHandlesOutsideImage } from './manipulators/anyHandlesOutsideImage';
-export { default as drawHandles } from './manipulators/drawHandles';
-export { default as getHandleNearImagePoint } from './manipulators/getHandleNearImagePoint';
-export { default as handleActivator } from './manipulators/handleActivator';
-export { default as moveAllHandles } from './manipulators/moveAllHandles';
-export { default as moveHandle } from './manipulators/moveHandle';
-export { default as moveNewHandle } from './manipulators/moveNewHandle';
-export { default as moveNewHandleTouch } from './manipulators/moveNewHandleTouch';
-export { default as touchMoveAllHandles } from './manipulators/touchMoveAllHandles';
-export { default as touchMoveHandle } from './manipulators/touchMoveHandle';
-
-export { default as keyboardInput } from './inputSources/keyboardInput';
-export { default as mouseInput } from './inputSources/mouseInput';
-export { default as mouseWheelInput } from './inputSources/mouseWheelInput';
-export { default as preventGhostClick } from './inputSources/preventGhostClick';
-export { default as touchInput } from './inputSources/touchInput';
-
-
-export { angle, angleTouch } from './imageTools/angleTool';
-export { arrowAnnotate, arrowAnnotateTouch } from './imageTools/arrowAnnotate';
-export { crosshairs, crosshairsTouch } from './imageTools/crosshairs';
-export { default as displayTool } from './imageTools/displayTool';
-export { default as doubleTapTool } from './imageTools/doubleTapTool';
-export { default as doubleTapZoom } from './imageTools/doubleTapZoom';
-export { dragProbe, dragProbeTouch } from './imageTools/dragProbe';
-
-export { ellipticalRoi, ellipticalRoiTouch } from './imageTools/ellipticalRoi';
-export { freehand } from './imageTools/freehand';
-
-export { highlight, highlightTouch } from './imageTools/highlight';
-export { default as imageStats } from './imageTools/imageStats';
-export { default as keyboardTool } from './imageTools/keyboardTool';
-export { length, lengthTouch } from './imageTools/length';
-export { magnify, magnifyTouchDrag } from './imageTools/magnify';
-export { default as mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool';
-export { default as mouseButtonTool } from './imageTools/mouseButtonTool';
-export { default as mouseWheelTool } from './imageTools/mouseWheelTool';
-export { default as multiTouchDragTool } from './imageTools/multiTouchDragTool';
-export { default as orientationMarkers } from './imageTools/orientationMarkers';
-
-export { pan, panTouchDrag } from './imageTools/pan';
-export { default as panMultiTouch } from './imageTools/panMultiTouch';
-export { probe, probeTouch } from './imageTools/probe';
-export { rectangleRoi, rectangleRoiTouch } from './imageTools/rectangleRoi';
-export { rotate, rotateTouchDrag } from './imageTools/rotate';
-export { default as rotateTouch } from './imageTools/rotateTouch';
-export { default as saveAs } from './imageTools/saveAs';
-export { seedAnnotate, seedAnnotateTouch } from './imageTools/seedAnnotate';
-export { simpleAngle, simpleAngleTouch } from './imageTools/simpleAngle';
-export { default as simpleMouseButtonTool } from './imageTools/simpleMouseButtonTool';
-export { textMarker, textMarkerTouch } from './imageTools/textMarker';
-
-export { default as touchDragTool } from './imageTools/touchDragTool';
-export { default as touchPinchTool } from './imageTools/touchPinchTool';
-export { default as touchTool } from './imageTools/touchTool';
-export { wwwc, wwwcTouchDrag } from './imageTools/wwwc';
-export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion';
->>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 export { zoom,
          zoomWheel,
          zoomTouchPinch,

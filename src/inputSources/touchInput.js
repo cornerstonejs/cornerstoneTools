@@ -1,15 +1,9 @@
 import Hammer from 'hammerjs';
-<<<<<<< HEAD
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
-=======
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
-import copyPoints from '../util/copyPoints';
-import pauseEvent from '../util/pauseEvent';
-import preventGhostClick from '../inputSources/preventGhostClick';
->>>>>>> b55d87f70249cbcc987b7e5eeab73c830d385702
 
 let startPoints,
   currentPoints,
