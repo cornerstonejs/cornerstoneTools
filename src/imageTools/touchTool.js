@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from '../manipulators/touchMoveHandle.js';

@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 

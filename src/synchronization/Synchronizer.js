@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element

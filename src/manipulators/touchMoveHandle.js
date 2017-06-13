@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 
  /*
  * Define the runAnimation boolean as an object

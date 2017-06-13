@@ -62,8 +62,8 @@ export { addTimeSeriesStateManager,
 export { default as textStyle } from './stateManagement/textStyle.js';
 export { default as stackSpecificStateManager } from './stateManagement/stackSpecificStateManager.js';
 
-export { newStackSpecificToolStateManager,
-         addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
+//export { newStackSpecificToolStateManager,
+//         addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
 
 export { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
 

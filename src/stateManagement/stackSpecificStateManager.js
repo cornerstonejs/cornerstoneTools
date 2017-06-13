@@ -90,7 +90,7 @@ function addStackStateManager (element, otherTools) {
   setElementToolStateManager(element, stackSpecificStateManager);
 }
 
-export {
+export default {
   newStackSpecificToolStateManager,
   addStackStateManager
 };

@@ -1,6 +1,5 @@
-import Hammer from 'hammerjs';
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';

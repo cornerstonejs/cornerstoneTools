@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import doubleTapTool from './doubleTapTool.js';
 
 function fitToWindowStrategy (eventData) {

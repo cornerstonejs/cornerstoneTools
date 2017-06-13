@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;

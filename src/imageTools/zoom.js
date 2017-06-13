@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import mouseWheelTool from './mouseWheelTool.js';

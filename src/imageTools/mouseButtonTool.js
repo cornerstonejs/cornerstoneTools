@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import toolCoordinates from '../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import handleActivator from '../manipulators/handleActivator.js';

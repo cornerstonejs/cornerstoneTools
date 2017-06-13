@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import { getElementToolStateManager } from './toolState.js';
 

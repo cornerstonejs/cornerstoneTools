@@ -1,5 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
 const handleRadius = 6;
