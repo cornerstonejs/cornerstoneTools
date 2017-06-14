@@ -60,10 +60,10 @@ export { default as toolColors } from './stateManagement/toolColors.js';
 export { addTimeSeriesStateManager,
          newTimeSeriesSpecificToolStateManager } from './stateManagement/timeSeriesSpecificStateManager.js';
 export { default as textStyle } from './stateManagement/textStyle.js';
-export { default as stackSpecificStateManager } from './stateManagement/stackSpecificStateManager.js';
 
-//export { newStackSpecificToolStateManager,
-//         addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
+export { stackSpecificStateManager,
+         newStackSpecificToolStateManager,
+         addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
 
 export { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
 
