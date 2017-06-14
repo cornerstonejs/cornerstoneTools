@@ -78,6 +78,8 @@ export default function (mouseToolInterface) {
   }
 
   function mouseDownActivateCallback (e, eventData) {
+    if (e.data.canCreate===false) return false;
+
     if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
       if (mouseToolInterface.addNewMeasurement) {
         mouseToolInterface.addNewMeasurement(eventData);
@@ -243,9 +245,10 @@ export default function (mouseToolInterface) {
   }
 
     // Visible, interactive and can create
-  function activate (element, mouseButtonMask) {
+  function activate (element, mouseButtonMask, canCreate) {
     const eventData = {
-      mouseButtonMask
+      mouseButtonMask,
+      canCreate: !(canCreate===false)
     };
 
     $(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
