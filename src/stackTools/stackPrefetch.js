@@ -1,6 +1,7 @@
 import requestPoolManager from '../requestPool/requestPoolManager';
 import loadHandlerManager from '../stateManagement/loadHandlerManager';
 import { addToolState, getToolState } from '../stateManagement/toolState';
+import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
@@ -296,6 +297,10 @@ function getConfiguration () {
 
 function setConfiguration (config) {
   configuration = config;
+
+  if (config.maxSimultaneousRequests) {
+    setMaxSimultaneousRequests(config.maxSimultaneousRequests);
+  }
 }
 
 // Module/private exports
