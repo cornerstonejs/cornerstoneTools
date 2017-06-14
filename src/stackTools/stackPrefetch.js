@@ -2,6 +2,7 @@ import * as cornerstone from '../cornerstone-core.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
@@ -297,6 +298,10 @@ function getConfiguration () {
 
 function setConfiguration (config) {
   configuration = config;
+
+  if (config.maxSimultaneousRequests) {
+    setMaxSimultaneousRequests(config.maxSimultaneousRequests);
+  }
 }
 
 // Module/private exports
