@@ -2,6 +2,7 @@ import * as cornerstone from '../cornerstone-core.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
@@ -76,10 +77,10 @@ function prefetch (element) {
     return;
   }
 
-  const stackPrefetch = stackPrefetchData.data[0] || {};
+  const stackPrefetch = stackPrefetchData.data[0];
 
     // If all the requests are complete, disable the stackPrefetch tool
-  if (!stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
+  if (!stackPrefetch || !stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
     stackPrefetch.enabled = false;
   }
 
@@ -268,8 +269,8 @@ function enable (element) {
   $(element).off('CornerstoneNewImage', onImageUpdated);
   $(element).on('CornerstoneNewImage', onImageUpdated);
 
-  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  $(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
+  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone).on('CornerstoneImageCachePromiseRemoved', {
     element
   }, promiseRemovedHandler);
 }
@@ -278,7 +279,7 @@ function disable (element) {
   clearTimeout(resetPrefetchTimeout);
   $(element).off('CornerstoneNewImage', onImageUpdated);
 
-  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
   const stackPrefetchData = getToolState(element, toolType);
     // If there is actually something to disable, disable it
@@ -297,6 +298,10 @@ function getConfiguration () {
 
 function setConfiguration (config) {
   configuration = config;
+
+  if (config.maxSimultaneousRequests) {
+    setMaxSimultaneousRequests(config.maxSimultaneousRequests);
+  }
 }
 
 // Module/private exports
