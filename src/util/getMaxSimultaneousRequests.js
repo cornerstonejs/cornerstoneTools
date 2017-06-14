@@ -1,4 +1,4 @@
-import stackPrefetch from '../stackTools/stackPrefetch';
+let configMaxSimultaneousRequests;
 
 // Maximum concurrent connections to the same server
 // Information from http://sgdev-blog.blogspot.fr/2014/01/maximum-concurrent-connection-to-same.html
@@ -54,12 +54,13 @@ function getBrowserInfo () {
   return M.join(' ');
 }
 
-function getMaxSimultaneousRequests () {
-  const config = stackPrefetch.getConfiguration();
+function setMaxSimultaneousRequests (newMaxSimultaneousRequests) {
+  configMaxSimultaneousRequests = newMaxSimultaneousRequests;
+}
 
-    // Give preference to user-chosen values
-  if (config.maxSimultaneousRequests) {
-    return config.maxSimultaneousRequests;
+function getMaxSimultaneousRequests () {
+  if (configMaxSimultaneousRequests) {
+    return configMaxSimultaneousRequests;
   }
 
   return getDefaultSimultaneousRequests();
@@ -93,6 +94,7 @@ function isMobileDevice () {
 export {
   getDefaultSimultaneousRequests,
   getMaxSimultaneousRequests,
+  setMaxSimultaneousRequests,
   getBrowserInfo,
   isMobileDevice
 };
