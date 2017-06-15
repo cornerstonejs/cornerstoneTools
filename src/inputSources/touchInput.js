@@ -1,3 +1,4 @@
+/*global Hammer*/
 import * as cornerstone from '../cornerstone-core.js';
 import * as cornerstoneMath from '../cornerstone-math.js';
 import copyPoints from '../util/copyPoints.js';
