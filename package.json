@@ -2,7 +2,7 @@
   "name": "cornerstone-tools",
   "version": "0.8.9",
   "description": "Medical imaging tools for the Cornerstone library",
-  "main": "./dist/cornerstoneTools.min.js",
+  "main": "./dist/cornerstoneTools.js",
   "keywords": [
     "DICOM",
     "medical",
@@ -67,7 +67,7 @@
     "webpack": "^2.4.1"
   },
   "dependencies": {
-    "cornerstone-core": "^0.11.0",
+    "cornerstone-core": "^0.12.0",
     "cornerstone-math": "^0.1.6",
     "dicom-parser": "1.7.5",
     "hammerjs": "^2.0.8",

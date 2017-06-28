@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- support for mobile touch devices -->
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <link href="../bootstrap.min.css" rel="stylesheet">
+  <link href="../dialogPolyfill.css" rel="stylesheet">
+  <link href="../cornerstone.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>
+        Segmentation Brush Example
+      </h1>
+      <p>
+        This page contains an example of the segmentation paintbrush tool
+      </p>
+      <a href="../index.html">Go back to the Examples page</a>
+    </div>
+
+    <div class="row">
+
+      <div class="col-xs-9">
+        <div style="width:512px;height:512px;position:relative;display:inline-block;"
+            oncontextmenu="return false"
+            class='cornerstone-enabled-image'
+            unselectable='on'
+            onselectstart='return false;'
+            onmousedown='return false;'>
+          <div id="dicomImage"
+            style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-xs-3">
+        <h5>Controls:</h5>
+        <ul>
+          <li>Left click paint</li>
+          <li>Middle Mouse button drag - pan</li>
+          <li>Right click drag - zoom</li>
+        </ul>
+
+        <div class="row">
+          <button id="drawErase" class="btn btn-primary">Erase</button>
+        </div>
+        
+        <div class="row">
+          <label for="radiusSlider">Radius: <span id="valBox">3</span>px</label>
+          <input id="radiusSlider" type="range" min="1" max="10" value="3" steps="1" style="width: 200px"/>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
+is used by our example image loader-->
+<script src="../jquery.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="../cornerstone.min.js"></script>
+  
+<script src="../cornerstoneMath.min.js"></script>
+
+<!-- include the cornerstone tools library -->
+<script src="../../dist/cornerstoneTools.js"></script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../exampleImageLoader.js"></script>
+
+<script>
+  var radius = 3;
+  
+  var element = document.getElementById('dicomImage');
+  var imageId = 'example://1';
+
+  var configuration = cornerstoneTools.brush.getConfiguration();
+  configuration.radius = radius;
+
+  cornerstoneTools.brush.setConfiguration(configuration);
+
+  cornerstone.enable(element);  
+  cornerstone.loadImage(imageId).then(function(image) {
+    cornerstone.addLayer(element, image);
+    cornerstone.updateImage(element);
+    
+    cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.pan.activate(element, 2);
+    cornerstoneTools.zoom.activate(element, 4);
+    
+    cornerstoneTools.brush.activate(element, 1);     
+  });
+
+  var $drawEraseButton = $('#drawErase');
+
+  $drawEraseButton.click(function () {
+    var configuration = cornerstoneTools.brush.getConfiguration();
+    if (configuration.draw == 0) {
+      configuration.draw = 1;
+      $drawEraseButton.text("Erase");
+    } else {
+      configuration.draw = 0;
+      $drawEraseButton.text("Draw");
+    }
+    cornerstoneTools.brush.setConfiguration(configuration);
+  });
+  
+  var $radiusSlider = $('#radiusSlider');
+  $radiusSlider.on('input', function(){
+    var radius = $radiusSlider.val();
+    $('#valBox').text(radius);
+    configuration.radius = radius;
+    cornerstoneTools.brush.setConfiguration(configuration);
+  });
+</script>
+</html>
