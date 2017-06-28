@@ -84,6 +84,7 @@ export { stackScroll,
 
 export { default as stackPrefetch } from './stackTools/stackPrefetch';
 export { default as scrollIndicator } from './stackTools/scrollIndicator';
+export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip';
 
 export { default as anyHandlesOutsideImage } from './manipulators/anyHandlesOutsideImage';
