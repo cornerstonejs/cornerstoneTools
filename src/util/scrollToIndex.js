@@ -11,6 +11,17 @@ export default function (element, newImageIdIndex) {
     return;
   }
 
+  // If we have more than one stack, check if we have a stack renderer defined
+  let stackRenderer;
+
+  if (toolData.data.length > 1) {
+    const stackRendererData = getToolState(element, 'stackRenderer');
+
+    if (stackRendererData && stackRendererData.data && stackRendererData.data.length) {
+      stackRenderer = stackRendererData.data[0];
+    }
+  }
+
   const stackData = toolData.data[0];
 
     // Allow for negative indexing
@@ -37,7 +48,13 @@ export default function (element, newImageIdIndex) {
       return;
     }
 
-    cornerstone.displayImage(element, image, viewport);
+    if (stackRenderer) {
+      stackRenderer.currentImageIdIndex = newImageIdIndex;
+      stackRenderer.render(element, toolData.data);
+    } else {
+      cornerstone.displayImage(element, image, viewport);
+    }
+
     if (endLoadingHandler) {
       endLoadingHandler(element, image);
     }
