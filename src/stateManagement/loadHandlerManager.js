@@ -1,4 +1,5 @@
 let defaultStartLoadHandler;
+let defaultDisplayLoadingHandler;
 let defaultEndLoadHandler;
 let defaultErrorLoadingHandler;
 
@@ -8,6 +9,14 @@ function setStartLoadHandler (handler) {
 
 function getStartLoadHandler () {
   return defaultStartLoadHandler;
+}
+
+function setDisplayLoadingHandler (handler) {
+  defaultDisplayLoadingHandler = handler;
+}
+
+function getDisplayLoadingHandler () {
+  return defaultDisplayLoadingHandler;
 }
 
 function setEndLoadHandler (handler) {
@@ -29,6 +38,8 @@ function getErrorLoadingHandler () {
 const loadHandlerManager = {
   setStartLoadHandler,
   getStartLoadHandler,
+  setDisplayLoadingHandler,
+  getDisplayLoadingHandler,
   setEndLoadHandler,
   getEndLoadHandler,
   setErrorLoadingHandler,
