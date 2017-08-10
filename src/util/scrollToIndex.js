@@ -30,6 +30,7 @@ export default function (element, newImageIdIndex) {
   }
 
   const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+  const displayLoadingHandler = loadHandlerManager.getDisplayLoadingHandler();
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
   const viewport = cornerstone.getViewport(element);
@@ -105,6 +106,12 @@ export default function (element, newImageIdIndex) {
     imagePromise = cornerstone.loadImage(newImageId);
   } else {
     imagePromise = cornerstone.loadAndCacheImage(newImageId);
+  }
+
+  if (displayLoadingHandler && (imagePromise === undefined || imagePromise.state() === 'pending')) {
+    const imageId = stackData.imageIds[newImageIdIndex];
+
+    displayLoadingHandler(element, imageId);
   }
 
   imagePromise.then(doneCallback, failCallback);
