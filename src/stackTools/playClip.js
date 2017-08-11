@@ -1,7 +1,9 @@
 /* eslint no-bitwise:0 */
 import * as cornerstone from 'cornerstone-core';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
 import { addToolState, getToolState } from '../stateManagement/toolState';
+import requestPoolManager from '../requestPool/requestPoolManager';
+import loadHandlerManager from '../stateManagement/loadHandlerManager';
+import { stackScroll } from './stackScroll';
 
 const toolType = 'playClip';
 
@@ -155,8 +157,7 @@ function playClip (element, framesPerSecond) {
   const playClipAction = () => {
 
         // Hoisting of context variables
-    let loader,
-      viewport,
+    let viewport,
       startLoadingHandler,
       displayLoadingHandler,
       endLoadingHandler,
@@ -200,30 +201,30 @@ function playClip (element, framesPerSecond) {
 
       viewport = cornerstone.getViewport(element);
 
-      function doneCallback (image) {
+      const doneCallback = function (image) {
         if (stackData.currentImageIdIndex === newImageIdIndex) {
           cornerstone.displayImage(element, image, viewport);
           if (endLoadingHandler) {
             endLoadingHandler(element, image);
           }
         }
-      }
+      };
 
-      function failCallback (error) {
+      const failCallback = function (error) {
         const imageId = stackData.imageIds[newImageIdIndex];
 
         if (errorLoadingHandler) {
           errorLoadingHandler(element, imageId, error);
         }
-      }
+      };
 
-      function pendingCallback () {
+      const pendingCallback = function () {
         const imageId = stackData.imageIds[newImageIdIndex];
 
         if (displayLoadingHandler) {
           displayLoadingHandler(element, imageId);
         }
-      }
+      };
 
       stackData.currentImageIdIndex = newImageIdIndex;
       const newImageId = stackData.imageIds[newImageIdIndex];
