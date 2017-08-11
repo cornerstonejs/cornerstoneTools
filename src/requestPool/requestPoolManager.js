@@ -17,11 +17,7 @@ const numRequests = {
   autoPrefetch: 0
 };
 
-let maxNumRequests = {
-  interaction: 6,
-  thumbnail: 6,
-  prefetch: 5
-};
+let maxNumRequests;
 
 let awake = false;
 const grabDelay = 20;
