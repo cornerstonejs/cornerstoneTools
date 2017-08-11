@@ -40,7 +40,16 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     failCallback
   };
 
-      // If this imageId is in the cache, resolve it immediately
+  // Auto retry
+  if (configuration.retryLoad === true) {
+    const cachedImagePromise = cornerstone.imageCache.getImagePromise(imageId);
+
+    if (cachedImagePromise && cachedImagePromise.state() === 'rejected') {
+      cornerstone.imageCache.removeImagePromise(imageId);
+    }
+  }
+
+  // If this imageId is in the cache, resolve it immediately
   const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
   if (pendingCallback && (imagePromise === undefined || imagePromise.state() === 'pending')) {
@@ -57,7 +66,7 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     return;
   }
 
-      // Add it to the end of the stack
+  // Add it to the end of the stack
   requestPool[type].push(requestDetails);
 }
 
