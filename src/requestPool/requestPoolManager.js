@@ -6,13 +6,15 @@ let configuration = {};
 const requestPool = {
   interaction: [],
   thumbnail: [],
-  prefetch: []
+  prefetch: [],
+  autoPrefetch: []
 };
 
 const numRequests = {
   interaction: 0,
   thumbnail: 0,
-  prefetch: 0
+  prefetch: 0,
+  autoPrefetch: 0
 };
 
 let maxNumRequests = {
@@ -158,7 +160,8 @@ function startGrabbing () {
   maxNumRequests = {
     interaction: Math.max(maxSimultaneousRequests, 1),
     thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
-    prefetch: Math.max(maxSimultaneousRequests - 1, 1)
+    prefetch: Math.max(maxSimultaneousRequests - 1, 1),
+    autoPrefetch: 3
   };
 
   const currentRequests = numRequests.interaction +
@@ -188,9 +191,14 @@ function getNextRequest () {
     return requestPool.prefetch.shift();
   }
 
+  if (requestPool.autoPrefetch.length && numRequests.autoPrefetch < maxNumRequests.autoPrefetch) {
+    return requestPool.autoPrefetch.shift();
+  }
+
   if (!requestPool.interaction.length &&
           !requestPool.thumbnail.length &&
-          !requestPool.prefetch.length) {
+          !requestPool.prefetch.length &&
+          !requestPool.autoPrefetch.length) {
     awake = false;
   }
 
