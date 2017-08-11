@@ -61,6 +61,24 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   requestPool[type].push(requestDetails);
 }
 
+function addPriorRequests (element, imageIdList, requestType, preventCache, doneCallback, failCallback, pendingCallback) {
+  // Save the previously queued requests
+  const oldRequestQueue = getRequestPool()[requestType].slice();
+
+  // Clear the requests queue
+  clearRequestStack(requestType);
+
+  // Add the prior requests
+  for (let i = 0; i < imageIdList.length; i++) {
+    const imageId = imageIdList[i];
+
+    addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback, pendingCallback);
+  }
+
+  // Add the previously queued requests
+  Array.prototype.push.apply(getRequestPool()[requestType], oldRequestQueue);
+}
+
 function clearRequestStack (type) {
       // Console.log('clearRequestStack');
   if (!requestPool.hasOwnProperty(type)) {
@@ -219,6 +237,7 @@ function setConfiguration (config) {
 
 export default {
   addRequest,
+  addPriorRequests,
   clearRequestStack,
   startGrabbing,
   getRequestPool,
