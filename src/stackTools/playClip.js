@@ -200,34 +200,60 @@ function playClip (element, framesPerSecond) {
 
       viewport = cornerstone.getViewport(element);
 
-      if (stackData.preventCache === true) {
-        loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
-      } else {
-        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
-      }
-
-      if (displayLoadingHandler && (loader === undefined || loader.state() === 'pending')) {
-        const imageId = stackData.imageIds[newImageIdIndex];
-
-        displayLoadingHandler(element, imageId);
-      }
-
-      loader.then(function (image) {
-        stackData.currentImageIdIndex = newImageIdIndex;
-        cornerstone.displayImage(element, image, viewport);
-        if (endLoadingHandler) {
-          endLoadingHandler(element, image);
+      function doneCallback (image) {
+        if (stackData.currentImageIdIndex === newImageIdIndex) {
+          cornerstone.displayImage(element, image, viewport);
+          if (endLoadingHandler) {
+            endLoadingHandler(element, image);
+          }
         }
-      }, function (error) {
+      }
+
+      function failCallback (error) {
         const imageId = stackData.imageIds[newImageIdIndex];
 
         if (errorLoadingHandler) {
           errorLoadingHandler(element, imageId, error);
         }
-      });
+      }
 
+      function pendingCallback () {
+        const imageId = stackData.imageIds[newImageIdIndex];
+
+        if (displayLoadingHandler) {
+          displayLoadingHandler(element, imageId);
+        }
+      }
+
+      stackData.currentImageIdIndex = newImageIdIndex;
+      const newImageId = stackData.imageIds[newImageIdIndex];
+
+        // Retry image loading in cases where previous image promise
+        // Was rejected, if the option is set
+      const config = stackScroll.getConfiguration();
+
+      if (config && config.retryLoadOnScroll === true) {
+        const newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+
+        if (newImagePromise && newImagePromise.state() === 'rejected') {
+          cornerstone.imageCache.removeImagePromise(newImageId);
+        }
+      }
+
+      const type = 'interaction';
+
+        // Clear the interaction queue
+      requestPoolManager.clearRequestStack(type);
+
+        // Convert the preventCache value in stack data to a boolean
+      const preventCache = Boolean(stackData.preventCache);
+
+        // Request the image
+      requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback, pendingCallback);
+
+        // Make sure we kick off any changed download request pools
+      requestPoolManager.startGrabbing();
     }
-
   };
 
     // If playClipTimeouts array is available, not empty and its elements are NOT uniform ...
