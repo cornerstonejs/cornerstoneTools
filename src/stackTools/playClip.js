@@ -155,7 +155,7 @@ function playClip (element, framesPerSecond) {
   const playClipAction = () => {
 
         // Hoisting of context variables
-    let imagePromise,
+    let loader,
       viewport,
       startLoadingHandler,
       displayLoadingHandler,
@@ -201,18 +201,18 @@ function playClip (element, framesPerSecond) {
       viewport = cornerstone.getViewport(element);
 
       if (stackData.preventCache === true) {
-        imagePromise = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+        loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
       } else {
-        imagePromise = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
       }
 
-      if (displayLoadingHandler && (imagePromise === undefined || imagePromise.state() === 'pending')) {
+      if (displayLoadingHandler && (loader === undefined || loader.state() === 'pending')) {
         const imageId = stackData.imageIds[newImageIdIndex];
 
         displayLoadingHandler(element, imageId);
       }
 
-      imagePromise.then(function (image) {
+      loader.then(function (image) {
         stackData.currentImageIdIndex = newImageIdIndex;
         cornerstone.displayImage(element, image, viewport);
         if (endLoadingHandler) {
