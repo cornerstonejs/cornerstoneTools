@@ -1,6 +1,8 @@
 import * as cornerstone from 'cornerstone-core';
 import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
 
+let configuration = {};
+
 const requestPool = {
   interaction: [],
   thumbnail: [],
@@ -199,9 +201,19 @@ function getRequestPool () {
   return requestPool;
 }
 
+function getConfiguration () {
+  return configuration;
+}
+
+function setConfiguration (config) {
+  configuration = config;
+}
+
 export default {
   addRequest,
   clearRequestStack,
   startGrabbing,
-  getRequestPool
+  getRequestPool,
+  getConfiguration,
+  setConfiguration
 };
