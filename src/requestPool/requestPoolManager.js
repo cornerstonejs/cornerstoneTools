@@ -22,7 +22,7 @@ let maxNumRequests;
 let awake = false;
 const grabDelay = 20;
 
-function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
+function addRequest (element, imageId, type, preventCache, doneCallback, failCallback, pendingCallback) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, prefetch, or autoPrefetch');
   }
@@ -42,6 +42,10 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
 
       // If this imageId is in the cache, resolve it immediately
   const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+
+  if (pendingCallback && (imagePromise === undefined || imagePromise.state() === 'pending')) {
+    pendingCallback();
+  }
 
   if (imagePromise) {
     imagePromise.then(function (image) {
