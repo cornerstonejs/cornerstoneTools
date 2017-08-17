@@ -89,12 +89,6 @@ function mouseDown (e) {
     type: eventType
   };
 
-  const onMouseDown = $(element).data('onMouseDown');
-
-  if (onMouseDown) {
-    onMouseDown(eventData);
-  }
-
   const event = $.Event(eventType, eventData);
 
   $(eventData.element).trigger(event, eventData);
