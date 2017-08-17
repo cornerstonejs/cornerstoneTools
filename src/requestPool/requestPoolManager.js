@@ -22,6 +22,8 @@ let maxNumRequests;
 let awake = false;
 const grabDelay = 20;
 
+const countRetries = {};
+
 function addRequest (element, imageId, type, preventCache, doneCallback, failCallback, pendingCallback) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, prefetch, or autoPrefetch');
@@ -41,11 +43,15 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   };
 
   // Auto retry
-  if (configuration.retryLoad === true) {
+  if (configuration.maxRetries > 0 && countRetries[imageId] === undefined) {
+    countRetries[imageId] = 0;
+  }
+  if (configuration.maxRetries > 0 && countRetries[imageId] < configuration.maxRetries) {
     const cachedImagePromise = cornerstone.imageCache.getImagePromise(imageId);
 
     if (cachedImagePromise && cachedImagePromise.state() === 'rejected') {
       cornerstone.imageCache.removeImagePromise(imageId);
+      countRetries[imageId]++;
     }
   }
 
