@@ -149,5 +149,4 @@ export { zoom,
          zoomTouchPinch,
          zoomTouchDrag } from './imageTools/zoom.js';
 export { brush } from './paintingTools/brush.js';
-
 export { default as version } from './version.js';
