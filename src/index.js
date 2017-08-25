@@ -84,6 +84,7 @@ export { stackScroll,
 
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as scrollIndicator } from './stackTools/scrollIndicator.js';
+export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
 
 export { default as anyHandlesOutsideImage } from './manipulators/anyHandlesOutsideImage.js';
@@ -147,5 +148,5 @@ export { zoom,
          zoomWheel,
          zoomTouchPinch,
          zoomTouchDrag } from './imageTools/zoom.js';
-
+export { brush } from './paintingTools/brush.js';
 export { default as version } from './version.js';
