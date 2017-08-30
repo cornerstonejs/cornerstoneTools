@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.0 - 2017-06-28 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-08-30 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
@@ -10901,7 +10901,7 @@ function mouseDoubleClick(e) {
   var lastPoints = (0, _copyPoints2.default)(startPoints);
   var eventData = {
     event: e,
-    which: e.which,
+    which: typeof e.buttons === 'undefined' ? e.which : e.buttons,
     viewport: cornerstone.getViewport(element),
     image: cornerstone.getEnabledElement(element).image,
     element: element,
@@ -10943,7 +10943,7 @@ function mouseDown(e) {
   var lastPoints = (0, _copyPoints2.default)(startPoints);
   var eventData = {
     event: e,
-    which: e.which,
+    which: typeof e.buttons === 'undefined' ? e.which : e.buttons,
     viewport: cornerstone.getViewport(element),
     image: cornerstone.getEnabledElement(element).image,
     element: element,
@@ -10968,7 +10968,7 @@ function mouseDown(e) {
     }
   }
 
-  var whichMouseButton = e.which;
+  var whichMouseButton = typeof e.buttons === 'undefined' ? e.which : e.buttons;
 
   function onMouseMove(e) {
     // Calculate our current points in page and image coordinates
@@ -11001,7 +11001,10 @@ function mouseDown(e) {
       lastPoints: lastPoints,
       currentPoints: currentPoints,
       deltaPoints: deltaPoints,
-      type: eventType
+      type: eventType,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey
     };
 
     $(eventData.element).trigger(eventType, eventData);
@@ -11093,7 +11096,7 @@ function mouseMove(e) {
 
   var lastPoints = (0, _copyPoints2.default)(startPoints);
 
-  var whichMouseButton = e.which;
+  var whichMouseButton = typeof e.buttons === 'undefined' ? e.which : e.buttons;
 
   // Calculate our current points in page and image coordinates
   var currentPoints = {
