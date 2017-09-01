@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.0 - 2017-06-28 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-08-31 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
@@ -10875,6 +10875,24 @@ var isClickEvent = true;
 var preventClickTimeout = void 0;
 var clickDelay = 200;
 
+function getEventWhich(event) {
+  if (typeof event.buttons !== 'number') {
+    return event.which;
+  }
+
+  if (event.buttons === 0) {
+    return 0;
+  } else if (event.buttons % 2 === 1) {
+    return 1;
+  } else if (event.buttons % 4 === 2) {
+    return 3;
+  } else if (event.buttons % 8 === 4) {
+    return 2;
+  }
+
+  return 0;
+}
+
 function preventClickHandler() {
   isClickEvent = false;
 }
@@ -10901,7 +10919,7 @@ function mouseDoubleClick(e) {
   var lastPoints = (0, _copyPoints2.default)(startPoints);
   var eventData = {
     event: e,
-    which: e.which,
+    which: getEventWhich(e),
     viewport: cornerstone.getViewport(element),
     image: cornerstone.getEnabledElement(element).image,
     element: element,
@@ -10943,7 +10961,7 @@ function mouseDown(e) {
   var lastPoints = (0, _copyPoints2.default)(startPoints);
   var eventData = {
     event: e,
-    which: e.which,
+    which: getEventWhich(e),
     viewport: cornerstone.getViewport(element),
     image: cornerstone.getEnabledElement(element).image,
     element: element,
@@ -10968,7 +10986,7 @@ function mouseDown(e) {
     }
   }
 
-  var whichMouseButton = e.which;
+  var whichMouseButton = getEventWhich(e);
 
   function onMouseMove(e) {
     // Calculate our current points in page and image coordinates
@@ -11001,7 +11019,10 @@ function mouseDown(e) {
       lastPoints: lastPoints,
       currentPoints: currentPoints,
       deltaPoints: deltaPoints,
-      type: eventType
+      type: eventType,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey
     };
 
     $(eventData.element).trigger(eventType, eventData);
@@ -11093,7 +11114,7 @@ function mouseMove(e) {
 
   var lastPoints = (0, _copyPoints2.default)(startPoints);
 
-  var whichMouseButton = e.which;
+  var whichMouseButton = getEventWhich(e);
 
   // Calculate our current points in page and image coordinates
   var currentPoints = {
