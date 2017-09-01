@@ -1,7 +1,7 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
-import touchDragTool from './touchDragTool';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import touchDragTool from './touchDragTool.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
 // --- Strategies --- //
 function defaultStrategy (eventData) {

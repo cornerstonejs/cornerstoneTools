@@ -1,4 +1,4 @@
-import textStyle from '../stateManagement/textStyle';
+import textStyle from '../stateManagement/textStyle.js';
 
 export default function (context, textLines, x, y, color, options) {
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {

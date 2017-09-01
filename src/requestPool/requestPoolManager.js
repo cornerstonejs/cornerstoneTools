@@ -1,5 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
-import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
+import * as cornerstone from '../cornerstone-core.js';
+import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
 const requestPool = {
   interaction: [],

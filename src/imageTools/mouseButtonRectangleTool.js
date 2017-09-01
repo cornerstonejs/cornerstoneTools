@@ -1,9 +1,9 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import toolCoordinates from '../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
-import handleActivator from '../manipulators/handleActivator';
-import moveHandle from '../manipulators/moveHandle';
-import moveAllHandles from '../manipulators/moveAllHandles';
+import handleActivator from '../manipulators/handleActivator.js';
+import moveHandle from '../manipulators/moveHandle.js';
+import moveAllHandles from '../manipulators/moveAllHandles.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';

@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 
 function mouseWheel (e) {
     // !!!HACK/NOTE/WARNING!!!

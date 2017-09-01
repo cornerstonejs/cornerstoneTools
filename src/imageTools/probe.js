@@ -1,13 +1,13 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import toolColors from '../stateManagement/toolColors.js';
 import textStyle from '../stateManagement/textStyle.js';
-import drawHandles from '../manipulators/drawHandles';
-import drawTextBox from '../util/drawTextBox';
-import getRGBPixels from '../util/getRGBPixels';
-import calculateSUV from '../util/calculateSUV';
+import drawHandles from '../manipulators/drawHandles.js';
+import drawTextBox from '../util/drawTextBox.js';
+import getRGBPixels from '../util/getRGBPixels.js';
+import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'probe';

@@ -1,5 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
@@ -7,10 +7,10 @@ import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import moveNewHandle from '../manipulators/moveNewHandle';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch';
-import drawHandles from '../manipulators/drawHandles';
-import touchTool from './touchTool';
+import moveNewHandle from '../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
+import drawHandles from '../manipulators/drawHandles.js';
+import touchTool from './touchTool.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 

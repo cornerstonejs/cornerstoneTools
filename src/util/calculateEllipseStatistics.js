@@ -1,4 +1,4 @@
-import pointInEllipse from './pointInEllipse';
+import pointInEllipse from './pointInEllipse.js';
 
 export default function (sp, ellipse) {
     // TODO: Get a real statistics library here that supports large counts

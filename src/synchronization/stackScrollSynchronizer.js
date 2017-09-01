@@ -1,6 +1,6 @@
-import * as cornerstone from 'cornerstone-core';
-import { getToolState } from '../stateManagement/toolState';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
+import * as cornerstone from '../cornerstone-core.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
 // This function causes any scrolling actions within the stack to propagate to
 // All of the other viewports that are synced

@@ -1,19 +1,19 @@
 /* eslint no-alert:0 */
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles';
-import drawArrow from '../util/drawArrow';
-import moveNewHandle from '../manipulators/moveNewHandle';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch';
-import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
+import drawHandles from '../manipulators/drawHandles.js';
+import drawArrow from '../util/drawArrow.js';
+import moveNewHandle from '../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'arrowAnnotate';
