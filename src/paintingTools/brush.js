@@ -1,3 +1,4 @@
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';

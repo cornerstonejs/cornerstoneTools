@@ -1,3 +1,4 @@
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 import touchDragTool from './touchDragTool.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';

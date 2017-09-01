@@ -1,3 +1,5 @@
+import $ from '../jquery.js';
+
 export default function (element, filename) {
   const canvas = $(element).find('canvas').get(0);
 

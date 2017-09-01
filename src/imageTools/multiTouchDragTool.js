@@ -1,3 +1,5 @@
+import $ from '../jquery.js';
+
 export default function (touchDragCallback, options) {
   let configuration = {};
   let events = 'CornerstoneToolsMultiTouchDrag';

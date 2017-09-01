@@ -1,3 +1,4 @@
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
