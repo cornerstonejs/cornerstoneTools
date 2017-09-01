@@ -1,12 +1,12 @@
-import * as cornerstone from 'cornerstone-core';
+import * as cornerstone from '../cornerstone-core.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox';
-import getRGBPixels from '../util/getRGBPixels';
-import calculateSUV from '../util/calculateSUV';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
+import drawTextBox from '../util/drawTextBox.js';
+import getRGBPixels from '../util/getRGBPixels.js';
+import calculateSUV from '../util/calculateSUV.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
 let dragEventData;
 

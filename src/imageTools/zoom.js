@@ -1,9 +1,9 @@
-import * as cornerstone from 'cornerstone-core';
-import simpleMouseButtonTool from './simpleMouseButtonTool';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
-import mouseWheelTool from './mouseWheelTool';
-import touchPinchTool from './touchPinchTool';
-import touchDragTool from './touchDragTool';
+import * as cornerstone from '../cornerstone-core.js';
+import simpleMouseButtonTool from './simpleMouseButtonTool.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import mouseWheelTool from './mouseWheelTool.js';
+import touchPinchTool from './touchPinchTool.js';
+import touchDragTool from './touchDragTool.js';
 
 
 let startPoints;

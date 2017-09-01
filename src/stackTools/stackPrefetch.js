@@ -1,8 +1,8 @@
-import * as cornerstone from 'cornerstone-core';
-import requestPoolManager from '../requestPool/requestPoolManager';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
-import { addToolState, getToolState } from '../stateManagement/toolState';
-import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests';
+import * as cornerstone from '../cornerstone-core.js';
+import requestPoolManager from '../requestPool/requestPoolManager.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';

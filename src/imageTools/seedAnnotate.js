@@ -1,18 +1,18 @@
 /* eslint no-alert:0 */
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import moveHandle from '../manipulators/moveHandle';
-import drawHandles from '../manipulators/drawHandles';
-import drawCircle from '../util/drawCircle';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
+import moveHandle from '../manipulators/moveHandle.js';
+import drawHandles from '../manipulators/drawHandles.js';
+import drawCircle from '../util/drawCircle.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'seedAnnotate';

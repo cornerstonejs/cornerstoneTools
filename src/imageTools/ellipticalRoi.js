@@ -1,15 +1,15 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool';
+import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles';
-import drawTextBox from '../util/drawTextBox';
-import drawEllipse from '../util/drawEllipse';
-import pointInEllipse from '../util/pointInEllipse';
-import calculateEllipseStatistics from '../util/calculateEllipseStatistics';
-import calculateSUV from '../util/calculateSUV';
+import drawHandles from '../manipulators/drawHandles.js';
+import drawTextBox from '../util/drawTextBox.js';
+import drawEllipse from '../util/drawEllipse.js';
+import pointInEllipse from '../util/pointInEllipse.js';
+import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
+import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'ellipticalRoi';

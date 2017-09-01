@@ -1,4 +1,4 @@
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstoneMath from '../cornerstone-math.js';
 
 export default function (renderData, handles) {
   const image = renderData.image;

@@ -1,7 +1,7 @@
 /* eslint no-bitwise:0 */
-import * as cornerstone from 'cornerstone-core';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
-import { addToolState, getToolState } from '../stateManagement/toolState';
+import * as cornerstone from '../cornerstone-core.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'playClip';
 

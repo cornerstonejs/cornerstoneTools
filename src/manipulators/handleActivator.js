@@ -1,4 +1,4 @@
-import getHandleNearImagePoint from './getHandleNearImagePoint';
+import getHandleNearImagePoint from './getHandleNearImagePoint.js';
 
 function getActiveHandle (handles) {
   let activeHandle;

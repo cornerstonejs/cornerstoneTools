@@ -1,5 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
-import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager';
+import * as cornerstone from '../cornerstone-core.js';
+import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 
 function getElementToolStateManager (element) {
   const enabledImage = cornerstone.getEnabledElement(element);
