@@ -1,4 +1,4 @@
-import Hammer from 'hammerjs';
+import Hammer from '../hammer.js';
 import * as cornerstone from '../cornerstone-core.js';
 import * as cornerstoneMath from '../cornerstone-math.js';
 import copyPoints from '../util/copyPoints.js';
