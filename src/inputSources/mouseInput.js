@@ -133,7 +133,10 @@ function mouseDown (e) {
       lastPoints,
       currentPoints,
       deltaPoints,
-      type: eventType
+      type: eventType,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey
     };
 
     $(eventData.element).trigger(eventType, eventData);

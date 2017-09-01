@@ -2,3 +2,5 @@ test
 scripts
 # required for overriding gitignore when publishing using npm
 src
+coverage
+documentation

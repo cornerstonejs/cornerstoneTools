@@ -1,0 +1,116 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <!-- support for mobile touch devices -->
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../dialogPolyfill.css" rel="stylesheet">
+  <link href="../cornerstone.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>
+        Layered Image Stacks Example
+      </h1>
+      <p>
+        This page contains an example of adding two stacks as layers. Here we show a PET stack overlaid on a CT stack. The developer defines a custom function for determining which image in the stack to show depending on the base layer image.
+      </p>
+      <a href="../index.html">Go back to the Examples page</a>
+    </div>
+
+    <div class="row">
+
+      <div class="col-xs-9">
+        <div style="width:512px;height:512px;position:relative;display:inline-block;"
+            oncontextmenu="return false"
+            class='cornerstone-enabled-image'
+            unselectable='on'
+            onselectstart='return false;'
+            onmousedown='return false;'>
+          <div id="dicomImage"
+            style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
+is used by our example image loader-->
+<script src="../jquery.min.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="../cornerstone.js"></script>
+  
+<script src="../cornerstoneMath.min.js"></script>
+
+<!-- include the cornerstone tools library -->
+<script src="../../dist/cornerstoneTools.js"></script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../petctImageIdLoader.js"></script>
+<script src="../petctMetaDataProvider.js"></script>
+
+<script>
+  var element = document.getElementById('dicomImage');
+  cornerstone.enable(element);
+
+  var ctStack = {
+    imageIds: ['ct://1', 'ct://2'],
+    currentImageIdIndex: 0
+  }
+
+  var petStack = {
+    imageIds: ['pet://1', 'pet://2'],
+    currentImageIdIndex: 0,
+    options: {
+      opacity: 0.4,
+      visible: true,
+      colormap: 'jet'
+    }
+  };
+
+  // Select a renderer and apply the specified options
+  var renderer = new cornerstoneTools.stackRenderers.FusionRenderer();
+  renderer.findImageFn = function(imageIds, targetImageId) {
+    var minDistance = 1;
+    var targetImagePlane = cornerstone.metaData.get('imagePlane', targetImageId);
+    var imagePositionZ = targetImagePlane.imagePositionPatient.z;
+
+    var closest;
+    imageIds.forEach(function(imageId) {
+      var imagePlane = cornerstone.metaData.get('imagePlane', imageId);  
+      var imgPosZ = imagePlane.imagePositionPatient.z;
+      var distance = Math.abs(imgPosZ - imagePositionZ);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closest = imageId;
+      }
+    });
+
+    return closest;
+  }
+
+  // Create a stack from the image object array
+  cornerstone.loadAndCacheImage(ctStack.imageIds[0]).then(image => {
+      cornerstone.displayImage(element, image);
+
+      cornerstoneTools.addStackStateManager(element, ['stack']);
+      cornerstoneTools.addToolState(element, 'stack', ctStack);
+      cornerstoneTools.addToolState(element, 'stack', petStack);
+      cornerstoneTools.addToolState(element, 'stackRenderer', renderer);
+
+      cornerstoneTools.scrollToIndex(element, 1);
+
+      cornerstoneTools.mouseInput.enable(element);
+      cornerstoneTools.mouseWheelInput.enable(element);
+      cornerstoneTools.pan.activate(element, 1);
+      cornerstoneTools.zoom.activate(element, 4);
+      cornerstoneTools.stackScrollWheel.activate(element);
+  })
+</script>
+</html>

@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.8.9 - 2017-06-09 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-06-28 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
@@ -8,7 +8,7 @@
 		exports["cornerstoneTools"] = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"));
 	else
 		root["cornerstoneTools"] = factory(root["cornerstone"], root["cornerstoneMath"], root["Hammer"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_113__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_0__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_116__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 107);
+/******/ 	return __webpack_require__(__webpack_require__.s = 109);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -397,66 +397,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (context, renderData, handles, color, options) {
-  context.strokeStyle = color;
-
-  Object.keys(handles).forEach(function (name) {
-    var handle = handles[name];
-
-    if (handle.drawnIndependently === true) {
-      return;
-    }
-
-    if (options && options.drawHandlesIfActive === true && !handle.active) {
-      return;
-    }
-
-    context.beginPath();
-
-    if (handle.active) {
-      context.lineWidth = _toolStyle2.default.getActiveWidth();
-    } else {
-      context.lineWidth = _toolStyle2.default.getToolWidth();
-    }
-
-    var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
-
-    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
-
-    if (options && options.fill) {
-      context.fillStyle = options.fill;
-      context.fill();
-    }
-
-    context.stroke();
-  });
-};
-
-var _cornerstoneCore = __webpack_require__(0);
-
-var cornerstone = _interopRequireWildcard(_cornerstoneCore);
-
-var _toolStyle = __webpack_require__(5);
-
-var _toolStyle2 = _interopRequireDefault(_toolStyle);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var handleRadius = 6;
-
-/***/ }),
-/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -797,7 +737,7 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _toolCoordinates = __webpack_require__(28);
+var _toolCoordinates = __webpack_require__(29);
 
 var _toolCoordinates2 = _interopRequireDefault(_toolCoordinates);
 
@@ -805,7 +745,7 @@ var _getHandleNearImagePoint = __webpack_require__(15);
 
 var _getHandleNearImagePoint2 = _interopRequireDefault(_getHandleNearImagePoint);
 
-var _handleActivator = __webpack_require__(25);
+var _handleActivator = __webpack_require__(26);
 
 var _handleActivator2 = _interopRequireDefault(_handleActivator);
 
@@ -817,7 +757,7 @@ var _moveNewHandle = __webpack_require__(22);
 
 var _moveNewHandle2 = _interopRequireDefault(_moveNewHandle);
 
-var _moveAllHandles = __webpack_require__(26);
+var _moveAllHandles = __webpack_require__(27);
 
 var _moveAllHandles2 = _interopRequireDefault(_moveAllHandles);
 
@@ -834,6 +774,66 @@ var _toolState = __webpack_require__(1);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (context, renderData, handles, color, options) {
+  context.strokeStyle = color;
+
+  Object.keys(handles).forEach(function (name) {
+    var handle = handles[name];
+
+    if (handle.drawnIndependently === true) {
+      return;
+    }
+
+    if (options && options.drawHandlesIfActive === true && !handle.active) {
+      return;
+    }
+
+    context.beginPath();
+
+    if (handle.active) {
+      context.lineWidth = _toolStyle2.default.getActiveWidth();
+    } else {
+      context.lineWidth = _toolStyle2.default.getToolWidth();
+    }
+
+    var handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
+
+    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+
+    if (options && options.fill) {
+      context.fillStyle = options.fill;
+      context.fill();
+    }
+
+    context.stroke();
+  });
+};
+
+var _cornerstoneCore = __webpack_require__(0);
+
+var cornerstone = _interopRequireWildcard(_cornerstoneCore);
+
+var _toolStyle = __webpack_require__(5);
+
+var _toolStyle2 = _interopRequireDefault(_toolStyle);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var handleRadius = 6;
 
 /***/ }),
 /* 9 */
@@ -1956,8 +1956,8 @@ exports.default = function (mouseEventData, toolType, data, handle, doneMovingCa
   }
 
   function whichMovement(e) {
-    $(element).off('CornerstoneToolsMouseMove');
-    $(element).off('CornerstoneToolsMouseDrag');
+    $(element).off('CornerstoneToolsMouseMove', whichMovement);
+    $(element).off('CornerstoneToolsMouseDrag', whichMovement);
 
     $(element).on('CornerstoneToolsMouseMove', moveCallback);
     $(element).on('CornerstoneToolsMouseDrag', moveCallback);
@@ -2157,6 +2157,114 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var configMaxSimultaneousRequests = void 0;
+
+// Maximum concurrent connections to the same server
+// Information from http://sgdev-blog.blogspot.fr/2014/01/maximum-concurrent-connection-to-same.html
+var maxSimultaneousRequests = {
+  default: 6,
+  IE: {
+    9: 6,
+    10: 8,
+    default: 8
+  },
+  Firefox: {
+    default: 6
+  },
+  Opera: {
+    10: 8,
+    11: 6,
+    12: 6,
+    default: 6
+  },
+  Chrome: {
+    default: 6
+  },
+  Safari: {
+    default: 6
+  }
+};
+
+// Browser name / version detection
+// http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+function getBrowserInfo() {
+  var ua = navigator.userAgent;
+  var M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+  var tem = void 0;
+
+  if (/trident/i.test(M[1])) {
+    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
+
+    return 'IE ' + (tem[1] || '');
+  }
+
+  if (M[1] === 'Chrome') {
+    tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
+    if (tem !== null) {
+      return tem.slice(1).join(' ').replace('OPR', 'Opera');
+    }
+  }
+
+  M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
+  if ((tem = ua.match(/version\/(\d+)/i)) !== null) {
+    M.splice(1, 1, tem[1]);
+  }
+
+  return M.join(' ');
+}
+
+function setMaxSimultaneousRequests(newMaxSimultaneousRequests) {
+  configMaxSimultaneousRequests = newMaxSimultaneousRequests;
+}
+
+function getMaxSimultaneousRequests() {
+  if (configMaxSimultaneousRequests) {
+    return configMaxSimultaneousRequests;
+  }
+
+  return getDefaultSimultaneousRequests();
+}
+
+function getDefaultSimultaneousRequests() {
+  var infoString = getBrowserInfo();
+  var info = infoString.split(' ');
+  var browserName = info[0];
+  var browserVersion = info[1];
+  var browserData = maxSimultaneousRequests[browserName];
+
+  if (!browserData) {
+    return maxSimultaneousRequests.default;
+  }
+
+  if (!browserData[browserVersion]) {
+    return browserData.default;
+  }
+
+  return browserData[browserVersion];
+}
+
+function isMobileDevice() {
+  var pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
+
+  return pattern.test(navigator.userAgent);
+}
+
+exports.getDefaultSimultaneousRequests = getDefaultSimultaneousRequests;
+exports.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
+exports.setMaxSimultaneousRequests = setMaxSimultaneousRequests;
+exports.getBrowserInfo = getBrowserInfo;
+exports.isMobileDevice = isMobileDevice;
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 exports.default = function (touchDragCallback, options) {
   var configuration = {};
@@ -2210,7 +2318,7 @@ exports.default = function (touchDragCallback, options) {
 };
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2266,7 +2374,7 @@ function getActiveHandle(handles) {
 }
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2357,7 +2465,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2371,7 +2479,7 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _getMaxSimultaneousRequests = __webpack_require__(31);
+var _getMaxSimultaneousRequests = __webpack_require__(24);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -2577,7 +2685,7 @@ exports.default = {
 };
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2604,7 +2712,7 @@ var toolCoordinates = {
 exports.default = toolCoordinates;
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2694,7 +2802,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2723,118 +2831,6 @@ var _cornerstoneMath = __webpack_require__(2);
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-/***/ }),
-/* 31 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.isMobileDevice = exports.getBrowserInfo = exports.getMaxSimultaneousRequests = exports.getDefaultSimultaneousRequests = undefined;
-
-var _stackPrefetch = __webpack_require__(46);
-
-var _stackPrefetch2 = _interopRequireDefault(_stackPrefetch);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// Maximum concurrent connections to the same server
-// Information from http://sgdev-blog.blogspot.fr/2014/01/maximum-concurrent-connection-to-same.html
-var maxSimultaneousRequests = {
-  default: 6,
-  IE: {
-    9: 6,
-    10: 8,
-    default: 8
-  },
-  Firefox: {
-    default: 6
-  },
-  Opera: {
-    10: 8,
-    11: 6,
-    12: 6,
-    default: 6
-  },
-  Chrome: {
-    default: 6
-  },
-  Safari: {
-    default: 6
-  }
-};
-
-// Browser name / version detection
-// http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
-function getBrowserInfo() {
-  var ua = navigator.userAgent;
-  var M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
-  var tem = void 0;
-
-  if (/trident/i.test(M[1])) {
-    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
-
-    return 'IE ' + (tem[1] || '');
-  }
-
-  if (M[1] === 'Chrome') {
-    tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
-    if (tem !== null) {
-      return tem.slice(1).join(' ').replace('OPR', 'Opera');
-    }
-  }
-
-  M = M[2] ? [M[1], M[2]] : [navigator.appName, navigator.appVersion, '-?'];
-  if ((tem = ua.match(/version\/(\d+)/i)) !== null) {
-    M.splice(1, 1, tem[1]);
-  }
-
-  return M.join(' ');
-}
-
-function getMaxSimultaneousRequests() {
-  var config = _stackPrefetch2.default.getConfiguration();
-
-  // Give preference to user-chosen values
-  if (config.maxSimultaneousRequests) {
-    return config.maxSimultaneousRequests;
-  }
-
-  return getDefaultSimultaneousRequests();
-}
-
-function getDefaultSimultaneousRequests() {
-  var infoString = getBrowserInfo();
-  var info = infoString.split(' ');
-  var browserName = info[0];
-  var browserVersion = info[1];
-  var browserData = maxSimultaneousRequests[browserName];
-
-  if (!browserData) {
-    return maxSimultaneousRequests.default;
-  }
-
-  if (!browserData[browserVersion]) {
-    return browserData.default;
-  }
-
-  return browserData[browserVersion];
-}
-
-function isMobileDevice() {
-  var pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
-
-  return pattern.test(navigator.userAgent);
-}
-
-exports.getDefaultSimultaneousRequests = getDefaultSimultaneousRequests;
-exports.getMaxSimultaneousRequests = getMaxSimultaneousRequests;
-exports.getBrowserInfo = getBrowserInfo;
-exports.isMobileDevice = isMobileDevice;
 
 /***/ }),
 /* 32 */
@@ -3137,7 +3133,7 @@ exports.default = function (element, images) {
   (0, _scrollToIndex2.default)(element, newImageIdIndex);
 };
 
-var _scrollToIndex = __webpack_require__(53);
+var _scrollToIndex = __webpack_require__(52);
 
 var _scrollToIndex2 = _interopRequireDefault(_scrollToIndex);
 
@@ -3441,7 +3437,7 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _toolCoordinates = __webpack_require__(28);
+var _toolCoordinates = __webpack_require__(29);
 
 var _toolCoordinates2 = _interopRequireDefault(_toolCoordinates);
 
@@ -3449,7 +3445,7 @@ var _getHandleNearImagePoint = __webpack_require__(15);
 
 var _getHandleNearImagePoint2 = _interopRequireDefault(_getHandleNearImagePoint);
 
-var _handleActivator = __webpack_require__(25);
+var _handleActivator = __webpack_require__(26);
 
 var _handleActivator2 = _interopRequireDefault(_handleActivator);
 
@@ -3457,7 +3453,7 @@ var _moveHandle = __webpack_require__(21);
 
 var _moveHandle2 = _interopRequireDefault(_moveHandle);
 
-var _moveAllHandles = __webpack_require__(26);
+var _moveAllHandles = __webpack_require__(27);
 
 var _moveAllHandles2 = _interopRequireDefault(_moveAllHandles);
 
@@ -3838,11 +3834,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _getOrientationString = __webpack_require__(110);
+var _getOrientationString = __webpack_require__(112);
 
 var _getOrientationString2 = _interopRequireDefault(_getOrientationString);
 
-var _invertOrientationString = __webpack_require__(111);
+var _invertOrientationString = __webpack_require__(113);
 
 var _invertOrientationString2 = _interopRequireDefault(_invertOrientationString);
 
@@ -3865,350 +3861,13 @@ exports.default = orientation;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _cornerstoneCore = __webpack_require__(0);
-
-var cornerstone = _interopRequireWildcard(_cornerstoneCore);
-
-var _requestPoolManager = __webpack_require__(27);
-
-var _requestPoolManager2 = _interopRequireDefault(_requestPoolManager);
-
-var _loadHandlerManager = __webpack_require__(10);
-
-var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
-
-var _toolState = __webpack_require__(1);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-var toolType = 'stackPrefetch';
-var requestType = 'prefetch';
-
-var configuration = {};
-
-var resetPrefetchTimeout = void 0;
-var resetPrefetchDelay = 300;
-
-function range(lowEnd, highEnd) {
-  // Javascript version of Python's range function
-  // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
-  lowEnd = Math.round(lowEnd) || 0;
-  highEnd = Math.round(highEnd) || 0;
-
-  var arr = [];
-  var c = highEnd - lowEnd + 1;
-
-  if (c <= 0) {
-    return arr;
-  }
-
-  while (c--) {
-    arr[c] = highEnd--;
-  }
-
-  return arr;
-}
-
-var max = function max(arr) {
-  return Math.max.apply(null, arr);
-};
-
-var min = function min(arr) {
-  return Math.min.apply(null, arr);
-};
-
-function nearestIndex(arr, x) {
-  // Return index of nearest values in array
-  // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
-  var l = [];
-  var h = [];
-
-  arr.forEach(function (v) {
-    if (v < x) {
-      l.push(v);
-    } else if (v > x) {
-      h.push(v);
-    }
-  });
-
-  return {
-    low: arr.indexOf(max(l)),
-    high: arr.indexOf(min(h))
-  };
-}
-
-function prefetch(element) {
-  // Check to make sure stack data exists
-  var stackData = (0, _toolState.getToolState)(element, 'stack');
-
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
-
-  var stack = stackData.data[0];
-
-  // Get the stackPrefetch tool data
-  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
-
-  if (!stackPrefetchData) {
-    return;
-  }
-
-  var stackPrefetch = stackPrefetchData.data[0] || {};
-
-  // If all the requests are complete, disable the stackPrefetch tool
-  if (!stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
-    stackPrefetch.enabled = false;
-  }
-
-  // Make sure the tool is still enabled
-  if (stackPrefetch.enabled === false) {
-    return;
-  }
-
-  // Remove an imageIdIndex from the list of indices to request
-  // This fires when the individual image loading deferred is resolved
-  function removeFromList(imageIdIndex) {
-    var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
-
-    if (index > -1) {
-      // Don't remove last element if imageIdIndex not found
-      stackPrefetch.indicesToRequest.splice(index, 1);
-    }
-  }
-
-  // Remove all already cached images from the
-  // IndicesToRequest array
-  stackPrefetchData.data[0].indicesToRequest.sort(function (a, b) {
-    return a - b;
-  });
-  var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
-
-  indicesToRequestCopy.forEach(function (imageIdIndex) {
-    var imageId = stack.imageIds[imageIdIndex];
-
-    if (!imageId) {
-      return;
-    }
-
-    var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
-
-    if (imagePromise && imagePromise.state() === 'resolved') {
-      removeFromList(imageIdIndex);
-    }
-  });
-
-  // Stop here if there are no images left to request
-  // After those in the cache have been removed
-  if (!stackPrefetch.indicesToRequest.length) {
-    return;
-  }
-
-  // Clear the requestPool of prefetch requests
-  _requestPoolManager2.default.clearRequestStack(requestType);
-
-  // Identify the nearest imageIdIndex to the currentImageIdIndex
-  var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
-
-  var imageId = void 0;
-  var nextImageIdIndex = void 0;
-  var preventCache = false;
-
-  function doneCallback(image) {
-    // Console.log('prefetch done: ' + image.imageId);
-    var imageIdIndex = stack.imageIds.indexOf(image.imageId);
-
-    removeFromList(imageIdIndex);
-  }
-
-  // Retrieve the errorLoadingHandler if one exists
-  var errorLoadingHandler = _loadHandlerManager2.default.getErrorLoadingHandler();
-
-  function failCallback(error) {
-    console.log('prefetch errored: ' + error);
-    if (errorLoadingHandler) {
-      errorLoadingHandler(element, imageId, error, 'stackPrefetch');
-    }
-  }
-
-  // Prefetch images around the current image (before and after)
-  var lowerIndex = nearest.low;
-  var higherIndex = nearest.high;
-
-  while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
-    if (lowerIndex >= 0) {
-      nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
-      imageId = stack.imageIds[nextImageIdIndex];
-      _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
-    }
-
-    if (higherIndex < stackPrefetch.indicesToRequest.length) {
-      nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
-      imageId = stack.imageIds[nextImageIdIndex];
-      _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
-    }
-  }
-
-  // Try to start the requestPool's grabbing procedure
-  // In case it isn't already running
-  _requestPoolManager2.default.startGrabbing();
-}
-
-function promiseRemovedHandler(e, eventData) {
-  // When an imagePromise has been pushed out of the cache, re-add its index
-  // It to the indicesToRequest list so that it will be retrieved later if the
-  // CurrentImageIdIndex is changed to an image nearby
-  var element = e.data.element;
-  var stackData = void 0;
-
-  try {
-    // It will throw an exception in some cases (eg: thumbnails)
-    stackData = (0, _toolState.getToolState)(element, 'stack');
-  } catch (error) {
-    return;
-  }
-
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
-
-  var stack = stackData.data[0];
-  var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
-
-  // Make sure the image that was removed is actually in this stack
-  // Before adding it to the indicesToRequest array
-  if (imageIdIndex < 0) {
-    return;
-  }
-
-  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
-
-  if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-    return;
-  }
-
-  stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
-}
-
-function onImageUpdated(e) {
-  // Start prefetching again (after a delay)
-  // When the user has scrolled to a new image
-  clearTimeout(resetPrefetchTimeout);
-  resetPrefetchTimeout = setTimeout(function () {
-    var element = e.target;
-
-    // If playClip is enabled and the user loads a different series in the viewport
-    // An exception will be thrown because the element will not be enabled anymore
-    try {
-      prefetch(element);
-    } catch (error) {
-      return;
-    }
-  }, resetPrefetchDelay);
-}
-
-function enable(element) {
-  // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-  var stackPrefetchDataArray = (0, _toolState.getToolState)(element, toolType);
-
-  stackPrefetchDataArray.data = [];
-
-  // First check that there is stack data available
-  var stackData = (0, _toolState.getToolState)(element, 'stack');
-
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
-
-  var stack = stackData.data[0];
-
-  // Check if we are allowed to cache images in this stack
-  if (stack.preventCache === true) {
-    console.warn('A stack that should not be cached was given the stackPrefetch');
-
-    return;
-  }
-
-  // Use the currentImageIdIndex from the stack as the initalImageIdIndex
-  var stackPrefetchData = {
-    indicesToRequest: range(0, stack.imageIds.length - 1),
-    enabled: true,
-    direction: 1
-  };
-
-  // Remove the currentImageIdIndex from the list to request
-  var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
-
-  stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
-
-  (0, _toolState.addToolState)(element, toolType, stackPrefetchData);
-
-  prefetch(element);
-
-  $(element).off('CornerstoneNewImage', onImageUpdated);
-  $(element).on('CornerstoneNewImage', onImageUpdated);
-
-  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  $(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
-    element: element
-  }, promiseRemovedHandler);
-}
-
-function disable(element) {
-  clearTimeout(resetPrefetchTimeout);
-  $(element).off('CornerstoneNewImage', onImageUpdated);
-
-  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-
-  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
-  // If there is actually something to disable, disable it
-
-  if (stackPrefetchData && stackPrefetchData.data.length) {
-    stackPrefetchData.data[0].enabled = false;
-
-    // Clear current prefetch requests from the requestPool
-    _requestPoolManager2.default.clearRequestStack(requestType);
-  }
-}
-
-function getConfiguration() {
-  return configuration;
-}
-
-function setConfiguration(config) {
-  configuration = config;
-}
-
-// Module/private exports
-var stackPrefetch = {
-  enable: enable,
-  disable: disable,
-  getConfiguration: getConfiguration,
-  setConfiguration: setConfiguration
-};
-
-exports.default = stackPrefetch;
-
-/***/ }),
-/* 47 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 exports.stackScrollMultiTouch = exports.stackScrollTouchDrag = exports.stackScrollWheel = exports.stackScroll = undefined;
 
 var _touchDragTool = __webpack_require__(11);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
-var _multiTouchDragTool = __webpack_require__(24);
+var _multiTouchDragTool = __webpack_require__(25);
 
 var _multiTouchDragTool2 = _interopRequireDefault(_multiTouchDragTool);
 
@@ -4328,7 +3987,7 @@ exports.stackScrollTouchDrag = stackScrollTouchDrag;
 exports.stackScrollMultiTouch = stackScrollMultiTouch;
 
 /***/ }),
-/* 48 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4390,7 +4049,7 @@ var _pointInEllipse2 = _interopRequireDefault(_pointInEllipse);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 49 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4435,7 +4094,7 @@ exports.default = function (context, start, end, color, lineWidth) {
 };
 
 /***/ }),
-/* 50 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4456,7 +4115,7 @@ exports.default = function (context, start, color, lineWidth) {
 };
 
 /***/ }),
-/* 51 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4491,7 +4150,7 @@ exports.default = function (context, x, y, w, h) {
 };
 
 /***/ }),
-/* 52 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4547,7 +4206,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 53 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4562,6 +4221,17 @@ exports.default = function (element, newImageIdIndex) {
 
   if (!toolData || !toolData.data || !toolData.data.length) {
     return;
+  }
+
+  // If we have more than one stack, check if we have a stack renderer defined
+  var stackRenderer = void 0;
+
+  if (toolData.data.length > 1) {
+    var stackRendererData = (0, _toolState.getToolState)(element, 'stackRenderer');
+
+    if (stackRendererData && stackRendererData.data && stackRendererData.data.length) {
+      stackRenderer = stackRendererData.data[0];
+    }
   }
 
   var stackData = toolData.data[0];
@@ -4590,7 +4260,13 @@ exports.default = function (element, newImageIdIndex) {
       return;
     }
 
-    cornerstone.displayImage(element, image, viewport);
+    if (stackRenderer) {
+      stackRenderer.currentImageIdIndex = newImageIdIndex;
+      stackRenderer.render(element, toolData.data);
+    } else {
+      cornerstone.displayImage(element, image, viewport);
+    }
+
     if (endLoadingHandler) {
       endLoadingHandler(element, image);
     }
@@ -4656,7 +4332,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
 var _toolState = __webpack_require__(1);
 
-var _requestPoolManager = __webpack_require__(27);
+var _requestPoolManager = __webpack_require__(28);
 
 var _requestPoolManager2 = _interopRequireDefault(_requestPoolManager);
 
@@ -4664,14 +4340,14 @@ var _loadHandlerManager = __webpack_require__(10);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
-var _stackScroll = __webpack_require__(47);
+var _stackScroll = __webpack_require__(46);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 54 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4704,7 +4380,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 55 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4730,7 +4406,7 @@ exports.default = function (targetImagePlane, referenceImagePlane) {
 var _pointProjector = __webpack_require__(35);
 
 /***/ }),
-/* 56 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4802,7 +4478,7 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _calculateReferenceLine = __webpack_require__(55);
+var _calculateReferenceLine = __webpack_require__(54);
 
 var _calculateReferenceLine2 = _interopRequireDefault(_calculateReferenceLine);
 
@@ -4819,7 +4495,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 57 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4838,7 +4514,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -4866,7 +4542,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -5044,7 +4720,7 @@ exports.angle = angle;
 exports.angleTouch = angleTouch;
 
 /***/ }),
-/* 58 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5063,7 +4739,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -5087,11 +4763,11 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
-var _drawArrow = __webpack_require__(49);
+var _drawArrow = __webpack_require__(48);
 
 var _drawArrow2 = _interopRequireDefault(_drawArrow);
 
@@ -5576,7 +5252,7 @@ exports.arrowAnnotate = arrowAnnotate;
 exports.arrowAnnotateTouch = arrowAnnotateTouch;
 
 /***/ }),
-/* 59 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5809,7 +5485,7 @@ exports.crosshairs = crosshairs;
 exports.crosshairsTouch = crosshairsTouch;
 
 /***/ }),
-/* 60 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5852,7 +5528,7 @@ doubleTapZoom.strategy = fitToWindowStrategy;
 exports.default = doubleTapZoom;
 
 /***/ }),
-/* 61 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6131,7 +5807,7 @@ exports.dragProbe = dragProbe;
 exports.dragProbeTouch = dragProbeTouch;
 
 /***/ }),
-/* 62 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6150,7 +5826,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -6166,7 +5842,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -6174,7 +5850,7 @@ var _drawTextBox = __webpack_require__(6);
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
-var _drawEllipse = __webpack_require__(51);
+var _drawEllipse = __webpack_require__(50);
 
 var _drawEllipse2 = _interopRequireDefault(_drawEllipse);
 
@@ -6182,7 +5858,7 @@ var _pointInEllipse = __webpack_require__(34);
 
 var _pointInEllipse2 = _interopRequireDefault(_pointInEllipse);
 
-var _calculateEllipseStatistics = __webpack_require__(48);
+var _calculateEllipseStatistics = __webpack_require__(47);
 
 var _calculateEllipseStatistics2 = _interopRequireDefault(_calculateEllipseStatistics);
 
@@ -6596,7 +6272,7 @@ exports.ellipticalRoi = ellipticalRoi;
 exports.ellipticalRoiTouch = ellipticalRoiTouch;
 
 /***/ }),
-/* 63 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6623,7 +6299,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -7082,7 +6758,7 @@ var freehand = {
 exports.freehand = freehand;
 
 /***/ }),
-/* 64 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7117,7 +6793,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -7291,7 +6967,7 @@ exports.highlight = highlight;
 exports.highlightTouch = highlightTouch;
 
 /***/ }),
-/* 65 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7339,7 +7015,7 @@ var imageStats = (0, _displayTool2.default)(onImageRendered);
 exports.default = imageStats;
 
 /***/ }),
-/* 66 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7358,7 +7034,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -7378,7 +7054,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -7613,7 +7289,7 @@ exports.length = length;
 exports.lengthTouch = lengthTouch;
 
 /***/ }),
-/* 67 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7632,7 +7308,7 @@ var _touchDragTool = __webpack_require__(11);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
-var _getMaxSimultaneousRequests = __webpack_require__(31);
+var _getMaxSimultaneousRequests = __webpack_require__(24);
 
 var _isMouseButtonEnabled = __webpack_require__(3);
 
@@ -7875,7 +7551,7 @@ exports.magnify = magnify;
 exports.magnifyTouchDrag = magnifyTouchDrag;
 
 /***/ }),
-/* 68 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8009,7 +7685,7 @@ var orientationMarkers = (0, _displayTool2.default)(onImageRendered);
 exports.default = orientationMarkers;
 
 /***/ }),
-/* 69 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8082,7 +7758,7 @@ exports.pan = pan;
 exports.panTouchDrag = panTouchDrag;
 
 /***/ }),
-/* 70 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8096,7 +7772,7 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _multiTouchDragTool = __webpack_require__(24);
+var _multiTouchDragTool = __webpack_require__(25);
 
 var _multiTouchDragTool2 = _interopRequireDefault(_multiTouchDragTool);
 
@@ -8129,7 +7805,7 @@ panMultiTouch.setConfiguration(configuration);
 exports.default = panMultiTouch;
 
 /***/ }),
-/* 71 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8148,7 +7824,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -8164,7 +7840,7 @@ var _textStyle = __webpack_require__(14);
 
 var _textStyle2 = _interopRequireDefault(_textStyle);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -8311,7 +7987,7 @@ exports.probe = probe;
 exports.probeTouch = probeTouch;
 
 /***/ }),
-/* 72 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8330,7 +8006,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -8346,7 +8022,7 @@ var _toolColors = __webpack_require__(4);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -8782,7 +8458,7 @@ exports.rectangleRoi = rectangleRoi;
 exports.rectangleRoiTouch = rectangleRoiTouch;
 
 /***/ }),
-/* 73 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8890,7 +8566,7 @@ exports.rotate = rotate;
 exports.rotateTouchDrag = rotateTouchDrag;
 
 /***/ }),
-/* 74 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8930,7 +8606,7 @@ var rotateTouch = {
 exports.default = rotateTouch;
 
 /***/ }),
-/* 75 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8970,7 +8646,7 @@ exports.default = function (element, filename) {
 };
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8989,7 +8665,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -9021,11 +8697,11 @@ var _moveHandle = __webpack_require__(21);
 
 var _moveHandle2 = _interopRequireDefault(_moveHandle);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
-var _drawCircle = __webpack_require__(50);
+var _drawCircle = __webpack_require__(49);
 
 var _drawCircle2 = _interopRequireDefault(_drawCircle);
 
@@ -9464,7 +9140,7 @@ exports.seedAnnotate = seedAnnotate;
 exports.seedAnnotateTouch = seedAnnotateTouch;
 
 /***/ }),
-/* 77 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9483,7 +9159,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -9519,7 +9195,7 @@ var _moveNewHandleTouch = __webpack_require__(23);
 
 var _moveNewHandleTouch2 = _interopRequireDefault(_moveNewHandleTouch);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
@@ -9909,7 +9585,7 @@ exports.simpleAngle = simpleAngle;
 exports.simpleAngleTouch = simpleAngleTouch;
 
 /***/ }),
-/* 78 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9928,7 +9604,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
@@ -10246,7 +9922,7 @@ exports.textMarker = textMarker;
 exports.textMarkerTouch = textMarkerTouch;
 
 /***/ }),
-/* 79 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10360,7 +10036,7 @@ exports.wwwc = wwwc;
 exports.wwwcTouchDrag = wwwcTouchDrag;
 
 /***/ }),
-/* 80 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10385,7 +10061,7 @@ var _toolColors2 = _interopRequireDefault(_toolColors);
 
 var _toolState = __webpack_require__(1);
 
-var _getLuminance = __webpack_require__(52);
+var _getLuminance = __webpack_require__(51);
 
 var _getLuminance2 = _interopRequireDefault(_getLuminance);
 
@@ -10761,7 +10437,7 @@ exports.wwwcRegion = wwwcRegion;
 exports.wwwcRegionTouch = wwwcRegionTouch;
 
 /***/ }),
-/* 81 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11086,7 +10762,7 @@ exports.zoomTouchPinch = zoomTouchPinch;
 exports.zoomTouchDrag = zoomTouchDrag;
 
 /***/ }),
-/* 82 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11165,7 +10841,7 @@ var keyboardInput = {
 exports.default = keyboardInput;
 
 /***/ }),
-/* 83 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11183,7 +10859,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _copyPoints = __webpack_require__(30);
+var _copyPoints = __webpack_require__(31);
 
 var _copyPoints2 = _interopRequireDefault(_copyPoints);
 
@@ -11481,7 +11157,7 @@ var mouseInput = {
 exports.default = mouseInput;
 
 /***/ }),
-/* 84 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11584,7 +11260,7 @@ var mouseWheelInput = {
 exports.default = mouseWheelInput;
 
 /***/ }),
-/* 85 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11594,7 +11270,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _hammerjs = __webpack_require__(113);
+var _hammerjs = __webpack_require__(116);
 
 var _hammerjs2 = _interopRequireDefault(_hammerjs);
 
@@ -11606,7 +11282,7 @@ var _cornerstoneMath = __webpack_require__(2);
 
 var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 
-var _copyPoints = __webpack_require__(30);
+var _copyPoints = __webpack_require__(31);
 
 var _copyPoints2 = _interopRequireDefault(_copyPoints);
 
@@ -12124,7 +11800,7 @@ var touchInput = {
 exports.default = touchInput;
 
 /***/ }),
-/* 86 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12145,6 +11821,239 @@ var metaData = cornerstone.metaData;
 exports.default = metaData;
 
 /***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.brush = undefined;
+
+var _cornerstoneCore = __webpack_require__(0);
+
+var cornerstone = _interopRequireWildcard(_cornerstoneCore);
+
+var _mouseButtonTool = __webpack_require__(7);
+
+var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
+
+var _isMouseButtonEnabled = __webpack_require__(3);
+
+var _isMouseButtonEnabled2 = _interopRequireDefault(_isMouseButtonEnabled);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+// This module is for creating segmentation overlays
+var configuration = {
+  draw: 1,
+  radius: 10,
+  hoverColor: 'green',
+  dragColor: 'yellow',
+  overlayColor: 'red'
+};
+
+var brushImagePositions = [];
+var lastCanvasCoords = void 0;
+var dynamicImageCanvas = document.createElement('canvas');
+
+function defaultStrategy(eventData) {
+  var configuration = brush.getConfiguration();
+  var enabledElement = cornerstone.getEnabledElement(eventData.element);
+  var context = enabledElement.canvas.getContext('2d');
+
+  context.setTransform(1, 0, 0, 1, 0, 0);
+
+  var coords = eventData.currentPoints.canvas;
+  var radius = configuration.radius * enabledElement.viewport.scale;
+
+  drawCircle(context, coords, radius, configuration.dragColor);
+
+  brushImagePositions.push({
+    x: Math.round(eventData.currentPoints.image.x),
+    y: Math.round(eventData.currentPoints.image.y)
+  });
+
+  lastCanvasCoords = eventData.currentPoints.canvas;
+}
+
+function drawCircle(context, coords, radius, color) {
+  context.save();
+  context.beginPath();
+  context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI, true);
+  context.strokeStyle = color;
+  context.fillStyle = color;
+  context.stroke();
+  context.fill();
+  context.restore();
+}
+
+function clearCircle(context, coords, radius) {
+  context.save();
+  context.beginPath();
+  context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI, true);
+  context.clip();
+  context.clearRect(coords.x - radius - 1, coords.y - radius - 1, radius * 2 + 2, radius * 2 + 2);
+  context.restore();
+}
+
+function mouseMoveCallback(e, eventData) {
+  lastCanvasCoords = eventData.currentPoints.canvas;
+  cornerstone.updateImage(eventData.element);
+}
+
+function mouseUpCallback(e, eventData) {
+  lastCanvasCoords = eventData.currentPoints.canvas;
+  cornerstone.updateImage(eventData.element, true);
+
+  $(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
+  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+}
+
+function dragCallback(e, eventData) {
+  brush.strategy(eventData);
+
+  return false;
+}
+
+function mouseDownActivateCallback(e, eventData) {
+  if ((0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
+    $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
+    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    brush.strategy(eventData);
+
+    return false;
+  }
+
+  $(eventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
+  $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+}
+
+function onImageRendered(e, eventData) {
+  var configuration = brush.getConfiguration();
+  var enabledElement = cornerstone.getEnabledElement(eventData.element);
+  var context = enabledElement.canvas.getContext('2d');
+
+  context.setTransform(1, 0, 0, 1, 0, 0);
+
+  if (!lastCanvasCoords) {
+    return;
+  }
+
+  var radius = configuration.radius * enabledElement.viewport.scale;
+
+  drawCircle(context, lastCanvasCoords, radius, configuration.hoverColor);
+}
+
+function getPixelData() {
+  var configuration = brush.getConfiguration();
+
+  var context = dynamicImageCanvas.getContext('2d');
+
+  if (configuration.draw === 1) {
+    // Draw
+    brushImagePositions.forEach(function (coords) {
+      drawCircle(context, coords, configuration.radius, configuration.overlayColor);
+    });
+  } else {
+    // Erase
+    brushImagePositions.forEach(function (coords) {
+      clearCircle(context, coords, configuration.radius);
+    });
+  }
+
+  brushImagePositions = [];
+
+  var width = this.width;
+  var height = this.height;
+  var imageData = context.getImageData(0, 0, width, height);
+
+  return imageData.data;
+}
+
+var brushLayerId = void 0;
+
+function activate(element, mouseButtonMask) {
+  $(element).off('CornerstoneImageRendered', onImageRendered);
+  $(element).on('CornerstoneImageRendered', onImageRendered);
+
+  var eventData = {
+    mouseButtonMask: mouseButtonMask
+  };
+
+  $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+  $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+
+  $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+  $(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  dynamicImageCanvas.width = enabledElement.canvas.width;
+  dynamicImageCanvas.height = enabledElement.canvas.height;
+
+  var context = dynamicImageCanvas.getContext('2d');
+
+  context.fillStyle = 'rgba(0,0,0,0)';
+  context.fillRect(0, 0, dynamicImageCanvas.width, dynamicImageCanvas.height);
+
+  var dynamicImage = {
+    minPixelValue: 0,
+    maxPixelValue: 255,
+    slope: 1.0,
+    intercept: 0,
+    windowCenter: 127,
+    windowWidth: 256,
+    getPixelData: getPixelData,
+    rgba: true,
+    rows: enabledElement.image.height,
+    columns: enabledElement.image.width,
+    height: enabledElement.image.height,
+    width: enabledElement.image.width,
+    color: true,
+    invert: false,
+    columnPixelSpacing: 1.0,
+    rowPixelSpacing: 1.0,
+    sizeInBytes: enabledElement.image.width * enabledElement.image.height * 4
+  };
+
+  var layer = void 0;
+
+  if (brushLayerId) {
+    layer = cornerstone.getLayer(element, brushLayerId);
+  }
+
+  if (!layer) {
+    brushLayerId = cornerstone.addLayer(element, dynamicImage);
+  }
+
+  cornerstone.updateImage(element);
+}
+
+var brush = (0, _mouseButtonTool2.default)({
+  mouseMoveCallback: mouseMoveCallback,
+  mouseDownActivateCallback: mouseDownActivateCallback,
+  onImageRendered: onImageRendered
+});
+
+brush.activate = activate;
+
+brush.setConfiguration(configuration);
+brush.strategies = {
+  default: defaultStrategy
+};
+brush.strategy = defaultStrategy;
+
+exports.brush = brush;
+
+/***/ }),
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -12155,15 +12064,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _calculateReferenceLine = __webpack_require__(55);
+var _calculateReferenceLine = __webpack_require__(54);
 
 var _calculateReferenceLine2 = _interopRequireDefault(_calculateReferenceLine);
 
-var _referenceLinesTool = __webpack_require__(112);
+var _referenceLinesTool = __webpack_require__(114);
 
 var _referenceLinesTool2 = _interopRequireDefault(_referenceLinesTool);
 
-var _renderActiveReferenceLine = __webpack_require__(56);
+var _renderActiveReferenceLine = __webpack_require__(55);
 
 var _renderActiveReferenceLine2 = _interopRequireDefault(_renderActiveReferenceLine);
 
@@ -12547,6 +12456,372 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _cornerstoneCore = __webpack_require__(0);
+
+var cornerstone = _interopRequireWildcard(_cornerstoneCore);
+
+var _requestPoolManager = __webpack_require__(28);
+
+var _requestPoolManager2 = _interopRequireDefault(_requestPoolManager);
+
+var _loadHandlerManager = __webpack_require__(10);
+
+var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
+
+var _toolState = __webpack_require__(1);
+
+var _getMaxSimultaneousRequests = __webpack_require__(24);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+var toolType = 'stackPrefetch';
+var requestType = 'prefetch';
+
+var configuration = {};
+
+var resetPrefetchTimeout = void 0;
+var resetPrefetchDelay = 300;
+
+function range(lowEnd, highEnd) {
+  // Javascript version of Python's range function
+  // http://stackoverflow.com/questions/3895478/does-javascript-have-a-method-like-range-to-generate-an-array-based-on-suppl
+  lowEnd = Math.round(lowEnd) || 0;
+  highEnd = Math.round(highEnd) || 0;
+
+  var arr = [];
+  var c = highEnd - lowEnd + 1;
+
+  if (c <= 0) {
+    return arr;
+  }
+
+  while (c--) {
+    arr[c] = highEnd--;
+  }
+
+  return arr;
+}
+
+var max = function max(arr) {
+  return Math.max.apply(null, arr);
+};
+
+var min = function min(arr) {
+  return Math.min.apply(null, arr);
+};
+
+function nearestIndex(arr, x) {
+  // Return index of nearest values in array
+  // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
+  var l = [];
+  var h = [];
+
+  arr.forEach(function (v) {
+    if (v < x) {
+      l.push(v);
+    } else if (v > x) {
+      h.push(v);
+    }
+  });
+
+  return {
+    low: arr.indexOf(max(l)),
+    high: arr.indexOf(min(h))
+  };
+}
+
+function prefetch(element) {
+  // Check to make sure stack data exists
+  var stackData = (0, _toolState.getToolState)(element, 'stack');
+
+  if (!stackData || !stackData.data || !stackData.data.length) {
+    return;
+  }
+
+  var stack = stackData.data[0];
+
+  // Get the stackPrefetch tool data
+  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
+
+  if (!stackPrefetchData) {
+    return;
+  }
+
+  var stackPrefetch = stackPrefetchData.data[0] || {};
+
+  // If all the requests are complete, disable the stackPrefetch tool
+  if (!stackPrefetch.indicesToRequest || !stackPrefetch.indicesToRequest.length) {
+    stackPrefetch.enabled = false;
+  }
+
+  // Make sure the tool is still enabled
+  if (stackPrefetch.enabled === false) {
+    return;
+  }
+
+  // Remove an imageIdIndex from the list of indices to request
+  // This fires when the individual image loading deferred is resolved
+  function removeFromList(imageIdIndex) {
+    var index = stackPrefetch.indicesToRequest.indexOf(imageIdIndex);
+
+    if (index > -1) {
+      // Don't remove last element if imageIdIndex not found
+      stackPrefetch.indicesToRequest.splice(index, 1);
+    }
+  }
+
+  // Remove all already cached images from the
+  // IndicesToRequest array
+  stackPrefetchData.data[0].indicesToRequest.sort(function (a, b) {
+    return a - b;
+  });
+  var indicesToRequestCopy = stackPrefetch.indicesToRequest.slice();
+
+  indicesToRequestCopy.forEach(function (imageIdIndex) {
+    var imageId = stack.imageIds[imageIdIndex];
+
+    if (!imageId) {
+      return;
+    }
+
+    var imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+
+    if (imagePromise && imagePromise.state() === 'resolved') {
+      removeFromList(imageIdIndex);
+    }
+  });
+
+  // Stop here if there are no images left to request
+  // After those in the cache have been removed
+  if (!stackPrefetch.indicesToRequest.length) {
+    return;
+  }
+
+  // Clear the requestPool of prefetch requests
+  _requestPoolManager2.default.clearRequestStack(requestType);
+
+  // Identify the nearest imageIdIndex to the currentImageIdIndex
+  var nearest = nearestIndex(stackPrefetch.indicesToRequest, stack.currentImageIdIndex);
+
+  var imageId = void 0;
+  var nextImageIdIndex = void 0;
+  var preventCache = false;
+
+  function doneCallback(image) {
+    // Console.log('prefetch done: ' + image.imageId);
+    var imageIdIndex = stack.imageIds.indexOf(image.imageId);
+
+    removeFromList(imageIdIndex);
+  }
+
+  // Retrieve the errorLoadingHandler if one exists
+  var errorLoadingHandler = _loadHandlerManager2.default.getErrorLoadingHandler();
+
+  function failCallback(error) {
+    console.log('prefetch errored: ' + error);
+    if (errorLoadingHandler) {
+      errorLoadingHandler(element, imageId, error, 'stackPrefetch');
+    }
+  }
+
+  // Prefetch images around the current image (before and after)
+  var lowerIndex = nearest.low;
+  var higherIndex = nearest.high;
+
+  while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
+    if (lowerIndex >= 0) {
+      nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
+      imageId = stack.imageIds[nextImageIdIndex];
+      _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
+    }
+
+    if (higherIndex < stackPrefetch.indicesToRequest.length) {
+      nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
+      imageId = stack.imageIds[nextImageIdIndex];
+      _requestPoolManager2.default.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
+    }
+  }
+
+  // Try to start the requestPool's grabbing procedure
+  // In case it isn't already running
+  _requestPoolManager2.default.startGrabbing();
+}
+
+function promiseRemovedHandler(e, eventData) {
+  // When an imagePromise has been pushed out of the cache, re-add its index
+  // It to the indicesToRequest list so that it will be retrieved later if the
+  // CurrentImageIdIndex is changed to an image nearby
+  var element = e.data.element;
+  var stackData = void 0;
+
+  try {
+    // It will throw an exception in some cases (eg: thumbnails)
+    stackData = (0, _toolState.getToolState)(element, 'stack');
+  } catch (error) {
+    return;
+  }
+
+  if (!stackData || !stackData.data || !stackData.data.length) {
+    return;
+  }
+
+  var stack = stackData.data[0];
+  var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
+
+  // Make sure the image that was removed is actually in this stack
+  // Before adding it to the indicesToRequest array
+  if (imageIdIndex < 0) {
+    return;
+  }
+
+  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
+
+  if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
+    return;
+  }
+
+  stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+}
+
+function onImageUpdated(e) {
+  // Start prefetching again (after a delay)
+  // When the user has scrolled to a new image
+  clearTimeout(resetPrefetchTimeout);
+  resetPrefetchTimeout = setTimeout(function () {
+    var element = e.target;
+
+    // If playClip is enabled and the user loads a different series in the viewport
+    // An exception will be thrown because the element will not be enabled anymore
+    try {
+      prefetch(element);
+    } catch (error) {
+      return;
+    }
+  }, resetPrefetchDelay);
+}
+
+function enable(element) {
+  // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
+  var stackPrefetchDataArray = (0, _toolState.getToolState)(element, toolType);
+
+  stackPrefetchDataArray.data = [];
+
+  // First check that there is stack data available
+  var stackData = (0, _toolState.getToolState)(element, 'stack');
+
+  if (!stackData || !stackData.data || !stackData.data.length) {
+    return;
+  }
+
+  var stack = stackData.data[0];
+
+  // Check if we are allowed to cache images in this stack
+  if (stack.preventCache === true) {
+    console.warn('A stack that should not be cached was given the stackPrefetch');
+
+    return;
+  }
+
+  // Use the currentImageIdIndex from the stack as the initalImageIdIndex
+  var stackPrefetchData = {
+    indicesToRequest: range(0, stack.imageIds.length - 1),
+    enabled: true,
+    direction: 1
+  };
+
+  // Remove the currentImageIdIndex from the list to request
+  var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
+
+  stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
+
+  (0, _toolState.addToolState)(element, toolType, stackPrefetchData);
+
+  prefetch(element);
+
+  $(element).off('CornerstoneNewImage', onImageUpdated);
+  $(element).on('CornerstoneNewImage', onImageUpdated);
+
+  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
+    element: element
+  }, promiseRemovedHandler);
+}
+
+function disable(element) {
+  clearTimeout(resetPrefetchTimeout);
+  $(element).off('CornerstoneNewImage', onImageUpdated);
+
+  $(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+
+  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
+  // If there is actually something to disable, disable it
+
+  if (stackPrefetchData && stackPrefetchData.data.length) {
+    stackPrefetchData.data[0].enabled = false;
+
+    // Clear current prefetch requests from the requestPool
+    _requestPoolManager2.default.clearRequestStack(requestType);
+  }
+}
+
+function getConfiguration() {
+  return configuration;
+}
+
+function setConfiguration(config) {
+  configuration = config;
+
+  if (config.maxSimultaneousRequests) {
+    (0, _getMaxSimultaneousRequests.setMaxSimultaneousRequests)(config.maxSimultaneousRequests);
+  }
+}
+
+// Module/private exports
+var stackPrefetch = {
+  enable: enable,
+  disable: disable,
+  getConfiguration: getConfiguration,
+  setConfiguration: setConfiguration
+};
+
+exports.default = stackPrefetch;
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _fusionRenderer = __webpack_require__(115);
+
+var _fusionRenderer2 = _interopRequireDefault(_fusionRenderer);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var stackRenderers = {};
+
+stackRenderers.FusionRenderer = _fusionRenderer2.default;
+
+exports.default = stackRenderers;
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _scroll = __webpack_require__(37);
 
 var _scroll2 = _interopRequireDefault(_scroll);
@@ -12584,7 +12859,7 @@ var stackScrollKeyboard = (0, _keyboardTool2.default)(keyDownCallback);
 exports.default = stackScrollKeyboard;
 
 /***/ }),
-/* 91 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12676,7 +12951,7 @@ var appState = {
 exports.default = appState;
 
 /***/ }),
-/* 92 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12778,7 +13053,7 @@ exports.newFrameOfReferenceSpecificToolStateManager = newFrameOfReferenceSpecifi
 exports.globalFrameOfReferenceSpecificToolStateManager = globalFrameOfReferenceSpecificToolStateManager;
 
 /***/ }),
-/* 93 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12868,7 +13143,7 @@ function addStackStateManager(element, otherTools) {
     oldStateManager = _imageIdSpecificStateManager.globalImageIdSpecificToolStateManager;
   }
 
-  var stackTools = ['stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs'];
+  var stackTools = ['stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs', 'stackRenderer'];
 
   if (otherTools) {
     stackTools = stackTools.concat(otherTools);
@@ -12884,7 +13159,7 @@ exports.newStackSpecificToolStateManager = newStackSpecificToolStateManager;
 exports.addStackStateManager = addStackStateManager;
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12974,7 +13249,7 @@ exports.addTimeSeriesStateManager = addTimeSeriesStateManager;
 exports.newTimeSeriesSpecificToolStateManager = newTimeSeriesSpecificToolStateManager;
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13274,7 +13549,7 @@ function Synchronizer(event, handler) {
 exports.default = Synchronizer;
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13313,7 +13588,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13393,7 +13668,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13489,7 +13764,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13582,7 +13857,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13666,7 +13941,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13693,7 +13968,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13732,7 +14007,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13746,25 +14021,25 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
-var _setContextToDisplayFontSize = __webpack_require__(54);
+var _setContextToDisplayFontSize = __webpack_require__(53);
 
 var _setContextToDisplayFontSize2 = _interopRequireDefault(_setContextToDisplayFontSize);
 
 var _toolState = __webpack_require__(1);
 
-var _measurementManager = __webpack_require__(109);
+var _measurementManager = __webpack_require__(111);
 
 var _measurementManager2 = _interopRequireDefault(_measurementManager);
 
-var _lineSampleMeasurement = __webpack_require__(108);
+var _lineSampleMeasurement = __webpack_require__(110);
 
 var _lineSampleMeasurement2 = _interopRequireDefault(_lineSampleMeasurement);
 
@@ -13884,7 +14159,7 @@ var probeTool4D = (0, _mouseButtonTool2.default)({
 exports.default = probeTool4D;
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13896,7 +14171,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _toolState = __webpack_require__(1);
 
-var _incrementTimePoint = __webpack_require__(29);
+var _incrementTimePoint = __webpack_require__(30);
 
 var _incrementTimePoint2 = _interopRequireDefault(_incrementTimePoint);
 
@@ -13982,7 +14257,7 @@ var timeSeriesPlayer = {
 exports.default = timeSeriesPlayer;
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14005,7 +14280,7 @@ var _mouseWheelTool = __webpack_require__(20);
 
 var _mouseWheelTool2 = _interopRequireDefault(_mouseWheelTool);
 
-var _incrementTimePoint = __webpack_require__(29);
+var _incrementTimePoint = __webpack_require__(30);
 
 var _incrementTimePoint2 = _interopRequireDefault(_incrementTimePoint);
 
@@ -14109,7 +14384,7 @@ exports.timeSeriesScrollWheel = timeSeriesScrollWheel;
 exports.timeSeriesScrollTouchDrag = timeSeriesScrollTouchDrag;
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14118,10 +14393,10 @@ exports.timeSeriesScrollTouchDrag = timeSeriesScrollTouchDrag;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '0.8.9';
+exports.default = '0.9.0';
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14131,7 +14406,7 @@ Object.defineProperty(exports, "__esModule", {
          value: true
 });
 
-var _metaData = __webpack_require__(86);
+var _metaData = __webpack_require__(85);
 
 Object.defineProperty(exports, 'metaData', {
          enumerable: true,
@@ -14158,7 +14433,7 @@ Object.defineProperty(exports, 'orientation', {
          }
 });
 
-var _requestPoolManager = __webpack_require__(27);
+var _requestPoolManager = __webpack_require__(28);
 
 Object.defineProperty(exports, 'requestPoolManager', {
          enumerable: true,
@@ -14167,7 +14442,7 @@ Object.defineProperty(exports, 'requestPoolManager', {
          }
 });
 
-var _setContextToDisplayFontSize = __webpack_require__(54);
+var _setContextToDisplayFontSize = __webpack_require__(53);
 
 Object.defineProperty(exports, 'setContextToDisplayFontSize', {
          enumerable: true,
@@ -14176,7 +14451,7 @@ Object.defineProperty(exports, 'setContextToDisplayFontSize', {
          }
 });
 
-var _scrollToIndex = __webpack_require__(53);
+var _scrollToIndex = __webpack_require__(52);
 
 Object.defineProperty(exports, 'scrollToIndex', {
          enumerable: true,
@@ -14269,7 +14544,7 @@ Object.defineProperty(exports, 'getRGBPixels', {
          }
 });
 
-var _getMaxSimultaneousRequests = __webpack_require__(31);
+var _getMaxSimultaneousRequests = __webpack_require__(24);
 
 Object.defineProperty(exports, 'getDefaultSimultaneousRequests', {
          enumerable: true,
@@ -14296,7 +14571,7 @@ Object.defineProperty(exports, 'isMobileDevice', {
          }
 });
 
-var _getLuminance = __webpack_require__(52);
+var _getLuminance = __webpack_require__(51);
 
 Object.defineProperty(exports, 'getLuminance', {
          enumerable: true,
@@ -14314,7 +14589,7 @@ Object.defineProperty(exports, 'drawTextBox', {
          }
 });
 
-var _drawEllipse = __webpack_require__(51);
+var _drawEllipse = __webpack_require__(50);
 
 Object.defineProperty(exports, 'drawEllipse', {
          enumerable: true,
@@ -14323,7 +14598,7 @@ Object.defineProperty(exports, 'drawEllipse', {
          }
 });
 
-var _drawCircle = __webpack_require__(50);
+var _drawCircle = __webpack_require__(49);
 
 Object.defineProperty(exports, 'drawCircle', {
          enumerable: true,
@@ -14332,7 +14607,7 @@ Object.defineProperty(exports, 'drawCircle', {
          }
 });
 
-var _drawArrow = __webpack_require__(49);
+var _drawArrow = __webpack_require__(48);
 
 Object.defineProperty(exports, 'drawArrow', {
          enumerable: true,
@@ -14341,7 +14616,7 @@ Object.defineProperty(exports, 'drawArrow', {
          }
 });
 
-var _copyPoints = __webpack_require__(30);
+var _copyPoints = __webpack_require__(31);
 
 Object.defineProperty(exports, 'copyPoints', {
          enumerable: true,
@@ -14359,7 +14634,7 @@ Object.defineProperty(exports, 'calculateSUV', {
          }
 });
 
-var _calculateEllipseStatistics = __webpack_require__(48);
+var _calculateEllipseStatistics = __webpack_require__(47);
 
 Object.defineProperty(exports, 'calculateEllipseStatistics', {
          enumerable: true,
@@ -14368,7 +14643,7 @@ Object.defineProperty(exports, 'calculateEllipseStatistics', {
          }
 });
 
-var _probeTool4D = __webpack_require__(103);
+var _probeTool4D = __webpack_require__(105);
 
 Object.defineProperty(exports, 'probeTool4D', {
          enumerable: true,
@@ -14377,7 +14652,7 @@ Object.defineProperty(exports, 'probeTool4D', {
          }
 });
 
-var _incrementTimePoint = __webpack_require__(29);
+var _incrementTimePoint = __webpack_require__(30);
 
 Object.defineProperty(exports, 'incrementTimePoint', {
          enumerable: true,
@@ -14386,7 +14661,7 @@ Object.defineProperty(exports, 'incrementTimePoint', {
          }
 });
 
-var _timeSeriesPlayer = __webpack_require__(104);
+var _timeSeriesPlayer = __webpack_require__(106);
 
 Object.defineProperty(exports, 'timeSeriesPlayer', {
          enumerable: true,
@@ -14395,7 +14670,7 @@ Object.defineProperty(exports, 'timeSeriesPlayer', {
          }
 });
 
-var _timeSeriesScroll = __webpack_require__(105);
+var _timeSeriesScroll = __webpack_require__(107);
 
 Object.defineProperty(exports, 'timeSeriesScroll', {
          enumerable: true,
@@ -14416,7 +14691,7 @@ Object.defineProperty(exports, 'timeSeriesScrollTouchDrag', {
          }
 });
 
-var _wwwcSynchronizer = __webpack_require__(102);
+var _wwwcSynchronizer = __webpack_require__(104);
 
 Object.defineProperty(exports, 'wwwcSynchronizer', {
          enumerable: true,
@@ -14425,7 +14700,7 @@ Object.defineProperty(exports, 'wwwcSynchronizer', {
          }
 });
 
-var _updateImageSynchronizer = __webpack_require__(101);
+var _updateImageSynchronizer = __webpack_require__(103);
 
 Object.defineProperty(exports, 'updateImageSynchronizer', {
          enumerable: true,
@@ -14434,7 +14709,7 @@ Object.defineProperty(exports, 'updateImageSynchronizer', {
          }
 });
 
-var _Synchronizer = __webpack_require__(95);
+var _Synchronizer = __webpack_require__(97);
 
 Object.defineProperty(exports, 'Synchronizer', {
          enumerable: true,
@@ -14443,7 +14718,7 @@ Object.defineProperty(exports, 'Synchronizer', {
          }
 });
 
-var _stackScrollSynchronizer = __webpack_require__(100);
+var _stackScrollSynchronizer = __webpack_require__(102);
 
 Object.defineProperty(exports, 'stackScrollSynchronizer', {
          enumerable: true,
@@ -14452,7 +14727,7 @@ Object.defineProperty(exports, 'stackScrollSynchronizer', {
          }
 });
 
-var _stackImagePositionSynchronizer = __webpack_require__(99);
+var _stackImagePositionSynchronizer = __webpack_require__(101);
 
 Object.defineProperty(exports, 'stackImagePositionSynchronizer', {
          enumerable: true,
@@ -14461,7 +14736,7 @@ Object.defineProperty(exports, 'stackImagePositionSynchronizer', {
          }
 });
 
-var _stackImagePositionOffsetSynchronizer = __webpack_require__(98);
+var _stackImagePositionOffsetSynchronizer = __webpack_require__(100);
 
 Object.defineProperty(exports, 'stackImagePositionOffsetSynchronizer', {
          enumerable: true,
@@ -14470,7 +14745,7 @@ Object.defineProperty(exports, 'stackImagePositionOffsetSynchronizer', {
          }
 });
 
-var _stackImageIndexSynchronizer = __webpack_require__(97);
+var _stackImageIndexSynchronizer = __webpack_require__(99);
 
 Object.defineProperty(exports, 'stackImageIndexSynchronizer', {
          enumerable: true,
@@ -14479,7 +14754,7 @@ Object.defineProperty(exports, 'stackImageIndexSynchronizer', {
          }
 });
 
-var _panZoomSynchronizer = __webpack_require__(96);
+var _panZoomSynchronizer = __webpack_require__(98);
 
 Object.defineProperty(exports, 'panZoomSynchronizer', {
          enumerable: true,
@@ -14536,7 +14811,7 @@ Object.defineProperty(exports, 'getElementToolStateManager', {
          }
 });
 
-var _toolCoordinates = __webpack_require__(28);
+var _toolCoordinates = __webpack_require__(29);
 
 Object.defineProperty(exports, 'toolCoordinates', {
          enumerable: true,
@@ -14554,7 +14829,7 @@ Object.defineProperty(exports, 'toolColors', {
          }
 });
 
-var _timeSeriesSpecificStateManager = __webpack_require__(94);
+var _timeSeriesSpecificStateManager = __webpack_require__(96);
 
 Object.defineProperty(exports, 'addTimeSeriesStateManager', {
          enumerable: true,
@@ -14578,7 +14853,7 @@ Object.defineProperty(exports, 'textStyle', {
          }
 });
 
-var _stackSpecificStateManager = __webpack_require__(93);
+var _stackSpecificStateManager = __webpack_require__(95);
 
 Object.defineProperty(exports, 'stackSpecificStateManager', {
          enumerable: true,
@@ -14623,7 +14898,7 @@ Object.defineProperty(exports, 'globalImageIdSpecificToolStateManager', {
          }
 });
 
-var _frameOfReferenceStateManager = __webpack_require__(92);
+var _frameOfReferenceStateManager = __webpack_require__(94);
 
 Object.defineProperty(exports, 'newFrameOfReferenceSpecificToolStateManager', {
          enumerable: true,
@@ -14638,7 +14913,7 @@ Object.defineProperty(exports, 'globalFrameOfReferenceSpecificToolStateManager',
          }
 });
 
-var _appState = __webpack_require__(91);
+var _appState = __webpack_require__(93);
 
 Object.defineProperty(exports, 'appState', {
          enumerable: true,
@@ -14647,7 +14922,7 @@ Object.defineProperty(exports, 'appState', {
          }
 });
 
-var _stackScrollKeyboard = __webpack_require__(90);
+var _stackScrollKeyboard = __webpack_require__(92);
 
 Object.defineProperty(exports, 'stackScrollKeyboard', {
          enumerable: true,
@@ -14656,7 +14931,7 @@ Object.defineProperty(exports, 'stackScrollKeyboard', {
          }
 });
 
-var _stackScroll = __webpack_require__(47);
+var _stackScroll = __webpack_require__(46);
 
 Object.defineProperty(exports, 'stackScroll', {
          enumerable: true,
@@ -14683,7 +14958,7 @@ Object.defineProperty(exports, 'stackScrollMultiTouch', {
          }
 });
 
-var _stackPrefetch = __webpack_require__(46);
+var _stackPrefetch = __webpack_require__(90);
 
 Object.defineProperty(exports, 'stackPrefetch', {
          enumerable: true,
@@ -14698,6 +14973,15 @@ Object.defineProperty(exports, 'scrollIndicator', {
          enumerable: true,
          get: function get() {
                   return _interopRequireDefault(_scrollIndicator).default;
+         }
+});
+
+var _stackRenderers = __webpack_require__(91);
+
+Object.defineProperty(exports, 'stackRenderers', {
+         enumerable: true,
+         get: function get() {
+                  return _interopRequireDefault(_stackRenderers).default;
          }
 });
 
@@ -14725,7 +15009,7 @@ Object.defineProperty(exports, 'anyHandlesOutsideImage', {
          }
 });
 
-var _drawHandles = __webpack_require__(7);
+var _drawHandles = __webpack_require__(8);
 
 Object.defineProperty(exports, 'drawHandles', {
          enumerable: true,
@@ -14743,7 +15027,7 @@ Object.defineProperty(exports, 'getHandleNearImagePoint', {
          }
 });
 
-var _handleActivator = __webpack_require__(25);
+var _handleActivator = __webpack_require__(26);
 
 Object.defineProperty(exports, 'handleActivator', {
          enumerable: true,
@@ -14752,7 +15036,7 @@ Object.defineProperty(exports, 'handleActivator', {
          }
 });
 
-var _moveAllHandles = __webpack_require__(26);
+var _moveAllHandles = __webpack_require__(27);
 
 Object.defineProperty(exports, 'moveAllHandles', {
          enumerable: true,
@@ -14806,7 +15090,7 @@ Object.defineProperty(exports, 'touchMoveHandle', {
          }
 });
 
-var _keyboardInput = __webpack_require__(82);
+var _keyboardInput = __webpack_require__(81);
 
 Object.defineProperty(exports, 'keyboardInput', {
          enumerable: true,
@@ -14815,7 +15099,7 @@ Object.defineProperty(exports, 'keyboardInput', {
          }
 });
 
-var _mouseInput = __webpack_require__(83);
+var _mouseInput = __webpack_require__(82);
 
 Object.defineProperty(exports, 'mouseInput', {
          enumerable: true,
@@ -14824,7 +15108,7 @@ Object.defineProperty(exports, 'mouseInput', {
          }
 });
 
-var _mouseWheelInput = __webpack_require__(84);
+var _mouseWheelInput = __webpack_require__(83);
 
 Object.defineProperty(exports, 'mouseWheelInput', {
          enumerable: true,
@@ -14842,7 +15126,7 @@ Object.defineProperty(exports, 'preventGhostClick', {
          }
 });
 
-var _touchInput = __webpack_require__(85);
+var _touchInput = __webpack_require__(84);
 
 Object.defineProperty(exports, 'touchInput', {
          enumerable: true,
@@ -14851,7 +15135,7 @@ Object.defineProperty(exports, 'touchInput', {
          }
 });
 
-var _angleTool = __webpack_require__(57);
+var _angleTool = __webpack_require__(56);
 
 Object.defineProperty(exports, 'angle', {
          enumerable: true,
@@ -14866,7 +15150,7 @@ Object.defineProperty(exports, 'angleTouch', {
          }
 });
 
-var _arrowAnnotate = __webpack_require__(58);
+var _arrowAnnotate = __webpack_require__(57);
 
 Object.defineProperty(exports, 'arrowAnnotate', {
          enumerable: true,
@@ -14881,7 +15165,7 @@ Object.defineProperty(exports, 'arrowAnnotateTouch', {
          }
 });
 
-var _crosshairs = __webpack_require__(59);
+var _crosshairs = __webpack_require__(58);
 
 Object.defineProperty(exports, 'crosshairs', {
          enumerable: true,
@@ -14914,7 +15198,7 @@ Object.defineProperty(exports, 'doubleTapTool', {
          }
 });
 
-var _doubleTapZoom = __webpack_require__(60);
+var _doubleTapZoom = __webpack_require__(59);
 
 Object.defineProperty(exports, 'doubleTapZoom', {
          enumerable: true,
@@ -14923,7 +15207,7 @@ Object.defineProperty(exports, 'doubleTapZoom', {
          }
 });
 
-var _dragProbe = __webpack_require__(61);
+var _dragProbe = __webpack_require__(60);
 
 Object.defineProperty(exports, 'dragProbe', {
          enumerable: true,
@@ -14938,7 +15222,7 @@ Object.defineProperty(exports, 'dragProbeTouch', {
          }
 });
 
-var _ellipticalRoi = __webpack_require__(62);
+var _ellipticalRoi = __webpack_require__(61);
 
 Object.defineProperty(exports, 'ellipticalRoi', {
          enumerable: true,
@@ -14953,7 +15237,7 @@ Object.defineProperty(exports, 'ellipticalRoiTouch', {
          }
 });
 
-var _freehand = __webpack_require__(63);
+var _freehand = __webpack_require__(62);
 
 Object.defineProperty(exports, 'freehand', {
          enumerable: true,
@@ -14962,7 +15246,7 @@ Object.defineProperty(exports, 'freehand', {
          }
 });
 
-var _highlight = __webpack_require__(64);
+var _highlight = __webpack_require__(63);
 
 Object.defineProperty(exports, 'highlight', {
          enumerable: true,
@@ -14977,7 +15261,7 @@ Object.defineProperty(exports, 'highlightTouch', {
          }
 });
 
-var _imageStats = __webpack_require__(65);
+var _imageStats = __webpack_require__(64);
 
 Object.defineProperty(exports, 'imageStats', {
          enumerable: true,
@@ -14995,7 +15279,7 @@ Object.defineProperty(exports, 'keyboardTool', {
          }
 });
 
-var _length = __webpack_require__(66);
+var _length = __webpack_require__(65);
 
 Object.defineProperty(exports, 'length', {
          enumerable: true,
@@ -15010,7 +15294,7 @@ Object.defineProperty(exports, 'lengthTouch', {
          }
 });
 
-var _magnify = __webpack_require__(67);
+var _magnify = __webpack_require__(66);
 
 Object.defineProperty(exports, 'magnify', {
          enumerable: true,
@@ -15034,7 +15318,7 @@ Object.defineProperty(exports, 'mouseButtonRectangleTool', {
          }
 });
 
-var _mouseButtonTool = __webpack_require__(8);
+var _mouseButtonTool = __webpack_require__(7);
 
 Object.defineProperty(exports, 'mouseButtonTool', {
          enumerable: true,
@@ -15052,7 +15336,7 @@ Object.defineProperty(exports, 'mouseWheelTool', {
          }
 });
 
-var _multiTouchDragTool = __webpack_require__(24);
+var _multiTouchDragTool = __webpack_require__(25);
 
 Object.defineProperty(exports, 'multiTouchDragTool', {
          enumerable: true,
@@ -15061,7 +15345,7 @@ Object.defineProperty(exports, 'multiTouchDragTool', {
          }
 });
 
-var _orientationMarkers = __webpack_require__(68);
+var _orientationMarkers = __webpack_require__(67);
 
 Object.defineProperty(exports, 'orientationMarkers', {
          enumerable: true,
@@ -15070,7 +15354,7 @@ Object.defineProperty(exports, 'orientationMarkers', {
          }
 });
 
-var _pan = __webpack_require__(69);
+var _pan = __webpack_require__(68);
 
 Object.defineProperty(exports, 'pan', {
          enumerable: true,
@@ -15085,7 +15369,7 @@ Object.defineProperty(exports, 'panTouchDrag', {
          }
 });
 
-var _panMultiTouch = __webpack_require__(70);
+var _panMultiTouch = __webpack_require__(69);
 
 Object.defineProperty(exports, 'panMultiTouch', {
          enumerable: true,
@@ -15094,7 +15378,7 @@ Object.defineProperty(exports, 'panMultiTouch', {
          }
 });
 
-var _probe = __webpack_require__(71);
+var _probe = __webpack_require__(70);
 
 Object.defineProperty(exports, 'probe', {
          enumerable: true,
@@ -15109,7 +15393,7 @@ Object.defineProperty(exports, 'probeTouch', {
          }
 });
 
-var _rectangleRoi = __webpack_require__(72);
+var _rectangleRoi = __webpack_require__(71);
 
 Object.defineProperty(exports, 'rectangleRoi', {
          enumerable: true,
@@ -15124,7 +15408,7 @@ Object.defineProperty(exports, 'rectangleRoiTouch', {
          }
 });
 
-var _rotate = __webpack_require__(73);
+var _rotate = __webpack_require__(72);
 
 Object.defineProperty(exports, 'rotate', {
          enumerable: true,
@@ -15139,7 +15423,7 @@ Object.defineProperty(exports, 'rotateTouchDrag', {
          }
 });
 
-var _rotateTouch = __webpack_require__(74);
+var _rotateTouch = __webpack_require__(73);
 
 Object.defineProperty(exports, 'rotateTouch', {
          enumerable: true,
@@ -15148,7 +15432,7 @@ Object.defineProperty(exports, 'rotateTouch', {
          }
 });
 
-var _saveAs = __webpack_require__(75);
+var _saveAs = __webpack_require__(74);
 
 Object.defineProperty(exports, 'saveAs', {
          enumerable: true,
@@ -15157,7 +15441,7 @@ Object.defineProperty(exports, 'saveAs', {
          }
 });
 
-var _seedAnnotate = __webpack_require__(76);
+var _seedAnnotate = __webpack_require__(75);
 
 Object.defineProperty(exports, 'seedAnnotate', {
          enumerable: true,
@@ -15172,7 +15456,7 @@ Object.defineProperty(exports, 'seedAnnotateTouch', {
          }
 });
 
-var _simpleAngle = __webpack_require__(77);
+var _simpleAngle = __webpack_require__(76);
 
 Object.defineProperty(exports, 'simpleAngle', {
          enumerable: true,
@@ -15196,7 +15480,7 @@ Object.defineProperty(exports, 'simpleMouseButtonTool', {
          }
 });
 
-var _textMarker = __webpack_require__(78);
+var _textMarker = __webpack_require__(77);
 
 Object.defineProperty(exports, 'textMarker', {
          enumerable: true,
@@ -15238,7 +15522,7 @@ Object.defineProperty(exports, 'touchTool', {
          }
 });
 
-var _wwwc = __webpack_require__(79);
+var _wwwc = __webpack_require__(78);
 
 Object.defineProperty(exports, 'wwwc', {
          enumerable: true,
@@ -15253,7 +15537,7 @@ Object.defineProperty(exports, 'wwwcTouchDrag', {
          }
 });
 
-var _wwwcRegion = __webpack_require__(80);
+var _wwwcRegion = __webpack_require__(79);
 
 Object.defineProperty(exports, 'wwwcRegion', {
          enumerable: true,
@@ -15268,7 +15552,7 @@ Object.defineProperty(exports, 'wwwcRegionTouch', {
          }
 });
 
-var _zoom = __webpack_require__(81);
+var _zoom = __webpack_require__(80);
 
 Object.defineProperty(exports, 'zoom', {
          enumerable: true,
@@ -15295,7 +15579,16 @@ Object.defineProperty(exports, 'zoomTouchDrag', {
          }
 });
 
-var _version = __webpack_require__(106);
+var _brush = __webpack_require__(86);
+
+Object.defineProperty(exports, 'brush', {
+         enumerable: true,
+         get: function get() {
+                  return _brush.brush;
+         }
+});
+
+var _version = __webpack_require__(108);
 
 Object.defineProperty(exports, 'version', {
          enumerable: true,
@@ -15307,7 +15600,7 @@ Object.defineProperty(exports, 'version', {
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15332,7 +15625,7 @@ exports.default = function () {
 };
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15379,7 +15672,7 @@ var manager = new MeasurementManager();
 exports.default = manager;
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15426,7 +15719,7 @@ var cornerstoneMath = _interopRequireWildcard(_cornerstoneMath);
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15450,7 +15743,7 @@ exports.default = function (string) {
 };
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15466,7 +15759,7 @@ var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
 var _toolState = __webpack_require__(1);
 
-var _renderActiveReferenceLine = __webpack_require__(56);
+var _renderActiveReferenceLine = __webpack_require__(55);
 
 var _renderActiveReferenceLine2 = _interopRequireDefault(_renderActiveReferenceLine);
 
@@ -15536,10 +15829,114 @@ var tool = {
 exports.default = tool;
 
 /***/ }),
-/* 113 */
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _cornerstoneCore = __webpack_require__(0);
+
+var cornerstone = _interopRequireWildcard(_cornerstoneCore);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FusionRenderer = function () {
+  function FusionRenderer() {
+    _classCallCheck(this, FusionRenderer);
+
+    this.currentImageIdIndex = 0;
+    this.layerIds = [];
+    this.findImageFn = undefined;
+  }
+
+  _createClass(FusionRenderer, [{
+    key: 'render',
+    value: function render(element, imageStacks) {
+      var _this = this;
+
+      // Move this to base Renderer class
+      if (!Number.isInteger(this.currentImageIdIndex)) {
+        throw new Error('FusionRenderer: render - Image ID Index is not an integer');
+      }
+
+      if (!this.findImageFn) {
+        throw new Error('No findImage function has been defined');
+      }
+
+      // TODO: Figure out what to do with LoadHandlers in this scenario...
+
+      // For the base layer, go to the currentImageIdIndex
+      var baseImageObject = imageStacks[0];
+      var currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];
+
+      // TODO: Figure out how to calculate the minimum distance
+      var minDistance = 1;
+
+      cornerstone.loadAndCacheImage(currentImageId).then(function (image) {
+        if (_this.layerIds && _this.layerIds[0]) {
+          var currentLayerId = _this.layerIds[0];
+          var layer = cornerstone.getLayer(element, currentLayerId);
+
+          layer.image = image;
+        } else {
+          var layerId = cornerstone.addLayer(element, image, baseImageObject.options);
+
+          _this.layerIds.push(layerId);
+        }
+
+        cornerstone.updateImage(element);
+
+        // Splice out the first image
+        var overlayImageStacks = imageStacks.slice(1, imageStacks.length);
+
+        // Loop through the remaining 'overlay' image stacks
+        overlayImageStacks.forEach(function (imgObj, overlayLayerIndex) {
+          var imageId = _this.findImageFn(imgObj.imageIds, currentImageId, minDistance);
+
+          if (!imageId) {
+            return;
+          }
+
+          cornerstone.loadAndCacheImage(imageId).then(function (image) {
+            var layerIndex = overlayLayerIndex + 1;
+
+            if (_this.layerIds && _this.layerIds[layerIndex]) {
+              var _currentLayerId = _this.layerIds[layerIndex];
+              var _layer = cornerstone.getLayer(element, _currentLayerId);
+
+              _layer.image = image;
+            } else {
+              var _layerId = cornerstone.addLayer(element, image, imgObj.options);
+
+              _this.layerIds.push(_layerId);
+            }
+
+            cornerstone.updateImage(element, true);
+          });
+        });
+      });
+    }
+  }]);
+
+  return FusionRenderer;
+}();
+
+exports.default = FusionRenderer;
+
+/***/ }),
+/* 116 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_113__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_116__;
 
 /***/ })
 /******/ ]);

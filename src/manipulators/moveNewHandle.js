@@ -29,8 +29,8 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
   }
 
   function whichMovement (e) {
-    $(element).off('CornerstoneToolsMouseMove');
-    $(element).off('CornerstoneToolsMouseDrag');
+    $(element).off('CornerstoneToolsMouseMove', whichMovement);
+    $(element).off('CornerstoneToolsMouseDrag', whichMovement);
 
     $(element).on('CornerstoneToolsMouseMove', moveCallback);
     $(element).on('CornerstoneToolsMouseDrag', moveCallback);
