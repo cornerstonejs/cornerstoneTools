@@ -1,3 +1,4 @@
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';

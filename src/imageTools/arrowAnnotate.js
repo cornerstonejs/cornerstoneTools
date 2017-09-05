@@ -1,4 +1,5 @@
 /* eslint no-alert:0 */
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';

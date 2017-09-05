@@ -1,3 +1,4 @@
+import $ from '../jquery.js';
 import * as cornerstone from '../cornerstone-core.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
