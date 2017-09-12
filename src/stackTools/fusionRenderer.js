@@ -7,7 +7,7 @@ export default class FusionRenderer {
     this.findImageFn = undefined;
   }
 
-  render (element, imageStacks) {
+  render (element, imageStacks, viewport) {
     // Move this to base Renderer class
     if (!Number.isInteger(this.currentImageIdIndex)) {
       throw new Error('FusionRenderer: render - Image ID Index is not an integer');
@@ -38,7 +38,7 @@ export default class FusionRenderer {
         this.layerIds.push(layerId);
       }
 
-      cornerstone.updateImage(element);
+      cornerstone.displayImage(element, image, viewport);
 
       // Splice out the first image
       const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
