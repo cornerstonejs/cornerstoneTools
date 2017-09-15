@@ -50,7 +50,7 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function pointNearEllipse (element, data, coords, distance) {
+function pointNearTool(element, data, coords, distance) {
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -76,14 +76,6 @@ function pointNearEllipse (element, data, coords, distance) {
   }
 
   return false;
-}
-
-function pointNearTool (element, data, coords) {
-  return pointNearEllipse(element, data, coords, 15);
-}
-
-function pointNearToolTouch (element, data, coords) {
-  return pointNearEllipse(element, data, coords, 25);
 }
 
 function numberWithCommas (x) {
@@ -398,14 +390,14 @@ function onImageRendered (e, eventData) {
 const ellipticalRoi = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 15 * mouseButtonTool().getConfiguration().sensitivityFactor),
   toolType
 });
 
 const ellipticalRoiTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool: pointNearToolTouch,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 25 * touchTool().getConfiguration().sensitivityFactor),
   toolType
 });
 

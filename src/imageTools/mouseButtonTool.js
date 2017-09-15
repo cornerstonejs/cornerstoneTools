@@ -10,7 +10,11 @@ import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
-export default function (mouseToolInterface) {
+let globalConfiguration = {
+  sensitivityFactor: 1.0
+};
+
+function mouseButtonTool(mouseToolInterface) {
   let configuration = {};
 
     // /////// BEGIN ACTIVE TOOL ///////
@@ -301,12 +305,14 @@ export default function (mouseToolInterface) {
     cornerstone.updateImage(element);
   }
 
-  function getConfiguration () {
-    return configuration;
+  function getConfiguration() {
+    return Object.assign(configuration, globalConfiguration);
   }
 
-  function setConfiguration (config) {
-    configuration = config;
+  function setConfiguration(config) {
+    for (const p in config) {
+      if (globalConfiguration[p]) globalConfiguration[p] = config[p]; else configuration[p] = config[p];
+    }
   }
 
   const toolInterface = {
@@ -322,17 +328,19 @@ export default function (mouseToolInterface) {
   };
 
     // Expose pointNearTool if available
-  if (mouseToolInterface.pointNearTool) {
+  if (mouseToolInterface && mouseToolInterface.pointNearTool) {
     toolInterface.pointNearTool = mouseToolInterface.pointNearTool;
   }
 
-  if (mouseToolInterface.mouseDoubleClickCallback) {
+  if (mouseToolInterface && mouseToolInterface.mouseDoubleClickCallback) {
     toolInterface.mouseDoubleClickCallback = mouseToolInterface.mouseDoubleClickCallback;
   }
 
-  if (mouseToolInterface.addNewMeasurement) {
+  if (mouseToolInterface && mouseToolInterface.addNewMeasurement) {
     toolInterface.addNewMeasurement = mouseToolInterface.addNewMeasurement;
   }
 
   return toolInterface;
 }
+
+export default mouseButtonTool;

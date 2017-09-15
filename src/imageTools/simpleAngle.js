@@ -57,7 +57,7 @@ function createNewMeasurement (mouseEventData) {
 }
 // /////// END ACTIVE TOOL ///////
 
-function pointNearTool (element, data, coords) {
+function pointNearTool (element, data, coords, distance) {
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
@@ -65,7 +65,7 @@ function pointNearTool (element, data, coords) {
 
   let distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
-  if (distanceToPoint < 25) {
+  if (distanceToPoint < distance) {
     return true;
   }
 
@@ -74,7 +74,7 @@ function pointNearTool (element, data, coords) {
 
   distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
-  return (distanceToPoint < 25);
+  return (distanceToPoint < distance);
 }
 
 function length (vector) {
@@ -376,7 +376,7 @@ const simpleAngle = mouseButtonTool({
   createNewMeasurement,
   addNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 25 * mouseButtonTool().getConfiguration().sensitivityFactor),
   toolType
 });
 
@@ -384,7 +384,7 @@ const simpleAngleTouch = touchTool({
   createNewMeasurement,
   addNewMeasurement: addNewMeasurementTouch,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 25 * touchTool().getConfiguration().sensitivityFactor),
   toolType
 });
 

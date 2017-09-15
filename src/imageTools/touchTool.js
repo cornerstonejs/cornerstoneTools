@@ -7,6 +7,10 @@ import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from '../manipulators/touchMoveAllHandles.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
+let globalConfiguration = {
+  sensitivityFactor: 1.0
+};
+
 function deactivateAllHandles (handles) {
   Object.keys(handles).forEach(function (name) {
     const handle = handles[name];
@@ -33,6 +37,8 @@ function deactivateAllToolInstances (toolData) {
 }
 
 function touchTool (touchToolInterface) {
+  let configuration = {};
+
     // /////// BEGIN ACTIVE TOOL ///////
 
   function addNewMeasurement (touchEventData) {
@@ -351,30 +357,42 @@ function touchTool (touchToolInterface) {
     cornerstone.updateImage(element);
   }
 
-  const toolInterface = {
+  function getConfiguration() {
+    return Object.assign(configuration, globalConfiguration);
+  }
+
+  function setConfiguration(config) {
+    for (const p in config) {
+      if (globalConfiguration[p]) globalConfiguration[p] = config[p]; else configuration[p] = config[p];
+    }
+  }
+
+	const toolInterface = {
     enable,
     disable,
     activate,
     deactivate,
-    touchStartCallback: touchToolInterface.touchStartCallback || touchStartCallback,
-    touchDownActivateCallback: touchToolInterface.touchDownActivateCallback || touchDownActivateCallback,
-    tapCallback: touchToolInterface.tapCallback || tapCallback
+    getConfiguration,
+    setConfiguration,
+		touchStartCallback: (touchToolInterface && touchToolInterface.touchStartCallback) || touchStartCallback,
+		touchDownActivateCallback: (touchToolInterface && touchToolInterface.touchDownActivateCallback) || touchDownActivateCallback,
+		tapCallback: (touchToolInterface && touchToolInterface.tapCallback) || tapCallback
   };
 
     // Expose pointNearTool if available
-  if (touchToolInterface.pointNearTool) {
+	if (touchToolInterface && touchToolInterface.pointNearTool) {
     toolInterface.pointNearTool = touchToolInterface.pointNearTool;
   }
 
-  if (touchToolInterface.doubleTapCallback) {
+	if (touchToolInterface && touchToolInterface.doubleTapCallback) {
     toolInterface.doubleTapCallback = touchToolInterface.doubleTapCallback;
   }
 
-  if (touchToolInterface.pressCallback) {
+	if (touchToolInterface && touchToolInterface.pressCallback) {
     toolInterface.pressCallback = touchToolInterface.pressCallback;
   }
 
-  if (touchToolInterface.addNewMeasurement) {
+	if (touchToolInterface && touchToolInterface.addNewMeasurement) {
     toolInterface.addNewMeasurement = touchToolInterface.addNewMeasurement;
   }
 

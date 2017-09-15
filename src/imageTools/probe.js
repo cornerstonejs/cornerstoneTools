@@ -34,11 +34,11 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function pointNearTool (element, data, coords) {
-  const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+function pointNearTool (element, data, coords, distance) {
+	const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
 
-  return cornerstoneMath.point.distance(endCanvas, coords) < 5;
+ return cornerstoneMath.point.distance(endCanvas, coords) < distance;
 }
 
 function onImageRendered (e, eventData) {
@@ -122,14 +122,14 @@ function onImageRendered (e, eventData) {
 const probe = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 5 * mouseButtonTool().getConfiguration().sensitivityFactor),
   toolType
 });
 
 const probeTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 5 * touchTool().getConfiguration().sensitivityFactor),
   toolType
 });
 

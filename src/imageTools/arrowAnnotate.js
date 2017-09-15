@@ -123,7 +123,7 @@ function createNewMeasurement (mouseEventData) {
 }
 // /////// END ACTIVE TOOL ///////
 
-function pointNearTool (element, data, coords) {
+function pointNearTool(element, data, coords, distance) {
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -132,7 +132,7 @@ function pointNearTool (element, data, coords) {
   const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
 
-  return (distanceToPoint < 25);
+  return (distanceToPoint < distance);
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
@@ -455,7 +455,7 @@ const arrowAnnotate = mouseButtonTool({
   addNewMeasurement,
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 25 * mouseButtonTool().getConfiguration().sensitivityFactor),
   toolType,
   mouseDoubleClickCallback: doubleClickCallback
 });
@@ -466,7 +466,7 @@ const arrowAnnotateTouch = touchTool({
   addNewMeasurement: addNewMeasurementTouch,
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 25 * touchTool().getConfiguration().sensitivityFactor),
   toolType,
   pressCallback
 });
