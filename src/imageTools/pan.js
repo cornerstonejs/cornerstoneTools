@@ -1,4 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
+import $ from '../jquery.js';
+import * as cornerstone from '../cornerstone-core.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';

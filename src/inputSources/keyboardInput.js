@@ -1,4 +1,5 @@
-import * as cornerstone from 'cornerstone-core';
+import $ from '../jquery.js';
+import * as cornerstone from '../cornerstone-core.js';
 
 let mouseX;
 let mouseY;

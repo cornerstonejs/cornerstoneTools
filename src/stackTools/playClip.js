@@ -1,9 +1,10 @@
 /* eslint no-bitwise:0 */
-import * as cornerstone from 'cornerstone-core';
-import { addToolState, getToolState } from '../stateManagement/toolState';
-import requestPoolManager from '../requestPool/requestPoolManager';
-import loadHandlerManager from '../stateManagement/loadHandlerManager';
-import { stackScroll } from './stackScroll';
+import $ from '../jquery.js';
+import * as cornerstone from '../cornerstone-core.js';
+import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import requestPoolManager from '../requestPool/requestPoolManager.js';
+import { stackScroll } from './stackScroll.js';
 
 const toolType = 'playClip';
 

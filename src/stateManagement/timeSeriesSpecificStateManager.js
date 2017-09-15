@@ -1,5 +1,5 @@
-import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager';
-import { getElementToolStateManager, setElementToolStateManager } from './toolState';
+import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
+import { getElementToolStateManager, setElementToolStateManager } from './toolState.js';
 
 // This implements an Stack specific tool state management strategy.  This means
 // That tool data is shared between all imageIds in a given stack

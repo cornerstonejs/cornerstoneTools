@@ -1,3 +1,5 @@
+import $ from '../jquery.js';
+
 export default function (touchPinchCallback) {
   const toolInterface = {
     activate (element) {

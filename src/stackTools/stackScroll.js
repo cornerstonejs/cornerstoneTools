@@ -1,10 +1,11 @@
-import touchDragTool from '../imageTools/touchDragTool';
-import multiTouchDragTool from '../imageTools/multiTouchDragTool';
-import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool';
-import mouseWheelTool from '../imageTools/mouseWheelTool';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled';
-import scroll from '../util/scroll';
-import { getToolState } from '../stateManagement/toolState';
+import $ from '../jquery.js';
+import touchDragTool from '../imageTools/touchDragTool.js';
+import multiTouchDragTool from '../imageTools/multiTouchDragTool.js';
+import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
+import mouseWheelTool from '../imageTools/mouseWheelTool.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import scroll from '../util/scroll.js';
+import { getToolState } from '../stateManagement/toolState.js';
 
 function mouseUpCallback (e, eventData) {
   $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);

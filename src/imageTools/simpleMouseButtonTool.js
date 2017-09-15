@@ -1,3 +1,5 @@
+import $ from '../jquery.js';
+
 export default function (mouseDownCallback) {
   let configuration = {};
 

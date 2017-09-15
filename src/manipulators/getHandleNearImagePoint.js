@@ -1,6 +1,6 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
+import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 
 export default function (element, handles, coords, distanceThreshold) {
   let nearbyHandle;

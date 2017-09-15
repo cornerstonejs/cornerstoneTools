@@ -2,6 +2,8 @@
 // All credit to @kosich
 // https://gist.github.com/kosich/23188dd86633b6c2efb7
 
+import $ from '../jquery.js';
+
 const antiGhostDelay = 2000,
   pointerType = {
     mouse: 0,

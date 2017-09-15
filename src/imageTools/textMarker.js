@@ -1,5 +1,6 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import $ from '../jquery.js';
+import * as cornerstone from '../cornerstone-core.js';
+import * as cornerstoneMath from '../cornerstone-math.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';

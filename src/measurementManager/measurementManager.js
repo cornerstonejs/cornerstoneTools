@@ -1,4 +1,6 @@
 // This object manages a collection of measurements
+import $ from '../jquery.js';
+
 function MeasurementManager () {
   const that = this;
 
