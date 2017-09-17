@@ -358,7 +358,10 @@ function touchTool (touchToolInterface) {
   }
 
   function getConfiguration() {
-    return Object.assign(configuration, globalConfiguration);
+    let res = {};
+    Object.assign(res, globalConfiguration);
+    Object.assign(res, configuration);
+    return res;
   }
 
   function setConfiguration(config) {
