@@ -31,7 +31,15 @@ function mouseDownCallback (e, eventData) {
 function mouseWheelCallback (e, eventData) {
   const images = -eventData.direction;
 
-  scroll(eventData.element, images);
+  const config = stackScroll.getConfiguration();
+
+  let loop = false;
+
+  if (config && config.loop) {
+    loop = config.loop;
+  }
+
+  scroll(eventData.element, images, loop);
 }
 
 function dragCallback (e, eventData) {
