@@ -1,7 +1,7 @@
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
-export default function (element, images, loop) {
+export default function (element, images, loop = false) {
   const toolData = getToolState(element, 'stack');
 
   if (!toolData || !toolData.data || !toolData.data.length) {
