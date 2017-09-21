@@ -217,15 +217,19 @@ function playClip (element, framesPerSecond) {
       }
 
       loader.then(function (image) {
-        stackData.currentImageIdIndex = newImageIdIndex;
-        if (stackRenderer) {
-          stackRenderer.currentImageIdIndex = newImageIdIndex;
-          stackRenderer.render(element, stackToolData.data, viewport);
-        } else {
-          cornerstone.displayImage(element, image, viewport);
-        }
-        if (endLoadingHandler) {
-          endLoadingHandler(element, image);
+        try {
+          stackData.currentImageIdIndex = newImageIdIndex;
+          if (stackRenderer) {
+            stackRenderer.currentImageIdIndex = newImageIdIndex;
+            stackRenderer.render(element, stackToolData.data, viewport);
+          } else {
+            cornerstone.displayImage(element, image, viewport);
+          }
+          if (endLoadingHandler) {
+            endLoadingHandler(element, image);
+          }
+        } catch (error) {
+          return;
         }
       }, function (error) {
         const imageId = stackData.imageIds[newImageIdIndex];
