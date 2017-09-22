@@ -153,8 +153,8 @@ function activate (element, mouseButtonMask) {
 
   const enabledElement = cornerstone.getEnabledElement(element);
 
-  dynamicImageCanvas.width = enabledElement.canvas.width;
-  dynamicImageCanvas.height = enabledElement.canvas.height;
+  dynamicImageCanvas.width = enabledElement.image.width;
+  dynamicImageCanvas.height = enabledElement.image.height;
 
   const context = dynamicImageCanvas.getContext('2d');
 
