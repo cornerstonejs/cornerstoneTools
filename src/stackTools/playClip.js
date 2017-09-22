@@ -111,6 +111,17 @@ function playClip (element, framesPerSecond) {
     return;
   }
 
+  // If we have more than one stack, check if we have a stack renderer defined
+  let stackRenderer;
+
+  if (stackToolData.data.length > 1) {
+    const stackRendererData = getToolState(element, 'stackRenderer');
+
+    if (stackRendererData && stackRendererData.data && stackRendererData.data.length) {
+      stackRenderer = stackRendererData.data[0];
+    }
+  }
+
   const stackData = stackToolData.data[0];
 
   const playClipToolData = getToolState(element, toolType);
@@ -206,10 +217,19 @@ function playClip (element, framesPerSecond) {
       }
 
       loader.then(function (image) {
-        stackData.currentImageIdIndex = newImageIdIndex;
-        cornerstone.displayImage(element, image, viewport);
-        if (endLoadingHandler) {
-          endLoadingHandler(element, image);
+        try {
+          stackData.currentImageIdIndex = newImageIdIndex;
+          if (stackRenderer) {
+            stackRenderer.currentImageIdIndex = newImageIdIndex;
+            stackRenderer.render(element, stackToolData.data, viewport);
+          } else {
+            cornerstone.displayImage(element, image, viewport);
+          }
+          if (endLoadingHandler) {
+            endLoadingHandler(element, image);
+          }
+        } catch (error) {
+          return;
         }
       }, function (error) {
         const imageId = stackData.imageIds[newImageIdIndex];
