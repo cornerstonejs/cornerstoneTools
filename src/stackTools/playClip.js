@@ -208,6 +208,11 @@ function playClip (element, framesPerSecond) {
         startLoadingHandler(element);
       }
 
+      const eventData = {
+        newImageIdIndex,
+        direction: newImageIdIndex - stackData.currentImageIdIndex
+      };
+
       viewport = cornerstone.getViewport(element);
 
       if (stackData.preventCache === true) {
@@ -239,6 +244,7 @@ function playClip (element, framesPerSecond) {
         }
       });
 
+      $(element).trigger('CornerstoneClipScroll', eventData);
     }
 
   };
