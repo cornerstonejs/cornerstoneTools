@@ -31,9 +31,9 @@ export default class FusionRenderer {
         const currentLayerId = this.layerIds[0];
         const layer = cornerstone.getLayer(element, currentLayerId);
 
-        layer.image = $.extend({}, image);
+        layer.image = Object.assign({}, image);
       } else {
-        const layerId = cornerstone.addLayer(element, $.extend({}, image), baseImageObject.options);
+        const layerId = cornerstone.addLayer(element, Object.assign({}, image), baseImageObject.options);
 
         this.layerIds.push(layerId);
       }
@@ -58,9 +58,9 @@ export default class FusionRenderer {
             const currentLayerId = this.layerIds[layerIndex];
             const layer = cornerstone.getLayer(element, currentLayerId);
 
-            layer.image = $.extend({}, image);
+            layer.image = Object.assign({}, image);
           } else {
-            const layerId = cornerstone.addLayer(element, $.extend({}, image), imgObj.options);
+            const layerId = cornerstone.addLayer(element, Object.assign({}, image), imgObj.options);
 
             this.layerIds.push(layerId);
           }
