@@ -14,17 +14,40 @@ export default function (synchronizer, sourceElement, targetElement) {
 
   const sourceImage = cornerstone.getEnabledElement(sourceElement).image;
   const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImage.imageId);
-  const sourceImagePosition = sourceImagePlane.imagePositionPatient;
+  let sourceImagePosition;
+
+  if (sourceImagePlane !== undefined) {
+    sourceImagePosition = sourceImagePlane.imagePositionPatient;
+  }
+
+  if (sourceImagePosition === undefined) {
+    // Console.log('No position found for image ' + sourceImage.imageId);
+
+    return;
+  }
 
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];
 
   let minDistance = Number.MAX_VALUE;
   let newImageIdIndex = -1;
+  let nbComparedPositions = 0;
 
   $.each(stackData.imageIds, function (index, imageId) {
     const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
-    const imagePosition = imagePlane.imagePositionPatient;
+    let imagePosition;
+
+    if (imagePlane !== undefined) {
+      imagePosition = imagePlane.imagePositionPatient;
+    }
+
+    if (imagePosition === undefined) {
+      // Console.log('No position found for image ' + imageId);
+
+      return;
+    }
+
+    nbComparedPositions++;
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
         // Console.log(index + '=' + distance);
 
@@ -33,6 +56,10 @@ export default function (synchronizer, sourceElement, targetElement) {
       newImageIdIndex = index;
     }
   });
+
+  if (nbComparedPositions !== stackData.imageIds.length) {
+    // Console.log('No position found for ' + (stackData.imageIds.length - nbComparedPositions) + ' images of ' + stackData.imageIds.length);
+  }
 
   if (newImageIdIndex === stackData.currentImageIdIndex) {
     return;
