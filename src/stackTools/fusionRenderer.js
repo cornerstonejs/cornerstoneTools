@@ -38,7 +38,7 @@ export default class FusionRenderer {
         this.layerIds.push(layerId);
       }
 
-      cornerstone.displayImage(element, image);
+      cornerstone.updateImage(element);
 
       // Splice out the first image
       const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
