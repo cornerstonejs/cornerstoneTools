@@ -31,6 +31,10 @@ export default class FusionRenderer {
         const currentLayerId = this.layerIds[0];
         const layer = cornerstone.getLayer(element, currentLayerId);
 
+        if (layer === undefined) {
+          return;
+        }
+
         layer.image = Object.assign({}, image);
       } else {
         const layerId = cornerstone.addLayer(element, Object.assign({}, image), baseImageObject.options);
@@ -57,6 +61,10 @@ export default class FusionRenderer {
           if (this.layerIds && this.layerIds[layerIndex]) {
             const currentLayerId = this.layerIds[layerIndex];
             const layer = cornerstone.getLayer(element, currentLayerId);
+
+            if (layer === undefined) {
+              return;
+            }
 
             layer.image = Object.assign({}, image);
           } else {
