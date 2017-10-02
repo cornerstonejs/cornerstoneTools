@@ -1,4 +1,4 @@
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath } from '../externalImports.js';
 
 // Projects a patient point to an image point
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {

@@ -1,4 +1,4 @@
-import $ from '../jquery.js';
+import { $ } from '../externalImports.js';
 
 export default function (element, filename) {
   const canvas = $(element).find('canvas').get(0);

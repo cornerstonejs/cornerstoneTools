@@ -1,4 +1,4 @@
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath } from '../externalImports.js';
 
 export default function (points) {
   const page = cornerstoneMath.point.copy(points.page);
