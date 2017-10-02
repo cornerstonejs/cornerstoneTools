@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalImports.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -22,7 +21,6 @@ export default function (element, newImageIdIndex) {
       stackRenderer = stackRendererData.data[0];
     }
   }
-
   const stackData = toolData.data[0];
 
     // Allow for negative indexing
@@ -53,9 +51,8 @@ export default function (element, newImageIdIndex) {
       stackRenderer.currentImageIdIndex = newImageIdIndex;
       stackRenderer.render(element, toolData.data);
     } else {
-      cornerstone.displayImage(element, image, viewport);
+    cornerstone.displayImage(element, image, viewport);
     }
-
     if (endLoadingHandler) {
       endLoadingHandler(element, image);
     }

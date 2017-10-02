@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalImports.js';
 
  /**
  * Sets the canvas context transformation matrix so it is scaled to show text
