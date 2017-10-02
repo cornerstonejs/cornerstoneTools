@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
