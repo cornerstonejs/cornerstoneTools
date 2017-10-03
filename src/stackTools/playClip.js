@@ -168,7 +168,6 @@ function playClip (element, framesPerSecond) {
 
         // Hoisting of context variables
     let loader,
-      viewport,
       startLoadingHandler,
       endLoadingHandler,
       errorLoadingHandler,
@@ -208,8 +207,6 @@ function playClip (element, framesPerSecond) {
         startLoadingHandler(element);
       }
 
-      viewport = cornerstone.getViewport(element);
-
       if (stackData.preventCache === true) {
         loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
       } else {
@@ -221,7 +218,7 @@ function playClip (element, framesPerSecond) {
           stackData.currentImageIdIndex = newImageIdIndex;
           if (stackRenderer) {
             stackRenderer.currentImageIdIndex = newImageIdIndex;
-            stackRenderer.render(element, stackToolData.data, viewport);
+            stackRenderer.render(element, stackToolData.data);
           } else {
             cornerstone.displayImage(element, image);
           }
