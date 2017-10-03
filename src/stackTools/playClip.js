@@ -223,7 +223,7 @@ function playClip (element, framesPerSecond) {
             stackRenderer.currentImageIdIndex = newImageIdIndex;
             stackRenderer.render(element, stackToolData.data, viewport);
           } else {
-            cornerstone.displayImage(element, image, viewport);
+            cornerstone.displayImage(element, image);
           }
           if (endLoadingHandler) {
             endLoadingHandler(element, image);
