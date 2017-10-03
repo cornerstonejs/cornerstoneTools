@@ -1,6 +1,6 @@
-import * as $ from 'jquery';
-import * as Hammer from 'hammerjs';
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import * as cornerstone from '../../cornerstone/src/index.js';
+import * as dicomParser from '../../dicomParser/src/index.js';
+const $ = window.$;
+const Hammer = window.Hammer;
 
 export { $, Hammer, cornerstone, cornerstoneMath };
