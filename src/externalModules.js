@@ -1,7 +1,6 @@
-import * as cornerstone from '../../cornerstone/src/index.js';
-import * as cornerstoneMath from '../../cornerstoneMath/src/index.js';
-
-const $ = window.$;
-const Hammer = window.Hammer;
+mport * as $ from 'jquery';
+import * as Hammer from 'hammerjs';
+import * as cornerstone from 'cornerstone-core';
+import * as cornerstoneMath from 'cornerstone-math';
 
 export { $, Hammer, cornerstone, cornerstoneMath };
