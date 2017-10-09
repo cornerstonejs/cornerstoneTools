@@ -130,7 +130,7 @@ function getPixelData (element, canvas) {
     const toolData = getToolState(element, toolType);
 
     if (toolData) {
-      // this was add to avoid ovveride between multiple viewports
+      // State update is done here to avoid state override with multipleviewports
       const lastState = toolData.data[toolData.data.length - 1];
 
       context.putImageData(lastState.imageData, 0, 0);

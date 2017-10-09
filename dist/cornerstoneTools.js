@@ -12205,9 +12205,7 @@ function clearCircle(context, coords, radius) {
 }
 
 function newImageCallback(event) {
-  var currentTarget = event.currentTarget;
-
-  cornerstone.updateImage(currentTarget, true);
+  cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback(e, eventData) {
@@ -12275,7 +12273,7 @@ function getPixelData(element, canvas) {
     var toolData = (0, _toolState.getToolState)(element, toolType);
 
     if (toolData) {
-      // this was add to avoid ovveride between multiple viewports
+      // State update is done here to avoid state override with multipleviewports
       var lastState = toolData.data[toolData.data.length - 1];
 
       context.putImageData(lastState.imageData, 0, 0);
