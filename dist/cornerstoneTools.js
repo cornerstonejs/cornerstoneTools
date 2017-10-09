@@ -12160,9 +12160,7 @@ function createNewMeasurement(imageData) {
   return {
     visible: true,
     active: true,
-    handles: {
-      imageData: imageData
-    }
+    imageData: imageData
   };
 }
 
@@ -12206,29 +12204,10 @@ function clearCircle(context, coords, radius) {
   context.restore();
 }
 
-function mouseWheelCallback(e) {
-  var canvas = dynamicImageCanvasMap[e.currentTarget.id];
-  var context = canvas.getContext('2d');
-  var width = canvas.width,
-      height = canvas.height;
+function newImageCallback(event) {
+  var currentTarget = event.currentTarget;
 
-  // Cleaning up canvas so we do not use dirty data in our states
-
-  context.save();
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.beginPath();
-  context.clearRect(0, 0, width, height);
-  context.restore();
-
-  var toolData = (0, _toolState.getToolState)(e.currentTarget, toolType);
-
-  if (toolData) {
-    var lastState = toolData.data[toolData.data.length - 1];
-
-    context.putImageData(lastState.handles.imageData, 0, 0);
-  }
-
-  cornerstone.updateImage(e.currentTarget, true);
+  cornerstone.updateImage(currentTarget, true);
 }
 
 function mouseMoveCallback(e, eventData) {
@@ -12293,6 +12272,14 @@ function getPixelData(element, canvas) {
         height = canvas.height;
 
     var context = canvas.getContext('2d');
+    var toolData = (0, _toolState.getToolState)(element, toolType);
+
+    if (toolData) {
+      // this was add to avoid ovveride between multiple viewports
+      var lastState = toolData.data[toolData.data.length - 1];
+
+      context.putImageData(lastState.imageData, 0, 0);
+    }
 
     if (draw === 1) {
       // Draw
@@ -12333,8 +12320,8 @@ function activate(element, mouseButtonMask) {
   (0, _jquery2.default)(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   (0, _jquery2.default)(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  (0, _jquery2.default)(element).off('CornerstoneStackScroll', mouseWheelCallback);
-  (0, _jquery2.default)(element).on('CornerstoneStackScroll', mouseWheelCallback);
+  (0, _jquery2.default)(element).off('CornerstoneNewImage', newImageCallback);
+  (0, _jquery2.default)(element).on('CornerstoneNewImage', newImageCallback);
 
   var enabledElement = cornerstone.getEnabledElement(element);
   var canvas = document.createElement('canvas');

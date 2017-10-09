@@ -22,9 +22,7 @@ function createNewMeasurement (imageData) {
   return {
     visible: true,
     active: true,
-    handles: {
-      imageData
-    }
+    imageData
   };
 }
 
@@ -69,27 +67,10 @@ function clearCircle (context, coords, radius) {
   context.restore();
 }
 
-function mouseWheelCallback (e) {
-  const canvas = dynamicImageCanvasMap[e.currentTarget.id];
-  const context = canvas.getContext('2d');
-  const { width, height } = canvas;
+function newImageCallback (event) {
+  const currentTarget = event.currentTarget;
 
-  // Cleaning up canvas so we do not use dirty data in our states
-  context.save();
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.beginPath();
-  context.clearRect(0, 0, width, height);
-  context.restore();
-
-  const toolData = getToolState(e.currentTarget, toolType);
-
-  if (toolData) {
-    const lastState = toolData.data[toolData.data.length - 1];
-
-    context.putImageData(lastState.handles.imageData, 0, 0);
-  }
-
-  cornerstone.updateImage(e.currentTarget, true);
+  cornerstone.updateImage(currentTarget, true);
 }
 
 function mouseMoveCallback (e, eventData) {
@@ -148,6 +129,14 @@ function getPixelData (element, canvas) {
     const { draw, radius, overlayColor } = brush.getConfiguration();
     const { width, height } = canvas;
     const context = canvas.getContext('2d');
+    const toolData = getToolState(element, toolType);
+
+    if (toolData) {
+      // this was add to avoid ovveride between multiple viewports
+      const lastState = toolData.data[toolData.data.length - 1];
+
+      context.putImageData(lastState.imageData, 0, 0);
+    }
 
     if (draw === 1) {
       // Draw
@@ -188,8 +177,8 @@ function activate (element, mouseButtonMask) {
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   $(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  $(element).off('CornerstoneStackScroll', mouseWheelCallback);
-  $(element).on('CornerstoneStackScroll', mouseWheelCallback);
+  $(element).off('CornerstoneNewImage', newImageCallback);
+  $(element).on('CornerstoneNewImage', newImageCallback);
 
   const enabledElement = cornerstone.getEnabledElement(element);
   const canvas = document.createElement('canvas');
