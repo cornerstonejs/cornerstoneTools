@@ -68,9 +68,7 @@ function clearCircle (context, coords, radius) {
 }
 
 function newImageCallback (event) {
-  const currentTarget = event.currentTarget;
-
-  cornerstone.updateImage(currentTarget, true);
+  cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback (e, eventData) {
