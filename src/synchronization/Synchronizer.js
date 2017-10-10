@@ -123,7 +123,7 @@ function Synchronizer (event, handler) {
 
       if (sourceImageId === targetImageId) {
         positionDifference = 0;
-      } else {
+      } else if (initialData.distances[sourceImageId] !== undefined) {
         positionDifference = initialData.distances[sourceImageId][targetImageId];
       }
 
