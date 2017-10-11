@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
 import toolColors from '../stateManagement/toolColors.js';

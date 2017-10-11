@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -33,7 +32,6 @@ export default function (element, newImageIdIndex) {
   const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
-  const viewport = cornerstone.getViewport(element);
 
   function doneCallback (image) {
     if (stackData.currentImageIdIndex !== newImageIdIndex) {
@@ -53,7 +51,7 @@ export default function (element, newImageIdIndex) {
       stackRenderer.currentImageIdIndex = newImageIdIndex;
       stackRenderer.render(element, toolData.data);
     } else {
-      cornerstone.displayImage(element, image, viewport);
+      cornerstone.displayImage(element, image);
     }
 
     if (endLoadingHandler) {

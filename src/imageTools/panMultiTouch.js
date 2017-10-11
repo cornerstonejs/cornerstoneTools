@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 import multiTouchDragTool from './multiTouchDragTool.js';
 
 function touchPanCallback (e, eventData) {

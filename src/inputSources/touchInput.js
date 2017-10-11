@@ -1,7 +1,4 @@
-import $ from '../jquery.js';
-import Hammer from '../hammer.js';
-import * as cornerstone from '../cornerstone-core.js';
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { $, Hammer, cornerstone, cornerstoneMath } from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
