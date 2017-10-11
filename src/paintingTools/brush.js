@@ -1,9 +1,11 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
+import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
 // This module is for creating segmentation overlays
+const toolType = 'brush';
+const dynamicImageCanvasMap = {};
 const configuration = {
   draw: 1,
   radius: 10,
@@ -14,7 +16,14 @@ const configuration = {
 
 let brushImagePositions = [];
 let lastCanvasCoords;
-const dynamicImageCanvas = document.createElement('canvas');
+
+function createNewMeasurement (imageData) {
+  return {
+    visible: true,
+    active: true,
+    imageData
+  };
+}
 
 function defaultStrategy (eventData) {
   const configuration = brush.getConfiguration();
@@ -55,6 +64,10 @@ function clearCircle (context, coords, radius) {
   context.clearRect(coords.x - radius - 1, coords.y - radius - 1,
                     radius * 2 + 2, radius * 2 + 2);
   context.restore();
+}
+
+function newImageCallback (event) {
+  cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback (e, eventData) {
@@ -108,31 +121,41 @@ function onImageRendered (e, eventData) {
   drawCircle(context, lastCanvasCoords, radius, configuration.hoverColor);
 }
 
-function getPixelData () {
-  const configuration = brush.getConfiguration();
+function getPixelData (element, canvas) {
+  return function () {
+    const { draw, radius, overlayColor } = brush.getConfiguration();
+    const { width, height } = canvas;
+    const context = canvas.getContext('2d');
+    const toolData = getToolState(element, toolType);
 
-  const context = dynamicImageCanvas.getContext('2d');
+    if (toolData) {
+      // State update is done here to avoid state override with multipleviewports
+      const lastState = toolData.data[toolData.data.length - 1];
 
-  if (configuration.draw === 1) {
-    // Draw
-    brushImagePositions.forEach(function (coords) {
-      drawCircle(context, coords, configuration.radius, configuration.overlayColor);
-    });
-  } else {
-    // Erase
-    brushImagePositions.forEach(function (coords) {
-      clearCircle(context, coords, configuration.radius);
-    });
-  }
+      context.putImageData(lastState.imageData, 0, 0);
+    }
 
-  brushImagePositions = [];
+    if (draw === 1) {
+      // Draw
+      brushImagePositions.forEach(function (coords) {
+        drawCircle(context, coords, radius, overlayColor);
+      });
+    } else {
+      // Erase
+      brushImagePositions.forEach(function (coords) {
+        clearCircle(context, coords, radius);
+      });
+    }
 
-  const width = this.width;
-  const height = this.height;
-  const imageData = context.getImageData(0, 0, width, height);
+    brushImagePositions = [];
 
+    const imageData = context.getImageData(0, 0, width, height);
+    const measurementData = createNewMeasurement(imageData);
 
-  return imageData.data;
+    addToolState(element, toolType, measurementData);
+
+    return imageData.data;
+  };
 }
 
 let brushLayerId;
@@ -151,15 +174,20 @@ function activate (element, mouseButtonMask) {
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   $(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
+  $(element).off('CornerstoneNewImage', newImageCallback);
+  $(element).on('CornerstoneNewImage', newImageCallback);
+
   const enabledElement = cornerstone.getEnabledElement(element);
+  const canvas = document.createElement('canvas');
 
-  dynamicImageCanvas.width = enabledElement.image.width;
-  dynamicImageCanvas.height = enabledElement.image.height;
+  canvas.width = enabledElement.image.width;
+  canvas.height = enabledElement.image.height;
 
-  const context = dynamicImageCanvas.getContext('2d');
+  const context = canvas.getContext('2d');
+  const { width, height } = canvas;
 
   context.fillStyle = 'rgba(0,0,0,0)';
-  context.fillRect(0, 0, dynamicImageCanvas.width, dynamicImageCanvas.height);
+  context.fillRect(0, 0, width, height);
 
   const dynamicImage = {
     minPixelValue: 0,
@@ -168,7 +196,7 @@ function activate (element, mouseButtonMask) {
     intercept: 0,
     windowCenter: 127,
     windowWidth: 256,
-    getPixelData,
+    getPixelData: getPixelData(element, canvas),
     rgba: true,
     rows: enabledElement.image.height,
     columns: enabledElement.image.width,
@@ -190,6 +218,8 @@ function activate (element, mouseButtonMask) {
   if (!layer) {
     brushLayerId = cornerstone.addLayer(element, dynamicImage);
   }
+
+  dynamicImageCanvasMap[element.id] = canvas;
 
   cornerstone.updateImage(element);
 }

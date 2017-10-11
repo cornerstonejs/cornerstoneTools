@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 
 export default class FusionRenderer {
   constructor () {
@@ -31,9 +31,13 @@ export default class FusionRenderer {
         const currentLayerId = this.layerIds[0];
         const layer = cornerstone.getLayer(element, currentLayerId);
 
-        layer.image = image;
+        if (layer === undefined) {
+          return;
+        }
+
+        layer.image = Object.assign({}, image);
       } else {
-        const layerId = cornerstone.addLayer(element, image, baseImageObject.options);
+        const layerId = cornerstone.addLayer(element, Object.assign({}, image), baseImageObject.options);
 
         this.layerIds.push(layerId);
       }
@@ -58,9 +62,13 @@ export default class FusionRenderer {
             const currentLayerId = this.layerIds[layerIndex];
             const layer = cornerstone.getLayer(element, currentLayerId);
 
-            layer.image = image;
+            if (layer === undefined) {
+              return;
+            }
+
+            layer.image = Object.assign({}, image);
           } else {
-            const layerId = cornerstone.addLayer(element, image, imgObj.options);
+            const layerId = cornerstone.addLayer(element, Object.assign({}, image), imgObj.options);
 
             this.layerIds.push(layerId);
           }

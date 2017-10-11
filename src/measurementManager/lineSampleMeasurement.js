@@ -1,6 +1,6 @@
-// This object manages a collection of measurements
-import $ from '../jquery.js';
+import { $ } from '../externalModules.js';
 
+// This object manages a collection of measurements
 export default function () {
 
   const that = this;

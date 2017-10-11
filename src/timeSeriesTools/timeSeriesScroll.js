@@ -1,4 +1,4 @@
-import $ from '../jquery.js';
+import { $ } from '../externalModules.js';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
 import touchDragTool from '../imageTools/touchDragTool.js';
 import mouseWheelTool from '../imageTools/mouseWheelTool.js';

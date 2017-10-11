@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;

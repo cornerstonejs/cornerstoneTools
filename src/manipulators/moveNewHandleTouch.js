@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
     // Console.log('moveNewHandleTouch');

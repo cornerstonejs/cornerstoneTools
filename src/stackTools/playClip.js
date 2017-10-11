@@ -1,6 +1,5 @@
 /* eslint no-bitwise:0 */
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
@@ -169,8 +168,7 @@ function playClip (element, framesPerSecond) {
   const playClipAction = () => {
 
         // Hoisting of context variables
-    let viewport,
-      startLoadingHandler,
+    let startLoadingHandler,
       displayLoadingHandler,
       endLoadingHandler,
       errorLoadingHandler,
@@ -218,9 +216,9 @@ function playClip (element, framesPerSecond) {
           try {
             if (stackRenderer) {
               stackRenderer.currentImageIdIndex = newImageIdIndex;
-              stackRenderer.render(element, stackToolData.data, viewport);
+              stackRenderer.render(element, stackToolData.data);
             } else {
-              cornerstone.displayImage(element, image, viewport);
+              cornerstone.displayImage(element, image);
             }
             if (endLoadingHandler) {
               endLoadingHandler(element, image);

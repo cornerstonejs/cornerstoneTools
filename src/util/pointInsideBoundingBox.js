@@ -1,4 +1,4 @@
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath } from '../externalModules.js';
 
 export default function (handle, coords) {
   if (!handle.boundingBox) {
