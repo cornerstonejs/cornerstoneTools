@@ -1,6 +1,6 @@
-// This object manages a collection of measurements
-import $ from '../jquery.js';
+import { $ } from '../externalModules.js';
 
+// This object manages a collection of measurements
 function MeasurementManager () {
   const that = this;
 

@@ -1,4 +1,4 @@
-import $ from '../jquery.js';
+import { $ } from '../externalModules.js';
 
 export default function (keyDownCallback) {
   let configuration = {};

@@ -1,4 +1,5 @@
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath } from '../externalModules.js';
+
 
 export default function (vector) {
     // Thanks to David Clunie
