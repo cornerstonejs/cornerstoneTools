@@ -1,4 +1,4 @@
-import * as cornerstone from './cornerstone-core.js';
+import { cornerstone } from './externalModules.js';
 
 const metaData = cornerstone.metaData;
 
