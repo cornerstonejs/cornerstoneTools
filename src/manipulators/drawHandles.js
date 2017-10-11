@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
 const handleRadius = 6;
