@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.0 - 2017-09-21 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-10-09 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"), require("jquery"));
@@ -12128,6 +12128,8 @@ var _cornerstoneCore = __webpack_require__(0);
 
 var cornerstone = _interopRequireWildcard(_cornerstoneCore);
 
+var _toolState = __webpack_require__(2);
+
 var _mouseButtonTool = __webpack_require__(8);
 
 var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
@@ -12141,6 +12143,8 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // This module is for creating segmentation overlays
+var toolType = 'brush';
+var dynamicImageCanvasMap = {};
 var configuration = {
   draw: 1,
   radius: 10,
@@ -12151,7 +12155,14 @@ var configuration = {
 
 var brushImagePositions = [];
 var lastCanvasCoords = void 0;
-var dynamicImageCanvas = document.createElement('canvas');
+
+function createNewMeasurement(imageData) {
+  return {
+    visible: true,
+    active: true,
+    imageData: imageData
+  };
+}
 
 function defaultStrategy(eventData) {
   var configuration = brush.getConfiguration();
@@ -12191,6 +12202,10 @@ function clearCircle(context, coords, radius) {
   context.clip();
   context.clearRect(coords.x - radius - 1, coords.y - radius - 1, radius * 2 + 2, radius * 2 + 2);
   context.restore();
+}
+
+function newImageCallback(event) {
+  cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback(e, eventData) {
@@ -12244,30 +12259,47 @@ function onImageRendered(e, eventData) {
   drawCircle(context, lastCanvasCoords, radius, configuration.hoverColor);
 }
 
-function getPixelData() {
-  var configuration = brush.getConfiguration();
+function getPixelData(element, canvas) {
+  return function () {
+    var _brush$getConfigurati = brush.getConfiguration(),
+        draw = _brush$getConfigurati.draw,
+        radius = _brush$getConfigurati.radius,
+        overlayColor = _brush$getConfigurati.overlayColor;
 
-  var context = dynamicImageCanvas.getContext('2d');
+    var width = canvas.width,
+        height = canvas.height;
 
-  if (configuration.draw === 1) {
-    // Draw
-    brushImagePositions.forEach(function (coords) {
-      drawCircle(context, coords, configuration.radius, configuration.overlayColor);
-    });
-  } else {
-    // Erase
-    brushImagePositions.forEach(function (coords) {
-      clearCircle(context, coords, configuration.radius);
-    });
-  }
+    var context = canvas.getContext('2d');
+    var toolData = (0, _toolState.getToolState)(element, toolType);
 
-  brushImagePositions = [];
+    if (toolData) {
+      // State update is done here to avoid state override with multipleviewports
+      var lastState = toolData.data[toolData.data.length - 1];
 
-  var width = this.width;
-  var height = this.height;
-  var imageData = context.getImageData(0, 0, width, height);
+      context.putImageData(lastState.imageData, 0, 0);
+    }
 
-  return imageData.data;
+    if (draw === 1) {
+      // Draw
+      brushImagePositions.forEach(function (coords) {
+        drawCircle(context, coords, radius, overlayColor);
+      });
+    } else {
+      // Erase
+      brushImagePositions.forEach(function (coords) {
+        clearCircle(context, coords, radius);
+      });
+    }
+
+    brushImagePositions = [];
+
+    var imageData = context.getImageData(0, 0, width, height);
+    var measurementData = createNewMeasurement(imageData);
+
+    (0, _toolState.addToolState)(element, toolType, measurementData);
+
+    return imageData.data;
+  };
 }
 
 var brushLayerId = void 0;
@@ -12286,15 +12318,22 @@ function activate(element, mouseButtonMask) {
   (0, _jquery2.default)(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   (0, _jquery2.default)(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
+  (0, _jquery2.default)(element).off('CornerstoneNewImage', newImageCallback);
+  (0, _jquery2.default)(element).on('CornerstoneNewImage', newImageCallback);
+
   var enabledElement = cornerstone.getEnabledElement(element);
+  var canvas = document.createElement('canvas');
 
-  dynamicImageCanvas.width = enabledElement.image.width;
-  dynamicImageCanvas.height = enabledElement.image.height;
+  canvas.width = enabledElement.image.width;
+  canvas.height = enabledElement.image.height;
 
-  var context = dynamicImageCanvas.getContext('2d');
+  var context = canvas.getContext('2d');
+  var width = canvas.width,
+      height = canvas.height;
+
 
   context.fillStyle = 'rgba(0,0,0,0)';
-  context.fillRect(0, 0, dynamicImageCanvas.width, dynamicImageCanvas.height);
+  context.fillRect(0, 0, width, height);
 
   var dynamicImage = {
     minPixelValue: 0,
@@ -12303,7 +12342,7 @@ function activate(element, mouseButtonMask) {
     intercept: 0,
     windowCenter: 127,
     windowWidth: 256,
-    getPixelData: getPixelData,
+    getPixelData: getPixelData(element, canvas),
     rgba: true,
     rows: enabledElement.image.height,
     columns: enabledElement.image.width,
@@ -12325,6 +12364,8 @@ function activate(element, mouseButtonMask) {
   if (!layer) {
     brushLayerId = cornerstone.addLayer(element, dynamicImage);
   }
+
+  dynamicImageCanvasMap[element.id] = canvas;
 
   cornerstone.updateImage(element);
 }
@@ -12618,15 +12659,19 @@ function playClip(element, framesPerSecond) {
       }
 
       loader.then(function (image) {
-        stackData.currentImageIdIndex = newImageIdIndex;
-        if (stackRenderer) {
-          stackRenderer.currentImageIdIndex = newImageIdIndex;
-          stackRenderer.render(element, stackToolData.data, viewport);
-        } else {
-          cornerstone.displayImage(element, image, viewport);
-        }
-        if (endLoadingHandler) {
-          endLoadingHandler(element, image);
+        try {
+          stackData.currentImageIdIndex = newImageIdIndex;
+          if (stackRenderer) {
+            stackRenderer.currentImageIdIndex = newImageIdIndex;
+            stackRenderer.render(element, stackToolData.data, viewport);
+          } else {
+            cornerstone.displayImage(element, image, viewport);
+          }
+          if (endLoadingHandler) {
+            endLoadingHandler(element, image);
+          }
+        } catch (error) {
+          return;
         }
       }, function (error) {
         var imageId = stackData.imageIds[newImageIdIndex];
@@ -16261,9 +16306,13 @@ var FusionRenderer = function () {
           var currentLayerId = _this.layerIds[0];
           var layer = cornerstone.getLayer(element, currentLayerId);
 
-          layer.image = image;
+          if (layer === undefined) {
+            return;
+          }
+
+          layer.image = Object.assign({}, image);
         } else {
-          var layerId = cornerstone.addLayer(element, image, baseImageObject.options);
+          var layerId = cornerstone.addLayer(element, Object.assign({}, image), baseImageObject.options);
 
           _this.layerIds.push(layerId);
         }
@@ -16288,9 +16337,13 @@ var FusionRenderer = function () {
               var _currentLayerId = _this.layerIds[layerIndex];
               var _layer = cornerstone.getLayer(element, _currentLayerId);
 
-              _layer.image = image;
+              if (_layer === undefined) {
+                return;
+              }
+
+              _layer.image = Object.assign({}, image);
             } else {
-              var _layerId = cornerstone.addLayer(element, image, imgObj.options);
+              var _layerId = cornerstone.addLayer(element, Object.assign({}, image), imgObj.options);
 
               _this.layerIds.push(_layerId);
             }
