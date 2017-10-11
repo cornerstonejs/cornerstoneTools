@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
@@ -123,7 +122,7 @@ function Synchronizer (event, handler) {
 
       if (sourceImageId === targetImageId) {
         positionDifference = 0;
-      } else {
+      } else if (initialData.distances[sourceImageId] !== undefined) {
         positionDifference = initialData.distances[sourceImageId][targetImageId];
       }
 

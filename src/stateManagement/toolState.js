@@ -1,5 +1,4 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { $, cornerstone } from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 
 function getElementToolStateManager (element) {

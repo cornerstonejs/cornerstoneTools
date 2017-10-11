@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 
 // Returns a decimal value given a fractional value
 function fracToDec (fractionalValue) {

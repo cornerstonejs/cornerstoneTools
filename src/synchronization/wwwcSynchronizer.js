@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { cornerstone } from '../externalModules.js';
 
 // This function synchronizes the target element ww/wc to match the source element
 export default function (synchronizer, sourceElement, targetElement) {
