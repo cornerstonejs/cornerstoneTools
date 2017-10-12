@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.0 - 2017-10-11 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-10-12 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"), require("jquery"));
@@ -713,6 +713,10 @@ exports.default = function (mouseToolInterface) {
     if (mouseToolInterface.mouseDoubleClickCallback) {
       (0, _externalModules.$)(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
       (0, _externalModules.$)(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
+    }
+
+    if (mouseToolInterface.deactivate) {
+      mouseToolInterface.deactivate(element, mouseButtonMask);
     }
 
     _externalModules.cornerstone.updateImage(element);
@@ -11812,6 +11816,10 @@ function getPixelData(element, canvas) {
   };
 }
 
+function deactivate(element) {
+  (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
+}
+
 var brushLayerId = void 0;
 
 function activate(element, mouseButtonMask) {
@@ -11883,7 +11891,8 @@ function activate(element, mouseButtonMask) {
 var brush = (0, _mouseButtonTool2.default)({
   mouseMoveCallback: mouseMoveCallback,
   mouseDownActivateCallback: mouseDownActivateCallback,
-  onImageRendered: onImageRendered
+  onImageRendered: onImageRendered,
+  deactivate: deactivate
 });
 
 brush.activate = activate;

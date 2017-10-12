@@ -158,6 +158,10 @@ function getPixelData (element, canvas) {
   };
 }
 
+function deactivate(element) {
+  $(element).off('CornerstoneImageRendered', onImageRendered);
+}
+
 let brushLayerId;
 
 function activate (element, mouseButtonMask) {
@@ -227,7 +231,8 @@ function activate (element, mouseButtonMask) {
 const brush = mouseButtonTool({
   mouseMoveCallback,
   mouseDownActivateCallback,
-  onImageRendered
+  onImageRendered,
+  deactivate
 });
 
 brush.activate = activate;
