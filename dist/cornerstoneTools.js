@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.0 - 2017-10-11 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.0 - 2017-10-12 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-core"), require("cornerstone-math"), require("hammerjs"), require("jquery"));
@@ -7012,11 +7012,25 @@ function onImageRendered(e, eventData) {
 
   // We have tool data for this element - iterate over each one and draw it
   var context = eventData.canvasContext.canvas.getContext('2d');
+  var image = eventData.image,
+      element = eventData.element;
+
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var config = length.getConfiguration();
+  var imagePlane = _externalModules.cornerstone.metaData.get('imagePlane', image.imageId);
+  var rowPixelSpacing = void 0;
+  var colPixelSpacing = void 0;
+
+  if (imagePlane) {
+    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing = imagePlane.colPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
+  }
 
   for (var i = 0; i < toolData.data.length; i++) {
     context.save();
@@ -7032,8 +7046,8 @@ function onImageRendered(e, eventData) {
     var color = _toolColors2.default.getColorIfActive(data.active);
 
     // Get the handle positions in canvas coordinates
-    var handleStartCanvas = _externalModules.cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    var handleEndCanvas = _externalModules.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    var handleStartCanvas = _externalModules.cornerstone.pixelToCanvas(element, data.handles.start);
+    var handleEndCanvas = _externalModules.cornerstone.pixelToCanvas(element, data.handles.end);
 
     // Draw the measurement line
     context.beginPath();
@@ -7054,8 +7068,8 @@ function onImageRendered(e, eventData) {
     context.fillStyle = color;
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-    var dx = (data.handles.end.x - data.handles.start.x) * (eventData.image.columnPixelSpacing || 1);
-    var dy = (data.handles.end.y - data.handles.start.y) * (eventData.image.rowPixelSpacing || 1);
+    var dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
+    var dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
 
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     var _length = Math.sqrt(dx * dx + dy * dy);
@@ -7066,7 +7080,7 @@ function onImageRendered(e, eventData) {
     // Set the length text suffix depending on whether or not pixelSpacing is available
     var suffix = ' mm';
 
-    if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+    if (!rowPixelSpacing || !colPixelSpacing) {
       suffix = ' pixels';
     }
 
