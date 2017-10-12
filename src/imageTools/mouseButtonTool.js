@@ -297,6 +297,10 @@ export default function (mouseToolInterface) {
       $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
+    if (mouseToolInterface.deactivate) {
+      mouseToolInterface.deactivate(element, mouseButtonMask);
+    }
+
     cornerstone.updateImage(element);
   }
 

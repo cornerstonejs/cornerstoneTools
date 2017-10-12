@@ -715,6 +715,10 @@ exports.default = function (mouseToolInterface) {
       (0, _externalModules.$)(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
+    if (mouseToolInterface.deactivate) {
+      mouseToolInterface.deactivate(element, mouseButtonMask);
+    }
+
     _externalModules.cornerstone.updateImage(element);
   }
 
@@ -11826,6 +11830,10 @@ function getPixelData(element, canvas) {
   };
 }
 
+function deactivate(element) {
+  (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
+}
+
 var brushLayerId = void 0;
 
 function activate(element, mouseButtonMask) {
@@ -11897,7 +11905,8 @@ function activate(element, mouseButtonMask) {
 var brush = (0, _mouseButtonTool2.default)({
   mouseMoveCallback: mouseMoveCallback,
   mouseDownActivateCallback: mouseDownActivateCallback,
-  onImageRendered: onImageRendered
+  onImageRendered: onImageRendered,
+  deactivate: deactivate
 });
 
 brush.activate = activate;
