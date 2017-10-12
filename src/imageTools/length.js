@@ -65,11 +65,23 @@ function onImageRendered (e, eventData) {
 
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
+  const { image, element } = eventData;
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   const lineWidth = toolStyle.getToolWidth();
   const config = length.getConfiguration();
+  const imagePlane = cornerstone.metaData.get('imagePlane', image.imageId);
+  let rowPixelSpacing;
+  let colPixelSpacing;
+
+  if (imagePlane) {
+    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing = imagePlane.colPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
+  }
 
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();
@@ -85,8 +97,8 @@ function onImageRendered (e, eventData) {
     const color = toolColors.getColorIfActive(data.active);
 
         // Get the handle positions in canvas coordinates
-    const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+    const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
         // Draw the measurement line
     context.beginPath();
@@ -107,8 +119,8 @@ function onImageRendered (e, eventData) {
     context.fillStyle = color;
 
         // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-    const dx = (data.handles.end.x - data.handles.start.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (data.handles.end.y - data.handles.start.y) * (eventData.image.rowPixelSpacing || 1);
+    const dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
+    const dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
 
         // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
@@ -119,7 +131,7 @@ function onImageRendered (e, eventData) {
         // Set the length text suffix depending on whether or not pixelSpacing is available
     let suffix = ' mm';
 
-    if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
+    if (!rowPixelSpacing || !colPixelSpacing) {
       suffix = ' pixels';
     }
 
