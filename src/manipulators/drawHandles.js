@@ -1,13 +1,14 @@
 import { cornerstone } from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
-const handleRadius = 6;
+const defaultHandleRadius = 6;
 
 export default function (context, renderData, handles, color, options) {
   context.strokeStyle = color;
 
   Object.keys(handles).forEach(function (name) {
     const handle = handles[name];
+    let handleRadius = defaultHandleRadius;
 
     if (handle.drawnIndependently === true) {
       return;
@@ -15,6 +16,10 @@ export default function (context, renderData, handles, color, options) {
 
     if (options && options.drawHandlesIfActive === true && !handle.active) {
       return;
+    }
+
+    if (options && options.handleRadius !== undefined) {
+      handleRadius = options.handleRadius;
     }
 
     context.beginPath();

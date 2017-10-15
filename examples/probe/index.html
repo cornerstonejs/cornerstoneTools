@@ -76,6 +76,9 @@ is used by our example image loader-->
 
         // Enable all tools we want to use with this element
         cornerstoneTools.probe.activate(element, 1);
+        cornerstoneTools.probe.setConfiguration(
+            {handleRadius : 2}
+        );
         activate("#activate");
 
         function activate(id)

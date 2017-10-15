@@ -48,6 +48,8 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const config = probe.getConfiguration();
+
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 
@@ -69,7 +71,7 @@ function onImageRendered (e, eventData) {
     }
 
         // Draw the handles
-    drawHandles(context, eventData, data.handles, color);
+    drawHandles(context, eventData, data.handles, color, config);
 
     const x = Math.round(data.handles.end.x);
     const y = Math.round(data.handles.end.y);
