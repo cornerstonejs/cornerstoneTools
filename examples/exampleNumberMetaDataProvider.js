@@ -9,7 +9,7 @@
             if (imageId.startsWith('example-n')) {
                 var tokens = imageId.substring(12).split(':');
                 var n = Number(tokens[0]);
-                var z = Window.isNaN(n)?0:n;
+                var z = window.isNaN(n)?0:n;
                 return {
                     frameOfReferenceUID: '1.2.3.4.5',
                     rows: 256,

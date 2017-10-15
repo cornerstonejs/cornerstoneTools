@@ -8,14 +8,14 @@
         canvas.width = 256;
         canvas.height = 256;
         var ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#222';
+        ctx.fillStyle = bg;
         ctx.fillRect(0, 0, 256, 256);
         ctx.font = "48px courier";
         ctx.fillStyle = 'white';
         ctx.strokeStyle = 'white';
         ctx.strokeText(''+l, 50, 100);
-        var RgbaPixelData = ctx.getImageData().data;
-        var RedPiexelData = RgbaPixelData.data.filter((p,i)=>i%4===0);
+        var RgbaPixelData = ctx.getImageData(0,0,256,256).data;
+        var RedPiexelData = RgbaPixelData.filter((p,i)=>i%4===0);
         return RedPiexelData;
     }
 
