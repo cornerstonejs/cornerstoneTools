@@ -76,22 +76,35 @@ is used by our example image loader-->
   var radius = 3;
   
   var element = document.getElementById('dicomImage');
-  var imageId = 'example://1';
 
   var configuration = cornerstoneTools.brush.getConfiguration();
   configuration.radius = radius;
 
   cornerstoneTools.brush.setConfiguration(configuration);
 
+  var imageIds = [
+      'example://1',
+      'example://2',
+  ];
+
+  var stack = {
+      currentImageIdIndex : 0,
+      imageIds: imageIds
+  };
+
   cornerstone.enable(element);  
-  cornerstone.loadImage(imageId).then(function(image) {
+  cornerstone.loadImage(imageIds[0]).then(function(image) {
     cornerstone.addLayer(element, image);
     cornerstone.updateImage(element);
-    
+
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
+
     cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.mouseWheelInput.enable(element);
+    cornerstoneTools.stackScrollWheel.activate(element);
     cornerstoneTools.pan.activate(element, 2);
-    cornerstoneTools.zoom.activate(element, 4);
-    
+    cornerstoneTools.zoom.activate(element, 4);    
     cornerstoneTools.brush.activate(element, 1);     
   });
 
