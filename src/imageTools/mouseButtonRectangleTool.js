@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import toolCoordinates from '../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import handleActivator from '../manipulators/handleActivator.js';
@@ -81,11 +81,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
         // Handle activation status changed, redraw the image
     if (imageNeedsUpdate === true) {
-      cornerstone.updateImage(eventData.element);
+      getCornerstone().updateImage(eventData.element);
     }
   }
 
   function mouseDownCallback (e, eventData) {
+    const cornerstone = getCornerstone();
     let data;
 
     function handleDoneMove () {
@@ -155,7 +156,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
     $(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible but not interactive
@@ -167,7 +168,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
     $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible, interactive and can create
@@ -186,7 +187,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
     $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
     $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible, interactive
@@ -204,7 +205,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
     $(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
     $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
   const toolInterface = {

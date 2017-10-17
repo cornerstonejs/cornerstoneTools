@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 
 export default function (onImageRendered) {
   let configuration = {};
@@ -10,7 +10,7 @@ export default function (onImageRendered) {
     enable (element) {
       $(element).off('CornerstoneImageRendered', onImageRendered);
       $(element).on('CornerstoneImageRendered', onImageRendered);
-      cornerstone.updateImage(element);
+      getCornerstone().updateImage(element);
     },
     getConfiguration () {
       return configuration;

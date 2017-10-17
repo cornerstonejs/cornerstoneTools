@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -17,6 +17,7 @@ function chooseLocation (e, eventData) {
   }
 
     // Get current element target information
+  const cornerstone = getCornerstone();
   const sourceElement = e.currentTarget;
   const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   const sourceImageId = sourceEnabledElement.image.imageId;

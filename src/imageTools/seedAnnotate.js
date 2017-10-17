@@ -1,5 +1,5 @@
 /* eslint no-alert:0 */
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, getCornerstone, cornerstoneMath } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -40,6 +40,7 @@ const configuration = {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement (mouseEventData) {
+  const cornerstone = getCornerstone();
   const element = mouseEventData.element;
   const config = seedAnnotate.getConfiguration();
   const measurementData = createNewMeasurement(mouseEventData);
@@ -106,7 +107,7 @@ function pointNearTool (element, data, coords) {
     return;
   }
 
-  const realCoords = cornerstone.pixelToCanvas(element, data.handles.end);
+  const realCoords = getCornerstone().pixelToCanvas(element, data.handles.end);
   const distanceToPoint = cornerstoneMath.point.distance(realCoords, coords);
 
 
@@ -122,6 +123,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = getCornerstone();
   const enabledElement = eventData.enabledElement;
 
     // We have tool data for this element - iterate over each one and draw it
@@ -266,6 +268,7 @@ function onImageRendered (e, eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurementTouch (touchEventData) {
+  const cornerstone = getCornerstone();
   const element = touchEventData.element;
   const config = seedAnnotate.getConfiguration();
   const measurementData = createNewMeasurement(touchEventData);
@@ -300,6 +303,7 @@ function addNewMeasurementTouch (touchEventData) {
 }
 
 function doubleClickCallback (e, eventData) {
+  const cornerstone = getCornerstone();
   const element = eventData.element;
   let data;
 
@@ -348,6 +352,7 @@ function doubleClickCallback (e, eventData) {
 }
 
 function pressCallback (e, eventData) {
+  const cornerstone = getCornerstone();
   const element = eventData.element;
   let data;
 

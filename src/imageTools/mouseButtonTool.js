@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import toolCoordinates from '../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import handleActivator from '../manipulators/handleActivator.js';
@@ -14,6 +14,7 @@ export default function (mouseToolInterface) {
 
     // /////// BEGIN ACTIVE TOOL ///////
   function addNewMeasurement (mouseEventData) {
+    const cornerstone = getCornerstone();
     const element = mouseEventData.element;
 
     const measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
@@ -129,7 +130,7 @@ export default function (mouseToolInterface) {
 
         // Handle activation status changed, redraw the image
     if (imageNeedsUpdate === true) {
-      cornerstone.updateImage(eventData.element);
+      getCornerstone().updateImage(eventData.element);
     }
   }
 
@@ -144,7 +145,7 @@ export default function (mouseToolInterface) {
         removeToolState(element, mouseToolInterface.toolType, data);
       }
 
-      cornerstone.updateImage(element);
+      getCornerstone().updateImage(element);
       $(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     }
 
@@ -223,7 +224,7 @@ export default function (mouseToolInterface) {
       $(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible but not interactive
@@ -239,7 +240,7 @@ export default function (mouseToolInterface) {
 
     $(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible, interactive and can create
@@ -263,7 +264,7 @@ export default function (mouseToolInterface) {
       $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
     // Visible, interactive
@@ -297,7 +298,7 @@ export default function (mouseToolInterface) {
       $(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    cornerstone.updateImage(element);
+    getCornerstone().updateImage(element);
   }
 
   function getConfiguration () {

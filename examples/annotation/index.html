@@ -118,12 +118,14 @@ is used by our example image loader-->
 <script src="../dialogPolyfill.js"></script>
 
 <script>
+    cornerstoneTools.storeCornerstone(cornerstone);
+
     // Register the dialogs using the HTML5 Dialog Polyfill
     var annotationDialog = document.querySelector('.annotationDialog');
     var relabelDialog = document.querySelector('.relabelDialog');
     dialogPolyfill.registerDialog(annotationDialog);
     dialogPolyfill.registerDialog(relabelDialog);
-    
+
     var element = $('#dicomImage').get(0);
 
     var imageId = 'example://1';

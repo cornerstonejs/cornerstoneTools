@@ -1,9 +1,10 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 
 export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const element = touchEventData.element;
+  const cornerstone = getCornerstone();
 
   function touchDragCallback (e, eventData) {
     data.active = true;

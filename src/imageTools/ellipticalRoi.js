@@ -1,4 +1,4 @@
-import { cornerstone, cornerstoneMath } from '../externalModules.js';
+import { getCornerstone, cornerstoneMath } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
@@ -50,6 +50,7 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearEllipse (element, data, coords, distance) {
+  const cornerstone = getCornerstone();
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -102,6 +103,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = getCornerstone();
   const image = eventData.image;
   const element = eventData.element;
   const lineWidth = toolStyle.getToolWidth();

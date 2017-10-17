@@ -1,9 +1,10 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 
 let mouseX;
 let mouseY;
 
 function keyPress (e) {
+  const cornerstone = getCornerstone();
   const element = e.currentTarget;
 
   const keyPressData = {

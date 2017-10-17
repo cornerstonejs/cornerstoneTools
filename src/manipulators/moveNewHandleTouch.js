@@ -1,7 +1,8 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
     // Console.log('moveNewHandleTouch');
+  const cornerstone = getCornerstone();
   const element = eventData.element;
   const imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
   const distanceFromTouch = {

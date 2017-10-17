@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { getCornerstone } from '../externalModules.js';
 import multiTouchDragTool from './multiTouchDragTool.js';
 
 function touchPanCallback (e, eventData) {
@@ -7,7 +7,7 @@ function touchPanCallback (e, eventData) {
   if (config && config.testPointers(eventData)) {
     eventData.viewport.translation.x += (eventData.deltaPoints.page.x / eventData.viewport.scale);
     eventData.viewport.translation.y += (eventData.deltaPoints.page.y / eventData.viewport.scale);
-    cornerstone.setViewport(eventData.element, eventData.viewport);
+    getCornerstone().setViewport(eventData.element, eventData.viewport);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }

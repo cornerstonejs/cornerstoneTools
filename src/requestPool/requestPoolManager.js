@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { getCornerstone } from '../externalModules.js';
 import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
 const requestPool = {
@@ -41,7 +41,7 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   };
 
       // If this imageId is in the cache, resolve it immediately
-  const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+  const imagePromise = getCornerstone().imageCache.getImagePromise(imageId);
 
   if (imagePromise) {
     imagePromise.then(function (image) {
@@ -77,6 +77,7 @@ function startAgain () {
 }
 
 function sendRequest (requestDetails) {
+  const cornerstone = getCornerstone();
       // Increment the number of current requests of this type
   const type = requestDetails.type;
 

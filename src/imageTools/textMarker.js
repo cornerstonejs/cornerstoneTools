@@ -1,4 +1,4 @@
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, getCornerstone, cornerstoneMath } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
@@ -127,7 +127,7 @@ function onImageRendered (e, eventData) {
 
     data.textWidth = measureText.width + 10;
 
-    const textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    const textCoords = getCornerstone().pixelToCanvas(eventData.element, data.handles.end);
 
     const options = {
       centering: {
@@ -145,6 +145,7 @@ function onImageRendered (e, eventData) {
 }
 
 function doubleClickCallback (e, eventData) {
+  const cornerstone = getCornerstone();
   const element = eventData.element;
   let data;
 
@@ -205,6 +206,7 @@ function doubleClickCallback (e, eventData) {
 }
 
 function touchPressCallback (e, eventData) {
+  const cornerstone = getCornerstone();
   const element = eventData.element;
   let data;
 

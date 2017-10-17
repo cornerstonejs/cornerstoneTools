@@ -75,8 +75,11 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
+    cornerstoneTools.storeCornerstone(cornerstone);
+    metaDataProvider(cornerstoneTools);
+
     var container = $('#dicomImage');
-    
+
     var element = container.get(0);
     var imageId = 'example://1';
 

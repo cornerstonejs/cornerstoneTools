@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import mouseWheelTool from './mouseWheelTool.js';
@@ -65,6 +65,7 @@ function correctShift (shift, viewport) {
 }
 
 function defaultStrategy (eventData, ticks) {
+  const cornerstone = getCornerstone();
   const element = eventData.element;
 
     // Calculate the new scale factor based on how far the mouse has changed
@@ -187,7 +188,7 @@ function translateStrategy (eventData, ticks) {
   viewport.translation.y -= shift.y;
 
     // Update the Viewport with the new translation value
-  cornerstone.setViewport(element, viewport);
+  getCornerstone().setViewport(element, viewport);
 }
 
 function zoomToCenterStrategy (eventData, ticks) {
@@ -196,7 +197,7 @@ function zoomToCenterStrategy (eventData, ticks) {
     // Calculate the new scale factor based on how far the mouse has changed
   const viewport = changeViewportScale(eventData.viewport, ticks);
 
-  cornerstone.setViewport(element, viewport);
+  getCornerstone().setViewport(element, viewport);
 }
 
 function mouseUpCallback (e, eventData) {
@@ -240,10 +241,11 @@ function mouseWheelCallback (e, eventData) {
 
   const viewport = changeViewportScale(eventData.viewport, ticks);
 
-  cornerstone.setViewport(eventData.element, viewport);
+  getCornerstone().setViewport(eventData.element, viewport);
 }
 
 function touchPinchCallback (e, eventData) {
+  const cornerstone = getCornerstone();
   const config = zoom.getConfiguration();
   const viewport = eventData.viewport;
   const element = eventData.element;

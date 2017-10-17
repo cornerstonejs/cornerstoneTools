@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { getCornerstone } from '../externalModules.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
@@ -9,6 +9,7 @@ import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.j
 const toolType = 'probe4D';
 
 function updateLineSample (measurementData) {
+  const cornerstone = getCornerstone();
   const samples = [];
 
   measurementData.timeSeries.stacks.forEach(function (stack) {
@@ -76,7 +77,7 @@ function onImageRendered (e, eventData) {
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 
-  cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+  getCornerstone().setToPixelCoordinateSystem(eventData.enabledElement, context);
   const color = 'white';
 
   for (let i = 0; i < toolData.data.length; i++) {

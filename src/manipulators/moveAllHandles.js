@@ -1,8 +1,9 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 
 export default function (mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
+  const cornerstone = getCornerstone();
   const element = mouseEventData.element;
 
   function mouseDragCallback (e, eventData) {

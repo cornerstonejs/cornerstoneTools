@@ -1,4 +1,4 @@
-(function (cornerstoneTools) {
+function metaDataProvider(cornerstoneTools) {
 
     "use strict";
 
@@ -52,6 +52,6 @@
         return undefined;
     }
 
-    cornerstoneTools.metaData.addProvider(metaDataProvider);
+    cornerstoneTools.getCornerstone().metaData.addProvider(metaDataProvider);
 
-}(cornerstoneTools));
+};

@@ -1,4 +1,4 @@
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, getCornerstone, cornerstoneMath } from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
@@ -59,7 +59,7 @@ function addPoint (eventData) {
   config.freehand = false;
 
     // Force onImageRendered to fire
-  cornerstone.updateImage(eventData.element);
+  getCornerstone().updateImage(eventData.element);
 }
 
 function pointNearHandle (eventData, toolIndex) {
@@ -78,7 +78,7 @@ function pointNearHandle (eventData, toolIndex) {
   const mousePoint = eventData.currentPoints.canvas;
 
   for (let i = 0; i < data.handles.length; i++) {
-    const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
+    const handleCanvas = getCornerstone().pixelToCanvas(eventData.element, data.handles[i]);
 
     if (cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
       return i;
@@ -131,7 +131,7 @@ function mouseUpCallback (e, eventData) {
     config.freehand = false;
   }
 
-  cornerstone.updateImage(eventData.element);
+  getCornerstone().updateImage(eventData.element);
 }
 
 function mouseMoveCallback (e, eventData) {
@@ -188,7 +188,7 @@ function mouseMoveCallback (e, eventData) {
   }
 
     // Force onImageRendered
-  cornerstone.updateImage(eventData.element);
+  getCornerstone().updateImage(eventData.element);
 }
 
 function startDrawing (eventData) {
@@ -246,7 +246,7 @@ function endDrawing (eventData, handleNearby) {
 
   $(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  cornerstone.updateImage(eventData.element);
+  getCornerstone().updateImage(eventData.element);
 }
 
 function mouseDownCallback (e, eventData) {
@@ -308,6 +308,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = getCornerstone();
   const config = freehand.getConfiguration();
 
     // We have tool data for this element - iterate over each one and draw it
@@ -387,7 +388,7 @@ function enable (element) {
   $(element).off('CornerstoneImageRendered', onImageRendered);
 
   $(element).on('CornerstoneImageRendered', onImageRendered);
-  cornerstone.updateImage(element);
+  getCornerstone().updateImage(element);
 }
 
 // Disables the reference line tool for the given element
@@ -396,7 +397,7 @@ function disable (element) {
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   $(element).off('CornerstoneImageRendered', onImageRendered);
-  cornerstone.updateImage(element);
+  getCornerstone().updateImage(element);
 }
 
 // Visible and interactive
@@ -413,7 +414,7 @@ function activate (element, mouseButtonMask) {
   $(element).on('CornerstoneImageRendered', onImageRendered);
   $(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-  cornerstone.updateImage(element);
+  getCornerstone().updateImage(element);
 }
 
 // Visible, but not interactive
@@ -425,7 +426,7 @@ function deactivate (element) {
 
   $(element).on('CornerstoneImageRendered', onImageRendered);
 
-  cornerstone.updateImage(element);
+  getCornerstone().updateImage(element);
 }
 
 function getConfiguration () {

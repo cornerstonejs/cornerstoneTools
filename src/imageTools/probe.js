@@ -1,4 +1,4 @@
-import { cornerstone, cornerstoneMath } from '../externalModules.js';
+import { getCornerstone, cornerstoneMath } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -34,7 +34,7 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
-  const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+  const endCanvas = getCornerstone().pixelToCanvas(element, data.handles.end);
 
 
   return cornerstoneMath.point.distance(endCanvas, coords) < 5;
@@ -48,6 +48,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = getCornerstone();
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 

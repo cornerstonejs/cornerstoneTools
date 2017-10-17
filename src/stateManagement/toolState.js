@@ -1,8 +1,8 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 
 function getElementToolStateManager (element) {
-  const enabledImage = cornerstone.getEnabledElement(element);
+  const enabledImage = getCornerstone().getEnabledElement(element);
     // If the enabledImage has no toolStateManager, create a default one for it
     // NOTE: This makes state management element specific
 
@@ -77,7 +77,7 @@ function clearToolState (element, toolType) {
 
 // Sets the tool state manager for an element
 function setElementToolStateManager (element, toolStateManager) {
-  const enabledImage = cornerstone.getEnabledElement(element);
+  const enabledImage = getCornerstone().getEnabledElement(element);
 
   enabledImage.toolStateManager = toolStateManager;
 }

@@ -1,5 +1,5 @@
 /* eslint no-bitwise:0 */
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 
@@ -110,6 +110,7 @@ function playClip (element, framesPerSecond) {
     return;
   }
 
+  const cornerstone = getCornerstone();
   // If we have more than one stack, check if we have a stack renderer defined
   let stackRenderer;
 

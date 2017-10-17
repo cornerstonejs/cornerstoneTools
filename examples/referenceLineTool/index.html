@@ -71,6 +71,9 @@ is used by our example image loader-->
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
+    cornerstoneTools.storeCornerstone(cornerstone);
+    metaDataProvider(cornerstoneTools);
+
     var axialElement = $('#axial').get(0);
     var coronalElement = $('#coronal').get(0);
 

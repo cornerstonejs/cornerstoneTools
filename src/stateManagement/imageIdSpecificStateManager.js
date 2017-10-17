@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { getCornerstone } from '../externalModules.js';
 
 // This implements an imageId specific tool state management strategy.  This means that
 // Measurements data is tied to a specific imageId and only visible for enabled elements
@@ -29,7 +29,7 @@ function newImageIdSpecificToolStateManager () {
     // Here we add tool state, this is done by tools as well
     // As modules that restore saved state
   function addImageIdSpecificToolState (element, toolType, data) {
-    const enabledImage = cornerstone.getEnabledElement(element);
+    const enabledImage = getCornerstone().getEnabledElement(element);
         // If we don't have any tool state for this imageId, add an empty object
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
@@ -54,7 +54,7 @@ function newImageIdSpecificToolStateManager () {
     // Here you can get state - used by tools as well as modules
     // That save state persistently
   function getImageIdSpecificToolState (element, toolType) {
-    const enabledImage = cornerstone.getEnabledElement(element);
+    const enabledImage = getCornerstone().getEnabledElement(element);
         // If we don't have any tool state for this imageId, return undefined
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
@@ -76,7 +76,7 @@ function newImageIdSpecificToolStateManager () {
 
     // Clears all tool data from this toolStateManager.
   function clearImageIdSpecificToolStateManager (element) {
-    const enabledImage = cornerstone.getEnabledElement(element);
+    const enabledImage = getCornerstone().getEnabledElement(element);
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
       return;

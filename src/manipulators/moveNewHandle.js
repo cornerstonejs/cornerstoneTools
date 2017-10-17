@@ -1,6 +1,7 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+  const cornerstone = getCornerstone();
   const element = mouseEventData.element;
 
   function moveCallback (e, eventData) {

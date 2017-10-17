@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { getCornerstone } from '../externalModules.js';
 
 // This function synchronizes the target zoom and pan to match the source
 export default function (synchronizer, sourceElement, targetElement) {
@@ -7,6 +7,8 @@ export default function (synchronizer, sourceElement, targetElement) {
   if (targetElement === sourceElement) {
     return;
   }
+
+  const cornerstone = getCornerstone();
     // Get the source and target viewports
   const sourceViewport = cornerstone.getViewport(sourceElement);
   const targetViewport = cornerstone.getViewport(targetElement);

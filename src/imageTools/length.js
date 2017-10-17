@@ -1,4 +1,4 @@
-import { cornerstone, cornerstoneMath } from '../externalModules.js';
+import { getCornerstone, cornerstoneMath } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -44,6 +44,7 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = getCornerstone();
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -63,6 +64,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = getCornerstone();
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
   const { image, element } = eventData;

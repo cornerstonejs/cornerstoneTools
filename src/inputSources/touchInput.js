@@ -1,4 +1,4 @@
-import { $, Hammer, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, Hammer, getCornerstone, cornerstoneMath } from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
@@ -22,6 +22,7 @@ const pressDelay = 700,
   pressMaxDistance = 5;
 
 function onTouch (e) {
+  const cornerstone = getCornerstone();
   const element = e.currentTarget || e.srcEvent.currentTarget;
   let event,
     eventType,

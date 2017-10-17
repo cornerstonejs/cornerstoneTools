@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, getCornerstone } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -27,17 +27,17 @@ function defaultStrategy (eventData) {
   const rotation = -1 * rotationDegrees + 90;
 
   eventData.viewport.rotation = rotation;
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  getCornerstone().setViewport(eventData.element, eventData.viewport);
 }
 
 function horizontalStrategy (eventData) {
   eventData.viewport.rotation += (eventData.deltaPoints.page.x / eventData.viewport.scale);
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  getCornerstone().setViewport(eventData.element, eventData.viewport);
 }
 
 function verticalStrategy (eventData) {
   eventData.viewport.rotation += (eventData.deltaPoints.page.y / eventData.viewport.scale);
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  getCornerstone().setViewport(eventData.element, eventData.viewport);
 }
 
 // --- Mouse event callbacks --- //
@@ -59,7 +59,7 @@ function mouseDownCallback (e, eventData) {
 
 function dragCallback (e, eventData) {
   rotate.strategy(eventData);
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  getCornerstone().setViewport(eventData.element, eventData.viewport);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
