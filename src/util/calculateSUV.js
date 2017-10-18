@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 // Returns a decimal value given a fractional value
 function fracToDec (fractionalValue) {
@@ -6,7 +6,7 @@ function fracToDec (fractionalValue) {
 }
 
 export default function (image, storedPixelValue) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
 

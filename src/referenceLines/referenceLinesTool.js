@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
@@ -21,7 +21,7 @@ function onImageRendered (e, eventData) {
     // Create the canvas context and reset it to the pixel coordinate system
   const context = eventData.canvasContext.canvas.getContext('2d');
 
-  getCornerstone().setToPixelCoordinateSystem(eventData.enabledElement, context);
+  external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
     // Iterate over each referenced element
   $.each(enabledElements, function (index, referenceEnabledElement) {
@@ -46,13 +46,13 @@ function enable (element, synchronizationContext, renderer) {
     renderer
   });
   $(element).on('CornerstoneImageRendered', onImageRendered);
-  getCornerstone().updateImage(element);
+  external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
   $(element).off('CornerstoneImageRendered', onImageRendered);
-  getCornerstone().updateImage(element);
+  external.cornerstone.updateImage(element);
 }
 
 // Module/private exports

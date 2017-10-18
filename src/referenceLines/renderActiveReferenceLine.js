@@ -1,11 +1,11 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
 // Renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const targetImage = cornerstone.getEnabledElement(targetElement).image;
   const referenceImage = cornerstone.getEnabledElement(referenceElement).image;
 

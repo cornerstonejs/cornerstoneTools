@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from '../manipulators/touchMoveHandle.js';
@@ -35,7 +35,7 @@ function touchTool (touchToolInterface) {
     // /////// BEGIN ACTIVE TOOL ///////
   function addNewMeasurement (touchEventData) {
         // Console.log('touchTool addNewMeasurement');
-    const cornerstone = getCornerstone();
+    const cornerstone = external.cornerstone;
     const element = touchEventData.element;
 
     const measurementData = touchToolInterface.createNewMeasurement(touchEventData);
@@ -96,7 +96,7 @@ function touchTool (touchToolInterface) {
     // /////// BEGIN INACTIVE TOOL ///////
   function tapCallback (e, eventData) {
         // Console.log('touchTool tapCallback');
-    const cornerstone = getCornerstone();
+    const cornerstone = external.cornerstone;
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
     const toolData = getToolState(e.currentTarget, touchToolInterface.toolType);
@@ -170,7 +170,7 @@ function touchTool (touchToolInterface) {
 
   function touchStartCallback (e, eventData) {
         // Console.log('touchTool touchStartCallback');
-    const cornerstone = getCornerstone();
+    const cornerstone = external.cornerstone;
     const element = eventData.element;
     const coords = eventData.startPoints.canvas;
     let data;
@@ -270,7 +270,7 @@ function touchTool (touchToolInterface) {
       $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    getCornerstone().updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 
     // Visible but not interactive
@@ -290,7 +290,7 @@ function touchTool (touchToolInterface) {
       $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    getCornerstone().updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 
     // Visible, interactive and can create
@@ -317,7 +317,7 @@ function touchTool (touchToolInterface) {
       $(element).on('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    getCornerstone().updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 
     // Visible, interactive
@@ -349,7 +349,7 @@ function touchTool (touchToolInterface) {
       $(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    getCornerstone().updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 
   const toolInterface = {

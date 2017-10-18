@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
@@ -9,7 +9,7 @@ export default function (element, timePoints, wrap) {
     return;
   }
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const timeSeriesData = toolData.data[0];
   const currentStack = timeSeriesData.stacks[timeSeriesData.currentStackIndex];
   const currentImageIdIndex = currentStack.currentImageIdIndex;

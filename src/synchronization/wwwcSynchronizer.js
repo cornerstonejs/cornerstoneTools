@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 // This function synchronizes the target element ww/wc to match the source element
 export default function (synchronizer, sourceElement, targetElement) {
@@ -8,7 +8,7 @@ export default function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
     // Get the source and target viewports
   const sourceViewport = cornerstone.getViewport(sourceElement);
   const targetViewport = cornerstone.getViewport(targetElement);

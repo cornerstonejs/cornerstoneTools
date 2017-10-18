@@ -56,7 +56,7 @@ is used by our example image loader-->
 <script src="../petctMetaDataProvider.js"></script>
 
 <script>
-  cornerstoneTools.storeCornerstone(cornerstone);
+  cornerstoneTools.external.cornerstone = cornerstone;
   var element = document.getElementById('dicomImage');
   cornerstone.enable(element);
 

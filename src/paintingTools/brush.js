@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -27,7 +27,7 @@ function createNewMeasurement (imageData) {
 
 function defaultStrategy (eventData) {
   const configuration = brush.getConfiguration();
-  const enabledElement = getCornerstone().getEnabledElement(eventData.element);
+  const enabledElement = external.cornerstone.getEnabledElement(eventData.element);
   const context = enabledElement.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -67,17 +67,17 @@ function clearCircle (context, coords, radius) {
 }
 
 function newImageCallback (event) {
-  getCornerstone().updateImage(event.currentTarget, true);
+  external.cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback (e, eventData) {
   lastCanvasCoords = eventData.currentPoints.canvas;
-  getCornerstone().updateImage(eventData.element);
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseUpCallback (e, eventData) {
   lastCanvasCoords = eventData.currentPoints.canvas;
-  getCornerstone().updateImage(eventData.element, true);
+  external.cornerstone.updateImage(eventData.element, true);
 
   $(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
   $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
@@ -107,7 +107,7 @@ function mouseDownActivateCallback (e, eventData) {
 
 function onImageRendered (e, eventData) {
   const configuration = brush.getConfiguration();
-  const enabledElement = getCornerstone().getEnabledElement(eventData.element);
+  const enabledElement = external.cornerstone.getEnabledElement(eventData.element);
   const context = enabledElement.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -164,7 +164,7 @@ function activate (element, mouseButtonMask) {
   $(element).off('CornerstoneImageRendered', onImageRendered);
   $(element).on('CornerstoneImageRendered', onImageRendered);
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const eventData = {
     mouseButtonMask
   };

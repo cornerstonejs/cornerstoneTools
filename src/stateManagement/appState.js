@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import { getElementToolStateManager } from './toolState.js';
 
@@ -20,7 +20,7 @@ function saveApplicationState (elements) {
 
     appState.elementToolState[element.id] = toolStateManager.saveToolState();
 
-    appState.elementViewport[element.id] = getCornerstone().getViewport(element);
+    appState.elementViewport[element.id] = external.cornerstone.getViewport(element);
   });
 
   return appState;
@@ -33,7 +33,7 @@ function restoreApplicationState (appState) {
     return;
   }
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
 
     // Restore all the imageId specific tool data
   globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);

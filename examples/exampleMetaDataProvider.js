@@ -52,6 +52,6 @@ function metaDataProvider(cornerstoneTools) {
         return undefined;
     }
 
-    cornerstoneTools.getCornerstone().metaData.addProvider(metaDataProvider);
+    cornerstoneTools.external.cornerstone.metaData.addProvider(metaDataProvider);
 
 };

@@ -4,12 +4,13 @@ import * as cornerstoneMath from 'cornerstone-math';
 
 let cornerstone;
 
-function storeCornerstone (cs) {
-  cornerstone = cs;
-}
+const external = {
+  set cornerstone (cs) {
+    cornerstone = cs;
+  },
+  get cornerstone () {
+    return cornerstone;
+  }
+};
 
-function getCornerstone () {
-  return cornerstone;
-}
-
-export { $, Hammer, storeCornerstone, getCornerstone, cornerstoneMath };
+export { $, Hammer, cornerstoneMath, external };

@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.1 - 2017-10-17 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.1 - 2017-10-18 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"), require("hammerjs"), require("jquery"));
@@ -87,7 +87,7 @@ return /******/ (function(modules) { // webpackBootstrap
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.cornerstoneMath = exports.getCornerstone = exports.storeCornerstone = exports.Hammer = exports.$ = undefined;
+exports.external = exports.cornerstoneMath = exports.Hammer = exports.$ = undefined;
 
 var _jquery = __webpack_require__(116);
 
@@ -107,19 +107,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var cornerstone = void 0;
 
-function storeCornerstone(cs) {
-  cornerstone = cs;
-}
-
-function getCornerstone() {
-  return cornerstone;
-}
+var external = {
+  set cornerstone(cs) {
+    cornerstone = cs;
+  },
+  get cornerstone() {
+    return cornerstone;
+  }
+};
 
 exports.$ = _jquery2.default;
 exports.Hammer = _hammerjs2.default;
-exports.storeCornerstone = storeCornerstone;
-exports.getCornerstone = getCornerstone;
 exports.cornerstoneMath = cornerstoneMath;
+exports.external = external;
 
 /***/ }),
 /* 1 */
@@ -138,7 +138,7 @@ var _externalModules = __webpack_require__(0);
 var _imageIdSpecificStateManager = __webpack_require__(15);
 
 function getElementToolStateManager(element) {
-  var enabledImage = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+  var enabledImage = _externalModules.external.cornerstone.getEnabledElement(element);
   // If the enabledImage has no toolStateManager, create a default one for it
   // NOTE: This makes state management element specific
 
@@ -212,7 +212,7 @@ function clearToolState(element, toolType) {
 
 // Sets the tool state manager for an element
 function setElementToolStateManager(element, toolStateManager) {
-  var enabledImage = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+  var enabledImage = _externalModules.external.cornerstone.getEnabledElement(element);
 
   enabledImage.toolStateManager = toolStateManager;
 }
@@ -439,7 +439,7 @@ exports.default = function (mouseToolInterface) {
 
   // /////// BEGIN ACTIVE TOOL ///////
   function addNewMeasurement(mouseEventData) {
-    var cornerstone = (0, _externalModules.getCornerstone)();
+    var cornerstone = _externalModules.external.cornerstone;
     var element = mouseEventData.element;
 
     var measurementData = mouseToolInterface.createNewMeasurement(mouseEventData);
@@ -555,7 +555,7 @@ exports.default = function (mouseToolInterface) {
 
     // Handle activation status changed, redraw the image
     if (imageNeedsUpdate === true) {
-      (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+      _externalModules.external.cornerstone.updateImage(eventData.element);
     }
   }
 
@@ -570,7 +570,7 @@ exports.default = function (mouseToolInterface) {
         (0, _toolState.removeToolState)(element, mouseToolInterface.toolType, data);
       }
 
-      (0, _externalModules.getCornerstone)().updateImage(element);
+      _externalModules.external.cornerstone.updateImage(element);
       (0, _externalModules.$)(element).on('CornerstoneToolsMouseMove', eventData, mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
     }
 
@@ -649,7 +649,7 @@ exports.default = function (mouseToolInterface) {
       (0, _externalModules.$)(element).off('CornerstoneToolsMouseDoubleClick', mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible but not interactive
@@ -665,7 +665,7 @@ exports.default = function (mouseToolInterface) {
 
     (0, _externalModules.$)(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive and can create
@@ -689,7 +689,7 @@ exports.default = function (mouseToolInterface) {
       (0, _externalModules.$)(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive
@@ -723,7 +723,7 @@ exports.default = function (mouseToolInterface) {
       (0, _externalModules.$)(element).on('CornerstoneToolsMouseDoubleClick', eventData, mouseToolInterface.mouseDoubleClickCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   function getConfiguration() {
@@ -833,7 +833,7 @@ exports.default = function (context, renderData, handles, color, options) {
       context.lineWidth = _toolStyle2.default.getToolWidth();
     }
 
-    var handleCanvasCoords = (0, _externalModules.getCornerstone)().pixelToCanvas(renderData.element, handle);
+    var handleCanvasCoords = _externalModules.external.cornerstone.pixelToCanvas(renderData.element, handle);
 
     context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
@@ -922,7 +922,7 @@ function touchTool(touchToolInterface) {
   // /////// BEGIN ACTIVE TOOL ///////
   function addNewMeasurement(touchEventData) {
     // Console.log('touchTool addNewMeasurement');
-    var cornerstone = (0, _externalModules.getCornerstone)();
+    var cornerstone = _externalModules.external.cornerstone;
     var element = touchEventData.element;
 
     var measurementData = touchToolInterface.createNewMeasurement(touchEventData);
@@ -983,7 +983,7 @@ function touchTool(touchToolInterface) {
   // /////// BEGIN INACTIVE TOOL ///////
   function tapCallback(e, eventData) {
     // Console.log('touchTool tapCallback');
-    var cornerstone = (0, _externalModules.getCornerstone)();
+    var cornerstone = _externalModules.external.cornerstone;
     var element = eventData.element;
     var coords = eventData.currentPoints.canvas;
     var toolData = (0, _toolState.getToolState)(e.currentTarget, touchToolInterface.toolType);
@@ -1057,7 +1057,7 @@ function touchTool(touchToolInterface) {
 
   function touchStartCallback(e, eventData) {
     // Console.log('touchTool touchStartCallback');
-    var cornerstone = (0, _externalModules.getCornerstone)();
+    var cornerstone = _externalModules.external.cornerstone;
     var element = eventData.element;
     var coords = eventData.startPoints.canvas;
     var data = void 0;
@@ -1157,7 +1157,7 @@ function touchTool(touchToolInterface) {
       (0, _externalModules.$)(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible but not interactive
@@ -1177,7 +1177,7 @@ function touchTool(touchToolInterface) {
       (0, _externalModules.$)(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive and can create
@@ -1204,7 +1204,7 @@ function touchTool(touchToolInterface) {
       (0, _externalModules.$)(element).on('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive
@@ -1236,7 +1236,7 @@ function touchTool(touchToolInterface) {
       (0, _externalModules.$)(element).off('CornerstoneToolsTouchPress', touchToolInterface.pressCallback);
     }
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   var toolInterface = {
@@ -1545,7 +1545,7 @@ exports.default = function (element, handles, coords, distanceThreshold) {
         return;
       }
     } else {
-      var handleCanvas = (0, _externalModules.getCornerstone)().pixelToCanvas(element, handle);
+      var handleCanvas = _externalModules.external.cornerstone.pixelToCanvas(element, handle);
       var distance = _externalModules.cornerstoneMath.point.distance(handleCanvas, coords);
 
       if (distance <= distanceThreshold) {
@@ -1610,7 +1610,7 @@ function newImageIdSpecificToolStateManager() {
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
   function addImageIdSpecificToolState(element, toolType, data) {
-    var enabledImage = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+    var enabledImage = _externalModules.external.cornerstone.getEnabledElement(element);
     // If we don't have any tool state for this imageId, add an empty object
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
@@ -1635,7 +1635,7 @@ function newImageIdSpecificToolStateManager() {
   // Here you can get state - used by tools as well as modules
   // That save state persistently
   function getImageIdSpecificToolState(element, toolType) {
-    var enabledImage = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+    var enabledImage = _externalModules.external.cornerstone.getEnabledElement(element);
     // If we don't have any tool state for this imageId, return undefined
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
@@ -1656,7 +1656,7 @@ function newImageIdSpecificToolStateManager() {
 
   // Clears all tool data from this toolStateManager.
   function clearImageIdSpecificToolStateManager(element) {
-    var enabledImage = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+    var enabledImage = _externalModules.external.cornerstone.getEnabledElement(element);
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
       return;
@@ -1696,7 +1696,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (image, storedPixelValue) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
   var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
 
@@ -1793,7 +1793,7 @@ exports.default = function (onImageRendered) {
     enable: function enable(element) {
       (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
       (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
-      (0, _externalModules.getCornerstone)().updateImage(element);
+      _externalModules.external.cornerstone.updateImage(element);
     },
     getConfiguration: function getConfiguration() {
       return configuration;
@@ -1855,7 +1855,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = mouseEventData.element;
   var distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
@@ -1923,7 +1923,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = mouseEventData.element;
 
   function moveCallback(e, eventData) {
@@ -2021,7 +2021,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   // Console.log('moveNewHandleTouch');
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
   var distanceFromTouch = {
@@ -2376,7 +2376,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = mouseEventData.element;
 
   function mouseDragCallback(e, eventData) {
@@ -2507,7 +2507,7 @@ function addRequest(element, imageId, type, preventCache, doneCallback, failCall
   };
 
   // If this imageId is in the cache, resolve it immediately
-  var imagePromise = (0, _externalModules.getCornerstone)().imageCache.getImagePromise(imageId);
+  var imagePromise = _externalModules.external.cornerstone.imageCache.getImagePromise(imageId);
 
   if (imagePromise) {
     imagePromise.then(function (image) {
@@ -2543,7 +2543,7 @@ function startAgain() {
 }
 
 function sendRequest(requestDetails) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Increment the number of current requests of this type
   var type = requestDetails.type;
 
@@ -2714,7 +2714,7 @@ exports.default = function (element, timePoints, wrap) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var timeSeriesData = toolData.data[0];
   var currentStack = timeSeriesData.stacks[timeSeriesData.currentStackIndex];
   var currentImageIdIndex = currentStack.currentImageIdIndex;
@@ -2828,7 +2828,7 @@ exports.default = function (element, x, y, width, height) {
 
   x = Math.round(x);
   y = Math.round(y);
-  var enabledElement = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+  var enabledElement = _externalModules.external.cornerstone.getEnabledElement(element);
   var storedPixelData = [];
   var index = 0;
   var pixelData = enabledElement.image.getPixelData();
@@ -3279,12 +3279,12 @@ exports.default = function (mouseToolInterface, preventHandleOutsideImage) {
 
     // Handle activation status changed, redraw the image
     if (imageNeedsUpdate === true) {
-      (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+      _externalModules.external.cornerstone.updateImage(eventData.element);
     }
   }
 
   function mouseDownCallback(e, eventData) {
-    var cornerstone = (0, _externalModules.getCornerstone)();
+    var cornerstone = _externalModules.external.cornerstone;
     var data = void 0;
 
     function handleDoneMove() {
@@ -3354,7 +3354,7 @@ exports.default = function (mouseToolInterface, preventHandleOutsideImage) {
     (0, _externalModules.$)(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     (0, _externalModules.$)(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible but not interactive
@@ -3366,7 +3366,7 @@ exports.default = function (mouseToolInterface, preventHandleOutsideImage) {
 
     (0, _externalModules.$)(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive and can create
@@ -3385,7 +3385,7 @@ exports.default = function (mouseToolInterface, preventHandleOutsideImage) {
     (0, _externalModules.$)(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
     (0, _externalModules.$)(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   // Visible, interactive
@@ -3403,7 +3403,7 @@ exports.default = function (mouseToolInterface, preventHandleOutsideImage) {
     (0, _externalModules.$)(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
     (0, _externalModules.$)(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-    (0, _externalModules.getCornerstone)().updateImage(element);
+    _externalModules.external.cornerstone.updateImage(element);
   }
 
   var toolInterface = {
@@ -3585,7 +3585,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   var element = touchEventData.element;
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   function touchDragCallback(e, eventData) {
     data.active = true;
@@ -3674,7 +3674,7 @@ exports.default = function (touchEventData, toolType, data, handle, doneMovingCa
   // Console.log('touchMoveHandle');
   runAnimation.value = true;
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = touchEventData.element;
   var enabledElement = cornerstone.getEnabledElement(element);
 
@@ -3770,7 +3770,7 @@ function animate(lastTime, handle, runAnimation, enabledElement, targetLocation)
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Update
   var time = new Date().getTime();
   // Var timeDiff = time - lastTime;
@@ -4156,7 +4156,7 @@ exports.default = function (element, x, y, width, height) {
 
   x = Math.round(x);
   y = Math.round(y);
-  var enabledElement = (0, _externalModules.getCornerstone)().getEnabledElement(element);
+  var enabledElement = _externalModules.external.cornerstone.getEnabledElement(element);
   var image = enabledElement.image;
   var luminance = [];
   var index = 0;
@@ -4208,7 +4208,7 @@ exports.default = function (element, newImageIdIndex) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // If we have more than one stack, check if we have a stack renderer defined
   var stackRenderer = void 0;
 
@@ -4341,7 +4341,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (enabledElement, context, fontSize) {
   var fontScale = 0.1;
 
-  (0, _externalModules.getCornerstone)().setToPixelCoordinateSystem(enabledElement, context, fontScale);
+  _externalModules.external.cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
   // Return the font size to use
   var scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
   // TODO: actually calculate this?
@@ -4394,7 +4394,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (context, eventData, targetElement, referenceElement) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var targetImage = cornerstone.getEnabledElement(targetElement).image;
   var referenceImage = cornerstone.getEnabledElement(referenceElement).image;
 
@@ -4559,7 +4559,7 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   var lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
@@ -4600,7 +4600,7 @@ function onImageRendered(e, eventData) {
   var lineWidth = _toolStyle2.default.getToolWidth();
   var font = _textStyle2.default.getFont();
   var config = angle.getConfiguration();
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   for (var i = 0; i < toolData.data.length; i++) {
     context.save();
@@ -4784,7 +4784,7 @@ var configuration = {
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement(mouseEventData) {
   var measurementData = createNewMeasurement(mouseEventData);
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   var eventData = {
     mouseButtonMask: mouseEventData.which
@@ -4867,7 +4867,8 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
+
   var lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -4888,7 +4889,7 @@ function onImageRendered(e, eventData) {
   }
 
   var enabledElement = eventData.enabledElement;
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   // We have tool data for this element - iterate over each one and draw it
   var context = eventData.canvasContext.canvas.getContext('2d');
@@ -5041,7 +5042,7 @@ function onImageRendered(e, eventData) {
 function addNewMeasurementTouch(touchEventData) {
   var element = touchEventData.element;
   var measurementData = createNewMeasurement(touchEventData);
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   function doneChangingTextCallback(text) {
     if (text === null) {
@@ -5082,7 +5083,7 @@ function addNewMeasurementTouch(touchEventData) {
 
 function doubleClickCallback(e, eventData) {
   var element = eventData.element;
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var data = void 0;
 
   function doneChangingTextCallback(data, updatedText, deleteTool) {
@@ -5127,7 +5128,7 @@ function doubleClickCallback(e, eventData) {
 
 function pressCallback(e, eventData) {
   var element = eventData.element;
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var data = void 0;
 
   function doneChangingTextCallback(data, updatedText, deleteTool) {
@@ -5259,7 +5260,7 @@ function chooseLocation(e, eventData) {
   }
 
   // Get current element target information
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var sourceElement = e.currentTarget;
   var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   var sourceImageId = sourceEnabledElement.image.imageId;
@@ -5468,7 +5469,7 @@ var _doubleTapTool2 = _interopRequireDefault(_doubleTapTool);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function fitToWindowStrategy(eventData) {
-  (0, _externalModules.getCornerstone)().fitToWindow(eventData.element);
+  _externalModules.external.cornerstone.fitToWindow(eventData.element);
 }
 
 function doubleTapCallback(e, eventData) {
@@ -5538,7 +5539,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var dragEventData = void 0;
 
 function defaultStrategy(eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = cornerstone.getEnabledElement(eventData.element);
 
   var context = enabledElement.canvas.getContext('2d');
@@ -5604,7 +5605,7 @@ function defaultStrategy(eventData) {
 }
 
 function minimalStrategy(eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var enabledElement = cornerstone.getEnabledElement(element);
   var image = enabledElement.image;
@@ -5710,7 +5711,7 @@ function mouseUpCallback(e, eventData) {
   (0, _externalModules.$)(element).off('CornerstoneToolsMouseDrag', dragCallback);
   (0, _externalModules.$)(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   (0, _externalModules.$)(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseDownCallback(e, eventData) {
@@ -5741,7 +5742,7 @@ function dragCallback(e, eventData) {
   var element = eventData.element;
 
   dragEventData = eventData;
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
@@ -5861,7 +5862,7 @@ function createNewMeasurement(mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearEllipse(element, data, coords, distance) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -5914,7 +5915,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var image = eventData.image;
   var element = eventData.element;
   var lineWidth = _toolStyle2.default.getToolWidth();
@@ -6311,7 +6312,7 @@ function addPoint(eventData) {
   config.freehand = false;
 
   // Force onImageRendered to fire
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function pointNearHandle(eventData, toolIndex) {
@@ -6330,7 +6331,7 @@ function pointNearHandle(eventData, toolIndex) {
   var mousePoint = eventData.currentPoints.canvas;
 
   for (var i = 0; i < data.handles.length; i++) {
-    var handleCanvas = (0, _externalModules.getCornerstone)().pixelToCanvas(eventData.element, data.handles[i]);
+    var handleCanvas = _externalModules.external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
 
     if (_externalModules.cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
       return i;
@@ -6383,7 +6384,7 @@ function mouseUpCallback(e, eventData) {
     config.freehand = false;
   }
 
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseMoveCallback(e, eventData) {
@@ -6440,7 +6441,7 @@ function mouseMoveCallback(e, eventData) {
   }
 
   // Force onImageRendered
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function startDrawing(eventData) {
@@ -6498,7 +6499,7 @@ function endDrawing(eventData, handleNearby) {
 
   (0, _externalModules.$)(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseDownCallback(e, eventData) {
@@ -6561,7 +6562,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var config = freehand.getConfiguration();
 
   // We have tool data for this element - iterate over each one and draw it
@@ -6641,7 +6642,7 @@ function enable(element) {
   (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
 
   (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
@@ -6650,7 +6651,7 @@ function disable(element) {
   (0, _externalModules.$)(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   (0, _externalModules.$)(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Visible and interactive
@@ -6667,7 +6668,7 @@ function activate(element, mouseButtonMask) {
   (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
   (0, _externalModules.$)(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Visible, but not interactive
@@ -6679,7 +6680,7 @@ function deactivate(element) {
 
   (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
 
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 function getConfiguration() {
@@ -6776,7 +6777,7 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointInsideRect(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -6797,7 +6798,7 @@ function pointInsideRect(element, data, coords) {
 }
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -6823,7 +6824,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // We have tool data for this elemen
   var context = eventData.canvasContext.canvas.getContext('2d');
 
@@ -7033,7 +7034,7 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -7052,7 +7053,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
   var context = eventData.canvasContext.canvas.getContext('2d');
   var image = eventData.image,
@@ -7359,7 +7360,7 @@ function drawMagnificationTool(eventData) {
   var getSize = magnifySize / magnificationLevel;
 
   // Calculate the on-canvas location of the mouse pointer / touch
-  var canvasLocation = (0, _externalModules.getCornerstone)().pixelToCanvas(eventData.element, eventData.currentPoints.image);
+  var canvasLocation = _externalModules.external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
   if (eventData.isTouchEvent === true) {
     canvasLocation.y -= 1.25 * getSize;
@@ -7526,7 +7527,7 @@ var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getOrientationMarkers(element) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = cornerstone.getEnabledElement(element);
   var imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
 
@@ -7549,7 +7550,7 @@ function getOrientationMarkers(element) {
 }
 
 function getOrientationMarkerPositions(element) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = cornerstone.getEnabledElement(element);
   var coords = void 0;
 
@@ -7684,7 +7685,7 @@ function dragCallback(e, eventData) {
 
   eventData.viewport.translation.x += eventData.deltaPoints.page.x / widthScale;
   eventData.viewport.translation.y += eventData.deltaPoints.page.y / heightScale;
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
@@ -7720,7 +7721,7 @@ function touchPanCallback(e, eventData) {
   if (config && config.testPointers(eventData)) {
     eventData.viewport.translation.x += eventData.deltaPoints.page.x / eventData.viewport.scale;
     eventData.viewport.translation.y += eventData.deltaPoints.page.y / eventData.viewport.scale;
-    (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+    _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
@@ -7812,7 +7813,7 @@ function createNewMeasurement(mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool(element, data, coords) {
-  var endCanvas = (0, _externalModules.getCornerstone)().pixelToCanvas(element, data.handles.end);
+  var endCanvas = _externalModules.external.cornerstone.pixelToCanvas(element, data.handles.end);
 
   return _externalModules.cornerstoneMath.point.distance(endCanvas, coords) < 5;
 }
@@ -7825,7 +7826,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
   var context = eventData.canvasContext.canvas.getContext('2d');
 
@@ -7997,7 +7998,7 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   var endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -8069,7 +8070,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var image = eventData.image;
   var element = eventData.element;
   var lineWidth = _toolStyle2.default.getToolWidth();
@@ -8430,17 +8431,17 @@ function defaultStrategy(eventData) {
   var rotation = -1 * rotationDegrees + 90;
 
   eventData.viewport.rotation = rotation;
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
 function horizontalStrategy(eventData) {
   eventData.viewport.rotation += eventData.deltaPoints.page.x / eventData.viewport.scale;
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
 function verticalStrategy(eventData) {
   eventData.viewport.rotation += eventData.deltaPoints.page.y / eventData.viewport.scale;
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
 // --- Mouse event callbacks --- //
@@ -8462,7 +8463,7 @@ function mouseDownCallback(e, eventData) {
 
 function dragCallback(e, eventData) {
   rotate.strategy(eventData);
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }
@@ -8497,7 +8498,7 @@ var _externalModules = __webpack_require__(0);
 
 function touchRotateCallback(e, eventData) {
   eventData.viewport.rotation += eventData.rotation;
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false;
 }
@@ -8655,7 +8656,7 @@ var configuration = {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement(mouseEventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = mouseEventData.element;
   var config = seedAnnotate.getConfiguration();
   var measurementData = createNewMeasurement(mouseEventData);
@@ -8721,7 +8722,7 @@ function pointNearTool(element, data, coords) {
     return;
   }
 
-  var realCoords = (0, _externalModules.getCornerstone)().pixelToCanvas(element, data.handles.end);
+  var realCoords = _externalModules.external.cornerstone.pixelToCanvas(element, data.handles.end);
   var distanceToPoint = _externalModules.cornerstoneMath.point.distance(realCoords, coords);
 
   return distanceToPoint < 25;
@@ -8736,7 +8737,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
@@ -8878,7 +8879,7 @@ function onImageRendered(e, eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurementTouch(touchEventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = touchEventData.element;
   var config = seedAnnotate.getConfiguration();
   var measurementData = createNewMeasurement(touchEventData);
@@ -8913,7 +8914,7 @@ function addNewMeasurementTouch(touchEventData) {
 }
 
 function doubleClickCallback(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var data = void 0;
 
@@ -8961,7 +8962,7 @@ function doubleClickCallback(e, eventData) {
 }
 
 function pressCallback(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var data = void 0;
 
@@ -9158,7 +9159,7 @@ function createNewMeasurement(mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool(element, data, coords) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
@@ -9191,7 +9192,7 @@ function onImageRendered(e, eventData) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
@@ -9378,7 +9379,7 @@ function onImageRendered(e, eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement(mouseEventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var measurementData = createNewMeasurement(mouseEventData);
   var element = mouseEventData.element;
 
@@ -9432,7 +9433,7 @@ function addNewMeasurement(mouseEventData) {
 }
 
 function addNewMeasurementTouch(touchEventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var measurementData = createNewMeasurement(touchEventData);
   var element = touchEventData.element;
 
@@ -9655,7 +9656,7 @@ function onImageRendered(e, eventData) {
 
     data.textWidth = measureText.width + 10;
 
-    var textCoords = (0, _externalModules.getCornerstone)().pixelToCanvas(eventData.element, data.handles.end);
+    var textCoords = _externalModules.external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
     var options = {
       centering: {
@@ -9673,7 +9674,7 @@ function onImageRendered(e, eventData) {
 }
 
 function doubleClickCallback(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var data = void 0;
 
@@ -9734,7 +9735,7 @@ function doubleClickCallback(e, eventData) {
 }
 
 function touchPressCallback(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
   var data = void 0;
 
@@ -9888,7 +9889,7 @@ function defaultStrategy(eventData) {
 
 function mouseDragCallback(e, eventData) {
   wwwc.strategy(eventData);
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, eventData.viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false; // False = cases jquery to preventDefault() and stopPropagation() this event
 }
@@ -9919,7 +9920,7 @@ function touchDragCallback(e, eventData) {
     dragData.viewport.voi.windowCenter += deltaY;
   }
 
-  (0, _externalModules.getCornerstone)().setViewport(dragData.element, dragData.viewport);
+  _externalModules.external.cornerstone.setViewport(dragData.element, dragData.viewport);
 }
 
 var wwwc = (0, _simpleMouseButtonTool2.default)(mouseDownCallback);
@@ -10060,7 +10061,7 @@ function dragEndCallback(e, eventData) {
 
 /** Calculates the minimum and maximum value in the given pixel array */
 function applyWWWCRegion(eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var toolData = (0, _toolState.getToolState)(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -10171,11 +10172,11 @@ function dragCallback(e, eventData) {
   };
 
   toolData.data[0].endPoint = endPoint;
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function onImageRendered(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var toolData = (0, _toolState.getToolState)(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -10241,7 +10242,7 @@ function disable(element) {
   (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
   (0, _externalModules.$)(element).off('CornerstoneNewImage', newImageCallback);
 
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 function activate(element, mouseButtonMask) {
@@ -10277,7 +10278,7 @@ function activate(element, mouseButtonMask) {
   // Cancel the handlers and prepare for another click
   (0, _externalModules.$)(element).on('CornerstoneNewImage', newImageCallback);
 
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // --- Touch tool enable / disable --- //
@@ -10429,7 +10430,7 @@ function correctShift(shift, viewport) {
 }
 
 function defaultStrategy(eventData, ticks) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = eventData.element;
 
   // Calculate the new scale factor based on how far the mouse has changed
@@ -10552,7 +10553,7 @@ function translateStrategy(eventData, ticks) {
   viewport.translation.y -= shift.y;
 
   // Update the Viewport with the new translation value
-  (0, _externalModules.getCornerstone)().setViewport(element, viewport);
+  _externalModules.external.cornerstone.setViewport(element, viewport);
 }
 
 function zoomToCenterStrategy(eventData, ticks) {
@@ -10561,7 +10562,7 @@ function zoomToCenterStrategy(eventData, ticks) {
   // Calculate the new scale factor based on how far the mouse has changed
   var viewport = changeViewportScale(eventData.viewport, ticks);
 
-  (0, _externalModules.getCornerstone)().setViewport(element, viewport);
+  _externalModules.external.cornerstone.setViewport(element, viewport);
 }
 
 function mouseUpCallback(e, eventData) {
@@ -10605,11 +10606,11 @@ function mouseWheelCallback(e, eventData) {
 
   var viewport = changeViewportScale(eventData.viewport, ticks);
 
-  (0, _externalModules.getCornerstone)().setViewport(eventData.element, viewport);
+  _externalModules.external.cornerstone.setViewport(eventData.element, viewport);
 }
 
 function touchPinchCallback(e, eventData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var config = zoom.getConfiguration();
   var viewport = eventData.viewport;
   var element = eventData.element;
@@ -10674,7 +10675,7 @@ var mouseX = void 0;
 var mouseY = void 0;
 
 function keyPress(e) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget;
 
   var keyPressData = {
@@ -10787,7 +10788,7 @@ function activateMouseDown(mouseEventDetail) {
 }
 
 function mouseDoubleClick(e) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget;
   var eventType = 'CornerstoneToolsMouseDoubleClick';
 
@@ -10827,7 +10828,7 @@ function mouseDoubleClick(e) {
 function mouseDown(e) {
   preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget;
   var eventType = 'CornerstoneToolsMouseDown';
 
@@ -10985,7 +10986,7 @@ function mouseDown(e) {
 }
 
 function mouseMove(e) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget;
   var eventType = 'CornerstoneToolsMouseMove';
 
@@ -11094,7 +11095,7 @@ function mouseWheel(e) {
 
   e.preventDefault();
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget;
 
   var x = void 0;
@@ -11211,7 +11212,7 @@ var pressDelay = 700,
     pressMaxDistance = 5;
 
 function onTouch(e) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var element = e.currentTarget || e.srcEvent.currentTarget;
   var event = void 0,
       eventType = void 0,
@@ -11744,7 +11745,7 @@ function createNewMeasurement(imageData) {
 
 function defaultStrategy(eventData) {
   var configuration = brush.getConfiguration();
-  var enabledElement = (0, _externalModules.getCornerstone)().getEnabledElement(eventData.element);
+  var enabledElement = _externalModules.external.cornerstone.getEnabledElement(eventData.element);
   var context = enabledElement.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -11783,17 +11784,17 @@ function clearCircle(context, coords, radius) {
 }
 
 function newImageCallback(event) {
-  (0, _externalModules.getCornerstone)().updateImage(event.currentTarget, true);
+  _externalModules.external.cornerstone.updateImage(event.currentTarget, true);
 }
 
 function mouseMoveCallback(e, eventData) {
   lastCanvasCoords = eventData.currentPoints.canvas;
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseUpCallback(e, eventData) {
   lastCanvasCoords = eventData.currentPoints.canvas;
-  (0, _externalModules.getCornerstone)().updateImage(eventData.element, true);
+  _externalModules.external.cornerstone.updateImage(eventData.element, true);
 
   (0, _externalModules.$)(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
   (0, _externalModules.$)(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
@@ -11823,7 +11824,7 @@ function mouseDownActivateCallback(e, eventData) {
 
 function onImageRendered(e, eventData) {
   var configuration = brush.getConfiguration();
-  var enabledElement = (0, _externalModules.getCornerstone)().getEnabledElement(eventData.element);
+  var enabledElement = _externalModules.external.cornerstone.getEnabledElement(eventData.element);
   var context = enabledElement.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -11886,7 +11887,7 @@ function activate(element, mouseButtonMask) {
   (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
   (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var eventData = {
     mouseButtonMask: mouseButtonMask
   };
@@ -12128,7 +12129,7 @@ function playClip(element, framesPerSecond) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // If we have more than one stack, check if we have a stack renderer defined
   var stackRenderer = void 0;
 
@@ -12508,7 +12509,7 @@ function prefetch(element) {
       return;
     }
 
-    var imagePromise = (0, _externalModules.getCornerstone)().imageCache.getImagePromise(imageId);
+    var imagePromise = _externalModules.external.cornerstone.imageCache.getImagePromise(imageId);
 
     if (imagePromise && imagePromise.state() === 'resolved') {
       removeFromList(imageIdIndex);
@@ -12625,7 +12626,7 @@ function onImageUpdated(e) {
 }
 
 function enable(element) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
   var stackPrefetchDataArray = (0, _toolState.getToolState)(element, toolType);
 
@@ -12676,7 +12677,7 @@ function disable(element) {
   clearTimeout(resetPrefetchTimeout);
   (0, _externalModules.$)(element).off('CornerstoneNewImage', onImageUpdated);
 
-  (0, _externalModules.$)((0, _externalModules.getCornerstone)().events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  (0, _externalModules.$)(_externalModules.external.cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
   var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
   // If there is actually something to disable, disable it
@@ -12816,7 +12817,7 @@ function saveApplicationState(elements) {
 
     appState.elementToolState[element.id] = toolStateManager.saveToolState();
 
-    appState.elementViewport[element.id] = (0, _externalModules.getCornerstone)().getViewport(element);
+    appState.elementViewport[element.id] = _externalModules.external.cornerstone.getViewport(element);
   });
 
   return appState;
@@ -12827,7 +12828,7 @@ function restoreApplicationState(appState) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
 
   // Restore all the imageId specific tool data
   _imageIdSpecificStateManager.globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);
@@ -13192,7 +13193,7 @@ var _externalModules = __webpack_require__(0);
 // Element
 function Synchronizer(event, handler) {
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var that = this;
   var sourceElements = []; // Source elements fire the events we want to synchronize to
   var targetElements = []; // Target elements we want to synchronize to source elements
@@ -13490,7 +13491,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Get the source and target viewports
   var sourceViewport = cornerstone.getViewport(sourceElement);
   var targetViewport = cornerstone.getViewport(targetElement);
@@ -13527,7 +13528,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var sourceStackToolDataSource = (0, _toolState.getToolState)(sourceElement, 'stack');
   var sourceStackData = sourceStackToolDataSource.data[0];
   var targetStackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
@@ -13604,7 +13605,7 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
   var sourceImagePosition = sourceImagePlane.imagePositionPatient;
@@ -13697,7 +13698,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
   var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImage.imageId);
   var sourceImagePosition = sourceImagePlane.imagePositionPatient;
@@ -13791,7 +13792,7 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Get the stack of the target viewport
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
   var stackData = stackToolDataSource.data[0];
@@ -13868,7 +13869,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  (0, _externalModules.getCornerstone)().updateImage(targetElement);
+  _externalModules.external.cornerstone.updateImage(targetElement);
 };
 
 var _externalModules = __webpack_require__(0);
@@ -13891,7 +13892,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   // Get the source and target viewports
   var sourceViewport = cornerstone.getViewport(sourceElement);
   var targetViewport = cornerstone.getViewport(targetElement);
@@ -13950,7 +13951,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var toolType = 'probe4D';
 
 function updateLineSample(measurementData) {
-  var cornerstone = (0, _externalModules.getCornerstone)();
+  var cornerstone = _externalModules.external.cornerstone;
   var samples = [];
 
   measurementData.timeSeries.stacks.forEach(function (stack) {
@@ -14018,7 +14019,7 @@ function onImageRendered(e, eventData) {
   // We have tool data for this element - iterate over each one and draw it
   var context = eventData.canvasContext.canvas.getContext('2d');
 
-  (0, _externalModules.getCornerstone)().setToPixelCoordinateSystem(eventData.enabledElement, context);
+  _externalModules.external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
   var color = 'white';
 
   for (var i = 0; i < toolData.data.length; i++) {
@@ -14311,16 +14312,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _externalModules = __webpack_require__(0);
 
-Object.defineProperty(exports, 'getCornerstone', {
+Object.defineProperty(exports, 'external', {
          enumerable: true,
          get: function get() {
-                  return _externalModules.getCornerstone;
-         }
-});
-Object.defineProperty(exports, 'storeCornerstone', {
-         enumerable: true,
-         get: function get() {
-                  return _externalModules.storeCornerstone;
+                  return _externalModules.external;
          }
 });
 
@@ -15692,7 +15687,7 @@ function onImageRendered(e, eventData) {
   // Create the canvas context and reset it to the pixel coordinate system
   var context = eventData.canvasContext.canvas.getContext('2d');
 
-  (0, _externalModules.getCornerstone)().setToPixelCoordinateSystem(eventData.enabledElement, context);
+  _externalModules.external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
   // Iterate over each referenced element
   _externalModules.$.each(enabledElements, function (index, referenceEnabledElement) {
@@ -15717,13 +15712,13 @@ function enable(element, synchronizationContext, renderer) {
     renderer: renderer
   });
   (0, _externalModules.$)(element).on('CornerstoneImageRendered', onImageRendered);
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable(element) {
   (0, _externalModules.$)(element).off('CornerstoneImageRendered', onImageRendered);
-  (0, _externalModules.getCornerstone)().updateImage(element);
+  _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Module/private exports
@@ -15776,7 +15771,7 @@ var FusionRenderer = function () {
 
       // TODO: Figure out what to do with LoadHandlers in this scenario...
 
-      var cornerstone = (0, _externalModules.getCornerstone)();
+      var cornerstone = _externalModules.external.cornerstone;
       // For the base layer, go to the currentImageIdIndex
       var baseImageObject = imageStacks[0];
       var currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];

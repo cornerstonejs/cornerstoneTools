@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
@@ -111,7 +111,7 @@ function prefetch (element) {
       return;
     }
 
-    const imagePromise = getCornerstone().imageCache.getImagePromise(imageId);
+    const imagePromise = external.cornerstone.imageCache.getImagePromise(imageId);
 
     if (imagePromise && imagePromise.state() === 'resolved') {
       removeFromList(imageIdIndex);
@@ -229,7 +229,7 @@ function onImageUpdated (e) {
 }
 
 function enable (element) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
     // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
   const stackPrefetchDataArray = getToolState(element, toolType);
 
@@ -280,7 +280,7 @@ function disable (element) {
   clearTimeout(resetPrefetchTimeout);
   $(element).off('CornerstoneNewImage', onImageUpdated);
 
-  $(getCornerstone().events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  $(external.cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
 
   const stackPrefetchData = getToolState(element, toolType);
     // If there is actually something to disable, disable it

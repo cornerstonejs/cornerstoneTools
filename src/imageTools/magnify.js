@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import touchDragTool from './touchDragTool.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -100,7 +100,7 @@ function drawMagnificationTool (eventData) {
   const getSize = magnifySize / magnificationLevel;
 
     // Calculate the on-canvas location of the mouse pointer / touch
-  const canvasLocation = getCornerstone().pixelToCanvas(eventData.element, eventData.currentPoints.image);
+  const canvasLocation = external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
   if (eventData.isTouchEvent === true) {
     canvasLocation.y -= 1.25 * getSize;

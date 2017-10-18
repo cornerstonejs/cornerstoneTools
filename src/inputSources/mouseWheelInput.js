@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 
 function mouseWheel (e) {
     // !!!HACK/NOTE/WARNING!!!
@@ -16,7 +16,7 @@ function mouseWheel (e) {
 
   e.preventDefault();
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
 
   let x;

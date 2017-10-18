@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 export default class FusionRenderer {
   constructor () {
@@ -19,7 +19,7 @@ export default class FusionRenderer {
 
     // TODO: Figure out what to do with LoadHandlers in this scenario...
 
-    const cornerstone = getCornerstone();
+    const cornerstone = external.cornerstone;
     // For the base layer, go to the currentImageIdIndex
     const baseImageObject = imageStacks[0];
     const currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];

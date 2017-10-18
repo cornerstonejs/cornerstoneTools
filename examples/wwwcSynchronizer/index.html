@@ -84,7 +84,7 @@ is used by our example image loader-->
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    cornerstoneTools.storeCornerstone(cornerstone);
+    cornerstoneTools.external.cornerstone = cornerstone;
     metaDataProvider(cornerstoneTools);
 
     var axialElement1 = $('#axial1').get(0);

@@ -1,10 +1,10 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
 function Synchronizer (event, handler) {
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const that = this;
   const sourceElements = []; // Source elements fire the events we want to synchronize to
   const targetElements = []; // Target elements we want to synchronize to source elements

@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -11,7 +11,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 let dragEventData;
 
 function defaultStrategy (eventData) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(eventData.element);
 
   const context = enabledElement.canvas.getContext('2d');
@@ -77,7 +77,7 @@ function defaultStrategy (eventData) {
 }
 
 function minimalStrategy (eventData) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const element = eventData.element;
   const enabledElement = cornerstone.getEnabledElement(element);
   const image = enabledElement.image;
@@ -186,7 +186,7 @@ function mouseUpCallback (e, eventData) {
   $(element).off('CornerstoneToolsMouseDrag', dragCallback);
   $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-  getCornerstone().updateImage(eventData.element);
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function mouseDownCallback (e, eventData) {
@@ -217,7 +217,7 @@ function dragCallback (e, eventData) {
   const element = eventData.element;
 
   dragEventData = eventData;
-  getCornerstone().updateImage(element);
+  external.cornerstone.updateImage(element);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }

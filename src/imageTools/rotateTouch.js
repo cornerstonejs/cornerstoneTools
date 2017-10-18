@@ -1,8 +1,8 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;
-  getCornerstone().setViewport(eventData.element, eventData.viewport);
+  external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false;
 }

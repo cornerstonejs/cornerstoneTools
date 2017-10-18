@@ -110,7 +110,7 @@ is used by our example image loader-->
 <script src="../dialogPolyfill.js"></script>
 
 <script>
-  cornerstoneTools.storeCornerstone(cornerstone);
+  cornerstoneTools.external.cornerstone = cornerstone;
 
   // Register the dialogs using the HTML5 Dialog Polyfill
   var relabelDialog = document.querySelector('.relabelDialog');

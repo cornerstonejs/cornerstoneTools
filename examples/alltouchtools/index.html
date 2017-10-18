@@ -123,7 +123,7 @@ is used by our example image loader-->
 
 <script>
     var element = $('#dicomImage').get(0);
-    cornerstoneTools.storeCornerstone(cornerstone);
+    cornerstoneTools.external.cornerstone = cornerstone;
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onViewportUpdated(e) {

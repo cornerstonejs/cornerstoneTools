@@ -114,9 +114,9 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    cornerstoneTools.external.cornerstone = cornerstone;
 
-    cornerstoneTools.storeCornerstone(cornerstone);
+    var element = $('#dicomImage').get(0);
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onViewportUpdated(e) {

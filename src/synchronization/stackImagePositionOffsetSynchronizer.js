@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
@@ -14,7 +14,7 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
     return;
   }
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
   const sourceImagePosition = sourceImagePlane.imagePositionPatient;

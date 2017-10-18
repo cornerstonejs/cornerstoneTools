@@ -1,4 +1,4 @@
-import { getCornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
  /**
  * Sets the canvas context transformation matrix so it is scaled to show text
@@ -14,7 +14,7 @@ import { getCornerstone } from '../externalModules.js';
 export default function (enabledElement, context, fontSize) {
   const fontScale = 0.1;
 
-  getCornerstone().setToPixelCoordinateSystem(enabledElement, context, fontScale);
+  external.cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
     // Return the font size to use
   const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
     // TODO: actually calculate this?

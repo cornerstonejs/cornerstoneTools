@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 
  /*
  * Define the runAnimation boolean as an object
@@ -21,7 +21,7 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
     return;
   }
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
     // Update
   const time = (new Date()).getTime();
     // Var timeDiff = time - lastTime;
@@ -57,7 +57,7 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
     // Console.log('touchMoveHandle');
   runAnimation.value = true;
 
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const element = touchEventData.element;
   const enabledElement = cornerstone.getEnabledElement(element);
 

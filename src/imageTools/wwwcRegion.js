@@ -1,4 +1,4 @@
-import { $, getCornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
@@ -96,7 +96,7 @@ function dragEndCallback (e, eventData) {
 
 /** Calculates the minimum and maximum value in the given pixel array */
 function applyWWWCRegion (eventData) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -207,11 +207,11 @@ function dragCallback (e, eventData) {
   };
 
   toolData.data[0].endPoint = endPoint;
-  getCornerstone().updateImage(eventData.element);
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function onImageRendered (e, eventData) {
-  const cornerstone = getCornerstone();
+  const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -277,7 +277,7 @@ function disable (element) {
   $(element).off('CornerstoneImageRendered', onImageRendered);
   $(element).off('CornerstoneNewImage', newImageCallback);
 
-  getCornerstone().updateImage(element);
+  external.cornerstone.updateImage(element);
 }
 
 function activate (element, mouseButtonMask) {
@@ -313,7 +313,7 @@ function activate (element, mouseButtonMask) {
     // Cancel the handlers and prepare for another click
   $(element).on('CornerstoneNewImage', newImageCallback);
 
-  getCornerstone().updateImage(element);
+  external.cornerstone.updateImage(element);
 }
 
 // --- Touch tool enable / disable --- //
