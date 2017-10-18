@@ -1,6 +1,8 @@
 import { $ } from '../externalModules.js';
 
-export default function (element, filename) {
+export default function (element, filename, mimetype) {
+  // setting the default value for mimetype to image/png
+  mimetype = mimetype || "image/png";
   const canvas = $(element).find('canvas').get(0);
 
     // Thanks to Ken Fyrstenber
@@ -13,7 +15,7 @@ export default function (element, filename) {
     // / convert canvas content to data-uri for link. When download
     // / attribute is set the content pointed to by link will be
     // / pushed as 'download' in HTML5 capable browsers
-  lnk.href = canvas.toDataURL();
+  lnk.href = canvas.toDataURL(mimetype);
 
     // / create a 'fake' click-event to trigger the download
   if (document.createEvent) {
