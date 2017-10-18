@@ -16,6 +16,9 @@ import { addToolState, removeToolState, getToolState } from '../stateManagement/
 
 const toolType = 'seedAnnotate';
 
+const mousePointNearDistance = 25 * mouseButtonTool().getConfiguration().sensitivityFactor;
+const touchNearDistance = 25 * touchTool().getConfiguration().sensitivityFactor;
+
 // Define a callback to get your text annotation
 // This could be used, e.g. to open a modal
 function getTextCallback (doneGetTextCallback) {
@@ -101,7 +104,7 @@ function createNewMeasurement (mouseEventData) {
 }
 // /////// END ACTIVE TOOL ///////
 
-function pointNearTool (element, data, coords) {
+function pointNearTool (element, data, coords, distance) {
   if (!data.handles.end) {
     return;
   }
@@ -110,7 +113,7 @@ function pointNearTool (element, data, coords) {
   const distanceToPoint = cornerstoneMath.point.distance(realCoords, coords);
 
 
-  return (distanceToPoint < 25);
+  return (distanceToPoint < distance);
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
@@ -330,7 +333,7 @@ function doubleClickCallback (e, eventData) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (pointNearTool(element, data, coords) ||
+    if (pointNearTool(element, data, coords, mousePointNearDistance) ||
             pointInsideBoundingBox(data.handles.textBox, coords)) {
 
       data.active = true;
@@ -396,7 +399,7 @@ function pressCallback (e, eventData) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (pointNearTool(element, data, coords) ||
+    if (pointNearTool(element, data, coords, touchNearDistance) ||
           pointInsideBoundingBox(data.handles.textBox, coords)) {
       data.active = true;
       cornerstone.updateImage(element);
@@ -421,7 +424,7 @@ const seedAnnotate = mouseButtonTool({
   addNewMeasurement,
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, mousePointNearDistance),
   toolType,
   mouseDoubleClickCallback: doubleClickCallback
 });
@@ -432,7 +435,7 @@ const seedAnnotateTouch = touchTool({
   addNewMeasurement: addNewMeasurementTouch,
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, touchNearDistance),
   toolType,
   pressCallback
 });

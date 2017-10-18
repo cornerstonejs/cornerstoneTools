@@ -9,6 +9,9 @@ import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'textMarker';
 
+const mousePointNearDistance = 10 * mouseButtonTool().getConfiguration().sensitivityFactor;
+const touchPointNearDistance = 10 * touchTool().getConfiguration().sensitivityFactor;
+
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
   const config = textMarker.getConfiguration();
@@ -77,7 +80,7 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function pointNearTool (element, data, coords) {
+function pointNearTool (element, data, coords, distance) {
   if (!data.handles.end.boundingBox) {
     return;
   }
@@ -86,7 +89,7 @@ function pointNearTool (element, data, coords) {
   const insideBoundingBox = pointInsideBoundingBox(data.handles.end, coords);
 
 
-  return (distanceToPoint < 10) || insideBoundingBox;
+  return (distanceToPoint < distance) || insideBoundingBox;
 }
 
 function onImageRendered (e, eventData) {
@@ -184,7 +187,7 @@ function doubleClickCallback (e, eventData) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (pointNearTool(element, data, coords)) {
+    if (pointNearTool(element, data, coords, mousePointNearDistance)) {
       data.active = true;
       cornerstone.updateImage(element);
 
@@ -255,7 +258,7 @@ function touchPressCallback (e, eventData) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (pointNearTool(element, data, coords)) {
+    if (pointNearTool(element, data, coords, touchPointNearDistance)) {
       data.active = true;
       cornerstone.updateImage(element);
 
@@ -279,7 +282,7 @@ function touchPressCallback (e, eventData) {
 const textMarker = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, mousePointNearDistance),
   toolType,
   mouseDoubleClickCallback: doubleClickCallback
 });
@@ -287,7 +290,7 @@ const textMarker = mouseButtonTool({
 const textMarkerTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, touchPointNearDistance),
   toolType,
   pressCallback: touchPressCallback
 });

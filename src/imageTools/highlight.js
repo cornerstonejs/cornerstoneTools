@@ -61,7 +61,7 @@ function pointInsideRect (element, data, coords) {
   return insideBox;
 }
 
-function pointNearTool (element, data, coords) {
+function pointNearTool (element, data, coords, distance) {
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
@@ -75,7 +75,7 @@ function pointNearTool (element, data, coords) {
   const distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
 
 
-  return (distanceToPoint < 5);
+  return (distanceToPoint < distance);
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
@@ -154,7 +154,7 @@ const preventHandleOutsideImage = true;
 const highlight = mouseButtonRectangleTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 5 * mouseButtonTool().getConfiguration().sensitivityFactor),
   pointInsideRect,
   toolType
 }, preventHandleOutsideImage);
@@ -162,7 +162,7 @@ const highlight = mouseButtonRectangleTool({
 const highlightTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
-  pointNearTool,
+  pointNearTool: (element, data, coords) => pointNearTool(element, data, coords, 5 * touchTool().getConfiguration().sensitivityFactor),
   pointInsideRect,
   toolType
 }, preventHandleOutsideImage);
