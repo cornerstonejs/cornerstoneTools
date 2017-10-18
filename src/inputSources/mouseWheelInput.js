@@ -37,7 +37,7 @@ function mouseWheel (e) {
 
   const startingCoords = cornerstone.pageToPixel(element, x, y);
 
-  e = window.event || e; // Old IE support
+  e = (window.event && window.event.wheelDelta) ? window.event : e; // Old IE support
 
   let wheelDelta;
 
