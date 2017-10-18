@@ -77,7 +77,7 @@ function onImageRendered (e, eventData) {
 
   if (imagePlane) {
     rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.colPixelSpacing || imagePlane.colImagePixelSpacing;
+    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
   } else {
     rowPixelSpacing = image.rowPixelSpacing;
     colPixelSpacing = image.columnPixelSpacing;
