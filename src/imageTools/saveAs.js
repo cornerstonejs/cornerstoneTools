@@ -1,8 +1,8 @@
 import { $ } from '../externalModules.js';
 
 export default function (element, filename, mimetype) {
-  // setting the default value for mimetype to image/png
-  mimetype = mimetype || "image/png";
+  // Setting the default value for mimetype to image/png
+  mimetype = mimetype || 'image/png';
   const canvas = $(element).find('canvas').get(0);
 
     // Thanks to Ken Fyrstenber
