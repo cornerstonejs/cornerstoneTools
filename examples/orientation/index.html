@@ -126,7 +126,7 @@
     function calculateOrientationMarkers(element, viewport) {
         var elementDiv = $(element);
         var enabledElement = cornerstone.getEnabledElement(element);
-        var imagePlaneMetaData = cornerstoneTools.getCornerstone().metaData.get('imagePlane', enabledElement.image.imageId);
+        var imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
         console.log(imagePlaneMetaData);
         
         var rowString = cornerstoneTools.orientation.getOrientationString(imagePlaneMetaData.rowCosines);
