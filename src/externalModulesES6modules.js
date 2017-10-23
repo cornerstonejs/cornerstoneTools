@@ -4,7 +4,7 @@ import * as cornerstoneMath from '../../cornerstoneMath/src/index.js';
 const $ = window.$;
 const Hammer = window.Hammer;
 
-let cornerstone;
+let cornerstone = window.cornerstone;
 
 const external = {
   set cornerstone (cs) {

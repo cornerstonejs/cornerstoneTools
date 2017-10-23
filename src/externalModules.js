@@ -2,7 +2,7 @@ import $ from 'jquery';
 import Hammer from 'hammerjs';
 import * as cornerstoneMath from 'cornerstone-math';
 
-let cornerstone;
+let cornerstone = window.cornerstone;
 
 const external = {
   set cornerstone (cs) {

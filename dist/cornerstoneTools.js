@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 0.9.1 - 2017-10-18 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 0.9.1 - 2017-10-23 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"), require("hammerjs"), require("jquery"));
@@ -105,7 +105,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var cornerstone = void 0;
+var cornerstone = window.cornerstone;
 
 var external = {
   set cornerstone(cs) {
