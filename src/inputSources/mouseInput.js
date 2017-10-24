@@ -1,4 +1,4 @@
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, cornerstoneMath, external } from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 
@@ -33,6 +33,7 @@ function activateMouseDown (mouseEventDetail) {
 }
 
 function mouseDoubleClick (e) {
+  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
   const eventType = 'CornerstoneToolsMouseDoubleClick';
 
@@ -72,6 +73,7 @@ function mouseDoubleClick (e) {
 function mouseDown (e) {
   preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
 
+  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
   const eventType = 'CornerstoneToolsMouseDown';
 
@@ -229,6 +231,7 @@ function mouseDown (e) {
 }
 
 function mouseMove (e) {
+  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
   const eventType = 'CornerstoneToolsMouseMove';
 

@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -11,6 +11,7 @@ export default function (element, newImageIdIndex) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   // If we have more than one stack, check if we have a stack renderer defined
   let stackRenderer;
 

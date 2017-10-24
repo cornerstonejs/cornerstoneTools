@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 export default function (element, x, y, width, height) {
   if (!element) {
@@ -7,7 +7,7 @@ export default function (element, x, y, width, height) {
 
   x = Math.round(x);
   y = Math.round(y);
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
   const storedPixelData = [];
   let index = 0;
   const pixelData = enabledElement.image.getPixelData();

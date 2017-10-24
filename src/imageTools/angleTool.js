@@ -1,4 +1,4 @@
-import { cornerstone, cornerstoneMath } from '../externalModules.js';
+import { cornerstoneMath, external } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -50,6 +50,8 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = external.cornerstone;
+
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -89,6 +91,7 @@ function onImageRendered (e, eventData) {
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = angle.getConfiguration();
+  const cornerstone = external.cornerstone;
 
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();

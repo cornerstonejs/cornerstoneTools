@@ -1,4 +1,4 @@
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, cornerstoneMath, external } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
@@ -56,6 +56,7 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = external.cornerstone;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
@@ -88,6 +89,7 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   const enabledElement = eventData.enabledElement;
 
     // We have tool data for this element - iterate over each one and draw it
@@ -275,6 +277,7 @@ function onImageRendered (e, eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement (mouseEventData) {
+  const cornerstone = external.cornerstone;
   const measurementData = createNewMeasurement(mouseEventData);
   const element = mouseEventData.element;
 
@@ -328,6 +331,7 @@ function addNewMeasurement (mouseEventData) {
 }
 
 function addNewMeasurementTouch (touchEventData) {
+  const cornerstone = external.cornerstone;
   const measurementData = createNewMeasurement(touchEventData);
   const element = touchEventData.element;
 

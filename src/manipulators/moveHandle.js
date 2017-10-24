@@ -1,6 +1,7 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,

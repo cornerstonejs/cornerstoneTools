@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
@@ -15,6 +15,7 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
     return;
   }
 
+  const cornerstone = external.cornerstone;
     // Get the stack of the target viewport
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];

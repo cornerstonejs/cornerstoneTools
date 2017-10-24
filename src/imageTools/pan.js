@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -33,7 +33,7 @@ function dragCallback (e, eventData) {
 
   eventData.viewport.translation.x += (eventData.deltaPoints.page.x / widthScale);
   eventData.viewport.translation.y += (eventData.deltaPoints.page.y / heightScale);
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false; // False = causes jquery to preventDefault() and stopPropagation() this event
 }

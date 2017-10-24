@@ -1,4 +1,4 @@
-import { $, cornerstone } from '../externalModules.js';
+import { $, external } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -38,7 +38,7 @@ function defaultStrategy (eventData) {
 
 function mouseDragCallback (e, eventData) {
   wwwc.strategy(eventData);
-  cornerstone.setViewport(eventData.element, eventData.viewport);
+  external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   return false; // False = cases jquery to preventDefault() and stopPropagation() this event
 }
@@ -69,7 +69,7 @@ function touchDragCallback (e, eventData) {
     dragData.viewport.voi.windowCenter += (deltaY);
   }
 
-  cornerstone.setViewport(dragData.element, dragData.viewport);
+  external.cornerstone.setViewport(dragData.element, dragData.viewport);
 }
 
 const wwwc = simpleMouseButtonTool(mouseDownCallback);

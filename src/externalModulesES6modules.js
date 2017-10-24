@@ -4,4 +4,15 @@ import * as cornerstoneMath from '../../cornerstoneMath/src/index.js';
 const $ = window.$;
 const Hammer = window.Hammer;
 
-export { $, Hammer, cornerstone, cornerstoneMath };
+let cornerstone = window.cornerstone;
+
+const external = {
+  set cornerstone (cs) {
+    cornerstone = cs;
+  },
+  get cornerstone () {
+    return cornerstone;
+  }
+};
+
+export { $, Hammer, external, cornerstoneMath };

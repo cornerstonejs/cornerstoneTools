@@ -1,4 +1,4 @@
-import { cornerstone } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 // This function causes the target image to be drawn immediately
 export default function (synchronizer, sourceElement, targetElement) {
@@ -8,5 +8,5 @@ export default function (synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  cornerstone.updateImage(targetElement);
+  external.cornerstone.updateImage(targetElement);
 }

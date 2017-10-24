@@ -1,5 +1,5 @@
 /* eslint no-alert:0 */
-import { $, cornerstone, cornerstoneMath } from '../externalModules.js';
+import { $, cornerstoneMath, external } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -40,6 +40,7 @@ const configuration = {
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement (mouseEventData) {
   const measurementData = createNewMeasurement(mouseEventData);
+  const cornerstone = external.cornerstone;
 
   const eventData = {
     mouseButtonMask: mouseEventData.which
@@ -122,6 +123,8 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = external.cornerstone;
+
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -143,6 +146,7 @@ function onImageRendered (e, eventData) {
   }
 
   const enabledElement = eventData.enabledElement;
+  const cornerstone = external.cornerstone;
 
     // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
@@ -296,6 +300,7 @@ function onImageRendered (e, eventData) {
 function addNewMeasurementTouch (touchEventData) {
   const element = touchEventData.element;
   const measurementData = createNewMeasurement(touchEventData);
+  const cornerstone = external.cornerstone;
 
   function doneChangingTextCallback (text) {
     if (text === null) {
@@ -336,6 +341,7 @@ function addNewMeasurementTouch (touchEventData) {
 
 function doubleClickCallback (e, eventData) {
   const element = eventData.element;
+  const cornerstone = external.cornerstone;
   let data;
 
   function doneChangingTextCallback (data, updatedText, deleteTool) {
@@ -381,6 +387,7 @@ function doubleClickCallback (e, eventData) {
 
 function pressCallback (e, eventData) {
   const element = eventData.element;
+  const cornerstone = external.cornerstone;
   let data;
 
   function doneChangingTextCallback (data, updatedText, deleteTool) {
