@@ -1,3 +1,10 @@
+# Version 0.10.0
+
+- Add a 3rd parameter to saveAs to allow other mimeTypes, such as image/jpeg
+- Made Cornerstone, Jquery and Hammer as injection dependencies
+- Using window.cornerstone as default cornerstone for this library
+- Fix `window.event.wheelDelta` in IE
+
 # Version 0.9.1
 
 - Added eventType, ctrlKey, metaKey and shiftKey to cornerstoneTools eventData on mouseMove event
