@@ -1,8 +1,8 @@
-import $ from 'jquery';
-import Hammer from 'hammerjs';
 import * as cornerstoneMath from 'cornerstone-math';
 
 let cornerstone = window.cornerstone;
+let $ = window.$;
+let Hammer = window.Hammer;
 
 const external = {
   set cornerstone (cs) {
@@ -10,7 +10,19 @@ const external = {
   },
   get cornerstone () {
     return cornerstone;
+  },
+  set $ (module) {
+    $ = module;
+  },
+  get $ () {
+    return $;
+  },
+  set Hammer (module) {
+    Hammer = module;
+  },
+  get Hammer () {
+    return Hammer;
   }
 };
 
-export { $, Hammer, cornerstoneMath, external };
+export { cornerstoneMath, external };

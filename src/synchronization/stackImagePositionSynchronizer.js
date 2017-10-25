@@ -1,4 +1,4 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
@@ -6,7 +6,7 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 // To the image in the source stack by image position
 export default function (synchronizer, sourceElement, targetElement) {
 
-    // Ignore the case where the source and target are the same enabled element
+  // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
   }
@@ -22,11 +22,11 @@ export default function (synchronizer, sourceElement, targetElement) {
   let minDistance = Number.MAX_VALUE;
   let newImageIdIndex = -1;
 
-  $.each(stackData.imageIds, function (index, imageId) {
+  external.$.each(stackData.imageIds, function (index, imageId) {
     const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
     const imagePosition = imagePlane.imagePositionPatient;
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
-        // Console.log(index + '=' + distance);
+    // Console.log(index + '=' + distance);
 
     if (distance < minDistance) {
       minDistance = distance;

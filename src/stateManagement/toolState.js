@@ -1,10 +1,10 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 
 function getElementToolStateManager (element) {
   const enabledImage = external.cornerstone.getEnabledElement(element);
-    // If the enabledImage has no toolStateManager, create a default one for it
-    // NOTE: This makes state management element specific
+  // If the enabledImage has no toolStateManager, create a default one for it
+  // NOTE: This makes state management element specific
 
   if (enabledImage.toolStateManager === undefined) {
     enabledImage.toolStateManager = globalImageIdSpecificToolStateManager;
@@ -27,7 +27,7 @@ function addToolState (element, toolType, measurementData) {
     measurementData
   };
 
-  $(element).trigger(eventType, eventData);
+  external.$(element).trigger(eventType, eventData);
 }
 
 // Here you can get state - used by tools as well as modules
@@ -42,7 +42,7 @@ function getToolState (element, toolType) {
 function removeToolState (element, toolType, data) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
-    // Find this tool data
+  // Find this tool data
   let indexOfData = -1;
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -61,7 +61,7 @@ function removeToolState (element, toolType, data) {
       measurementData: data
     };
 
-    $(element).trigger(eventType, eventData);
+    external.$(element).trigger(eventType, eventData);
   }
 }
 
@@ -69,7 +69,7 @@ function clearToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
 
-    // If any toolData actually exists, clear it
+  // If any toolData actually exists, clear it
   if (toolData !== undefined) {
     toolData.data = [];
   }

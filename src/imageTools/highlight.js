@@ -10,14 +10,14 @@ const toolType = 'highlight';
 
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
-    // If already a highlight measurement, creating a new one will be useless
+  // If already a highlight measurement, creating a new one will be useless
   const existingToolData = getToolState(mouseEventData.event.currentTarget, toolType);
 
   if (existingToolData && existingToolData.data && existingToolData.data.length > 0) {
     return;
   }
 
-    // Create the measurement data for this tool with the end handle activated
+  // Create the measurement data for this tool with the end handle activated
   const measurementData = {
     visible: true,
     active: true,
@@ -83,7 +83,7 @@ function pointNearTool (element, data, coords) {
 // /////// BEGIN IMAGE RENDERING ///////
 
 function onImageRendered (e, eventData) {
-    // If we have no toolData for this element, return immediately as there is nothing to do
+  // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
   if (toolData === undefined) {
@@ -91,7 +91,7 @@ function onImageRendered (e, eventData) {
   }
 
   const cornerstone = external.cornerstone;
-    // We have tool data for this elemen
+  // We have tool data for this elemen
   const context = eventData.canvasContext.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -135,17 +135,17 @@ function onImageRendered (e, eventData) {
   context.fill();
   context.closePath();
 
-    // Draw dashed stroke rectangle
+  // Draw dashed stroke rectangle
   context.beginPath();
   context.strokeStyle = color;
   context.lineWidth = lineWidth;
   context.setLineDash([4]);
   context.strokeRect(rect.left, rect.top, rect.width, rect.height);
 
-    // Strange fix, but restore doesn't seem to reset the line dashes?
+  // Strange fix, but restore doesn't seem to reset the line dashes?
   context.setLineDash([]);
 
-    // Draw the handles last, so they will be on top of the overlay
+  // Draw the handles last, so they will be on top of the overlay
   drawHandles(context, eventData, data.handles, color);
   context.restore();
 }

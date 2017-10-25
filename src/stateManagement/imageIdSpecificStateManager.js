@@ -7,8 +7,8 @@ import { external } from '../externalModules.js';
 function newImageIdSpecificToolStateManager () {
   let toolState = {};
 
-    // Here we add tool state, this is done by tools as well
-    // As modules that restore saved state
+  // Here we add tool state, this is done by tools as well
+  // As modules that restore saved state
 
   function saveImageIdToolState (imageId) {
     return toolState[imageId];
@@ -26,11 +26,11 @@ function newImageIdSpecificToolStateManager () {
     toolState = savedToolState;
   }
 
-    // Here we add tool state, this is done by tools as well
-    // As modules that restore saved state
+  // Here we add tool state, this is done by tools as well
+  // As modules that restore saved state
   function addImageIdSpecificToolState (element, toolType, data) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
-        // If we don't have any tool state for this imageId, add an empty object
+    // If we don't have any tool state for this imageId, add an empty object
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
       toolState[enabledImage.image.imageId] = {};
@@ -38,7 +38,7 @@ function newImageIdSpecificToolStateManager () {
 
     const imageIdToolState = toolState[enabledImage.image.imageId];
 
-        // If we don't have tool state for this type of tool, add an empty object
+    // If we don't have tool state for this type of tool, add an empty object
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       imageIdToolState[toolType] = {
         data: []
@@ -47,15 +47,15 @@ function newImageIdSpecificToolStateManager () {
 
     const toolData = imageIdToolState[toolType];
 
-        // Finally, add this new tool to the state
+    // Finally, add this new tool to the state
     toolData.data.push(data);
   }
 
-    // Here you can get state - used by tools as well as modules
-    // That save state persistently
+  // Here you can get state - used by tools as well as modules
+  // That save state persistently
   function getImageIdSpecificToolState (element, toolType) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
-        // If we don't have any tool state for this imageId, return undefined
+    // If we don't have any tool state for this imageId, return undefined
 
     if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
       return;
@@ -63,7 +63,7 @@ function newImageIdSpecificToolStateManager () {
 
     const imageIdToolState = toolState[enabledImage.image.imageId];
 
-        // If we don't have tool state for this type of tool, return undefined
+    // If we don't have tool state for this type of tool, return undefined
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       return;
     }
@@ -74,7 +74,7 @@ function newImageIdSpecificToolStateManager () {
     return toolData;
   }
 
-    // Clears all tool data from this toolStateManager.
+  // Clears all tool data from this toolStateManager.
   function clearImageIdSpecificToolStateManager (element) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
 

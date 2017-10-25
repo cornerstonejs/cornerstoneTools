@@ -3,7 +3,7 @@ import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateMan
 import { getElementToolStateManager } from './toolState.js';
 
 function saveApplicationState (elements) {
-    // Save imageId-specific tool state data
+  // Save imageId-specific tool state data
   const appState = {
     imageIdToolState: globalImageIdSpecificToolStateManager.saveToolState(),
     elementToolState: {},
@@ -35,11 +35,11 @@ function restoreApplicationState (appState) {
 
   const cornerstone = external.cornerstone;
 
-    // Restore all the imageId specific tool data
+  // Restore all the imageId specific tool data
   globalImageIdSpecificToolStateManager.restoreToolState(appState.imageIdToolState);
 
   Object.keys(appState.elementViewport).forEach(function (elementId) {
-        // Restore any stack specific tool data
+    // Restore any stack specific tool data
     const element = document.getElementById(elementId);
 
     if (!element) {
@@ -58,12 +58,12 @@ function restoreApplicationState (appState) {
 
     toolStateManager.restoreToolState(appState.elementToolState[elementId]);
 
-        // Restore the saved viewport information
+    // Restore the saved viewport information
     const savedViewport = appState.elementViewport[elementId];
 
     cornerstone.setViewport(element, savedViewport);
 
-        // Update the element to apply the viewport and tool changes
+    // Update the element to apply the viewport and tool changes
     cornerstone.updateImage(element);
   });
 

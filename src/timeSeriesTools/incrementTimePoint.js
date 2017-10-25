@@ -15,7 +15,7 @@ export default function (element, timePoints, wrap) {
   const currentImageIdIndex = currentStack.currentImageIdIndex;
   let newStackIndex = timeSeriesData.currentStackIndex + timePoints;
 
-    // Loop around if we go outside the stack
+  // Loop around if we go outside the stack
   if (wrap) {
     if (newStackIndex >= timeSeriesData.stacks.length) {
       newStackIndex = 0;

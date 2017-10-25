@@ -1,4 +1,4 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;
@@ -8,12 +8,12 @@ function touchRotateCallback (e, eventData) {
 }
 
 function disable (element) {
-  $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+  external.$(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
 }
 
 function activate (element) {
-  $(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
-  $(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
+  external.$(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+  external.$(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
 }
 
 const rotateTouch = {

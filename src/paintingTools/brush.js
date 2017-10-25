@@ -1,4 +1,4 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -62,7 +62,7 @@ function clearCircle (context, coords, radius) {
   context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI, true);
   context.clip();
   context.clearRect(coords.x - radius - 1, coords.y - radius - 1,
-                    radius * 2 + 2, radius * 2 + 2);
+    radius * 2 + 2, radius * 2 + 2);
   context.restore();
 }
 
@@ -79,10 +79,10 @@ function mouseUpCallback (e, eventData) {
   lastCanvasCoords = eventData.currentPoints.canvas;
   external.cornerstone.updateImage(eventData.element, true);
 
-  $(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
-  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
 function dragCallback (e, eventData) {
@@ -93,16 +93,16 @@ function dragCallback (e, eventData) {
 
 function mouseDownActivateCallback (e, eventData) {
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
     brush.strategy(eventData);
 
     return false;
   }
 
-  $(eventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
-  $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
+  external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
 }
 
 function onImageRendered (e, eventData) {
@@ -161,22 +161,22 @@ function getPixelData (element, canvas) {
 let brushLayerId;
 
 function activate (element, mouseButtonMask) {
-  $(element).off('CornerstoneImageRendered', onImageRendered);
-  $(element).on('CornerstoneImageRendered', onImageRendered);
+  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  external.$(element).on('CornerstoneImageRendered', onImageRendered);
 
   const cornerstone = external.cornerstone;
   const eventData = {
     mouseButtonMask
   };
 
-  $(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
-  $(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+  external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
+  external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
 
-  $(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  $(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+  external.$(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  $(element).off('CornerstoneNewImage', newImageCallback);
-  $(element).on('CornerstoneNewImage', newImageCallback);
+  external.$(element).off('CornerstoneNewImage', newImageCallback);
+  external.$(element).on('CornerstoneNewImage', newImageCallback);
 
   const enabledElement = cornerstone.getEnabledElement(element);
   const canvas = document.createElement('canvas');

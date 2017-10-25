@@ -16,7 +16,7 @@ export default function (image, storedPixelValue) {
 
   const modality = seriesModule.modality;
 
-    // Image must be PET
+  // Image must be PET
   if (modality !== 'PT') {
     return;
   }

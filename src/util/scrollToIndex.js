@@ -1,4 +1,4 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -25,7 +25,7 @@ export default function (element, newImageIdIndex) {
 
   const stackData = toolData.data[0];
 
-    // Allow for negative indexing
+  // Allow for negative indexing
   if (newImageIdIndex < 0) {
     newImageIdIndex += stackData.imageIds.length;
   }
@@ -39,10 +39,10 @@ export default function (element, newImageIdIndex) {
       return;
     }
 
-        // Check if the element is still enabled in Cornerstone,
-        // If an error is thrown, stop here.
+    // Check if the element is still enabled in Cornerstone,
+    // If an error is thrown, stop here.
     try {
-            // TODO: Add 'isElementEnabled' to Cornerstone?
+      // TODO: Add 'isElementEnabled' to Cornerstone?
       cornerstone.getEnabledElement(element);
     } catch(error) {
       return;
@@ -84,8 +84,8 @@ export default function (element, newImageIdIndex) {
   stackData.currentImageIdIndex = newImageIdIndex;
   const newImageId = stackData.imageIds[newImageIdIndex];
 
-    // Retry image loading in cases where previous image promise
-    // Was rejected, if the option is set
+  // Retry image loading in cases where previous image promise
+  // Was rejected, if the option is set
   const config = stackScroll.getConfiguration();
 
   if (config && config.retryLoadOnScroll === true) {
@@ -96,7 +96,7 @@ export default function (element, newImageIdIndex) {
     }
   }
 
-    // Convert the preventCache value in stack data to a boolean
+  // Convert the preventCache value in stack data to a boolean
   const preventCache = Boolean(stackData.preventCache);
 
   let imagePromise;
@@ -108,8 +108,8 @@ export default function (element, newImageIdIndex) {
   }
 
   imagePromise.then(doneCallback, failCallback);
-    // Make sure we kick off any changed download request pools
+  // Make sure we kick off any changed download request pools
   requestPoolManager.startGrabbing();
 
-  $(element).trigger('CornerstoneStackScroll', eventData);
+  external.$(element).trigger('CornerstoneStackScroll', eventData);
 }

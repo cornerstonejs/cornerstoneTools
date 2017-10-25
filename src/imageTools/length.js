@@ -11,7 +11,7 @@ const toolType = 'length';
 
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
-    // Create the measurement data for this tool with the end handle activated
+  // Create the measurement data for this tool with the end handle activated
   const measurementData = {
     visible: true,
     active: true,
@@ -57,7 +57,7 @@ function pointNearTool (element, data, coords) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function onImageRendered (e, eventData) {
-    // If we have no toolData for this element, return immediately as there is nothing to do
+  // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
   if (!toolData) {
@@ -65,7 +65,7 @@ function onImageRendered (e, eventData) {
   }
 
   const cornerstone = external.cornerstone;
-    // We have tool data for this element - iterate over each one and draw it
+  // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
   const { image, element } = eventData;
 
@@ -88,7 +88,7 @@ function onImageRendered (e, eventData) {
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();
 
-        // Configurable shadow
+    // Configurable shadow
     if (config && config.shadow) {
       context.shadowColor = config.shadowColor || '#000000';
       context.shadowOffsetX = config.shadowOffsetX || 1;
@@ -98,11 +98,11 @@ function onImageRendered (e, eventData) {
     const data = toolData.data[i];
     const color = toolColors.getColorIfActive(data.active);
 
-        // Get the handle positions in canvas coordinates
+    // Get the handle positions in canvas coordinates
     const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
     const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-        // Draw the measurement line
+    // Draw the measurement line
     context.beginPath();
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
@@ -110,34 +110,34 @@ function onImageRendered (e, eventData) {
     context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
     context.stroke();
 
-        // Draw the handles
+    // Draw the handles
     const handleOptions = {
       drawHandlesIfActive: (config && config.drawHandlesOnHover)
     };
 
     drawHandles(context, eventData, data.handles, color, handleOptions);
 
-        // Draw the text
+    // Draw the text
     context.fillStyle = color;
 
-        // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+    // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
     const dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
 
-        // Calculate the length, and create the text variable with the millimeters or pixels suffix
+    // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
 
-        // Store the length inside the tool for outside access
+    // Store the length inside the tool for outside access
     data.length = length;
 
-        // Set the length text suffix depending on whether or not pixelSpacing is available
+    // Set the length text suffix depending on whether or not pixelSpacing is available
     let suffix = ' mm';
 
     if (!rowPixelSpacing || !colPixelSpacing) {
       suffix = ' pixels';
     }
 
-        // Store the length measurement text
+    // Store the length measurement text
     const text = `${length.toFixed(2)}${suffix}`;
 
     if (!data.handles.textBox.hasMoved) {
@@ -145,8 +145,8 @@ function onImageRendered (e, eventData) {
         x: Math.max(data.handles.start.x, data.handles.end.x)
       };
 
-            // Depending on which handle has the largest x-value,
-            // Set the y-value for the text box
+      // Depending on which handle has the largest x-value,
+      // Set the y-value for the text box
       if (coords.x === data.handles.start.x) {
         coords.y = data.handles.start.y;
       } else {
@@ -159,8 +159,8 @@ function onImageRendered (e, eventData) {
 
     const textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
 
-        // Move the textbox slightly to the right and upwards
-        // So that it sits beside the length tool handle
+    // Move the textbox slightly to the right and upwards
+    // So that it sits beside the length tool handle
     textCoords.x += 10;
 
     const options = {
@@ -170,13 +170,13 @@ function onImageRendered (e, eventData) {
       }
     };
 
-        // Draw the textbox
+    // Draw the textbox
     const boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
 
     data.handles.textBox.boundingBox = boundingBox;
 
     if (data.handles.textBox.hasMoved) {
-            // Draw dashed link line between ellipse and text
+      // Draw dashed link line between ellipse and text
       const link = {
         start: {},
         end: {}
@@ -195,19 +195,19 @@ function onImageRendered (e, eventData) {
       link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
 
       const boundingBoxPoints = [{
-                // Top middle point of bounding box
+        // Top middle point of bounding box
         x: boundingBox.left + boundingBox.width / 2,
         y: boundingBox.top
       }, {
-                // Left middle point of bounding box
+        // Left middle point of bounding box
         x: boundingBox.left,
         y: boundingBox.top + boundingBox.height / 2
       }, {
-                // Bottom middle point of bounding box
+        // Bottom middle point of bounding box
         x: boundingBox.left + boundingBox.width / 2,
         y: boundingBox.top + boundingBox.height
       }, {
-                // Right middle point of bounding box
+        // Right middle point of bounding box
         x: boundingBox.left + boundingBox.width,
         y: boundingBox.top + boundingBox.height / 2
       }

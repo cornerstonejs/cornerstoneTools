@@ -1,4 +1,4 @@
-import { $ } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import touchDragTool from '../imageTools/touchDragTool.js';
 import multiTouchDragTool from '../imageTools/multiTouchDragTool.js';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
@@ -8,9 +8,9 @@ import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 function mouseUpCallback (e, eventData) {
-  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
 function mouseDownCallback (e, eventData) {
@@ -19,9 +19,9 @@ function mouseDownCallback (e, eventData) {
       deltaY: 0
     };
 
-    $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, dragCallback);
-    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, dragCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
     e.stopImmediatePropagation();
 
     return false;
@@ -55,8 +55,8 @@ function dragCallback (e, eventData) {
 
   const config = stackScroll.getConfiguration();
 
-    // The Math.max here makes it easier to mouseDrag-scroll small image stacks
-  let pixelsPerImage = $(element).height() / Math.max(stackData.imageIds.length, 8);
+  // The Math.max here makes it easier to mouseDrag-scroll small image stacks
+  let pixelsPerImage = external.$(element).height() / Math.max(stackData.imageIds.length, 8);
 
   if (config && config.stackScrollSpeed) {
     pixelsPerImage = config.stackScrollSpeed;

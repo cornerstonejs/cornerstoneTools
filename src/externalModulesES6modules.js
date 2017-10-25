@@ -1,10 +1,8 @@
-import * as cornerstone from '../../cornerstone/src/index.js';
-import * as dicomParser from '../../dicomParser/src/index.js';
 import * as cornerstoneMath from '../../cornerstoneMath/src/index.js';
-const $ = window.$;
-const Hammer = window.Hammer;
 
 let cornerstone = window.cornerstone;
+let $ = window.$;
+let Hammer = window.Hammer;
 
 const external = {
   set cornerstone (cs) {
@@ -12,7 +10,19 @@ const external = {
   },
   get cornerstone () {
     return cornerstone;
+  },
+  set $ (module) {
+    $ = module;
+  },
+  get $ () {
+    return $;
+  },
+  set Hammer (module) {
+    Hammer = module;
+  },
+  get Hammer () {
+    return Hammer;
   }
 };
 
-export { $, Hammer, external, cornerstoneMath };
+export { external, cornerstoneMath };

@@ -1,11 +1,11 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
 // --- Strategies --- //
 function defaultStrategy (eventData) {
-    // Calculate distance from the center of the image
+  // Calculate distance from the center of the image
   const rect = eventData.element.getBoundingClientRect(eventData.element);
 
   const points = {
@@ -18,7 +18,7 @@ function defaultStrategy (eventData) {
 
   const pointsFromCenter = {
     x: points.x - rect.left - width / 2,
-        // Invert the coordinate system so that up is positive
+    // Invert the coordinate system so that up is positive
     y: -1 * (points.y - rect.top - height / 2)
   };
 
@@ -42,16 +42,16 @@ function verticalStrategy (eventData) {
 
 // --- Mouse event callbacks --- //
 function mouseUpCallback (e, eventData) {
-  $(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
 function mouseDownCallback (e, eventData) {
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    $(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }

@@ -1,4 +1,4 @@
-import { $, external } from '../externalModules.js';
+import { external } from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -52,7 +52,7 @@ function defaultStrategy (eventData) {
     const mo = sp * eventData.image.slope + eventData.image.intercept;
     const suv = calculateSUV(eventData.image, sp);
 
-        // Draw text
+    // Draw text
     text = `${x}, ${y}`;
     str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
     if (suv) {
@@ -60,9 +60,9 @@ function defaultStrategy (eventData) {
     }
   }
 
-    // Draw text
+  // Draw text
   const coords = {
-        // Translate the x/y away from the cursor
+    // Translate the x/y away from the cursor
     x: eventData.currentPoints.image.x + 3,
     y: eventData.currentPoints.image.y - 3
   };
@@ -109,10 +109,10 @@ function minimalStrategy (eventData) {
 
   if (eventData.isTouchEvent === true) {
     toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-            eventData.currentPoints.page.y - textStyle.getFontSize() * 4);
+      eventData.currentPoints.page.y - textStyle.getFontSize() * 4);
   } else {
     toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x,
-            eventData.currentPoints.page.y - textStyle.getFontSize() / 2);
+      eventData.currentPoints.page.y - textStyle.getFontSize() / 2);
   }
 
   let storedPixels;
@@ -147,13 +147,13 @@ function minimalStrategy (eventData) {
     }
   }
 
-    // Prepare text
+  // Prepare text
   const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
 
   context.font = font;
   context.fillStyle = color;
 
-    // Translate the x/y away from the cursor
+  // Translate the x/y away from the cursor
   let translation;
   const handleRadius = 6;
   const width = context.measureText(text).width;
@@ -182,10 +182,10 @@ function minimalStrategy (eventData) {
 function mouseUpCallback (e, eventData) {
   const element = eventData.element;
 
-  $(element).off('CornerstoneImageRendered', imageRenderedCallback);
-  $(element).off('CornerstoneToolsMouseDrag', dragCallback);
-  $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(element).off('CornerstoneImageRendered', imageRenderedCallback);
+  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
   external.cornerstone.updateImage(eventData.element);
 }
 
@@ -193,10 +193,10 @@ function mouseDownCallback (e, eventData) {
   const element = eventData.element;
 
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    $(element).on('CornerstoneImageRendered', imageRenderedCallback);
-    $(element).on('CornerstoneToolsMouseDrag', dragCallback);
-    $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(element).on('CornerstoneImageRendered', imageRenderedCallback);
+    external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
+    external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
     dragProbe.strategy(eventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event

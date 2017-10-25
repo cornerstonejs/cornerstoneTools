@@ -9,7 +9,7 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
 export default function (synchronizer, sourceElement, targetElement, eventData, positionDifference) {
 
-    // Ignore the case where the source and target are the same enabled element
+  // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
   }

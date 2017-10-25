@@ -29,7 +29,7 @@ export function imagePointToPatientPoint (imagePoint, imagePlane) {
 }
 
 function getRectangleFromImagePlane (imagePlane) {
-    // Get the points
+  // Get the points
   const topLeft = imagePointToPatientPoint({
     x: 0,
     y: 0
@@ -75,9 +75,9 @@ function lineRectangleIntersection (line, rect) {
 }
 
 export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
-    // Gets the line of intersection between two planes in patient space
+  // Gets the line of intersection between two planes in patient space
 
-    // First, get the normals of each image plane
+  // First, get the normals of each image plane
   const targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
   const targetPlane = new cornerstoneMath.Plane();
 
@@ -92,25 +92,25 @@ export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
   const origin = originDirection.origin;
   const direction = originDirection.direction;
 
-    // Calculate the longest possible length in the reference image plane (the length of the diagonal)
+  // Calculate the longest possible length in the reference image plane (the length of the diagonal)
   const bottomRight = imagePointToPatientPoint({
     x: referenceImagePlane.columns,
     y: referenceImagePlane.rows
   }, referenceImagePlane);
   const distance = referenceImagePlane.imagePositionPatient.distanceTo(bottomRight);
 
-    // Use this distance to bound the ray intersecting the two planes
+  // Use this distance to bound the ray intersecting the two planes
   const line = new cornerstoneMath.Line3();
 
   line.start = origin;
   line.end = origin.clone().add(direction.multiplyScalar(distance));
 
-    // Find the intersections between this line and the reference image plane's four sides
+  // Find the intersections between this line and the reference image plane's four sides
   const rect = getRectangleFromImagePlane(referenceImagePlane);
   const intersections = lineRectangleIntersection(line, rect);
 
-    // Return the intersections between this line and the reference image plane's sides
-    // In order to draw the reference line from the target image.
+  // Return the intersections between this line and the reference image plane's sides
+  // In order to draw the reference line from the target image.
   if (intersections.length !== 2) {
     return;
   }
