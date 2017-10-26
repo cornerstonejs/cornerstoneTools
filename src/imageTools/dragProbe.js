@@ -182,7 +182,7 @@ function minimalStrategy (eventData) {
 function mouseUpCallback (e, eventData) {
   const element = eventData.element;
 
-  external.$(element).off('CornerstoneImageRendered', imageRenderedCallback);
+  element.removeEventListener('cornerstoneimagerendered', imageRenderedCallback);
   external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -193,7 +193,7 @@ function mouseDownCallback (e, eventData) {
   const element = eventData.element;
 
   if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(element).on('CornerstoneImageRendered', imageRenderedCallback);
+    element.addEventListener('cornerstoneimagerendered', imageRenderedCallback);
     external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
     external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
     external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -212,7 +212,7 @@ function imageRenderedCallback () {
 
 // The strategy can't be execute at this moment because the image is rendered asynchronously
 // (requestAnimationFrame). Then the eventData that contains all information needed is being
-// Cached and the strategy will be executed once CornerstoneImageRendered is triggered.
+// Cached and the strategy will be executed once cornerstoneimagerendered is triggered.
 function dragCallback (e, eventData) {
   const element = eventData.element;
 
