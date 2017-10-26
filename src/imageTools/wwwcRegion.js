@@ -274,7 +274,7 @@ function disable (element) {
   external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   external.$(element).off('CornerstoneNewImage', newImageCallback);
 
   external.cornerstone.updateImage(element);
@@ -303,11 +303,11 @@ function activate (element, mouseButtonMask) {
   external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   external.$(element).off('CornerstoneNewImage', newImageCallback);
 
   external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
@@ -321,7 +321,7 @@ function disableTouchDrag (element) {
   external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
   external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
   external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 }
 
 function activateTouchDrag (element) {
@@ -336,12 +336,12 @@ function activateTouchDrag (element) {
   external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
   external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
   external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
   external.$(element).on('CornerstoneToolsTouchDrag', dragCallback);
   external.$(element).on('CornerstoneToolsTouchStart', recordStartPoint);
   external.$(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 }
 
 function getConfiguration () {

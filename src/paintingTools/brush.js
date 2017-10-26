@@ -105,7 +105,8 @@ function mouseDownActivateCallback (e, eventData) {
   external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
 }
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
   const configuration = brush.getConfiguration();
   const enabledElement = external.cornerstone.getEnabledElement(eventData.element);
   const context = enabledElement.canvas.getContext('2d');
@@ -161,8 +162,8 @@ function getPixelData (element, canvas) {
 let brushLayerId;
 
 function activate (element, mouseButtonMask) {
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   const cornerstone = external.cornerstone;
   const eventData = {

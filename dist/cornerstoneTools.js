@@ -5730,7 +5730,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var toolType = 'referenceLines';
 
-function onImageRendered(e, eventData) {
+function onImageRendered(e) {
+  var eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   var toolData = (0, _toolState.getToolState)(e.currentTarget, toolType);
 
@@ -5771,13 +5773,15 @@ function enable(element, synchronizationContext, renderer) {
     synchronizationContext: synchronizationContext,
     renderer: renderer
   });
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable(element) {
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.cornerstone.updateImage(element);
 }
 
@@ -10607,7 +10611,7 @@ function minimalStrategy(eventData) {
 function mouseUpCallback(e, eventData) {
   var element = eventData.element;
 
-  _externalModules.external.$(element).off('CornerstoneImageRendered', imageRenderedCallback);
+  element.removeEventListener('cornerstoneimagerendered', imageRenderedCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -10618,7 +10622,7 @@ function mouseDownCallback(e, eventData) {
   var element = eventData.element;
 
   if ((0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
-    _externalModules.external.$(element).on('CornerstoneImageRendered', imageRenderedCallback);
+    element.addEventListener('cornerstoneimagerendered', imageRenderedCallback);
     _externalModules.external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
     _externalModules.external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
     _externalModules.external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
@@ -10637,7 +10641,7 @@ function imageRenderedCallback() {
 
 // The strategy can't be execute at this moment because the image is rendered asynchronously
 // (requestAnimationFrame). Then the eventData that contains all information needed is being
-// Cached and the strategy will be executed once CornerstoneImageRendered is triggered.
+// Cached and the strategy will be executed once cornerstoneimagerendered is triggered.
 function dragCallback(e, eventData) {
   var element = eventData.element;
 
@@ -11454,7 +11458,9 @@ function mouseDownCallback(e, eventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered(e, eventData) {
+function onImageRendered(e) {
+  var eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   var toolData = (0, _toolState.getToolState)(e.currentTarget, toolType);
 
@@ -11539,9 +11545,9 @@ function enable(element) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.cornerstone.updateImage(element);
 }
 
@@ -11550,7 +11556,7 @@ function disable(element) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.cornerstone.updateImage(element);
 }
 
@@ -11563,9 +11569,9 @@ function activate(element, mouseButtonMask) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
   _externalModules.external.cornerstone.updateImage(element);
@@ -11576,9 +11582,9 @@ function deactivate(element) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   _externalModules.external.cornerstone.updateImage(element);
 }
@@ -15139,7 +15145,7 @@ function disable(element) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.$(element).off('CornerstoneNewImage', newImageCallback);
 
   _externalModules.external.cornerstone.updateImage(element);
@@ -15168,11 +15174,11 @@ function activate(element, mouseButtonMask) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   _externalModules.external.$(element).off('CornerstoneNewImage', newImageCallback);
 
   _externalModules.external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
@@ -15186,7 +15192,7 @@ function disableTouchDrag(element) {
   _externalModules.external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
   _externalModules.external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
   _externalModules.external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 }
 
 function activateTouchDrag(element) {
@@ -15201,12 +15207,12 @@ function activateTouchDrag(element) {
   _externalModules.external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
   _externalModules.external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
   _externalModules.external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
   _externalModules.external.$(element).on('CornerstoneToolsTouchDrag', dragCallback);
   _externalModules.external.$(element).on('CornerstoneToolsTouchStart', recordStartPoint);
   _externalModules.external.$(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 }
 
 function getConfiguration() {
@@ -15685,7 +15691,8 @@ function mouseDownActivateCallback(e, eventData) {
   _externalModules.external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
 }
 
-function onImageRendered(e, eventData) {
+function onImageRendered(e) {
+  var eventData = e.detail;
   var configuration = brush.getConfiguration();
   var enabledElement = _externalModules.external.cornerstone.getEnabledElement(eventData.element);
   var context = enabledElement.canvas.getContext('2d');
@@ -15747,8 +15754,8 @@ function getPixelData(element, canvas) {
 var brushLayerId = void 0;
 
 function activate(element, mouseButtonMask) {
-  _externalModules.external.$(element).off('CornerstoneImageRendered', onImageRendered);
-  _externalModules.external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   var cornerstone = _externalModules.external.cornerstone;
   var eventData = {
