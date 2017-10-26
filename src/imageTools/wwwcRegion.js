@@ -275,7 +275,7 @@ function disable (element) {
   external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
   element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  external.$(element).off('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
@@ -304,14 +304,14 @@ function activate (element, mouseButtonMask) {
   external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
   element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  external.$(element).off('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
 
   external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
   element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
-  external.$(element).on('CornerstoneNewImage', newImageCallback);
+  element.addEventListener('cornerstonenewimage', newImageCallback);
 
   external.cornerstone.updateImage(element);
 }

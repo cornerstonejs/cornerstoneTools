@@ -15146,7 +15146,7 @@ function disable(element) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
   element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  _externalModules.external.$(element).off('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
 
   _externalModules.external.cornerstone.updateImage(element);
 }
@@ -15175,14 +15175,14 @@ function activate(element, mouseButtonMask) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
 
   element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  _externalModules.external.$(element).off('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
 
   _externalModules.external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
   element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
-  _externalModules.external.$(element).on('CornerstoneNewImage', newImageCallback);
+  element.addEventListener('cornerstonenewimage', newImageCallback);
 
   _externalModules.external.cornerstone.updateImage(element);
 }
@@ -15768,8 +15768,8 @@ function activate(element, mouseButtonMask) {
   _externalModules.external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   _externalModules.external.$(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  _externalModules.external.$(element).off('CornerstoneNewImage', newImageCallback);
-  _externalModules.external.$(element).on('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.addEventListener('cornerstonenewimage', newImageCallback);
 
   var enabledElement = cornerstone.getEnabledElement(element);
   var canvas = document.createElement('canvas');

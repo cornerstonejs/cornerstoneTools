@@ -176,8 +176,8 @@ function activate (element, mouseButtonMask) {
   external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   external.$(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
 
-  external.$(element).off('CornerstoneNewImage', newImageCallback);
-  external.$(element).on('CornerstoneNewImage', newImageCallback);
+  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.addEventListener('cornerstonenewimage', newImageCallback);
 
   const enabledElement = cornerstone.getEnabledElement(element);
   const canvas = document.createElement('canvas');
