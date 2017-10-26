@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.3 - 2017-11-15 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.3 - 2017-11-16 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -7995,40 +7995,43 @@ function prefetch(element) {
   _requestPoolManager2.default.startGrabbing();
 }
 
-function promiseRemovedHandler(e, eventData) {
-  // When an imagePromise has been pushed out of the cache, re-add its index
-  // It to the indicesToRequest list so that it will be retrieved later if the
-  // CurrentImageIdIndex is changed to an image nearby
-  var element = e.data.element;
-  var stackData = void 0;
+function getPromiseRemovedHandler(element) {
+  return function (e) {
+    var eventData = e.detail;
 
-  try {
-    // It will throw an exception in some cases (eg: thumbnails)
-    stackData = (0, _toolState.getToolState)(element, 'stack');
-  } catch (error) {
-    return;
-  }
+    // When an imagePromise has been pushed out of the cache, re-add its index
+    // It to the indicesToRequest list so that it will be retrieved later if the
+    // CurrentImageIdIndex is changed to an image nearby
+    var stackData = void 0;
 
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
+    try {
+      // It will throw an exception in some cases (eg: thumbnails)
+      stackData = (0, _toolState.getToolState)(element, 'stack');
+    } catch (error) {
+      return;
+    }
 
-  var stack = stackData.data[0];
-  var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
+    if (!stackData || !stackData.data || !stackData.data.length) {
+      return;
+    }
 
-  // Make sure the image that was removed is actually in this stack
-  // Before adding it to the indicesToRequest array
-  if (imageIdIndex < 0) {
-    return;
-  }
+    var stack = stackData.data[0];
+    var imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
 
-  var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
+    // Make sure the image that was removed is actually in this stack
+    // Before adding it to the indicesToRequest array
+    if (imageIdIndex < 0) {
+      return;
+    }
 
-  if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-    return;
-  }
+    var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
 
-  stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+    if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
+      return;
+    }
+
+    stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+  };
 }
 
 function onImageUpdated(e) {
@@ -8049,7 +8052,6 @@ function onImageUpdated(e) {
 }
 
 function enable(element) {
-  var cornerstone = _externalModules.external.cornerstone;
   // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
   var stackPrefetchDataArray = (0, _toolState.getToolState)(element, toolType);
 
@@ -8087,20 +8089,22 @@ function enable(element) {
 
   prefetch(element);
 
-  _externalModules.external.$(element).off('CornerstoneNewImage', onImageUpdated);
-  _externalModules.external.$(element).on('CornerstoneNewImage', onImageUpdated);
+  element.removeEventListener('cornerstonenewimage', onImageUpdated);
+  element.addEventListener('cornerstonenewimage', onImageUpdated);
 
-  _externalModules.external.$(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  _externalModules.external.$(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
-    element: element
-  }, promiseRemovedHandler);
+  var promiseRemovedHandler = getPromiseRemovedHandler(element);
+
+  _externalModules.external.cornerstone.events.removeEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
+  _externalModules.external.cornerstone.events.addEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
 }
 
 function disable(element) {
   clearTimeout(resetPrefetchTimeout);
-  _externalModules.external.$(element).off('CornerstoneNewImage', onImageUpdated);
+  element.removeEventListener('cornerstonenewimage', onImageUpdated);
 
-  _externalModules.external.$(_externalModules.external.cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  var promiseRemovedHandler = getPromiseRemovedHandler(element);
+
+  _externalModules.external.cornerstone.events.removeEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
 
   var stackPrefetchData = (0, _toolState.getToolState)(element, toolType);
   // If there is actually something to disable, disable it
