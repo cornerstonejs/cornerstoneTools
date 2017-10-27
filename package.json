@@ -46,7 +46,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
-    "cornerstone-core": "^0.13.0",
+    "cornerstone-core": "^1.0.0",
     "coveralls": "^3.0.0",
     "docdash": "^0.4.0",
     "eslint": "^4.9.0",
