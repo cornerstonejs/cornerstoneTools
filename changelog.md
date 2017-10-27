@@ -1,4 +1,20 @@
-# Version 0.10.0
+# Version 1.0.0
+
+- Updated to 1.0.0 because 0.10.0 introduced a breaking change with Cornerstone, jQuery, and Hammer.js injection. This doesn't break usage if you are using HTML script tags, but if you are using a module system, Cornerstone Tools may not properly find its dependencies.
+
+The solution for this is to inject your Cornerstone / jQuery / Hammers instance into Cornerstone Tools as follows:
+
+````javascript
+cornerstoneTools.external.$ = $;
+cornerstoneTools.external.Hammer = Hammer;
+cornerstoneTools.external.cornerstone = cornerstone;
+````
+
+An example commit doing this in the OHIF Viewer Meteor application is here: https://github.com/OHIF/Viewers/commit/012bba44806d0fb9bb60af329c4875e7f6b751e0#diff-d9ccd906dfc48b4589d720766fe14715R25
+
+We apologize for any headaches that the breaking change 0.10.0 may have caused for those using module systems.
+
+# Version 0.10.0 (deprecated due to breaking change)
 
 - Add a 3rd parameter to saveAs to allow other mimeTypes, such as image/jpeg
 - Made Cornerstone, Jquery and Hammer as injection dependencies
