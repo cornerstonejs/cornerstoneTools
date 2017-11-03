@@ -49,9 +49,9 @@ See the live examples and wiki for documentation on how to use this library
 *New*: Specify the cornerstone, jQuery, and Hammer.js instances you want to use the library with.
 
 ````javascript
-cornerstoneTools.externals.cornerstone = cornerstone;
-cornerstoneTools.externals.$ = $;
-cornerstoneTools.externals.Hammer = Hammer;
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.external.$ = $;
+cornerstoneTools.external.Hammer = Hammer;
 ````
 
 ```
