@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.0 - 2017-10-27 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.1 - 2017-11-04 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -3513,8 +3513,8 @@ function dragCallback(e, eventData) {
 
   var config = stackScroll.getConfiguration();
 
-  // The Math.max here makes it easier to mouseDrag-scroll small image stacks
-  var pixelsPerImage = _externalModules.external.$(element).height() / Math.max(stackData.imageIds.length, 8);
+  // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
+  var pixelsPerImage = Math.max(2, _externalModules.external.$(element).height() / Math.max(stackData.imageIds.length, 8));
 
   if (config && config.stackScrollSpeed) {
     pixelsPerImage = config.stackScrollSpeed;
@@ -15835,7 +15835,7 @@ exports.brush = brush;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '1.0.0';
+exports.default = '1.0.1';
 
 /***/ })
 /******/ ]);

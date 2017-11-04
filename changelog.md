@@ -1,3 +1,15 @@
+# Version 1.0.1
+
+- Add check to make drag (touch or click) stack scrolling work better on very large stacks.
+
+The previous behaviour led to scrolling more than 1 image per pixel if there were more images than the height of the element in pixels, which wasn't a good user experience.
+
+New behaviour is to scroll at most 1 image per 2 pixels, and at least 1 image per 1/8 of the element height. (thanks @Maistho)
+
+- Switch package.json 'main' to minified version to reduce bundle sizes
+- Fixed incorrect 'externals' to 'external' in README (thanks @nicomlas)
+- Fixed incorrect cornerstone-core devDependency (ˆ0.13.0 to ˆ1.0.0)
+
 # Version 1.0.0
 
 - Updated to 1.0.0 because 0.10.0 introduced a breaking change with Cornerstone, jQuery, and Hammer.js injection. This doesn't break usage if you are using HTML script tags, but if you are using a module system, Cornerstone Tools may not properly find its dependencies.
