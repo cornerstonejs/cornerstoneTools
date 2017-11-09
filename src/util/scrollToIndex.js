@@ -66,6 +66,8 @@ export default function (element, newImageIdIndex) {
     if (errorLoadingHandler) {
       errorLoadingHandler(element, imageId, error);
     }
+    
+    $(element).trigger('CornerstoneNewImageFailed', { element: element, imageId: imageId, error: error });
   }
 
   if (newImageIdIndex === stackData.currentImageIdIndex) {
