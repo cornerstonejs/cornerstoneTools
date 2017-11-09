@@ -1,4 +1,5 @@
 import { external } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 /*
  * Define the runAnimation boolean as an object
@@ -103,7 +104,7 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
   }
 
   external.$(element).on('CornerstoneToolsTouchDrag', touchDragCallback);

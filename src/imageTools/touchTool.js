@@ -5,6 +5,7 @@ import touchMoveHandle from '../manipulators/touchMoveHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from '../manipulators/touchMoveAllHandles.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 function deactivateAllHandles (handles) {
   Object.keys(handles).forEach(function (name) {
@@ -89,7 +90,8 @@ function touchTool (touchToolInterface) {
       addNewMeasurement(eventData);
     }
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+    e.stopImmediatePropagation();
+    e.preventDefault();
   }
   // /////// END ACTIVE TOOL ///////
 
@@ -134,8 +136,9 @@ function touchTool (touchToolInterface) {
           cornerstone.updateImage(element);
           touchMoveHandle(e, touchToolInterface.toolType, data, handle, doneMovingCallback);
           e.stopImmediatePropagation();
+          e.preventDefault();
 
-          return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+          return;
         }
       }
     }
@@ -151,8 +154,9 @@ function touchTool (touchToolInterface) {
           cornerstone.updateImage(element);
           touchMoveAllHandles(e, data, toolData, touchToolInterface.toolType, true, doneMovingCallback);
           e.stopImmediatePropagation();
+          e.preventDefault();
 
-          return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+          return;
         }
       }
     }
@@ -195,9 +199,7 @@ function touchTool (touchToolInterface) {
       }
 
       if (lastEvent && lastEvent.type === 'CornerstoneToolsTouchPress') {
-        const event = external.$.Event(lastEvent.type, lastEventData);
-
-        external.$(element).trigger(event, lastEventData);
+        triggerEvent(element, lastEvent.type, lastEventData);
       }
     }
 
@@ -226,8 +228,9 @@ function touchTool (touchToolInterface) {
         data.active = true;
         touchMoveHandle(e, touchToolInterface.toolType, data, handle, doneMovingCallback);
         e.stopImmediatePropagation();
+        e.preventDefault();
 
-        return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+        return;
       }
     }
 
@@ -248,8 +251,9 @@ function touchTool (touchToolInterface) {
 
         touchMoveAllHandles(e, data, toolData, touchToolInterface.toolType, true, doneMovingCallback);
         e.stopImmediatePropagation();
+        e.preventDefault();
 
-        return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+        return;
       }
     }
   }
@@ -333,9 +337,7 @@ function touchTool (touchToolInterface) {
       type: eventType
     };
 
-    const event = external.$.Event(eventType, statusChangeEventData);
-
-    external.$(element).trigger(event, statusChangeEventData);
+    triggerEvent(element, eventType, statusChangeEventData);
 
     element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
