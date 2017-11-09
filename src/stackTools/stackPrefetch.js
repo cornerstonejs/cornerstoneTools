@@ -7,10 +7,12 @@ import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.j
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
 
-let configuration = {};
+let configuration = {
+  maxImagesToPrefetch: Infinity
+};
 
 let resetPrefetchTimeout;
-const resetPrefetchDelay = 300;
+const resetPrefetchDelay = 10;
 
 function range (lowEnd, highEnd) {
   // Javascript version of Python's range function
@@ -156,17 +158,31 @@ function prefetch (element) {
   let higherIndex = nearest.high;
 
   while (lowerIndex > 0 || higherIndex < stackPrefetch.indicesToRequest.length) {
-    if (lowerIndex >= 0) {
+    const currentIndex = stack.currentImageIdIndex;
+
+
+    const shouldSkipLower = currentIndex - stackPrefetch.indicesToRequest[lowerIndex] > configuration.maxImagesToPrefetch;
+    const shouldSkipHigher = stackPrefetch.indicesToRequest[higherIndex] - currentIndex > configuration.maxImagesToPrefetch;
+
+    const shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
+    const shouldLoadHigher = !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
+
+    if (!shouldLoadHigher && !shouldLoadLower) {
+      break;
+    }
+
+    if (shouldLoadLower) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
       imageId = stack.imageIds[nextImageIdIndex];
       requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
     }
 
-    if (higherIndex < stackPrefetch.indicesToRequest.length) {
+    if (shouldLoadHigher) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
       imageId = stack.imageIds[nextImageIdIndex];
       requestPoolManager.addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
     }
+
   }
 
   // Try to start the requestPool's grabbing procedure
