@@ -1,5 +1,6 @@
 import { external } from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 function getElementToolStateManager (element) {
   const enabledImage = external.cornerstone.getEnabledElement(element);
@@ -27,7 +28,7 @@ function addToolState (element, toolType, measurementData) {
     measurementData
   };
 
-  external.$(element).trigger(eventType, eventData);
+  triggerEvent(element, eventType, eventData);
 }
 
 // Here you can get state - used by tools as well as modules
@@ -61,7 +62,7 @@ function removeToolState (element, toolType, data) {
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, eventData);
+    triggerEvent(element, eventType, eventData);
   }
 }
 

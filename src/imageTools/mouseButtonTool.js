@@ -8,6 +8,7 @@ import moveAllHandles from '../manipulators/moveAllHandles.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (mouseToolInterface) {
   let configuration = {};
@@ -280,9 +281,7 @@ export default function (mouseToolInterface) {
       type: eventType
     };
 
-    const event = external.$.Event(eventType, statusChangeEventData);
-
-    external.$(element).trigger(event, statusChangeEventData);
+    triggerEvent(element, eventType, statusChangeEventData);
 
     external.$(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
     external.$(element).off('CornerstoneToolsMouseMove', mouseToolInterface.mouseMoveCallback || mouseMoveCallback);
