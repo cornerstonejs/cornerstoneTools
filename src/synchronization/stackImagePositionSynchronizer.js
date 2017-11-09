@@ -22,7 +22,7 @@ export default function (synchronizer, sourceElement, targetElement) {
   let minDistance = Number.MAX_VALUE;
   let newImageIdIndex = -1;
 
-  external.$.each(stackData.imageIds, function (index, imageId) {
+  stackData.imageIds.forEach((imageId, index) => {
     const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
     const imagePosition = imagePlane.imagePositionPatient;
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
