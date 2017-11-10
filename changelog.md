@@ -1,3 +1,21 @@
+# Version 1.0.2
+
+- The biggest behaviour change in this release comes from bug fixes to the fusion renderer.
+
+When using the fusion renderer, this is how it works now:
+- Stacks in Cornerstone Tools correspond to layers in Cornerstone Core. If you have ten stacks in your toolData and you are using the fusion renderer, you have ten layers.
+- If no image is being displayed in the stack at any given time, the layer has image = undefined.
+- The active layer cannot be changed to a layer with an undefined image. setActiveLayer will switch to the base layer in this case.
+- When image is changed and current active layer has image=undefined, the active layer is set to the base layer.
+
+- Update cornerstone-core dependency since stack fusion renderer now requires APIs added in Cornerstone Core 1.1.0 (cornerstone.setLayerImage)
+
+- Added stackPrefetch configuration option for maximum amount of images to fetch (thanks @maistho)
+
+This option was added to allow developers using very large stack (i.e. > 1000 images) to limit the prefetching behaviour. The default value is Infinity, so no changes are necessary for normal use.
+
+- Bug fix for stackPrefetch: the first element on stackPrefetch.indicesToRequest wasn't being prefetched (thanks @lscoder). Closes #211
+
 # Version 1.0.1
 
 - Add check to make drag (touch or click) stack scrolling work better on very large stacks.
