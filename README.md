@@ -4,59 +4,106 @@
 cornerstoneTools
 ================
 
-cornerstoneTools is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
+`cornerstoneTools` is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
 a set of common tools needed in medical imaging to work with images and stacks of images.
 
-View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) to see this
-library in action!
-
-View the [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone.
-
-Community
----------
-
-Have questions?  Try posting on our [google groups forum](https://groups.google.com/forum/#!forum/cornerstone-platform).
-
-Status
-------
-
-**Project Status: Alpha (Stable) **
-
-NOTE: Project is currently under active development - functionality is not complete, bugs exist,
-APIs will change and documentation is missing or not correct.  The implemented functionality is considered
-relatively stable.
-
-Make sure to visit the [wiki](https://github.com/chafey/cornerstoneTools/wiki) for more information.
+* View [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) of individual tools
+* Take a peak at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
+* Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
 
 
-Install
--------
+Getting Started
+---------------
 
-Get a packaged source file:
+### Install
 
-* [cornerstoneTools.js](https://raw.githubusercontent.com/chafey/cornerstoneTools/master/dist/cornerstoneTools.js)
-* [cornerstoneTools.min.js](https://raw.githubusercontent.com/chafey/cornerstoneTools/master/dist/cornerstoneTools.min.js)
+**Via NPM:** (preferred)
 
-Or install via [Bower](http://bower.io/):
+`npm install --save cornerstone-tools`
 
-> bower install cornerstoneTools
 
-Usage
--------
+**Get a packaged source file:**
 
-See the live examples and wiki for documentation on how to use this library
+[UNPKG](https://unpkg.com/#/) offers a quick/neat solution for grabbing versioned copies of the source. For example:
 
-*New*: Specify the cornerstone, jQuery, and Hammer.js instances you want to use the library with.
+> `https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
+
+*For development, use the following to always get the latest minified source:*
+
+> `<script src="https://unpkg.com/cornerstone-tools"></script>`
+
+*For production, always specify a package version:*
+
+> `<script src="https://unpkg.com/cornerstone-tools@0.9.0"></script>`
+
+
+### Usage
+
+See the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/chafey/cornerstoneTools/wiki) for documentation on how to use this library
+
+
+**A common setup when using modules:**
 
 ````javascript
+// Load NPM packages
+import $ from 'jquery';                           // npm install --save jquery
+import Hammer from 'hammerjs';                    // npm install --save hammerjs
+import * as cornerstone from 'cornerstone-core';  // npm install --save cornerstone-core
+import * as cornerstoneTools from 'cornerstone-tools';
+
+// Specify external dependencies
+cornerstone.external.$ = $;
 cornerstoneTools.external.cornerstone = cornerstone;
 cornerstoneTools.external.$ = $;
 cornerstoneTools.external.Hammer = Hammer;
+
+// Use cornerstoneTools :celebrate:
 ````
 
-```
-TODO
-```
+*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+
+
+**A common setup when using package source files:**
+
+````javascript
+// Load Packaged Sources
+<script src="https://unpkg.com/jquery@3.2.1/dist/jquery.js"></script>
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+<script src="https://unpkg.com/cornerstone-core@1.1.0/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-tools@1.0.2/dist/cornerstoneTools.min.js"></script>
+
+// Specify external dependencies
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.external.$ = $;
+cornerstoneTools.external.Hammer = Hammer;
+
+// Use cornerstoneTools :celebrate:
+````
+
+*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+
+
+Contributing
+------------
+
+We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/chafey/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
+
+
+Versioning
+----------
+
+cornerstoneTools will be maintained under the [Semantic Versioning Guidelines](http://semver.org) as much as possible. Releases will be numbered with the following format:
+
+`<major>.<minor>.<patch>`
+
+And constructed with the following guidelines:
+
+* Breaking backward compatibility bumps the major (and resets the minor and patch)
+  - Information on how to navigate breaking changes will be included in our [Change Log](https://github.com/chafey/cornerstoneTools/blob/master/changelog.md)
+* New additions, including new icons, without breaking backward compatibility bumps the minor (and resets the patch)
+* Bug fixes, changes to brand logos, and misc changes bumps the patch
+
+
 
 Features Targeted for V1.0
 --------------------------
@@ -129,7 +176,7 @@ Backlog
 * add support for pointer events as an input source
 * Reference line renderer for first/last/active
 * Annotations (e.g. text, arrows, circles)
-* Move all API documentation from wiki into markdown in a doc folder
+* Move all API documentation from [wiki](https://github.com/chafey/cornerstoneTools/wiki) into markdown in a doc folder
 * key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
 Copyright
