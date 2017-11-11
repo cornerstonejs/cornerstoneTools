@@ -16,29 +16,34 @@ Features
 --------
 
 |   |   |**Single Image Tools**|    |   |
-|----------|----------|----------|----------|----------|
-| ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)  | ![Zoom Tool Example](https://placehold.it/150)  | ![Pan Tool Example](https://placehold.it/150) | ![Length Tool Example](https://placehold.it/150)  | ![Rectangle ROI Tool Example](https://placehold.it/150) |
+|:----------:|:----------:|:----------:|:----------:|:----------:|
+| ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)  | ![Zoom Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif)  | ![Pan Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif) | ![Length Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif)  | ![Rectangle ROI Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif) |
 | WW/WC | Zoom  | Pan | Length  | Rectangle ROI |
-| [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js) | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |
+| [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js) | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js)  |
 | ![Elliptical ROI Tool Example](https://placehold.it/150) | ![Pixel Probe Tool Example](https://placehold.it/150) | ![Angle Tool Example](https://placehold.it/150) |    |   |
 | Elliptical ROI  | Pixel Probe | Angle |   |   |
 | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
 
 
-|   | **Image Stack Tools**  |   |
-|----------|----------|----------|
-| ![Scroll Tool Example](https://placehold.it/150) | Scroll | [Example]()	/ [Source]()  |
-| ![Cine / Playing Clips Tool Example](https://placehold.it/150) | Cine / Playing Clips | [Example]()	/ [Source]()  |
-| ![Cross reference lines Tool Example](https://placehold.it/150) | Cross reference lines | [Example]()	/ [Source]()  |
-| **Timeseries Tools**		|		|		|
-| ![Play Tool Example](https://placehold.it/150) | Play | [Example]()	/ [Source]()  |
-| ![Scroll Tool Example](https://placehold.it/150) | Scroll | [Example]()	/ [Source]()  |
-| ![Probe Tool Example](https://placehold.it/150) | Probe | [Example]()	/ [Source]()  |
-| **Synchronization Tools**		|		|		|
-| ![Stack by image index snychronization Tool Example](https://placehold.it/150) | Stack by image index snychronization | [Example]()	/ [Source]()  |
-| ![Stack by image position snychronization Tool Example](https://placehold.it/150) | Stack by image position snychronization | [Example]()	/ [Source]()  |
-| ![Stack by zoom and pan snychronization Tool Example](https://placehold.it/150) | Stack by zoom and pan snychronization | [Example]()	/ [Source]()  |
-| ![Snychronization of ww/wc and invert Tool Example](https://placehold.it/150) | Snychronization of ww/wc and invert | [Example]()	/ [Source]()  |
+|   |   | **Image Stack Tools** |   |   |
+|:----------:|:----------:|:----------:|:----------:|:----------:|
+| ![Scroll Tool Example](https://placehold.it/150)  | ![Cine / Playing Clips Tool Example](https://placehold.it/150)  | ![Cross reference lines Tool Example](https://placehold.it/150) |   |   |
+| Scroll  | Cine / Playing Clips  | Cross reference lines |   |   |
+| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
+
+
+|   |   | **Time Series Tools** |   |   |
+|:----------:|:----------:|:----------:|:----------:|:----------:|
+| ![Play Tool Example](https://placehold.it/150)  | ![Scroll Tool Example](https://placehold.it/150)  | ![Probe Tool Example](https://placehold.it/150) |   |   |
+| Play  | Scroll  | Probe|   |   |
+| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
+
+|   |   | **Synchronization Tools** |   |   |
+|:----------:|:----------:|:----------:|:----------:|:----------:|
+| ![Stack by image index snychronization Tool Example](https://placehold.it/150)   | ![Stack by image position snychronization Tool Example](https://placehold.it/150)  | ![Stack by zoom and pan snychronization Tool Example](https://placehold.it/150) | ![Snychronization of ww/wc and invert Tool Example](https://placehold.it/150)  |   |
+| By Image Index  | By Image Position  | By Zoom/Pan  | By ww/wc and Invert  |   |
+| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |
+
 
 **Features that aren't as visual:**
 
