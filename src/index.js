@@ -113,6 +113,8 @@ export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
 export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
+export { eraser, eraserTouch } from './imageTools/eraserTool.js';
+
 export { ellipticalRoi, ellipticalRoiTouch } from './imageTools/ellipticalRoi.js';
 export { freehand } from './imageTools/freehand.js';
 
