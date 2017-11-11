@@ -69,15 +69,12 @@ Getting Started
 
 [UNPKG](https://unpkg.com/#/) offers a quick/neat solution for grabbing versioned copies of the source. For example:
 
-> `https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
+`https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
 
-*For development, use the following to always get the latest minified source:*
-
-> `<script src="https://unpkg.com/cornerstone-tools"></script>`
-
-*For production, always specify a package version:*
-
-> `<script src="https://unpkg.com/cornerstone-tools@0.9.0"></script>`
+* For development, to get the latest minified source:
+    * `<script src="https://unpkg.com/cornerstone-tools"></script>`
+* For production, specify a package version:
+    * `<script src="https://unpkg.com/cornerstone-tools@0.9.0"></script>`
 
 
 ### Usage
