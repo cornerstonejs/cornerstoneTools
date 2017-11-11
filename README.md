@@ -15,18 +15,18 @@ a set of common tools needed in medical imaging to work with images and stacks o
 Features
 --------
 
-| **GIF** | **Tool Name** |**Example / Source**|
-|----------|-------|---|
-| **Single Image Tools**		|		|		|
-| ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)  | WW/WC |	[Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js)  |
-| ![Zoom Tool Example](https://placehold.it/150) |	Zoom	| [Example]()	/ [Source]()  |
-| ![Pan Tool Example](https://placehold.it/150) | Pan | [Example]()	/ [Source]()  |
-| ![Length Tool Example](https://placehold.it/150) | Length | [Example]()	/ [Source]()  |
-| ![Rectangle ROI Tool Example](https://placehold.it/150) | Rectangle ROI | [Example]()	/ [Source]()  |
-| ![Elliptical ROI Tool Example](https://placehold.it/150) | Elliptical ROI | [Example]()	/ [Source]()  |
-| ![Pixel Probe Tool Example](https://placehold.it/150) | Pixel Probe | [Example]()	/ [Source]()  |
-| ![Angle Tool Example](https://placehold.it/150) | Angle | [Example]()	/ [Source]()  |
-| **Image Stack Tools**		|		|		|
+|   |   |**Single Image Tools**|    |   |
+|----------|----------|----------|----------|----------|
+| ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)  | ![Zoom Tool Example](https://placehold.it/150)  | ![Pan Tool Example](https://placehold.it/150) | ![Length Tool Example](https://placehold.it/150)  | ![Rectangle ROI Tool Example](https://placehold.it/150) |
+| WW/WC | Zoom  | Pan | Length  | Rectangle ROI |
+| [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js) | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |
+| ![Elliptical ROI Tool Example](https://placehold.it/150) | ![Pixel Probe Tool Example](https://placehold.it/150) | ![Angle Tool Example](https://placehold.it/150) |    |   |
+| Elliptical ROI  | Pixel Probe | Angle |   |   |
+| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
+
+
+|   | **Image Stack Tools**  |   |
+|----------|----------|----------|
 | ![Scroll Tool Example](https://placehold.it/150) | Scroll | [Example]()	/ [Source]()  |
 | ![Cine / Playing Clips Tool Example](https://placehold.it/150) | Cine / Playing Clips | [Example]()	/ [Source]()  |
 | ![Cross reference lines Tool Example](https://placehold.it/150) | Cross reference lines | [Example]()	/ [Source]()  |
