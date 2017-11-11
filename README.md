@@ -160,57 +160,17 @@ And constructed with the following guidelines:
 * Bug fixes, changes to brand logos, and misc changes bumps the patch
 
 
-
-Features Targeted for V1.0
---------------------------
-
-* Tools that work with a single image
-  * WW/WL
-  * Zoom
-  * Pan
-  * Length
-  * Rectangle ROI
-  * Elliptical ROI
-  * Pixel Probe
-  * Angle
-* Tools that work with a stack of images
-  * Scroll
-  * Cine / Playing Clips
-  * Cross reference lines
-* Tools that work with timeseries (4D)
-  * Play
-  * Scroll
-  * Probe
-* Measurement Manager
-* Synchronization tools
-  * Stack by image index
-  * Stack by image position
-  * Image by zoom and pan
-  * Sync ww/wc/invert
-* Support for binding each tool to different mouse inputs:
-  * Left mouse button
-  * Middle mouse button
-  * Right mouse button
-  * Mouse Wheel
-* Support for touch based gestures
-  * Drag
-  * Pinch
-* Tool framework that can be used to simplify development of new tools that work in a consistent manner with the included
-  tools
-* Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
-
 Build System
-============
+------------
 
 This project uses webpack to build the software.
 
-Pre-requisites:
----------------
+**Requirements:**
 
-NodeJs - [click to visit web site for installation instructions](http://nodejs.org).
+* [NodeJs](http://nodejs.org).
 
-Common Tasks
-------------
+**Common Tasks:**
+
 
 Update dependencies (after each pull):
 > npm install
