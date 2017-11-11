@@ -12,6 +12,49 @@ a set of common tools needed in medical imaging to work with images and stacks o
 * Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
 
 
+Features
+--------
+
+| **GIF** | **Tool Name** |**Example / Source**|
+|----------|-------|---|
+| **Single Image Tools**		|		|		|
+| WW/WC | ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/074c012323786744e45415f82a21582f65689923/examples/00-tool-images/wwwc.gif)  |	[Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js)  |
+| Zoom |		|		|
+| Pan |		|		|
+| Length |		|		|
+| Rectangle ROI |		|		|
+| Elliptical ROI |		|		|
+| Pixel Probe |		|		|
+| Angle |		|		|
+
+
+* Tools that work with a stack of images
+  * Scroll
+  * Cine / Playing Clips
+  * Cross reference lines
+* Tools that work with timeseries (4D)
+  * Play
+  * Scroll
+  * Probe
+* Measurement Manager
+* Synchronization tools
+  * Stack by image index
+  * Stack by image position
+  * Image by zoom and pan
+  * Sync ww/wc/invert
+* Support for binding each tool to different mouse inputs:
+  * Left mouse button
+  * Middle mouse button
+  * Right mouse button
+  * Mouse Wheel
+* Support for touch based gestures
+  * Drag
+  * Pinch
+* Tool framework that can be used to simplify development of new tools that work in a consistent manner with the included
+  tools
+* Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
+
+
 Getting Started
 ---------------
 
