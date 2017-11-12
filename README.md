@@ -20,16 +20,16 @@ Features
   <!-- Image Row -->
   <tr>
     <td>
-      ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)
+      <img alt="WW/WC Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif" />
     </td>
     <td>
-      ![Zoom Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif)
+      <img alt="Zoom Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif" />
     </td>
     <td>
-      ![Pan Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif)
+      <img alt="Pan Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif" />
     </td>
     <td>
-      ![Length Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif)
+      <img alt="Length Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif" />
     </td>
   <tr>
   <!-- Name Row -->
@@ -42,16 +42,20 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js)
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js">Source</a>
     </td>
     <td>
-      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js)
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Source</a>
     </td>
     <td>
-      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js)
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js">Source</a>
     </td>
     <td>
-      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js)
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js">Source</a>
     </td>
   </tr>
   <!-- Buffer Row -->
@@ -61,16 +65,16 @@ Features
    <!-- Image Row -->
   <tr>
     <td>
-      ![Rectangle ROI Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif)
+      <img alt="Rectangle ROI Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif" />
     </td>
     <td>
-      ![Elliptical ROI Tool Example](https://placehold.it/150)
+      <img alt="Elliptical ROI Tool Example" src="https://placehold.it/150" />
     </td>
     <td>
-      ![Pixel Probe Tool Example](https://placehold.it/150)
+      <img alt="Pixel Probe Tool Example" src="https://placehold.it/150" />
     </td>
     <td>
-      ![Angle Tool Example](https://placehold.it/150)
+      <img alt="Angle Tool Example" src="https://placehold.it/150" />
     </td>
   <tr>
   <!-- Name Row -->
@@ -83,16 +87,20 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js)
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
   </tr>
   <!-- Buffer Row -->
@@ -102,16 +110,16 @@ Features
   <!-- Image Row -->
   <tr>
     <td>
-      ![Scroll Tool Example](https://placehold.it/150)
+      <img alt="Scroll Tool Example" src="https://placehold.it/150" />
     </td>
     <td>
-      ![Cine / Playing Clips Tool Example](https://placehold.it/150)
+      <img alt="Cine / Playing Clips Tool Example" src="https://placehold.it/150" />
     </td>
     <td>
-      ![Cross reference lines Tool Example](https://placehold.it/150)
+      <img alt="Cross reference lines Tool Example" src="https://placehold.it/150" />
     </td>
     <td>
-      ![Placeholder Example](https://placehold.it/150)
+      <img alt="Placeholder Example" src="https://placehold.it/150" />
     </td>
   <tr>
   <!-- Name Row -->
@@ -124,16 +132,20 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
     <td>
-      [Example]()	/ [Source]()
+      <a href="">Example</a> /
+      <a href="">Source</a>
     </td>
   </tr>
 </table>
