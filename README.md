@@ -15,38 +15,141 @@ a set of common tools needed in medical imaging to work with images and stacks o
 Features
 --------
 
-|   |   |**Single Image Tools**|    |   |
-|:----------:|:----------:|:----------:|:----------:|:----------:|
-| ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)  | ![Zoom Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif)  | ![Pan Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif) | ![Length Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif)  | ![Rectangle ROI Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif) |
-| WW/WC | Zoom  | Pan | Length  | Rectangle ROI |
-| [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js) | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js)  | [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js)  |
-| ![Elliptical ROI Tool Example](https://placehold.it/150) | ![Pixel Probe Tool Example](https://placehold.it/150) | ![Angle Tool Example](https://placehold.it/150) |    |   |
-| Elliptical ROI  | Pixel Probe | Angle |   |   |
-| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
+<!-- 5 columns looks great on desktop, but 4 column table supports mobile better -->
+<table>
+  <!-- Image Row -->
+  <tr>
+    <td>
+      ![WW/WC Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif)
+    </td>
+    <td>
+      ![Zoom Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif)
+    </td>
+    <td>
+      ![Pan Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif)
+    </td>
+    <td>
+      ![Length Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif)
+    </td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>WW/WC</td>
+    <td>Zoom</td>
+    <td>Pan</td>
+    <td>Length</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html) / [Source](https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js)
+    </td>
+    <td>
+      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js)
+    </td>
+    <td>
+      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js)
+    </td>
+    <td>
+      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js)
+    </td>
+  </tr>
+  <!-- Buffer Row -->
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+   <!-- Image Row -->
+  <tr>
+    <td>
+      ![Rectangle ROI Tool Example](https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif)
+    </td>
+    <td>
+      ![Elliptical ROI Tool Example](https://placehold.it/150)
+    </td>
+    <td>
+      ![Pixel Probe Tool Example](https://placehold.it/150)
+    </td>
+    <td>
+      ![Angle Tool Example](https://placehold.it/150)
+    </td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>Rectangle ROI</td>
+    <td>Elliptical ROI</td>
+    <td>Pixel Probe</td>
+    <td>Angle</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      [Example](https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html)	/ [Source](https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js)
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+  </tr>
+  <!-- Buffer Row -->
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+  <!-- Image Row -->
+  <tr>
+    <td>
+      ![Scroll Tool Example](https://placehold.it/150)
+    </td>
+    <td>
+      ![Cine / Playing Clips Tool Example](https://placehold.it/150)
+    </td>
+    <td>
+      ![Cross reference lines Tool Example](https://placehold.it/150)
+    </td>
+    <td>
+      ![Placeholder Example](https://placehold.it/150)
+    </td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>Scroll</td>
+    <td>Cine / Playing Clips</td>
+    <td>Reference Lines</td>
+    <td>TBD</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+    <td>
+      [Example]()	/ [Source]()
+    </td>
+  </tr>
+</table>
 
 
-|   |   | **Image Stack Tools** |   |   |
-|:----------:|:----------:|:----------:|:----------:|:----------:|
-| ![Scroll Tool Example](https://placehold.it/150)  | ![Cine / Playing Clips Tool Example](https://placehold.it/150)  | ![Cross reference lines Tool Example](https://placehold.it/150) |   |   |
-| Scroll  | Cine / Playing Clips  | Cross reference lines |   |   |
-| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
+**Other Features:**
 
-
-|   |   | **Time Series Tools** |   |   |
-|:----------:|:----------:|:----------:|:----------:|:----------:|
-| ![Play Tool Example](https://placehold.it/150)  | ![Scroll Tool Example](https://placehold.it/150)  | ![Probe Tool Example](https://placehold.it/150) |   |   |
-| Play  | Scroll  | Probe|   |   |
-| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |   |
-
-|   |   | **Synchronization Tools** |   |   |
-|:----------:|:----------:|:----------:|:----------:|:----------:|
-| ![Stack by image index snychronization Tool Example](https://placehold.it/150)   | ![Stack by image position snychronization Tool Example](https://placehold.it/150)  | ![Stack by zoom and pan snychronization Tool Example](https://placehold.it/150) | ![Snychronization of ww/wc and invert Tool Example](https://placehold.it/150)  |   |
-| By Image Index  | By Image Position  | By Zoom/Pan  | By ww/wc and Invert  |   |
-| [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  | [Example]()	/ [Source]()  |   |
-
-
-**Features that aren't as visual:**
-
+* Time Series Tools
+  * Play
+  * Scroll
+  * Probe
+* Synchronization Tools
+  * By image index
+  * By image position
+  * By zoom and pan
+  * By ww/wc and inversion
 * Measurement Manager
 * Support for binding each tool to different mouse inputs:
   * Left mouse button
