@@ -1,27 +1,21 @@
 import * as _self from './../index.js';
 import { external } from '../externalModules.js';
-import mouseButtonTool from './mouseButtonTool.js';
-import touchTool from './touchTool.js';
+import simpleMouseButtonTool from './simpleMouseButtonTool.js';
+import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 
 const toolTypes = ['length'];
 const numToolTypes = toolTypes.length;
-const eraserDistance = 8;
+const eraserDistance = 10;
 
-function createNewMeasurement () {
-  return undefined;
-}
+let dragEvent;
+let dragEventData;
 
-function mouseDownCallback (e, eventData) {
+function defaultStrategy (e, eventData) {
   const element = eventData.element;
   let toolDataRemoved = false;
-
-  // Don't proceed if we haven't enabled listening for this mouseButton
-  if (!isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    return;
-  }
 
   const coords = eventData.startPoints.canvas;
 
@@ -40,7 +34,6 @@ function mouseDownCallback (e, eventData) {
     for (let j = 0; j < toolData.data.length; j++) {
       const data = toolData.data[j];
       const distance = eraserDistance;
-
       const isNearHandle = getHandleNearImagePoint(element, data.handles, coords, distance) !== undefined;
       const isNearTool = hasPointNearToolMethod && pointNearToolFn(element, data, coords);
 
@@ -57,16 +50,66 @@ function mouseDownCallback (e, eventData) {
   }
 }
 
-// Module exports
-const eraser = mouseButtonTool({
-  mouseDownCallback,
-  createNewMeasurement
-});
+function mouseUpCallback (e, eventData) {
+  const element = eventData.element;
 
-const eraserTouch = touchTool({
-  mouseDownCallback,
-  createNewMeasurement
-});
+  external.$(element).off('CornerstoneImageRendered', imageRenderedCallback);
+  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.cornerstone.updateImage(eventData.element);
+}
+
+function mouseDownCallback (e, eventData) {
+  const element = eventData.element;
+
+  if (!isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+    return;
+  }
+
+  external.$(element).on('CornerstoneImageRendered', imageRenderedCallback);
+  external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
+  external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  eraser.strategy(e, eventData);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+function imageRenderedCallback () {
+  if (dragEvent && dragEventData) {
+    eraser.strategy(dragEvent, dragEventData);
+    dragEvent = null;
+    dragEventData = null;
+  }
+}
+
+// The strategy can't be execute at this moment because the image is rendered asynchronously
+// (requestAnimationFrame). Then the eventData that contains all information needed is being
+// Cached and the strategy will be executed once CornerstoneImageRendered is triggered.
+function dragCallback (e, eventData) {
+  const element = eventData.element;
+
+  dragEvent = e;
+  dragEventData = eventData;
+  external.cornerstone.updateImage(element);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+const eraser = simpleMouseButtonTool(mouseDownCallback);
+
+eraser.strategies = {
+  default: defaultStrategy
+};
+
+eraser.strategy = defaultStrategy;
+
+const options = {
+  fireOnTouchStart: true
+};
+
+const eraserTouch = touchDragTool(dragCallback, options);
 
 export {
   eraser,
