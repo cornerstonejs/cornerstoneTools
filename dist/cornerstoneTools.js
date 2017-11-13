@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.2 - 2017-11-10 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.2 - 2017-11-13 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -3164,8 +3164,8 @@ exports.default = function (context, eventData, targetElement, referenceElement)
     return;
   }
 
-  var targetImagePlane = cornerstone.metaData.get('imagePlane', targetImage.imageId);
-  var referenceImagePlane = cornerstone.metaData.get('imagePlane', referenceImage.imageId);
+  var targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImage.imageId);
+  var referenceImagePlane = cornerstone.metaData.get('imagePlaneModule', referenceImage.imageId);
 
   // Make sure the target and reference actually have image plane metadata
   if (!targetImagePlane || !referenceImagePlane || !targetImagePlane.rowCosines || !targetImagePlane.columnCosines || !targetImagePlane.imagePositionPatient || !referenceImagePlane.rowCosines || !referenceImagePlane.columnCosines || !referenceImagePlane.imagePositionPatient) {
@@ -6422,7 +6422,7 @@ function Synchronizer(event, handler) {
       }
 
       var sourceImageId = sourceEnabledElement.image.imageId;
-      var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImageId);
+      var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
       if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
         return;
@@ -6460,7 +6460,7 @@ function Synchronizer(event, handler) {
           return;
         }
 
-        var targetImagePlane = cornerstone.metaData.get('imagePlane', targetImageId);
+        var targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImageId);
 
         if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
           return;
@@ -6767,7 +6767,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
 
   var cornerstone = _externalModules.external.cornerstone;
   var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-  var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImage.imageId);
+  var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
   var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
@@ -6777,7 +6777,7 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
   var newImageIdIndex = -1;
 
   _externalModules.external.$.each(stackData.imageIds, function (index, imageId) {
-    var imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+    var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
     var imagePosition = imagePlane.imagePositionPatient;
     var distance = imagePosition.distanceToSquared(sourceImagePosition);
     // Console.log(index + '=' + distance);
@@ -6857,7 +6857,7 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
 
   var cornerstone = _externalModules.external.cornerstone;
   var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
-  var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
+  var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
   var sourceImagePosition = sourceImagePlane.imagePositionPatient;
 
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
@@ -6873,7 +6873,7 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
   var finalPosition = sourceImagePosition.clone().add(positionDifference);
 
   stackData.imageIds.forEach(function (imageId, index) {
-    var imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+    var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
     var imagePosition = imagePlane.imagePositionPatient;
     var distance = finalPosition.distanceToSquared(imagePosition);
 
@@ -10174,7 +10174,7 @@ function chooseLocation(e, eventData) {
   var sourceElement = e.currentTarget;
   var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   var sourceImageId = sourceEnabledElement.image.imageId;
-  var sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImageId);
+  var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
   // Get currentPoints from mouse cursor on selected element
   var sourceImagePoint = eventData.currentPoints.image;
@@ -10206,7 +10206,7 @@ function chooseLocation(e, eventData) {
 
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
-      var imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+      var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
       var imagePosition = imagePlane.imagePositionPatient;
       var row = imagePlane.rowCosines.clone();
       var column = imagePlane.columnCosines.clone();
@@ -11974,7 +11974,7 @@ function onImageRendered(e, eventData) {
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var config = length.getConfiguration();
-  var imagePlane = cornerstone.metaData.get('imagePlane', image.imageId);
+  var imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   var rowPixelSpacing = void 0;
   var colPixelSpacing = void 0;
 
@@ -12439,7 +12439,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function getOrientationMarkers(element) {
   var cornerstone = _externalModules.external.cornerstone;
   var enabledElement = cornerstone.getEnabledElement(element);
-  var imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
+  var imagePlaneMetaData = cornerstone.metaData.get('imagePlaneModule', enabledElement.image.imageId);
 
   if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
     return;
