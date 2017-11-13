@@ -121,6 +121,7 @@ export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
 export { length, lengthTouch } from './imageTools/length.js';
 export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
+export { magnify2, magnify2TouchDrag } from './imageTools/magnify2.js';
 export { default as mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool.js';
 export { default as mouseButtonTool } from './imageTools/mouseButtonTool.js';
 export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
