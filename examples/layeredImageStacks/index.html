@@ -224,12 +224,12 @@ is used by our example image loader-->
   var renderer = new cornerstoneTools.stackRenderers.FusionRenderer();
   renderer.findImageFn = function(imageIds, targetImageId) {
     var minDistance = 1;
-    var targetImagePlane = cornerstone.metaData.get('imagePlane', targetImageId);
+    var targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImageId);
     var imagePositionZ = targetImagePlane.imagePositionPatient.z;
 
     var closest;
     imageIds.forEach(function(imageId) {
-      var imagePlane = cornerstone.metaData.get('imagePlane', imageId);  
+      var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
       var imgPosZ = imagePlane.imagePositionPatient.z;
       var distance = Math.abs(imgPosZ - imagePositionZ);
       if (distance < minDistance) {

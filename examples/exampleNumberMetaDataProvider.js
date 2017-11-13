@@ -4,7 +4,7 @@
 
     function metaDataProvider(type, imageId)
     {
-        if(type === 'imagePlane') {
+        if(type === 'imagePlaneModule') {
 
             if (imageId.startsWith('example-n')) {
                 var tokens = imageId.substring(12).split(':');
