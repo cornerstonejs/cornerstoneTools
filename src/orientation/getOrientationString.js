@@ -1,15 +1,16 @@
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath } from '../externalModules.js';
+
 
 export default function (vector) {
-    // Thanks to David Clunie
-    // https://sites.google.com/site/dicomnotes/
+  // Thanks to David Clunie
+  // https://sites.google.com/site/dicomnotes/
 
   let orientation = '';
   const orientationX = vector.x < 0 ? 'R' : 'L';
   const orientationY = vector.y < 0 ? 'A' : 'P';
   const orientationZ = vector.z < 0 ? 'F' : 'H';
 
-    // Should probably make this a function vector3.abs
+  // Should probably make this a function vector3.abs
   const abs = new cornerstoneMath.Vector3(Math.abs(vector.x), Math.abs(vector.y), Math.abs(vector.z));
 
   for (let i = 0; i < 3; i++) {

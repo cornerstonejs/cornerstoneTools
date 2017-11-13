@@ -1,7 +1,7 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import { external } from '../externalModules.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
@@ -34,16 +34,16 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       measurementData: data
     };
 
-    $(element).trigger(eventType, modifiedEventData);
+    external.$(element).trigger(eventType, modifiedEventData);
   }
 
-  $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+  external.$(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
 
   function mouseUpCallback () {
     handle.active = false;
-    $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-    $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+    external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
     cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
@@ -51,6 +51,6 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   }
 
-  $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
 }

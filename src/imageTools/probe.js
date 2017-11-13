@@ -1,5 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath, external } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -14,7 +13,7 @@ const toolType = 'probe';
 
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
-    // Create the measurement data for this tool with the end handle activated
+  // Create the measurement data for this tool with the end handle activated
   const measurementData = {
     visible: true,
     active: true,
@@ -35,7 +34,7 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
-  const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+  const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
 
   return cornerstoneMath.point.distance(endCanvas, coords) < 5;
@@ -49,7 +48,8 @@ function onImageRendered (e, eventData) {
     return;
   }
 
-    // We have tool data for this element - iterate over each one and draw it
+  const cornerstone = external.cornerstone;
+  // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -69,7 +69,7 @@ function onImageRendered (e, eventData) {
       color = toolColors.getToolColor();
     }
 
-        // Draw the handles
+    // Draw the handles
     drawHandles(context, eventData, data.handles, color);
 
     const x = Math.round(data.handles.end.x);
@@ -93,7 +93,7 @@ function onImageRendered (e, eventData) {
       const mo = sp * eventData.image.slope + eventData.image.intercept;
       const suv = calculateSUV(eventData.image, sp);
 
-            // Draw text
+      // Draw text
       text = `${x}, ${y}`;
       str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
       if (suv) {
@@ -102,7 +102,7 @@ function onImageRendered (e, eventData) {
     }
 
     const coords = {
-            // Translate the x/y away from the cursor
+      // Translate the x/y away from the cursor
       x: data.handles.end.x + 3,
       y: data.handles.end.y - 3
     };

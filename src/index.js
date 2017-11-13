@@ -1,4 +1,4 @@
-export { default as metaData } from './metaData.js';
+export { external } from './externalModules.js';
 
 export { default as referenceLines } from './referenceLines/index.js';
 export { default as orientation } from './orientation/index.js';
@@ -10,8 +10,8 @@ export { default as scrollToIndex } from './util/scrollToIndex.js';
 export { default as scroll } from './util/scroll.js';
 export { default as roundToDecimal } from './util/roundToDecimal.js';
 export { projectPatientPointToImagePlane,
-         imagePointToPatientPoint,
-         planePlaneIntersection } from './util/pointProjector.js';
+  imagePointToPatientPoint,
+  planePlaneIntersection } from './util/pointProjector.js';
 
 export { default as pointInsideBoundingBox } from './util/pointInsideBoundingBox.js';
 export { default as pointInEllipse } from './util/pointInEllipse.js';
@@ -19,9 +19,9 @@ export { default as pauseEvent } from './util/pauseEvent.js';
 export { default as isMouseButtonEnabled } from './util/isMouseButtonEnabled.js';
 export { default as getRGBPixels } from './util/getRGBPixels.js';
 export { getDefaultSimultaneousRequests,
-         getMaxSimultaneousRequests,
-         getBrowserInfo,
-         isMobileDevice } from './util/getMaxSimultaneousRequests.js';
+  getMaxSimultaneousRequests,
+  getBrowserInfo,
+  isMobileDevice } from './util/getMaxSimultaneousRequests.js';
 
 export { default as getLuminance } from './util/getLuminance.js';
 export { default as drawTextBox } from './util/drawTextBox.js';
@@ -36,8 +36,8 @@ export { default as probeTool4D } from './timeSeriesTools/probeTool4D.js';
 export { default as incrementTimePoint } from './timeSeriesTools/incrementTimePoint.js';
 export { default as timeSeriesPlayer } from './timeSeriesTools/timeSeriesPlayer.js';
 export { timeSeriesScroll,
-         timeSeriesScrollWheel,
-         timeSeriesScrollTouchDrag } from './timeSeriesTools/timeSeriesScroll.js';
+  timeSeriesScrollWheel,
+  timeSeriesScrollTouchDrag } from './timeSeriesTools/timeSeriesScroll.js';
 
 export { default as wwwcSynchronizer } from './synchronization/wwwcSynchronizer.js';
 export { default as updateImageSynchronizer } from './synchronization/updateImageSynchronizer.js';
@@ -50,37 +50,37 @@ export { default as panZoomSynchronizer } from './synchronization/panZoomSynchro
 
 export { default as toolStyle } from './stateManagement/toolStyle.js';
 export { addToolState,
-         getToolState,
-         removeToolState,
-         clearToolState,
-         setElementToolStateManager,
-         getElementToolStateManager } from './stateManagement/toolState.js';
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager } from './stateManagement/toolState.js';
 export { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
 export { default as toolColors } from './stateManagement/toolColors.js';
 export { addTimeSeriesStateManager,
-         newTimeSeriesSpecificToolStateManager } from './stateManagement/timeSeriesSpecificStateManager.js';
+  newTimeSeriesSpecificToolStateManager } from './stateManagement/timeSeriesSpecificStateManager.js';
 export { default as textStyle } from './stateManagement/textStyle.js';
 
 export { stackSpecificStateManager,
-         newStackSpecificToolStateManager,
-         addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
+  newStackSpecificToolStateManager,
+  addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
 
 export { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
 
 export { newImageIdSpecificToolStateManager,
-         globalImageIdSpecificToolStateManager } from './stateManagement/imageIdSpecificStateManager.js';
+  globalImageIdSpecificToolStateManager } from './stateManagement/imageIdSpecificStateManager.js';
 
 export { newFrameOfReferenceSpecificToolStateManager,
-         globalFrameOfReferenceSpecificToolStateManager } from './stateManagement/frameOfReferenceStateManager.js';
+  globalFrameOfReferenceSpecificToolStateManager } from './stateManagement/frameOfReferenceStateManager.js';
 
 export { default as appState } from './stateManagement/appState.js';
 
 export { default as stackScrollKeyboard } from './stackTools/stackScrollKeyboard.js';
 
 export { stackScroll,
-         stackScrollWheel,
-         stackScrollTouchDrag,
-         stackScrollMultiTouch } from './stackTools/stackScroll.js';
+  stackScrollWheel,
+  stackScrollTouchDrag,
+  stackScrollMultiTouch } from './stackTools/stackScroll.js';
 
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as scrollIndicator } from './stackTools/scrollIndicator.js';
@@ -145,8 +145,8 @@ export { default as touchTool } from './imageTools/touchTool.js';
 export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
 export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export { zoom,
-         zoomWheel,
-         zoomTouchPinch,
-         zoomTouchDrag } from './imageTools/zoom.js';
+  zoomWheel,
+  zoomTouchPinch,
+  zoomTouchDrag } from './imageTools/zoom.js';
 export { brush } from './paintingTools/brush.js';
 export { default as version } from './version.js';

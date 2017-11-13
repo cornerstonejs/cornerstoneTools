@@ -1,4 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { external } from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
 const handleRadius = 6;
@@ -25,7 +25,7 @@ export default function (context, renderData, handles, color, options) {
       context.lineWidth = toolStyle.getToolWidth();
     }
 
-    const handleCanvasCoords = cornerstone.pixelToCanvas(renderData.element, handle);
+    const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
 
     context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 

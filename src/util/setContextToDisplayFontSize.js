@@ -1,6 +1,6 @@
-import * as cornerstone from '../cornerstone-core.js';
+import { external } from '../externalModules.js';
 
- /**
+/**
  * Sets the canvas context transformation matrix so it is scaled to show text
  * more cleanly even if the image is scaled up.  See
  * https://github.com/chafey/cornerstoneTools/wiki/DrawingText
@@ -14,10 +14,10 @@ import * as cornerstone from '../cornerstone-core.js';
 export default function (enabledElement, context, fontSize) {
   const fontScale = 0.1;
 
-  cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
-    // Return the font size to use
+  external.cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
+  // Return the font size to use
   const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
-    // TODO: actually calculate this?
+  // TODO: actually calculate this?
   const lineHeight = fontSize / enabledElement.viewport.scale / fontScale;
 
 

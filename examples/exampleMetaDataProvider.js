@@ -1,10 +1,10 @@
-(function (cornerstoneTools) {
+(function metaDataProvider(cornerstone) {
 
     "use strict";
 
     function metaDataProvider(type, imageId)
     {
-        if(type === 'imagePlane') {
+        if(type === 'imagePlaneModule') {
 
             if (imageId === 'example://1') {
                 return {
@@ -52,6 +52,6 @@
         return undefined;
     }
 
-    cornerstoneTools.metaData.addProvider(metaDataProvider);
+    cornerstone.metaData.addProvider(metaDataProvider);
 
-}(cornerstoneTools));
+})(cornerstone);

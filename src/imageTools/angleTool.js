@@ -1,5 +1,4 @@
-import * as cornerstone from '../cornerstone-core.js';
-import * as cornerstoneMath from '../cornerstone-math.js';
+import { cornerstoneMath, external } from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -14,7 +13,7 @@ const toolType = 'angle';
 
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
-    // Create the measurement data for this tool with the end handle activated
+  // Create the measurement data for this tool with the end handle activated
   const angleData = {
     visible: true,
     active: true,
@@ -51,6 +50,8 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = external.cornerstone;
+
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.end)
@@ -73,28 +74,29 @@ function pointNearTool (element, data, coords) {
 // /////// BEGIN IMAGE RENDERING ///////
 function onImageRendered (e, eventData) {
 
-    // If we have no toolData for this element, return immediately as there is nothing to do
+  // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
   if (toolData === undefined) {
     return;
   }
 
-    // We have tool data for this element - iterate over each one and draw it
+  // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-    // Activation color
+  // Activation color
   let color;
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = angle.getConfiguration();
+  const cornerstone = external.cornerstone;
 
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();
 
-        // Configurable shadow
+    // Configurable shadow
     if (config && config.shadow) {
       context.shadowColor = config.shadowColor || '#000000';
       context.shadowOffsetX = config.shadowOffsetX || 1;
@@ -103,14 +105,14 @@ function onImageRendered (e, eventData) {
 
     const data = toolData.data[i];
 
-        // Differentiate the color of activation tool
+    // Differentiate the color of activation tool
     if (data.active) {
       color = toolColors.getActiveColor();
     } else {
       color = toolColors.getToolColor();
     }
 
-        // Draw the line
+    // Draw the line
     context.beginPath();
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
@@ -128,14 +130,14 @@ function onImageRendered (e, eventData) {
     context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
     context.stroke();
 
-        // Draw the handles
+    // Draw the handles
     drawHandles(context, eventData, data.handles);
 
-        // Draw the text
+    // Draw the text
     context.fillStyle = color;
 
-        // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-        // Where lines cross to measure angle. For now it will show smallest angle.
+    // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+    // Where lines cross to measure angle. For now it will show smallest angle.
     const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
     const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
     const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;

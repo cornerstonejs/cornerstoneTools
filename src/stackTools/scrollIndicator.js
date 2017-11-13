@@ -28,7 +28,7 @@ function onImageRendered (e, eventData) {
 
   const config = scrollIndicator.getConfiguration();
 
-    // Draw indicator background
+  // Draw indicator background
   context.fillStyle = config.backgroundColor;
   if (config.orientation === 'horizontal') {
     context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
@@ -36,7 +36,7 @@ function onImageRendered (e, eventData) {
     context.fillRect(0, 0, scrollBarHeight, height);
   }
 
-    // Get current image index
+  // Get current image index
   const stackData = getToolState(element, 'stack');
 
   if (!stackData || !stackData.data || !stackData.data.length) {
@@ -46,7 +46,7 @@ function onImageRendered (e, eventData) {
   const imageIds = stackData.data[0].imageIds;
   const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
-    // Draw current image cursor
+  // Draw current image cursor
   const cursorWidth = width / imageIds.length;
   const cursorHeight = height / imageIds.length;
   const xPosition = cursorWidth * currentImageIdIndex;
