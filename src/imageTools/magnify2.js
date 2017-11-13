@@ -199,14 +199,14 @@ function drawZoomedElement (e, eventData) {
   zoomElement.height = origCanvas.height * magnificationLevel;
   external.cornerstone.enable(zoomElement);
 
-  const fakeEnabledElement = external.cornerstone.getEnabledElement(zoomElement);
+  const zoomEnabledElement = external.cornerstone.getEnabledElement(zoomElement);
   const viewport = external.cornerstone.getViewport(enabledElement.element);
 
-  zoomCanvas = fakeEnabledElement.canvas;
+  zoomCanvas = zoomEnabledElement.canvas;
   zoomCanvas.width = origCanvas.width * magnificationLevel;
   zoomCanvas.height = origCanvas.height * magnificationLevel;
 
-  fakeEnabledElement.viewport = Object.assign({}, viewport);
+  zoomEnabledElement.viewport = Object.assign({}, viewport);
 
   viewport.scale *= magnificationLevel;
   external.cornerstone.displayImage(zoomElement, image);
