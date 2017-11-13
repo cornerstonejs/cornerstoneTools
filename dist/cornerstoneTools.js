@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.2 - 2017-11-11 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.2 - 2017-11-13 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -787,7 +787,7 @@ var _moveAllHandles = __webpack_require__(35);
 
 var _moveAllHandles2 = _interopRequireDefault(_moveAllHandles);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -868,7 +868,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _externalModules = __webpack_require__(0);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -1386,45 +1386,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-exports.default = function (renderData, handles) {
-  var image = renderData.image;
-  var imageRect = {
-    left: 0,
-    top: 0,
-    width: image.width,
-    height: image.height
-  };
-
-  var handleOutsideImage = false;
-
-  Object.keys(handles).forEach(function (name) {
-    var handle = handles[name];
-
-    if (handle.allowedOutsideImage === true) {
-      return;
-    }
-
-    if (_externalModules.cornerstoneMath.point.insideRect(handle, imageRect) === false) {
-      handleOutsideImage = true;
-    }
-  });
-
-  return handleOutsideImage;
-};
-
-var _externalModules = __webpack_require__(0);
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
 exports.default = function (mouseDownCallback) {
   var configuration = {};
 
@@ -1456,6 +1417,45 @@ exports.default = function (mouseDownCallback) {
   };
 
   return toolInterface;
+};
+
+var _externalModules = __webpack_require__(0);
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (renderData, handles) {
+  var image = renderData.image;
+  var imageRect = {
+    left: 0,
+    top: 0,
+    width: image.width,
+    height: image.height
+  };
+
+  var handleOutsideImage = false;
+
+  Object.keys(handles).forEach(function (name) {
+    var handle = handles[name];
+
+    if (handle.allowedOutsideImage === true) {
+      return;
+    }
+
+    if (_externalModules.cornerstoneMath.point.insideRect(handle, imageRect) === false) {
+      handleOutsideImage = true;
+    }
+  });
+
+  return handleOutsideImage;
 };
 
 var _externalModules = __webpack_require__(0);
@@ -3022,7 +3022,7 @@ exports.default = function (mouseEventData, data, toolData, toolType, options, d
 
 var _externalModules = __webpack_require__(0);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -3722,7 +3722,7 @@ Object.defineProperty(exports, 'stopClip', {
   }
 });
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 Object.defineProperty(exports, 'anyHandlesOutsideImage', {
   enumerable: true,
@@ -4208,7 +4208,7 @@ Object.defineProperty(exports, 'simpleAngleTouch', {
   }
 });
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 Object.defineProperty(exports, 'simpleMouseButtonTool', {
   enumerable: true,
@@ -4664,7 +4664,7 @@ var _multiTouchDragTool = __webpack_require__(26);
 
 var _multiTouchDragTool2 = _interopRequireDefault(_multiTouchDragTool);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -5122,7 +5122,7 @@ exports.default = function (touchEventData, data, toolData, toolType, deleteIfHa
 
 var _externalModules = __webpack_require__(0);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -5636,7 +5636,7 @@ var _moveAllHandles = __webpack_require__(35);
 
 var _moveAllHandles2 = _interopRequireDefault(_moveAllHandles);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -6209,7 +6209,7 @@ exports.timeSeriesScrollTouchDrag = exports.timeSeriesScrollWheel = exports.time
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -9667,7 +9667,7 @@ var _moveNewHandleTouch = __webpack_require__(23);
 
 var _moveNewHandleTouch2 = _interopRequireDefault(_moveNewHandleTouch);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -10427,7 +10427,7 @@ exports.dragProbeTouch = exports.dragProbe = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -10708,13 +10708,13 @@ var _self = _interopRequireWildcard(_index);
 
 var _externalModules = __webpack_require__(0);
 
-var _mouseButtonTool = __webpack_require__(6);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
-var _mouseButtonTool2 = _interopRequireDefault(_mouseButtonTool);
+var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchTool = __webpack_require__(8);
+var _touchDragTool = __webpack_require__(10);
 
-var _touchTool2 = _interopRequireDefault(_touchTool);
+var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
 var _isMouseButtonEnabled = __webpack_require__(2);
 
@@ -10732,20 +10732,14 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 
 var toolTypes = ['length'];
 var numToolTypes = toolTypes.length;
-var eraserDistance = 8;
+var eraserDistance = 10;
 
-function createNewMeasurement() {
-  return undefined;
-}
+var dragEvent = void 0;
+var dragEventData = void 0;
 
-function mouseDownCallback(e, eventData) {
+function defaultStrategy(e, eventData) {
   var element = eventData.element;
   var toolDataRemoved = false;
-
-  // Don't proceed if we haven't enabled listening for this mouseButton
-  if (!(0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
-    return;
-  }
 
   var coords = eventData.startPoints.canvas;
 
@@ -10764,7 +10758,6 @@ function mouseDownCallback(e, eventData) {
     for (var j = 0; j < toolData.data.length; j++) {
       var data = toolData.data[j];
       var distance = eraserDistance;
-
       var isNearHandle = (0, _getHandleNearImagePoint2.default)(element, data.handles, coords, distance) !== undefined;
       var isNearTool = hasPointNearToolMethod && pointNearToolFn(element, data, coords);
 
@@ -10781,16 +10774,66 @@ function mouseDownCallback(e, eventData) {
   }
 }
 
-// Module exports
-var eraser = (0, _mouseButtonTool2.default)({
-  mouseDownCallback: mouseDownCallback,
-  createNewMeasurement: createNewMeasurement
-});
+function mouseUpCallback(e, eventData) {
+  var element = eventData.element;
 
-var eraserTouch = (0, _touchTool2.default)({
-  mouseDownCallback: mouseDownCallback,
-  createNewMeasurement: createNewMeasurement
-});
+  _externalModules.external.$(element).off('CornerstoneImageRendered', imageRenderedCallback);
+  _externalModules.external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
+  _externalModules.external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  _externalModules.external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  _externalModules.external.cornerstone.updateImage(eventData.element);
+}
+
+function mouseDownCallback(e, eventData) {
+  var element = eventData.element;
+
+  if (!(0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
+    return;
+  }
+
+  _externalModules.external.$(element).on('CornerstoneImageRendered', imageRenderedCallback);
+  _externalModules.external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
+  _externalModules.external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  _externalModules.external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  eraser.strategy(e, eventData);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+function imageRenderedCallback() {
+  if (dragEvent && dragEventData) {
+    eraser.strategy(dragEvent, dragEventData);
+    dragEvent = null;
+    dragEventData = null;
+  }
+}
+
+// The strategy can't be execute at this moment because the image is rendered asynchronously
+// (requestAnimationFrame). Then the eventData that contains all information needed is being
+// Cached and the strategy will be executed once CornerstoneImageRendered is triggered.
+function dragCallback(e, eventData) {
+  var element = eventData.element;
+
+  dragEvent = e;
+  dragEventData = eventData;
+  _externalModules.external.cornerstone.updateImage(element);
+
+  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+}
+
+var eraser = (0, _simpleMouseButtonTool2.default)(mouseDownCallback);
+
+eraser.strategies = {
+  default: defaultStrategy
+};
+
+eraser.strategy = defaultStrategy;
+
+var options = {
+  fireOnTouchStart: true
+};
+
+var eraserTouch = (0, _touchDragTool2.default)(dragCallback, options);
 
 exports.eraser = eraser;
 exports.eraserTouch = eraserTouch;
@@ -12671,7 +12714,7 @@ exports.panTouchDrag = exports.pan = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -13423,7 +13466,7 @@ exports.rotateTouchDrag = exports.rotate = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -13631,7 +13674,7 @@ var _toolColors = __webpack_require__(3);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -14122,7 +14165,7 @@ var _toolColors = __webpack_require__(3);
 
 var _toolColors2 = _interopRequireDefault(_toolColors);
 
-var _anyHandlesOutsideImage = __webpack_require__(11);
+var _anyHandlesOutsideImage = __webpack_require__(12);
 
 var _anyHandlesOutsideImage2 = _interopRequireDefault(_anyHandlesOutsideImage);
 
@@ -14870,7 +14913,7 @@ exports.wwwcTouchDrag = exports.wwwc = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
@@ -15379,7 +15422,7 @@ exports.zoomTouchDrag = exports.zoomTouchPinch = exports.zoomWheel = exports.zoo
 
 var _externalModules = __webpack_require__(0);
 
-var _simpleMouseButtonTool = __webpack_require__(12);
+var _simpleMouseButtonTool = __webpack_require__(11);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
