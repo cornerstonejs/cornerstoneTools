@@ -73,7 +73,7 @@ function onImageRendered (e, eventData) {
 
   const lineWidth = toolStyle.getToolWidth();
   const config = length.getConfiguration();
-  const imagePlane = cornerstone.metaData.get('imagePlane', image.imageId);
+  const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let rowPixelSpacing;
   let colPixelSpacing;
 

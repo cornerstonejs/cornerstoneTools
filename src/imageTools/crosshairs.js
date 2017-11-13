@@ -21,7 +21,7 @@ function chooseLocation (e, eventData) {
   const sourceElement = e.currentTarget;
   const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   const sourceImageId = sourceEnabledElement.image.imageId;
-  const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImageId);
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
   // Get currentPoints from mouse cursor on selected element
   const sourceImagePoint = eventData.currentPoints.image;
@@ -53,7 +53,7 @@ function chooseLocation (e, eventData) {
 
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
-      const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+      const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
       const imagePosition = imagePlane.imagePositionPatient;
       const row = imagePlane.rowCosines.clone();
       const column = imagePlane.columnCosines.clone();
