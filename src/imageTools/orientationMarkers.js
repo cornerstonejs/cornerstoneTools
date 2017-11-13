@@ -7,7 +7,7 @@ import drawTextBox from '../util/drawTextBox.js';
 function getOrientationMarkers (element) {
   const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
-  const imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
+  const imagePlaneMetaData = cornerstone.metaData.get('imagePlaneModule', enabledElement.image.imageId);
 
   if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
     return;
