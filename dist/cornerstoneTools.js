@@ -7717,14 +7717,14 @@ function drawZoomedElement(e, eventData) {
   zoomElement.height = origCanvas.height * magnificationLevel;
   _externalModules.external.cornerstone.enable(zoomElement);
 
-  var fakeEnabledElement = _externalModules.external.cornerstone.getEnabledElement(zoomElement);
+  var zoomEnabledElement = _externalModules.external.cornerstone.getEnabledElement(zoomElement);
   var viewport = _externalModules.external.cornerstone.getViewport(enabledElement.element);
 
-  zoomCanvas = fakeEnabledElement.canvas;
+  zoomCanvas = zoomEnabledElement.canvas;
   zoomCanvas.width = origCanvas.width * magnificationLevel;
   zoomCanvas.height = origCanvas.height * magnificationLevel;
 
-  fakeEnabledElement.viewport = Object.assign({}, viewport);
+  zoomEnabledElement.viewport = Object.assign({}, viewport);
 
   viewport.scale *= magnificationLevel;
   _externalModules.external.cornerstone.displayImage(zoomElement, image);
