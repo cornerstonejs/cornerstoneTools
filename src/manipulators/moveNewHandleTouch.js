@@ -1,4 +1,5 @@
 import { external } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   // Console.log('moveNewHandleTouch');
@@ -34,7 +35,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
   }
 
   function moveEndCallback (e, eventData) {

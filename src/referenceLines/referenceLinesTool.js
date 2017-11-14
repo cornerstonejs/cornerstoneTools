@@ -26,7 +26,7 @@ function onImageRendered (e) {
   external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
   // Iterate over each referenced element
-  external.$.each(enabledElements, function (index, referenceEnabledElement) {
+  enabledElements.forEach((referenceEnabledElement) => {
 
     // Don't draw ourselves
     if (referenceEnabledElement === e.currentTarget) {
