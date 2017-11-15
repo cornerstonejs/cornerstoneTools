@@ -1,242 +1,104 @@
 import { external } from '../externalModules.js';
-import { getToolState, addToolState } from '../stateManagement/toolState.js';
-import mouseButtonTool from '../imageTools/mouseButtonTool.js';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import brushTool from './brushTool.js';
+import getCircle from './getCircle.js';
+import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
 
 // This module is for creating segmentation overlays
+const TOOL_STATE_TOOL_TYPE = 'brush';
 const toolType = 'brush';
-const dynamicImageCanvasMap = {};
 const configuration = {
   draw: 1,
-  radius: 10,
+  radius: 3,
   hoverColor: 'green',
-  dragColor: 'yellow',
-  overlayColor: 'red'
+  dragColor: 'yellow'
 };
 
-let brushImagePositions = [];
-let lastCanvasCoords;
+let lastImageCoords;
+let dragging = false;
 
-function createNewMeasurement (imageData) {
-  return {
-    visible: true,
-    active: true,
-    imageData
-  };
-}
-
-function defaultStrategy (eventData) {
+function paint (eventData) {
   const configuration = brush.getConfiguration();
-  const enabledElement = external.cornerstone.getEnabledElement(eventData.element);
-  const context = enabledElement.canvas.getContext('2d');
+  const element = eventData.element;
+  const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
+  const { rows, columns } = layer.image;
+  const { x, y } = eventData.currentPoints.image;
+  const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
+  const pixelData = toolData.data[0].pixelData;
+  const brushPixelValue = configuration.draw;
+  const radius = configuration.radius;
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  const coords = eventData.currentPoints.canvas;
-  const radius = configuration.radius * enabledElement.viewport.scale;
-
-  drawCircle(context, coords, radius, configuration.dragColor);
-
-  brushImagePositions.push({
-    x: Math.round(eventData.currentPoints.image.x),
-    y: Math.round(eventData.currentPoints.image.y)
-  });
-
-  lastCanvasCoords = eventData.currentPoints.canvas;
-}
-
-function drawCircle (context, coords, radius, color) {
-  context.save();
-  context.beginPath();
-  context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI, true);
-  context.strokeStyle = color;
-  context.fillStyle = color;
-  context.stroke();
-  context.fill();
-  context.restore();
-}
-
-function clearCircle (context, coords, radius) {
-  context.save();
-  context.beginPath();
-  context.arc(coords.x, coords.y, radius, 0, 2 * Math.PI, true);
-  context.clip();
-  context.clearRect(coords.x - radius - 1, coords.y - radius - 1,
-    radius * 2 + 2, radius * 2 + 2);
-  context.restore();
-}
-
-function newImageCallback (event) {
-  external.cornerstone.updateImage(event.currentTarget, true);
-}
-
-function mouseMoveCallback (e, eventData) {
-  lastCanvasCoords = eventData.currentPoints.canvas;
-  external.cornerstone.updateImage(eventData.element);
-}
-
-function mouseUpCallback (e, eventData) {
-  lastCanvasCoords = eventData.currentPoints.canvas;
-  external.cornerstone.updateImage(eventData.element, true);
-
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-}
-
-function dragCallback (e, eventData) {
-  brush.strategy(eventData);
-
-  return false;
-}
-
-function mouseDownActivateCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-    brush.strategy(eventData);
-
-    return false;
-  }
-
-  external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
-  external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-}
-
-function onImageRendered (e, eventData) {
-  const configuration = brush.getConfiguration();
-  const enabledElement = external.cornerstone.getEnabledElement(eventData.element);
-  const context = enabledElement.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  if (!lastCanvasCoords) {
+  if (x < 0 || x > columns ||
+    y < 0 || y > rows) {
     return;
   }
 
-  const radius = configuration.radius * enabledElement.viewport.scale;
+  const pointerArray = getCircle(radius, rows, columns, x, y);
 
-  drawCircle(context, lastCanvasCoords, radius, configuration.hoverColor);
+  drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
+
+  layer.invalid = true;
+
+  external.cornerstone.updateImage(element);
 }
 
-function getPixelData (element, canvas) {
-  return function () {
-    const { draw, radius, overlayColor } = brush.getConfiguration();
-    const { width, height } = canvas;
-    const context = canvas.getContext('2d');
-    const toolData = getToolState(element, toolType);
-
-    if (toolData) {
-      // State update is done here to avoid state override with multipleviewports
-      const lastState = toolData.data[toolData.data.length - 1];
-
-      context.putImageData(lastState.imageData, 0, 0);
-    }
-
-    if (draw === 1) {
-      // Draw
-      brushImagePositions.forEach(function (coords) {
-        drawCircle(context, coords, radius, overlayColor);
-      });
-    } else {
-      // Erase
-      brushImagePositions.forEach(function (coords) {
-        clearCircle(context, coords, radius);
-      });
-    }
-
-    brushImagePositions = [];
-
-    const imageData = context.getImageData(0, 0, width, height);
-    const measurementData = createNewMeasurement(imageData);
-
-    addToolState(element, toolType, measurementData);
-
-    return imageData.data;
-  };
+function onMouseUp (e, eventData) {
+  lastImageCoords = eventData.currentPoints.image;
+  dragging = false;
 }
 
-let brushLayerId;
+function onMouseDown (e, eventData) {
+  paint(eventData);
+  dragging = true;
+  lastImageCoords = eventData.currentPoints.image;
+}
 
-function activate (element, mouseButtonMask) {
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+function onMouseMove (e, eventData) {
+  lastImageCoords = eventData.currentPoints.image;
+  external.cornerstone.updateImage(eventData.element);
+}
 
-  const cornerstone = external.cornerstone;
-  const eventData = {
-    mouseButtonMask
-  };
+function onDrag (e, eventData) {
+  paint(eventData);
+  dragging = true;
+  lastImageCoords = eventData.currentPoints.image;
+}
 
-  external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
-  external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
-
-  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
-
-  external.$(element).off('CornerstoneNewImage', newImageCallback);
-  external.$(element).on('CornerstoneNewImage', newImageCallback);
-
-  const enabledElement = cornerstone.getEnabledElement(element);
-  const canvas = document.createElement('canvas');
-
-  canvas.width = enabledElement.image.width;
-  canvas.height = enabledElement.image.height;
-
-  const context = canvas.getContext('2d');
-  const { width, height } = canvas;
-
-  context.fillStyle = 'rgba(0,0,0,0)';
-  context.fillRect(0, 0, width, height);
-
-  const dynamicImage = {
-    minPixelValue: 0,
-    maxPixelValue: 255,
-    slope: 1.0,
-    intercept: 0,
-    windowCenter: 127,
-    windowWidth: 256,
-    getPixelData: getPixelData(element, canvas),
-    rgba: true,
-    rows: enabledElement.image.height,
-    columns: enabledElement.image.width,
-    height: enabledElement.image.height,
-    width: enabledElement.image.width,
-    color: true,
-    invert: false,
-    columnPixelSpacing: 1.0,
-    rowPixelSpacing: 1.0,
-    sizeInBytes: enabledElement.image.width * enabledElement.image.height * 4
-  };
-
-  let layer;
-
-  if (brushLayerId) {
-    layer = cornerstone.getLayer(element, brushLayerId);
+function onImageRendered (e, eventData) {
+  if (!lastImageCoords) {
+    return;
   }
 
-  if (!layer) {
-    brushLayerId = cornerstone.addLayer(element, dynamicImage);
+  const { rows, columns } = eventData.image;
+  const { x, y } = lastImageCoords;
+
+  if (x < 0 || x > columns ||
+    y < 0 || y > rows) {
+    return;
   }
 
-  dynamicImageCanvasMap[element.id] = canvas;
+  // Draw the hover overlay on top of the pixel data
+  const configuration = brush.getConfiguration();
+  const radius = configuration.radius;
+  const context = eventData.canvasContext;
+  const color = dragging ? configuration.dragColor : configuration.hoverColor;
+  const element = eventData.element;
 
-  cornerstone.updateImage(element);
+  context.setTransform(1, 0, 0, 1, 0, 0);
+  const pointerArray = getCircle(radius, rows, columns, x, y);
+
+  drawBrushOnCanvas(pointerArray, context, color, element);
 }
 
-const brush = mouseButtonTool({
-  mouseMoveCallback,
-  mouseDownActivateCallback,
+const brush = brushTool({
+  onMouseMove,
+  onMouseDown,
+  onMouseUp,
+  onDrag,
+  toolType,
   onImageRendered
 });
 
-brush.activate = activate;
-
 brush.setConfiguration(configuration);
-brush.strategies = {
-  default: defaultStrategy
-};
-brush.strategy = defaultStrategy;
 
 export { brush };
