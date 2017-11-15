@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.2 - 2017-11-15 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.3 - 2017-11-15 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -16264,7 +16264,7 @@ exports.adaptiveBrush = adaptiveBrush;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '1.0.2';
+exports.default = '1.0.3';
 
 /***/ })
 /******/ ]);
