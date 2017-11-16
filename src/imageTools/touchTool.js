@@ -257,7 +257,7 @@ function touchTool (touchToolInterface) {
 
   // Not visible, not interactive
   function disable (element) {
-    external.$(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
     external.$(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     external.$(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -275,12 +275,12 @@ function touchTool (touchToolInterface) {
 
   // Visible but not interactive
   function enable (element) {
-    external.$(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
     external.$(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     external.$(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-    external.$(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     if (touchToolInterface.doubleTapCallback) {
       external.$(element).off('CornerstoneToolsDoubleTap', touchToolInterface.doubleTapCallback);
@@ -295,14 +295,12 @@ function touchTool (touchToolInterface) {
 
   // Visible, interactive and can create
   function activate (element) {
-    // Console.log('activate touchTool');
-
-    external.$(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
     external.$(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     external.$(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-    external.$(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
     external.$(element).on('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     external.$(element).on('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
@@ -320,6 +318,13 @@ function touchTool (touchToolInterface) {
     external.cornerstone.updateImage(element);
   }
 
+  // Note: This is to maintain compatibility for developers that have
+  // Built on top of touchTool.js
+  // TODO: Remove this after we migrate Cornerstone Tools away from jQuery
+  function onImageRendered (e) {
+    touchToolInterface.onImageRendered(e, e.detail);
+  }
+
   // Visible, interactive
   function deactivate (element) {
     const eventType = 'CornerstoneToolsToolDeactivated';
@@ -332,12 +337,12 @@ function touchTool (touchToolInterface) {
 
     external.$(element).trigger(event, statusChangeEventData);
 
-    external.$(element).off('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
     external.$(element).off('CornerstoneToolsTouchStartActive', touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     external.$(element).off('CornerstoneToolsTap', touchToolInterface.tapCallback || tapCallback);
 
-    external.$(element).on('CornerstoneImageRendered', touchToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).on('CornerstoneToolsTouchStart', touchToolInterface.touchStartCallback || touchStartCallback);
 
     if (touchToolInterface.doubleTapCallback) {

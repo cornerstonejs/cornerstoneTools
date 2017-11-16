@@ -40,7 +40,8 @@ export default function (brushToolInterface) {
     external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
   }
 
-  function onImageRendered (e, eventData) {
+  function onImageRendered (e) {
+    const eventData = e.detail;
     const element = eventData.element;
     const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
     let pixelData;
@@ -58,12 +59,15 @@ export default function (brushToolInterface) {
     layer.invalid = true;
 
     external.cornerstone.updateImage(element);
+
+    // Note: This is to maintain compatibility with jQuery event handlers.
+    // On our next migration this should just be onImageRendered(e)
     brushToolInterface.onImageRendered(e, eventData);
   }
 
   function activate (element, mouseButtonMask) {
-    external.$(element).off('CornerstoneImageRendered', onImageRendered);
-    external.$(element).on('CornerstoneImageRendered', onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     const eventData = {
       mouseButtonMask
@@ -140,7 +144,7 @@ export default function (brushToolInterface) {
   }
 
   function deactivate (element) {
-    external.$(element).off('CornerstoneImageRendered', onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
     external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
   }
