@@ -45,7 +45,8 @@ function calculateMinMaxMean (storedPixelLuminanceData, globalMin, globalMax) {
 }
 
 /* Erases the toolData and rebinds the handlers when the image changes */
-function newImageCallback (e, eventData) {
+function newImageCallback (e) {
+  const eventData = e.detail;
   const toolData = getToolState(eventData.element, toolType);
 
   if (toolData && toolData.data) {
@@ -210,7 +211,8 @@ function dragCallback (e, eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
   const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 

@@ -31,7 +31,7 @@ function onTouch (e) {
     remainingPointers,
     rotation;
 
-    // Prevent mouse events from occurring alongside touch events
+  // Prevent mouse events from occurring alongside touch events
   e.preventDefault();
 
   // If more than one finger is placed on the element, stop the press timeout
@@ -176,9 +176,9 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      triggerEvent(element, eventType, eventData);
+      const eventPropagated = triggerEvent(element, eventType, eventData);
 
-      if (event.isImmediatePropagationStopped() === false) {
+      if (eventPropagated === true) {
         // IsPress = false;
         // ClearTimeout(pressTimeout);
 

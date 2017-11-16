@@ -29,11 +29,6 @@ function preventClickHandler () {
   isClickEvent = false;
 }
 
-function activateMouseDown (mouseEventDetail) {
-  triggerEvent(mouseEventDetail.element, 'CornerstoneToolsMouseDownActivate', mouseEventDetail);
-
-}
-
 function mouseDoubleClick (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget;
@@ -111,10 +106,9 @@ function mouseDown (e) {
   const eventPropagated = triggerEvent(eventData.element, eventType, eventData);
 
   if (eventPropagated) {
-    // No tools responded to this event, give the active tool a chance
-    if (activateMouseDown(eventData) === true) {
-      return pauseEvent(e);
-    }
+    // No tools responded to this event, create a new tool
+    eventData.type = 'CornerstoneToolsMouseDownActivate';
+    triggerEvent(eventData.element, 'CornerstoneToolsMouseDownActivate', eventData);
   }
 
   const whichMouseButton = getEventWhich(e);

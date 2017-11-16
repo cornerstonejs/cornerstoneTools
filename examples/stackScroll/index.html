@@ -81,8 +81,9 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
-    function onImageRendered(e, data) {
-        var viewport = data.viewport;
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        var viewport = eventData.viewport;
         $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
         $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
     };
