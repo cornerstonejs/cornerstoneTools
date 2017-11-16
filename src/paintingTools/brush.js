@@ -64,12 +64,11 @@ function onDrag (e, eventData) {
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onImageRendered (e) {
+function onImageRendered (e, eventData) {
   if (!lastImageCoords) {
     return;
   }
 
-  const eventData = e.detail;
   const { rows, columns } = eventData.image;
   const { x, y } = lastImageCoords;
 

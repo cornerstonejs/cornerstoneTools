@@ -15967,12 +15967,11 @@ function onDrag(e, eventData) {
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onImageRendered(e) {
+function onImageRendered(e, eventData) {
   if (!lastImageCoords) {
     return;
   }
 
-  var eventData = e.detail;
   var _eventData$image = eventData.image,
       rows = _eventData$image.rows,
       columns = _eventData$image.columns;
