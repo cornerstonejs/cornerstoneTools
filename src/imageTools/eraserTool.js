@@ -6,7 +6,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 
-const toolTypes = ['length'];
+const toolTypes = ['length', 'probe', 'ellipticalRoi', 'rectangleRoi', 'angle', 'arrowAnnotate'];
 const numToolTypes = toolTypes.length;
 const eraserDistance = 10;
 

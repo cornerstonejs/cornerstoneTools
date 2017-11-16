@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.2 - 2017-11-13 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.2 - 2017-11-16 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -10730,7 +10730,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
-var toolTypes = ['length'];
+var toolTypes = ['length', 'probe', 'ellipticalRoi', 'rectangleRoi', 'angle', 'arrowAnnotate'];
 var numToolTypes = toolTypes.length;
 var eraserDistance = 10;
 
