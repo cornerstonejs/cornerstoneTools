@@ -1,3 +1,17 @@
+# Version 1.0.3
+
+- Biggest change: Tools that required 'imagePlane' metadata, now require 'imagePlaneModule': 
+
+This is partly a breaking change but in reality will help most users, since CornerstoneWADOImageLoader is populating 'imagePlaneModule', not 'imagePlane'. Thanks to @dannyrb for this fix.
+
+*Note*: If you have written your own metadata provider, you should now use 'imagePlaneModule' instead of 'imagePlane'. 
+
+- Refactored the Brush tool into brush.js and brushTool.js. This works similarly to mouseButtonTool.
+- Brush tool now draws / erases on a label map, which is rendered by Cornerstone with a color lookup table.
+- Added an adaptive brush tool (thanks to @zelle-github of @Radiomics).
+
+The adaptive brush (see Segmentation Brush example) uses the range of grey values in the original click location to help the user paint structures of similar intensity.
+
 # Version 1.0.2
 
 - The biggest behaviour change in this release comes from bug fixes to the fusion renderer.
