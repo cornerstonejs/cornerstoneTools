@@ -271,10 +271,18 @@ var _externalModules = __webpack_require__(0);
 function triggerEvent(el, type) {
   var detail = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
-  var event = new CustomEvent(type.toLocaleLowerCase(), {
-    detail: detail,
-    cancelable: true
-  });
+  var event = void 0;
+
+  // This check is needed to polyfill CustomEvent on IE11-
+  if (typeof window.CustomEvent === 'function') {
+    event = new CustomEvent(type.toLocaleLowerCase(), {
+      detail: detail,
+      cancelable: true
+    });
+  } else {
+    event = document.createEvent('CustomEvent');
+    event.initCustomEvent(type.toLocaleLowerCase(), true, true, detail);
+  }
 
   // TODO: remove jQuery event triggers
   var jqEvent = _externalModules.external.$.Event(type, detail);
