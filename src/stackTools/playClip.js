@@ -2,6 +2,7 @@
 import { external } from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 const toolType = 'playClip';
 
@@ -84,9 +85,7 @@ function triggerStopEvent (element) {
     element
   };
 
-  const event = external.$.Event('CornerstoneToolsClipStopped', eventDetail);
-
-  external.$(element).trigger(event, eventDetail);
+  triggerEvent(element, 'CornerstoneToolsClipStopped', eventDetail);
 }
 
 /**

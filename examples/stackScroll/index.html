@@ -81,15 +81,17 @@ is used by our example image loader-->
 <script>
     var element = $('#dicomImage').get(0);
 
-    function onViewportUpdated(e, data) {
-        var viewport = data.viewport;
+    function onImageRendered(e) {
+        var eventData = e.detail;
+        var viewport = eventData.viewport;
         $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
         $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
     };
 
-    $(element).on("CornerstoneImageRendered", onViewportUpdated);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
-    function onNewImage(e, data) {
+    function onNewImage(e) {
+        var eventData = e.detail;
         var newImageIdIndex = stack.currentImageIdIndex;
 
         // Update the slider value
@@ -103,14 +105,14 @@ is used by our example image loader-->
         // if we are currently playing a clip then update the FPS
         var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
         if (playClipToolData !== undefined && !$.isEmptyObject(playClipToolData.data)) {
-            $("#frameRate").text("FPS: " + Math.round(data.frameRate));
+            $("#frameRate").text("FPS: " + Math.round(eventData.frameRate));
         } else {
             if ($("#frameRate").text().length > 0) {
                 $("#frameRate").text("");
             }
         }
     }
-    $(element).on("CornerstoneNewImage", onNewImage);
+    element.addEventListener('cornerstonenewimage', onNewImage);
 
     var loopCheckbox = $("#loop");
     loopCheckbox.on('change', function() {

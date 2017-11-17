@@ -82,11 +82,11 @@ is used by our example image loader-->
     var imageId = 'example://1';
 
     function onImageRendered(e) {
-        var viewport = cornerstone.getViewport(e.target)
+        var viewport = cornerstone.getViewport(e.target);
         $('#rotation').text("Rotation: " + Math.round(viewport.rotation) + "°");
-    };
+    }
 
-    $('#dicomImage').on("CornerstoneImageRendered", onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     // image enable the dicomImage element
     cornerstone.enable(element);

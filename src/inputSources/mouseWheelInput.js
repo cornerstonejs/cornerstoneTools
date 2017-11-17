@@ -1,4 +1,5 @@
 import { external } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 function mouseWheel (e) {
   // !!!HACK/NOTE/WARNING!!!
@@ -65,7 +66,7 @@ function mouseWheel (e) {
     imageY: startingCoords.y
   };
 
-  external.$(element).trigger('CornerstoneToolsMouseWheel', mouseWheelData);
+  triggerEvent(element, 'CornerstoneToolsMouseWheel', mouseWheelData);
 }
 
 const mouseWheelEvents = 'mousewheel DOMMouseScroll';
