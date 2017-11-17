@@ -340,7 +340,6 @@ function addNewMeasurementTouch (touchEventData) {
 }
 
 function doubleClickCallback (e, eventData) {
-  console.log('doubleClickCallback');
   const element = eventData.element;
   const cornerstone = external.cornerstone;
   let data;

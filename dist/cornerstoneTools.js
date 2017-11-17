@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.3 - 2017-11-16 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.3 - 2017-11-17 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -10426,7 +10426,6 @@ function addNewMeasurementTouch(touchEventData) {
 }
 
 function doubleClickCallback(e, eventData) {
-  console.log('doubleClickCallback');
   var element = eventData.element;
   var cornerstone = _externalModules.external.cornerstone;
   var data = void 0;
