@@ -1,4 +1,5 @@
 import { external } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   const cornerstone = external.cornerstone;
@@ -26,7 +27,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
   }
 
   function whichMovement (e) {

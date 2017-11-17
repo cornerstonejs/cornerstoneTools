@@ -1,6 +1,7 @@
 import { external } from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const element = touchEventData.element;
@@ -28,7 +29,7 @@ export default function (touchEventData, data, toolData, toolType, deleteIfHandl
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }

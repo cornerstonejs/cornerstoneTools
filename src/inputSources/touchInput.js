@@ -2,6 +2,7 @@ import { cornerstoneMath, external } from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 let startPoints,
   currentPoints,
@@ -24,14 +25,13 @@ const pressDelay = 700,
 function onTouch (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget || e.srcEvent.currentTarget;
-  let event,
-    eventType,
+  let eventType,
     scaleChange,
     delta,
     remainingPointers,
     rotation;
 
-    // Prevent mouse events from occurring alongside touch events
+  // Prevent mouse events from occurring alongside touch events
   e.preventDefault();
 
   // If more than one finger is placed on the element, stop the press timeout
@@ -68,8 +68,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
 
   case 'doubletap':
@@ -98,8 +97,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
 
   case 'pinchstart':
@@ -140,8 +138,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     lastScale = e.scale;
     break;
@@ -179,10 +176,9 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      const eventPropagated = triggerEvent(element, eventType, eventData);
 
-      if (event.isImmediatePropagationStopped() === false) {
+      if (eventPropagated === true) {
         // IsPress = false;
         // ClearTimeout(pressTimeout);
 
@@ -194,7 +190,7 @@ function onTouch (e) {
         }
 
         eventData.type = eventType;
-        external.$(element).trigger(eventType, eventData);
+        triggerEvent(element, eventType, eventData);
       }
 
       // Console.log(eventType);
@@ -229,8 +225,7 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      triggerEvent(element, eventType, eventData);
 
       // Console.log(eventType);
     }, pressDelay);
@@ -266,8 +261,7 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      triggerEvent(element, eventType, eventData);
     }, 50);
     break;
 
@@ -334,8 +328,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     lastPoints = copyPoints(currentPoints);
     break;
@@ -401,8 +394,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     remainingPointers = e.pointers.length - e.changedPointers.length;
 
@@ -429,8 +421,7 @@ function onTouch (e) {
       rotation,
       type: eventType
     };
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
   }
 

@@ -1,4 +1,5 @@
 import { external } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 let mouseX;
 let mouseY;
@@ -32,7 +33,7 @@ function keyPress (e) {
 
   };
 
-  external.$(element).trigger(keyPressEvents[e.type], keyPressData);
+  triggerEvent(element, keyPressEvents[e.type], keyPressData);
 }
 
 function mouseMove (e) {

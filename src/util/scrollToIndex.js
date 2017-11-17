@@ -3,6 +3,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { stackScroll } from '../stackTools/stackScroll.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (element, newImageIdIndex) {
   const toolData = getToolState(element, 'stack');
@@ -111,5 +112,5 @@ export default function (element, newImageIdIndex) {
   // Make sure we kick off any changed download request pools
   requestPoolManager.startGrabbing();
 
-  external.$(element).trigger('CornerstoneStackScroll', eventData);
+  triggerEvent(element, 'CornerstoneStackScroll', eventData);
 }

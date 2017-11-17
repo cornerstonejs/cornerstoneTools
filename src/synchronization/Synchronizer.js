@@ -259,8 +259,8 @@ function Synchronizer (event, handler) {
     ignoreFiredEvents = false;
   };
 
-  function disableHandler (e, eventData) {
-    const element = eventData.element;
+  function disableHandler (e) {
+    const element = e.detail.element;
 
     that.remove(element);
   }
@@ -269,8 +269,8 @@ function Synchronizer (event, handler) {
     const elements = external.$.unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
-      external.$(element).off('CornerstoneElementDisabled', disableHandler);
-      external.$(element).on('CornerstoneElementDisabled', disableHandler);
+      element.removeEventListener('cornerstoneelementdisabled', disableHandler);
+      element.addEventListener('cornerstoneelementdisabled', disableHandler);
     });
   };
 

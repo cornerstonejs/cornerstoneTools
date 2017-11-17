@@ -164,11 +164,11 @@
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onImageRendered(e) {
-        var viewport = cornerstone.getViewport(e.target)
+        var viewport = cornerstone.getViewport(e.target);
         updateOrientationMarkers(e.target, viewport);
     };
 
-    container.on("CornerstoneImageRendered", onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     cornerstone.enable(element);
 

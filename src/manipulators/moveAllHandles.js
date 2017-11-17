@@ -1,6 +1,7 @@
 import { external } from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
   const cornerstone = external.cornerstone;
@@ -37,7 +38,7 @@ export default function (mouseEventData, data, toolData, toolType, options, done
       measurementData: data
     };
 
-    external.$(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }

@@ -188,40 +188,43 @@ function prefetch (element) {
   requestPoolManager.startGrabbing();
 }
 
-function promiseRemovedHandler (e, eventData) {
-  // When an imagePromise has been pushed out of the cache, re-add its index
-  // It to the indicesToRequest list so that it will be retrieved later if the
-  // CurrentImageIdIndex is changed to an image nearby
-  const element = e.data.element;
-  let stackData;
+function getPromiseRemovedHandler (element) {
+  return function (e) {
+    const eventData = e.detail;
 
-  try {
-    // It will throw an exception in some cases (eg: thumbnails)
-    stackData = getToolState(element, 'stack');
-  } catch(error) {
-    return;
-  }
+    // When an imagePromise has been pushed out of the cache, re-add its index
+    // It to the indicesToRequest list so that it will be retrieved later if the
+    // CurrentImageIdIndex is changed to an image nearby
+    let stackData;
 
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
+    try {
+      // It will throw an exception in some cases (eg: thumbnails)
+      stackData = getToolState(element, 'stack');
+    } catch(error) {
+      return;
+    }
 
-  const stack = stackData.data[0];
-  const imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
+    if (!stackData || !stackData.data || !stackData.data.length) {
+      return;
+    }
 
-  // Make sure the image that was removed is actually in this stack
-  // Before adding it to the indicesToRequest array
-  if (imageIdIndex < 0) {
-    return;
-  }
+    const stack = stackData.data[0];
+    const imageIdIndex = stack.imageIds.indexOf(eventData.imageId);
 
-  const stackPrefetchData = getToolState(element, toolType);
+    // Make sure the image that was removed is actually in this stack
+    // Before adding it to the indicesToRequest array
+    if (imageIdIndex < 0) {
+      return;
+    }
 
-  if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
-    return;
-  }
+    const stackPrefetchData = getToolState(element, toolType);
 
-  stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+    if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
+      return;
+    }
+
+    stackPrefetchData.data[0].indicesToRequest.push(imageIdIndex);
+  };
 }
 
 function onImageUpdated (e) {
@@ -243,7 +246,6 @@ function onImageUpdated (e) {
 }
 
 function enable (element) {
-  const cornerstone = external.cornerstone;
   // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
   const stackPrefetchDataArray = getToolState(element, toolType);
 
@@ -281,20 +283,22 @@ function enable (element) {
 
   prefetch(element);
 
-  external.$(element).off('CornerstoneNewImage', onImageUpdated);
-  external.$(element).on('CornerstoneNewImage', onImageUpdated);
+  element.removeEventListener('cornerstonenewimage', onImageUpdated);
+  element.addEventListener('cornerstonenewimage', onImageUpdated);
 
-  external.$(cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
-  external.$(cornerstone.events).on('CornerstoneImageCachePromiseRemoved', {
-    element
-  }, promiseRemovedHandler);
+  const promiseRemovedHandler = getPromiseRemovedHandler(element);
+
+  external.cornerstone.events.removeEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
+  external.cornerstone.events.addEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
 }
 
 function disable (element) {
   clearTimeout(resetPrefetchTimeout);
-  external.$(element).off('CornerstoneNewImage', onImageUpdated);
+  element.removeEventListener('cornerstonenewimage', onImageUpdated);
 
-  external.$(external.cornerstone.events).off('CornerstoneImageCachePromiseRemoved', promiseRemovedHandler);
+  const promiseRemovedHandler = getPromiseRemovedHandler(element);
+
+  external.cornerstone.events.removeEventListener('cornerstoneimagecachepromiseremoved', promiseRemovedHandler);
 
   const stackPrefetchData = getToolState(element, toolType);
   // If there is actually something to disable, disable it
