@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 let isClickEvent = true;
 let preventClickTimeout;
@@ -26,10 +27,6 @@ function getEventWhich (event) {
 
 function preventClickHandler () {
   isClickEvent = false;
-}
-
-function activateMouseDown (mouseEventDetail) {
-  external.$(mouseEventDetail.element).trigger('CornerstoneToolsMouseDownActivate', mouseEventDetail);
 }
 
 function mouseDoubleClick (e) {
@@ -65,9 +62,7 @@ function mouseDoubleClick (e) {
     type: eventType
   };
 
-  const event = external.$.Event(eventType, eventData);
-
-  external.$(eventData.element).trigger(event, eventData);
+  triggerEvent(eventData.element, eventType, eventData);
 }
 
 function mouseDown (e) {
@@ -108,15 +103,12 @@ function mouseDown (e) {
     type: eventType
   };
 
-  const event = external.$.Event(eventType, eventData);
+  const eventPropagated = triggerEvent(eventData.element, eventType, eventData);
 
-  external.$(eventData.element).trigger(event, eventData);
-
-  if (event.isImmediatePropagationStopped() === false) {
-    // No tools responded to this event, give the active tool a chance
-    if (activateMouseDown(eventData) === true) {
-      return pauseEvent(e);
-    }
+  if (eventPropagated) {
+    // No tools responded to this event, create a new tool
+    eventData.type = 'CornerstoneToolsMouseDownActivate';
+    triggerEvent(eventData.element, 'CornerstoneToolsMouseDownActivate', eventData);
   }
 
   const whichMouseButton = getEventWhich(e);
@@ -158,7 +150,7 @@ function mouseDown (e) {
       shiftKey: e.shiftKey
     };
 
-    external.$(eventData.element).trigger(eventType, eventData);
+    triggerEvent(eventData.element, eventType, eventData);
 
     // Update the last points
     lastPoints = copyPoints(currentPoints);
@@ -212,9 +204,7 @@ function mouseDown (e) {
       type: eventType
     };
 
-    const event = external.$.Event(eventType, eventData);
-
-    external.$(eventData.element).trigger(event, eventData);
+    triggerEvent(eventData.element, eventType, eventData);
 
     external.$(document).off('mousemove', onMouseMove);
     external.$(document).off('mouseup', onMouseUp);
@@ -282,7 +272,7 @@ function mouseMove (e) {
     type: eventType
   };
 
-  external.$(element).trigger(eventType, eventData);
+  triggerEvent(element, eventType, eventData);
 
   // Update the last points
   lastPoints = copyPoints(currentPoints);

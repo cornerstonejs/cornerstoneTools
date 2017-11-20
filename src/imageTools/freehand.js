@@ -300,7 +300,9 @@ function mouseDownCallback (e, eventData) {
 // /////// END ACTIVE TOOL ///////
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -385,9 +387,9 @@ function enable (element) {
   external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
@@ -396,7 +398,7 @@ function disable (element) {
   external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
@@ -409,9 +411,9 @@ function activate (element, mouseButtonMask) {
   external.$(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
   external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 
   external.cornerstone.updateImage(element);
@@ -422,9 +424,9 @@ function deactivate (element) {
   external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
   external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
   external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
 
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
   external.cornerstone.updateImage(element);
 }

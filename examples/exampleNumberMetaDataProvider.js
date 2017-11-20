@@ -1,11 +1,9 @@
-(function (cornerstoneTools) {
+(function (cornerstone) {
 
     "use strict";
 
-    function metaDataProvider(type, imageId)
-    {
+    function metaDataProvider(type, imageId) {
         if(type === 'imagePlaneModule') {
-
             if (imageId.startsWith('example-n')) {
                 var tokens = imageId.substring(12).split(':');
                 var n = Number(tokens[0]);
@@ -21,10 +19,9 @@
                     rowPixelSpacing: 0.78
                 };
             }
-        return undefined;
         }
     }
 
-    cornerstoneTools.metaData.addProvider(metaDataProvider);
+    cornerstone.metaData.addProvider(metaDataProvider);
 
-}(cornerstoneTools));
+}(cornerstone));

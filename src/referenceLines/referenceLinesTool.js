@@ -4,7 +4,9 @@ import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
 const toolType = 'referenceLines';
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -24,7 +26,7 @@ function onImageRendered (e, eventData) {
   external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
   // Iterate over each referenced element
-  external.$.each(enabledElements, function (index, referenceEnabledElement) {
+  enabledElements.forEach((referenceEnabledElement) => {
 
     // Don't draw ourselves
     if (referenceEnabledElement === e.currentTarget) {
@@ -45,13 +47,15 @@ function enable (element, synchronizationContext, renderer) {
     synchronizationContext,
     renderer
   });
-  external.$(element).on('CornerstoneImageRendered', onImageRendered);
+
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  external.$(element).off('CornerstoneImageRendered', onImageRendered);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
