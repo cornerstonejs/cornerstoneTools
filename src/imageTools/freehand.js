@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
@@ -80,7 +80,7 @@ function pointNearHandle (eventData, toolIndex) {
   for (let i = 0; i < data.handles.length; i++) {
     const handleCanvas = external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
 
-    if (cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
+    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
       return i;
     }
   }

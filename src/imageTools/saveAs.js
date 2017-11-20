@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 export default function (element, filename, mimetype) {
   // Setting the default value for mimetype to image/png

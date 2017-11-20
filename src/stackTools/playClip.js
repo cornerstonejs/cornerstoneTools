@@ -1,5 +1,5 @@
 /* eslint no-bitwise:0 */
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 

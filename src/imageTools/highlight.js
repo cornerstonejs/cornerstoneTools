@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
@@ -74,7 +74,7 @@ function pointNearTool (element, data, coords) {
     height: Math.abs(startCanvas.y - endCanvas.y)
   };
 
-  const distanceToPoint = cornerstoneMath.rect.distanceToPoint(rect, coords);
+  const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(rect, coords);
 
 
   return (distanceToPoint < 5);

@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
@@ -62,7 +62,7 @@ function pointNearTool (element, data, coords) {
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
   };
 
-  let distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+	let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   if (distanceToPoint < 25) {
     return true;
@@ -71,7 +71,7 @@ function pointNearTool (element, data, coords) {
   lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.middle);
   lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
 
-  distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+	distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   return (distanceToPoint < 25);
 }
@@ -237,7 +237,7 @@ function onImageRendered (e, eventData) {
         link.end.x = textCoords.x;
         link.end.y = textCoords.y;
 
-        link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
+        link.start = external.cornerstoneMath.point.findClosestPoint(points, link.end);
 
         const boundingBoxPoints = [{
           // Top middle point of bounding box
@@ -258,7 +258,7 @@ function onImageRendered (e, eventData) {
         }
         ];
 
-        link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+				link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
 
         context.beginPath();
         context.strokeStyle = color;

@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
@@ -48,7 +48,7 @@ function onTouch (e) {
 
     // Calculate our current points in page and image coordinates
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -78,7 +78,7 @@ function onTouch (e) {
 
     // Calculate our current points in page and image coordinates
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -154,7 +154,7 @@ function onTouch (e) {
     clearTimeout(touchStartDelay);
     touchStartDelay = setTimeout(function () {
       startPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
         client: {
           x: e.originalEvent.touches[0].clientX,
@@ -209,7 +209,7 @@ function onTouch (e) {
       }
 
       currentPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
         client: {
           x: e.originalEvent.touches[0].clientX,
@@ -244,7 +244,7 @@ function onTouch (e) {
 
     setTimeout(function () {
       startPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.changedTouches[0].pageX, e.originalEvent.changedTouches[0].pageY),
         client: {
           x: e.originalEvent.changedTouches[0].clientX,
@@ -302,10 +302,10 @@ function onTouch (e) {
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
     };
 
     pageDistanceMoved += Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
@@ -347,7 +347,7 @@ function onTouch (e) {
     };
 
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -369,7 +369,7 @@ function onTouch (e) {
     }
 
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -380,10 +380,10 @@ function onTouch (e) {
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
     };
 
     eventType = 'CornerstoneToolsDragEnd';

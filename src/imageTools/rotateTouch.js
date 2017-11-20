@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 function touchRotateCallback (e, eventData) {
   eventData.viewport.rotation += eventData.rotation;

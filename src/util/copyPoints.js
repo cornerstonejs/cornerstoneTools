@@ -1,10 +1,10 @@
-import { cornerstoneMath } from '../externalModules.js';
+import external from '../externalModules.js';
 
 export default function (points) {
-  const page = cornerstoneMath.point.copy(points.page);
-  const image = cornerstoneMath.point.copy(points.image);
-  const client = cornerstoneMath.point.copy(points.client);
-  const canvas = cornerstoneMath.point.copy(points.canvas);
+  const page = external.cornerstoneMath.point.copy(points.page);
+  const image = external.cornerstoneMath.point.copy(points.image);
+  const client = external.cornerstoneMath.point.copy(points.client);
+  const canvas = external.cornerstoneMath.point.copy(points.canvas);
 
   return {
     page,

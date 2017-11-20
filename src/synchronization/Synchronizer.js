@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
