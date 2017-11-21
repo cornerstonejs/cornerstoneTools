@@ -1,4 +1,4 @@
-export { external } from './externalModules.js';
+export { default as external } from './externalModules.js';
 
 export { default as referenceLines } from './referenceLines/index.js';
 export { default as orientation } from './orientation/index.js';

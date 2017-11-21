@@ -1,4 +1,4 @@
-import { cornerstoneMath } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // Projects a patient point to an image point
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
@@ -49,10 +49,10 @@ function getRectangleFromImagePlane (imagePlane) {
 
     // Get each side as a vector
   const rect = {
-    top: new cornerstoneMath.Line3(topLeft, topRight),
-    left: new cornerstoneMath.Line3(topLeft, bottomLeft),
-    right: new cornerstoneMath.Line3(topRight, bottomRight),
-    bottom: new cornerstoneMath.Line3(bottomLeft, bottomRight)
+    top: new external.cornerstoneMath.Line3(topLeft, topRight),
+    left: new external.cornerstoneMath.Line3(topLeft, bottomLeft),
+    right: new external.cornerstoneMath.Line3(topRight, bottomRight),
+    bottom: new external.cornerstoneMath.Line3(bottomLeft, bottomRight)
   };
 
 
@@ -79,12 +79,12 @@ export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
 
   // First, get the normals of each image plane
   const targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
-  const targetPlane = new cornerstoneMath.Plane();
+  const targetPlane = new external.cornerstoneMath.Plane();
 
   targetPlane.setFromNormalAndCoplanarPoint(targetNormal, targetImagePlane.imagePositionPatient);
 
   const referenceNormal = referenceImagePlane.rowCosines.clone().cross(referenceImagePlane.columnCosines);
-  const referencePlane = new cornerstoneMath.Plane();
+  const referencePlane = new external.cornerstoneMath.Plane();
 
   referencePlane.setFromNormalAndCoplanarPoint(referenceNormal, referenceImagePlane.imagePositionPatient);
 
@@ -100,7 +100,7 @@ export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
   const distance = referenceImagePlane.imagePositionPatient.distanceTo(bottomRight);
 
   // Use this distance to bound the ray intersecting the two planes
-  const line = new cornerstoneMath.Line3();
+  const line = new external.cornerstoneMath.Line3();
 
   line.start = origin;
   line.end = origin.clone().add(direction.multiplyScalar(distance));

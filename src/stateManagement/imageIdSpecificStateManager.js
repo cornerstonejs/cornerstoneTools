@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // This implements an imageId specific tool state management strategy.  This means that
 // Measurements data is tied to a specific imageId and only visible for enabled elements

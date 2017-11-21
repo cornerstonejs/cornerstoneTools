@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 /*

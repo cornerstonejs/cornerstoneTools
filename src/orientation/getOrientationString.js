@@ -1,4 +1,4 @@
-import { cornerstoneMath } from '../externalModules.js';
+import external from '../externalModules.js';
 
 
 export default function (vector) {
@@ -11,7 +11,7 @@ export default function (vector) {
   const orientationZ = vector.z < 0 ? 'F' : 'H';
 
   // Should probably make this a function vector3.abs
-  const abs = new cornerstoneMath.Vector3(Math.abs(vector.x), Math.abs(vector.y), Math.abs(vector.z));
+  const abs = new external.cornerstoneMath.Vector3(Math.abs(vector.x), Math.abs(vector.y), Math.abs(vector.z));
 
   for (let i = 0; i < 3; i++) {
     if (abs.x > 0.0001 && abs.x > abs.y && abs.x > abs.z) {

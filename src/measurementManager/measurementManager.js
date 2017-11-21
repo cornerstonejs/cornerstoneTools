@@ -1,3 +1,4 @@
+import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 // This object manages a collection of measurements

@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
@@ -43,7 +43,7 @@ function createNewMeasurement (mouseEventData) {
 
     // Check if the current handle is outside the image,
     // If it is, prevent the handle creation
-  if (!cornerstoneMath.point.insideRect(measurementData.handles.end, imageRect)) {
+  if (!external.cornerstoneMath.point.insideRect(measurementData.handles.end, imageRect)) {
     return;
   }
 
@@ -82,7 +82,7 @@ function pointNearTool (element, data, coords) {
     return;
   }
 
-  const distanceToPoint = cornerstoneMath.rect.distanceToPoint(data.handles.end.boundingBox, coords);
+  const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(data.handles.end.boundingBox, coords);
   const insideBoundingBox = pointInsideBoundingBox(data.handles.end, coords);
 
 

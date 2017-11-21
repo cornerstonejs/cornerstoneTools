@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';

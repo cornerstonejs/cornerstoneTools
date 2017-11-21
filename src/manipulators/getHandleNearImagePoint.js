@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 
 export default function (element, handles, coords, distanceThreshold) {
@@ -25,7 +25,7 @@ export default function (element, handles, coords, distanceThreshold) {
       }
     } else {
       const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
-      const distance = cornerstoneMath.point.distance(handleCanvas, coords);
+      const distance = external.cornerstoneMath.point.distance(handleCanvas, coords);
 
       if (distance <= distanceThreshold) {
         nearbyHandle = handle;

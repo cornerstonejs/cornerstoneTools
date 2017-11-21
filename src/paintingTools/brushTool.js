@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';

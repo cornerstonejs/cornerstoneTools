@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // Returns a decimal value given a fractional value
 function fracToDec (fractionalValue) {
