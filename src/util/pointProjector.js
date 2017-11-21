@@ -5,7 +5,8 @@ import convertToVector3 from '../util/convertToVector3.js';
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
   const rowCosines = convertToVector3(imagePlane.rowCosines);
   const columnCosines = convertToVector3(imagePlane.columnCosines);
-  const point = patientPoint.clone().sub();
+  const imagePositionPatient = convertToVector3(imagePlane.imagePositionPatient);
+  const point = patientPoint.clone().sub(imagePositionPatient);
   const x = rowCosines.dot(point) / imagePlane.columnPixelSpacing;
   const y = columnCosines.dot(point) / imagePlane.rowPixelSpacing;
 

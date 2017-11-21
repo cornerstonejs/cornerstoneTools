@@ -2455,7 +2455,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function projectPatientPointToImagePlane(patientPoint, imagePlane) {
   var rowCosines = (0, _convertToVector2.default)(imagePlane.rowCosines);
   var columnCosines = (0, _convertToVector2.default)(imagePlane.columnCosines);
-  var point = patientPoint.clone().sub();
+  var imagePositionPatient = (0, _convertToVector2.default)(imagePlane.imagePositionPatient);
+  var point = patientPoint.clone().sub(imagePositionPatient);
   var x = rowCosines.dot(point) / imagePlane.columnPixelSpacing;
   var y = columnCosines.dot(point) / imagePlane.rowPixelSpacing;
 
