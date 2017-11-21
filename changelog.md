@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2017-11-21
+### Added
+- cornerstoneMath can now be specified as an external module. Use:
+
+````javascript
+cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+````
+
+to do so. This is not required for normal use, as window.cornerstoneMath is the default.
+
+### Changed
+- imagePlaneModule metaData is no longer required to be cornerstoneMath.Vector3 format. These can be passed in as arrays of length 3 (i.e. [x, y, z]). This change was made so that cornerstoneWADOImageLoader didn't need to pull in cornerstoneMath.
+
 ## [1.1.0] - 2017-11-17
 ### Added
 - Internal triggerEvent function which triggers jQuery and CustomEvents side-by-side. These events are the same as the current
