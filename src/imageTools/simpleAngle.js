@@ -62,7 +62,7 @@ function pointNearTool (element, data, coords) {
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
   };
 
-	let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   if (distanceToPoint < 25) {
     return true;
@@ -71,7 +71,7 @@ function pointNearTool (element, data, coords) {
   lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.middle);
   lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
 
-	distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   return (distanceToPoint < 25);
 }
@@ -258,7 +258,7 @@ function onImageRendered (e, eventData) {
         }
         ];
 
-				link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
 
         context.beginPath();
         context.strokeStyle = color;

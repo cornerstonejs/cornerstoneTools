@@ -1,9 +1,9 @@
 import external from '../externalModules.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
 function Synchronizer (event, handler) {
-
   const cornerstone = external.cornerstone;
   const that = this;
   const sourceElements = []; // Source elements fire the events we want to synchronize to
@@ -46,7 +46,7 @@ function Synchronizer (event, handler) {
         return;
       }
 
-      const sourceImagePosition = sourceImagePlane.imagePositionPatient;
+      const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
 
       if (initialData.hasOwnProperty(sourceEnabledElement)) {
         return;
@@ -85,7 +85,7 @@ function Synchronizer (event, handler) {
           return;
         }
 
-        const targetImagePosition = targetImagePlane.imagePositionPatient;
+        const targetImagePosition = convertToVector3(targetImagePlane.imagePositionPatient);
 
         initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
       });
@@ -155,7 +155,7 @@ function Synchronizer (event, handler) {
     // Subscribe to the event
     external.$(element).on(event, onEvent);
 
-    // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
     that.updateDisableHandlers();
@@ -173,7 +173,7 @@ function Synchronizer (event, handler) {
     // Add to our list of enabled elements
     targetElements.push(element);
 
-    // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
     // Invoke the handler for this new target element
@@ -203,7 +203,7 @@ function Synchronizer (event, handler) {
     // Stop listening for the event
     external.$(element).off(event, onEvent);
 
-    // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
     // Update everyone listening for events
@@ -223,7 +223,7 @@ function Synchronizer (event, handler) {
     // Remove this element from the array
     targetElements.splice(index, 1);
 
-    // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
     // Invoke the handler for the removed target

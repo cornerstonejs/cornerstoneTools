@@ -57,7 +57,7 @@ function pointNearTool (element, data, coords) {
     height: Math.abs(startCanvas.y - endCanvas.y)
   };
 
-	const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(rect, coords);
+  const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(rect, coords);
 
 
   return (distanceToPoint < 5);
@@ -394,7 +394,7 @@ function onImageRendered (e, eventData) {
 
       // Now we recalculate the link endpoint by identifying which corner of the bounding box
       // Is closest to the start point we just calculated.
-			link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+      link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
 
       // Finally we draw the dashed linking line
       context.beginPath();

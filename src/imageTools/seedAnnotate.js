@@ -108,7 +108,7 @@ function pointNearTool (element, data, coords) {
   }
 
   const realCoords = external.cornerstone.pixelToCanvas(element, data.handles.end);
-	const distanceToPoint = external.cornerstoneMath.point.distance(realCoords, coords);
+  const distanceToPoint = external.cornerstoneMath.point.distance(realCoords, coords);
 
 
   return (distanceToPoint < 25);
