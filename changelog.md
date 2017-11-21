@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2017-11-21
+### Changed
+- Fix bug (#293) introduced in 1.1.1 a missing argument in pointProjector (thanks @hardmaster92)
+
 ## [1.1.1] - 2017-11-21
 ### Added
 - cornerstoneMath can now be specified as an external module. Use:
