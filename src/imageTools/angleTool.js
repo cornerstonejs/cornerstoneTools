@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -57,7 +57,7 @@ function pointNearTool (element, data, coords) {
     end: cornerstone.pixelToCanvas(element, data.handles.end)
   };
 
-  let distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   if (distanceToPoint < 5) {
     return true;
@@ -66,7 +66,7 @@ function pointNearTool (element, data, coords) {
   lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.start2);
   lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end2);
 
-  distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   return (distanceToPoint < 5);
 }

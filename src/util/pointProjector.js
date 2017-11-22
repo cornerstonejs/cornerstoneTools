@@ -1,10 +1,14 @@
-import { cornerstoneMath } from '../externalModules.js';
+import external from '../externalModules.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // Projects a patient point to an image point
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
-  const point = patientPoint.clone().sub(imagePlane.imagePositionPatient);
-  const x = imagePlane.rowCosines.dot(point) / imagePlane.columnPixelSpacing;
-  const y = imagePlane.columnCosines.dot(point) / imagePlane.rowPixelSpacing;
+  const rowCosines = convertToVector3(imagePlane.rowCosines);
+  const columnCosines = convertToVector3(imagePlane.columnCosines);
+  const imagePositionPatient = convertToVector3(imagePlane.imagePositionPatient);
+  const point = patientPoint.clone().sub(imagePositionPatient);
+  const x = rowCosines.dot(point) / imagePlane.columnPixelSpacing;
+  const y = columnCosines.dot(point) / imagePlane.rowPixelSpacing;
 
 
   return {
@@ -15,15 +19,19 @@ export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
 
 // Projects an image point to a patient point
 export function imagePointToPatientPoint (imagePoint, imagePlane) {
-  const x = imagePlane.rowCosines.clone().multiplyScalar(imagePoint.x);
+  const rowCosines = convertToVector3(imagePlane.rowCosines);
+  const columnCosines = convertToVector3(imagePlane.columnCosines);
+  const imagePositionPatient = convertToVector3(imagePlane.imagePositionPatient);
+
+  const x = rowCosines.clone().multiplyScalar(imagePoint.x);
 
   x.multiplyScalar(imagePlane.columnPixelSpacing);
-  const y = imagePlane.columnCosines.clone().multiplyScalar(imagePoint.y);
+  const y = columnCosines.clone().multiplyScalar(imagePoint.y);
 
   y.multiplyScalar(imagePlane.rowPixelSpacing);
   const patientPoint = x.add(y);
 
-  patientPoint.add(imagePlane.imagePositionPatient);
+  patientPoint.add(imagePositionPatient);
 
   return patientPoint;
 }
@@ -49,10 +57,10 @@ function getRectangleFromImagePlane (imagePlane) {
 
     // Get each side as a vector
   const rect = {
-    top: new cornerstoneMath.Line3(topLeft, topRight),
-    left: new cornerstoneMath.Line3(topLeft, bottomLeft),
-    right: new cornerstoneMath.Line3(topRight, bottomRight),
-    bottom: new cornerstoneMath.Line3(bottomLeft, bottomRight)
+    top: new external.cornerstoneMath.Line3(topLeft, topRight),
+    left: new external.cornerstoneMath.Line3(topLeft, bottomLeft),
+    right: new external.cornerstoneMath.Line3(topRight, bottomRight),
+    bottom: new external.cornerstoneMath.Line3(bottomLeft, bottomRight)
   };
 
 
@@ -74,19 +82,25 @@ function lineRectangleIntersection (line, rect) {
   return intersections;
 }
 
+// Gets the line of intersection between two planes in patient space
 export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
-  // Gets the line of intersection between two planes in patient space
+  const targetRowCosines = convertToVector3(targetImagePlane.rowCosines);
+  const targetColumnCosines = convertToVector3(targetImagePlane.columnCosines);
+  const targetImagePositionPatient = convertToVector3(targetImagePlane.imagePositionPatient);
+  const referenceRowCosines = convertToVector3(referenceImagePlane.rowCosines);
+  const referenceColumnCosines = convertToVector3(referenceImagePlane.columnCosines);
+  const referenceImagePositionPatient = convertToVector3(referenceImagePlane.imagePositionPatient);
 
   // First, get the normals of each image plane
-  const targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
-  const targetPlane = new cornerstoneMath.Plane();
+  const targetNormal = targetRowCosines.clone().cross(targetColumnCosines);
+  const targetPlane = new external.cornerstoneMath.Plane();
 
-  targetPlane.setFromNormalAndCoplanarPoint(targetNormal, targetImagePlane.imagePositionPatient);
+  targetPlane.setFromNormalAndCoplanarPoint(targetNormal, targetImagePositionPatient);
 
-  const referenceNormal = referenceImagePlane.rowCosines.clone().cross(referenceImagePlane.columnCosines);
-  const referencePlane = new cornerstoneMath.Plane();
+  const referenceNormal = referenceRowCosines.clone().cross(referenceColumnCosines);
+  const referencePlane = new external.cornerstoneMath.Plane();
 
-  referencePlane.setFromNormalAndCoplanarPoint(referenceNormal, referenceImagePlane.imagePositionPatient);
+  referencePlane.setFromNormalAndCoplanarPoint(referenceNormal, referenceImagePositionPatient);
 
   const originDirection = referencePlane.clone().intersectPlane(targetPlane);
   const origin = originDirection.origin;
@@ -97,10 +111,10 @@ export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
     x: referenceImagePlane.columns,
     y: referenceImagePlane.rows
   }, referenceImagePlane);
-  const distance = referenceImagePlane.imagePositionPatient.distanceTo(bottomRight);
+  const distance = referenceImagePositionPatient.distanceTo(bottomRight);
 
   // Use this distance to bound the ray intersecting the two planes
-  const line = new cornerstoneMath.Line3();
+  const line = new external.cornerstoneMath.Line3();
 
   line.start = origin;
   line.end = origin.clone().add(direction.multiplyScalar(distance));

@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // Functions to prevent ghost clicks following a touch
 // All credit to @kosich

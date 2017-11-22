@@ -1,7 +1,8 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // Renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {
@@ -33,6 +34,13 @@ export default function (context, eventData, targetElement, referenceElement) {
   if (targetImagePlane.frameOfReferenceUID !== referenceImagePlane.frameOfReferenceUID) {
     return;
   }
+
+  targetImagePlane.rowCosines = convertToVector3(targetImagePlane.rowCosines);
+  targetImagePlane.columnCosines = convertToVector3(targetImagePlane.columnCosines);
+  targetImagePlane.imagePositionPatient = convertToVector3(targetImagePlane.imagePositionPatient);
+  referenceImagePlane.rowCosines = convertToVector3(referenceImagePlane.rowCosines);
+  referenceImagePlane.columnCosines = convertToVector3(referenceImagePlane.columnCosines);
+  referenceImagePlane.imagePositionPatient = convertToVector3(referenceImagePlane.imagePositionPatient);
 
   // The image plane normals must be > 30 degrees apart
   const targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);

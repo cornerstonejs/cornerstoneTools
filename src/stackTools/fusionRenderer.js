@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 export default class FusionRenderer {

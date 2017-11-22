@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) {
   const getPixelIndex = (x, y) => (y * columns) + x;

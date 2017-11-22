@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 
 // This function synchronizes the target zoom and pan to match the source
 export default function (synchronizer, sourceElement, targetElement) {

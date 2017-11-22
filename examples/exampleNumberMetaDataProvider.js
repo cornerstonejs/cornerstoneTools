@@ -12,9 +12,9 @@
                     frameOfReferenceUID: '1.2.3.4.5',
                     rows: 256,
                     columns: 256,
-                    rowCosines: new cornerstoneMath.Vector3(0, 1, 0),
-                    columnCosines: new cornerstoneMath.Vector3(0, 0, -1),
-                    imagePositionPatient: new cornerstoneMath.Vector3(-9.4, -92.5, z),
+                    rowCosines: [0, 1, 0],
+                    columnCosines: [0, 0, -1],
+                    imagePositionPatient: [-9.4, -92.5, z],
                     columnPixelSpacing: 0.78,
                     rowPixelSpacing: 0.78
                 };

@@ -1,8 +1,9 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 const toolType = 'crosshairs';
 
@@ -54,9 +55,9 @@ function chooseLocation (e, eventData) {
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
       const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
-      const imagePosition = imagePlane.imagePositionPatient;
-      const row = imagePlane.rowCosines.clone();
-      const column = imagePlane.columnCosines.clone();
+      const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
+      const row = convertToVector3(imagePlane.rowCosines);
+      const column = convertToVector3(imagePlane.columnCosines);
       const normal = column.clone().cross(row.clone());
       const distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
       // Console.log(index + '=' + distance);

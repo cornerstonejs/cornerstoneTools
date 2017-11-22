@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
