@@ -1,9 +1,9 @@
-import * as cornerstoneMath from 'cornerstone-math';
+import external from '../externalModules.js';
 
 export default function (handle, coords) {
   if (!handle.boundingBox) {
     return;
   }
 
-  return cornerstoneMath.point.insideRect(coords, handle.boundingBox);
+  return external.cornerstoneMath.point.insideRect(coords, handle.boundingBox);
 }

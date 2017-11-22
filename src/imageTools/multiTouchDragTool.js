@@ -1,3 +1,5 @@
+import external from '../externalModules.js';
+
 export default function (touchDragCallback, options) {
   let configuration = {};
   let events = 'CornerstoneToolsMultiTouchDrag';
@@ -8,12 +10,12 @@ export default function (touchDragCallback, options) {
 
   const toolInterface = {
     activate (element) {
-      $(element).off(events, touchDragCallback);
+      external.$(element).off(events, touchDragCallback);
 
       if (options && options.eventData) {
-        $(element).on(events, options.eventData, touchDragCallback);
+        external.$(element).on(events, options.eventData, touchDragCallback);
       } else {
-        $(element).on(events, touchDragCallback);
+        external.$(element).on(events, touchDragCallback);
       }
 
       if (options && options.activateCallback) {
@@ -21,19 +23,19 @@ export default function (touchDragCallback, options) {
       }
     },
     disable (element) {
-      $(element).off(events, touchDragCallback);
+      external.$(element).off(events, touchDragCallback);
       if (options && options.disableCallback) {
         options.disableCallback(element);
       }
     },
     enable (element) {
-      $(element).off(events, touchDragCallback);
+      external.$(element).off(events, touchDragCallback);
       if (options && options.enableCallback) {
         options.enableCallback(element);
       }
     },
     deactivate (element) {
-      $(element).off(events, touchDragCallback);
+      external.$(element).off(events, touchDragCallback);
       if (options && options.deactivateCallback) {
         options.deactivateCallback(element);
       }

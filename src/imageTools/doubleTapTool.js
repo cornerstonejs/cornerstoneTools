@@ -1,22 +1,21 @@
+import external from '../externalModules.js';
+
 export default function (doubleTapCallback) {
-  const toolInterface = {
+  return {
     activate (element) {
-      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+      external.$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
       const eventData = {};
 
-      $(element).on('CornerstoneToolsDoubleTap', eventData, doubleTapCallback);
+      external.$(element).on('CornerstoneToolsDoubleTap', eventData, doubleTapCallback);
     },
     disable (element) {
-      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+      external.$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
     },
     enable (element) {
-      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+      external.$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
     },
     deactivate (element) {
-      $(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
+      external.$(element).off('CornerstoneToolsDoubleTap', doubleTapCallback);
     }
   };
-
-
-  return toolInterface;
 }

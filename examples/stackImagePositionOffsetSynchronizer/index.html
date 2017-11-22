@@ -79,30 +79,27 @@ is used by our example image loader-->
 <script src="../../dist/cornerstoneTools.js"></script>
 
 <!-- include special code for these examples which provides images -->
-<script src="../exampleImageLoader.js"></script>
-<script src="../exampleMetaDataProvider.js"></script>
+<script src="../exampleTextImageLoader.js"></script>
+<script src="../exampleNumberMetaDataProvider.js"></script>
 
 <script>
     var axialElement1 = $('#axial1').get(0);
     var axialElement2 = $('#axial2').get(0);
     var axialElement3 = $('#axial3').get(0);
 
-    var axialImageIds = [
-        'example://1',
-        'example://2'
-    ]
+    var axialImageIds = new Array(128).fill().map((e,i)=>'example-n://'+i);
 
     var axialStack1 = {
         currentImageIdIndex : 0,
-        imageIds: axialImageIds
+        imageIds: axialImageIds.map(img=>img+':#888')
     };
     var axialStack2 = {
         currentImageIdIndex : 1,
-        imageIds: axialImageIds
+        imageIds: axialImageIds.map(img=>img+':#666')
     };
     var axialStack3 = {
         currentImageIdIndex : 1,
-        imageIds: axialImageIds
+        imageIds: axialImageIds.map(img=>img+':#222')
     };
 
     var stacks = [
@@ -110,6 +107,8 @@ is used by our example image loader-->
         { element: axialElement2, stack: axialStack2 },
         { element: axialElement3, stack: axialStack3 }]
     ;
+
+    var offsets = new Map();
 
     var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneNewImage", cornerstoneTools.stackImagePositionOffsetSynchronizer);
 
@@ -143,6 +142,9 @@ is used by our example image loader-->
 
             synchronizer.add(element);
             synchronizer.getDistances();
+
+            // start with no offsets;
+            offsets.set(element,0);
         });
     }
    

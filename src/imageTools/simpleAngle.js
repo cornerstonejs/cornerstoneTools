@@ -1,5 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
-import * as cornerstoneMath from 'cornerstone-math';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
@@ -7,10 +6,10 @@ import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import moveNewHandle from '../manipulators/moveNewHandle';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch';
-import drawHandles from '../manipulators/drawHandles';
-import touchTool from './touchTool';
+import moveNewHandle from '../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
+import drawHandles from '../manipulators/drawHandles.js';
+import touchTool from './touchTool.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 
@@ -18,7 +17,7 @@ const toolType = 'simpleAngle';
 
 // /////// BEGIN ACTIVE TOOL ///////
 function createNewMeasurement (mouseEventData) {
-    // Create the measurement data for this tool with the end handle activated
+  // Create the measurement data for this tool with the end handle activated
   const angleData = {
     visible: true,
     active: true,
@@ -57,12 +56,13 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  const cornerstone = external.cornerstone;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
     end: cornerstone.pixelToCanvas(element, data.handles.middle)
   };
 
-  let distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   if (distanceToPoint < 25) {
     return true;
@@ -71,7 +71,7 @@ function pointNearTool (element, data, coords) {
   lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.middle);
   lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
 
-  distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
 
   return (distanceToPoint < 25);
 }
@@ -89,14 +89,15 @@ function onImageRendered (e, eventData) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   const enabledElement = eventData.enabledElement;
 
-    // We have tool data for this element - iterate over each one and draw it
+  // We have tool data for this element - iterate over each one and draw it
   const context = eventData.canvasContext.canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-    // Activation color
+  // Activation color
   let color;
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
@@ -113,7 +114,7 @@ function onImageRendered (e, eventData) {
 
     const data = toolData.data[i];
 
-        // Differentiate the color of activation tool
+    // Differentiate the color of activation tool
     if (data.active) {
       color = toolColors.getActiveColor();
     } else {
@@ -124,7 +125,7 @@ function onImageRendered (e, eventData) {
     const handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
     const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-        // Draw the line
+    // Draw the line
     context.beginPath();
     context.strokeStyle = color;
     context.lineWidth = lineWidth;
@@ -133,17 +134,17 @@ function onImageRendered (e, eventData) {
     context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
     context.stroke();
 
-        // Draw the handles
+    // Draw the handles
     const handleOptions = {
       drawHandlesIfActive: (config && config.drawHandlesOnHover)
     };
 
     drawHandles(context, eventData, data.handles, color, handleOptions);
 
-        // Draw the text
+    // Draw the text
     context.fillStyle = color;
 
-        // Default to isotropic pixel size, update suffix to reflect this
+    // Default to isotropic pixel size, update suffix to reflect this
     const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
     const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
     let suffix = '';
@@ -171,7 +172,7 @@ function onImageRendered (e, eventData) {
     const sideBLength = length(sideB);
     const sideCLength = length(sideC);
 
-        // Cosine law
+    // Cosine law
     let angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
 
     angle *= (180 / Math.PI);
@@ -225,7 +226,7 @@ function onImageRendered (e, eventData) {
       data.handles.textBox.boundingBox = boundingBox;
 
       if (data.handles.textBox.hasMoved) {
-                // Draw dashed link line between tool and text
+        // Draw dashed link line between tool and text
         const link = {
           start: {},
           end: {}
@@ -236,28 +237,28 @@ function onImageRendered (e, eventData) {
         link.end.x = textCoords.x;
         link.end.y = textCoords.y;
 
-        link.start = cornerstoneMath.point.findClosestPoint(points, link.end);
+        link.start = external.cornerstoneMath.point.findClosestPoint(points, link.end);
 
         const boundingBoxPoints = [{
-                    // Top middle point of bounding box
+          // Top middle point of bounding box
           x: boundingBox.left + boundingBox.width / 2,
           y: boundingBox.top
         }, {
-                    // Left middle point of bounding box
+          // Left middle point of bounding box
           x: boundingBox.left,
           y: boundingBox.top + boundingBox.height / 2
         }, {
-                    // Bottom middle point of bounding box
+          // Bottom middle point of bounding box
           x: boundingBox.left + boundingBox.width / 2,
           y: boundingBox.top + boundingBox.height
         }, {
-                    // Right middle point of bounding box
+          // Right middle point of bounding box
           x: boundingBox.left + boundingBox.width,
           y: boundingBox.top + boundingBox.height / 2
         }
         ];
 
-        link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
 
         context.beginPath();
         context.strokeStyle = color;
@@ -276,6 +277,7 @@ function onImageRendered (e, eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement (mouseEventData) {
+  const cornerstone = external.cornerstone;
   const measurementData = createNewMeasurement(mouseEventData);
   const element = mouseEventData.element;
 
@@ -286,24 +288,24 @@ function addNewMeasurement (mouseEventData) {
     // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, toolType, measurementData);
 
-    // Since we are dragging to another place to drop the end point, we can just activate
-    // The end point and let the moveHandle move it for us.
-  $(element).off('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-  $(element).off('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-  $(element).off('CornerstoneToolsMouseDown', simpleAngle.mouseDownCallback);
-  $(element).off('CornerstoneToolsMouseDownActivate', simpleAngle.mouseDownActivateCallback);
+  // Since we are dragging to another place to drop the end point, we can just activate
+  // The end point and let the moveHandle move it for us.
+  external.$(element).off('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
+  external.$(element).off('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
+  external.$(element).off('CornerstoneToolsMouseDown', simpleAngle.mouseDownCallback);
+  external.$(element).off('CornerstoneToolsMouseDownActivate', simpleAngle.mouseDownActivateCallback);
   cornerstone.updateImage(element);
 
   moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.middle, function () {
     measurementData.active = false;
     if (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
-            // Delete the measurement
+      // Delete the measurement
       removeToolState(element, toolType, measurementData);
 
-      $(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-      $(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-      $(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
-      $(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
+      external.$(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
+      external.$(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
+      external.$(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
+      external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
       cornerstone.updateImage(element);
 
       return;
@@ -315,42 +317,43 @@ function addNewMeasurement (mouseEventData) {
     moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.end, function () {
       measurementData.active = false;
       if (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
-                // Delete the measurement
+        // Delete the measurement
         removeToolState(element, toolType, measurementData);
       }
 
-      $(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-      $(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-      $(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
-      $(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
+      external.$(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
+      external.$(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
+      external.$(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
+      external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
       cornerstone.updateImage(element);
     });
   });
 }
 
 function addNewMeasurementTouch (touchEventData) {
+  const cornerstone = external.cornerstone;
   const measurementData = createNewMeasurement(touchEventData);
   const element = touchEventData.element;
 
-    // Associate this data with this imageId so we can render it and manipulate it
+  // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, toolType, measurementData);
 
-    // Since we are dragging to another place to drop the end point, we can just activate
-    // The end point and let the moveHandle move it for us.
-  $(element).off('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-  $(element).off('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-  $(element).off('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-  $(element).off('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+  // Since we are dragging to another place to drop the end point, we can just activate
+  // The end point and let the moveHandle move it for us.
+  external.$(element).off('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
+  external.$(element).off('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
+  external.$(element).off('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
+  external.$(element).off('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
   cornerstone.updateImage(element);
 
   moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.middle, function () {
     if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
-            // Delete the measurement
+      // Delete the measurement
       removeToolState(element, toolType, measurementData);
-      $(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-      $(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-      $(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-      $(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+      external.$(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
+      external.$(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
+      external.$(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
+      external.$(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
       cornerstone.updateImage(element);
 
       return;
@@ -358,15 +361,15 @@ function addNewMeasurementTouch (touchEventData) {
 
     moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.end, function () {
       if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
-                // Delete the measurement
+        // Delete the measurement
         removeToolState(element, toolType, measurementData);
         cornerstone.updateImage(element);
       }
 
-      $(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-      $(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-      $(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-      $(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+      external.$(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
+      external.$(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
+      external.$(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
+      external.$(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
     });
   });
 }

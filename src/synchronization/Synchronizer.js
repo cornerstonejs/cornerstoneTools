@@ -1,9 +1,10 @@
-import * as cornerstone from 'cornerstone-core';
+import external from '../externalModules.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
 function Synchronizer (event, handler) {
-
+  const cornerstone = external.cornerstone;
   const that = this;
   const sourceElements = []; // Source elements fire the events we want to synchronize to
   const targetElements = []; // Target elements we want to synchronize to source elements
@@ -39,13 +40,13 @@ function Synchronizer (event, handler) {
       }
 
       const sourceImageId = sourceEnabledElement.image.imageId;
-      const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImageId);
+      const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
       if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
         return;
       }
 
-      const sourceImagePosition = sourceImagePlane.imagePositionPatient;
+      const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
 
       if (initialData.hasOwnProperty(sourceEnabledElement)) {
         return;
@@ -78,13 +79,13 @@ function Synchronizer (event, handler) {
           return;
         }
 
-        const targetImagePlane = cornerstone.metaData.get('imagePlane', targetImageId);
+        const targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImageId);
 
         if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
           return;
         }
 
-        const targetImagePosition = targetImagePlane.imagePositionPatient;
+        const targetImagePosition = convertToVector3(targetImagePlane.imagePositionPatient);
 
         initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
       });
@@ -96,7 +97,7 @@ function Synchronizer (event, handler) {
   };
 
   function fireEvent (sourceElement, eventData) {
-        // Broadcast an event that something changed
+    // Broadcast an event that something changed
     if (!sourceElements.length || !targetElements.length) {
       return;
     }
@@ -122,7 +123,7 @@ function Synchronizer (event, handler) {
 
       if (sourceImageId === targetImageId) {
         positionDifference = 0;
-      } else {
+      } else if (initialData.distances[sourceImageId] !== undefined) {
         positionDifference = initialData.distances[sourceImageId][targetImageId];
       }
 
@@ -139,109 +140,109 @@ function Synchronizer (event, handler) {
     fireEvent(e.currentTarget, eventData);
   }
 
-    // Adds an element as a source
+  // Adds an element as a source
   this.addSource = function (element) {
-        // Return if this element was previously added
+    // Return if this element was previously added
     const index = sourceElements.indexOf(element);
 
     if (index !== -1) {
       return;
     }
 
-        // Add to our list of enabled elements
+    // Add to our list of enabled elements
     sourceElements.push(element);
 
-        // Subscribe to the event
-    $(element).on(event, onEvent);
+    // Subscribe to the event
+    external.$(element).on(event, onEvent);
 
-        // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
     that.updateDisableHandlers();
   };
 
-    // Adds an element as a target
+  // Adds an element as a target
   this.addTarget = function (element) {
-        // Return if this element was previously added
+    // Return if this element was previously added
     const index = targetElements.indexOf(element);
 
     if (index !== -1) {
       return;
     }
 
-        // Add to our list of enabled elements
+    // Add to our list of enabled elements
     targetElements.push(element);
 
-        // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
-        // Invoke the handler for this new target element
+    // Invoke the handler for this new target element
     eventHandler(that, element, element, 0);
 
     that.updateDisableHandlers();
   };
 
-    // Adds an element as both a source and a target
+  // Adds an element as both a source and a target
   this.add = function (element) {
     that.addSource(element);
     that.addTarget(element);
   };
 
-    // Removes an element as a source
+  // Removes an element as a source
   this.removeSource = function (element) {
-        // Find the index of this element
+    // Find the index of this element
     const index = sourceElements.indexOf(element);
 
     if (index === -1) {
       return;
     }
 
-        // Remove this element from the array
+    // Remove this element from the array
     sourceElements.splice(index, 1);
 
-        // Stop listening for the event
-    $(element).off(event, onEvent);
+    // Stop listening for the event
+    external.$(element).off(event, onEvent);
 
-        // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
-        // Update everyone listening for events
+    // Update everyone listening for events
     fireEvent(element);
     that.updateDisableHandlers();
   };
 
-    // Removes an element as a target
+  // Removes an element as a target
   this.removeTarget = function (element) {
-        // Find the index of this element
+    // Find the index of this element
     const index = targetElements.indexOf(element);
 
     if (index === -1) {
       return;
     }
 
-        // Remove this element from the array
+    // Remove this element from the array
     targetElements.splice(index, 1);
 
-        // Update the inital distances between elements
+    // Update the initial distances between elements
     that.getDistances();
 
-        // Invoke the handler for the removed target
+    // Invoke the handler for the removed target
     eventHandler(that, element, element, 0);
     that.updateDisableHandlers();
   };
 
-    // Removes an element as both a source and target
+  // Removes an element as both a source and target
   this.remove = function (element) {
     that.removeTarget(element);
     that.removeSource(element);
   };
 
-    // Returns the source elements
+  // Returns the source elements
   this.getSourceElements = function () {
     return sourceElements;
   };
 
-    // Returns the target elements
+  // Returns the target elements
   this.getTargetElements = function () {
     return targetElements;
   };
@@ -258,23 +259,23 @@ function Synchronizer (event, handler) {
     ignoreFiredEvents = false;
   };
 
-  function disableHandler (e, eventData) {
-    const element = eventData.element;
+  function disableHandler (e) {
+    const element = e.detail.element;
 
     that.remove(element);
   }
 
   this.updateDisableHandlers = function () {
-    const elements = $.unique(sourceElements.concat(targetElements));
+    const elements = external.$.unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
-      $(element).off('CornerstoneElementDisabled', disableHandler);
-      $(element).on('CornerstoneElementDisabled', disableHandler);
+      element.removeEventListener('cornerstoneelementdisabled', disableHandler);
+      element.addEventListener('cornerstoneelementdisabled', disableHandler);
     });
   };
 
   this.destroy = function () {
-    const elements = $.unique(sourceElements.concat(targetElements));
+    const elements = external.$.unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
       that.remove(element);

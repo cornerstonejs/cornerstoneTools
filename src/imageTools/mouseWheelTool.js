@@ -1,20 +1,22 @@
+import external from '../externalModules.js';
+
 export default function (mouseWheelCallback) {
   const toolInterface = {
     activate (element) {
-      $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
+      external.$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
       const eventData = {
       };
 
-      $(element).on('CornerstoneToolsMouseWheel', eventData, mouseWheelCallback);
+      external.$(element).on('CornerstoneToolsMouseWheel', eventData, mouseWheelCallback);
     },
     disable (element) {
-      $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
+      external.$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
     },
     enable (element) {
-      $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
+      external.$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
     },
     deactivate (element) {
-      $(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
+      external.$(element).off('CornerstoneToolsMouseWheel', mouseWheelCallback);
     }
   };
 

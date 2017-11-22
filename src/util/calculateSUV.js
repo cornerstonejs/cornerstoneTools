@@ -1,4 +1,4 @@
-import * as cornerstone from 'cornerstone-core';
+import external from '../externalModules.js';
 
 // Returns a decimal value given a fractional value
 function fracToDec (fractionalValue) {
@@ -6,6 +6,7 @@ function fracToDec (fractionalValue) {
 }
 
 export default function (image, storedPixelValue) {
+  const cornerstone = external.cornerstone;
   const patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
 
@@ -15,7 +16,7 @@ export default function (image, storedPixelValue) {
 
   const modality = seriesModule.modality;
 
-    // Image must be PET
+  // Image must be PET
   if (modality !== 'PT') {
     return;
   }

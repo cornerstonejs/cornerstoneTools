@@ -80,8 +80,9 @@ is used by our example image loader-->
                     "percentLoaded": 0,
                     };
 
-    function onImageLoaded (event, args){
-        var imageId = args.image.imageId;
+    function onImageLoaded (event) {
+        var eventData = event.detail;
+        var imageId = eventData.image.imageId;
         var imageIds = loadProgress["imageIds"];
 
         // Remove all instances, in case the stack repeats imageIds
@@ -105,7 +106,7 @@ is used by our example image loader-->
     }
 
     // Image loading events are bound to the cornerstone object, not the element
-    $(cornerstone.events).on("CornerstoneImageLoaded", onImageLoaded);
+    cornerstone.events.addEventListener("cornerstoneimageloaded", onImageLoaded);
 
     // image enable the dicomImage element and the mouse inputs
     console.time("Loading");

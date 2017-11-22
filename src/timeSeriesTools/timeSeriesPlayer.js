@@ -1,5 +1,5 @@
-import { addToolState, getToolState } from '../stateManagement/toolState';
-import incrementTimePoint from './incrementTimePoint';
+import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import incrementTimePoint from './incrementTimePoint.js';
 
 const toolType = 'timeSeriesPlayer';
 
@@ -42,7 +42,7 @@ function playClip (element, framesPerSecond) {
     playClipData.framesPerSecond = framesPerSecond;
   }
 
-    // If already playing, do not set a new interval
+  // If already playing, do not set a new interval
   if (playClipData.intervalId !== undefined) {
     return;
   }

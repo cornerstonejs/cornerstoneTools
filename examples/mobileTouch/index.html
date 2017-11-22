@@ -83,13 +83,13 @@ is used by our example image loader-->
     var element = $('#dicomImage').get(0);
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
-    function onViewportUpdated(e) {
-        var viewport = cornerstone.getViewport(e.target)
+    function onImageRendered(e) {
+        var viewport = cornerstone.getViewport(e.target);
         $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
         $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
     };
-    
-    $(element).on("CornerstoneImageRendered", onViewportUpdated);
+
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     var imageId = 'example://1';
 
