@@ -1,10 +1,12 @@
-import { $, cornerstone } from '../externalModules.js';
+import external from '../externalModules.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
 const toolType = 'referenceLines';
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -12,26 +14,26 @@ function onImageRendered (e, eventData) {
     return;
   }
 
-    // Get the enabled elements associated with this synchronization context and draw them
+  // Get the enabled elements associated with this synchronization context and draw them
   const syncContext = toolData.data[0].synchronizationContext;
   const enabledElements = syncContext.getSourceElements();
 
   const renderer = toolData.data[0].renderer;
 
-    // Create the canvas context and reset it to the pixel coordinate system
+  // Create the canvas context and reset it to the pixel coordinate system
   const context = eventData.canvasContext.canvas.getContext('2d');
 
-  cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+  external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-    // Iterate over each referenced element
-  $.each(enabledElements, function (index, referenceEnabledElement) {
+  // Iterate over each referenced element
+  enabledElements.forEach((referenceEnabledElement) => {
 
-        // Don't draw ourselves
+    // Don't draw ourselves
     if (referenceEnabledElement === e.currentTarget) {
       return;
     }
 
-        // Render it
+    // Render it
     renderer(context, eventData, e.currentTarget, referenceEnabledElement);
   });
 }
@@ -45,14 +47,16 @@ function enable (element, synchronizationContext, renderer) {
     synchronizationContext,
     renderer
   });
-  $(element).on('CornerstoneImageRendered', onImageRendered);
-  cornerstone.updateImage(element);
+
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener('cornerstoneimagerendered', onImageRendered);
+  external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  $(element).off('CornerstoneImageRendered', onImageRendered);
-  cornerstone.updateImage(element);
+  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  external.cornerstone.updateImage(element);
 }
 
 // Module/private exports
