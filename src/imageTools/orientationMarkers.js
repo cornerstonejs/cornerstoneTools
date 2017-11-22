@@ -1,12 +1,13 @@
-import { cornerstone } from '../externalModules.js';
+import external from '../externalModules.js';
 import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawTextBox from '../util/drawTextBox.js';
 
 function getOrientationMarkers (element) {
+  const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
-  const imagePlaneMetaData = cornerstone.metaData.get('imagePlane', enabledElement.image.imageId);
+  const imagePlaneMetaData = cornerstone.metaData.get('imagePlaneModule', enabledElement.image.imageId);
 
   if (!imagePlaneMetaData || !imagePlaneMetaData.rowCosines || !imagePlaneMetaData.columnCosines) {
     return;
@@ -27,6 +28,7 @@ function getOrientationMarkers (element) {
 }
 
 function getOrientationMarkerPositions (element) {
+  const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
   let coords;
 

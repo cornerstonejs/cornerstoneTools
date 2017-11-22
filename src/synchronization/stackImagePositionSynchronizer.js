@@ -1,19 +1,21 @@
-import { $, cornerstone } from '../externalModules.js';
+import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position
 export default function (synchronizer, sourceElement, targetElement) {
 
-    // Ignore the case where the source and target are the same enabled element
+  // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   const sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-  const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImage.imageId);
-  const sourceImagePosition = sourceImagePlane.imagePositionPatient;
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
+  const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
 
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];
@@ -21,11 +23,11 @@ export default function (synchronizer, sourceElement, targetElement) {
   let minDistance = Number.MAX_VALUE;
   let newImageIdIndex = -1;
 
-  $.each(stackData.imageIds, function (index, imageId) {
-    const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
-    const imagePosition = imagePlane.imagePositionPatient;
+  stackData.imageIds.forEach((imageId, index) => {
+    const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+    const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
-        // Console.log(index + '=' + distance);
+    // Console.log(index + '=' + distance);
 
     if (distance < minDistance) {
       minDistance = distance;

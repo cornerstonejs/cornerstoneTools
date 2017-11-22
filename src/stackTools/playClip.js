@@ -1,9 +1,10 @@
 /* eslint no-bitwise:0 */
-import { $, cornerstone } from '../externalModules.js';
+import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import { stackScroll } from './stackScroll.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 const toolType = 'playClip';
 
@@ -23,14 +24,14 @@ function getPlayClipTimeouts (vector, speed) {
   const limit = vector.length;
   const timeouts = [];
 
-    // Initialize time varying to false
+  // Initialize time varying to false
   timeouts.isTimeVarying = false;
 
   if (typeof speed !== 'number' || speed <= 0) {
     speed = 1;
   }
 
-    // First element of a frame time vector must be discarded
+  // First element of a frame time vector must be discarded
   for (i = 1; i < limit; i++) {
     delay = (Number(vector[i]) / speed) | 0; // Integral part only
     timeouts.push(delay);
@@ -45,7 +46,7 @@ function getPlayClipTimeouts (vector, speed) {
 
   if (timeouts.length > 0) {
     if (timeouts.isTimeVarying) {
-            // If it's a time varying vector, make the last item an average...
+      // If it's a time varying vector, make the last item an average...
       delay = (sum / timeouts.length) | 0;
     } else {
       delay = timeouts[0];
@@ -86,9 +87,7 @@ function triggerStopEvent (element) {
     element
   };
 
-  const event = $.Event('CornerstoneToolsClipStopped', eventDetail);
-
-  $(element).trigger(event, eventDetail);
+  triggerEvent(element, 'CornerstoneToolsClipStopped', eventDetail);
 }
 
 /**
@@ -112,6 +111,7 @@ function playClip (element, framesPerSecond) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   // If we have more than one stack, check if we have a stack renderer defined
   let stackRenderer;
 
@@ -143,31 +143,31 @@ function playClip (element, framesPerSecond) {
     addToolState(element, toolType, playClipData);
   } else {
     playClipData = playClipToolData.data[0];
-        // Make sure the specified clip is not running before any property update
+    // Make sure the specified clip is not running before any property update
     stopClipWithData(playClipData);
   }
 
-    // If a framesPerSecond is specified and is valid, update the playClipData now
+  // If a framesPerSecond is specified and is valid, update the playClipData now
   if (framesPerSecond < 0 || framesPerSecond > 0) {
     playClipData.framesPerSecond = Number(framesPerSecond);
     playClipData.reverse = playClipData.framesPerSecond < 0;
-        // If framesPerSecond is given, frameTimeVector will be ignored...
+    // If framesPerSecond is given, frameTimeVector will be ignored...
     playClipData.ignoreFrameTimeVector = true;
   }
 
-    // Determine if frame time vector should be used instead of a fixed frame rate...
+  // Determine if frame time vector should be used instead of a fixed frame rate...
   if (
-        playClipData.ignoreFrameTimeVector !== true &&
+    playClipData.ignoreFrameTimeVector !== true &&
         playClipData.frameTimeVector &&
         playClipData.frameTimeVector.length === stackData.imageIds.length
-    ) {
+  ) {
     playClipTimeouts = getPlayClipTimeouts(playClipData.frameTimeVector, playClipData.speed);
   }
 
-    // This function encapsulates the frame rendering logic...
+  // This function encapsulates the frame rendering logic...
   const playClipAction = () => {
 
-        // Hoisting of context variables
+    // Hoisting of context variables
     let startLoadingHandler,
       displayLoadingHandler,
       endLoadingHandler,
@@ -189,7 +189,7 @@ function playClip (element, framesPerSecond) {
       return;
     }
 
-        // Loop around if we go outside the stack
+    // Loop around if we go outside the stack
     if (newImageIdIndex >= imageCount) {
       newImageIdIndex = 0;
     }
@@ -285,7 +285,7 @@ function playClip (element, framesPerSecond) {
       playClipAction();
     }, 0);
   } else {
-        // ... otherwise user setInterval implementation which is much more efficient.
+    // ... otherwise user setInterval implementation which is much more efficient.
     playClipData.usingFrameTimeVector = false;
     playClipData.intervalId = setInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
   }
@@ -309,6 +309,6 @@ function stopClip (element) {
 }
 
 export {
-    playClip,
-    stopClip
+  playClip,
+  stopClip
 };

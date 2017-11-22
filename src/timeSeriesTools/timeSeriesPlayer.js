@@ -42,7 +42,7 @@ function playClip (element, framesPerSecond) {
     playClipData.framesPerSecond = framesPerSecond;
   }
 
-    // If already playing, do not set a new interval
+  // If already playing, do not set a new interval
   if (playClipData.intervalId !== undefined) {
     return;
   }
