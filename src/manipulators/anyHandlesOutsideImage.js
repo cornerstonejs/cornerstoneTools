@@ -1,4 +1,4 @@
-import { cornerstoneMath } from '../externalModules.js';
+import external from '../externalModules.js';
 
 export default function (renderData, handles) {
   const image = renderData.image;
@@ -18,7 +18,7 @@ export default function (renderData, handles) {
       return;
     }
 
-    if (cornerstoneMath.point.insideRect(handle, imageRect) === false) {
+    if (external.cornerstoneMath.point.insideRect(handle, imageRect) === false) {
       handleOutsideImage = true;
     }
   });

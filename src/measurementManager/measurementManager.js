@@ -1,4 +1,4 @@
-import { $ } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 // This object manages a collection of measurements
 function MeasurementManager () {
@@ -15,7 +15,7 @@ function MeasurementManager () {
       measurement
     };
 
-    $(that).trigger('CornerstoneMeasurementAdded', eventDetail);
+    triggerEvent(that, 'CornerstoneMeasurementAdded', eventDetail);
   };
 
   this.remove = function (index) {
@@ -28,7 +28,7 @@ function MeasurementManager () {
       measurement
     };
 
-    $(that).trigger('CornerstoneMeasurementRemoved', eventDetail);
+    triggerEvent(that, 'CornerstoneMeasurementRemoved', eventDetail);
   };
 
 }
