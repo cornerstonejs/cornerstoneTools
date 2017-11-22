@@ -1,10 +1,11 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 let mouseX;
 let mouseY;
 
 function keyPress (e) {
+  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
 
   const keyPressData = {
@@ -32,7 +33,7 @@ function keyPress (e) {
 
   };
 
-  $(element).trigger(keyPressEvents[e.type], keyPressData);
+  triggerEvent(element, keyPressEvents[e.type], keyPressData);
 }
 
 function mouseMove (e) {
@@ -43,16 +44,16 @@ function mouseMove (e) {
 const keyboardEvent = 'keydown keypress keyup';
 
 function enable (element) {
-    // Prevent handlers from being attached multiple times
+  // Prevent handlers from being attached multiple times
   disable(element);
 
-  $(element).on(keyboardEvent, keyPress);
-  $(element).on('mousemove', mouseMove);
+  external.$(element).on(keyboardEvent, keyPress);
+  external.$(element).on('mousemove', mouseMove);
 }
 
 function disable (element) {
-  $(element).off(keyboardEvent, keyPress);
-  $(element).off('mousemove', mouseMove);
+  external.$(element).off(keyboardEvent, keyPress);
+  external.$(element).off('mousemove', mouseMove);
 }
 
 // Module exports

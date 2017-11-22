@@ -1,6 +1,7 @@
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position
@@ -9,14 +10,15 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 
 export default function (synchronizer, sourceElement, targetElement, eventData, positionDifference) {
 
-    // Ignore the case where the source and target are the same enabled element
+  // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
-  const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceEnabledElement.image.imageId);
-  const sourceImagePosition = sourceImagePlane.imagePositionPatient;
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
+  const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
 
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];
@@ -31,8 +33,8 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
   const finalPosition = sourceImagePosition.clone().add(positionDifference);
 
   stackData.imageIds.forEach(function (imageId, index) {
-    const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
-    const imagePosition = imagePlane.imagePositionPatient;
+    const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+    const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
     const distance = finalPosition.distanceToSquared(imagePosition);
 
     if (distance < minDistance) {

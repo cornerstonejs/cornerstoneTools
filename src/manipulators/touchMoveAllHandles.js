@@ -1,10 +1,11 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (touchEventData, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const element = touchEventData.element;
+  const cornerstone = external.cornerstone;
 
   function touchDragCallback (e, eventData) {
     data.active = true;
@@ -28,26 +29,26 @@ export default function (touchEventData, data, toolData, toolType, deleteIfHandl
       measurementData: data
     };
 
-    $(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
 
-  $(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
+  external.$(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
 
   function touchEndCallback (e, eventData) {
-        // Console.log('touchMoveAllHandles touchEndCallback: ' + e.type);
+    // Console.log('touchMoveAllHandles touchEndCallback: ' + e.type);
     data.active = false;
     data.invalidated = false;
 
-    $(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
-    $(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
-    $(element).off('CornerstoneToolsTouchPress', touchEndCallback);
-    $(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
-    $(element).off('CornerstoneToolsDragEnd', touchEndCallback);
-    $(element).off('CornerstoneToolsTap', touchEndCallback);
+    external.$(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
+    external.$(element).off('CornerstoneToolsTouchPinch', touchEndCallback);
+    external.$(element).off('CornerstoneToolsTouchPress', touchEndCallback);
+    external.$(element).off('CornerstoneToolsTouchEnd', touchEndCallback);
+    external.$(element).off('CornerstoneToolsDragEnd', touchEndCallback);
+    external.$(element).off('CornerstoneToolsTap', touchEndCallback);
 
-        // If any handle is outside the image, delete the tool data
+    // If any handle is outside the image, delete the tool data
     if (deleteIfHandleOutsideImage === true &&
             anyHandlesOutsideImage(eventData, data.handles)) {
       removeToolState(element, toolType, data);
@@ -60,11 +61,11 @@ export default function (touchEventData, data, toolData, toolType, deleteIfHandl
     }
   }
 
-  $(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
-  $(element).on('CornerstoneToolsTouchPress', touchEndCallback);
-  $(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
-  $(element).on('CornerstoneToolsDragEnd', touchEndCallback);
-  $(element).on('CornerstoneToolsTap', touchEndCallback);
+  external.$(element).on('CornerstoneToolsTouchPinch', touchEndCallback);
+  external.$(element).on('CornerstoneToolsTouchPress', touchEndCallback);
+  external.$(element).on('CornerstoneToolsTouchEnd', touchEndCallback);
+  external.$(element).on('CornerstoneToolsDragEnd', touchEndCallback);
+  external.$(element).on('CornerstoneToolsTap', touchEndCallback);
 
   return true;
 }

@@ -1,8 +1,8 @@
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 import doubleTapTool from './doubleTapTool.js';
 
 function fitToWindowStrategy (eventData) {
-  cornerstone.fitToWindow(eventData.element);
+  external.cornerstone.fitToWindow(eventData.element);
 }
 
 function doubleTapCallback (e, eventData) {

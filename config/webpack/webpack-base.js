@@ -20,24 +20,6 @@ module.exports = {
   },
   devtool: 'source-map',
   externals: {
-    jquery: {
-      commonjs: "jquery",
-      commonjs2: "jquery",
-      amd: "jquery",
-      root: '$'
-    },
-    'hammerjs': {
-      commonjs: "hammerjs",
-      commonjs2: "hammerjs",
-      amd: "hammerjs",
-      root: 'Hammer'
-    },
-    'cornerstone-core': {
-      commonjs: "cornerstone-core",
-      commonjs2: "cornerstone-core",
-      amd: "cornerstone-core",
-      root: 'cornerstone'
-    },
     'cornerstone-math': {
       commonjs: "cornerstone-math",
       commonjs2: "cornerstone-math",

@@ -1,9 +1,10 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (mouseEventData, data, toolData, toolType, options, doneMovingCallback) {
+  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
 
   function mouseDragCallback (e, eventData) {
@@ -37,21 +38,21 @@ export default function (mouseEventData, data, toolData, toolType, options, done
       measurementData: data
     };
 
-    $(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
 
-  $(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+  external.$(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
 
   function mouseUpCallback (e, eventData) {
     data.invalidated = true;
 
-    $(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-    $(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+    external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 
-        // If any handle is outside the image, delete the tool data
+    // If any handle is outside the image, delete the tool data
     if (options.deleteIfHandleOutsideImage === true &&
             anyHandlesOutsideImage(eventData, data.handles)) {
       removeToolState(element, toolType, data);
@@ -64,8 +65,8 @@ export default function (mouseEventData, data, toolData, toolType, options, done
     }
   }
 
-  $(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
 
   return true;
 }

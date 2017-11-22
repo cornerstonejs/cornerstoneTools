@@ -1,4 +1,4 @@
-import $ from '../jquery.js';
+import external from '../externalModules.js';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
 import touchDragTool from '../imageTools/touchDragTool.js';
 import mouseWheelTool from '../imageTools/mouseWheelTool.js';
@@ -7,9 +7,9 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 function mouseUpCallback (e, eventData) {
-  $(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-  $(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  $(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
 }
 
 function mouseDownCallback (e, eventData) {
@@ -20,9 +20,9 @@ function mouseDownCallback (e, eventData) {
       options: e.data.options
     };
 
-    $(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, mouseDragCallback);
-    $(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    $(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, mouseDragCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
     e.stopImmediatePropagation();
 
     return false;
@@ -40,7 +40,7 @@ function mouseDragCallback (e, eventData) {
 
   const timeSeriesData = toolData.data[0];
 
-  let pixelsPerTimeSeries = $(eventData.element).height() / timeSeriesData.stacks.length;
+  let pixelsPerTimeSeries = external.$(eventData.element).height() / timeSeriesData.stacks.length;
 
   if (e.data.options !== undefined && e.data.options.timeSeriesScrollSpeed !== undefined) {
     pixelsPerTimeSeries = e.data.options.timeSeriesScrollSpeed;

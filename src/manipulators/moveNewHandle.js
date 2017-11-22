@@ -1,7 +1,8 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
 
   function moveCallback (e, eventData) {
@@ -26,19 +27,19 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       measurementData: data
     };
 
-    $(element).trigger(eventType, modifiedEventData);
+    triggerEvent(element, eventType, modifiedEventData);
   }
 
   function whichMovement (e) {
-    $(element).off('CornerstoneToolsMouseMove', whichMovement);
-    $(element).off('CornerstoneToolsMouseDrag', whichMovement);
+    external.$(element).off('CornerstoneToolsMouseMove', whichMovement);
+    external.$(element).off('CornerstoneToolsMouseDrag', whichMovement);
 
-    $(element).on('CornerstoneToolsMouseMove', moveCallback);
-    $(element).on('CornerstoneToolsMouseDrag', moveCallback);
+    external.$(element).on('CornerstoneToolsMouseMove', moveCallback);
+    external.$(element).on('CornerstoneToolsMouseDrag', moveCallback);
 
-    $(element).on('CornerstoneToolsMouseClick', moveEndCallback);
+    external.$(element).on('CornerstoneToolsMouseClick', moveEndCallback);
     if (e.type === 'CornerstoneToolsMouseDrag') {
-      $(element).on('CornerstoneToolsMouseUp', moveEndCallback);
+      external.$(element).on('CornerstoneToolsMouseUp', moveEndCallback);
     }
   }
 
@@ -50,30 +51,30 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
   function toolDeactivatedCallback (e, eventData) {
     if (eventData.toolType === toolType) {
-      $(element).off('CornerstoneToolsMouseMove', moveCallback);
-      $(element).off('CornerstoneToolsMouseDrag', moveCallback);
-      $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
-      $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
-      $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-      $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+      external.$(element).off('CornerstoneToolsMouseMove', moveCallback);
+      external.$(element).off('CornerstoneToolsMouseDrag', moveCallback);
+      external.$(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+      external.$(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+      external.$(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+      external.$(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
       handle.active = false;
       cornerstone.updateImage(element);
     }
   }
 
-  $(element).on('CornerstoneToolsMouseDrag', whichMovement);
-  $(element).on('CornerstoneToolsMouseMove', whichMovement);
-  $(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-  $(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+  external.$(element).on('CornerstoneToolsMouseDrag', whichMovement);
+  external.$(element).on('CornerstoneToolsMouseMove', whichMovement);
+  external.$(element).on('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+  external.$(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
   function moveEndCallback () {
-    $(element).off('CornerstoneToolsMouseMove', moveCallback);
-    $(element).off('CornerstoneToolsMouseDrag', moveCallback);
-    $(element).off('CornerstoneToolsMouseClick', moveEndCallback);
-    $(element).off('CornerstoneToolsMouseUp', moveEndCallback);
-    $(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
-    $(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+    external.$(element).off('CornerstoneToolsMouseMove', moveCallback);
+    external.$(element).off('CornerstoneToolsMouseDrag', moveCallback);
+    external.$(element).off('CornerstoneToolsMouseClick', moveEndCallback);
+    external.$(element).off('CornerstoneToolsMouseUp', moveEndCallback);
+    external.$(element).off('CornerstoneToolsMeasurementRemoved', measurementRemovedCallback);
+    external.$(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
 
     handle.active = false;
     cornerstone.updateImage(element);

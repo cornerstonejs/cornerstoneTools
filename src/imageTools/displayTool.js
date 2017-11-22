@@ -1,17 +1,23 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 
 export default function (onImageRendered) {
   let configuration = {};
 
+  // Note: This is to maintain compatibility for developers that have
+  // Built on top of mouseButtonRectangleTool.js
+  // TODO: Remove this after we migrate Cornerstone Tools away from jQuery
+  function customEventOnImageRendered (e) {
+    onImageRendered(e, e.detail);
+  }
+
   const toolInterface = {
     disable (element) {
-      $(element).off('CornerstoneImageRendered', onImageRendered);
+      element.removeEventListener('cornerstoneimagerendered', customEventOnImageRendered);
     },
     enable (element) {
-      $(element).off('CornerstoneImageRendered', onImageRendered);
-      $(element).on('CornerstoneImageRendered', onImageRendered);
-      cornerstone.updateImage(element);
+      element.removeEventListener('cornerstoneimagerendered', customEventOnImageRendered);
+      element.addEventListener('cornerstoneimagerendered', customEventOnImageRendered);
+      external.cornerstone.updateImage(element);
     },
     getConfiguration () {
       return configuration;

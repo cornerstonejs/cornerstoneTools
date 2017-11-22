@@ -1,4 +1,5 @@
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
+import { getToolState } from '../stateManagement/toolState.js';
 
 export default class FusionRenderer {
   constructor () {
@@ -17,56 +18,64 @@ export default class FusionRenderer {
       throw new Error('No findImage function has been defined');
     }
 
+    if (!imageStacks) {
+      const toolData = getToolState(element, 'stack');
+
+      imageStacks = toolData.data;
+    }
     // TODO: Figure out what to do with LoadHandlers in this scenario...
+
+    const cornerstone = external.cornerstone;
 
     // For the base layer, go to the currentImageIdIndex
     const baseImageObject = imageStacks[0];
     const currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];
+    const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
 
-    // TODO: Figure out how to calculate the minimum distance
-    const minDistance = 1;
+    cornerstone.loadAndCacheImage(currentImageId).then((baseImage) => {
+      let baseLayerId = this.layerIds[0];
 
-    cornerstone.loadAndCacheImage(currentImageId).then((image) => {
-      if (this.layerIds && this.layerIds[0]) {
-        const currentLayerId = this.layerIds[0];
-        const layer = cornerstone.getLayer(element, currentLayerId);
-
-        layer.image = Object.assign({}, image);
+      // Get the base layer if one exists
+      if (baseLayerId) {
+        cornerstone.setLayerImage(element, baseImage, baseLayerId);
       } else {
-        const layerId = cornerstone.addLayer(element, Object.assign({}, image), baseImageObject.options);
-
-        this.layerIds.push(layerId);
+        // Otherwise, create a new layer with the base layer's image
+        baseLayerId = cornerstone.addLayer(element, baseImage, baseImageObject.options);
+        this.layerIds.push(baseLayerId);
       }
 
-      cornerstone.displayImage(element, image);
-
-      // Splice out the first image
-      const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
+      // Display the image immediately while the overlay images are identified
+      cornerstone.displayImage(element, baseImage);
 
       // Loop through the remaining 'overlay' image stacks
       overlayImageStacks.forEach((imgObj, overlayLayerIndex) => {
-        const imageId = this.findImageFn(imgObj.imageIds, currentImageId, minDistance);
+        const imageId = this.findImageFn(imgObj.imageIds, currentImageId);
+        const layerIndex = overlayLayerIndex + 1;
+        let currentLayerId = this.layerIds[layerIndex];
 
-        if (!imageId) {
-          return;
+        // If no layer exists yet for this overlaid stack, create
+        // One and add it to the layerIds property for this instance
+        // Of the fusion renderer.
+        if (!currentLayerId) {
+          currentLayerId = cornerstone.addLayer(element, undefined, imgObj.options);
+          this.layerIds.push(currentLayerId);
         }
 
-        cornerstone.loadAndCacheImage(imageId).then((image) => {
-          const layerIndex = overlayLayerIndex + 1;
-
-          if (this.layerIds && this.layerIds[layerIndex]) {
-            const currentLayerId = this.layerIds[layerIndex];
-            const layer = cornerstone.getLayer(element, currentLayerId);
-
-            layer.image = Object.assign({}, image);
-          } else {
-            const layerId = cornerstone.addLayer(element, Object.assign({}, image), imgObj.options);
-
-            this.layerIds.push(layerId);
-          }
-
-          cornerstone.updateImage(element, true);
-        });
+        if (imageId) {
+          // If an imageId was returned from the findImage function,
+          // Load it, make sure it's visible and update the layer
+          // With the new image object.
+          cornerstone.loadAndCacheImage(imageId).then((image) => {
+            cornerstone.setLayerImage(element, image, currentLayerId);
+            cornerstone.updateImage(element);
+          });
+        } else {
+          // If no imageId was returned from the findImage function.
+          // This means that there is no relevant image to display.
+          cornerstone.setLayerImage(element, undefined, currentLayerId);
+          cornerstone.setActiveLayer(element, baseLayerId);
+          cornerstone.updateImage(element);
+        }
       });
     });
   }

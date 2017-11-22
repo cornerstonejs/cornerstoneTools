@@ -1,23 +1,24 @@
-import $ from '../jquery.js';
-import * as cornerstone from '../cornerstone-core.js';
+import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position
 export default function (synchronizer, sourceElement, targetElement) {
 
-    // Ignore the case where the source and target are the same enabled element
+  // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
   }
 
+  const cornerstone = external.cornerstone;
   const sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-  const sourceImagePlane = cornerstone.metaData.get('imagePlane', sourceImage.imageId);
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
   let sourceImagePosition;
 
   if (sourceImagePlane !== undefined) {
-    sourceImagePosition = sourceImagePlane.imagePositionPatient;
+    sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
   }
 
   if (sourceImagePosition === undefined) {
@@ -33,12 +34,12 @@ export default function (synchronizer, sourceElement, targetElement) {
   let newImageIdIndex = -1;
   let nbComparedPositions = 0;
 
-  $.each(stackData.imageIds, function (index, imageId) {
-    const imagePlane = cornerstone.metaData.get('imagePlane', imageId);
+  stackData.imageIds.forEach((imageId, index) => {
+    const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
     let imagePosition;
 
     if (imagePlane !== undefined) {
-      imagePosition = imagePlane.imagePositionPatient;
+      imagePosition = convertToVector3(imagePlane.imagePositionPatient);
     }
 
     if (imagePosition === undefined) {
@@ -49,7 +50,7 @@ export default function (synchronizer, sourceElement, targetElement) {
 
     nbComparedPositions++;
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
-        // Console.log(index + '=' + distance);
+    // Console.log(index + '=' + distance);
 
     if (distance < minDistance) {
       minDistance = distance;
