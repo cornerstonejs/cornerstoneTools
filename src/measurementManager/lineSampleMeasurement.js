@@ -1,4 +1,4 @@
-import { $ } from '../externalModules.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 // This object manages a collection of measurements
 export default function () {
@@ -11,6 +11,6 @@ export default function () {
   this.set = function (samples) {
     that.samples = samples;
     // Fire event
-    $(that).trigger('CornerstoneLineSampleUpdated');
+    triggerEvent(that, 'CornerstoneLineSampleUpdated');
   };
 }

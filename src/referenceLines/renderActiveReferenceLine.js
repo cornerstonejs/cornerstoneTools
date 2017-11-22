@@ -1,22 +1,24 @@
-import { cornerstone } from '../externalModules.js';
+import external from '../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';
+import convertToVector3 from '../util/convertToVector3.js';
 
 // Renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {
+  const cornerstone = external.cornerstone;
   const targetImage = cornerstone.getEnabledElement(targetElement).image;
   const referenceImage = cornerstone.getEnabledElement(referenceElement).image;
 
-    // Make sure the images are actually loaded for the target and reference
+  // Make sure the images are actually loaded for the target and reference
   if (!targetImage || !referenceImage) {
     return;
   }
 
-  const targetImagePlane = cornerstone.metaData.get('imagePlane', targetImage.imageId);
-  const referenceImagePlane = cornerstone.metaData.get('imagePlane', referenceImage.imageId);
+  const targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImage.imageId);
+  const referenceImagePlane = cornerstone.metaData.get('imagePlaneModule', referenceImage.imageId);
 
-    // Make sure the target and reference actually have image plane metadata
+  // Make sure the target and reference actually have image plane metadata
   if (!targetImagePlane ||
         !referenceImagePlane ||
         !targetImagePlane.rowCosines ||
@@ -28,12 +30,19 @@ export default function (context, eventData, targetElement, referenceElement) {
     return;
   }
 
-    // The image planes must be in the same frame of reference
+  // The image planes must be in the same frame of reference
   if (targetImagePlane.frameOfReferenceUID !== referenceImagePlane.frameOfReferenceUID) {
     return;
   }
 
-    // The image plane normals must be > 30 degrees apart
+  targetImagePlane.rowCosines = convertToVector3(targetImagePlane.rowCosines);
+  targetImagePlane.columnCosines = convertToVector3(targetImagePlane.columnCosines);
+  targetImagePlane.imagePositionPatient = convertToVector3(targetImagePlane.imagePositionPatient);
+  referenceImagePlane.rowCosines = convertToVector3(referenceImagePlane.rowCosines);
+  referenceImagePlane.columnCosines = convertToVector3(referenceImagePlane.columnCosines);
+  referenceImagePlane.imagePositionPatient = convertToVector3(referenceImagePlane.imagePositionPatient);
+
+  // The image plane normals must be > 30 degrees apart
   const targetNormal = targetImagePlane.rowCosines.clone().cross(targetImagePlane.columnCosines);
   const referenceNormal = referenceImagePlane.rowCosines.clone().cross(referenceImagePlane.columnCosines);
   let angleInRadians = targetNormal.angleTo(referenceNormal);
@@ -55,7 +64,7 @@ export default function (context, eventData, targetElement, referenceElement) {
   const color = toolColors.getActiveColor();
   const lineWidth = toolStyle.getToolWidth();
 
-    // Draw the referenceLines
+  // Draw the referenceLines
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   context.save();
