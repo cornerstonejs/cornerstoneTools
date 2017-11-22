@@ -114,7 +114,7 @@ export default function (element, newImageIdIndex) {
   // Convert the preventCache value in stack data to a boolean
   const preventCache = Boolean(stackData.preventCache);
 
-    // Request the image
+  // Request the image
   requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback, pendingCallback);
 
   // Make sure we kick off any changed download request pools

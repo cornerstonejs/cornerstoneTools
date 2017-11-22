@@ -209,8 +209,6 @@ function playClip (element, framesPerSecond) {
         startLoadingHandler(element);
       }
 
-      viewport = cornerstone.getViewport(element);
-
       const doneCallback = function (image) {
         if (stackData.currentImageIdIndex === newImageIdIndex) {
           try {
@@ -248,8 +246,8 @@ function playClip (element, framesPerSecond) {
       stackData.currentImageIdIndex = newImageIdIndex;
       const newImageId = stackData.imageIds[newImageIdIndex];
 
-        // Retry image loading in cases where previous image promise
-        // Was rejected, if the option is set
+      // Retry image loading in cases where previous image promise
+      // Was rejected, if the option is set
       const config = stackScroll.getConfiguration();
 
       if (config && config.retryLoadOnScroll === true) {
@@ -262,16 +260,16 @@ function playClip (element, framesPerSecond) {
 
       const type = 'interaction';
 
-        // Clear the interaction queue
+      // Clear the interaction queue
       requestPoolManager.clearRequestStack(type);
 
-        // Convert the preventCache value in stack data to a boolean
+      // Convert the preventCache value in stack data to a boolean
       const preventCache = Boolean(stackData.preventCache);
 
-        // Request the image
+      // Request the image
       requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback, pendingCallback);
 
-        // Make sure we kick off any changed download request pools
+      // Make sure we kick off any changed download request pools
       requestPoolManager.startGrabbing();
     }
   };
