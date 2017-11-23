@@ -32,7 +32,6 @@ export default function (synchronizer, sourceElement, targetElement) {
 
   let minDistance = Number.MAX_VALUE;
   let newImageIdIndex = -1;
-  let nbComparedPositions = 0;
 
   stackData.imageIds.forEach((imageId, index) => {
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
@@ -48,7 +47,6 @@ export default function (synchronizer, sourceElement, targetElement) {
       return;
     }
 
-    nbComparedPositions++;
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
     // Console.log(index + '=' + distance);
 
@@ -57,10 +55,6 @@ export default function (synchronizer, sourceElement, targetElement) {
       newImageIdIndex = index;
     }
   });
-
-  if (nbComparedPositions !== stackData.imageIds.length) {
-    // Console.log('No position found for ' + (stackData.imageIds.length - nbComparedPositions) + ' images of ' + stackData.imageIds.length);
-  }
 
   if (newImageIdIndex === stackData.currentImageIdIndex) {
     return;
