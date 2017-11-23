@@ -215,7 +215,7 @@ function playClip (element, framesPerSecond) {
       loader.then(function (image) {
         try {
           stackData.currentImageIdIndex = newImageIdIndex;
-          cornerstone.displayImage(element, image, viewport);
+          cornerstone.displayImage(element, image);
 
           if (stackRenderer) {
             stackRenderer.currentImageIdIndex = newImageIdIndex;
