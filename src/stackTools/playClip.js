@@ -240,7 +240,7 @@ function playClip (element, framesPerSecond) {
         }
       });
 
-      $(element).trigger('CornerstoneClipScroll', eventData);
+      triggerEvent(element, 'CornerstoneClipScroll', eventData);
     }
 
   };
