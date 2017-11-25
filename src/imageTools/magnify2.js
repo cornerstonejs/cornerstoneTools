@@ -1,5 +1,4 @@
 import { external } from '../externalModules.js';
-import touchDragTool from './touchDragTool.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
@@ -33,16 +32,19 @@ function mouseDownCallback (e, eventData) {
 
   const element = eventData.element;
 
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+  if (e.isTouchEvent || isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
     external.$(element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
+    external.$(element).on('CornerstoneToolsTouchDrag', eventData, dragCallback);
     external.$(element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
+    external.$(element).on('CornerstoneToolsTouchEnd', eventData, mouseUpCallback);
     external.$(element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
 
-    currentPoints = eventData.currentPoints;
-    drawZoomedElement(e, eventData);
+    external.$(element).on('CornerstoneNewImage', eventData, newImageCallback);
+
+    // Ignore until next event
+    drawZoomedElement(eventData);
     // On next frame
     window.requestAnimationFrame(() => drawMagnificationTool(eventData));
-    external.$(element).on('CornerstoneNewImage', eventData, newImageCallback);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
@@ -64,7 +66,6 @@ function dragEndCallback (e, eventData) {
 
     /** Drag callback is triggered by both the touch and mouse magnify tools */
 function dragCallback (e, eventData) {
-  currentPoints = eventData.currentPoints;
 
   drawMagnificationTool(eventData);
   if (eventData.isTouchEvent === true) {
@@ -83,7 +84,7 @@ function drawMagnificationTool (eventData) {
   }
 
   if (zoomCanvas === undefined) {
-    // Ignore until next event
+
     return;
   }
 
@@ -108,9 +109,9 @@ function drawMagnificationTool (eventData) {
   // Calculate the on-canvas location of the mouse pointer / touch
   const canvasLocation = external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
-  if (eventData.isTouchEvent === true) {
-    canvasLocation.y -= 1.25 * getSize;
-  }
+  /* If (eventData.isTouchEvent === true) {
+    canvasLocation.y -= 20;
+  }*/
 
   canvasLocation.x = Math.max(canvasLocation.x, 0);
   canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
@@ -146,6 +147,11 @@ function drawMagnificationTool (eventData) {
   magnify.style.top = `${canvasLocation.y - 0.5 * magnifySize}px`;
   magnify.style.left = `${canvasLocation.x - 0.5 * magnifySize}px`;
 
+  if (eventData.isTouchEvent) {
+    magnify.style.top = `calc( ${canvasLocation.y - 0.5 * magnifySize}px - 2cm )`;
+  }
+
+
   magnify.style.display = 'block';
 
   // Hide the mouse cursor, so the user can see better
@@ -171,6 +177,7 @@ function createMagnificationCanvas (element) {
     // Make sure position is absolute so the canvas can follow the mouse / touch
     magnify.style.position = 'absolute';
     magnify.style.display = 'none';
+    magnify.style.zIndex = '100';
     element.appendChild(magnify);
   }
 }
@@ -180,7 +187,7 @@ function removeMagnificationCanvas (element) {
   external.$(element).find('.magnifyTool').remove();
 }
 
-function drawZoomedElement (e, eventData) {
+function drawZoomedElement (eventData) {
   removeZoomElement();
   let enabledElement = eventData.enabledElement;
 
@@ -270,13 +277,22 @@ const magnify2 = {
   setConfiguration
 };
 
-const options = {
-  fireOnTouchStart: true,
-  activateCallback: createMagnificationCanvas,
-  disableCallback: removeMagnificationCanvas
-};
+function enableTouch (element) {
+  external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
+  external.$(element).on('CornerstoneToolsTouchStart', mouseDownCallback);
+}
 
-const magnify2TouchDrag = touchDragTool(dragCallback, options);
+// Disables the reference line tool for the given element
+function disableTouch (element) {
+  external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
+}
+
+const magnify2TouchDrag = {
+  activate: enableTouch,
+  deactivate: disableTouch,
+  enable: enableTouch,
+  disable: disableTouch
+};
 
 export {
     magnify2,
