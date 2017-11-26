@@ -68,13 +68,13 @@ Features
       <img alt="Rectangle ROI Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif" />
     </td>
     <td>
-      <img alt="Elliptical ROI Tool Example" src="https://placehold.it/150" />
+      <img alt="Elliptical ROI Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/elliptical-roi.gif" />
     </td>
     <td>
-      <img alt="Pixel Probe Tool Example" src="https://placehold.it/150" />
+      <img alt="Pixel Probe Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/probe.gif" />
     </td>
     <td>
-      <img alt="Angle Tool Example" src="https://placehold.it/150" />
+      <img alt="Angle Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/angle.gif" />
     </td>
   <tr>
   <!-- Name Row -->
@@ -110,10 +110,10 @@ Features
   <!-- Image Row -->
   <tr>
     <td>
-      <img alt="Scroll Tool Example" src="https://placehold.it/150" />
+      <img alt="Scroll Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/stack-scroll.gif" />
     </td>
     <td>
-      <img alt="Cross reference lines Tool Example" src="https://placehold.it/150" />
+      <img alt="Cross reference lines Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/reference-lines.gif" />
     </td>
     <td colspan="2"><!-- Empty Column --></td>
   <tr>
