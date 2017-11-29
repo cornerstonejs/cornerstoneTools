@@ -8,7 +8,7 @@ cornerstoneTools
 a set of common tools needed in medical imaging to work with images and stacks of images.
 
 * View [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) of individual tools
-* Take a peak at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
+* Take a peek at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
 * Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
 
 
