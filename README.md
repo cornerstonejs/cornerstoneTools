@@ -4,86 +4,152 @@
 cornerstoneTools
 ================
 
-cornerstoneTools is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
+`cornerstoneTools` is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
 a set of common tools needed in medical imaging to work with images and stacks of images.
 
-View the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) to see this
-library in action!
-
-View the [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone.
-
-Community
----------
-
-Have questions?  Try posting on our [google groups forum](https://groups.google.com/forum/#!forum/cornerstone-platform).
-
-Status
-------
-
-**Project Status: Alpha (Stable) **
-
-NOTE: Project is currently under active development - functionality is not complete, bugs exist,
-APIs will change and documentation is missing or not correct.  The implemented functionality is considered
-relatively stable.
-
-Make sure to visit the [wiki](https://github.com/chafey/cornerstoneTools/wiki) for more information.
+* View [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) of individual tools
+* Take a peek at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
+* Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
 
 
-Install
--------
+Features
+--------
 
-Get a packaged source file:
+<!-- 5 columns looks great on desktop, but 4 column table supports mobile better -->
+<table>
+  <!-- Image Row -->
+  <tr>
+    <td>
+      <img alt="WW/WC Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif" />
+    </td>
+    <td>
+      <img alt="Zoom Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif" />
+    </td>
+    <td>
+      <img alt="Pan Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif" />
+    </td>
+    <td>
+      <img alt="Length Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif" />
+    </td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>WW/WC</td>
+    <td>Zoom</td>
+    <td>Pan</td>
+    <td>Length</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Source</a>
+    </td>
+    <td>
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js">Source</a>
+    </td>
+  </tr>
+  <!-- Buffer Row -->
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+   <!-- Image Row -->
+  <tr>
+    <td>
+      <img alt="Rectangle ROI Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif" />
+    </td>
+    <td>
+      <img alt="Elliptical ROI Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/elliptical-roi.gif" />
+    </td>
+    <td>
+      <img alt="Pixel Probe Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/probe.gif" />
+    </td>
+    <td>
+      <img alt="Angle Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/angle.gif" />
+    </td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>Rectangle ROI</td>
+    <td>Elliptical ROI</td>
+    <td>Pixel Probe</td>
+    <td>Angle</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/ellipticalRoi.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/probe.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/angleTool.js">Source</a>
+    </td>
+  </tr>
+  <!-- Buffer Row -->
+  <tr>
+    <td colspan="4">&nbsp;</td>
+  </tr>
+  <!-- Image Row -->
+  <tr>
+    <td>
+      <img alt="Scroll Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/stack-scroll.gif" />
+    </td>
+    <td>
+      <img alt="Cross reference lines Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/reference-lines.gif" />
+    </td>
+    <td colspan="2"><!-- Empty Column --></td>
+  <tr>
+  <!-- Name Row -->
+  <tr>
+    <td>Scroll</td>
+    <td>Reference Lines</td>
+    <td colspan="2">Many More!</td>
+  </tr>
+  <!-- External Links Row -->
+  <tr>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/stackScroll/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/stackTools/stackScroll.js">Source</a>
+    </td>
+    <td>
+      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/referenceLineTool/index.html">Example</a> /
+      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/referenceLines/referenceLinesTool.js">Source</a>
+    </td>
+    <td colspan="2"><a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/index.html">Click Here to See a Full List</a></td>
+  </tr>
+</table>
 
-* [cornerstoneTools.js](https://raw.githubusercontent.com/chafey/cornerstoneTools/master/dist/cornerstoneTools.js)
-* [cornerstoneTools.min.js](https://raw.githubusercontent.com/chafey/cornerstoneTools/master/dist/cornerstoneTools.min.js)
 
-Or install via [Bower](http://bower.io/):
+**Other Features:**
 
-> bower install cornerstoneTools
-
-Usage
--------
-
-See the live examples and wiki for documentation on how to use this library
-
-*New*: Specify the cornerstone, jQuery, and Hammer.js instances you want to use the library with.
-
-````javascript
-cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.$ = $;
-cornerstoneTools.external.Hammer = Hammer;
-````
-
-```
-TODO
-```
-
-Features Targeted for V1.0
---------------------------
-
-* Tools that work with a single image
-  * WW/WL
-  * Zoom
-  * Pan
-  * Length
-  * Rectangle ROI
-  * Elliptical ROI
-  * Pixel Probe
-  * Angle
-* Tools that work with a stack of images
-  * Scroll
-  * Cine / Playing Clips
-  * Cross reference lines
-* Tools that work with timeseries (4D)
+* Time Series Tools
   * Play
   * Scroll
   * Probe
+* Synchronization Tools
+  * By image index
+  * By image position
+  * By zoom and pan
+  * By ww/wc and inversion
 * Measurement Manager
-* Synchronization tools
-  * Stack by image index
-  * Stack by image position
-  * Image by zoom and pan
-  * Sync ww/wc/invert
 * Support for binding each tool to different mouse inputs:
   * Left mouse button
   * Middle mouse button
@@ -96,18 +162,120 @@ Features Targeted for V1.0
   tools
 * Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
 
+
+Getting Started
+---------------
+
+### Install
+
+**Via NPM:** (preferred)
+
+`npm install --save cornerstone-tools`
+
+
+**Get a packaged source file:**
+
+[UNPKG](https://unpkg.com/#/) offers a quick/neat solution for grabbing versioned copies of the source. For example:
+
+`https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
+
+* For development, to get the latest minified source:
+    * `<script src="https://unpkg.com/cornerstone-tools"></script>`
+* For production, specify a package version:
+    * `<script src="https://unpkg.com/cornerstone-tools@0.9.0"></script>`
+
+
+### Usage
+
+See the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/chafey/cornerstoneTools/wiki) for documentation on how to use this library
+
+
+**A common setup when using modules:**
+
+````javascript
+// Load NPM packages
+import $ from 'jquery';                           // npm install --save jquery
+import Hammer from 'hammerjs';                    // npm install --save hammerjs
+import * as cornerstone from 'cornerstone-core';  // npm install --save cornerstone-core
+import * as cornerstoneTools from 'cornerstone-tools';
+
+// Specify external dependencies
+cornerstone.external.$ = $;
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.external.$ = $;
+cornerstoneTools.external.Hammer = Hammer;
+````
+
+*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+
+
+**A common setup when using package source files:**
+
+````javascript
+// Load Packaged Sources
+<script src="https://unpkg.com/jquery@3.2.1/dist/jquery.js"></script>
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+<script src="https://unpkg.com/cornerstone-core@1.1.0/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-tools@1.0.2/dist/cornerstoneTools.min.js"></script>
+
+// Specify external dependencies
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.external.$ = $;
+cornerstoneTools.external.Hammer = Hammer;
+````
+
+*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+
+
+Contributing
+------------
+
+We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/chafey/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
+
+**How To Contribute:**
+
+1. Fork this repository
+2. Clone the forked repository
+3. Before committing code, create a branch-per-feature, or branch-per-bug
+4. Create pull requests against `chafey/cornerstoneTools/master`
+
+**What To Contribute:**
+
+If you're looking to get your feet wet, start by:
+
+- Read existing [wiki documentation](https://github.com/chafey/cornerstoneTools/wiki) as you implement your solution. Notice any holes? Fill them in.
+- Can't find an [example of a tool](https://rawgit.com/chafey/cornerstoneTools/master/examples/index.html)? Or think an example can be improved? Improve it.
+- Creating your first tool and learned some lessons along the way? Add documentation to help others.
+
+Can't think of anything? Weigh in on and claim an [outstanding issue in the backlog](https://github.com/chafey/cornerstoneTools/issues).
+
+
+Versioning
+----------
+
+cornerstoneTools will be maintained under the [Semantic Versioning Guidelines](http://semver.org) as much as possible. Releases will be numbered with the following format:
+
+`<major>.<minor>.<patch>`
+
+And constructed with the following guidelines:
+
+* Breaking backward compatibility bumps the major (and resets the minor and patch)
+  - Information on how to navigate breaking changes will be included in our [Change Log](https://github.com/chafey/cornerstoneTools/blob/master/changelog.md)
+* New additions, including new icons, without breaking backward compatibility bumps the minor (and resets the patch)
+* Bug fixes, changes to brand logos, and misc changes bumps the patch
+
+
 Build System
-============
+------------
 
 This project uses webpack to build the software.
 
-Pre-requisites:
----------------
+**Requirements:**
 
-NodeJs - [click to visit web site for installation instructions](http://nodejs.org).
+* [NodeJs](http://nodejs.org).
 
-Common Tasks
-------------
+**Common Tasks:**
+
 
 Update dependencies (after each pull):
 > npm install
@@ -129,7 +297,7 @@ Backlog
 * add support for pointer events as an input source
 * Reference line renderer for first/last/active
 * Annotations (e.g. text, arrows, circles)
-* Move all API documentation from wiki into markdown in a doc folder
+* Move all API documentation from [wiki](https://github.com/chafey/cornerstoneTools/wiki) into markdown in a doc folder
 * key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
 Copyright
