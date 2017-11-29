@@ -1,14 +1,9 @@
 import { external } from '../externalModules.js';
 
-export default function (element, filename, mimetype, encoderOption) {
+export default function (element, filename, mimetype) {
   // Setting the default value for mimetype to image/png
   mimetype = mimetype || 'image/png';
   const canvas = external.$(element).find('canvas').get(0);
-  let imageQuality = 1;
-
-  if (encoderOption && (encoderOption < 0 && encoderOption <= 1)) {
-    imageQuality = encoderOption;
-  }
 
   // Thanks to Ken Fyrstenber
   // http://stackoverflow.com/questions/18480474/how-to-save-an-image-from-canvas
@@ -20,7 +15,7 @@ export default function (element, filename, mimetype, encoderOption) {
   // / convert canvas content to data-uri for link. When download
   // / attribute is set the content pointed to by link will be
   // / pushed as 'download' in HTML5 capable browsers
-  lnk.href = canvas.toDataURL(mimetype, imageQuality);
+  lnk.href = canvas.toDataURL(mimetype, 1);
 
   // / create a 'fake' click-event to trigger the download
   if (document.createEvent) {
