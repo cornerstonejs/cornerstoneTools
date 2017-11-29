@@ -72,6 +72,7 @@
     "webpack": "^3.8.1"
   },
   "dependencies": {
-    "cornerstone-math": "^0.1.6"
+    "cornerstone-math": "^0.1.6",
+    "kew": "^0.7.0"
   }
 }
