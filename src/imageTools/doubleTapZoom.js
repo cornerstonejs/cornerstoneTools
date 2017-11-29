@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import doubleTapTool from './doubleTapTool.js';
 
 function fitToWindowStrategy (eventData) {

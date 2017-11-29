@@ -1,4 +1,4 @@
-export { external } from './externalModules.js';
+export { default as external } from './externalModules.js';
 
 export { default as referenceLines } from './referenceLines/index.js';
 export { default as orientation } from './orientation/index.js';
@@ -149,4 +149,5 @@ export { zoom,
   zoomTouchPinch,
   zoomTouchDrag } from './imageTools/zoom.js';
 export { brush } from './paintingTools/brush.js';
+export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';

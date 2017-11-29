@@ -1,4 +1,4 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -37,7 +37,7 @@ function pointNearTool (element, data, coords) {
   const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
 
-  return cornerstoneMath.point.distance(endCanvas, coords) < 5;
+  return external.cornerstoneMath.point.distance(endCanvas, coords) < 5;
 }
 
 function onImageRendered (e, eventData) {

@@ -1,5 +1,5 @@
 /* eslint no-alert:0 */
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -108,7 +108,7 @@ function pointNearTool (element, data, coords) {
   }
 
   const realCoords = external.cornerstone.pixelToCanvas(element, data.handles.end);
-  const distanceToPoint = cornerstoneMath.point.distance(realCoords, coords);
+  const distanceToPoint = external.cornerstoneMath.point.distance(realCoords, coords);
 
 
   return (distanceToPoint < 25);
@@ -249,7 +249,7 @@ function onImageRendered (e, eventData) {
           }
         ];
 
-        link.end = cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
 
         context.beginPath();
         context.strokeStyle = color;

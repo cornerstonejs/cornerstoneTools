@@ -1,7 +1,8 @@
-import { cornerstoneMath, external } from '../externalModules.js';
+import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 let startPoints,
   currentPoints,
@@ -24,14 +25,13 @@ const pressDelay = 700,
 function onTouch (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget || e.srcEvent.currentTarget;
-  let event,
-    eventType,
+  let eventType,
     scaleChange,
     delta,
     remainingPointers,
     rotation;
 
-    // Prevent mouse events from occurring alongside touch events
+  // Prevent mouse events from occurring alongside touch events
   e.preventDefault();
 
   // If more than one finger is placed on the element, stop the press timeout
@@ -48,7 +48,7 @@ function onTouch (e) {
 
     // Calculate our current points in page and image coordinates
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -68,8 +68,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
 
   case 'doubletap':
@@ -78,7 +77,7 @@ function onTouch (e) {
 
     // Calculate our current points in page and image coordinates
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -98,8 +97,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
 
   case 'pinchstart':
@@ -140,8 +138,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     lastScale = e.scale;
     break;
@@ -154,7 +151,7 @@ function onTouch (e) {
     clearTimeout(touchStartDelay);
     touchStartDelay = setTimeout(function () {
       startPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
         client: {
           x: e.originalEvent.touches[0].clientX,
@@ -179,10 +176,9 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      const eventPropagated = triggerEvent(element, eventType, eventData);
 
-      if (event.isImmediatePropagationStopped() === false) {
+      if (eventPropagated === true) {
         // IsPress = false;
         // ClearTimeout(pressTimeout);
 
@@ -194,7 +190,7 @@ function onTouch (e) {
         }
 
         eventData.type = eventType;
-        external.$(element).trigger(eventType, eventData);
+        triggerEvent(element, eventType, eventData);
       }
 
       // Console.log(eventType);
@@ -209,7 +205,7 @@ function onTouch (e) {
       }
 
       currentPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.touches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.touches[0].pageX, e.originalEvent.touches[0].pageY),
         client: {
           x: e.originalEvent.touches[0].clientX,
@@ -229,8 +225,7 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      triggerEvent(element, eventType, eventData);
 
       // Console.log(eventType);
     }, pressDelay);
@@ -244,7 +239,7 @@ function onTouch (e) {
 
     setTimeout(function () {
       startPoints = {
-        page: cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.originalEvent.changedTouches[0]),
         image: cornerstone.pageToPixel(element, e.originalEvent.changedTouches[0].pageX, e.originalEvent.changedTouches[0].pageY),
         client: {
           x: e.originalEvent.changedTouches[0].clientX,
@@ -266,8 +261,7 @@ function onTouch (e) {
         isTouchEvent: true
       };
 
-      event = external.$.Event(eventType, eventData);
-      external.$(element).trigger(event, eventData);
+      triggerEvent(element, eventType, eventData);
     }, 50);
     break;
 
@@ -302,10 +296,10 @@ function onTouch (e) {
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
     };
 
     pageDistanceMoved += Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
@@ -334,8 +328,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     lastPoints = copyPoints(currentPoints);
     break;
@@ -347,7 +340,7 @@ function onTouch (e) {
     };
 
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -369,7 +362,7 @@ function onTouch (e) {
     }
 
     currentPoints = {
-      page: cornerstoneMath.point.pageToPoint(e.pointers[0]),
+      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
       image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
       client: {
         x: e.pointers[0].clientX,
@@ -380,10 +373,10 @@ function onTouch (e) {
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
+      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
+      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
+      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
     };
 
     eventType = 'CornerstoneToolsDragEnd';
@@ -401,8 +394,7 @@ function onTouch (e) {
       isTouchEvent: true
     };
 
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
 
     remainingPointers = e.pointers.length - e.changedPointers.length;
 
@@ -429,8 +421,7 @@ function onTouch (e) {
       rotation,
       type: eventType
     };
-    event = external.$.Event(eventType, eventData);
-    external.$(element).trigger(event, eventData);
+    triggerEvent(element, eventType, eventData);
     break;
   }
 

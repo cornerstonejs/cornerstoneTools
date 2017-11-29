@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import toolCoordinates from '../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import handleActivator from '../manipulators/handleActivator.js';
@@ -149,9 +149,16 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
   }
   // /////// END DEACTIVE TOOL ///////
 
+  // Note: This is to maintain compatibility for developers that have
+  // Built on top of mouseButtonRectangleTool.js
+  // TODO: Remove this after we migrate Cornerstone Tools away from jQuery
+  function onImageRendered (e) {
+    mouseToolInterface.onImageRendered(e, e.detail);
+  }
+
   // Not visible, not interactive
   function disable (element) {
-    external.$(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
     external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
@@ -161,12 +168,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
   // Visible but not interactive
   function enable (element) {
-    external.$(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
     external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-    external.$(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     external.cornerstone.updateImage(element);
   }
@@ -177,12 +184,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
       mouseButtonMask
     };
 
-    external.$(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
     external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-    external.$(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
     external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
     external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
@@ -196,12 +203,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
       mouseButtonMask
     };
 
-    external.$(element).off('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
     external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
     external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
 
-    external.$(element).on('CornerstoneImageRendered', mouseToolInterface.onImageRendered);
+    element.addEventListener('cornerstoneimagerendered', onImageRendered);
     external.$(element).on('CornerstoneToolsMouseMove', eventData, mouseMoveCallback);
     external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
 

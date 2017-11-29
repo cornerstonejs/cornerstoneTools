@@ -1,4 +1,4 @@
-import { external } from '../externalModules.js';
+import external from '../externalModules.js';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
 import touchDragTool from '../imageTools/touchDragTool.js';
 import mouseWheelTool from '../imageTools/mouseWheelTool.js';

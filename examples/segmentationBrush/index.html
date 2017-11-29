@@ -47,10 +47,17 @@
         <div class="row">
           <button id="drawErase" class="btn btn-primary">Erase</button>
         </div>
+        <div class="row">
+            <label for="toolType">Type</label>
+            <select id="toolType" style="width:100%">
+                <option value="brush">Default</option>
+                <option value="adaptiveBrush">Adaptive</option>
+            </select>
+        </div>
         
         <div class="row">
           <label for="radiusSlider">Radius: <span id="valBox">3</span>px</label>
-          <input id="radiusSlider" type="range" min="1" max="10" value="3" steps="1" style="width: 200px"/>
+          <input id="radiusSlider" type="range" min="1" max="20" value="20" steps="1" style="width: 200px"/>
         </div>
       </div>
     </div>
@@ -73,13 +80,28 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-  var radius = 3;
+  var $radiusSlider = $('#radiusSlider');
+  var radius = $radiusSlider.val();
   var element = document.getElementById('dicomImage');
 
   var configuration = cornerstoneTools.brush.getConfiguration();
-  configuration.radius = radius;
+  configuration.radius = parseInt(radius, 10);
 
+  const colormapId = 'MyNewColorMap';
+  const colormap = cornerstone.colors.getColormap(colormapId);
+
+  colormap.setNumberOfColors(2);
+  colormap.setColor(0, [0, 0, 0, 0]);
+  colormap.setColor(1, [200, 0, 0, 255]);
+
+  configuration.colormapId = colormapId;
+
+  var toolType = 'brush';
   cornerstoneTools.brush.setConfiguration(configuration);
+
+  var adaptiveConfig = cornerstoneTools.adaptiveBrush.getConfiguration();
+  adaptiveConfig.colormapId = colormapId;
+  cornerstoneTools.adaptiveBrush.setConfiguration(adaptiveConfig);
 
   var imageIds = [
       'example://1',
@@ -95,6 +117,9 @@ is used by our example image loader-->
   cornerstone.loadImage(imageIds[0]).then(function(image) {
     cornerstone.addLayer(element, image);
     cornerstone.updateImage(element);
+    var viewport = cornerstone.getViewport(element);
+    viewport.pixelReplication = true;
+    cornerstone.setViewport(element, viewport);
 
     cornerstoneTools.addStackStateManager(element, ['stack']);
     cornerstoneTools.addToolState(element, 'stack', stack);
@@ -104,29 +129,47 @@ is used by our example image loader-->
     cornerstoneTools.stackScrollWheel.activate(element);
     cornerstoneTools.pan.activate(element, 2);
     cornerstoneTools.zoom.activate(element, 4);    
-    cornerstoneTools.brush.activate(element, 1);     
+    cornerstoneTools[toolType].activate(element, 1);
   });
 
   var $drawEraseButton = $('#drawErase');
-
+  let drawValue = 1;
   $drawEraseButton.click(function () {
-    var configuration = cornerstoneTools.brush.getConfiguration();
-    if (configuration.draw == 0) {
+    var configuration = cornerstoneTools[toolType].getConfiguration();
+    if (configuration.draw === 0) {
       configuration.draw = 1;
       $drawEraseButton.text("Erase");
     } else {
       configuration.draw = 0;
       $drawEraseButton.text("Draw");
     }
-    cornerstoneTools.brush.setConfiguration(configuration);
+    cornerstoneTools[toolType].setConfiguration(configuration);
   });
   
   var $radiusSlider = $('#radiusSlider');
   $radiusSlider.on('input', function(){
+    var configuration = cornerstoneTools[toolType].getConfiguration();
     var radius = $radiusSlider.val();
     $('#valBox').text(radius);
-    configuration.radius = radius;
-    cornerstoneTools.brush.setConfiguration(configuration);
+    configuration.radius = parseInt(radius, 10);
+    cornerstoneTools[toolType].setConfiguration(configuration);
+    cornerstone.updateImage(element, true);
+  });
+
+  var $toolType = $('#toolType');
+  $toolType.on('change', function(){
+    toolType = $toolType.val();
+    cornerstoneTools.brush.disable(element);
+    cornerstoneTools.adaptiveBrush.disable(element);
+
+    var configuration = cornerstoneTools[toolType].getConfiguration();
+    var radius = $radiusSlider.val();
+    configuration.radius = parseInt(radius, 10);
+    configuration.draw = drawValue;
+    cornerstoneTools[toolType].setConfiguration(configuration);
+    
+    cornerstoneTools[toolType].activate(element, 1);
+    cornerstone.updateImage(element, true);
   });
 </script>
 </html>
