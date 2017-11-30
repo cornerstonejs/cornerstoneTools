@@ -7408,13 +7408,6 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
   var cornerstone = _externalModules2.default.cornerstone;
   var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
   var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
-
-  if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
-    // Console.log('No position found for image ' + sourceImage.imageId);
-
-    return;
-  }
-
   var sourceImagePosition = (0, _convertToVector2.default)(sourceImagePlane.imagePositionPatient);
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
   var stackData = stackToolDataSource.data[0];
@@ -7424,13 +7417,6 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
 
   stackData.imageIds.forEach(function (imageId, index) {
     var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
-
-    if (imagePlane === undefined || imagePlane.imagePositionPatient === undefined) {
-      // Console.log('No position found for image ' + imageId);
-
-      return;
-    }
-
     var imagePosition = (0, _convertToVector2.default)(imagePlane.imagePositionPatient);
     var distance = imagePosition.distanceToSquared(sourceImagePosition);
     // Console.log(index + '=' + distance);
