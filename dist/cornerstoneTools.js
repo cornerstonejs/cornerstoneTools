@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.1.2 - 2017-11-21 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.1.2 - 2017-11-30 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -7409,7 +7409,6 @@ exports.default = function (synchronizer, sourceElement, targetElement) {
   var sourceImage = cornerstone.getEnabledElement(sourceElement).image;
   var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
   var sourceImagePosition = (0, _convertToVector2.default)(sourceImagePlane.imagePositionPatient);
-
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
   var stackData = stackToolDataSource.data[0];
 
@@ -14182,7 +14181,7 @@ exports.default = function (element, filename, mimetype) {
   // / convert canvas content to data-uri for link. When download
   // / attribute is set the content pointed to by link will be
   // / pushed as 'download' in HTML5 capable browsers
-  lnk.href = canvas.toDataURL(mimetype);
+  lnk.href = canvas.toDataURL(mimetype, 1);
 
   // / create a 'fake' click-event to trigger the download
   if (document.createEvent) {

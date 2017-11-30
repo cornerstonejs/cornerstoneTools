@@ -15,7 +15,7 @@ export default function (element, filename, mimetype) {
   // / convert canvas content to data-uri for link. When download
   // / attribute is set the content pointed to by link will be
   // / pushed as 'download' in HTML5 capable browsers
-  lnk.href = canvas.toDataURL(mimetype);
+  lnk.href = canvas.toDataURL(mimetype, 1);
 
   // / create a 'fake' click-event to trigger the download
   if (document.createEvent) {
