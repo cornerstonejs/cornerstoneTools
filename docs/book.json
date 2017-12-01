@@ -1,0 +1,20 @@
+{
+  "title": "cornerstone-tools",
+  "gitbook": ">3.0.0",
+  "plugins": ["edit-link", "github"],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/vuejs/vue-router/edit/master/docs",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/cornerstonejs/cornerstoneTools"
+    }
+  },
+  "links": {
+    "sharing": {
+      "facebook": false,
+      "twitter": false
+    }
+  }
+}
