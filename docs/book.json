@@ -4,7 +4,7 @@
   "plugins": ["edit-link", "github"],
   "pluginsConfig": {
     "edit-link": {
-      "base": "https://github.com/vuejs/vue-router/edit/master/docs",
+      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs",
       "label": "Edit This Page"
     },
     "github": {
