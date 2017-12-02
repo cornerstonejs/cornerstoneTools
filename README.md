@@ -297,13 +297,8 @@ Backlog
 * reconsider the state management api, it is a bit clunky
 * add support for pointer events as an input source
 * Reference line renderer for first/last/active
-* Annotations (e.g. text, arrows, circles)
-* Move all API documentation from [wiki](https://github.com/chafey/cornerstoneTools/wiki) into markdown in a doc folder
 * key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
-Copyright
-============
-Copyright 2015 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
