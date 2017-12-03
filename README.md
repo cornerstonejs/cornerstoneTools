@@ -187,7 +187,7 @@ Getting Started
 
 ### Usage
 
-See the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/chafey/cornerstoneTools/wiki) for documentation on how to use this library
+See the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/chafey/cornerstoneTools/wiki) for documentation (Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)) on how to use this library
 
 
 **A common setup when using modules:**
@@ -244,6 +244,7 @@ We love contributions, and we have plenty of work queued up for all skill levels
 If you're looking to get your feet wet, start by:
 
 - Read existing [wiki documentation](https://github.com/chafey/cornerstoneTools/wiki) as you implement your solution. Notice any holes? Fill them in.
+  - Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)
 - Can't find an [example of a tool](https://rawgit.com/chafey/cornerstoneTools/master/examples/index.html)? Or think an example can be improved? Improve it.
 - Creating your first tool and learned some lessons along the way? Add documentation to help others.
 
@@ -296,13 +297,8 @@ Backlog
 * reconsider the state management api, it is a bit clunky
 * add support for pointer events as an input source
 * Reference line renderer for first/last/active
-* Annotations (e.g. text, arrows, circles)
-* Move all API documentation from [wiki](https://github.com/chafey/cornerstoneTools/wiki) into markdown in a doc folder
 * key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
 
-Copyright
-============
-Copyright 2015 Chris Hafey [chafey@gmail.com](mailto:chafey@gmail.com)
 
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
