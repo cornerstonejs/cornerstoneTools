@@ -22,12 +22,6 @@ Include `cornerstoneTools` after Cornerstone and it will install itself automati
 npm install cornerstone-tools --save
 ```
 
-### Yarn
-
-``` bash
-yarn add cornerstone-tools
-```
-
 When used with a module system, you can import `cornerstoneTools` like this:
 
 ``` js
