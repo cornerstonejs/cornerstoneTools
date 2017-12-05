@@ -1,7 +1,12 @@
 {
   "title": "cornerstone-tools",
   "gitbook": ">3.0.0",
-  "plugins": ["edit-link", "github"],
+  "plugins": [
+    "edit-link",
+    "theme-cornerstone",
+    "-fontsettings",
+    "github"
+  ],
   "pluginsConfig": {
     "edit-link": {
       "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs",
