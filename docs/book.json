@@ -3,6 +3,8 @@
   "gitbook": ">3.0.0",
   "plugins": [
     "edit-link",
+    "theme-cornerstone",
+    "-fontsettings",
     "github"
   ],
   "pluginsConfig": {
