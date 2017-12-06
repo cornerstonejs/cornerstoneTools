@@ -9,12 +9,12 @@
     "imaging"
   ],
   "author": "Chris Hafey, Prasath",
-  "homepage": "https://github.com/chafey/cornerstoneTools",
+  "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
   "license": "MIT",
   "module": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chafey/cornerstoneTools.git"
+    "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
   },
   "scripts": {
     "eslint": "eslint -c .eslintrc.js src",

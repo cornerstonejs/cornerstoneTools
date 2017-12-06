@@ -3,7 +3,7 @@ import external from '../externalModules.js';
 /**
  * Sets the canvas context transformation matrix so it is scaled to show text
  * more cleanly even if the image is scaled up.  See
- * https://github.com/chafey/cornerstoneTools/wiki/DrawingText
+ * https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText
  * for more information
  *
  * @param enabledElement

@@ -49,7 +49,7 @@ You don't need to do this when using global script tags.
 You will have to clone directly from GitHub and build `cornerstoneTools` yourself if you want to use the latest dev build.
 
 ``` bash
-git clone https://github.com/chafey/cornerstoneTools.git node_modules/cornerstoneTools
+git clone https://github.com/cornerstonejs/cornerstoneTools.git node_modules/cornerstoneTools
 cd node_modules/cornerstoneTools
 npm install
 npm run build

@@ -4,10 +4,10 @@
 cornerstoneTools
 ================
 
-`cornerstoneTools` is a library built on top of [cornerstone](https://github.com/chafey/cornerstone) that provides
+`cornerstoneTools` is a library built on top of [cornerstone](https://github.com/cornerstonejs/cornerstone) that provides
 a set of common tools needed in medical imaging to work with images and stacks of images.
 
-* View [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) of individual tools
+* View [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/master/examples/index.html) of individual tools
 * Take a peek at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
 * Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
 
@@ -42,20 +42,20 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
       <a href="https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/zoom.js">Source</a>
     </td>
     <td>
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/zoom.js">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/pan.js">Source</a>
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/zoom.js">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/pan.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/length.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/length.js">Source</a>
     </td>
   </tr>
   <!-- Buffer Row -->
@@ -87,20 +87,20 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/ellipticalRoi.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/ellipticalRoi.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/probe.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/probe.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/imageTools/angleTool.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/angleTool.js">Source</a>
     </td>
   </tr>
   <!-- Buffer Row -->
@@ -126,14 +126,14 @@ Features
   <!-- External Links Row -->
   <tr>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/stackScroll/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/stackTools/stackScroll.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/stackScroll/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/stackTools/stackScroll.js">Source</a>
     </td>
     <td>
-      <a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/referenceLineTool/index.html">Example</a> /
-      <a href="https://github.com/chafey/cornerstoneTools/blob/master/src/referenceLines/referenceLinesTool.js">Source</a>
+      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/referenceLineTool/index.html">Example</a> /
+      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/referenceLines/referenceLinesTool.js">Source</a>
     </td>
-    <td colspan="2"><a href="https://rawgit.com/chafey/cornerstoneTools/master/examples/index.html">Click Here to See a Full List</a></td>
+    <td colspan="2"><a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/index.html">Click Here to See a Full List</a></td>
   </tr>
 </table>
 
@@ -187,7 +187,7 @@ Getting Started
 
 ### Usage
 
-See the [live examples](https://rawgithub.com/chafey/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/chafey/cornerstoneTools/wiki) for documentation (Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)) on how to use this library
+See the [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/cornerstonejs/cornerstoneTools/wiki) for documentation (Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)) on how to use this library
 
 
 **A common setup when using modules:**
@@ -230,25 +230,25 @@ cornerstoneTools.external.Hammer = Hammer;
 Contributing
 ------------
 
-We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/chafey/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/chafey/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
+We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/cornerstonejs/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
 
 **How To Contribute:**
 
 1. Fork this repository
 2. Clone the forked repository
 3. Before committing code, create a branch-per-feature, or branch-per-bug
-4. Create pull requests against `chafey/cornerstoneTools/master`
+4. Create pull requests against `cornerstonejs/cornerstoneTools/master`
 
 **What To Contribute:**
 
 If you're looking to get your feet wet, start by:
 
-- Read existing [wiki documentation](https://github.com/chafey/cornerstoneTools/wiki) as you implement your solution. Notice any holes? Fill them in.
+- Read existing [wiki documentation](https://github.com/cornerstonejs/cornerstoneTools/wiki) as you implement your solution. Notice any holes? Fill them in.
   - Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)
-- Can't find an [example of a tool](https://rawgit.com/chafey/cornerstoneTools/master/examples/index.html)? Or think an example can be improved? Improve it.
+- Can't find an [example of a tool](https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/index.html)? Or think an example can be improved? Improve it.
 - Creating your first tool and learned some lessons along the way? Add documentation to help others.
 
-Can't think of anything? Weigh in on and claim an [outstanding issue in the backlog](https://github.com/chafey/cornerstoneTools/issues).
+Can't think of anything? Weigh in on and claim an [outstanding issue in the backlog](https://github.com/cornerstonejs/cornerstoneTools/issues).
 
 
 Versioning
@@ -261,7 +261,7 @@ cornerstoneTools will be maintained under the [Semantic Versioning Guidelines](h
 And constructed with the following guidelines:
 
 * Breaking backward compatibility bumps the major (and resets the minor and patch)
-  - Information on how to navigate breaking changes will be included in our [Change Log](https://github.com/chafey/cornerstoneTools/blob/master/changelog.md)
+  - Information on how to navigate breaking changes will be included in our [Change Log](https://github.com/cornerstonejs/cornerstoneTools/blob/master/changelog.md)
 * New additions, including new icons, without breaking backward compatibility bumps the minor (and resets the patch)
 * Bug fixes, changes to brand logos, and misc changes bumps the patch
 
@@ -307,8 +307,8 @@ Backlog
 [npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
 [npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
 
-[travis-url]: http://travis-ci.org/chafey/cornerstoneTools
-[travis-image]: https://travis-ci.org/chafey/cornerstoneTools.svg?branch=master
+[travis-url]: http://travis-ci.org/cornerstonejs/cornerstoneTools
+[travis-image]: https://travis-ci.org/cornerstonejs/cornerstoneTools.svg?branch=master
 
-[coverage-url]: https://coveralls.io/github/chafey/cornerstoneTools?branch=master
-[coverage-image]: https://coveralls.io/repos/github/chafey/cornerstoneTools/badge.svg?branch=master
+[coverage-url]: https://coveralls.io/github/cornerstonejs/cornerstoneTools?branch=master
+[coverage-image]: https://coveralls.io/repos/github/cornerstonejs/cornerstoneTools/badge.svg?branch=master
