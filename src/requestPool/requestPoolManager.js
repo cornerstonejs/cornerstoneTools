@@ -19,7 +19,7 @@ let maxNumRequests = {
   prefetch: 5
 };
 
-let awake = false;
+awake = false;
 const grabDelay = 20;
 
 function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
