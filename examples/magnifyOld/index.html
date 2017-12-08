@@ -19,7 +19,6 @@
             border-radius: 50%;
             display: none;
             cursor: none;
-            z-index: 100;
         }
         /* prevents selection when left click dragging */
         .disable-selection {
@@ -35,7 +34,7 @@
 <div class="container">
     <div class="page-header">
         <h1>
-            Magnify2 Example
+            Magnify Example
         </h1>
         <p>
             This page contains an example of the magnification tool.
@@ -50,20 +49,20 @@
                 <a id="disable" class="list-group-item">Disable</a>
             </ul>
             <label for="magLevelRange">Magnification Level</label>
-            <input id="magLevelRange" type="range" min="1" value="5" max="10" />
+            <input id="magLevelRange" type="range" min="1" value="2" max="10" />
             <br/>
             <label for="magSizeRange">Magnifying glass size</label>
             <input id="magSizeRange" type="range" min="100" value="225" max="300" step="25"/>
         </div>
         <div class="col-xs-12 col-sm-6">
-            <div style="width:128px;height:128px;position:relative;display:inline-block;color:white;margin-bottom:128px;"
+            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image class='cornerstone-enabled-image disable-selection noIbar''
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
                 <div id="dicomImage"
-                     style="width:128px;height:128px;top:0px;left:0px; position:absolute;">
+                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
                 </div>
             </div>
         </div>
@@ -102,13 +101,13 @@
 
     var magLevelRange = $("#magLevelRange")
     magLevelRange.on("change", function() {
-        var config = cornerstoneTools.magnify2.getConfiguration();
+        var config = cornerstoneTools.magnifyOld.getConfiguration();
         config.magnificationLevel = parseInt(magLevelRange.val(), 10);
     });
 
     var magSizeRange = $("#magSizeRange")
     magSizeRange.on("change", function() {
-        var config = cornerstoneTools.magnify2.getConfiguration();
+        var config = cornerstoneTools.magnifyOld.getConfiguration();
         config.magnifySize = parseInt(magSizeRange.val(), 10)
         var magnify = $(".magnifyTool").get(0);
         magnify.width = config.magnifySize;
@@ -120,20 +119,20 @@
         magnificationLevel: parseInt(magLevelRange.val(), 10)
     };
 
-    cornerstoneTools.magnify2.setConfiguration(config);
+    cornerstoneTools.magnifyOld.setConfiguration(config);
 
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
 
-        cornerstoneTools.magnify2.enable(element);
-        cornerstoneTools.magnify2TouchDrag.enable(element);
+        cornerstoneTools.magnifyOld.enable(element);
+        cornerstoneTools.magnifyOldTouchDrag.enable(element);
 
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
 
         // Enable all tools we want to use with this element
-        cornerstoneTools.magnify2.activate(element, 1);
-        cornerstoneTools.magnify2TouchDrag.activate(element);
+        cornerstoneTools.magnifyOld.activate(element, 1);
+        cornerstoneTools.magnifyOldTouchDrag.activate(element);
 
         activate("#activate");
 
@@ -146,14 +145,14 @@
         // Tool button event handlers that set the new active tool
         $('#disable').click(function() {
             activate("#disable");
-            cornerstoneTools.magnify2.disable(element);
-            cornerstoneTools.magnify2TouchDrag.disable(element);
+            cornerstoneTools.magnifyOld.disable(element);
+            cornerstoneTools.magnifyOldTouchDrag.disable(element);
             return false;
         });
         $('#activate').click(function() {
             activate("#activate");
-            cornerstoneTools.magnify2.activate(element, 1);
-            cornerstoneTools.magnify2TouchDrag.activate(element);
+            cornerstoneTools.magnifyOld.activate(element, 1);
+            cornerstoneTools.magnifyOldTouchDrag.activate(element);
             return false;
         });
 

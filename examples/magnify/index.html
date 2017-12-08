@@ -19,6 +19,7 @@
             border-radius: 50%;
             display: none;
             cursor: none;
+            z-index: 100;
         }
         /* prevents selection when left click dragging */
         .disable-selection {
@@ -49,20 +50,20 @@
                 <a id="disable" class="list-group-item">Disable</a>
             </ul>
             <label for="magLevelRange">Magnification Level</label>
-            <input id="magLevelRange" type="range" min="1" value="2" max="10" />
+            <input id="magLevelRange" type="range" min="1" value="5" max="10" />
             <br/>
             <label for="magSizeRange">Magnifying glass size</label>
             <input id="magSizeRange" type="range" min="100" value="225" max="300" step="25"/>
         </div>
         <div class="col-xs-12 col-sm-6">
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+            <div style="width:128px;height:128px;position:relative;display:inline-block;color:white;margin-bottom:128px;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image disable-selection noIbar'
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
                 <div id="dicomImage"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                     style="width:128px;height:128px;top:0px;left:0px; position:absolute;">
                 </div>
             </div>
         </div>
