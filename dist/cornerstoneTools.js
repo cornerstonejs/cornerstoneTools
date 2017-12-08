@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.0.2 - 2017-11-13 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
+/*! cornerstone-tools - 1.0.2 - 2017-12-08 | (c) 2017 Chris Hafey | https://github.com/chafey/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory(require("cornerstone-math"));
@@ -1282,6 +1282,55 @@ exports.default = touchTool;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+var defaultStartLoadHandler = void 0;
+var defaultEndLoadHandler = void 0;
+var defaultErrorLoadingHandler = void 0;
+
+function setStartLoadHandler(handler) {
+  defaultStartLoadHandler = handler;
+}
+
+function getStartLoadHandler() {
+  return defaultStartLoadHandler;
+}
+
+function setEndLoadHandler(handler) {
+  defaultEndLoadHandler = handler;
+}
+
+function getEndLoadHandler() {
+  return defaultEndLoadHandler;
+}
+
+function setErrorLoadingHandler(handler) {
+  defaultErrorLoadingHandler = handler;
+}
+
+function getErrorLoadingHandler() {
+  return defaultErrorLoadingHandler;
+}
+
+var loadHandlerManager = {
+  setStartLoadHandler: setStartLoadHandler,
+  getStartLoadHandler: getStartLoadHandler,
+  setEndLoadHandler: setEndLoadHandler,
+  getEndLoadHandler: getEndLoadHandler,
+  setErrorLoadingHandler: setErrorLoadingHandler,
+  getErrorLoadingHandler: getErrorLoadingHandler
+};
+
+exports.default = loadHandlerManager;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 
 exports.default = function (touchDragCallback, options) {
   var events = 'CornerstoneToolsTouchDrag';
@@ -1328,55 +1377,6 @@ exports.default = function (touchDragCallback, options) {
 };
 
 var _externalModules = __webpack_require__(0);
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var defaultStartLoadHandler = void 0;
-var defaultEndLoadHandler = void 0;
-var defaultErrorLoadingHandler = void 0;
-
-function setStartLoadHandler(handler) {
-  defaultStartLoadHandler = handler;
-}
-
-function getStartLoadHandler() {
-  return defaultStartLoadHandler;
-}
-
-function setEndLoadHandler(handler) {
-  defaultEndLoadHandler = handler;
-}
-
-function getEndLoadHandler() {
-  return defaultEndLoadHandler;
-}
-
-function setErrorLoadingHandler(handler) {
-  defaultErrorLoadingHandler = handler;
-}
-
-function getErrorLoadingHandler() {
-  return defaultErrorLoadingHandler;
-}
-
-var loadHandlerManager = {
-  setStartLoadHandler: setStartLoadHandler,
-  getStartLoadHandler: getStartLoadHandler,
-  setEndLoadHandler: setEndLoadHandler,
-  getEndLoadHandler: getEndLoadHandler,
-  setErrorLoadingHandler: setErrorLoadingHandler,
-  getErrorLoadingHandler: getErrorLoadingHandler
-};
-
-exports.default = loadHandlerManager;
 
 /***/ }),
 /* 11 */
@@ -2778,7 +2778,7 @@ var _externalModules = __webpack_require__(0);
 
 var _toolState = __webpack_require__(1);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -3843,7 +3843,7 @@ exports.stackScrollMultiTouch = exports.stackScrollTouchDrag = exports.stackScro
 
 var _externalModules = __webpack_require__(0);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -4318,7 +4318,7 @@ var _requestPoolManager = __webpack_require__(27);
 
 var _requestPoolManager2 = _interopRequireDefault(_requestPoolManager);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -5232,7 +5232,7 @@ exports.crosshairsTouch = exports.crosshairs = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -5505,7 +5505,7 @@ var _simpleMouseButtonTool = __webpack_require__(12);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -7250,7 +7250,7 @@ exports.magnifyTouchDrag = exports.magnify = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -7508,10 +7508,6 @@ exports.magnify2TouchDrag = exports.magnify2 = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _touchDragTool = __webpack_require__(9);
-
-var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
-
 var _getMaxSimultaneousRequests = __webpack_require__(17);
 
 var _isMouseButtonEnabled = __webpack_require__(2);
@@ -7550,18 +7546,21 @@ function mouseDownCallback(e, eventData) {
 
   var element = eventData.element;
 
-  if ((0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
+  if (e.isTouchEvent || (0, _isMouseButtonEnabled2.default)(eventData.which, e.data.mouseButtonMask)) {
     _externalModules.external.$(element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
+    _externalModules.external.$(element).on('CornerstoneToolsTouchDrag', eventData, dragCallback);
     _externalModules.external.$(element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
+    _externalModules.external.$(element).on('CornerstoneToolsTouchEnd', eventData, mouseUpCallback);
     _externalModules.external.$(element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
 
-    currentPoints = eventData.currentPoints;
-    drawZoomedElement(e, eventData);
+    _externalModules.external.$(element).on('CornerstoneNewImage', eventData, newImageCallback);
+
+    // Ignore until next event
+    drawZoomedElement(eventData);
     // On next frame
     window.requestAnimationFrame(function () {
       return drawMagnificationTool(eventData);
     });
-    _externalModules.external.$(element).on('CornerstoneNewImage', eventData, newImageCallback);
 
     return false; // False = causes jquery to preventDefault() and stopPropagation() this event
   }
@@ -7583,7 +7582,6 @@ function dragEndCallback(e, eventData) {
 
 /** Drag callback is triggered by both the touch and mouse magnify tools */
 function dragCallback(e, eventData) {
-  currentPoints = eventData.currentPoints;
 
   drawMagnificationTool(eventData);
   if (eventData.isTouchEvent === true) {
@@ -7602,7 +7600,7 @@ function drawMagnificationTool(eventData) {
   }
 
   if (zoomCanvas === undefined) {
-    // Ignore until next event
+
     return;
   }
 
@@ -7626,10 +7624,6 @@ function drawMagnificationTool(eventData) {
 
   // Calculate the on-canvas location of the mouse pointer / touch
   var canvasLocation = _externalModules.external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
-
-  if (eventData.isTouchEvent === true) {
-    canvasLocation.y -= 1.25 * getSize;
-  }
 
   canvasLocation.x = Math.max(canvasLocation.x, 0);
   canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
@@ -7665,6 +7659,10 @@ function drawMagnificationTool(eventData) {
   magnify.style.top = canvasLocation.y - 0.5 * magnifySize + 'px';
   magnify.style.left = canvasLocation.x - 0.5 * magnifySize + 'px';
 
+  if (eventData.isTouchEvent) {
+    magnify.style.top = canvasLocation.y - 0.5 * magnifySize - 120 + 'px';
+  }
+
   magnify.style.display = 'block';
 
   // Hide the mouse cursor, so the user can see better
@@ -7698,7 +7696,7 @@ function removeMagnificationCanvas(element) {
   _externalModules.external.$(element).find('.magnifyTool').remove();
 }
 
-function drawZoomedElement(e, eventData) {
+function drawZoomedElement(eventData) {
   removeZoomElement();
   var enabledElement = eventData.enabledElement;
 
@@ -7788,13 +7786,22 @@ var magnify2 = {
   setConfiguration: setConfiguration
 };
 
-var options = {
-  fireOnTouchStart: true,
-  activateCallback: createMagnificationCanvas,
-  disableCallback: removeMagnificationCanvas
-};
+function enableTouch(element) {
+  _externalModules.external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
+  _externalModules.external.$(element).on('CornerstoneToolsTouchStart', mouseDownCallback);
+}
 
-var magnify2TouchDrag = (0, _touchDragTool2.default)(dragCallback, options);
+// Disables the reference line tool for the given element
+function disableTouch(element) {
+  _externalModules.external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
+}
+
+var magnify2TouchDrag = {
+  activate: enableTouch,
+  deactivate: disableTouch,
+  enable: enableTouch,
+  disable: disableTouch
+};
 
 exports.magnify2 = magnify2;
 exports.magnify2TouchDrag = magnify2TouchDrag;
@@ -7949,7 +7956,7 @@ var _simpleMouseButtonTool = __webpack_require__(12);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -8701,7 +8708,7 @@ var _simpleMouseButtonTool = __webpack_require__(12);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -10148,7 +10155,7 @@ var _simpleMouseButtonTool = __webpack_require__(12);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -10669,7 +10676,7 @@ var _touchPinchTool = __webpack_require__(40);
 
 var _touchPinchTool2 = _interopRequireDefault(_touchPinchTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -12314,7 +12321,7 @@ exports.stopClip = exports.playClip = undefined;
 
 var _externalModules = __webpack_require__(0);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -12690,7 +12697,7 @@ var _requestPoolManager = __webpack_require__(27);
 
 var _requestPoolManager2 = _interopRequireDefault(_requestPoolManager);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -13895,7 +13902,7 @@ var _externalModules = __webpack_require__(0);
 
 var _toolState = __webpack_require__(1);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -13988,7 +13995,7 @@ var _externalModules = __webpack_require__(0);
 
 var _toolState = __webpack_require__(1);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -14078,7 +14085,7 @@ var _externalModules = __webpack_require__(0);
 
 var _toolState = __webpack_require__(1);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -14159,7 +14166,7 @@ var _externalModules = __webpack_require__(0);
 
 var _toolState = __webpack_require__(1);
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 var _loadHandlerManager2 = _interopRequireDefault(_loadHandlerManager);
 
@@ -14490,7 +14497,7 @@ var _simpleMouseButtonTool = __webpack_require__(12);
 
 var _simpleMouseButtonTool2 = _interopRequireDefault(_simpleMouseButtonTool);
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 var _touchDragTool2 = _interopRequireDefault(_touchDragTool);
 
@@ -15092,7 +15099,7 @@ Object.defineProperty(exports, 'addStackStateManager', {
   }
 });
 
-var _loadHandlerManager = __webpack_require__(10);
+var _loadHandlerManager = __webpack_require__(9);
 
 Object.defineProperty(exports, 'loadHandlerManager', {
   enumerable: true,
@@ -15728,7 +15735,7 @@ Object.defineProperty(exports, 'textMarkerTouch', {
   }
 });
 
-var _touchDragTool = __webpack_require__(9);
+var _touchDragTool = __webpack_require__(10);
 
 Object.defineProperty(exports, 'touchDragTool', {
   enumerable: true,

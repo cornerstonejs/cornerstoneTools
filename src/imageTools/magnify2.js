@@ -109,9 +109,6 @@ function drawMagnificationTool (eventData) {
   // Calculate the on-canvas location of the mouse pointer / touch
   const canvasLocation = external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
-  /* If (eventData.isTouchEvent === true) {
-    canvasLocation.y -= 20;
-  }*/
 
   canvasLocation.x = Math.max(canvasLocation.x, 0);
   canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
@@ -148,7 +145,7 @@ function drawMagnificationTool (eventData) {
   magnify.style.left = `${canvasLocation.x - 0.5 * magnifySize}px`;
 
   if (eventData.isTouchEvent) {
-    magnify.style.top = `calc( ${canvasLocation.y - 0.5 * magnifySize}px - 2cm )`;
+    magnify.style.top = `${canvasLocation.y - 0.5 * magnifySize - 120}px`;
   }
 
 
@@ -177,7 +174,6 @@ function createMagnificationCanvas (element) {
     // Make sure position is absolute so the canvas can follow the mouse / touch
     magnify.style.position = 'absolute';
     magnify.style.display = 'none';
-    magnify.style.zIndex = '100';
     element.appendChild(magnify);
   }
 }
