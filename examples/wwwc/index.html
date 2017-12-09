@@ -25,12 +25,10 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="disable" class="list-group-item">Disable</a>
-                <a href="#" id="enable" class="list-group-item">Enable</a>
-                <a href="#" id="activate" class="list-group-item">Activate</a>
-                <a href="#" id="deactivate" class="list-group-item">Deactivate</a>
-                <a href="#" id="defaultStrategy" class="list-group-item">Default Strategy</a>
-                <a href="#" id="osirixStrategy" class="list-group-item">Osirix Strategy</a>
+                <a id="disable" class="list-group-item">Disable</a>
+                <a id="activate" class="list-group-item">Activate</a>
+                <a id="defaultStrategy" class="list-group-item">Default Strategy</a>
+                <a id="osirixStrategy" class="list-group-item">Osirix Strategy</a>
 
             </ul>
         </div>
@@ -50,10 +48,6 @@
     </div>
 
 </body>
-
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
@@ -78,7 +72,7 @@ is used by our example image loader-->
         eventData.viewport.voi.windowCenter -= (deltaY);
     };
 
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -91,48 +85,39 @@ is used by our example image loader-->
 
         // Enable all tools we want to use with this element
         cornerstoneTools.wwwc.activate(element, 1);
-        activate("#activate");
+        activate("activate");
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+              elem.classList.remove('active');
+            });
+
+            document.getElementById(id).classList.add('active');
         }
 
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.wwwc.disable(element);
             return false;
         });
-        $('#enable').click(function() {
-            activate("#enable");
-            cornerstoneTools.wwwc.enable(element);
-            return false;
-        });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.wwwc.activate(element, 1);
             return false;
         });
-        $('#deactivate').click(function() {
-            activate("#deactivate");
-            cornerstoneTools.wwwc.deactivate(element, 1);
-            return false;
-        });
-        $('#defaultStrategy').click(function() {
-            activate("#defaultStrategy");
+        document.getElementById('defaultStrategy').addEventListener('click', function() {
+            activate("defaultStrategy");
             cornerstoneTools.wwwc.strategy = cornerstoneTools.wwwc.strategies.default;
+            cornerstoneTools.wwwc.activate(element, 1);
             return false;
         });
-        $('#osirixStrategy').click(function() {
-            activate("#osirixStrategy");
+        document.getElementById('osirixStrategy').addEventListener('click', function() {
+            activate("osirixStrategy");
             cornerstoneTools.wwwc.strategy = cornerstoneTools.wwwc.strategies.osirix;
+            cornerstoneTools.wwwc.activate(element, 1);
             return false;
         });
     });
-
-
-
 </script>
 </html>

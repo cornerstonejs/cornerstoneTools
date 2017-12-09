@@ -6,7 +6,8 @@ const keys = {
   DOWN: 40
 };
 
-function keyDownCallback (e, eventData) {
+function keyDownCallback (e) {
+  const eventData = e.detail;
   const keyCode = eventData.keyCode;
 
   if (keyCode !== keys.UP && keyCode !== keys.DOWN) {

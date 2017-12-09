@@ -1,4 +1,5 @@
 /* eslint no-bitwise:0 */
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
@@ -85,7 +86,7 @@ function triggerStopEvent (element) {
     element
   };
 
-  triggerEvent(element, 'CornerstoneToolsClipStopped', eventDetail);
+  triggerEvent(element, EVENTS.CLIP_STOPPED, eventDetail);
 }
 
 /**

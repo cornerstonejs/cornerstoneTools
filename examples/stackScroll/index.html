@@ -26,8 +26,8 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="playClip" class="list-group-item">Play Clip</a>
-                <a href="#" id="stopClip" class="list-group-item">Stop Clip</a>
+                <a id="playClip" class="list-group-item">Play Clip</a>
+                <a id="stopClip" class="list-group-item">Stop Clip</a>
             </ul>
             <label>Loop</label>
             <input type="checkbox" id="loop" checked />
@@ -64,10 +64,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -79,13 +75,13 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     function onImageRendered(e) {
         var eventData = e.detail;
         var viewport = eventData.viewport;
-        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
+        document.getElementById('mrbottomleft').textContent = "WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter);
+        document.getElementById('zoomText').textContent = "Zoom: " + viewport.scale.toFixed(2);
     };
 
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
@@ -104,21 +100,37 @@ is used by our example image loader-->
 
         // if we are currently playing a clip then update the FPS
         var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
-        if (playClipToolData !== undefined && !$.isEmptyObject(playClipToolData.data)) {
-            $("#frameRate").text("FPS: " + Math.round(eventData.frameRate));
+        if (playClipToolData !== undefined && Object.keys(playClipToolData.data).length !== 0) {
+            document.getElementById('frameRate').textContent = "FPS: " + Math.round(eventData.frameRate);
         } else {
-            if ($("#frameRate").text().length > 0) {
-                $("#frameRate").text("");
+            if (document.getElementById('frameRate').textContent.length > 0) {
+                document.getElementById('frameRate').textContent = "";
             }
         }
     }
     element.addEventListener('cornerstonenewimage', onNewImage);
 
-    var loopCheckbox = $("#loop");
-    loopCheckbox.on('change', function() {
+    var loopCheckbox = document.getElementById('loop');
+    loopCheckbox.addEventListener('change', function() {
         var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
-        playClipToolData.data[0].loop = loopCheckbox.is(":checked");
-    })
+
+        if (!playClipToolData.data.length) {
+            playClipToolData.data.push({
+              intervalId: undefined,
+              framesPerSecond: 30,
+              lastFrameTimeStamp: undefined,
+              frameRate: 0,
+              frameTimeVector: undefined,
+              ignoreFrameTimeVector: false,
+              usingFrameTimeVector: false,
+              speed: 1,
+              reverse: false,
+              loop: loopCheckbox.checked
+            })
+        } else {
+          playClipToolData.data[0].loop = loopCheckbox.checked;
+        }
+    });
 
     var imageIds = [
         'example://1',
@@ -167,7 +179,7 @@ is used by our example image loader-->
     }
 
     // Bind the range slider events
-    $("#slice-range").on("input", selectImage);
+    document.getElementById('slice-range').addEventListener("input", selectImage);
 
     // Enable the dicomImage element and the mouse inputs
     cornerstone.enable(element);
@@ -187,21 +199,20 @@ is used by our example image loader-->
 
         cornerstoneTools.scrollIndicator.enable(element);
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) { elem.classList.remove('active'); });
+            document.getElementById(id).classList.add('active');
         }
 
-        $('#playClip').click(function() {
-            activate("#playClip");
+        document.getElementById('playClip').addEventListener('click', function() {
+            activate("playClip");
             cornerstoneTools.playClip(element, 31);
             return false;
         });
-        $('#stopClip').click(function() {
-            activate("#stopClip");
+        document.getElementById('stopClip').addEventListener('click', function() {
+            activate("stopClip");
             cornerstoneTools.stopClip(element);
-            $("#frameRate").text("");
+            document.getElementById('frameRate').textContent = "";
             return false;
         });
 

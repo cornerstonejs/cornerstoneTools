@@ -194,15 +194,12 @@ See the [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/mas
 
 ````javascript
 // Load NPM packages
-import $ from 'jquery';                           // npm install --save jquery
 import Hammer from 'hammerjs';                    // npm install --save hammerjs
 import * as cornerstone from 'cornerstone-core';  // npm install --save cornerstone-core
 import * as cornerstoneTools from 'cornerstone-tools';
 
 // Specify external dependencies
-cornerstone.external.$ = $;
 cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.$ = $;
 cornerstoneTools.external.Hammer = Hammer;
 ````
 
@@ -213,14 +210,12 @@ cornerstoneTools.external.Hammer = Hammer;
 
 ````javascript
 // Load Packaged Sources
-<script src="https://unpkg.com/jquery@3.2.1/dist/jquery.js"></script>
 <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
-<script src="https://unpkg.com/cornerstone-core@1.1.0/dist/cornerstone.min.js"></script>
-<script src="https://unpkg.com/cornerstone-tools@1.0.2/dist/cornerstoneTools.min.js"></script>
+<script src="https://unpkg.com/cornerstone-core@2.0.0/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-tools@2.0.0/dist/cornerstoneTools.min.js"></script>
 
 // Specify external dependencies
 cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.$ = $;
 cornerstoneTools.external.Hammer = Hammer;
 ````
 

@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
@@ -9,7 +10,9 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     y: handle.y - mouseEventData.currentPoints.image.y
   };
 
-  function mouseDragCallback (e, eventData) {
+  function mouseDragCallback (e) {
+    const eventData = e.detail;
+
     if (handle.hasMoved === false) {
       handle.hasMoved = true;
     }
@@ -28,7 +31,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
     cornerstone.updateImage(element);
 
-    const eventType = 'CornerstoneToolsMeasurementModified';
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
@@ -38,13 +41,13 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  external.$(element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
   function mouseUpCallback () {
     handle.active = false;
-    external.$(element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-    external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
     cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
@@ -52,6 +55,6 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   }
 
-  external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }

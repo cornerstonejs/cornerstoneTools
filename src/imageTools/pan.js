@@ -1,25 +1,38 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { getToolOptions } from '../toolOptions.js';
 
-function mouseUpCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+const toolType = 'pan';
+
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }
 
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
 
   // FIXME: Copied from Cornerstone src/internal/calculateTransform.js, should be exposed from there.
   let widthScale = eventData.viewport.scale;
@@ -35,11 +48,12 @@ function dragCallback (e, eventData) {
   eventData.viewport.translation.y += (eventData.deltaPoints.page.y / heightScale);
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
-  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  e.preventDefault();
+  e.stopPropagation();
 }
 
-const pan = simpleMouseButtonTool(mouseDownCallback);
-const panTouchDrag = touchDragTool(dragCallback);
+const pan = simpleMouseButtonTool(mouseDownCallback, toolType);
+const panTouchDrag = touchDragTool(dragCallback, toolType);
 
 export {
   pan,

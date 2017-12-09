@@ -23,7 +23,14 @@ module.exports = {
     'brace-style': 'warn',
     'callback-return': 'warn',
     'camelcase': 'warn',
-    'capitalized-comments': 'warn',
+    'capitalized-comments': [
+        "warn",
+        "always",
+        {
+            "ignorePattern": "pragma|ignored",
+            "ignoreInlineComments": true
+        }
+    ],
     'class-methods-use-this': 'warn',
     'comma-dangle': 'warn',
     'comma-spacing': [

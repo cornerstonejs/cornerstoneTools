@@ -33,10 +33,10 @@
         <div class="row">
             <div class="col-xs-2">
                 <ul class="list-group">
-                    <a href="#" id="add" class="list-group-item active">Add All</a>
-                    <a href="#" id="remove" class="list-group-item">Remove All</a>
-                    <a href="#" id="add3" class="list-group-item">Add 3rd</a>
-                    <a href="#" id="remove3" class="list-group-item">Remove 3rd</a>
+                    <a id="add" class="list-group-item active">Add All</a>
+                    <a id="remove" class="list-group-item">Remove All</a>
+                    <a id="add3" class="list-group-item">Add 3rd</a>
+                    <a id="remove3" class="list-group-item">Remove 3rd</a>
                 </ul>
             </div>
             <div class="col-xs-10">
@@ -86,10 +86,6 @@
     </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -102,9 +98,9 @@ is used by our example image loader-->
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var axialElement1 = $('#axial1').get(0);
-    var axialElement2 = $('#axial2').get(0);
-    var axialElement3 = $('#axial3').get(0);
+    var axialElement1 = document.getElementById('axial1');
+    var axialElement2 = document.getElementById('axial2');
+    var axialElement3 = document.getElementById('axial3');
 
     var axialImageIds = [
         'example://1',
@@ -131,27 +127,20 @@ is used by our example image loader-->
         { element: axialElement3, stack: axialStack3 }]
     ;
 
-    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneStackScroll", cornerstoneTools.stackScrollSynchronizer);
-
-    // image enable the dicomImage element and the mouse inputs
-    cornerstone.enable(axialElement1);
-    cornerstone.enable(axialElement2);
-    cornerstone.enable(axialElement3);
-
-    cornerstoneTools.mouseInput.enable(axialElement1);
-    cornerstoneTools.mouseWheelInput.enable(axialElement1);
-    cornerstoneTools.mouseInput.enable(axialElement2);
-    cornerstoneTools.mouseWheelInput.enable(axialElement2);
-    cornerstoneTools.mouseInput.enable(axialElement3);
-    cornerstoneTools.mouseWheelInput.enable(axialElement3);
+    var synchronizer = new cornerstoneTools.Synchronizer("cornerstonestackscroll", cornerstoneTools.stackScrollSynchronizer);
 
     // Load the proper image in each view port
-    for (var s = 0; s < stacks.length; s++) {
-        var element = stacks[s].element;
-        var stack = stacks[s].stack;
+    for (let s = 0; s < stacks.length; s++) {
+        const element = stacks[s].element;
+        const stack = stacks[s].stack;
+
+        cornerstone.enable(element);
         cornerstone.loadImage(stack.imageIds[stack.currentImageIdIndex]).then(function(image) {
             // display this image
             cornerstone.displayImage(element, image);
+
+            cornerstoneTools.mouseInput.enable(element);
+            cornerstoneTools.mouseWheelInput.enable(element);
 
             // set the stack as tool state
             cornerstoneTools.addStackStateManager(element, ['stack']);
@@ -166,50 +155,56 @@ is used by our example image loader-->
     }
    
     function activate(id){
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        document.querySelectorAll('a').forEach(function(elem) {
+          elem.classList.remove('active');
+        });
+
+        document.getElementById(id).classList.add('active');
     }
 
-    $(function() {
-        $('#add').click(function () {
-            activate("#add");
-            synchronizer.add(axialElement1);
-            synchronizer.add(axialElement2);
-            synchronizer.add(axialElement3);
-            return false;
-        });
-        $('#remove').click(function () {
-            activate("#remove");
-            synchronizer.remove(axialElement1);
-            synchronizer.remove(axialElement2);
-            synchronizer.remove(axialElement3);
-            return false;
-        });
-        $('#add3').click(function () {
-            activate("#add3");
-            synchronizer.add(axialElement3);
-            return false;
-        });
-        $('#remove3').click(function () {
-            activate("#remove3");
-            synchronizer.remove(axialElement3);
-            return false;
-        });
+    document.getElementById('add').addEventListener('click', function () {
+        activate("add");
+        synchronizer.add(axialElement1);
+        synchronizer.add(axialElement2);
+        synchronizer.add(axialElement3);
+        return false;
+    });
+    document.getElementById('remove').addEventListener('click', function () {
+        activate("remove");
+        synchronizer.remove(axialElement1);
+        synchronizer.remove(axialElement2);
+        synchronizer.remove(axialElement3);
+        return false;
+    });
+    document.getElementById('add3').addEventListener('click', function () {
+        activate("add3");
+        synchronizer.add(axialElement3);
+        return false;
+    });
+    document.getElementById('remove3').addEventListener('click', function () {
+        activate("remove3");
+        synchronizer.remove(axialElement3);
+        return false;
+    });
 
-        // Listener for example purposes to demonstrate scroll direction
-        $(document).on('CornerstoneStackScroll', function (e, eventData) {
-            // Manually display direction
-            if (eventData.direction === 0) {
-                return;
-            }
-            $("#direction").html(eventData.direction > 0 ? "UP" : "DOWN");
-            // Update indices of each stack
-            $('[id^="axial"]').each(function () {
-                // Resolve the stack and get the current image index
-                var targetStackToolDataSource = cornerstoneTools.getToolState($(this).get(0), 'stack');
-                var targetStackData = targetStackToolDataSource.data[0];
-                $(this).siblings('.index').html(targetStackData.currentImageIdIndex);
-            });
+
+    // Listener for example purposes to demonstrate scroll direction
+    document.addEventListener('cornerstonestackscroll', function (e) {
+        var eventData = e.detail;
+
+        // Manually display direction
+        if (eventData.direction === 0) {
+            return;
+        }
+        document.getElementById('direction').innerHTML = eventData.direction > 0 ? "UP" : "DOWN";
+
+        // Update indices of each stack
+        document.querySelectorAll('[id^="axial"]').forEach(function (element) {
+            // Resolve the stack and get the current image index
+            var targetStackToolDataSource = cornerstoneTools.getToolState(element, 'stack');
+            var targetStackData = targetStackToolDataSource.data[0];
+
+            element.parentNode.children.querySelector('.index').innerHTML = targetStackData.currentImageIdIndex;
         });
     });
 </script>
