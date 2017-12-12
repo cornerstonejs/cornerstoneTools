@@ -9,12 +9,12 @@
     "imaging"
   ],
   "author": "Chris Hafey, Prasath",
-  "homepage": "https://github.com/chafey/cornerstoneTools",
+  "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
   "license": "MIT",
   "module": "src/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/chafey/cornerstoneTools.git"
+    "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
   },
   "scripts": {
     "eslint": "eslint -c .eslintrc.js src",
@@ -26,6 +26,8 @@
     "clean:coverage": "shx rm -rf coverage",
     "doc": "npm run doc:generate && opn documentation/index.html",
     "doc:generate": "npm run clean:docs && jsdoc -c .jsdocrc",
+    "docs": "cd docs && gitbook install && gitbook serve",
+    "docs:deploy": "bash ./build/update-docs.sh",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js",
     "build": "npm run test && npm run version && npm run webpack && npm run doc:generate",
     "webpack": "npm run clean:dist && npm run webpack:prod && npm run webpack:dev",
@@ -52,6 +54,8 @@
     "eslint": "^4.9.0",
     "eslint-loader": "^1.9.0",
     "eslint-plugin-import": "^2.8.0",
+    "gitbook-plugin-edit-link": "^2.0.2",
+    "gitbook-plugin-github": "^3.0.0",
     "hammerjs": "^2.0.8",
     "istanbul": "^0.4.5",
     "istanbul-instrumenter-loader": "^3.0.0",
