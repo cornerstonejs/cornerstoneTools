@@ -41,7 +41,7 @@ function mouseDownCallback (e) {
 
 function mouseWheelCallback (e) {
   const eventData = e.detail;
-  const images = -eventData.direction;
+  const images = eventData.direction;
 
   const config = stackScroll.getConfiguration();
 
