@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 1.1.2 - 2017-12-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 1.1.3 - 2017-12-13 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -8,7 +8,7 @@
 		exports["cornerstoneTools"] = factory();
 	else
 		root["cornerstoneTools"] = factory();
-})(this, function() {
+})(typeof self !== 'undefined' ? self : this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -16729,7 +16729,7 @@ exports.adaptiveBrush = adaptiveBrush;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '1.1.2';
+exports.default = '1.1.3';
 
 /***/ })
 /******/ ]);

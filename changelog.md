@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2017-12-13
+### Added
+- Gitbook integration for improving our documentation. View it live at https://tools.cornerstonejs.org (thanks @dannyrb)
+- eslint-plugin-import to force us to keep .js in the import paths and make sure all of our paths resolve
+
+### Changed
+- Moved the repository from Chris Hafey's (@chafey) personal page to a new Organization (@cornerstonejs). Renamed all the relevant links. Join us at @cornerstonejs to start contributing!
+- Modernized the README with GIFs for each example (thanks @dannyrb)
+- Bug fix for stackImagePositionSynchronizer for cases where no imagePositionPatient exists for an image (thanks @adreyfus)
+- saveAs tool now uses canvas.toDataURL image quality of 1 by default (thanks @andrebot)
+
 ## [1.1.2] - 2017-11-21
 ### Changed
 - Fix bug (#293) introduced in 1.1.1 a missing argument in pointProjector (thanks @hardmaster92)
