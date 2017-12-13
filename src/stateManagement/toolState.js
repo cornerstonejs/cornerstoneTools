@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
@@ -21,7 +22,7 @@ function addToolState (element, toolType, measurementData) {
 
   toolStateManager.add(element, toolType, measurementData);
 
-  const eventType = 'CornerstoneToolsMeasurementAdded';
+  const eventType = EVENTS.MEASUREMENT_ADDED;
   const eventData = {
     toolType,
     element,
@@ -55,7 +56,7 @@ function removeToolState (element, toolType, data) {
   if (indexOfData !== -1) {
     toolData.data.splice(indexOfData, 1);
 
-    const eventType = 'CornerstoneToolsMeasurementRemoved';
+    const eventType = EVENTS.MEASUREMENT_REMOVED;
     const eventData = {
       toolType,
       element,

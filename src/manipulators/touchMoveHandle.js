@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
@@ -9,12 +10,13 @@ const runAnimation = {
   value: false
 };
 
-const touchEndEvents = ['CornerstoneToolsTouchEnd',
-  'CornerstoneToolsDragEnd',
-  'CornerstoneToolsTouchPinch',
-  'CornerstoneToolsTouchPress',
-  'CornerstoneToolsTap'
-].join(' ');
+const touchEndEvents = [
+  EVENTS.TOUCH_END,
+  EVENTS.TOUCH_DRAG_END,
+  EVENTS.TOUCH_PINCH,
+  EVENTS.TOUCH_PRESS,
+  EVENTS.TAP
+];
 
 function animate (lastTime, handle, runAnimation, enabledElement, targetLocation) {
   // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
@@ -31,7 +33,6 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
   const distanceRemaining = Math.abs(handle.y - targetLocation.y);
   const linearDistEachFrame = distanceRemaining / 10;
 
-  console.log(`distanceRemaining: ${distanceRemaining}`);
   if (distanceRemaining < 1) {
     handle.y = targetLocation.y;
     runAnimation.value = false;
@@ -54,10 +55,11 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
   });
 }
 
-export default function (touchEventData, toolType, data, handle, doneMovingCallback) {
+export default function (event, toolType, data, handle, doneMovingCallback) {
   // Console.log('touchMoveHandle');
   runAnimation.value = true;
 
+  const touchEventData = event.detail;
   const cornerstone = external.cornerstone;
   const element = touchEventData.element;
   const enabledElement = cornerstone.getEnabledElement(element);
@@ -75,7 +77,9 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
 
   let targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
 
-  function touchDragCallback (e, eventData) {
+  function touchDragCallback (e) {
+    const eventData = e.detail;
+
     // Console.log('touchMoveHandle touchDragCallback: ' + e.type);
     runAnimation.value = false;
 
@@ -97,7 +101,7 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
 
     cornerstone.updateImage(element);
 
-    const eventType = 'CornerstoneToolsMeasurementModified';
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
@@ -107,19 +111,23 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  external.$(element).on('CornerstoneToolsTouchDrag', touchDragCallback);
+  element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
-  function touchEndCallback (e, eventData) {
+  function touchEndCallback (e) {
+    const eventData = e.detail;
     // Console.log('touchMoveHandle touchEndCallback: ' + e.type);
+
     runAnimation.value = false;
 
     handle.active = false;
-    external.$(element).off('CornerstoneToolsTouchDrag', touchDragCallback);
-    external.$(element).off(touchEndEvents, touchEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
+    touchEndEvents.forEach((eventType) => {
+      element.removeEventListener(eventType, touchEndCallback);
+    });
 
     cornerstone.updateImage(element);
 
-    if (e.type === 'CornerstoneToolsTouchPress') {
+    if (e.type === EVENTS.TOUCH_PRESS) {
       eventData.handlePressed = data;
 
       handle.x = touchEventData.currentPoints.image.x;
@@ -127,11 +135,13 @@ export default function (touchEventData, toolType, data, handle, doneMovingCallb
     }
 
     if (typeof doneMovingCallback === 'function') {
-      doneMovingCallback(e, eventData);
+      doneMovingCallback(e);
     }
   }
 
-  external.$(element).on(touchEndEvents, touchEndCallback);
+  touchEndEvents.forEach((eventType) => {
+    element.addEventListener(eventType, touchEndCallback);
+  });
 
   animate(time, handle, runAnimation, enabledElement, targetLocation);
 }

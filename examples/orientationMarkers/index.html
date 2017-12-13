@@ -56,10 +56,6 @@
 </div>
 </body>
 
-
-<!-- jquery - currently a dependency and thus required for using cornerstoneWADOImageLoader -->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -75,9 +71,7 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var container = $('#dicomImage');
-
-    var element = container.get(0);
+    var element = document.getElementById('dicomImage');
     var imageId = 'example://1';
 
     cornerstone.enable(element);
@@ -108,31 +102,31 @@
         cornerstoneTools.rotateTouchDrag.activate(element);
 
         // Add event handlers to flip or rotate the image
-        $('#hFlip').click(function (e) {
+        document.getElementById('hFlip').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.hflip = !viewport.hflip;
             cornerstone.setViewport(element, viewport);
         });
 
-        $('#vFlip').click(function (e) {
+        document.getElementById('vFlip').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.vflip = !viewport.vflip;
             cornerstone.setViewport(element, viewport);
         });
 
-        $('#lRotate').click(function (e) {
+        document.getElementById('lRotate').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.rotation -=90;
             cornerstone.setViewport(element, viewport);
         });
 
-        $('#rRotate').click(function (e) {
+        document.getElementById('rRotate').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.rotation +=90;
             cornerstone.setViewport(element, viewport);
         });
         
-        $('#reset').click(function (e) {
+        document.getElementById('reset').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.hflip = false;
             viewport.vflip = false;

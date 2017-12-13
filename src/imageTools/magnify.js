@@ -1,7 +1,11 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import touchDragTool from './touchDragTool.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
+
+const toolType = 'magnify';
 
 let configuration = {
   magnifySize: 100,
@@ -13,36 +17,43 @@ let browserName;
 let currentPoints;
 
 /** Remove the magnifying glass when the mouse event ends */
-function mouseUpCallback (e, eventData) {
+function mouseUpCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
-  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
-  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
   hideTool(eventData);
 }
 
 function hideTool (eventData) {
-  external.$(eventData.element).find('.magnifyTool').hide();
+  const element = eventData.element;
+
+  element.querySelector('.magnifyTool').style.display = 'none';
+
   // Re-enable the mouse cursor
   document.body.style.cursor = 'default';
 }
 
 /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
-function mouseDownCallback (e, eventData) {
+function mouseDownCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
-    external.$(element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
-    external.$(element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
     currentPoints = eventData.currentPoints;
-    element.addEventListener('cornerstonenewimage', newImageCallback);
+    element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
     drawMagnificationTool(eventData);
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
@@ -53,31 +64,37 @@ function newImageCallback (e) {
   drawMagnificationTool(eventData);
 }
 
-function dragEndCallback (e, eventData) {
+function dragEndCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
-  external.$(eventData.element).off('CornerstoneToolsDragEnd', dragEndCallback);
-  external.$(eventData.element).off('CornerstoneToolsTouchEnd', dragEndCallback);
-  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
+  element.removeEventListener(EVENTS.TOUCH_END, dragEndCallback);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
   hideTool(eventData);
 }
 
 /** Drag callback is triggered by both the touch and mouse magnify tools */
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
   currentPoints = eventData.currentPoints;
 
   drawMagnificationTool(eventData);
   if (eventData.isTouchEvent === true) {
-    external.$(eventData.element).on('CornerstoneToolsDragEnd', dragEndCallback);
-    external.$(eventData.element).on('CornerstoneToolsTouchEnd', dragEndCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
+    element.addEventListener(EVENTS.TOUCH_END, dragEndCallback);
   }
 
-  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  e.preventDefault();
+  e.stopPropagation();
 }
 
 /** Draws the magnifying glass */
 function drawMagnificationTool (eventData) {
-  const magnifyCanvas = external.$(eventData.element).find('.magnifyTool').get(0);
+  const element = eventData.element;
+  const magnifyCanvas = element.querySelector('.magnifyTool');
 
   if (!magnifyCanvas) {
     createMagnificationCanvas(eventData.element);
@@ -90,7 +107,7 @@ function drawMagnificationTool (eventData) {
 
   // The 'not' magnifyTool class here is necessary because cornerstone places
   // No classes of it's own on the canvas we want to select
-  const canvas = external.$(eventData.element).find('canvas').not('.magnifyTool').get(0);
+  const canvas = element.querySelector('canvas:not(.magnifyTool)');
   const context = canvas.getContext('2d');
 
   context.setTransform(1, 0, 0, 1, 0, 0);
@@ -156,7 +173,7 @@ function drawMagnificationTool (eventData) {
 /** Creates the magnifying glass canvas */
 function createMagnificationCanvas (element) {
   // If the magnifying glass canvas doesn't already exist
-  if (external.$(element).find('.magnifyTool').length === 0) {
+  if (element.querySelector('.magnifyTool') === null) {
     // Create a canvas and append it as a child to the element
     const magnifyCanvas = document.createElement('canvas');
     // The magnifyTool class is used to find the canvas later on
@@ -176,12 +193,16 @@ function createMagnificationCanvas (element) {
 
 /** Find the magnifying glass canvas and remove it */
 function removeMagnificationCanvas (element) {
-  external.$(element).find('.magnifyTool').remove();
+  const magnifyCanvas = element.querySelector('.magnifyTool');
+
+  if (magnifyCanvas) {
+    element.removeChild(magnifyCanvas);
+  }
 }
 
 // --- Mouse tool activate / disable --- //
 function disable (element) {
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   removeMagnificationCanvas(element);
 }
 
@@ -197,13 +218,11 @@ function enable (element) {
 }
 
 function activate (element, mouseButtonMask) {
-  const eventData = {
-    mouseButtonMask
-  };
+  setToolOptions(toolType, element, { mouseButtonMask });
 
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
-  external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   createMagnificationCanvas(element);
 }
 
@@ -232,7 +251,7 @@ const options = {
   disableCallback: removeMagnificationCanvas
 };
 
-const magnifyTouchDrag = touchDragTool(dragCallback, options);
+const magnifyTouchDrag = touchDragTool(dragCallback, toolType, options);
 
 export {
   magnify,

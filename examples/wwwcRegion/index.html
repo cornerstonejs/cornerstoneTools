@@ -56,10 +56,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -74,7 +70,7 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -90,23 +86,25 @@ is used by our example image loader-->
         cornerstoneTools.wwwcRegion.activate(element, 1);
         cornerstoneTools.wwwcRegionTouch.activate(element);
 
-        activate("#activate");
+        activate("activate");
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+              elem.classList.remove('active');
+            });
+
+            document.getElementById(id).classList.add('active');
         }
 
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.wwwcRegion.disable(element);
             cornerstoneTools.wwwcRegionTouch.disable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.wwwcRegion.activate(element, 1);
             cornerstoneTools.wwwcRegionTouch.activate(element);
             return false;

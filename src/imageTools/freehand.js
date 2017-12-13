@@ -1,9 +1,11 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -115,8 +117,11 @@ function pointNearHandleAllTools (eventData) {
 // On next click, add another point -- continuously
 // On each click, if it intersects with a current point, end drawing loop
 
-function mouseUpCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
 
   // Check if drawing is finished
   const toolData = getToolState(eventData.element, toolType);
@@ -134,7 +139,8 @@ function mouseUpCallback (e, eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-function mouseMoveCallback (e, eventData) {
+function mouseMoveCallback (e) {
+  const eventData = e.detail;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData) {
@@ -192,8 +198,10 @@ function mouseMoveCallback (e, eventData) {
 }
 
 function startDrawing (eventData) {
-  external.$(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
-  external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+  const element = eventData.element;
+
+  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
 
   const measurementData = {
     visible: true,
@@ -214,6 +222,7 @@ function startDrawing (eventData) {
 }
 
 function endDrawing (eventData, handleNearby) {
+  const element = eventData.element;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData) {
@@ -244,13 +253,17 @@ function endDrawing (eventData, handleNearby) {
   config.currentHandle = 0;
   config.currentTool = -1;
 
-  external.$(eventData.element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
 
   external.cornerstone.updateImage(eventData.element);
 }
 
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
+
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
     const toolData = getToolState(eventData.element, toolType);
 
     let handleNearby, toolIndex;
@@ -272,8 +285,8 @@ function mouseDownCallback (e, eventData) {
         toolIndex = nearby.toolIndex;
         // This means the user is trying to modify a point
         if (handleNearby !== undefined) {
-          external.$(eventData.element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
-          external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+          element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+          element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
           config.modifying = true;
           config.currentHandle = handleNearby;
           config.currentTool = toolIndex;
@@ -293,7 +306,8 @@ function mouseDownCallback (e, eventData) {
       }
     }
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
@@ -382,51 +396,50 @@ function onImageRendered (e) {
     context.restore();
   }
 }
+
 // /////// END IMAGE RENDERING ///////
 function enable (element) {
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
-  element.addEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
 // Visible and interactive
 function activate (element, mouseButtonMask) {
-  const eventData = {
-    mouseButtonMask
-  };
+  setToolOptions(toolType, element, { mouseButtonMask });
 
-  external.$(element).off('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
-  element.addEventListener('cornerstoneimagerendered', onImageRendered);
-  external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
   external.cornerstone.updateImage(element);
 }
 
 // Visible, but not interactive
 function deactivate (element) {
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
-  element.addEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
   external.cornerstone.updateImage(element);
 }

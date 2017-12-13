@@ -1,26 +1,29 @@
-import external from '../externalModules.js';
+import EVENTS from '../events.js';
+import { setToolOptions } from '../toolOptions.js';
 
-export default function (mouseDownCallback) {
+export default function (mouseDownCallback, toolType) {
+  if (!toolType) {
+    throw new Error('simpleMouseButtonTool: toolType is required');
+  }
+
   let configuration = {};
 
-  const toolInterface = {
-    activate (element, mouseButtonMask, options) {
-      external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
-      const eventData = {
-        mouseButtonMask,
-        options
-      };
+  return {
+    activate (element, mouseButtonMask, options = {}) {
+      options.mouseButtonMask = mouseButtonMask;
+      setToolOptions(toolType, element, options);
 
-      external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownCallback);
+      element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownCallback);
+      element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownCallback);
     },
     disable (element) {
-      external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+      element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownCallback);
     },
     enable (element) {
-      external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+      element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownCallback);
     },
     deactivate (element) {
-      external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownCallback);
+      element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownCallback);
     },
     getConfiguration () {
       return configuration;
@@ -29,7 +32,4 @@ export default function (mouseDownCallback) {
       configuration = config;
     }
   };
-
-
-  return toolInterface;
 }
