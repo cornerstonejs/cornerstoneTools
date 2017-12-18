@@ -45,12 +45,17 @@ function mouseWheelCallback (e) {
   const config = stackScroll.getConfiguration();
 
   let loop = false;
+  let allowSkipping = true;
 
   if (config && config.loop) {
     loop = config.loop;
   }
 
-  scroll(eventData.element, images, loop);
+  if (config && config.allowSkipping !== undefined) {
+    allowSkipping = config.allowSkipping;
+  }
+
+  scroll(eventData.element, images, loop, allowSkipping);
 }
 
 function dragCallback (e) {
@@ -67,6 +72,12 @@ function dragCallback (e) {
 
   const config = stackScroll.getConfiguration();
 
+  let allowSkipping = true;
+
+  if (config && config.allowSkipping !== undefined) {
+    allowSkipping = config.allowSkipping;
+  }
+
   // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
   let pixelsPerImage = Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8));
 
@@ -82,7 +93,7 @@ function dragCallback (e) {
   if (Math.abs(deltaY) >= pixelsPerImage) {
     const imageIdIndexOffset = Math.round(deltaY / pixelsPerImage);
 
-    scroll(element, imageIdIndexOffset);
+    scroll(element, imageIdIndexOffset, false, allowSkipping);
 
     options.deltaY = deltaY % pixelsPerImage;
   } else {
