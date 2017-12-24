@@ -47,12 +47,9 @@ function mouseWheelCallback (e) {
   let loop = false;
   let allowSkipping = true;
 
-  if (config && config.loop) {
-    loop = config.loop;
-  }
-
-  if (config && config.allowSkipping !== undefined) {
-    allowSkipping = config.allowSkipping;
+  if (config) {
+    loop = config.loop !== undefined ? config.loop : false;
+    allowSkipping = config.allowSkipping !== undefined ? || true;
   }
 
   scroll(eventData.element, images, loop, allowSkipping);
