@@ -1,8 +1,6 @@
 # Tool States
 
-Each CornerstoneTool can be in one of four states: **disabled, enabled, active, passive**.
-
-For a quick visualization/demo, checkout: this (todo)
+Each CornerstoneTool can be in one of four states: **disabled, enabled, active, passive**. You can see a quick demo of these states in action in [this codepen](https://codepen.io/dannyrb/full/GyjEqW/), or in the [pixel probe example](https://rawgit.com/chafey/cornerstoneTools/master/examples/probe/index.html).
 
 You set the state per tool, per [enabled element](./../api/enable-element.md). That means you can have multiple enabled canvases displaying images, with a different set of tools active in each.
 
