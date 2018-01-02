@@ -61,7 +61,7 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   if (pendingCallback && (imageLoadObject === undefined || imageLoadObject.promise.state() === 'pending')) {
     pendingCallback();
   }
-  
+
   if (imageLoadObject) {
     imageLoadObject.promise.then(function (image) {
       doneCallback(image);
