@@ -1,5 +1,3 @@
-import external from '../externalModules.js';
-
 // Functions to prevent ghost clicks following a touch
 // All credit to @kosich
 // https://gist.github.com/kosich/23188dd86633b6c2efb7
@@ -41,7 +39,7 @@ function attachEvents (element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
   eventList.forEach(function (eventName) {
-    external.$(element).on(eventName, tapHandler);
+    element.addEventListener(eventName, tapHandler);
   });
 }
 
@@ -49,7 +47,7 @@ function removeEvents (element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
   eventList.forEach(function (eventName) {
-    external.$(element).off(eventName, tapHandler);
+    element.removeEventListener(eventName, tapHandler);
   });
 }
 

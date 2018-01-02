@@ -58,10 +58,6 @@
     </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.fakemultitouch so we can test with a mouse -->
 <script src="../touch-emulator.js"></script>
 <script> TouchEmulator(); </script>
@@ -80,13 +76,13 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onImageRendered(e) {
         var viewport = cornerstone.getViewport(e.target);
-        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
+        document.getElementById('mrbottomleft').textContent = "WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter);
+        document.getElementById('mrbottomright').textContent = "Zoom: " + viewport.scale.toFixed(2);
     };
 
     element.addEventListener('cornerstoneimagerendered', onImageRendered);

@@ -56,14 +56,14 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   }
 
   // If this imageId is in the cache, resolve it immediately
-  const imagePromise = external.cornerstone.imageCache.getImagePromise(imageId);
+  const imageLoadObject = external.cornerstone.imageCache.getImageLoadObject(imageId);
 
-  if (pendingCallback && (imagePromise === undefined || imagePromise.state() === 'pending')) {
+  if (pendingCallback && (imageLoadObject === undefined || imageLoadObject.promise.state() === 'pending')) {
     pendingCallback();
   }
-
-  if (imagePromise) {
-    imagePromise.then(function (image) {
+  
+  if (imageLoadObject) {
+    imageLoadObject.promise.then(function (image) {
       doneCallback(image);
     }, function (error) {
       failCallback(error);
@@ -126,12 +126,12 @@ function sendRequest (requestDetails) {
   const failCallback = requestDetails.failCallback;
 
   // Check if we already have this image promise in the cache
-  const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+  const imageLoadObject = cornerstone.imageCache.getImageLoadObject(imageId);
 
-  if (imagePromise) {
+  if (imageLoadObject) {
     // If we do, remove from list (when resolved, as we could have
     // Pending prefetch requests) and stop processing this iteration
-    imagePromise.then(function (image) {
+    imageLoadObject.promise.then(function (image) {
       numRequests[type]--;
       // Console.log(numRequests);
 

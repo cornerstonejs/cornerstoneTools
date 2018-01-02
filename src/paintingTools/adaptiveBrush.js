@@ -128,7 +128,9 @@ function erase (eventData) {
   external.cornerstone.updateImage(element);
 }
 
-function onMouseUp (e, eventData) {
+function onMouseUp (e) {
+  const eventData = e.detail;
+
   lastImageCoords = eventData.currentPoints.image;
   const configuration = adaptiveBrush.getConfiguration();
 
@@ -137,7 +139,9 @@ function onMouseUp (e, eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-function onMouseDown (e, eventData) {
+function onMouseDown (e) {
+  const eventData = e.detail;
+
   const element = eventData.element;
   const configuration = adaptiveBrush.getConfiguration();
   const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
@@ -157,12 +161,16 @@ function onMouseDown (e, eventData) {
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onMouseMove (e, eventData) {
+function onMouseMove (e) {
+  const eventData = e.detail;
+
   lastImageCoords = eventData.currentPoints.image;
   external.cornerstone.updateImage(eventData.element);
 }
 
-function onDrag (e, eventData) {
+function onDrag (e) {
+  const eventData = e.detail;
+
   if (configuration.draw === 0) {
     erase(eventData);
   } else {
@@ -173,7 +181,9 @@ function onDrag (e, eventData) {
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   if (!lastImageCoords) {
     return;
   }

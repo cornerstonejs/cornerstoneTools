@@ -1,35 +1,46 @@
-import external from '../externalModules.js';
+import EVENTS from '../events.js';
 import simpleMouseButtonTool from '../imageTools/simpleMouseButtonTool.js';
 import touchDragTool from '../imageTools/touchDragTool.js';
 import mouseWheelTool from '../imageTools/mouseWheelTool.js';
 import incrementTimePoint from './incrementTimePoint.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
-function mouseUpCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+const toolType = 'timeSeriesScroll';
+
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }
 
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-    const mouseDragEventData = {
-      deltaY: 0,
-      options: e.data.options
-    };
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    options.deltaY = 0;
 
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragEventData, mouseDragCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+    setToolOptions(toolType, element, options);
+
+    element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
     e.stopImmediatePropagation();
 
     return false;
   }
 }
 
-function mouseDragCallback (e, eventData) {
+function mouseDragCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
   e.data.deltaY += eventData.deltaPoints.page.y;
 
   const toolData = getToolState(eventData.element, 'timeSeries');
@@ -40,7 +51,7 @@ function mouseDragCallback (e, eventData) {
 
   const timeSeriesData = toolData.data[0];
 
-  let pixelsPerTimeSeries = external.$(eventData.element).height() / timeSeriesData.stacks.length;
+  let pixelsPerTimeSeries = element.offsetHeight / timeSeriesData.stacks.length;
 
   if (e.data.options !== undefined && e.data.options.timeSeriesScrollSpeed !== undefined) {
     pixelsPerTimeSeries = e.data.options.timeSeriesScrollSpeed;
@@ -54,16 +65,17 @@ function mouseDragCallback (e, eventData) {
     e.data.deltaY = timeSeriesDeltaMod;
   }
 
-  return false; // False = cases jquery to preventDefault() and stopPropagation() this event
+  return false;
 }
 
-function mouseWheelCallback (e, eventData) {
+function mouseWheelCallback (e) {
+  const eventData = e.detail;
   const images = -eventData.direction;
 
   incrementTimePoint(eventData.element, images);
 }
 
-function onDrag (e) {
+function dragCallback (e) {
   const mouseMoveData = e.originalEvent.detail;
   const eventData = {
     deltaY: 0
@@ -85,13 +97,13 @@ function onDrag (e) {
     eventData.deltaY = timeSeriesDeltaMod;
   }
 
-  return false; // False = cases jquery to preventDefault() and stopPropagation() this event
+  return false;
 }
 
 // Module/private exports
-const timeSeriesScroll = simpleMouseButtonTool(mouseDownCallback);
+const timeSeriesScroll = simpleMouseButtonTool(mouseDownCallback, toolType);
 const timeSeriesScrollWheel = mouseWheelTool(mouseWheelCallback);
-const timeSeriesScrollTouchDrag = touchDragTool(onDrag);
+const timeSeriesScrollTouchDrag = touchDragTool(dragCallback);
 
 export {
   timeSeriesScroll,

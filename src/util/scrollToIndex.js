@@ -1,8 +1,8 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-import { stackScroll } from '../stackTools/stackScroll.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 export default function (element, newImageIdIndex) {
@@ -87,15 +87,17 @@ export default function (element, newImageIdIndex) {
 
   // Retry image loading in cases where previous image promise
   // Was rejected, if the option is set
-  const config = stackScroll.getConfiguration();
+  /*
 
-  if (config && config.retryLoadOnScroll === true) {
-    const newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+    Const config = stackScroll.getConfiguration();
 
-    if (newImagePromise && newImagePromise.state() === 'rejected') {
-      cornerstone.imageCache.removeImagePromise(newImageId);
+    TODO: Revisit this. It appears that Core's imageCache is not
+    keeping rejected promises anywhere, so we have no way to know
+    if something was previously rejected.
+
+    if (config && config.retryLoadOnScroll === true) {
     }
-  }
+  */
 
   // Convert the preventCache value in stack data to a boolean
   const preventCache = Boolean(stackData.preventCache);
@@ -112,5 +114,5 @@ export default function (element, newImageIdIndex) {
   // Make sure we kick off any changed download request pools
   requestPoolManager.startGrabbing();
 
-  triggerEvent(element, 'CornerstoneStackScroll', eventData);
+  triggerEvent(element, EVENTS.STACK_SCROLL, eventData);
 }

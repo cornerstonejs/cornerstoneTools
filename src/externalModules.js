@@ -1,6 +1,5 @@
 let cornerstone = window.cornerstone;
 let cornerstoneMath = window.cornerstoneMath;
-let $ = window.$;
 let Hammer = window.Hammer;
 
 export default {
@@ -15,12 +14,6 @@ export default {
   },
   get cornerstoneMath () {
     return cornerstoneMath;
-  },
-  set $ (module) {
-    $ = module;
-  },
-  get $ () {
-    return $;
   },
   set Hammer (module) {
     Hammer = module;

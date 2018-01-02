@@ -1,7 +1,11 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { getToolOptions } from '../toolOptions.js';
+
+const toolType = 'rotate';
 
 // --- Strategies --- //
 function defaultStrategy (eventData) {
@@ -41,30 +45,41 @@ function verticalStrategy (eventData) {
 }
 
 // --- Mouse event callbacks --- //
-function mouseUpCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }
 
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
+
   rotate.strategy(eventData);
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
-  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  e.preventDefault();
+  e.stopPropagation();
 }
 
-const rotate = simpleMouseButtonTool(mouseDownCallback);
+const rotate = simpleMouseButtonTool(mouseDownCallback, toolType);
 
 rotate.strategies = {
   default: defaultStrategy,
@@ -74,7 +89,7 @@ rotate.strategies = {
 
 rotate.strategy = defaultStrategy;
 
-const rotateTouchDrag = touchDragTool(dragCallback);
+const rotateTouchDrag = touchDragTool(dragCallback, toolType);
 
 export {
   rotate,

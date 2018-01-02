@@ -42,29 +42,39 @@ function paint (eventData) {
   external.cornerstone.updateImage(element);
 }
 
-function onMouseUp (e, eventData) {
+function onMouseUp (e) {
+  const eventData = e.detail;
+
   lastImageCoords = eventData.currentPoints.image;
   dragging = false;
 }
 
-function onMouseDown (e, eventData) {
+function onMouseDown (e) {
+  const eventData = e.detail;
+
   paint(eventData);
   dragging = true;
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onMouseMove (e, eventData) {
+function onMouseMove (e) {
+  const eventData = e.detail;
+
   lastImageCoords = eventData.currentPoints.image;
   external.cornerstone.updateImage(eventData.element);
 }
 
-function onDrag (e, eventData) {
+function onDrag (e) {
+  const eventData = e.detail;
+
   paint(eventData);
   dragging = true;
   lastImageCoords = eventData.currentPoints.image;
 }
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   if (!lastImageCoords) {
     return;
   }
