@@ -1,6 +1,9 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 
-function touchRotateCallback (e, eventData) {
+function touchRotateCallback (e) {
+  const eventData = e.detail;
+
   eventData.viewport.rotation += eventData.rotation;
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
@@ -8,12 +11,12 @@ function touchRotateCallback (e, eventData) {
 }
 
 function disable (element) {
-  external.$(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
+  element.removeEventListener(EVENTS.TOUCH_ROTATE, touchRotateCallback);
 }
 
 function activate (element) {
-  external.$(element).off('CornerstoneToolsTouchRotate', touchRotateCallback);
-  external.$(element).on('CornerstoneToolsTouchRotate', touchRotateCallback);
+  element.removeEventListener(EVENTS.TOUCH_ROTATE, touchRotateCallback);
+  element.addEventListener(EVENTS.TOUCH_ROTATE, touchRotateCallback);
 }
 
 const rotateTouch = {

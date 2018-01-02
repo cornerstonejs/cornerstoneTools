@@ -97,10 +97,6 @@
     </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 
@@ -114,13 +110,13 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onImageRendered(e) {
         var viewport = cornerstone.getViewport(e.target);
-        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
+        document.getElementById('mrbottomleft').textContent = "WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter);
+        document.getElementById('mrbottomright').textContent = "Zoom: " + viewport.scale.toFixed(2);
     };
 
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
@@ -136,7 +132,7 @@ is used by our example image loader-->
 
     cornerstoneTools.zoom.setConfiguration(config);
 
-    $('#chkshadow').on('change', function(){
+    document.getElementById('chkshadow').addEventListener('change', function(){
       cornerstoneTools.length.setConfiguration({shadow: this.checked});
       cornerstoneTools.angle.setConfiguration({shadow: this.checked});
       cornerstone.updateImage(element);
@@ -160,13 +156,16 @@ is used by our example image loader-->
         cornerstoneTools.angle.enable(element);
         cornerstoneTools.highlight.enable(element);
 
-        activate("#enableWindowLevelTool");
+        activate("enableWindowLevelTool");
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+                elem.classList.remove('active');
+            });
+
+            document.getElementById(id).classList.add('active');
         }
+
         // helper function used by the tool button handlers to disable the active tool
         // before making a new tool active
         function disableAllTools()
@@ -184,53 +183,53 @@ is used by our example image loader-->
         }
 
         // Tool button event handlers that set the new active tool
-        $('#enableWindowLevelTool').click(function() {
-            activate('#enableWindowLevelTool')
+        document.getElementById('enableWindowLevelTool').addEventListener('click', function() {
+            activate('enableWindowLevelTool')
             disableAllTools();
             cornerstoneTools.wwwc.activate(element, 1);
         });
-        $('#pan').click(function() {
-            activate('#pan')
+        document.getElementById('pan').addEventListener('click', function() {
+            activate('pan')
             disableAllTools();
             cornerstoneTools.pan.activate(element, 3); // 3 means left mouse button and middle mouse button
         });
-        $('#zoom').click(function() {
-            activate('#zoom')
+        document.getElementById('zoom').addEventListener('click', function() {
+            activate('zoom')
             disableAllTools();
             cornerstoneTools.zoom.activate(element, 5); // 5 means left mouse button and right mouse button
         });
-        $('#enableLength').click(function() {
-            activate('#enableLength')
+        document.getElementById('enableLength').addEventListener('click', function() {
+            activate('enableLength')
             disableAllTools();
             cornerstoneTools.length.activate(element, 1);
         });
-        $('#probe').click(function() {
-            activate('#probe')
+        document.getElementById('probe').addEventListener('click', function() {
+            activate('probe')
             disableAllTools();
             cornerstoneTools.probe.activate(element, 1);
         });
-        $('#circleroi').click(function() {
-            activate('#circleroi')
+        document.getElementById('circleroi').addEventListener('click', function() {
+            activate('circleroi')
             disableAllTools();
             cornerstoneTools.ellipticalRoi.activate(element, 1);
         });
-        $('#rectangleroi').click(function() {
-            activate('#rectangleroi')
+        document.getElementById('rectangleroi').addEventListener('click', function() {
+            activate('rectangleroi')
             disableAllTools();
             cornerstoneTools.rectangleRoi.activate(element, 1);
         });
-        $('#angle').click(function () {
-            activate('#angle')
+        document.getElementById('angle').addEventListener('click', function () {
+            activate('angle')
             disableAllTools();
             cornerstoneTools.angle.activate(element, 1);
         });
-        $('#highlight').click(function() {
-            activate('#highlight')
+        document.getElementById('highlight').addEventListener('click', function() {
+            activate('highlight')
             disableAllTools();
             cornerstoneTools.highlight.activate(element, 1);
         });
-        $('#freehand').click(function() {
-            activate('#freehand')
+        document.getElementById('freehand').addEventListener('click', function() {
+            activate('freehand')
             disableAllTools();
             cornerstoneTools.freehand.activate(element, 1);
         });

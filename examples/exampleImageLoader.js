@@ -77,11 +77,21 @@
             image.maxPixelValue = 1440;
             image.windowCenter = 473;
             image.windowWidth = 770;
+        } else if (imageId === 'example://failingImage') {
+          return {
+            promise: new Promise((resolve, reject) => {
+              reject(new Error('An error!'));
+            }),
+            cancelFn: undefined
+          }
         }
 
-        var deferred = $.Deferred();
-        deferred.resolve(image);
-        return deferred;
+        return {
+            promise: new Promise((resolve) => {
+              resolve(image);
+            }),
+            cancelFn: undefined
+        };
     }
 
 

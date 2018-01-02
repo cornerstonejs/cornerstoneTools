@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import drawTextBox from '../util/drawTextBox.js';
@@ -81,7 +82,8 @@ function length (vector) {
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -281,19 +283,15 @@ function addNewMeasurement (mouseEventData) {
   const measurementData = createNewMeasurement(mouseEventData);
   const element = mouseEventData.element;
 
-  const eventData = {
-    mouseButtonMask: mouseEventData.which
-  };
-
-    // Associate this data with this imageId so we can render it and manipulate it
+  // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, toolType, measurementData);
 
   // Since we are dragging to another place to drop the end point, we can just activate
   // The end point and let the moveHandle move it for us.
-  external.$(element).off('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-  external.$(element).off('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-  external.$(element).off('CornerstoneToolsMouseDown', simpleAngle.mouseDownCallback);
-  external.$(element).off('CornerstoneToolsMouseDownActivate', simpleAngle.mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, simpleAngle.mouseMoveCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, simpleAngle.mouseMoveCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, simpleAngle.mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, simpleAngle.mouseDownActivateCallback);
   cornerstone.updateImage(element);
 
   moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.middle, function () {
@@ -302,10 +300,10 @@ function addNewMeasurement (mouseEventData) {
       // Delete the measurement
       removeToolState(element, toolType, measurementData);
 
-      external.$(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-      external.$(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-      external.$(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
-      external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
+      element.addEventListener(EVENTS.MOUSE_MOVE, simpleAngle.mouseMoveCallback);
+      element.addEventListener(EVENTS.MOUSE_DRAG, simpleAngle.mouseMoveCallback);
+      element.addEventListener(EVENTS.MOUSE_DOWN, simpleAngle.mouseDownCallback);
+      element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, simpleAngle.mouseDownActivateCallback);
       cornerstone.updateImage(element);
 
       return;
@@ -321,10 +319,10 @@ function addNewMeasurement (mouseEventData) {
         removeToolState(element, toolType, measurementData);
       }
 
-      external.$(element).on('CornerstoneToolsMouseMove', simpleAngle.mouseMoveCallback);
-      external.$(element).on('CornerstoneToolsMouseDrag', simpleAngle.mouseMoveCallback);
-      external.$(element).on('CornerstoneToolsMouseDown', eventData, simpleAngle.mouseDownCallback);
-      external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, simpleAngle.mouseDownActivateCallback);
+      element.addEventListener(EVENTS.MOUSE_MOVE, simpleAngle.mouseMoveCallback);
+      element.addEventListener(EVENTS.MOUSE_DRAG, simpleAngle.mouseMoveCallback);
+      element.addEventListener(EVENTS.MOUSE_DOWN, simpleAngle.mouseDownCallback);
+      element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, simpleAngle.mouseDownActivateCallback);
       cornerstone.updateImage(element);
     });
   });
@@ -340,20 +338,20 @@ function addNewMeasurementTouch (touchEventData) {
 
   // Since we are dragging to another place to drop the end point, we can just activate
   // The end point and let the moveHandle move it for us.
-  external.$(element).off('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-  external.$(element).off('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-  external.$(element).off('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-  external.$(element).off('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+  element.removeEventListener(EVENTS.TOUCH_DRAG, simpleAngleTouch.touchMoveCallback);
+  element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, simpleAngleTouch.touchDownActivateCallback);
+  element.removeEventListener(EVENTS.TOUCH_START, simpleAngleTouch.touchStartCallback);
+  element.removeEventListener(EVENTS.TAP, simpleAngleTouch.tapCallback);
   cornerstone.updateImage(element);
 
   moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.middle, function () {
     if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
       // Delete the measurement
       removeToolState(element, toolType, measurementData);
-      external.$(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-      external.$(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-      external.$(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-      external.$(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+      element.addEventListener(EVENTS.TOUCH_DRAG, simpleAngleTouch.touchMoveCallback);
+      element.addEventListener(EVENTS.TOUCH_START, simpleAngleTouch.touchStartCallback);
+      element.addEventListener(EVENTS.TOUCH_START_ACTIVE, simpleAngleTouch.touchDownActivateCallback);
+      element.addEventListener(EVENTS.TAP, simpleAngleTouch.tapCallback);
       cornerstone.updateImage(element);
 
       return;
@@ -366,10 +364,10 @@ function addNewMeasurementTouch (touchEventData) {
         cornerstone.updateImage(element);
       }
 
-      external.$(element).on('CornerstoneToolsTouchDrag', simpleAngleTouch.touchMoveCallback);
-      external.$(element).on('CornerstoneToolsTouchStart', simpleAngleTouch.touchStartCallback);
-      external.$(element).on('CornerstoneToolsTouchStartActive', simpleAngleTouch.touchDownActivateCallback);
-      external.$(element).on('CornerstoneToolsTap', simpleAngleTouch.tapCallback);
+      element.addEventListener(EVENTS.TOUCH_DRAG, simpleAngleTouch.touchMoveCallback);
+      element.addEventListener(EVENTS.TOUCH_START, simpleAngleTouch.touchStartCallback);
+      element.addEventListener(EVENTS.TOUCH_START_ACTIVE, simpleAngleTouch.touchDownActivateCallback);
+      element.addEventListener(EVENTS.TAP, simpleAngleTouch.tapCallback);
     });
   });
 }
