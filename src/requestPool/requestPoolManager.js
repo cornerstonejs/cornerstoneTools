@@ -47,10 +47,10 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     countRetries[imageId] = 0;
   }
   if (configuration.maxRetries > 0 && countRetries[imageId] < configuration.maxRetries) {
-    const cachedImagePromise = external.cornerstone.imageCache.getImagePromise(imageId);
+    const cachedImageLoadObject = external.cornerstone.imageCache.getImageLoadObject(imageId);
 
-    if (cachedImagePromise && cachedImagePromise.state() === 'rejected') {
-      external.cornerstone.imageCache.removeImagePromise(imageId);
+    if (cachedImageLoadObject && cachedImageLoadObject.promise.state() === 'rejected') {
+      external.cornerstone.imageCache.removeImageLoadObject(imageId);
       countRetries[imageId]++;
     }
   }
