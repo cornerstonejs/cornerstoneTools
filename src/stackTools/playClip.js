@@ -252,10 +252,10 @@ function playClip (element, framesPerSecond) {
       const config = stackScroll.getConfiguration();
 
       if (config && config.retryLoadOnScroll === true) {
-        const newImagePromise = cornerstone.imageCache.getImagePromise(newImageId);
+        const newImageLoadObject = cornerstone.imageCache.getImageLoadObject(newImageId);
 
-        if (newImagePromise && newImagePromise.state() === 'rejected') {
-          cornerstone.imageCache.removeImagePromise(newImageId);
+        if (newImageLoadObject && newImageLoadObject.promise.state() === 'rejected') {
+          cornerstone.imageCache.removeImageLoadObject(newImageId);
         }
       }
 
