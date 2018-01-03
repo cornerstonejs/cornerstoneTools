@@ -1,25 +1,19 @@
-import external from '../externalModules.js';
+import EVENTS from '../events.js';
 
 export default function (touchPinchCallback) {
-  const toolInterface = {
+  return {
     activate (element) {
-      external.$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
-      const eventData = {
-      };
-
-      external.$(element).on('CornerstoneToolsTouchPinch', eventData, touchPinchCallback);
+      element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinchCallback);
+      element.addEventListener(EVENTS.TOUCH_PINCH, touchPinchCallback);
     },
     disable (element) {
-      external.$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
+      element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinchCallback);
     },
     enable (element) {
-      external.$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
+      element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinchCallback);
     },
     deactivate (element) {
-      external.$(element).off('CornerstoneToolsTouchPinch', touchPinchCallback);
+      element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinchCallback);
     }
   };
-
-
-  return toolInterface;
 }

@@ -76,9 +76,6 @@
 </body>
 
 
-<!-- jquery - currently a dependency and thus required for using cornerstoneWADOImageLoader -->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -94,9 +91,7 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var container = $('#dicomImage');
-
-    var element = container.get(0);
+    var element = document.getElementById('dicomImage');
     var imageId = 'example://1';
 
     function rotateMarker(div, rotation) {
@@ -116,13 +111,20 @@
             "transform" : "rotate("+ -rotation +"deg)"
         };
 
-        div.css(rotationCSS);
-        div.find(".orientationMarkerDiv").css(oppositeRotationCSS);
+        Object.keys(rotationCSS).forEach(function(key) {
+          div.style[key] = rotationCSS[key];
+        });
+
+        const orientationMarkerDivs = div.querySelectorAll(".orientationMarkerDiv");
+        Object.keys(rotationCSS).forEach(function(key) {
+          orientationMarkerDivs.forEach(function(div) {
+            div.style[key] = oppositeRotationCSS[key];
+          });
+        });
     }
 
 
-    function calculateOrientationMarkers(element, viewport) {
-        var elementDiv = $(element);
+    function calculateOrientationMarkers(element) {
         var enabledElement = cornerstone.getEnabledElement(element);
         var imagePlaneMetaData = cornerstone.metaData.get('imagePlaneModule', enabledElement.image.imageId);
         console.log(imagePlaneMetaData);
@@ -140,25 +142,20 @@
             right: rowString
         }
 
-        var topMid = elementDiv.find('.mrtopmiddle .orientationMarker');
-        var bottomMid = elementDiv.find('.mrbottommiddle .orientationMarker');
-        var rightMid = elementDiv.find('.mrrightmiddle .orientationMarker');
-        var leftMid = elementDiv.find('.mrleftmiddle .orientationMarker');
+        var topMid = element.querySelector('.mrtopmiddle .orientationMarker');
+        var bottomMid = element.querySelector('.mrbottommiddle .orientationMarker');
+        var rightMid = element.querySelector('.mrrightmiddle .orientationMarker');
+        var leftMid = element.querySelector('.mrleftmiddle .orientationMarker');
 
-        topMid.text(markers.top);
-        bottomMid.text(markers.bottom);
-        rightMid.text(markers.right);
-        leftMid.text(markers.left);
+        topMid.textContent = markers.top;
+        bottomMid.textContent = markers.bottom;
+        rightMid.textContent = markers.right;
+        leftMid.textContent = markers.left;
     }
 
-    function updateOrientationMarkers(element, viewport)
-    {
-        var elementDiv = $(element);
-        var width = elementDiv.width();
-        var height = elementDiv.width();
-
-        //Apply rotations
-        var orientationMarkers = elementDiv.find('.orientationMarkers');
+    function updateOrientationMarkers(element, viewport) {
+        // Apply rotations
+        var orientationMarkers = element.querySelector('.orientationMarkers');
         rotateMarker(orientationMarkers, viewport.rotation);
     }
 
@@ -191,45 +188,43 @@
         cornerstoneTools.rotateTouchDrag.activate(element);
 
         // Add event handlers to flip or rotate the image
-        $('#hFlip').click(function (e) {
+        document.getElementById('hFlip').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.hflip = !viewport.hflip;
             cornerstone.setViewport(element, viewport);
-
-            var elementDiv = $(element);
-            var rightMid = elementDiv.find('.mrrightmiddle .orientationMarker');
-            var leftMid = elementDiv.find('.mrleftmiddle .orientationMarker');
-            var temp = rightMid.text();
-            rightMid.text(leftMid.text());
-            leftMid.text(temp);
+          
+            var rightMid = element.querySelector('.mrrightmiddle .orientationMarker');
+            var leftMid = element.querySelector('.mrleftmiddle .orientationMarker');
+            var temp = rightMid.textContent;
+            rightMid.textContent = leftMid.textContent;
+            leftMid.textContent = temp;
         });
 
-        $('#vFlip').click(function (e) {
+        document.getElementById('vFlip').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.vflip = !viewport.vflip;
             cornerstone.setViewport(element, viewport);
-            
-            var elementDiv = $(element);
-            var topMid = elementDiv.find('.mrtopmiddle .orientationMarker');
-            var bottomMid = elementDiv.find('.mrbottommiddle .orientationMarker');
-            var temp = topMid.text();
-            topMid.text(bottomMid.text());
-            bottomMid.text(temp);
+
+            var topMid = element.querySelector('.mrtopmiddle .orientationMarker');
+            var bottomMid = element.querySelector('.mrbottommiddle .orientationMarker');
+            var temp = topMid.textContent;
+            topMid.textContent = bottomMid.textContent;
+            bottomMid.textContent = temp;
         });
 
-        $('#lRotate').click(function (e) {
+        document.getElementById('lRotate').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.rotation -=90;
             cornerstone.setViewport(element, viewport);
         });
 
-        $('#rRotate').click(function (e) {
+        document.getElementById('rRotate').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.rotation +=90;
             cornerstone.setViewport(element, viewport);
         });
         
-        $('#reset').click(function (e) {
+        document.getElementById('reset').addEventListener('click', function (e) {
             viewport = cornerstone.getViewport(element);
             viewport.hflip = false;
             viewport.vflip = false;

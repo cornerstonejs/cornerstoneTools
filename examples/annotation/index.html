@@ -98,10 +98,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -124,26 +120,24 @@ is used by our example image loader-->
     dialogPolyfill.registerDialog(annotationDialog);
     dialogPolyfill.registerDialog(relabelDialog);
 
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
     // Define a callback to get your text annotation
     // This could be used, e.g. to open a modal
     function getTextCallback(doneChangingTextCallback) {
-        var annotationDialog  = $('.annotationDialog');
-        var getTextInput = annotationDialog .find('.annotationTextInput');
-        var confirm = annotationDialog .find('.annotationDialogConfirm');
+        var annotationDialog  = document.querySelector('.annotationDialog');
+        var getTextInput = annotationDialog.querySelector('.annotationTextInput');
+        var confirm = annotationDialog.querySelector('.annotationDialogConfirm');
 
-        annotationDialog .get(0).showModal();
+        annotationDialog.showModal();
 
-        confirm.off('click');
-        confirm.on('click', function() {
-            closeHandler();
-        });
+        confirm.removeEventListener('click', closeHandler);
+        confirm.addEventListener('click', closeHandler);
 
-        annotationDialog .off("keydown");
-        annotationDialog .on('keydown', keyPressHandler);
+        annotationDialog.removeEventListener("keydown", keyPressHandler);
+        annotationDialog.addEventListener('keydown', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -153,39 +147,40 @@ is used by our example image loader-->
         }
 
         function closeHandler() {
-            annotationDialog .get(0).close();
-            doneChangingTextCallback(getTextInput.val());
+            annotationDialog.close();
+            doneChangingTextCallback(getTextInput.value);
             // Reset the text value
-            getTextInput.val("");
+            getTextInput.value = "";
         }
     }
 
     // Define a callback to edit your text annotation
     // This could be used, e.g. to open a modal
     function changeTextCallback(data, eventData, doneChangingTextCallback) {
-        var relabelDialog = $('.relabelDialog');
-        var getTextInput = relabelDialog.find('.annotationTextInput');
-        var confirm = relabelDialog.find('.relabelConfirm');
-        var remove = relabelDialog.find('.relabelRemove');
+        var relabelDialog = document.querySelector('.relabelDialog');
+        var getTextInput = relabelDialog.querySelector('.annotationTextInput');
+        var confirm = relabelDialog.querySelector('.relabelConfirm');
+        var remove = relabelDialog.querySelector('.relabelRemove');
 
-        getTextInput.val(data.annotationText);
-        relabelDialog.get(0).showModal();
+        getTextInput.value = data.text;
+        relabelDialog.showModal();
 
-        confirm.off('click');
-        confirm.on('click', function() {
-            relabelDialog.get(0).close();
-            doneChangingTextCallback(data, getTextInput.val());
-        });
+        function confirmHandler() {
+           relabelDialog.close();
+           doneChangingTextCallback(data, getTextInput.value);
+        }
+
+        confirm.removeEventListener('click', confirmHandler);
+        confirm.addEventListener('click', confirmHandler);
 
         // If the remove button is clicked, delete this marker
-        remove.off('click');
-        remove.on('click', function() {
-            relabelDialog.get(0).close();
-            doneChangingTextCallback(data, undefined, true);
-        });
+        function removeHandler() {
+          relabelDialog.close();
+          doneChangingTextCallback(data, undefined, true);
+        }
 
-        relabelDialog.off("keydown");
-        relabelDialog.on('keydown', keyPressHandler);
+        remove.removeEventListener('click', removeHandler);
+        remove.addEventListener('click', removeHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -194,13 +189,15 @@ is used by our example image loader-->
             }
         }
 
+        relabelDialog.removeEventListener("keydown", keyPressHandler);
+        relabelDialog.addEventListener('keydown', keyPressHandler);
+
         function closeHandler() {
-            relabelDialog.get(0).close();
-            doneChangingTextCallback(data, getTextInput.val());
+            relabelDialog.close();
+            doneChangingTextCallback(data, getTextInput.value);
             // Reset the text value
-            getTextInput.val("");
+            getTextInput.value = "";
         }
-        
     }
 
     var config = {
@@ -229,34 +226,34 @@ is used by our example image loader-->
         cornerstoneTools.arrowAnnotate.activate(element, 1);
         cornerstoneTools.arrowAnnotateTouch.activate(element);
 
-        activate("#activate");
+        activate("activate");
 
         function activate(id) {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+            document.querySelectorAll('a').forEach(function(elem) {              elem.classList.remove('active');            });
+            document.getElementById(id).classList.add('active');
         }
 
         // Tool button event handlers that set the new active tool
-        $('#enable').click(function() {
-            activate("#enable");
+        document.getElementById('enable').addEventListener('click', function() {
+            activate("enable");
             cornerstoneTools.arrowAnnotate.enable(element);
             cornerstoneTools.arrowAnnotateTouch.enable(element);
             return false;
         });
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.arrowAnnotate.disable(element);
             cornerstoneTools.arrowAnnotateTouch.disable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.arrowAnnotate.activate(element, 1);
             cornerstoneTools.arrowAnnotateTouch.activate(element);
             return false;
         });
-        $('#deactivate').click(function() {
-            activate("#deactivate");
+        document.getElementById('deactivate').addEventListener('click', function() {
+            activate("deactivate");
             cornerstoneTools.arrowAnnotate.deactivate(element, 1);
             cornerstoneTools.arrowAnnotateTouch.deactivate(element);
             return false;

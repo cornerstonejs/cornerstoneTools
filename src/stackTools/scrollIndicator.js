@@ -12,7 +12,8 @@ const configuration = {
   orientation: 'horizontal'
 };
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
   const element = eventData.element;
   const width = eventData.enabledElement.canvas.width;
   const height = eventData.enabledElement.canvas.height;
