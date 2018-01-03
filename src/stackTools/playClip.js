@@ -3,6 +3,8 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import requestPoolManager from '../requestPool/requestPoolManager.js';
+import { stackScroll } from './stackScroll.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 const toolType = 'playClip';
@@ -167,8 +169,8 @@ function playClip (element, framesPerSecond) {
   const playClipAction = () => {
 
     // Hoisting of context variables
-    let loader,
-      startLoadingHandler,
+    let startLoadingHandler,
+      displayLoadingHandler,
       endLoadingHandler,
       errorLoadingHandler,
       newImageIdIndex = stackData.currentImageIdIndex;
@@ -200,6 +202,7 @@ function playClip (element, framesPerSecond) {
     if (newImageIdIndex !== stackData.currentImageIdIndex) {
 
       startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+      displayLoadingHandler = loadHandlerManager.getDisplayLoadingHandler();
       endLoadingHandler = loadHandlerManager.getEndLoadHandler();
       errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
@@ -207,37 +210,69 @@ function playClip (element, framesPerSecond) {
         startLoadingHandler(element);
       }
 
-      if (stackData.preventCache === true) {
-        loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
-      } else {
-        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
-      }
-
-      loader.then(function (image) {
-        try {
-          stackData.currentImageIdIndex = newImageIdIndex;
-          if (stackRenderer) {
-            stackRenderer.currentImageIdIndex = newImageIdIndex;
-            stackRenderer.render(element, stackToolData.data);
-          } else {
-            cornerstone.displayImage(element, image);
+      const doneCallback = function (image) {
+        if (stackData.currentImageIdIndex === newImageIdIndex) {
+          try {
+            if (stackRenderer) {
+              stackRenderer.currentImageIdIndex = newImageIdIndex;
+              stackRenderer.render(element, stackToolData.data);
+            } else {
+              cornerstone.displayImage(element, image);
+            }
+            if (endLoadingHandler) {
+              endLoadingHandler(element, image);
+            }
+          } catch (error) {
+            return;
           }
-          if (endLoadingHandler) {
-            endLoadingHandler(element, image);
-          }
-        } catch (error) {
-          return;
         }
-      }, function (error) {
+      };
+
+      const failCallback = function (error) {
         const imageId = stackData.imageIds[newImageIdIndex];
 
         if (errorLoadingHandler) {
           errorLoadingHandler(element, imageId, error);
         }
-      });
+      };
 
+      const pendingCallback = function () {
+        const imageId = stackData.imageIds[newImageIdIndex];
+
+        if (displayLoadingHandler) {
+          displayLoadingHandler(element, imageId);
+        }
+      };
+
+      stackData.currentImageIdIndex = newImageIdIndex;
+      const newImageId = stackData.imageIds[newImageIdIndex];
+
+      // Retry image loading in cases where previous image promise
+      // Was rejected, if the option is set
+      const config = stackScroll.getConfiguration();
+
+      if (config && config.retryLoadOnScroll === true) {
+        const newImageLoadObject = cornerstone.imageCache.getImageLoadObject(newImageId);
+
+        if (newImageLoadObject && newImageLoadObject.promise.state() === 'rejected') {
+          cornerstone.imageCache.removeImageLoadObject(newImageId);
+        }
+      }
+
+      const type = 'interaction';
+
+      // Clear the interaction queue
+      requestPoolManager.clearRequestStack(type);
+
+      // Convert the preventCache value in stack data to a boolean
+      const preventCache = Boolean(stackData.preventCache);
+
+      // Request the image
+      requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback, pendingCallback);
+
+      // Make sure we kick off any changed download request pools
+      requestPoolManager.startGrabbing();
     }
-
   };
 
     // If playClipTimeouts array is available, not empty and its elements are NOT uniform ...

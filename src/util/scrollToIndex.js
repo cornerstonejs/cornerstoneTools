@@ -32,6 +32,7 @@ export default function (element, newImageIdIndex) {
   }
 
   const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+  const displayLoadingHandler = loadHandlerManager.getDisplayLoadingHandler();
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
@@ -69,6 +70,14 @@ export default function (element, newImageIdIndex) {
     }
   }
 
+  function pendingCallback () {
+    const imageId = stackData.imageIds[newImageIdIndex];
+
+    if (displayLoadingHandler) {
+      displayLoadingHandler(element, imageId);
+    }
+  }
+
   if (newImageIdIndex === stackData.currentImageIdIndex) {
     return;
   }
@@ -99,18 +108,17 @@ export default function (element, newImageIdIndex) {
     }
   */
 
+  const type = 'interaction';
+
+  // Clear the interaction queue
+  requestPoolManager.clearRequestStack(type);
+
   // Convert the preventCache value in stack data to a boolean
   const preventCache = Boolean(stackData.preventCache);
 
-  let imagePromise;
+  // Request the image
+  requestPoolManager.addRequest(element, newImageId, type, preventCache, doneCallback, failCallback, pendingCallback);
 
-  if (preventCache) {
-    imagePromise = cornerstone.loadImage(newImageId);
-  } else {
-    imagePromise = cornerstone.loadAndCacheImage(newImageId);
-  }
-
-  imagePromise.then(doneCallback, failCallback);
   // Make sure we kick off any changed download request pools
   requestPoolManager.startGrabbing();
 
