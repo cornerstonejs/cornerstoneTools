@@ -195,7 +195,7 @@ function startGrabbing () {
     interaction: Math.max(maxSimultaneousRequests, 1),
     thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
     prefetch: Math.max(maxSimultaneousRequests - 1, 1),
-    autoPrefetch: 3
+    autoPrefetch: Math.max(maxSimultaneousRequests - 1, 1)
   };
 
   const currentRequests = numRequests.interaction +
