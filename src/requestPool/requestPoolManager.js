@@ -22,9 +22,7 @@ let maxNumRequests;
 let awake = false;
 const grabDelay = 20;
 
-const countRetries = {};
-
-function addRequest (element, imageId, type, preventCache, doneCallback, failCallback, pendingCallback) {
+function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, prefetch, or autoPrefetch');
   }
@@ -42,25 +40,8 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     failCallback
   };
 
-  // Auto retry
-  if (configuration.maxRetries > 0 && countRetries[imageId] === undefined) {
-    countRetries[imageId] = 0;
-  }
-  if (configuration.maxRetries > 0 && countRetries[imageId] < configuration.maxRetries) {
-    const cachedImageLoadObject = external.cornerstone.imageCache.getImageLoadObject(imageId);
-
-    if (cachedImageLoadObject && cachedImageLoadObject.promise.state() === 'rejected') {
-      external.cornerstone.imageCache.removeImageLoadObject(imageId);
-      countRetries[imageId]++;
-    }
-  }
-
   // If this imageId is in the cache, resolve it immediately
   const imageLoadObject = external.cornerstone.imageCache.getImageLoadObject(imageId);
-
-  if (pendingCallback && (imageLoadObject === undefined || imageLoadObject.promise.state() === 'pending')) {
-    pendingCallback();
-  }
 
   if (imageLoadObject) {
     imageLoadObject.promise.then(function (image) {
@@ -76,7 +57,7 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   requestPool[type].push(requestDetails);
 }
 
-function addPriorRequests (element, imageIdList, requestType, preventCache, doneCallback, failCallback, pendingCallback) {
+function addPriorRequests (element, imageIdList, requestType, preventCache, doneCallback, failCallback) {
   // Save the previously queued requests
   const oldRequestQueue = getRequestPool()[requestType].slice();
 
@@ -87,7 +68,7 @@ function addPriorRequests (element, imageIdList, requestType, preventCache, done
   for (let i = 0; i < imageIdList.length; i++) {
     const imageId = imageIdList[i];
 
-    addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback, pendingCallback);
+    addRequest(element, imageId, requestType, preventCache, doneCallback, failCallback);
   }
 
   // Add the previously queued requests
