@@ -73,10 +73,6 @@ export default function (element, newImageIdIndex) {
     return;
   }
 
-  if (startLoadingHandler) {
-    startLoadingHandler(element);
-  }
-
   const eventData = {
     newImageIdIndex,
     direction: newImageIdIndex - stackData.currentImageIdIndex
@@ -84,6 +80,10 @@ export default function (element, newImageIdIndex) {
 
   stackData.currentImageIdIndex = newImageIdIndex;
   const newImageId = stackData.imageIds[newImageIdIndex];
+
+  if (startLoadingHandler) {
+    startLoadingHandler(element);
+  }
 
   // Retry image loading in cases where previous image promise
   // Was rejected, if the option is set
