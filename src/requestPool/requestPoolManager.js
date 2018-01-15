@@ -5,7 +5,7 @@ const requestPoolTypes = {};
 const requestPool = {};
 const numRequests = {};
 
-function addRequestPoolType(name, priority, maxRequests) {
+function addRequestPoolType (name, priority, maxRequests) {
   if (requestPoolTypes[name] === undefined) {
     requestPoolTypes[name] = {};
   }
@@ -23,16 +23,19 @@ function addRequestPoolType(name, priority, maxRequests) {
 
 
 // Add default types
-addRequestPoolType('interaction', 30, function() {
+addRequestPoolType('interaction', 30, function () {
   const maxSimultaneousRequests = getMaxSimultaneousRequests();
+
   return Math.max(maxSimultaneousRequests, 1);
 });
-addRequestPoolType('thumbnail', 20, function() {
+addRequestPoolType('thumbnail', 20, function () {
   const maxSimultaneousRequests = getMaxSimultaneousRequests();
+
   return Math.max(maxSimultaneousRequests - 2, 1);
 });
-addRequestPoolType('prefetch', 10, function() {
+addRequestPoolType('prefetch', 10, function () {
   const maxSimultaneousRequests = getMaxSimultaneousRequests();
+
   return Math.max(maxSimultaneousRequests - 1, 1);
 });
 
@@ -230,6 +233,8 @@ function getRequestPool () {
 }
 
 export default {
+  addRequestPoolType,
+  getRequestPoolTypes,
   addRequest,
   clearRequestStack,
   startGrabbing,
