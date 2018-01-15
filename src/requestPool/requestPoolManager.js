@@ -1,26 +1,61 @@
 import external from '../externalModules.js';
 import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 
-const requestPool = {
-  interaction: [],
-  thumbnail: [],
-  prefetch: []
-};
+const requestPoolTypes = {};
+const requestPool = {};
+const numRequests = {};
 
-const numRequests = {
-  interaction: 0,
-  thumbnail: 0,
-  prefetch: 0
-};
+function addRequestPoolType(name, priority, maxRequests) {
+  if (requestPoolTypes[name] === undefined) {
+    requestPoolTypes[name] = {};
+  }
+  if (requestPool[name] === undefined) {
+    requestPool[name] = [];
+  }
+  if (numRequests[numRequests] === undefined) {
+    numRequests[name] = 0;
+  }
 
-let maxNumRequests = {
-  interaction: 6,
-  thumbnail: 6,
-  prefetch: 5
-};
+  requestPoolTypes[name].name = name;
+  requestPoolTypes[name].priority = priority;
+  requestPoolTypes[maxRequests].maxRequests = maxRequests;
+}
+
+
+// Add default types
+addRequestPoolType('interaction', 30, function() {
+  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+  return Math.max(maxSimultaneousRequests, 1);
+});
+addRequestPoolType('thumbnail', 20, function() {
+  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+  return Math.max(maxSimultaneousRequests - 2, 1);
+});
+addRequestPoolType('prefetch', 10, function() {
+  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+  return Math.max(maxSimultaneousRequests - 1, 1);
+});
+
+function getMaxRequests (name) {
+  if (requestPoolTypes[name] === undefined) {
+    return undefined;
+  }
+
+  const maxRequests = requestPoolTypes[name].maxRequests;
+
+  if (typeof maxRequests === 'function') {
+    return maxRequests();
+  }
+
+  return maxRequests;
+}
 
 let awake = false;
 const grabDelay = 20;
+
+function getRequestPoolTypes () {
+  return requestPoolTypes;
+}
 
 function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
   if (!requestPool.hasOwnProperty(type)) {
@@ -154,12 +189,6 @@ function startGrabbing () {
   // Begin by grabbing X images
   const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
-  maxNumRequests = {
-    interaction: Math.max(maxSimultaneousRequests, 1),
-    thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
-    prefetch: Math.max(maxSimultaneousRequests - 1, 1)
-  };
-
   const currentRequests = numRequests.interaction +
           numRequests.thumbnail +
           numRequests.prefetch;
@@ -175,15 +204,15 @@ function startGrabbing () {
 }
 
 function getNextRequest () {
-  if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
+  if (requestPool.interaction.length && numRequests.interaction < getMaxRequests('interaction')) {
     return requestPool.interaction.shift();
   }
 
-  if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
+  if (requestPool.thumbnail.length && numRequests.thumbnail < getMaxRequests('thumbnail')) {
     return requestPool.thumbnail.shift();
   }
 
-  if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
+  if (requestPool.prefetch.length && numRequests.prefetch < getMaxRequests('prefetch')) {
     return requestPool.prefetch.shift();
   }
 
