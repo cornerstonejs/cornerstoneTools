@@ -22,7 +22,7 @@ let maxNumRequests = {
 let awake = false;
 const grabDelay = 20;
 
-function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
+function addRequest (element, imageId, type, preventCache, doneCallback, failCallback, addToBeginning) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
@@ -53,8 +53,13 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     return;
   }
 
-  // Add it to the end of the stack
-  requestPool[type].push(requestDetails);
+  if (addToBeginning) {
+    // Add it to the beginning of the stack
+    requestPool[type].unshift(requestDetails);
+  } else {
+    // Add it to the end of the stack
+    requestPool[type].push(requestDetails);
+  }
 }
 
 function clearRequestStack (type) {
