@@ -115,7 +115,6 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
 }
 
 function clearRequestStack (type) {
-  // Console.log('clearRequestStack');
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error(`Request type ${type} is not defined`);
   }
