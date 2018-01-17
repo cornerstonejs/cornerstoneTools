@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2017-12-13 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-01-17 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -2765,7 +2765,7 @@ var maxNumRequests = {
 var awake = false;
 var grabDelay = 20;
 
-function addRequest(element, imageId, type, preventCache, doneCallback, failCallback) {
+function addRequest(element, imageId, type, preventCache, doneCallback, failCallback, addToBeginning) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
@@ -2796,8 +2796,13 @@ function addRequest(element, imageId, type, preventCache, doneCallback, failCall
     return;
   }
 
-  // Add it to the end of the stack
-  requestPool[type].push(requestDetails);
+  if (addToBeginning) {
+    // Add it to the beginning of the stack
+    requestPool[type].unshift(requestDetails);
+  } else {
+    // Add it to the end of the stack
+    requestPool[type].push(requestDetails);
+  }
 }
 
 function clearRequestStack(type) {
@@ -2959,6 +2964,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (element, images) {
   var loop = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  var allowSkipping = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : true;
 
   var toolData = (0, _toolState.getToolState)(element, 'stack');
 
@@ -2967,6 +2973,10 @@ exports.default = function (element, images) {
   }
 
   var stackData = toolData.data[0];
+
+  if (!stackData.pending) {
+    stackData.pending = [];
+  }
 
   var newImageIdIndex = stackData.currentImageIdIndex + images;
 
@@ -2979,7 +2989,16 @@ exports.default = function (element, images) {
     newImageIdIndex = Math.max(0, newImageIdIndex);
   }
 
-  (0, _scrollToIndex2.default)(element, newImageIdIndex);
+  if (allowSkipping) {
+    (0, _scrollToIndex2.default)(element, newImageIdIndex);
+  } else {
+    var pendingEvent = {
+      index: newImageIdIndex
+    };
+
+    stackData.pending.push(pendingEvent);
+    scrollWithoutSkipping(stackData, pendingEvent, element);
+  }
 };
 
 var _scrollToIndex = __webpack_require__(44);
@@ -2989,6 +3008,37 @@ var _scrollToIndex2 = _interopRequireDefault(_scrollToIndex);
 var _toolState = __webpack_require__(2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function scrollWithoutSkipping(stackData, pendingEvent, element) {
+  if (stackData.pending[0] === pendingEvent) {
+    if (stackData.currentImageIdIndex === pendingEvent.index) {
+      stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
+
+      if (stackData.pending.length > 0) {
+        scrollWithoutSkipping(stackData, stackData.pending[0], element);
+      }
+
+      return;
+    }
+
+    var newImageHandler = function newImageHandler(event) {
+      var index = stackData.imageIds.indexOf(event.detail.image.imageId);
+
+      if (index === pendingEvent.index) {
+        stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
+        element.removeEventListener('cornerstonenewimage', newImageHandler);
+
+        if (stackData.pending.length > 0) {
+          scrollWithoutSkipping(stackData, stackData.pending[0], element);
+        }
+      }
+    };
+
+    element.addEventListener('cornerstonenewimage', newImageHandler);
+
+    (0, _scrollToIndex2.default)(element, pendingEvent.index);
+  }
+}
 
 /***/ }),
 /* 31 */
@@ -7125,6 +7175,7 @@ function unique(array) {
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
+// @param event can contain more than one event, separated by a space
 function Synchronizer(event, handler) {
   var cornerstone = _externalModules2.default.cornerstone;
   var that = this;
@@ -7276,7 +7327,9 @@ function Synchronizer(event, handler) {
     sourceElements.push(element);
 
     // Subscribe to the event
-    element.addEventListener(event, onEvent);
+    event.split(' ').forEach(function (oneEvent) {
+      element.addEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -7324,7 +7377,9 @@ function Synchronizer(event, handler) {
     sourceElements.splice(index, 1);
 
     // Stop listening for the event
-    element.removeEventListener(event, onEvent);
+    event.split(' ').forEach(function (oneEvent) {
+      element.removeEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -8348,12 +8403,14 @@ function mouseWheelCallback(e) {
   var config = stackScroll.getConfiguration();
 
   var loop = false;
+  var allowSkipping = true;
 
-  if (config && config.loop) {
-    loop = config.loop;
+  if (config) {
+    loop = config.loop === undefined ? false : config.loop;
+    allowSkipping = config.allowSkipping === undefined ? true : config.allowSkipping;
   }
 
-  (0, _scroll2.default)(eventData.element, images, loop);
+  (0, _scroll2.default)(eventData.element, images, loop, allowSkipping);
 }
 
 function dragCallback(e) {
@@ -8370,6 +8427,12 @@ function dragCallback(e) {
 
   var config = stackScroll.getConfiguration();
 
+  var allowSkipping = true;
+
+  if (config && config.allowSkipping !== undefined) {
+    allowSkipping = config.allowSkipping;
+  }
+
   // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
   var pixelsPerImage = Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8));
 
@@ -8385,7 +8448,7 @@ function dragCallback(e) {
   if (Math.abs(deltaY) >= pixelsPerImage) {
     var imageIdIndexOffset = Math.round(deltaY / pixelsPerImage);
 
-    (0, _scroll2.default)(element, imageIdIndexOffset);
+    (0, _scroll2.default)(element, imageIdIndexOffset, false, allowSkipping);
 
     options.deltaY = deltaY % pixelsPerImage;
   } else {
