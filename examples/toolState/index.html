@@ -31,8 +31,10 @@
 
             <div class="savedState">
                 <select>
-                    <option value='{"imageIdToolState":{"example://2":{"probe":{"data":[{"visible":true,"active":false,"handles":{"end":{"x":64.035618869664,"y":21.05592153169944,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"end":{"x":65.59724509573118,"y":116.31512132179843,"highlight":true,"active":false}},"invalidated":true}]}}},"elementToolState":{"axial1":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}},"axial2":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}}},"elementViewport":{"axial1":{"scale":0.6403580980567946,"translation":{"x":-31.53882275758602,"y":-3.931383582470403},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false},"axial2":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false}}}' selected>Example 1: Probe points</option>
-                    <option value='{"imageIdToolState":{"example://1":{"length":{"data":[{"visible":true,"active":false,"handles":{"start":{"x":159.84375,"y":87,"highlight":true,"active":true},"end":{"x":137.84375,"y":100,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":103.84375,"y":66,"highlight":true,"active":false},"end":{"x":90.84375,"y":148,"highlight":true,"active":false}},"invalidated":true}]}},"example://2":{"length":{"data":[{"visible":true,"active":false,"handles":{"start":{"x":101.84375,"y":120,"highlight":true,"active":false},"end":{"x":144.84375,"y":55,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":208.84375,"y":141,"highlight":true,"active":false},"end":{"x":81.84375,"y":163,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":52.84375,"y":77,"highlight":true,"active":false},"end":{"x":88.84375,"y":109,"highlight":true,"active":false}},"invalidated":true}]}}},"elementToolState":{"axial1":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}},"axial2":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}}},"elementViewport":{"axial1":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false},"axial2":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false}}}'>Example 2: Length</option>
+                    <option value='{"imageIdToolState":{"example://2":{"probe":{"data":[{"visible":true,"active":false,"handles":{"end":{"x":64.035618869664,"y":21.05592153169944,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"end":{"x":65.59724509573118,"y":116.31512132179843,"highlight":true,"active":false}},"invalidated":true}]}}},"elementToolState":{"axial1":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}},"axial2":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}}},"elementViewport":{"axial1":{"scale":0.6403580980567946,"translation":{"x":-31.53882275758602,"y":-3.931383582470403},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false},"axial2":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false}}}' checked>Example 1: Probe points</option>
+                    <!--TODO: Recreate this, it's now incompatible
+                    <option value='{"imageIdToolState":{"example://1":{"length":{"data":[{"visible":true,"active":false,"handles":{"start":{"x":159.84375,"y":87,"highlight":true,"active":true},"end":{"x":137.84375,"y":100,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":103.84375,"y":66,"highlight":true,"active":false},"end":{"x":90.84375,"y":148,"highlight":true,"active":false}},"invalidated":true}]}},"example://2":{"length":{"data":[{"visible":true,"active":false,"handles":{"start":{"x":101.84375,"y":120,"highlight":true,"active":false},"end":{"x":144.84375,"y":55,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":208.84375,"y":141,"highlight":true,"active":false},"end":{"x":81.84375,"y":163,"highlight":true,"active":false}},"invalidated":true},{"visible":true,"active":false,"handles":{"start":{"x":52.84375,"y":77,"highlight":true,"active":false},"end":{"x":88.84375,"y":109,"highlight":true,"active":false},"textBox":{"x":88.84375,"y":109,"highlight":true,"active":false, "hasMoved": false}},"invalidated":true}]}}},"elementToolState":{"axial1":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}},"axial2":{"stack":{"data":[{"currentImageIdIndex":1,"imageIds":["example://1","example://2"]}]}}},"elementViewport":{"axial1":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false},"axial2":{"scale":1,"translation":{"x":0,"y":0},"voi":{"windowWidth":256,"windowCenter":127},"pixelReplication":false,"rotation":0,"hflip":false,"vflip":false}}}'>Example 2: Length</option>
+                    !-->
                 </select>
             </div>
         </div>
@@ -62,10 +64,6 @@
 </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -86,30 +84,30 @@ is used by our example image loader-->
         return h + ':' + m;
     }
 
-    var save = $("#save");
-    var restore = $("#restore");
+    var save = document.getElementById('save');
+    var restore = document.getElementById('restore');
 
-    var axialElement1 = $('#axial1').get(0);
-    var axialElement2 = $('#axial2').get(0);
+    var axialElement1 = document.getElementById('axial1');
+    var axialElement2 = document.getElementById('axial2');
 
     var elements = [axialElement1, axialElement2];
 
-    save.on("click", function() {
+    save.addEventListener("click", function() {
         console.log("Saving state");
-        var appState = cornerstoneTools.appState.save(elements)
+        var appState = cornerstoneTools.appState.save(elements);
         var serializedState = JSON.stringify(appState);
         // console.log(serializedState);
         
-        var select = $(".savedState select").get(0);
+        var select = document.querySelector(".savedState select");
         var newOption = document.createElement("option");
         newOption.value = serializedState;
         newOption.text = "Saved at " + timeNow();
         select.appendChild(newOption);
     })
 
-    restore.on("click", function() {
+    restore.addEventListener("click", function() {
         console.log("Restoring state");
-        var serializedState = $(".savedState select").find(":selected").val();
+        var serializedState = document.querySelector(".savedState option:checked").value;
         var appState = JSON.parse(serializedState);
         cornerstoneTools.appState.restore(appState)
     })
@@ -118,12 +116,13 @@ is used by our example image loader-->
     var axialImageIds = [
         'example://1',
         'example://2'
-    ]
+    ];
 
     var axialStack1 = {
         currentImageIdIndex : 0,
         imageIds: axialImageIds
     };
+
     var axialStack2 = {
         currentImageIdIndex : 1,
         imageIds: axialImageIds

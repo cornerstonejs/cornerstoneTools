@@ -47,10 +47,10 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="disable" class="list-group-item">Disable</a>
-                <a href="#" id="enable" class="list-group-item">Enable</a>
-                <a href="#" id="activate" class="list-group-item">Activate</a>
-                <a href="#" id="deactivate" class="list-group-item">Deactivate</a>
+                <a id="disable" class="list-group-item">Disable</a>
+                <a id="enable" class="list-group-item">Enable</a>
+                <a id="activate" class="list-group-item">Activate</a>
+                <a id="deactivate" class="list-group-item">Deactivate</a>
             </ul>
 
             <label for="startFrom">Start from</label>
@@ -149,10 +149,6 @@
     </div>
 
 </body>
-
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
 <script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
@@ -171,21 +167,21 @@ is used by our example image loader-->
     var dialog = document.querySelector('dialog');
     dialogPolyfill.registerDialog(dialog);
 
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
-    var startFrom = $('#startFrom');
-    startFrom.on('change', function() {
+    var startFrom = document.getElementById('startFrom');
+    startFrom.addEventListener('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
-        config.current = startFrom.val();
+        config.current = startFrom.value;
         console.log("Changed starting point to: " + config.current)
     })
 
-    var ascending = $("#ascending");
-    ascending.on('change', function() {
+    var ascending = document.getElementById('ascending');
+    ascending.addEventListener('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
-        config.ascending = ascending.is(':checked');
+        config.ascending = ascending.checked;
         var currentIndex = config.markers.indexOf(config.current);
         
         // If we change direction, modify the upcoming label as required
@@ -214,45 +210,49 @@ is used by our example image loader-->
         console.log("Changed ascending to: " + config.ascending)
     })
 
-    var loop = $("#loop");
-    loop.on('change', function() {
+    var loop = document.getElementById('loop');
+    loop.addEventListener('change', function() {
         var config = cornerstoneTools.textMarker.getConfiguration(config);
-        config.loop = loop.is(':checked');
+        config.loop = loop.checked;
         console.log("Changed loop to: " + config.loop)
     })
 
     var toolType = 'textMarker';
-    var clearLabels = $("#clearLabels");
-    clearLabels.on('click', function() {
+    var clearLabels = document.getElementById('clearLabels');
+    clearLabels.addEventListener('click', function() {
         cornerstoneTools.clearToolState(element, toolType);
         cornerstone.updateImage(element);
     })
 
 
     function changeTextCallback(data, eventData, doneChangingTextCallback) {
-        var dialog = $('.relabelDialog');
-        var select = dialog.find('.relabelSelect');
-        var confirm = dialog.find('.relabelConfirm');
-        var remove = dialog.find('.relabelRemove');
+        var dialog = document.querySelector('.relabelDialog');
+        var select = dialog.querySelector('.relabelSelect');
+        var confirm = dialog.querySelector('.relabelConfirm');
+        var remove = dialog.querySelector('.relabelRemove');
 
-        dialog.get(0).show();
-        select.val(data.text);
+        dialog.show();
+        select.value = data.text;
 
-        confirm.off('click');
-        confirm.on('click', function() {
-            dialog.get(0).close();
-            doneChangingTextCallback(data, select.val());
-        });
+        function confirmHandler() {
+            dialog.close();
+            doneChangingTextCallback(data, select.value);
+        }
+
+        confirm.removeEventListener('click', confirmHandler);
+        confirm.addEventListener('click', confirmHandler);
 
         // If the remove button is clicked, delete this marker
-        remove.off('click');
-        remove.on('click', function() {
-            dialog.get(0).close();
+        function removeHandler () {
+            dialog.close();
             doneChangingTextCallback(data, undefined, true);
-        });
+        }
 
-        dialog.off("keypress");
-        dialog.on('keypress', keyPressHandler);
+        remove.removeEventListener('click', removeHandler);
+        remove.addEventListener('click', removeHandler);
+
+        dialog.removeEventListener("keypress", keyPressHandler);
+        dialog.addEventListener('keypress', keyPressHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -262,8 +262,8 @@ is used by our example image loader-->
         }
 
         function closeHandler() {
-            dialog.get(0).close();
-            doneChangingTextCallback(data, select.val());
+            dialog.close();
+            doneChangingTextCallback(data, select.value);
         }
         
     }
@@ -274,9 +274,9 @@ is used by our example image loader-->
                      'T6', 'T5', 'T4', 'T3', 'T2', 'T1',
                      'C7', 'C6', 'C5', 'C4', 'C3', 'C2', 'C1', // Cervical spine
                      ],
-        'current': startFrom.val(),
-        'ascending': ascending.is(':checked'),
-        'loop': loop.is(':checked'),
+        'current': startFrom.value,
+        'ascending': ascending.checked,
+        'loop': loop.checked,
         'changeTextCallback': changeTextCallback
     };
 
@@ -296,32 +296,32 @@ is used by our example image loader-->
         cornerstoneTools.textMarkerTouch.activate(element);
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
-        activate("#activate");
+        activate("activate");
 
         function activate(id)
         {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+            document.querySelectorAll('a').forEach(function(elem) { elem.classList.remove('active'); });
+            document.getElementById(id).classList.add('active');
         }
 
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.textMarker.disable(element);
             return false;
         });
-        $('#enable').click(function() {
-            activate("#enable");
+        document.getElementById('enable').addEventListener('click', function() {
+            activate("enable");
             cornerstoneTools.textMarker.enable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.textMarker.activate(element, 1);
             return false;
         });
-        $('#deactivate').click(function() {
-            activate("#deactivate");
+        document.getElementById('deactivate').addEventListener('click', function() {
+            activate("deactivate");
             cornerstoneTools.textMarker.deactivate(element, 1);
             return false;
         });

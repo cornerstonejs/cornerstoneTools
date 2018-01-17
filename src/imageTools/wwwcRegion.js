@@ -1,17 +1,17 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
 const toolType = 'wwwcRegion';
 
 let configuration = {
   minWindowWidth: 10
 };
-
-let currentMouseButtonMask;
 
 /** Calculates the minimum, maximum, and mean value in the given pixel array */
 function calculateMinMaxMean (storedPixelLuminanceData, globalMin, globalMax) {
@@ -47,38 +47,34 @@ function calculateMinMaxMean (storedPixelLuminanceData, globalMin, globalMax) {
 /* Erases the toolData and rebinds the handlers when the image changes */
 function newImageCallback (e) {
   const eventData = e.detail;
-  const toolData = getToolState(eventData.element, toolType);
+  const element = eventData.element;
+  const toolData = getToolState(element, toolType);
 
   if (toolData && toolData.data) {
     toolData.data = [];
   }
 
-  external.$(eventData.element).off('CornerstoneToolsMouseMove', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
 
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, dragEndCallback);
 
-  const mouseData = {
-    mouseButtonMask: currentMouseButtonMask
-  };
-
-  external.$(eventData.element).on('CornerstoneToolsMouseDown', mouseData, mouseDownCallback);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 }
 
 /* Applies the windowing procedure when the mouse drag ends */
-function dragEndCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseMove', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
+function dragEndCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
 
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', dragEndCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
 
-  const mouseData = {
-    mouseButtonMask: currentMouseButtonMask
-  };
+  element.removeEventListener(EVENTS.MOUSE_UP, dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, dragEndCallback);
 
-  external.$(eventData.element).on('CornerstoneToolsMouseDown', mouseData, mouseDownCallback);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
   const toolData = getToolState(eventData.element, toolType);
 
@@ -146,28 +142,33 @@ function applyWWWCRegion (eventData) {
   cornerstone.updateImage(eventData.element);
 }
 
-function whichMovement (e, eventData) {
+function whichMovement (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
-  external.$(element).off('CornerstoneToolsMouseMove');
-  external.$(element).off('CornerstoneToolsMouseDrag');
+  element.removeEventListener(EVENTS.MOUSE_MOVE, whichMovement);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, whichMovement);
 
-  external.$(element).on('CornerstoneToolsMouseMove', dragCallback);
-  external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
+  element.addEventListener(EVENTS.MOUSE_MOVE, dragCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
 
-  external.$(element).on('CornerstoneToolsMouseClick', dragEndCallback);
-  if (e.type === 'CornerstoneToolsMouseDrag') {
-    external.$(element).on('CornerstoneToolsMouseUp', dragEndCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, dragEndCallback);
+  if (e.type === EVENTS.MOUSE_DRAG) {
+    element.addEventListener(EVENTS.MOUSE_UP, dragEndCallback);
   }
 }
 
 /** Records the start point and attaches the drag event handler */
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', eventData, whichMovement);
-    external.$(eventData.element).on('CornerstoneToolsMouseMove', eventData, whichMovement);
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-    external.$(eventData.element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, whichMovement);
+    element.addEventListener(EVENTS.MOUSE_MOVE, whichMovement);
+
+    element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     recordStartPoint(eventData);
 
     return false;
@@ -193,26 +194,30 @@ function recordStartPoint (eventData) {
 }
 
 /** Draws the rectangular region while the touch or mouse event drag occurs */
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
-  const toolData = getToolState(eventData.element, toolType);
+  const toolData = getToolState(element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
     return;
   }
 
   // Update the endpoint as the mouse/touch is dragged
-  const endPoint = {
+  toolData.data[0].endPoint = {
     x: eventData.currentPoints.image.x,
     y: eventData.currentPoints.image.y
   };
 
-  toolData.data[0].endPoint = endPoint;
-  external.cornerstone.updateImage(eventData.element);
+  external.cornerstone.updateImage(element);
 }
 
 function onImageRendered (e) {
   const eventData = e.detail;
+  const element = eventData.element;
+  const context = eventData.canvasContext;
   const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 
@@ -227,18 +232,14 @@ function onImageRendered (e) {
     return;
   }
 
-  // Get the current element's canvas
-  const canvas = external.$(eventData.element).find('canvas').get(0);
-  const context = canvas.getContext('2d');
-
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   // Set to the active tool color
   const color = toolColors.getActiveColor();
 
   // Calculate the rectangle parameters
-  const startPointCanvas = cornerstone.pixelToCanvas(eventData.element, startPoint);
-  const endPointCanvas = cornerstone.pixelToCanvas(eventData.element, endPoint);
+  const startPointCanvas = cornerstone.pixelToCanvas(element, startPoint);
+  const endPointCanvas = cornerstone.pixelToCanvas(element, endPoint);
 
   const left = Math.min(startPointCanvas.x, endPointCanvas.x);
   const top = Math.min(startPointCanvas.y, endPointCanvas.y);
@@ -268,26 +269,22 @@ function onImageRendered (e) {
 
 // --- Mouse tool enable / disable --- ///
 function disable (element) {
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
-  external.$(element).off('CornerstoneToolsMouseUp', dragEndCallback);
-  external.$(element).off('CornerstoneToolsMouseClick', dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, dragEndCallback);
 
-  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
 
 function activate (element, mouseButtonMask) {
-  const eventData = {
-    mouseButtonMask
-  };
-
-  currentMouseButtonMask = mouseButtonMask;
+  setToolOptions(toolType, element, { mouseButtonMask });
 
   const toolData = getToolState(element, toolType);
 
@@ -297,33 +294,33 @@ function activate (element, mouseButtonMask) {
     addToolState(element, toolType, data);
   }
 
-  external.$(element).off('CornerstoneToolsMouseDown', mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
-  external.$(element).off('CornerstoneToolsMouseUp', dragEndCallback);
-  external.$(element).off('CornerstoneToolsMouseClick', dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, dragEndCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, dragEndCallback);
 
-  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsMouseMove', dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-  element.removeEventListener('cornerstonenewimage', newImageCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 
-  external.$(element).on('CornerstoneToolsMouseDown', eventData, mouseDownCallback);
-  element.addEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
-  element.addEventListener('cornerstonenewimage', newImageCallback);
+  element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
 
 // --- Touch tool enable / disable --- //
 function disableTouchDrag (element) {
-  external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
-  external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
+  element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function activateTouchDrag (element) {
@@ -335,15 +332,15 @@ function activateTouchDrag (element) {
     addToolState(element, toolType, data);
   }
 
-  external.$(element).off('CornerstoneToolsTouchDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsTouchStart', recordStartPoint);
-  external.$(element).off('CornerstoneToolsDragEnd', applyWWWCRegion);
-  element.removeEventListener('cornerstoneimagerendered', onImageRendered);
+  element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
+  element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
-  external.$(element).on('CornerstoneToolsTouchDrag', dragCallback);
-  external.$(element).on('CornerstoneToolsTouchStart', recordStartPoint);
-  external.$(element).on('CornerstoneToolsDragEnd', applyWWWCRegion);
-  element.addEventListener('cornerstoneimagerendered', onImageRendered);
+  element.addEventListener(EVENTS.TOUCH_DRAG, dragCallback);
+  element.addEventListener(EVENTS.TOUCH_START, recordStartPoint);
+  element.addEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function getConfiguration () {

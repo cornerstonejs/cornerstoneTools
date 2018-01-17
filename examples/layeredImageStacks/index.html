@@ -37,14 +37,8 @@
       </div>
       <div class="col-xs-12 col-sm-3">
             <div style="margin-bottom: 15px;">
-                <label for="syncViewports"> Sync Viewports</label><br>
-                <label for="syncViewportsYes">
-                    <input id="syncViewportsYes" name="syncViewports" type="radio" value="1" checked>
-                    Yes &nbsp;&nbsp;
-                </label>
-                <label for="syncViewportsNo">
-                    <input id="syncViewportsNo" name="syncViewports" type="radio" value="0">
-                    No
+                <label for="syncViewports"> Sync Viewports
+                    <input name="syncViewports" type="checkbox" checked>
                 </label>
             </div>
 
@@ -54,9 +48,9 @@
                 <label>Layer Properties</label>
                 <div style="width: 100%; padding: 5px 5px 5px 10px;">
                     <div style="margin-bottom: 15px;">
-                        <label for="visible"> Visible</label><br>
-                        <input name="visible" type="radio" value="1"> Yes &nbsp;&nbsp;
-                        <input name="visible" type="radio" value="0"> No
+                        <label for="visible"> Visible
+                            <input name="visible" type="checkbox" checked>
+                        </label>
                     </div>
                     <div style="margin-bottom: 15px;">
                         <label for="colormaps"> Colormap </label>
@@ -75,10 +69,6 @@
   </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.js"></script>
   
@@ -96,45 +86,45 @@ is used by our example image loader-->
 
   // Select the right layer in the dropdown
   function updateSelectedLayer(layerId) {
-      var $layers = $('#layers');
-      var currentLayerId = $layers.val();
+      var layers = document.getElementById('layers');
+      var currentLayerId = layers.value;
 
       if(currentLayerId !== layerId) {
-          $layers.val(layerId);
-          $layers.trigger('change');
+          layers.value = layerId;
+          layers.trigger('change');
       }
   }
 
   // Listen to `change` event to set the selected layer as active
-  $("#layers").change(function(event) {
+  document.getElementById('layers').addEventListener('change', function(event) {
       var layerId = event.currentTarget.value;
       cornerstone.setActiveLayer(element, layerId);
   });
 
   // Listen to `change` event to activate/deactivate the viewport synchronization
-  $('input[name=syncViewports]').change(function(event) {
+  document.querySelector('input[name=syncViewports]').addEventListener('change', function(event) {
       var enabledElement = cornerstone.getEnabledElement(element);
-      enabledElement.syncViewports = (event.currentTarget.value === "1");
+      enabledElement.syncViewports = event.currentTarget.checked;
       cornerstone.updateImage(element);
   });
 
-  $('#colormaps').change(function() {
+  document.getElementById('colormaps').addEventListener('change', function() {
       var layer = cornerstone.getActiveLayer(element);
-      layer.viewport.colormap = $('#colormaps').val();
+      layer.viewport.colormap = document.getElementById('colormaps').value;
       cornerstone.updateImage(element);
   });
 
   // Listen to `change` event to update the opacity of the active layer
-  $("#imageOpacity").change(function(event) {
+  document.getElementById('imageOpacity').addEventListener('change', function(event) {
       var layer = cornerstone.getActiveLayer(element);
       layer.options.opacity = parseFloat(event.currentTarget.value);
       cornerstone.updateImage(element);
   });
 
   // Listen to `change` event to update the visibility of the active layer
-  $('input[name=visible]').change(function(event) {
+  document.querySelector('input[name=visible]').addEventListener('change', function(event) {
       var layer = cornerstone.getActiveLayer(element);
-      layer.options.visible = (event.currentTarget.value === "1");
+      layer.options.visible = event.currentTarget.checked;
       cornerstone.updateImage(element);
   });
 
@@ -143,17 +133,17 @@ is used by our example image loader-->
   element.addEventListener('cornerstonelayeradded', function(e) {
       var eventData = e.detail;
       var layer = cornerstone.getLayer(eventData.element, eventData.layerId);
-      var $layers = $('#layers');
-      var $layerOption = $('<option></option>')
-          .val(layer.layerId)
-          .text(layer.options.name);
+      var layers = document.getElementById('layers');
+      var layerOption = document.createElement("OPTION");
+      layerOption.value = layer.layerId;
+      layerOption.textContent = layer.options.name;
 
       // Set the layer as selected in case its the the first layer to be added
-      if($layers.children().length === 0) {
-          $layerOption.prop('selected', true);
+      if(layers.children.length === 0) {
+          layerOption.selected = true;
       }
 
-      $layers.append($layerOption);
+      layers.appendChild(layerOption);
   });
 
   // This event will be called every time cornerstone.setActiveLayer is called
@@ -166,24 +156,24 @@ is used by our example image loader-->
       var visible = layer.options.visible !== false ? 1 : 0;
 
       // Restore all properties for the active layer
-      $('#imageOpacity').val(opacity);
-      $("input[name=visible][value=" + visible + "]").prop('checked', true);
-      $('#colormaps').val(colormap);
+      document.getElementById('imageOpacity').value = opacity;
+      document.querySelector("input[name=visible]").checked = !!visible;
+      document.getElementById('colormaps').value = colormap;
 
       updateSelectedLayer(eventData.layerId);
   });
 
   // Populate colormap dropdown with all the default ones
   function fillColormapsList() {
-      var $dropdown = $('#colormaps');
+      var dropdown = document.getElementById('colormaps');
       var colormapsList = cornerstone.colors.getColormapsList();
 
       var addOption = function(id, name) {
-          var $option = $('<option></option>')
-              .val(id)
-              .text(name);
+        var option = document.createElement("OPTION");
+        option.value = id;
+        option.textContent = name;
 
-          $dropdown.append($option);
+        dropdown.appendChild(option);
       };
 
       colormapsList.forEach(function(colormapItem) {
@@ -201,7 +191,7 @@ is used by our example image loader-->
       visible: true,
       name: 'CT'
     }
-  }
+  };
 
   var petStack = {
     imageIds: ['pet://1', 'pet://2'],
@@ -239,7 +229,7 @@ is used by our example image loader-->
     });
 
     return closest;
-  }
+  };
 
   // Create a stack from the image object array
   cornerstone.loadAndCacheImage(ctStack.imageIds[0]).then(image => {

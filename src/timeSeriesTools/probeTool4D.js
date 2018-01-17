@@ -1,10 +1,11 @@
 import external from '../externalModules.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import setContextToDisplayFontSize from '../util/setContextToDisplayFontSize.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import MeasurementManager from '../measurementManager/measurementManager.js';
 import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
+import textStyle from '../stateManagement/textStyle.js';
+import drawTextBox from '../util/drawTextBox.js';
 
 const toolType = 'probe4D';
 
@@ -66,7 +67,9 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const cornerstone = external.cornerstone;
+  const eventData = e.detail;
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -75,10 +78,12 @@ function onImageRendered (e, eventData) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
+  const context = eventData.canvasContext;
 
-  external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+  context.setTransform(1, 0, 0, 1, 0, 0);
+
   const color = 'white';
+  const font = textStyle.getFont();
 
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();
@@ -89,20 +94,19 @@ function onImageRendered (e, eventData) {
     drawHandles(context, eventData, data.handles, color);
     context.stroke();
 
-    // Draw text
-    const fontParameters = setContextToDisplayFontSize(eventData.enabledElement, eventData.canvasContext, 15);
+    context.font = font;
 
-    context.font = `${fontParameters.fontSize}px Arial`;
+    const coords = {
+      // Translate the x/y away from the cursor
+      x: data.handles.end.x + 3,
+      y: data.handles.end.y - 3
+    };
 
-    // Translate the x/y away from the cursor
-    const x = Math.round(data.handles.end.x);
-    const y = Math.round(data.handles.end.y);
-    const textX = data.handles.end.x + 3;
-    const textY = data.handles.end.y - 3;
+    const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
     context.fillStyle = color;
 
-    context.fillText(`${x},${y}`, textX, textY);
+    drawTextBox(context, `${data.handles.end.x}, ${data.handles.end.y}`, textCoords.x, textCoords.y, color);
 
     context.restore();
   }

@@ -26,8 +26,8 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="enable" class="list-group-item active">Enable</a>
-                <a href="#" id="disable" class="list-group-item">Disable</a>
+                <a id="enable" class="list-group-item active">Enable</a>
+                <a id="disable" class="list-group-item">Disable</a>
             </ul>
         </div>
         <div class="col-xs-10">
@@ -56,10 +56,6 @@
 </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -75,8 +71,8 @@ is used by our example image loader-->
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var axialElement = $('#axial').get(0);
-    var coronalElement = $('#coronal').get(0);
+    var axialElement = document.getElementById('axial');
+    var coronalElement = document.getElementById('coronal');
 
     var axialImageIds = [
         'example://1',
@@ -88,7 +84,7 @@ is used by our example image loader-->
         imageIds: axialImageIds
     };
 
-    var synchronizer = new cornerstoneTools.Synchronizer("CornerstoneNewImage", cornerstoneTools.updateImageSynchronizer);
+    var synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
 
     // image enable the dicomImage element
     cornerstone.enable(axialElement);
@@ -102,7 +98,7 @@ is used by our example image loader-->
     cornerstoneTools.mouseInput.enable(coronalElement);
     cornerstoneTools.touchInput.enable(coronalElement);
 
-    var axialDeferred = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
+    var axialPromise = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
         // display this image
         cornerstone.displayImage(axialElement, image);
 
@@ -115,12 +111,12 @@ is used by our example image loader-->
         cornerstoneTools.stackScrollWheel.activate(axialElement);
     });
 
-    var coronalDeferred = cornerstone.loadImage('example://3').then(function(image) {
+    var coronalPromise = cornerstone.loadImage('example://3').then(function(image) {
         // display this image
         cornerstone.displayImage(coronalElement, image);
     });
 
-    $.when(axialDeferred, coronalDeferred).then(function() {
+    Promise.all([axialPromise, coronalPromise]).then(function() {
         // Add the enabled elements to the synchronization context
         synchronizer.add(axialElement);
         synchronizer.add(coronalElement);
@@ -131,21 +127,24 @@ is used by our example image loader-->
         cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
         cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+              elem.classList.remove('active');
+            });
+
+            document.getElementById(id).classList.add('active');
         }
-        $('#enable').click(function() {
-            activate("#enable");
+
+        document.getElementById('enable').addEventListener('click', function() {
+            activate("enable");
             cornerstoneTools.crosshairs.enable(coronalElement, 1, synchronizer);
             cornerstoneTools.crosshairs.enable(axialElement, 1, synchronizer);
             cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
             cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
             return false;
         });
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.crosshairs.disable(coronalElement);
             cornerstoneTools.crosshairs.disable(axialElement);
             cornerstoneTools.crosshairsTouch.disable(coronalElement);

@@ -22,7 +22,7 @@ let maxNumRequests = {
 let awake = false;
 const grabDelay = 20;
 
-function addRequest (element, imageId, type, preventCache, doneCallback, failCallback) {
+function addRequest (element, imageId, type, preventCache, doneCallback, failCallback, addToBeginning) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
   }
@@ -41,10 +41,10 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
   };
 
   // If this imageId is in the cache, resolve it immediately
-  const imagePromise = external.cornerstone.imageCache.getImagePromise(imageId);
+  const imageLoadObject = external.cornerstone.imageCache.getImageLoadObject(imageId);
 
-  if (imagePromise) {
-    imagePromise.then(function (image) {
+  if (imageLoadObject) {
+    imageLoadObject.promise.then(function (image) {
       doneCallback(image);
     }, function (error) {
       failCallback(error);
@@ -53,8 +53,13 @@ function addRequest (element, imageId, type, preventCache, doneCallback, failCal
     return;
   }
 
-  // Add it to the end of the stack
-  requestPool[type].push(requestDetails);
+  if (addToBeginning) {
+    // Add it to the beginning of the stack
+    requestPool[type].unshift(requestDetails);
+  } else {
+    // Add it to the end of the stack
+    requestPool[type].push(requestDetails);
+  }
 }
 
 function clearRequestStack (type) {
@@ -89,12 +94,12 @@ function sendRequest (requestDetails) {
   const failCallback = requestDetails.failCallback;
 
   // Check if we already have this image promise in the cache
-  const imagePromise = cornerstone.imageCache.getImagePromise(imageId);
+  const imageLoadObject = cornerstone.imageCache.getImageLoadObject(imageId);
 
-  if (imagePromise) {
+  if (imageLoadObject) {
     // If we do, remove from list (when resolved, as we could have
     // Pending prefetch requests) and stop processing this iteration
-    imagePromise.then(function (image) {
+    imageLoadObject.promise.then(function (image) {
       numRequests[type]--;
       // Console.log(numRequests);
 

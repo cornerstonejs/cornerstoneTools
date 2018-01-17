@@ -1,21 +1,33 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { getToolOptions } from '../toolOptions.js';
 
-function mouseUpCallback (e, eventData) {
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseDragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+const toolType = 'wwwc';
+
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }
 
-function mouseDownCallback (e, eventData) {
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseDragCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
@@ -36,14 +48,16 @@ function defaultStrategy (eventData) {
   eventData.viewport.voi.windowCenter += (deltaY);
 }
 
-function mouseDragCallback (e, eventData) {
+function mouseDragCallback (e) {
+  const eventData = e.detail;
+
   wwwc.strategy(eventData);
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
-
-  return false; // False = cases jquery to preventDefault() and stopPropagation() this event
 }
 
-function touchDragCallback (e, eventData) {
+function touchDragCallback (e) {
+  const eventData = e.detail;
+
   e.stopImmediatePropagation(); // Prevent CornerstoneToolsTouchStartActive from killing any press events
   const dragData = eventData;
 
@@ -72,7 +86,7 @@ function touchDragCallback (e, eventData) {
   external.cornerstone.setViewport(dragData.element, dragData.viewport);
 }
 
-const wwwc = simpleMouseButtonTool(mouseDownCallback);
+const wwwc = simpleMouseButtonTool(mouseDownCallback, toolType);
 
 wwwc.strategies = {
   default: defaultStrategy

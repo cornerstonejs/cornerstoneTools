@@ -64,10 +64,6 @@
   </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
   
@@ -80,8 +76,8 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-  var $radiusSlider = $('#radiusSlider');
-  var radius = $radiusSlider.val();
+  var radiusSlider = document.getElementById('radiusSlider');
+  var radius = radiusSlider.value;
   var element = document.getElementById('dicomImage');
 
   var configuration = cornerstoneTools.brush.getConfiguration();
@@ -132,38 +128,38 @@ is used by our example image loader-->
     cornerstoneTools[toolType].activate(element, 1);
   });
 
-  var $drawEraseButton = $('#drawErase');
+  var drawEraseButton = document.getElementById('drawErase');
   let drawValue = 1;
-  $drawEraseButton.click(function () {
+  drawEraseButton.addEventListener('click', function () {
     var configuration = cornerstoneTools[toolType].getConfiguration();
     if (configuration.draw === 0) {
       configuration.draw = 1;
-      $drawEraseButton.text("Erase");
+      drawEraseButton.textContent = "Erase";
     } else {
       configuration.draw = 0;
-      $drawEraseButton.text("Draw");
+      drawEraseButton.textContent = "Draw";
     }
     cornerstoneTools[toolType].setConfiguration(configuration);
   });
   
-  var $radiusSlider = $('#radiusSlider');
-  $radiusSlider.on('input', function(){
+  var radiusSlider = document.getElementById('radiusSlider');
+  radiusSlider.addEventListener('input', function(){
     var configuration = cornerstoneTools[toolType].getConfiguration();
-    var radius = $radiusSlider.val();
-    $('#valBox').text(radius);
+    var radius = radiusSlider.value;
+    document.getElementById('valBox').textContent = radius;
     configuration.radius = parseInt(radius, 10);
     cornerstoneTools[toolType].setConfiguration(configuration);
     cornerstone.updateImage(element, true);
   });
 
-  var $toolType = $('#toolType');
-  $toolType.on('change', function(){
-    toolType = $toolType.val();
+  var toolTypeSelect = document.getElementById('toolType');
+  toolTypeSelect.addEventListener('change', function(){
+    toolType = toolTypeSelect.value;
     cornerstoneTools.brush.disable(element);
     cornerstoneTools.adaptiveBrush.disable(element);
 
     var configuration = cornerstoneTools[toolType].getConfiguration();
-    var radius = $radiusSlider.val();
+    var radius = radiusSlider.value;
     configuration.radius = parseInt(radius, 10);
     configuration.draw = drawValue;
     cornerstoneTools[toolType].setConfiguration(configuration);
