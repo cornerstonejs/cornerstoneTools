@@ -13,19 +13,20 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       return;
     }
 
-    element.addEventListener('cornerstonenewimage', function(event) {
-      const listener = this;
+    const newImageHandler = function (event) {
       const index = stackData.imageIds.indexOf(event.detail.image.imageId);
 
       if (index === pendingEvent.index) {
         stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener('cornerstonenewimage', listener);
+        element.removeEventListener('cornerstonenewimage', newImageHandler);
 
         if (stackData.pending.length > 0) {
           scrollWithoutSkipping(stackData, stackData.pending[0], element);
         }
       }
-    });
+    };
+
+    element.addEventListener('cornerstonenewimage', newImageHandler);
 
     scrollToIndex(element, pendingEvent.index);
   }
@@ -59,7 +60,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
     scrollToIndex(element, newImageIdIndex);
   } else {
     const pendingEvent = {
-      index : newImageIdIndex
+      index: newImageIdIndex
     };
 
     stackData.pending.push(pendingEvent);
