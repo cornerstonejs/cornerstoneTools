@@ -225,26 +225,22 @@ function startGrabbing () {
 }
 
 function getNextRequest () {
-  let stillRequest = false;
+  let hasRequestsInQueue = false;
 
   for (let i = 0; i < requestPoolTypes.length; i++) {
     const name = requestPoolTypes[i].name;
+    const hasPooledRequests = requestPool[name].length > 0;
+    const isUnderMaxActiveRequests = numRequests[name] < getMaxRequests(i);
 
-    if (requestPool[name].length && numRequests[name] < getMaxRequests(i)) {
+    if (hasPooledRequests && isUnderMaxActiveRequests) {
       return requestPool[name].shift();
     }
-  }
-
-  for (let i = 0; i < requestPoolTypes.length; i++) {
-    const name = requestPoolTypes[i].name;
-
-    if (requestPool[name].length) {
-      stillRequest = true;
-      break;
+    if (hasPooledRequests) {
+      hasRequestsInQueue = true;
     }
   }
 
-  if (!stillRequest) {
+  if (!hasRequestsInQueue) {
     awake = false;
   }
 
