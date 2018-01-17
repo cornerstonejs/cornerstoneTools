@@ -7,7 +7,7 @@ describe('clearRequestStack with an invalid type', function () {
 
   it('should throw an error when attempting to clear the request stack with an invalid type', function () {
     const nonExistantType = 'NotAnExistingType';
-    expect(() => requestPoolManager.clearRequestStack(nonExistantType)).to.throw(Error, 'Request type must be one of interaction, thumbnail, or prefetch');
+    expect(() => requestPoolManager.clearRequestStack(nonExistantType)).to.throw(Error, `Request type ${nonExistantType} is not defined`);
   });
 });
 
