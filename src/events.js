@@ -41,6 +41,7 @@ const EVENTS = {
   MEASUREMENT_REMOVED: 'cornerstonemeasurementremoved',
   TOOL_DEACTIVATED: 'cornerstonetoolstooldeactivated',
   CLIP_STOPPED: 'cornerstonetoolsclipstopped',
+  CLIP_SCROLLED: 'cornerstonetoolsclipscrolled',
   STACK_SCROLL: 'cornerstonestackscroll', // Should be renamed
 
   LINE_SAMPLE_UPDATED: 'cornerstonelinesampleupdated'
