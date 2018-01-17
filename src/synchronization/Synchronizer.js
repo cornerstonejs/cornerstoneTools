@@ -10,6 +10,7 @@ function unique (array) {
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
+//@param event can contain more than one event, separated by a space
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;
@@ -162,7 +163,9 @@ function Synchronizer (event, handler) {
     sourceElements.push(element);
 
     // Subscribe to the event
-    element.addEventListener(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.addEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -210,7 +213,9 @@ function Synchronizer (event, handler) {
     sourceElements.splice(index, 1);
 
     // Stop listening for the event
-    element.removeEventListener(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.removeEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
