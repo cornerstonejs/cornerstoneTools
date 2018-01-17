@@ -4,6 +4,55 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2017-12-13
+### Added
+- Began the [Getting Started guide](https://tools.cornerstonejs.org/essentials/getting-started.html) (thanks @dannyrb)
+- Since we are now using addEventListener/removeEventListener instead of jQuery's on/off, we had to create a separate cache for event data for each element / tool type combination since it cannot be passed to the handler when creating the listener.
+
+This is present in toolOptions.js and available as ````setToolOptions(toolType, element, options)```` and ````getToolOptions(toolType, element)````. These are now used to keep track of which mouse button is enabled for which tool and element.
+
+### Changed
+- *Breaking Change!!!* Removed all dependence on jQuery. This was a long process and we'd like to thank all the contributors that have come forward from the community to help.
+
+If you are listening to any Cornerstone Tools event, and your event handler has the signature
+
+````javascript
+function(event, eventData) {
+	// do stuff
+}````
+
+You need to switch it to:
+
+````javascript
+function(event) {
+	const eventData = event.detail;
+	// do stuff
+}
+````
+
+since this is how it is now being fired using native CustomEvents.
+
+- *Breaking Change!!!* Lower-cased all event names. This was done because we had two parallel sets of events (jQuery events and native Custom Events) in the previous major version. The jQuery events have now been removed. Check events.js for the list of event names. e.g. CornerstoneToolsMouseDrag -> cornerstonetoolsmousedrag
+
+- *Breaking Change!!!* jQuery Events are no longer being dispatched by triggerEvent.js
+
+- *Breaking Change!!!* Cornerstone Tools now depends on Cornerstone Core >= 2.0.0.
+
+- Removed jQuery from nearly all of the examples and replaced with native APIs. It is still being used in the All Image Tools example, solely for the Bootstrap dropdown.
+- Centralized all of the event names in events.js
+- Switched ESLint's capitalized-comments warning to ignore inline comments
+
+## [1.1.3] - 2017-12-13
+### Added
+- Gitbook integration for improving our documentation. View it live at https://tools.cornerstonejs.org (thanks @dannyrb)
+- eslint-plugin-import to force us to keep .js in the import paths and make sure all of our paths resolve
+
+### Changed
+- Moved the repository from Chris Hafey's (@chafey) personal page to a new Organization (@cornerstonejs). Renamed all the relevant links. Join us at @cornerstonejs to start contributing!
+- Modernized the README with GIFs for each example (thanks @dannyrb)
+- Bug fix for stackImagePositionSynchronizer for cases where no imagePositionPatient exists for an image (thanks @adreyfus)
+- saveAs tool now uses canvas.toDataURL image quality of 1 by default (thanks @andrebot)
+
 ## [1.1.2] - 2017-11-21
 ### Changed
 - Fix bug (#293) introduced in 1.1.1 a missing argument in pointProjector (thanks @hardmaster92)
@@ -24,7 +73,7 @@ to do so. This is not required for normal use, as window.cornerstoneMath is the 
 ## [1.1.0] - 2017-11-17
 ### Added
 - Internal triggerEvent function which triggers jQuery and CustomEvents side-by-side. These events are the same as the current
-event names, but with all lower case letters. E.g. CornerstoneToolsMouseMove => cornerstonetoolsmousemove 
+event names, but with all lower case letters. E.g. CornerstoneToolsMouseMove => cornerstonetoolsmousemove
 
 This will be the prevailing format moving forward, but you aren't forced to migrate until 2.0.0 when we plan to drop the jQuery events.
 
@@ -36,11 +85,11 @@ from Cornerstone Core. We can now remove jQuery events from Core without breakin
 
 ## Version 1.0.3
 
-- Biggest change: Tools that required 'imagePlane' metadata, now require 'imagePlaneModule': 
+- Biggest change: Tools that required 'imagePlane' metadata, now require 'imagePlaneModule':
 
 This is partly a breaking change but in reality will help most users, since CornerstoneWADOImageLoader is populating 'imagePlaneModule', not 'imagePlane'. Thanks to @dannyrb for this fix.
 
-*Note*: If you have written your own metadata provider, you should now use 'imagePlaneModule' instead of 'imagePlane'. 
+*Note*: If you have written your own metadata provider, you should now use 'imagePlaneModule' instead of 'imagePlane'.
 
 - Refactored the Brush tool into brush.js and brushTool.js. This works similarly to mouseButtonTool.
 - Brush tool now draws / erases on a label map, which is rendered by Cornerstone with a color lookup table.

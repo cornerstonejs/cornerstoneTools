@@ -47,10 +47,6 @@
 </div>
 </body>
 
-
-<!-- jquery - currently a dependency and thus required for using cornerstoneWADOImageLoader -->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -66,9 +62,7 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var container = $('#dicomImage');
-
-    var element = container.get(0);
+    var element = document.getElementById('dicomImage');
     var imageId = 'example://1';
 
     cornerstone.enable(element);

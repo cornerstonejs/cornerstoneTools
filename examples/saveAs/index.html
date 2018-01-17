@@ -25,7 +25,7 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="save" class="list-group-item">Save Image</a>
+                <a id="save" class="list-group-item">Save Image</a>
             </ul>
             <label for="filename">Save as:</label>
             <input id="filename" type="text" value="cornerstone.png">
@@ -47,10 +47,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -62,7 +58,7 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -74,8 +70,8 @@ is used by our example image loader-->
         cornerstone.displayImage(element, image);
 
         // Tool button event handlers that set the new active tool
-        $('#save').click(function() {
-            var filename = $("#filename").val();
+        document.getElementById('save').addEventListener('click', function() {
+            var filename = document.getElementById('filename').value;
             cornerstoneTools.saveAs(element, filename);
             return false;
         });

@@ -1,43 +1,54 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
 const TOOL_STATE_TOOL_TYPE = 'brush';
 let brushLayerId;
 
-export default function (brushToolInterface) {
-  function mouseMoveCallback (e, eventData) {
-    brushToolInterface.onMouseMove(e, eventData);
+export default function brushTool (brushToolInterface) {
+  const toolType = brushToolInterface.toolType;
+
+  function mouseMoveCallback (e) {
+    brushToolInterface.onMouseMove(e);
   }
 
-  function mouseUpCallback (e, eventData) {
-    brushToolInterface.onMouseUp(e, eventData);
+  function mouseUpCallback (e) {
+    const eventData = e.detail;
+    const element = eventData.element;
 
-    external.$(eventData.element).off('CornerstoneToolsMouseDrag', mouseMoveCallback);
-    external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-    external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+    brushToolInterface.onMouseUp(e);
+
+    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseMoveCallback);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
   }
 
-  function dragCallback (e, eventData) {
-    brushToolInterface.onDrag(e, eventData);
+  function dragCallback (e) {
+    brushToolInterface.onDrag(e);
 
     return false;
   }
 
-  function mouseDownActivateCallback (e, eventData) {
-    if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-      external.$(eventData.element).on('CornerstoneToolsMouseDrag', dragCallback);
-      external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-      external.$(eventData.element).on('CornerstoneToolsMouseClick', mouseUpCallback);
-      brushToolInterface.onMouseDown(e, eventData);
+  function mouseDownActivateCallback (e) {
+    const eventData = e.detail;
+    const element = eventData.element;
+    const options = getToolOptions(toolType, element);
+
+    if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+      element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+      element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+      element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+      brushToolInterface.onMouseDown(e);
 
       return false;
     }
 
-    external.$(eventData.element).on('CornerstoneToolsMouseDrag', mouseMoveCallback);
-    external.$(eventData.element).on('CornerstoneToolsMouseUp', mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_DRAG, mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   }
 
   function onImageRendered (e) {
@@ -60,24 +71,20 @@ export default function (brushToolInterface) {
 
     external.cornerstone.updateImage(element);
 
-    // Note: This is to maintain compatibility with jQuery event handlers.
-    // On our next migration this should just be onImageRendered(e)
-    brushToolInterface.onImageRendered(e, eventData);
+    brushToolInterface.onImageRendered(e);
   }
 
   function activate (element, mouseButtonMask) {
-    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-    element.addEventListener('cornerstoneimagerendered', onImageRendered);
+    setToolOptions(toolType, element, { mouseButtonMask });
 
-    const eventData = {
-      mouseButtonMask
-    };
+    element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
-    external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
-    external.$(element).on('CornerstoneToolsMouseDownActivate', eventData, mouseDownActivateCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
 
-    external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
-    external.$(element).on('CornerstoneToolsMouseMove', mouseMoveCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
 
     const enabledElement = external.cornerstone.getEnabledElement(element);
     const { width, height } = enabledElement.image;
@@ -144,9 +151,9 @@ export default function (brushToolInterface) {
   }
 
   function deactivate (element) {
-    element.removeEventListener('cornerstoneimagerendered', onImageRendered);
-    external.$(element).off('CornerstoneToolsMouseDownActivate', mouseDownActivateCallback);
-    external.$(element).off('CornerstoneToolsMouseMove', mouseMoveCallback);
+    element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   }
 
   const brushTool = mouseButtonTool({

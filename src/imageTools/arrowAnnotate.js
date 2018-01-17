@@ -1,4 +1,5 @@
 /* eslint no-alert:0 */
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -14,6 +15,7 @@ import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
+import { getToolOptions } from '../toolOptions.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -39,44 +41,41 @@ const configuration = {
 
 // /////// BEGIN ACTIVE TOOL ///////
 function addNewMeasurement (mouseEventData) {
+  const element = mouseEventData.element;
   const measurementData = createNewMeasurement(mouseEventData);
   const cornerstone = external.cornerstone;
 
-  const eventData = {
-    mouseButtonMask: mouseEventData.which
-  };
-
   function doneChangingTextCallback (text) {
     if (text === null) {
-      removeToolState(mouseEventData.element, toolType, measurementData);
+      removeToolState(element, toolType, measurementData);
     } else {
       measurementData.text = text;
     }
 
     measurementData.active = false;
-    cornerstone.updateImage(mouseEventData.element);
+    cornerstone.updateImage(element);
 
-    external.$(mouseEventData.element).on('CornerstoneToolsMouseMove', eventData, arrowAnnotate.mouseMoveCallback);
-    external.$(mouseEventData.element).on('CornerstoneToolsMouseDown', eventData, arrowAnnotate.mouseDownCallback);
-    external.$(mouseEventData.element).on('CornerstoneToolsMouseDownActivate', eventData, arrowAnnotate.mouseDownActivateCallback);
-    external.$(mouseEventData.element).on('CornerstoneToolsMouseDoubleClick', eventData, arrowAnnotate.mouseDoubleClickCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, arrowAnnotate.mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN, arrowAnnotate.mouseDownCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, arrowAnnotate.mouseDownActivateCallback);
+    element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, arrowAnnotate.mouseDoubleClickCallback);
   }
 
   // Associate this data with this imageId so we can render it and manipulate it
-  addToolState(mouseEventData.element, toolType, measurementData);
+  addToolState(element, toolType, measurementData);
 
   // Since we are dragging to another place to drop the end point, we can just activate
   // The end point and let the moveHandle move it for us.
-  external.$(mouseEventData.element).off('CornerstoneToolsMouseMove', arrowAnnotate.mouseMoveCallback);
-  external.$(mouseEventData.element).off('CornerstoneToolsMouseDown', arrowAnnotate.mouseDownCallback);
-  external.$(mouseEventData.element).off('CornerstoneToolsMouseDownActivate', arrowAnnotate.mouseDownActivateCallback);
-  external.$(mouseEventData.element).off('CornerstoneToolsMouseDoubleClick', arrowAnnotate.mouseDoubleClickCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, arrowAnnotate.mouseMoveCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN, arrowAnnotate.mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, arrowAnnotate.mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, arrowAnnotate.mouseDoubleClickCallback);
 
-  cornerstone.updateImage(mouseEventData.element);
+  cornerstone.updateImage(element);
   moveNewHandle(mouseEventData, toolType, measurementData, measurementData.handles.end, function () {
     if (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
       // Delete the measurement
-      removeToolState(mouseEventData.element, toolType, measurementData);
+      removeToolState(element, toolType, measurementData);
     }
 
     const config = arrowAnnotate.getConfiguration();
@@ -85,25 +84,25 @@ function addNewMeasurement (mouseEventData) {
       config.getTextCallback(doneChangingTextCallback);
     }
 
-    cornerstone.updateImage(mouseEventData.element);
+    cornerstone.updateImage(element);
   });
 }
 
-function createNewMeasurement (mouseEventData) {
+function createNewMeasurement (eventData) {
   // Create the measurement data for this tool with the end handle activated
   const measurementData = {
     visible: true,
     active: true,
     handles: {
       start: {
-        x: mouseEventData.currentPoints.image.x,
-        y: mouseEventData.currentPoints.image.y,
+        x: eventData.currentPoints.image.x,
+        y: eventData.currentPoints.image.y,
         highlight: true,
         active: false
       },
       end: {
-        x: mouseEventData.currentPoints.image.x,
-        y: mouseEventData.currentPoints.image.y,
+        x: eventData.currentPoints.image.x,
+        y: eventData.currentPoints.image.y,
         highlight: true,
         active: false
       },
@@ -137,7 +136,9 @@ function pointNearTool (element, data, coords) {
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
@@ -312,15 +313,15 @@ function addNewMeasurementTouch (touchEventData) {
     measurementData.active = false;
     cornerstone.updateImage(element);
 
-    external.$(element).on('CornerstoneToolsTouchPress', arrowAnnotateTouch.pressCallback);
-    external.$(element).on('CornerstoneToolsTouchStartActive', arrowAnnotateTouch.touchDownActivateCallback);
-    external.$(element).on('CornerstoneToolsTap', arrowAnnotateTouch.tapCallback);
+    element.addEventListener(EVENTS.TOUCH_PRESS, arrowAnnotateTouch.pressCallback);
+    element.addEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
+    element.addEventListener(EVENTS.TAP, arrowAnnotateTouch.tapCallback);
   }
 
   addToolState(element, toolType, measurementData);
-  external.$(element).off('CornerstoneToolsTouchPress', arrowAnnotateTouch.pressCallback);
-  external.$(element).off('CornerstoneToolsTouchStartActive', arrowAnnotateTouch.touchDownActivateCallback);
-  external.$(element).off('CornerstoneToolsTap', arrowAnnotateTouch.tapCallback);
+  element.removeEventListener(EVENTS.TOUCH_PRESS, arrowAnnotateTouch.pressCallback);
+  element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
+  element.removeEventListener(EVENTS.TAP, arrowAnnotateTouch.tapCallback);
   cornerstone.updateImage(element);
 
   moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.end, function () {
@@ -339,10 +340,16 @@ function addNewMeasurementTouch (touchEventData) {
   });
 }
 
-function doubleClickCallback (e, eventData) {
+function doubleClickCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
   const cornerstone = external.cornerstone;
+  const options = getToolOptions(toolType, element);
   let data;
+
+  if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    return;
+  }
 
   function doneChangingTextCallback (data, updatedText, deleteTool) {
     if (deleteTool === true) {
@@ -353,10 +360,6 @@ function doubleClickCallback (e, eventData) {
 
     data.active = false;
     cornerstone.updateImage(element);
-  }
-
-  if (e.data && e.data.mouseButtonMask && !isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    return;
   }
 
   const config = arrowAnnotate.getConfiguration();
@@ -385,7 +388,8 @@ function doubleClickCallback (e, eventData) {
   }
 }
 
-function pressCallback (e, eventData) {
+function pressCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
   const cornerstone = external.cornerstone;
   let data;
@@ -401,13 +405,9 @@ function pressCallback (e, eventData) {
     data.active = false;
     cornerstone.updateImage(element);
 
-    external.$(element).on('CornerstoneToolsTouchStart', arrowAnnotateTouch.touchStartCallback);
-    external.$(element).on('CornerstoneToolsTouchStartActive', arrowAnnotateTouch.touchDownActivateCallback);
-    external.$(element).on('CornerstoneToolsTap', arrowAnnotateTouch.tapCallback);
-  }
-
-  if (e.data && e.data.mouseButtonMask && !isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    return;
+    element.addEventListener(EVENTS.TOUCH_START, arrowAnnotateTouch.touchStartCallback);
+    element.addEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
+    element.addEventListener(EVENTS.TAP, arrowAnnotateTouch.tapCallback);
   }
 
   const config = arrowAnnotate.getConfiguration();
@@ -421,9 +421,9 @@ function pressCallback (e, eventData) {
   }
 
   if (eventData.handlePressed) {
-    external.$(element).off('CornerstoneToolsTouchStart', arrowAnnotateTouch.touchStartCallback);
-    external.$(element).off('CornerstoneToolsTouchStartActive', arrowAnnotateTouch.touchDownActivateCallback);
-    external.$(element).off('CornerstoneToolsTap', arrowAnnotateTouch.tapCallback);
+    element.removeEventListener(EVENTS.TOUCH_START, arrowAnnotateTouch.touchStartCallback);
+    element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
+    element.removeEventListener(EVENTS.TAP, arrowAnnotateTouch.tapCallback);
 
     // Allow relabelling via a callback
     config.changeTextCallback(eventData.handlePressed, eventData, doneChangingTextCallback);
@@ -440,9 +440,9 @@ function pressCallback (e, eventData) {
       data.active = true;
       cornerstone.updateImage(element);
 
-      external.$(element).off('CornerstoneToolsTouchStart', arrowAnnotateTouch.touchStartCallback);
-      external.$(element).off('CornerstoneToolsTouchStartActive', arrowAnnotateTouch.touchDownActivateCallback);
-      external.$(element).off('CornerstoneToolsTap', arrowAnnotateTouch.tapCallback);
+      element.removeEventListener(EVENTS.TOUCH_START, arrowAnnotateTouch.touchStartCallback);
+      element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
+      element.removeEventListener(EVENTS.TAP, arrowAnnotateTouch.tapCallback);
 
       // Allow relabelling via a callback
       config.changeTextCallback(data, eventData, doneChangingTextCallback);
@@ -453,7 +453,8 @@ function pressCallback (e, eventData) {
     }
   }
 
-  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  e.preventDefault();
+  e.stopPropagation();
 }
 
 const arrowAnnotate = mouseButtonTool({
