@@ -180,7 +180,7 @@
       });
     });
 
-    window.addEventListener("resize orientationchange", function () {
+    var onResize = function () {
         if (document.fullscreenElement || document.mozFullScreenElement ||
             document.webkitFullscreenElement || document.msFullscreenElement) {
             container.offsetWidth = window.outerWidth;
@@ -189,7 +189,9 @@
             element.offsetHeight = container.offsetHeight;
             cornerstone.resize(element, true);
         }
-    });
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
 
     // image enable the dicomImage element
     cornerstone.enable(element);
