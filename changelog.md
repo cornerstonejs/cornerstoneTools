@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.0.1] - 2018-01-05
+### Changed
+Overhauled and expanded the functionality of the freehandROI tool:
+- Added general area calculation for irregular polygons of N sides.
+- Finds pixels inside the freehand polygon by means of an even-odd rule algorithm, and calculates the mean and stdev based on the pixels found.
+- Displays these stats in a textbox in a similar fashion to the rectangular and ellipsoidal ROI tools. The text box is disabled for the shift-click 'pencil' mode.
+- Disallows the user to join up to any previous point besides the starting node (i.e. shape must be complete before tool deactivates).
+- Disallows the user to cross lines (using a orientation algorithm).
+- Fixed a UI bug, where upon editing the first node the line connecting the first and last nodes would not reactively update.
+- The textbox-polygon tether snaps to nearest node of the polygon when moved.
+
 ## [2.0.0] - 2017-12-13
 ### Added
 - Began the [Getting Started guide](https://tools.cornerstonejs.org/essentials/getting-started.html) (thanks @dannyrb)
