@@ -40,7 +40,7 @@ function createNewMeasurement () {
     handles: []
   };
 
-  measurementData.handles.textBox = {
+  measurementData.textBox = {
     active: false,
     hasMoved: false,
     freehand: false,
@@ -122,9 +122,9 @@ function pointNearHandle (eventData, toolIndex) {
   }
 
   // Check to see if mouse in bounding box of textbox
-  if (data.handles.textBox) {
-    if (pointInsideBoundingBox(data.handles.textBox, mousePoint)) {
-      return data.handles.textBox;
+  if (data.textBox) {
+    if (pointInsideBoundingBox(data.textBox, mousePoint)) {
+      return data.textBox;
     }
   }
 
@@ -357,8 +357,8 @@ function mouseHover (eventData, toolData) {
       imageNeedsUpdate = true;
     }
 
-    if (data.handles.textBox === true) {
-      if (pointInsideBoundingBox(data.handles.textBox, coords)) {
+    if (data.textBox === true) {
+      if (pointInsideBoundingBox(data.textBox, coords)) {
         data.active = !data.active;
         data.highlight = !data.highlight;
         imageNeedsUpdate = true;
@@ -439,7 +439,7 @@ function mouseDownCallback (e) {
         endDrawing(eventData, handleNearby);
       } else if (eventData.event.shiftKey) {
         config.freehand = true;
-        toolData.data[currentTool].handles.textBox.freehand = true;
+        toolData.data[currentTool].textBox.freehand = true;
       } else if (handleNearby === undefined) {
         addPoint(eventData);
       } else {
@@ -693,18 +693,18 @@ function onImageRendered (e) {
     }
 
     // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
-    if (data.polyBoundingBox && !data.handles.textBox.freehand) {
+    if (data.polyBoundingBox && !data.textBox.freehand) {
       // If the textbox has not been moved by the user, it should be displayed on the right-most
       // Side of the tool.
-      if (!data.handles.textBox.hasMoved) {
+      if (!data.textBox.hasMoved) {
         // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
         // Note that this calculates it in image coordinates
-        data.handles.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-        data.handles.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
       }
 
       // Convert the textbox Image coordinates into Canvas coordinates
-      const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
+      const textCoords = cornerstone.pixelToCanvas(element, data.textBox);
 
       // Set options for the textbox drawing function
       const textOptions = {
@@ -719,12 +719,12 @@ function onImageRendered (e) {
         textCoords.y, color, textOptions);
 
       // Store the bounding box data in the handle for mouse-dragging and highlighting
-      data.handles.textBox.boundingBox = boundingBox;
+      data.textBox.boundingBox = boundingBox;
 
       // If the textbox has moved, we would like to draw a line linking it with the tool
       // This section decides where to draw this line to on the polyBoundingBox based on the location
       // Of the textbox relative to it.
-      if (data.handles.textBox.hasMoved) {
+      if (data.textBox.hasMoved) {
         // Draw dashed link line between tool and text
 
         // The initial link position is at the center of the
