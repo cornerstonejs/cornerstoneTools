@@ -37,17 +37,15 @@ function createNewMeasurement () {
     visible: true,
     active: true,
     invalidated: true,
-    handles: []
-  };
-
-  measurementData.textBox = {
-    active: false,
-    hasMoved: false,
-    freehand: false,
-    movesIndependently: false,
-    drawnIndependently: true,
-    allowedOutsideImage: true,
-    hasBoundingBox: true
+    handles: [],
+    textBox: {
+      active: false,
+      hasMoved: false,
+      movesIndependently: false,
+      drawnIndependently: true,
+      allowedOutsideImage: true,
+      hasBoundingBox: true
+    }
   };
 
   return measurementData;
