@@ -96,6 +96,17 @@ function addPoint (eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+function pointNearTool (eventData, toolIndex) {
+  const isPointNearTool = pointNearHandle(eventData, toolIndex);
+
+  // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
+  if (isPointNearTool || isPointNearTool === 0) {
+    return true;
+  }
+
+  return false;
+}
+
 function pointNearHandle (eventData, toolIndex) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -348,14 +359,7 @@ function mouseHover (eventData, toolData) {
       imageNeedsUpdate = true;
     }
 
-    let isPointNearHandle = pointNearHandle(eventData, i);
-
-    if (isPointNearHandle === 0) {
-      // JPETTS - if returns index 0, set true as otherwise shows up falsy for condition bellow.
-      isPointNearHandle = true;
-    }
-
-    if ((isPointNearHandle && !data.active) || (!isPointNearHandle && data.active)) {
+    if ((pointNearTool(eventData, i) && !data.active) || (!pointNearTool(eventData, i) && data.active)) {
       if (!data.lockedForEditing) {
         data.active = !data.active;
         imageNeedsUpdate = true;
