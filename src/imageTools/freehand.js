@@ -348,10 +348,18 @@ function mouseHover (eventData, toolData) {
       imageNeedsUpdate = true;
     }
 
-    if ((pointNearHandleAllTools(eventData) && !data.active) || (!pointNearHandleAllTools(eventData) && data.active)) {
-      data.active = !data.active;
-      data.highlight = !data.highlight;
-      imageNeedsUpdate = true;
+    let isPointNearHandle = pointNearHandle(eventData, i);
+
+    if (isPointNearHandle === 0) {
+      // JPETTS - if returns index 0, set true as otherwise shows up falsy for condition bellow.
+      isPointNearHandle = true;
+    }
+
+    if ((isPointNearHandle && !data.active) || (!isPointNearHandle && data.active)) {
+      if (!data.lockedForEditing) {
+        data.active = !data.active;
+        imageNeedsUpdate = true;
+      }
     }
 
     if (data.textBox === true) {
