@@ -1,8 +1,16 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 
+function unique (array) {
+  return array.filter(function (value, index, self) {
+    return self.indexOf(value) === index;
+  });
+}
+
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
+// @param event can contain more than one event, separated by a space
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;
@@ -132,7 +140,9 @@ function Synchronizer (event, handler) {
     ignoreFiredEvents = false;
   }
 
-  function onEvent (e, eventData) {
+  function onEvent (e) {
+    const eventData = e.detail;
+
     if (ignoreFiredEvents === true) {
       return;
     }
@@ -153,7 +163,9 @@ function Synchronizer (event, handler) {
     sourceElements.push(element);
 
     // Subscribe to the event
-    external.$(element).on(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.addEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -201,7 +213,9 @@ function Synchronizer (event, handler) {
     sourceElements.splice(index, 1);
 
     // Stop listening for the event
-    external.$(element).off(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.removeEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -266,16 +280,16 @@ function Synchronizer (event, handler) {
   }
 
   this.updateDisableHandlers = function () {
-    const elements = external.$.unique(sourceElements.concat(targetElements));
+    const elements = unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
-      element.removeEventListener('cornerstoneelementdisabled', disableHandler);
-      element.addEventListener('cornerstoneelementdisabled', disableHandler);
+      element.removeEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
+      element.addEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
     });
   };
 
   this.destroy = function () {
-    const elements = external.$.unique(sourceElements.concat(targetElements));
+    const elements = unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
       that.remove(element);

@@ -70,15 +70,15 @@
     </div>
     <br/>
     <div class="row">
-        <div class="col-lg-12 col-md-12 col-xs-6 col-xs-offset-1 col-md-offset-0">
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+        <div class="col-lg-12 col-md-12 col-xs-10 col-xs-offset-1 col-md-offset-0">
+            <div style="width:100%;height:100%;min-height:256px;min-width:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image'
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
                 <div id="dicomImage"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                     style="width:100%;height:100%;min-height:256px;min-width:256px;">
                 </div>
                 <div id="mrtopleft" style="position: absolute;top:3px; left:3px">
                     Patient Name
@@ -97,11 +97,12 @@
     </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
+<!-- TODO: Switch to a Select element -->
+<!-- Latest compiled and minified JavaScript for Bootstrap and Jquery (only for the dropdown) -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+        crossorigin="anonymous"></script>
 
-<!-- Latest compiled and minified JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
 
 <!-- include the hammer.fakemultitouch so we can test with a mouse -->
@@ -122,13 +123,13 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     // Listen for changes to the viewport so we can update the text overlays in the corner
     function onImageRendered(e) {
         var viewport = cornerstone.getViewport(e.target);
-        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        $('#mrbottomright').text("Zoom: " + viewport.scale.toFixed(2));
+        document.getElementById('mrbottomleft').textContent = "WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter);
+        document.getElementById('mrbottomright').textContent = "Zoom: " + viewport.scale.toFixed(2);
     };
 
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
@@ -145,7 +146,7 @@ is used by our example image loader-->
 
     var container = element.parentNode;
 
-    $('#fullscreen').click(function (e) {
+    document.getElementById('fullscreen').addEventListener('click', function (e) {
         if (!document.fullscreenElement && !document.mozFullScreenElement &&
             !document.webkitFullscreenElement && !document.msFullscreenElement) {
             if (container.requestFullscreen) {
@@ -160,32 +161,37 @@ is used by our example image loader-->
         }
     });
 
-    $(document).on("webkitfullscreenchange mozfullscreenchange fullscreenchange", function() {
+    var fullScreenEventTypes = ['webkitfullscreenchange', 'mozfullscreenchange', 'fullscreenchange'];
+    fullScreenEventTypes.forEach(function(eventType) {
+      document.addEventListener(eventType, function() {
         if (!document.fullscreenElement && !document.mozFullScreenElement &&
-            !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            $(container).width(256);
-            $(container).height(256);
-            $(element).width(256);
-            $(element).height(256);
+          !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          container.offsetWidth = 256;
+          container.offsetHeight = 256;
+          element.offsetWidth = 256;
+          element.offsetHeight = 256;
         } else {
-            $(container).width($(window).width());
-            $(container).height($(window).height());
-            $(element).width($(container).width());
-            $(element).height($(container).height());
+          container.offsetWidth = window.outerWidth;
+          container.offsetHeight = window.outerHeight;
+          element.offsetWidth = container.offsetWidth;
+          element.offsetHeight = container.offsetHeight;
         }
         cornerstone.resize(element, true);
-    })
+      });
+    });
 
-    $(window).on("resize orientationchange", function () {
+    var onResize = function () {
         if (document.fullscreenElement || document.mozFullScreenElement ||
             document.webkitFullscreenElement || document.msFullscreenElement) {
-            $(container).width($(window).width());
-            $(container).height($(window).height());
-            $(element).width($(container).width());
-            $(element).height($(container).height());
+            container.offsetWidth = window.outerWidth;
+            container.offsetHeight = window.outerHeight;
+            element.offsetWidth = container.offsetWidth;
+            element.offsetHeight = container.offsetHeight;
             cornerstone.resize(element, true);
         }
-    })
+    };
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
 
     // image enable the dicomImage element
     cornerstone.enable(element);
@@ -215,8 +221,7 @@ is used by our example image loader-->
 
         // helper function used by the tool button handlers to disable the active tool
         // before making a new tool active
-        function disableAllTools()
-        {
+        function disableAllTools() {
             cornerstoneTools.panTouchDrag.deactivate(element);
             cornerstoneTools.rotateTouchDrag.deactivate(element);
             cornerstoneTools.rotateTouch.disable(element);
@@ -231,79 +236,76 @@ is used by our example image loader-->
         }
 
         // Tool button event handlers that set the new active tool
-        var toolSelector = $("#toolSelector");
-        $('#enableWindowLevelTool').click(function (e) {
+        var toolSelector = document.getElementById('toolSelector');
+        document.getElementById('enableWindowLevelTool').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.wwwcTouchDrag.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#pan').click(function (e) {
+        document.getElementById('pan').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.panTouchDrag.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#rotate').click(function (e) {
+        document.getElementById('rotate').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.rotateTouchDrag.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#zoom').click(function (e) {
+        document.getElementById('zoom').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.zoomTouchPinch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#zoomDrag').click(function (e) {
+        document.getElementById('zoomDrag').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.zoomTouchDrag.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#stackScroll').click(function (e) {
+        document.getElementById('stackScroll').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.stackScrollTouchDrag.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#length').click(function (e) {
+        document.getElementById('length').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.lengthTouch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#probe').click(function (e) {
+        document.getElementById('probe').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.probeTouch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#circleroi').click(function (e) {
+        document.getElementById('circleroi').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.ellipticalRoiTouch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#rectangleroi').click(function (e) {
+        document.getElementById('rectangleroi').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.rectangleRoiTouch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#angle').click(function (e) {
+        document.getElementById('angle').addEventListener('click', function (e) {
             disableAllTools();
             cornerstoneTools.angleTouch.activate(element);
-            toolSelector.text(e.currentTarget.innerHTML)
+            toolSelector.textContent = e.currentTarget.innerHTML
         });
-        $('#clearToolData').click(function() {
+        document.getElementById('clearToolData').addEventListener('click', function() {
             disableAllTools();
             cornerstoneTools.wwwcTouchDrag.activate(element);
             cornerstoneTools.zoomTouchPinch.activate(element);
 
-            toolSelector.html('Select tool <span class="caret"></span>')
+            toolSelector.innerHTML = 'Select tool <span class="caret"></span>';
 
             var toolStateManager = cornerstoneTools.globalImageIdSpecificToolStateManager;
             // Note that this only works on ImageId-specific tool state managers (for now)
-            toolStateManager.clear(element)
+            toolStateManager.clear(element);
             cornerstone.updateImage(element);
         });
-        $('#resetViewport').click(function() {
-            var canvas = $('#dicomImage canvas').get(0);
-            var enabledElement = cornerstone.getEnabledElement(element);
-            var viewport = cornerstone.getDefaultViewport(canvas, enabledElement.image)
-            cornerstone.setViewport(element, viewport);
+        document.getElementById('resetViewport').addEventListener('click', function() {
+            cornerstone.reset(element);
         });
     });
 

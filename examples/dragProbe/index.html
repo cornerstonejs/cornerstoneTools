@@ -25,10 +25,10 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="disable" class="list-group-item">Disable</a>
-                <a href="#" id="activate" class="list-group-item">Activate</a>
-                <a href="#" id="defaultStrategy" class="list-group-item">Default Strategy</a>
-                <a href="#" id="minimalStrategy" class="list-group-item">Minimal Strategy</a>
+                <a id="disable" class="list-group-item">Disable</a>
+                <a id="activate" class="list-group-item">Activate</a>
+                <a id="defaultStrategy" class="list-group-item">Default Strategy</a>
+                <a id="minimalStrategy" class="list-group-item">Minimal Strategy</a>
             </ul>
         </div>
         <div class="col-xs-6">
@@ -48,8 +48,6 @@
 
 </body>
 
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -64,7 +62,7 @@
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -82,34 +80,37 @@
 
         cornerstoneTools.zoomTouchPinch.activate(element);
 
-        activate("#activate");
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+              elem.classList.remove('active');
+            });
 
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+            document.getElementById(id).classList.add('active');
         }
 
+        activate("activate");
+
+
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.dragProbe.disable(element);
             cornerstoneTools.dragProbeTouch.disable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.dragProbe.activate(element, 1);
             cornerstoneTools.dragProbeTouch.activate(element);
             return false;
         });
-        $('#defaultStrategy').click(function() {
-            activate("#defaultStrategy");
+        document.getElementById('defaultStrategy').addEventListener('click', function() {
+            activate("defaultStrategy");
             cornerstoneTools.dragProbe.strategy = cornerstoneTools.dragProbe.strategies.default;
             return false;
         });
-        $('#minimalStrategy').click(function() {
-            activate("#minimalStrategy");
+        document.getElementById('minimalStrategy').addEventListener('click', function() {
+            activate("minimalStrategy");
             cornerstoneTools.dragProbe.strategy = cornerstoneTools.dragProbe.strategies.minimal;
             return false;
         });

@@ -26,8 +26,8 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="playClip" class="list-group-item">Play Time Series</a>
-                <a href="#" id="stopClip" class="list-group-item">Stop Time Series</a>
+                <a id="playClip" class="list-group-item">Play Time Series</a>
+                <a id="stopClip" class="list-group-item">Stop Time Series</a>
             </ul>
         </div>
         <div class="col-xs-6">
@@ -67,10 +67,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -82,13 +78,14 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     function onViewportUpdated(e) {
-        $('#mrbottomleft').text("WW/WL:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter));
-        $('#zoomText').text("Zoom:" + e.detail.viewport.scale.toFixed(2));
+        document.getElementById('mrbottomleft').textContent = "WW/WL:" + Math.round(e.detail.viewport.voi.windowWidth) + "/" + Math.round(e.detail.viewport.voi.windowCenter);
+        document.getElementById('zoomText').textContent = "Zoom:" + e.detail.viewport.scale.toFixed(2);
     };
-    element.addEventListener("CornerstoneViewportUpdated", onViewportUpdated, false);
+
+    element.addEventListener("cornerstoneimagerendered", onViewportUpdated);
 
     function onNewImage(e) {
         var timeSeriesToolData = cornerstoneTools.getToolState(element, 'timeSeries');
@@ -97,8 +94,8 @@ is used by our example image loader-->
         }
         var timeSeriesData = timeSeriesToolData.data[0];
 
-        $("#imageNumAndCount").text("Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length);
-        $("#timePoint").text("Timepoint #" + (timeSeriesData.currentStackIndex + 1) + "/" + timeSeriesData.stacks.length);
+        document.getElementById('imageNumAndCount').textContent = "Image #" + (stack.currentImageIdIndex + 1) + "/" + imageIds.length;
+        document.getElementById('timePoint').textContent = "Timepoint #" + (timeSeriesData.currentStackIndex + 1) + "/" + timeSeriesData.stacks.length;
     }
 
     element.addEventListener('cornerstonenewimage', onNewImage);
@@ -155,36 +152,33 @@ is used by our example image loader-->
 
         function activate(id)
         {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+            document.querySelectorAll('a').forEach(function(elem) { elem.classList.remove('active'); });
+            document.getElementById(id).classList.add('active');
         }
 
-        $('#playClip').click(function() {
-            activate("#playClip");
+        document.getElementById('playClip').addEventListener('click', function() {
+            activate("playClip");
             cornerstoneTools.timeSeriesPlayer.start(element, 31);
             return false;
         });
-        $('#stopClip').click(function() {
-            activate("#stopClip");
+        document.getElementById('stopClip').addEventListener('click', function() {
+            activate("stopClip");
             cornerstoneTools.timeSeriesPlayer.stop(element);
-            $("#frameRate").text("");
+            document.getElementById('frameRate').textContent = "";
             return false;
         });
 
     });
 
-    function onMeasurementAdded(e, ed) {
-        $('#data').empty();
-        ed.measurement.lineSample.samples.forEach(function(sample) {
+    function onMeasurementAdded(e) {
+        var eventData = e.detail;
+        document.getElementById('data').innerHTML = '';
+        eventData.measurement.lineSample.samples.forEach(function(sample) {
             console.log(sample);
-            $('#data').append('<li>' + sample + '</li>');
+            document.getElementById('data').append('<li>' + sample + '</li>');
         });
     }
 
-
-    $(cornerstoneTools.MeasurementManager).on('CornerstoneMeasurementAdded',onMeasurementAdded);
-
-
-
+    cornerstone.events.addEventListener('cornerstonetoolsmeasurementadded', onMeasurementAdded);
 </script>
 </html>

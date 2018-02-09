@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
@@ -7,6 +8,9 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
+import { getToolOptions } from '../toolOptions.js';
+
+const toolType = 'dragProbe';
 
 let dragEventData;
 
@@ -179,27 +183,31 @@ function minimalStrategy (eventData) {
   context.restore();
 }
 
-function mouseUpCallback (e, eventData) {
+function mouseUpCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
-  element.removeEventListener('cornerstoneimagerendered', imageRenderedCallback);
-  external.$(element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
   external.cornerstone.updateImage(eventData.element);
 }
 
-function mouseDownCallback (e, eventData) {
+function mouseDownCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
+  const options = getToolOptions(toolType, element);
 
-  if (isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    element.addEventListener('cornerstoneimagerendered', imageRenderedCallback);
-    external.$(element).on('CornerstoneToolsMouseDrag', dragCallback);
-    external.$(element).on('CornerstoneToolsMouseUp', mouseUpCallback);
-    external.$(element).on('CornerstoneToolsMouseClick', mouseUpCallback);
+  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
     dragProbe.strategy(eventData);
 
-    return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+    e.preventDefault();
+    e.stopPropagation();
   }
 }
 
@@ -213,16 +221,18 @@ function imageRenderedCallback () {
 // The strategy can't be execute at this moment because the image is rendered asynchronously
 // (requestAnimationFrame). Then the eventData that contains all information needed is being
 // Cached and the strategy will be executed once cornerstoneimagerendered is triggered.
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
   dragEventData = eventData;
   external.cornerstone.updateImage(element);
 
-  return false; // False = causes jquery to preventDefault() and stopPropagation() this event
+  e.preventDefault();
+  e.stopPropagation();
 }
 
-const dragProbe = simpleMouseButtonTool(mouseDownCallback);
+const dragProbe = simpleMouseButtonTool(mouseDownCallback, toolType);
 
 dragProbe.strategies = {
   default: defaultStrategy,
@@ -235,7 +245,7 @@ const options = {
   fireOnTouchStart: true
 };
 
-const dragProbeTouch = touchDragTool(dragCallback, options);
+const dragProbeTouch = touchDragTool(dragCallback, toolType, options);
 
 export {
   dragProbe,

@@ -26,10 +26,10 @@
     <div class="row">
         <div class="col-xs-2">
             <ul class="list-group">
-                <a href="#" id="disable" class="list-group-item">Disable</a>
-                <a href="#" id="enable" class="list-group-item">Enable</a>
-                <a href="#" id="activate" class="list-group-item">Activate</a>
-                <a href="#" id="deactivate" class="list-group-item">Deactivate</a>
+                <a id="disable" class="list-group-item">Disable</a>
+                <a id="enable" class="list-group-item">Enable</a>
+                <a id="activate" class="list-group-item">Activate</a>
+                <a id="deactivate" class="list-group-item">Deactivate</a>
             </ul>
         </div>
         <div class="col-xs-6">
@@ -49,10 +49,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
@@ -66,7 +62,7 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -84,32 +80,32 @@ is used by our example image loader-->
         cornerstoneTools.pan.activate(element, 2);
         cornerstoneTools.zoom.activate(element, 4);
         
-        activate("#activate");
+        activate("activate");
 
         function activate(id)
         {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+            document.querySelectorAll('a').forEach(function(elem) { elem.classList.remove('active'); });
+            document.getElementById(id).classList.add('active');
         }
 
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.simpleAngle.disable(element);
             return false;
         });
-        $('#enable').click(function() {
-            activate("#enable");
+        document.getElementById('enable').addEventListener('click', function() {
+            activate("enable");
             cornerstoneTools.simpleAngle.enable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.simpleAngle.activate(element, 1);
             return false;
         });
-        $('#deactivate').click(function() {
-            activate("#deactivate");
+        document.getElementById('deactivate').addEventListener('click', function() {
+            activate("deactivate");
             cornerstoneTools.simpleAngle.deactivate(element, 1);
             return false;
         });

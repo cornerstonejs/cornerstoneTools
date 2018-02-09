@@ -90,10 +90,6 @@
   </div>
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
 
@@ -114,7 +110,7 @@ is used by our example image loader-->
   var relabelDialog = document.querySelector('.relabelDialog');
   dialogPolyfill.registerDialog(relabelDialog);
   
-  var element = $('#dicomImage').get(0);
+  var element = document.getElementById('dicomImage');
   var imageId = 'example://1';
   
   // Define a callback to get your text annotation
@@ -134,34 +130,37 @@ is used by our example image loader-->
   // Define a callback to edit your text annotation
   // This could be used, e.g. to open a modal
   function changeTextCallback(data, eventData, doneChangingTextCallback) {
-
-    var relabelDialog = $('.relabelDialog');
+    var relabelDialog = document.querySelector('.relabelDialog');
     
-    var getTextLetter = $('#relabelText');
-    var getTextNumber = $('#relabelNumber');
+    var getTextLetter = document.getElementById('relabelText');
+    var getTextNumber = document.getElementById('relabelNumber');
     
-    var confirm = relabelDialog.find('.relabelConfirm');
-    var remove = relabelDialog.find('.relabelRemove');
+    var confirm = relabelDialog.querySelector('.relabelConfirm');
+    var remove = relabelDialog.querySelector('.relabelRemove');
 
-    getTextLetter.val(data.annotationText);
-    getTextNumber.val(data.annotationText);
-    relabelDialog.get(0).showModal();
+    getTextLetter.value = data.text;
+    getTextNumber.value = data.text;
+    relabelDialog.showModal();
 
-    confirm.off('click');
-    confirm.on('click', function() {
-      relabelDialog.get(0).close();
-      doneChangingTextCallback(data, getTextLetter.val().toUpperCase() + getTextNumber.val());
-    });
+    function confirmHandler() {
+      relabelDialog.close();
+      doneChangingTextCallback(data, getTextLetter.value.toUpperCase() + getTextNumber.value);
+    }
+
+    confirm.removeEventListener('click', confirmHandler);
+    confirm.addEventListener('click', confirmHandler);
 
     // If the remove button is clicked, delete this marker
-    remove.off('click');
-    remove.on('click', function() {
-      relabelDialog.get(0).close();
+    function removeHandler() {
+      relabelDialog.close();
       doneChangingTextCallback(data, undefined, true);
-    });
+    }
 
-    relabelDialog.off("keydown");
-    relabelDialog.on('keydown', keyPressHandler);
+    remove.removeEventListener('click', removeHandler);
+    remove.addEventListener('click', removeHandler);
+
+    relabelDialog.removeEventListener("keydown", keyPressHandler);
+    relabelDialog.addEventListener('keydown', keyPressHandler);
 
     function keyPressHandler(e) {
       // If Enter is pressed, close the dialog
@@ -171,11 +170,11 @@ is used by our example image loader-->
     }
 
     function closeHandler() {
-      relabelDialog.get(0).close();
-      doneChangingTextCallback(data, getTextLetter.val().toUpperCase() + getTextNumber.val());
+      relabelDialog.close();
+      doneChangingTextCallback(data, getTextLetter.value.toUpperCase() + getTextNumber.value);
       // Reset the text value
-      getTextLetter.val("");
-      getTextNumber.val("");
+      getTextLetter.value = "";
+      getTextNumber.value = "";
     }
   }
 
@@ -188,15 +187,16 @@ is used by our example image loader-->
     currentNumber: 0,
     showCoordinates: true,
     countUp: true
-  }
+  };
 
   // image enable the dicomImage element
   cornerstone.enable(element);
-  cornerstoneTools.mouseInput.enable(element);
-  cornerstoneTools.touchInput.enable(element);
 
   cornerstone.loadImage(imageId).then(function(image) {
     cornerstone.displayImage(element, image);
+
+    cornerstoneTools.mouseInput.enable(element);
+    cornerstoneTools.touchInput.enable(element);
 
     // Try commenting this out to see the default behaviour
     // By default, the tool uses Javascript's Prompt function
@@ -208,70 +208,76 @@ is used by our example image loader-->
     cornerstoneTools.seedAnnotate.activate(element, 1);
     cornerstoneTools.seedAnnotateTouch.activate(element);
 
-    activate("#activate");
+    activate("activate");
 
     function activate(id) {
-      $('a').removeClass('active');
-      $(id).addClass('active');
+      document.querySelectorAll('a').forEach(function(elem) { elem.classList.remove('active'); });
+      document.getElementById(id).classList.add('active');
     }
 
     // Tool button event handlers that set the new active tool
-    $('#enable').click(function() {
-      activate("#enable");
+    document.getElementById('enable').addEventListener('click', function() {
+      activate("enable");
       cornerstoneTools.seedAnnotate.enable(element);
       cornerstoneTools.seedAnnotateTouch.enable(element);
       return false;
     });
-    $('#disable').click(function() {
-      activate("#disable");
+    document.getElementById('disable').addEventListener('click', function() {
+      activate("disable");
       cornerstoneTools.seedAnnotate.disable(element);
       cornerstoneTools.seedAnnotateTouch.disable(element);
       return false;
     });
-    $('#activate').click(function() {
-      activate("#activate");
+    document.getElementById('activate').addEventListener('click', function() {
+      activate("activate");
       cornerstoneTools.seedAnnotate.activate(element, 1);
       cornerstoneTools.seedAnnotateTouch.activate(element);
       return false;
     });
-    $('#deactivate').click(function() {
-      activate("#deactivate");
+    document.getElementById('deactivate').addEventListener('click', function() {
+      activate("deactivate");
       cornerstoneTools.seedAnnotate.deactivate(element, 1);
       cornerstoneTools.seedAnnotateTouch.deactivate(element);
       return false;
     });
       
-    $('#check-coords').click(function() {
+    document.getElementById('check-coords').addEventListener('click', function() {
       config.showCoordinates = document.getElementById('check-coords').checked;
       cornerstone.updateImage(element);
     });
-    $('#check-countUp').click(function() {
+    document.getElementById('check-countUp').addEventListener('click', function() {
       config.countUp = document.getElementById('check-countUp').checked;
       cornerstone.updateImage(element);
     });
-    $('#f-letter').on('input propertychange paste', function() {
-      config.currentLetter = $('#f-letter').val().toUpperCase();
-    });
-    $('#f-number').on('input propertychange paste', function() {
+    var updateLetter = function() {
+      config.currentLetter = document.getElementById('f-letter').value.toUpperCase();
+    };
+    document.getElementById('f-letter').addEventListener('input', updateLetter);
+    document.getElementById('f-letter').addEventListener('propertychange', updateLetter);
+    document.getElementById('f-letter').addEventListener('paste', updateLetter);
+    var updateNumber = function() {
       if (config.countUp == true ) { 
-        config.currentNumber = parseInt($('#f-number').val()) - 1;
+        config.currentNumber = parseInt(document.getElementById('f-number').value) - 1;
       } else {
-        config.currentNumber = parseInt($('#f-number').val()) + 1;
+        config.currentNumber = parseInt(document.getElementById('f-number').value) + 1;
       }
-    });
+    };
+    document.getElementById('f-number').addEventListener('input', updateNumber);
+    document.getElementById('f-number').addEventListener('propertychange', updateNumber);
+    document.getElementById('f-number').addEventListener('paste', updateNumber);
       
     var toolType = 'seedAnnotate';
-    var clearLabels = $("#clearLabels");
-    clearLabels.on('click', function() {
+    var clearLabels = document.getElementById('clearLabels');
+    clearLabels.addEventListener('click', function() {
       // Clear all annotations
       cornerstoneTools.clearToolState(element, toolType);
       cornerstone.updateImage(element);
       // Reset the initial values for naming
-      config.currentLetter = $('#f-letter').val();
+      config.currentLetter = document.getElementById('f-letter').value;
       if (config.countUp == true ) { 
-        config.currentNumber = parseInt($('#f-number').val()) - 1;
+        config.currentNumber = parseInt(document.getElementById('f-number').value) - 1;
       } else {
-        config.currentNumber = parseInt($('#f-number').val()) + 1;
+        config.currentNumber = parseInt(document.getElementById('f-number').value) + 1;
       }
     })
       

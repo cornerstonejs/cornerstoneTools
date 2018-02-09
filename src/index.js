@@ -151,3 +151,5 @@ export { zoom,
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
+
+export { setToolOptions, getToolOptions } from './toolOptions.js';

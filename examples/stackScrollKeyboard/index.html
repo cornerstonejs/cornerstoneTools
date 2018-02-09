@@ -59,10 +59,6 @@
 
 </body>
 
-<!-- jquery - included to make things easier to demo, not needed or used by the cornerstone library but
-is used by our example image loader-->
-<script src="../jquery.min.js"></script>
-
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
 <script src="../cornerstoneMath.min.js"></script>
@@ -74,16 +70,7 @@ is used by our example image loader-->
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
-
-    function onImageRendered(e) {
-        var eventData = e.detail;
-        var viewport = eventData.viewport;
-        $('#mrbottomleft').text("WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter));
-        $('#zoomText').text("Zoom: " + viewport.scale.toFixed(2));
-    };
-
-    element.addEventListener('cornerstoneimagerendered', onImageRendered);
+    var element = document.getElementById('dicomImage');
 
     function onNewImage(e) {
         var newImageIdIndex = stack.currentImageIdIndex;
@@ -95,7 +82,8 @@ is used by our example image loader-->
 
     element.addEventListener('cornerstonenewimage', onNewImage);
 
-    function onKeyPress(e, data) {
+    function onKeyPress(e) {
+        var data = e.detail;
         var keyCode = data.keyCode;
         var keyName;
         var keys = {
@@ -110,10 +98,10 @@ is used by our example image loader-->
             keyName = String.fromCharCode(keyCode);
         }
 
-        $("#keyPressed").text("Pressed: " + keyName);
+        document.getElementById('keyPressed').textContent = "Pressed: " + keyName;
     }
 
-    $(element).on("CornerstoneToolsKeyDown", onKeyPress);
+    element.addEventListener("cornerstonetoolskeydown", onKeyPress);
 
     var imageIds = [
         'example://1',
@@ -137,16 +125,11 @@ is used by our example image loader-->
         cornerstoneTools.addToolState(element, 'stack', stack);
 
         // Set the div to focused, so keypress events are handled
-        $(element).attr("tabindex", 0).focus();
+        element.tabIndex = 0;
+        element.focus();
 
         // Enable all tools we want to use with this element
         cornerstoneTools.stackScrollKeyboard.activate(element);
-
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
-        }
     });
 
 </script>

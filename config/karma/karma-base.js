@@ -20,7 +20,6 @@ module.exports = {
   frameworks: ['mocha'],
   reporters: ['progress', 'coverage'],
   files: [
-    'node_modules/jquery/dist/jquery.js',
     'node_modules/cornerstone-core/dist/cornerstone.js',
     'node_modules/cornerstone-math/dist/cornerstoneMath.js',
     'node_modules/hammerjs/hammer.js',

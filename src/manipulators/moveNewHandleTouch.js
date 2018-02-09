@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
@@ -14,7 +15,9 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
   handle.active = true;
   data.active = true;
 
-  function moveCallback (e, eventData) {
+  function moveCallback (e) {
+    const eventData = e.detail;
+
     handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
     handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
 
@@ -28,7 +31,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
 
     cornerstone.updateImage(element);
 
-    const eventType = 'CornerstoneToolsMeasurementModified';
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
@@ -38,15 +41,17 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  function moveEndCallback (e, eventData) {
-    external.$(element).off('CornerstoneToolsTouchDrag', moveCallback);
-    external.$(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTap', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
-    external.$(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+  function moveEndCallback (e) {
+    const eventData = e.detail;
 
-    if (e.type === 'CornerstoneToolsTouchPinch' || e.type === 'CornerstoneToolsTouchPress') {
+    element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
+    element.removeEventListener(EVENTS.TOUCH_PINCH, moveEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
+    element.removeEventListener(EVENTS.TAP, moveEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
+    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+
+    if (e.type === EVENTS.TOUCH_PINCH || e.type === EVENTS.TOUCH_PRESS) {
       handle.active = false;
       cornerstone.updateImage(element);
       doneMovingCallback();
@@ -83,19 +88,19 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     return false;
   }
 
-  external.$(element).on('CornerstoneToolsTouchDrag', moveCallback);
-  external.$(element).on('CornerstoneToolsTouchPinch', moveEndCallback);
-  external.$(element).on('CornerstoneToolsTouchEnd', moveEndCallback);
-  external.$(element).on('CornerstoneToolsTap', moveEndCallback);
-  external.$(element).on('CornerstoneToolsTouchStart', stopImmediatePropagation);
+  element.addEventListener(EVENTS.TOUCH_DRAG, moveCallback);
+  element.addEventListener(EVENTS.TOUCH_PINCH, moveEndCallback);
+  element.addEventListener(EVENTS.TOUCH_END, moveEndCallback);
+  element.addEventListener(EVENTS.TAP, moveEndCallback);
+  element.addEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
 
   function toolDeactivatedCallback () {
-    external.$(element).off('CornerstoneToolsTouchDrag', moveCallback);
-    external.$(element).off('CornerstoneToolsTouchPinch', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTouchEnd', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTap', moveEndCallback);
-    external.$(element).off('CornerstoneToolsTouchStart', stopImmediatePropagation);
-    external.$(element).off('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
+    element.removeEventListener(EVENTS.TOUCH_PINCH, moveEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
+    element.removeEventListener(EVENTS.TAP, moveEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
+    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
     handle.active = false;
     data.active = false;
@@ -113,5 +118,5 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     cornerstone.updateImage(element);
   }
 
-  external.$(element).on('CornerstoneToolsToolDeactivated', toolDeactivatedCallback);
+  element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 }

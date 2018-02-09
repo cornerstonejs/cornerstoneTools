@@ -54,9 +54,12 @@
             sizeInBytes: width * height
         };
 
-        var deferred = $.Deferred();
-        deferred.resolve(image);
-        return deferred;
+        return {
+            promise: new Promise((resolve) => {
+              resolve(image);
+            }),
+            cancelFn: undefined
+        };
     }
 
     // register our imageLoader plugin with cornerstone

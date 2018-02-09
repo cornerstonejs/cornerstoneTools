@@ -57,7 +57,7 @@
         <div class="col-xs-12 col-sm-6">
             <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
-                 class='cornerstone-enabled-image class='cornerstone-enabled-image disable-selection noIbar''
+                 class='cornerstone-enabled-image disable-selection noIbar'
                  unselectable='on'
                  onselectstart='return false;'
                  onmousedown='return false;'>
@@ -71,8 +71,6 @@
         </div>
     </div>
 </body>
-
-<script src="../jquery.min.js"></script>
 
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
@@ -88,7 +86,7 @@
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-    var element = $('#dicomImage').get(0);
+    var element = document.getElementById('dicomImage');
 
     var imageId = 'example://1';
 
@@ -99,24 +97,24 @@
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.touchInput.enable(element);
 
-    var magLevelRange = $("#magLevelRange")
-    magLevelRange.on("change", function() {
+    var magLevelRange = document.getElementById("magLevelRange");
+    magLevelRange.addEventListener("change", function() {
         var config = cornerstoneTools.magnify.getConfiguration();
-        config.magnificationLevel = parseInt(magLevelRange.val(), 10);
+        config.magnificationLevel = parseInt(magLevelRange.value, 10);
     });
 
-    var magSizeRange = $("#magSizeRange")
-    magSizeRange.on("change", function() {
+    var magSizeRange = document.getElementById("magSizeRange");
+    magSizeRange.addEventListener("change", function() {
         var config = cornerstoneTools.magnify.getConfiguration();
-        config.magnifySize = parseInt(magSizeRange.val(), 10)
-        var magnify = $(".magnifyTool").get(0);
+        config.magnifySize = parseInt(magSizeRange.value, 10);
+        var magnify = document.querySelector('.magnifyTool');
         magnify.width = config.magnifySize;
         magnify.height = config.magnifySize;
     });
 
     var config = {
-        magnifySize: parseInt(magSizeRange.val(), 10),
-        magnificationLevel: parseInt(magLevelRange.val(), 10)
+        magnifySize: parseInt(magSizeRange.value, 10),
+        magnificationLevel: parseInt(magLevelRange.value, 10)
     };
 
     cornerstoneTools.magnify.setConfiguration(config);
@@ -134,29 +132,28 @@
         cornerstoneTools.magnify.activate(element, 1);
         cornerstoneTools.magnifyTouchDrag.activate(element);
 
-        activate("#activate");
-
-        function activate(id)
-        {
-            $('a').removeClass('active');
-            $(id).addClass('active');
+        function activate(id) {
+            document.querySelectorAll('a').forEach(function(elem) {
+              elem.classList.remove('active');
+            });
+            document.getElementById(id).classList.add('active');
         }
 
+        activate("activate");
+
         // Tool button event handlers that set the new active tool
-        $('#disable').click(function() {
-            activate("#disable");
+        document.getElementById('disable').addEventListener('click', function() {
+            activate("disable");
             cornerstoneTools.magnify.disable(element);
             cornerstoneTools.magnifyTouchDrag.disable(element);
             return false;
         });
-        $('#activate').click(function() {
-            activate("#activate");
+        document.getElementById('activate').addEventListener('click', function() {
+            activate("activate");
             cornerstoneTools.magnify.activate(element, 1);
             cornerstoneTools.magnifyTouchDrag.activate(element);
             return false;
         });
-
     });
-
 </script>
 </html>

@@ -40,7 +40,9 @@ function pointNearTool (element, data, coords) {
   return external.cornerstoneMath.point.distance(endCanvas, coords) < 5;
 }
 
-function onImageRendered (e, eventData) {
+function onImageRendered (e) {
+  const eventData = e.detail;
+
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
