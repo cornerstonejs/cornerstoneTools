@@ -34,7 +34,9 @@ function setToolOptions (toolType, element, options) {
       options
     });
   } else {
-    elementToolOptions[toolType][index].options = options;
+    const elementOptions = elementToolOptions[toolType][index].options || {};
+
+    elementToolOptions[toolType][index].options = Object.assign(elementOptions, options);
   }
 }
 
