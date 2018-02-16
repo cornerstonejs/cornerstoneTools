@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-02-12 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-02-16 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -334,7 +334,9 @@ function setToolOptions(toolType, element, options) {
       options: options
     });
   } else {
-    elementToolOptions[toolType][index].options = options;
+    var elementOptions = elementToolOptions[toolType][index].options || {};
+
+    elementToolOptions[toolType][index].options = Object.assign(elementOptions, options);
   }
 }
 
@@ -9923,7 +9925,7 @@ function mouseWheel(e) {
   var wheelDelta = void 0;
 
   if (e.wheelDelta) {
-    wheelDelta = -e.wheelDelta;
+    wheelDelta = e.wheelDelta;
   } else if (e.deltaY) {
     wheelDelta = -e.deltaY;
   } else if (e.detail) {
@@ -11378,6 +11380,12 @@ function chooseLocation(e) {
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
       var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+
+      // Skip if the image plane is not ready
+      if (!imagePlane || !imagePlane.imagePositionPatient || !imagePlane.rowCosines || !imagePlane.columnCosines) {
+        return;
+      }
+
       var imagePosition = (0, _convertToVector2.default)(imagePlane.imagePositionPatient);
       var row = (0, _convertToVector2.default)(imagePlane.rowCosines);
       var column = (0, _convertToVector2.default)(imagePlane.columnCosines);
@@ -12549,13 +12557,12 @@ function mouseMoveCallback(e) {
     data.highlight = true;
     data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
     data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-    if (currentHandle) {
-      var lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-      var lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+    var neighbourIndex = currentHandle === 0 ? data.handles.length - 1 : currentHandle - 1;
+    var lastLineIndex = data.handles[neighbourIndex].lines.length - 1;
+    var lastLine = data.handles[neighbourIndex].lines[lastLineIndex];
 
-      lastLine.x = config.mouseLocation.handles.start.x;
-      lastLine.y = config.mouseLocation.handles.start.y;
-    }
+    lastLine.x = config.mouseLocation.handles.start.x;
+    lastLine.y = config.mouseLocation.handles.start.y;
   }
 
   if (config.freehand) {
