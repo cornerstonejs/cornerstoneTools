@@ -45,7 +45,7 @@ function mouseWheel (e) {
   let wheelDelta;
 
   if (e.wheelDelta) {
-    wheelDelta = -e.wheelDelta;
+    wheelDelta = e.wheelDelta;
   } else if (e.deltaY) {
     wheelDelta = -e.deltaY;
   } else if (e.detail) {

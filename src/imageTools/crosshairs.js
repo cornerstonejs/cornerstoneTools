@@ -59,6 +59,12 @@ function chooseLocation (e) {
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
       const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+
+      // Skip if the image plane is not ready
+      if (!imagePlane || !imagePlane.imagePositionPatient || !imagePlane.rowCosines || !imagePlane.columnCosines) {
+        return;
+      }
+
       const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
       const row = convertToVector3(imagePlane.rowCosines);
       const column = convertToVector3(imagePlane.columnCosines);
