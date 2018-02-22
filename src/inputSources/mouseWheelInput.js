@@ -3,6 +3,14 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 function mouseWheel (e) {
+  const cornerstone = external.cornerstone;
+  const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   // !!!HACK/NOTE/WARNING!!!
   // For some reason I am getting mousewheel and DOMMouseScroll events on my
   // Mac os x mavericks system when middle mouse button dragging.
@@ -17,9 +25,6 @@ function mouseWheel (e) {
   }
 
   e.preventDefault();
-
-  const cornerstone = external.cornerstone;
-  const element = e.currentTarget;
 
   let x;
   let y;
@@ -40,7 +45,7 @@ function mouseWheel (e) {
   let wheelDelta;
 
   if (e.wheelDelta) {
-    wheelDelta = -e.wheelDelta;
+    wheelDelta = e.wheelDelta;
   } else if (e.deltaY) {
     wheelDelta = -e.deltaY;
   } else if (e.detail) {
@@ -54,7 +59,7 @@ function mouseWheel (e) {
   const mouseWheelData = {
     element,
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     direction,
     pageX: x,
     pageY: y,

@@ -33,6 +33,12 @@ function preventClickHandler () {
 function mouseDoubleClick (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   const eventType = EVENTS.MOUSE_DOUBLE_CLICK;
 
   const startPoints = {
@@ -60,7 +66,7 @@ function mouseDoubleClick (e) {
     event: e,
     which: e.which,
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element,
     startPoints,
     lastPoints,
@@ -76,10 +82,16 @@ function mouseDoubleClick (e) {
 }
 
 function mouseDown (e) {
-  preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
-
   const cornerstone = external.cornerstone;
   const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
+  preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
+
   const eventType = EVENTS.MOUSE_DOWN;
 
   // Prevent CornerstoneToolsMouseMove while mouse is down
@@ -101,7 +113,7 @@ function mouseDown (e) {
     event: e,
     which: getEventWhich(e),
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element,
     startPoints,
     lastPoints,
@@ -148,7 +160,7 @@ function mouseDown (e) {
     const eventData = {
       which: whichMouseButton,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       startPoints,
       lastPoints,
@@ -205,7 +217,7 @@ function mouseDown (e) {
       event: e,
       which: whichMouseButton,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       startPoints,
       lastPoints,
@@ -233,6 +245,12 @@ function mouseDown (e) {
 function mouseMove (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   const eventType = EVENTS.MOUSE_MOVE;
 
   const startPoints = {
@@ -270,7 +288,7 @@ function mouseMove (e) {
 
   const eventData = {
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element,
     startPoints,
     lastPoints,
