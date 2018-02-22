@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-01-17 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-02-12 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -338,8 +338,33 @@ function setToolOptions(toolType, element, options) {
   }
 }
 
+function clearToolOptions(toolType, element) {
+  var toolOptions = elementToolOptions[toolType];
+
+  if (toolOptions) {
+    elementToolOptions[toolType] = toolOptions.filter(function (toolOptionObject) {
+      return toolOptionObject.element !== element;
+    });
+  }
+}
+
+function clearToolOptionsByToolType(toolType) {
+  delete elementToolOptions[toolType];
+}
+
+function clearToolOptionsByElement(element) {
+  for (var toolType in elementToolOptions) {
+    elementToolOptions[toolType] = elementToolOptions[toolType].filter(function (toolOptionObject) {
+      return toolOptionObject.element !== element;
+    });
+  }
+}
+
 exports.getToolOptions = getToolOptions;
 exports.setToolOptions = setToolOptions;
+exports.clearToolOptions = clearToolOptions;
+exports.clearToolOptionsByToolType = clearToolOptionsByToolType;
+exports.clearToolOptionsByElement = clearToolOptionsByElement;
 
 /***/ }),
 /* 4 */
@@ -7165,6 +7190,8 @@ var _convertToVector = __webpack_require__(17);
 
 var _convertToVector2 = _interopRequireDefault(_convertToVector);
 
+var _toolOptions = __webpack_require__(3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function unique(array) {
@@ -7441,6 +7468,7 @@ function Synchronizer(event, handler) {
     var element = e.detail.element;
 
     that.remove(element);
+    (0, _toolOptions.clearToolOptionsByElement)(element);
   }
 
   this.updateDisableHandlers = function () {
@@ -9409,12 +9437,17 @@ var mouseY = void 0;
 function keyPress(e) {
   var cornerstone = _externalModules2.default.cornerstone;
   var element = e.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
 
   var keyPressData = {
     event: window.event || e, // Old IE support
     element: element,
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     currentPoints: {
       page: {
         x: mouseX,
@@ -9532,6 +9565,12 @@ function preventClickHandler() {
 function mouseDoubleClick(e) {
   var cornerstone = _externalModules2.default.cornerstone;
   var element = e.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   var eventType = _events2.default.MOUSE_DOUBLE_CLICK;
 
   var startPoints = {
@@ -9556,7 +9595,7 @@ function mouseDoubleClick(e) {
     event: e,
     which: e.which,
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element: element,
     startPoints: startPoints,
     lastPoints: lastPoints,
@@ -9572,10 +9611,16 @@ function mouseDoubleClick(e) {
 }
 
 function mouseDown(e) {
-  preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
-
   var cornerstone = _externalModules2.default.cornerstone;
   var element = e.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
+  preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
+
   var eventType = _events2.default.MOUSE_DOWN;
 
   // Prevent CornerstoneToolsMouseMove while mouse is down
@@ -9597,7 +9642,7 @@ function mouseDown(e) {
     event: e,
     which: getEventWhich(e),
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element: element,
     startPoints: startPoints,
     lastPoints: lastPoints,
@@ -9644,7 +9689,7 @@ function mouseDown(e) {
     var eventData = {
       which: whichMouseButton,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element: element,
       startPoints: startPoints,
       lastPoints: lastPoints,
@@ -9701,7 +9746,7 @@ function mouseDown(e) {
       event: e,
       which: whichMouseButton,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element: element,
       startPoints: startPoints,
       lastPoints: lastPoints,
@@ -9729,6 +9774,12 @@ function mouseDown(e) {
 function mouseMove(e) {
   var cornerstone = _externalModules2.default.cornerstone;
   var element = e.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   var eventType = _events2.default.MOUSE_MOVE;
 
   var startPoints = {
@@ -9766,7 +9817,7 @@ function mouseMove(e) {
 
   var eventData = {
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     element: element,
     startPoints: startPoints,
     lastPoints: lastPoints,
@@ -9830,6 +9881,14 @@ var _triggerEvent2 = _interopRequireDefault(_triggerEvent);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function mouseWheel(e) {
+  var cornerstone = _externalModules2.default.cornerstone;
+  var element = e.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   // !!!HACK/NOTE/WARNING!!!
   // For some reason I am getting mousewheel and DOMMouseScroll events on my
   // Mac os x mavericks system when middle mouse button dragging.
@@ -9844,9 +9903,6 @@ function mouseWheel(e) {
   }
 
   e.preventDefault();
-
-  var cornerstone = _externalModules2.default.cornerstone;
-  var element = e.currentTarget;
 
   var x = void 0;
   var y = void 0;
@@ -9881,7 +9937,7 @@ function mouseWheel(e) {
   var mouseWheelData = {
     element: element,
     viewport: cornerstone.getViewport(element),
-    image: cornerstone.getEnabledElement(element).image,
+    image: enabledElement.image,
     direction: direction,
     pageX: x,
     pageY: y,
@@ -9979,6 +10035,12 @@ var toolType = 'touchInput';
 function onTouch(e) {
   var cornerstone = _externalModules2.default.cornerstone;
   var element = e.currentTarget || e.srcEvent.currentTarget;
+  var enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   var eventType = void 0,
       scaleChange = void 0,
       delta = void 0,
@@ -10014,7 +10076,7 @@ function onTouch(e) {
       eventData = {
         event: e,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         currentPoints: currentPoints,
         type: eventType,
@@ -10043,7 +10105,7 @@ function onTouch(e) {
       eventData = {
         event: e,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         currentPoints: currentPoints,
         type: eventType,
@@ -10083,7 +10145,7 @@ function onTouch(e) {
         event: e,
         startPoints: startPoints,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         direction: e.scale < 1 ? 1 : -1,
         scaleChange: scaleChange,
@@ -10121,7 +10183,7 @@ function onTouch(e) {
         eventData = {
           event: e,
           viewport: cornerstone.getViewport(element),
-          image: cornerstone.getEnabledElement(element).image,
+          image: enabledElement.image,
           element: element,
           startPoints: startPoints,
           currentPoints: startPoints,
@@ -10171,7 +10233,7 @@ function onTouch(e) {
         eventData = {
           event: e,
           viewport: cornerstone.getViewport(element),
-          image: cornerstone.getEnabledElement(element).image,
+          image: enabledElement.image,
           element: element,
           currentPoints: currentPoints,
           type: eventType,
@@ -10206,7 +10268,7 @@ function onTouch(e) {
         eventData = {
           event: e,
           viewport: cornerstone.getViewport(element),
-          image: cornerstone.getEnabledElement(element).image,
+          image: enabledElement.image,
           element: element,
           startPoints: startPoints,
           currentPoints: startPoints,
@@ -10270,7 +10332,7 @@ function onTouch(e) {
 
       eventData = {
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         startPoints: startPoints,
         lastPoints: lastPoints,
@@ -10337,7 +10399,7 @@ function onTouch(e) {
       eventData = {
         event: e.srcEvent,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         startPoints: startPoints,
         lastPoints: lastPoints,
@@ -10369,7 +10431,7 @@ function onTouch(e) {
       eventData = {
         event: e.srcEvent,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element: element,
         rotation: rotation,
         type: eventType
