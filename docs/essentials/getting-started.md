@@ -9,12 +9,11 @@ Cornerstone.js provides a rock solid foundation for creating a web medical image
 ``` html
 <!-- Scripts -->
 <!-- Cornerstone Tools External Dependencies -->
-<script src="https://unpkg.com/jquery@3.2.1/dist/jquery.js"></script>
 <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
-<script src="https://unpkg.com/cornerstone-math"></script>
 
 <!-- Cornerstone Latest -->
 <script src="https://unpkg.com/cornerstone-core"></script>
+<script src="https://unpkg.com/cornerstone-math"></script>
 <script src="https://unpkg.com/cornerstone-web-image-loader"></script>
 
 <!-- Cornerstone Tools Latest -->

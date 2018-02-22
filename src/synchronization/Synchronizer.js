@@ -1,6 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
+import { clearToolOptionsByElement } from '../toolOptions.js';
 
 function unique (array) {
   return array.filter(function (value, index, self) {
@@ -277,6 +278,7 @@ function Synchronizer (event, handler) {
     const element = e.detail.element;
 
     that.remove(element);
+    clearToolOptionsByElement(element);
   }
 
   this.updateDisableHandlers = function () {
