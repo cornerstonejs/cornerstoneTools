@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-02-12 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-02-27 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -334,7 +334,9 @@ function setToolOptions(toolType, element, options) {
       options: options
     });
   } else {
-    elementToolOptions[toolType][index].options = options;
+    var elementOptions = elementToolOptions[toolType][index].options || {};
+
+    elementToolOptions[toolType][index].options = Object.assign(elementOptions, options);
   }
 }
 
@@ -8395,6 +8397,7 @@ var _toolOptions = __webpack_require__(3);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'stackScroll';
+var toolTypeTouchDrag = 'stackScrollTouchDrag';
 
 function mouseUpCallback(e) {
   var eventData = e.detail;
@@ -8498,7 +8501,7 @@ var options = {
     deltaY: 0
   }
 };
-var stackScrollTouchDrag = (0, _touchDragTool2.default)(dragCallback, toolType, options);
+var stackScrollTouchDrag = (0, _touchDragTool2.default)(dragCallback, toolTypeTouchDrag, options);
 
 function multiTouchDragCallback(e) {
   var eventData = e.detail;
@@ -9923,7 +9926,7 @@ function mouseWheel(e) {
   var wheelDelta = void 0;
 
   if (e.wheelDelta) {
-    wheelDelta = -e.wheelDelta;
+    wheelDelta = e.wheelDelta;
   } else if (e.deltaY) {
     wheelDelta = -e.deltaY;
   } else if (e.detail) {
@@ -11378,6 +11381,12 @@ function chooseLocation(e) {
     // Find within the element's stack the closest image plane to selected location
     stackData.imageIds.forEach(function (imageId, index) {
       var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+
+      // Skip if the image plane is not ready
+      if (!imagePlane || !imagePlane.imagePositionPatient || !imagePlane.rowCosines || !imagePlane.columnCosines) {
+        return;
+      }
+
       var imagePosition = (0, _convertToVector2.default)(imagePlane.imagePositionPatient);
       var row = (0, _convertToVector2.default)(imagePlane.rowCosines);
       var column = (0, _convertToVector2.default)(imagePlane.columnCosines);
