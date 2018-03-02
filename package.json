@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.min.js",
   "keywords": [
@@ -48,7 +48,7 @@
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
     "chai": "^4.1.2",
-    "cornerstone-core": "^2.0.0",
+    "cornerstone-core": "^2.1.0",
     "coveralls": "^3.0.0",
     "docdash": "^0.4.0",
     "eslint": "^4.17.0",

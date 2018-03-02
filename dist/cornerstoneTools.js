@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-02-27 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.1.0 - 2018-03-02 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -17404,7 +17404,7 @@ exports.adaptiveBrush = adaptiveBrush;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '2.0.0';
+exports.default = '2.1.0';
 
 /***/ })
 /******/ ]);
