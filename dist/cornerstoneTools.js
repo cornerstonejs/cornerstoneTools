@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-02-16 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-02-27 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -8397,6 +8397,7 @@ var _toolOptions = __webpack_require__(3);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'stackScroll';
+var toolTypeTouchDrag = 'stackScrollTouchDrag';
 
 function mouseUpCallback(e) {
   var eventData = e.detail;
@@ -8500,7 +8501,7 @@ var options = {
     deltaY: 0
   }
 };
-var stackScrollTouchDrag = (0, _touchDragTool2.default)(dragCallback, toolType, options);
+var stackScrollTouchDrag = (0, _touchDragTool2.default)(dragCallback, toolTypeTouchDrag, options);
 
 function multiTouchDragCallback(e) {
   var eventData = e.detail;
@@ -12557,12 +12558,13 @@ function mouseMoveCallback(e) {
     data.highlight = true;
     data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
     data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-    var neighbourIndex = currentHandle === 0 ? data.handles.length - 1 : currentHandle - 1;
-    var lastLineIndex = data.handles[neighbourIndex].lines.length - 1;
-    var lastLine = data.handles[neighbourIndex].lines[lastLineIndex];
+    if (currentHandle) {
+      var lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+      var lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
 
-    lastLine.x = config.mouseLocation.handles.start.x;
-    lastLine.y = config.mouseLocation.handles.start.y;
+      lastLine.x = config.mouseLocation.handles.start.x;
+      lastLine.y = config.mouseLocation.handles.start.y;
+    }
   }
 
   if (config.freehand) {
