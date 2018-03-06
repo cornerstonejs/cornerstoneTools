@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.1.0 - 2018-03-02 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.1.0 - 2018-03-04 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -296,6 +296,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 var elementToolOptions = {};
 
+/**
+ * Retrieve the options object associated with a particular toolType and element
+ *
+ * @param {string} toolType Tool type identifier of the target options object
+ * @param {HTMLElement} element Element of the target options object
+ *
+ * @return {Object} Target options object (empty if not yet set)
+ */
 function getToolOptions(toolType, element) {
   if (!elementToolOptions[toolType]) {
     return {};
@@ -313,6 +321,15 @@ function getToolOptions(toolType, element) {
   return optionsObject.options;
 }
 
+/**
+ * Set the options object associated with a particular toolType and element
+ *
+ * @param {string} toolType Tool type identifier of the target options object
+ * @param {HTMLElement} element Element of the target options object
+ * @param {Object} options Options object to store at target
+ *
+ * @return {void}
+ */
 function setToolOptions(toolType, element, options) {
   if (!elementToolOptions[toolType]) {
     elementToolOptions[toolType] = [{
@@ -340,6 +357,14 @@ function setToolOptions(toolType, element, options) {
   }
 }
 
+/**
+ * Clear the options object associated with a particular toolType and element
+ *
+ * @param {string} toolType Tool type identifier of the target options object
+ * @param {HTMLElement} element Element of the target options object
+ *
+ * @return {void}
+ */
 function clearToolOptions(toolType, element) {
   var toolOptions = elementToolOptions[toolType];
 
@@ -350,10 +375,24 @@ function clearToolOptions(toolType, element) {
   }
 }
 
+/**
+ * Clear the options objects associated with a particular toolType
+ *
+ * @param {string} toolType Tool type identifier of the target options objects
+ *
+ * @return {void}
+ */
 function clearToolOptionsByToolType(toolType) {
   delete elementToolOptions[toolType];
 }
 
+/**
+ * Clear the options objects associated with a particular element
+ *
+ * @param {HTMLElement} element Element of the target options objects
+ *
+ * @return {void}
+ */
 function clearToolOptionsByElement(element) {
   for (var toolType in elementToolOptions) {
     elementToolOptions[toolType] = elementToolOptions[toolType].filter(function (toolOptionObject) {
