@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.1.0 - 2018-03-02 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.1.0 - 2018-03-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -12113,221 +12113,225 @@ function onImageRendered(e) {
       (0, _drawHandles2.default)(context, eventData, data.handles, color);
     }
 
-    // Define variables for the area and mean/standard deviation
-    var area = void 0,
-        meanStdDev = void 0,
-        meanStdDevSUV = void 0;
+    // If the tool configuration specifies to hide text box, set config.hideTextBox = true, default show text box
+    if (config && !config.hideTextBox) {
 
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else {
-      // If the data has been invalidated, we need to calculate it again
+      // Define variables for the area and mean/standard deviation
+      var area = void 0,
+          meanStdDev = void 0,
+          meanStdDevSUV = void 0;
 
-      // Retrieve the bounds of the ellipse in image coordinates
-      var ellipse = {
-        left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
-        top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-        width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
-        height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
-      };
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else {
+        // If the data has been invalidated, we need to calculate it again
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ellipse bounds cover
-        var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
+        // Retrieve the bounds of the ellipse in image coordinates
+        var ellipse = {
+          left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+          top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+          width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+          height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
+        };
 
-        // Calculate the mean & standard deviation from the pixels and the ellipse details
-        meanStdDev = (0, _calculateEllipseStatistics2.default)(pixels, ellipse);
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ellipse bounds cover
+          var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
+          // Calculate the mean & standard deviation from the pixels and the ellipse details
+          meanStdDev = (0, _calculateEllipseStatistics2.default)(pixels, ellipse);
 
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
+
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
+
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        // Retrieve the pixel spacing values, and if they are not
+        // Real non-zero values, set them to 1
+        var columnPixelSpacing = image.columnPixelSpacing || 1;
+        var rowPixelSpacing = image.rowPixelSpacing || 1;
+
+        // Calculate the image area from the ellipse dimensions and pixel spacing
+        area = Math.PI * (ellipse.width * columnPixelSpacing / 2) * (ellipse.height * rowPixelSpacing / 2);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
         }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
+      // Define an array to store the rows of text for the textbox
+      var textLines = [];
 
-      // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = Math.PI * (ellipse.width * columnPixelSpacing / 2) * (ellipse.height * rowPixelSpacing / 2);
+      // If the mean and standard deviation values are present, display them
+      if (meanStdDev && meanStdDev.mean !== undefined) {
+        // If the modality is CT, add HU to denote Hounsfield Units
+        var moSuffix = '';
 
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+        if (modality === 'CT') {
+          moSuffix = ' HU';
+        }
+
+        // Create a line of text to display the mean and any units that were specified (i.e. HU)
+        var meanText = 'Mean: ' + numberWithCommas(meanStdDev.mean.toFixed(2)) + moSuffix;
+        // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
+        var stdDevText = 'StdDev: ' + numberWithCommas(meanStdDev.stdDev.toFixed(2)) + moSuffix;
+
+        // If this image has SUV values to display, concatenate them to the text line
+        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
+          var SUVtext = ' SUV: ';
+
+          meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
+          stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+        }
+
+        // Add these text lines to the array to be displayed in the textbox
+        textLines.push(meanText);
+        textLines.push(stdDevText);
       }
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+      // If the area is a sane value, display it
+      if (area) {
+        // Determine the area suffix based on the pixel spacing in the image.
+        // If pixel spacing is present, use millimeters. Otherwise, use pixels.
+        // This uses Char code 178 for a superscript 2
+        var suffix = ' mm' + String.fromCharCode(178);
 
-    // Define an array to store the rows of text for the textbox
-    var textLines = [];
+        if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+          suffix = ' pixels' + String.fromCharCode(178);
+        }
 
-    // If the mean and standard deviation values are present, display them
-    if (meanStdDev && meanStdDev.mean !== undefined) {
-      // If the modality is CT, add HU to denote Hounsfield Units
-      var moSuffix = '';
+        // Create a line of text to display the area and its units
+        var areaText = 'Area: ' + numberWithCommas(area.toFixed(2)) + suffix;
 
-      if (modality === 'CT') {
-        moSuffix = ' HU';
+        // Add this text line to the array to be displayed in the textbox
+        textLines.push(areaText);
       }
 
-      // Create a line of text to display the mean and any units that were specified (i.e. HU)
-      var meanText = 'Mean: ' + numberWithCommas(meanStdDev.mean.toFixed(2)) + moSuffix;
-      // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-      var stdDevText = 'StdDev: ' + numberWithCommas(meanStdDev.stdDev.toFixed(2)) + moSuffix;
-
-      // If this image has SUV values to display, concatenate them to the text line
-      if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-        var SUVtext = ' SUV: ';
-
-        meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-        stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.handles.textBox.hasMoved) {
+        // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+        data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
       }
 
-      // Add these text lines to the array to be displayed in the textbox
-      textLines.push(meanText);
-      textLines.push(stdDevText);
-    }
+      // Convert the textbox Image coordinates into Canvas coordinates
+      var textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
 
-    // If the area is a sane value, display it
-    if (area) {
-      // Determine the area suffix based on the pixel spacing in the image.
-      // If pixel spacing is present, use millimeters. Otherwise, use pixels.
-      // This uses Char code 178 for a superscript 2
-      var suffix = ' mm' + String.fromCharCode(178);
-
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
-        suffix = ' pixels' + String.fromCharCode(178);
-      }
-
-      // Create a line of text to display the area and its units
-      var areaText = 'Area: ' + numberWithCommas(area.toFixed(2)) + suffix;
-
-      // Add this text line to the array to be displayed in the textbox
-      textLines.push(areaText);
-    }
-
-    // If the textbox has not been moved by the user, it should be displayed on the right-most
-    // Side of the tool.
-    if (!data.handles.textBox.hasMoved) {
-      // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-      // Note that this calculates it in image coordinates
-      data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-      data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
-    }
-
-    // Convert the textbox Image coordinates into Canvas coordinates
-    var textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
-
-    // Set options for the textbox drawing function
-    var options = {
-      centering: {
-        x: false,
-        y: true
-      }
-    };
-
-    // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
-    var boundingBox = (0, _drawTextBox2.default)(context, textLines, textCoords.x, textCoords.y, color, options);
-
-    // Store the bounding box data in the handle for mouse-dragging and highlighting
-    data.handles.textBox.boundingBox = boundingBox;
-
-    // If the textbox has moved, we would like to draw a line linking it with the tool
-    // This section decides where to draw this line to on the Ellipse based on the location
-    // Of the textbox relative to the ellipse.
-    if (data.handles.textBox.hasMoved) {
-      // Draw dashed link line between tool and text
-
-      // The initial link position is at the center of the
-      // Textbox.
-      var link = {
-        start: {},
-        end: {
-          x: textCoords.x,
-          y: textCoords.y
+      // Set options for the textbox drawing function
+      var options = {
+        centering: {
+          x: false,
+          y: true
         }
       };
 
-      // First we calculate the ellipse points (top, left, right, and bottom)
-      var ellipsePoints = [{
-        // Top middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas
-      }, {
-        // Left middle point of ellipse
-        x: leftCanvas,
-        y: topCanvas + heightCanvas / 2
-      }, {
-        // Bottom middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas + heightCanvas
-      }, {
-        // Right middle point of ellipse
-        x: leftCanvas + widthCanvas,
-        y: topCanvas + heightCanvas / 2
-      }];
+      // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
+      var boundingBox = (0, _drawTextBox2.default)(context, textLines, textCoords.x, textCoords.y, color, options);
 
-      // We obtain the link starting point by finding the closest point on the ellipse to the
-      // Center of the textbox
-      link.start = _externalModules2.default.cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+      // Store the bounding box data in the handle for mouse-dragging and highlighting
+      data.handles.textBox.boundingBox = boundingBox;
 
-      // Next we calculate the corners of the textbox bounding box
-      var boundingBoxPoints = [{
-        // Top middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top
-      }, {
-        // Left middle point of bounding box
-        x: boundingBox.left,
-        y: boundingBox.top + boundingBox.height / 2
-      }, {
-        // Bottom middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top + boundingBox.height
-      }, {
-        // Right middle point of bounding box
-        x: boundingBox.left + boundingBox.width,
-        y: boundingBox.top + boundingBox.height / 2
-      }];
+      // If the textbox has moved, we would like to draw a line linking it with the tool
+      // This section decides where to draw this line to on the Ellipse based on the location
+      // Of the textbox relative to the ellipse.
+      if (data.handles.textBox.hasMoved) {
+        // Draw dashed link line between tool and text
 
-      // Now we recalculate the link endpoint by identifying which corner of the bounding box
-      // Is closest to the start point we just calculated.
-      link.end = _externalModules2.default.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+        // The initial link position is at the center of the
+        // Textbox.
+        var link = {
+          start: {},
+          end: {
+            x: textCoords.x,
+            y: textCoords.y
+          }
+        };
 
-      // Finally we draw the dashed linking line
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-      context.setLineDash([2, 3]);
-      context.moveTo(link.start.x, link.start.y);
-      context.lineTo(link.end.x, link.end.y);
-      context.stroke();
+        // First we calculate the ellipse points (top, left, right, and bottom)
+        var ellipsePoints = [{
+          // Top middle point of ellipse
+          x: leftCanvas + widthCanvas / 2,
+          y: topCanvas
+        }, {
+          // Left middle point of ellipse
+          x: leftCanvas,
+          y: topCanvas + heightCanvas / 2
+        }, {
+          // Bottom middle point of ellipse
+          x: leftCanvas + widthCanvas / 2,
+          y: topCanvas + heightCanvas
+        }, {
+          // Right middle point of ellipse
+          x: leftCanvas + widthCanvas,
+          y: topCanvas + heightCanvas / 2
+        }];
+
+        // We obtain the link starting point by finding the closest point on the ellipse to the
+        // Center of the textbox
+        link.start = _externalModules2.default.cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+
+        // Next we calculate the corners of the textbox bounding box
+        var boundingBoxPoints = [{
+          // Top middle point of bounding box
+          x: boundingBox.left + boundingBox.width / 2,
+          y: boundingBox.top
+        }, {
+          // Left middle point of bounding box
+          x: boundingBox.left,
+          y: boundingBox.top + boundingBox.height / 2
+        }, {
+          // Bottom middle point of bounding box
+          x: boundingBox.left + boundingBox.width / 2,
+          y: boundingBox.top + boundingBox.height
+        }, {
+          // Right middle point of bounding box
+          x: boundingBox.left + boundingBox.width,
+          y: boundingBox.top + boundingBox.height / 2
+        }];
+
+        // Now we recalculate the link endpoint by identifying which corner of the bounding box
+        // Is closest to the start point we just calculated.
+        link.end = _externalModules2.default.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+
+        // Finally we draw the dashed linking line
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = lineWidth;
+        context.setLineDash([2, 3]);
+        context.moveTo(link.start.x, link.start.y);
+        context.lineTo(link.end.x, link.end.y);
+        context.stroke();
+      }
     }
 
     context.restore();
@@ -14360,223 +14364,225 @@ function onImageRendered(e) {
       (0, _drawHandles2.default)(context, eventData, data.handles, color);
     }
 
-    // Define variables for the area and mean/standard deviation
-    var area = void 0,
-        meanStdDev = void 0,
-        meanStdDevSUV = void 0;
+    // If the tool configuration specifies to hide text box, set config.hideTextBox = true, default show text box
+    if (config && !config.hideTextBox) {
+      // Define variables for the area and mean/standard deviation
+      var area = void 0,
+          meanStdDev = void 0,
+          meanStdDevSUV = void 0;
 
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else {
-      // If the data has been invalidated, we need to calculate it again
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else {
+        // If the data has been invalidated, we need to calculate it again
 
-      // Retrieve the bounds of the ellipse in image coordinates
-      var ellipse = {
-        left: Math.min(data.handles.start.x, data.handles.end.x),
-        top: Math.min(data.handles.start.y, data.handles.end.y),
-        width: Math.abs(data.handles.start.x - data.handles.end.x),
-        height: Math.abs(data.handles.start.y - data.handles.end.y)
-      };
+        // Retrieve the bounds of the ellipse in image coordinates
+        var ellipse = {
+          left: Math.min(data.handles.start.x, data.handles.end.x),
+          top: Math.min(data.handles.start.y, data.handles.end.y),
+          width: Math.abs(data.handles.start.x - data.handles.end.x),
+          height: Math.abs(data.handles.start.y - data.handles.end.y)
+        };
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ellipse bounds cover
-        var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ellipse bounds cover
+          var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
-        // Calculate the mean & standard deviation from the pixels and the ellipse details
-        meanStdDev = calculateMeanStdDev(pixels, ellipse);
+          // Calculate the mean & standard deviation from the pixels and the ellipse details
+          meanStdDev = calculateMeanStdDev(pixels, ellipse);
 
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
 
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
+
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        // Retrieve the pixel spacing values, and if they are not
+        // Real non-zero values, set them to 1
+        var columnPixelSpacing = image.columnPixelSpacing || 1;
+        var rowPixelSpacing = image.rowPixelSpacing || 1;
+
+        // Calculate the image area from the ellipse dimensions and pixel spacing
+        area = ellipse.width * columnPixelSpacing * (ellipse.height * rowPixelSpacing);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
         }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
+      // Define an array to store the rows of text for the textbox
+      var textLines = [];
 
-      // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = ellipse.width * columnPixelSpacing * (ellipse.height * rowPixelSpacing);
+      // If the mean and standard deviation values are present, display them
+      if (meanStdDev && meanStdDev.mean) {
+        // If the modality is CT, add HU to denote Hounsfield Units
+        var moSuffix = '';
 
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+        if (modality === 'CT') {
+          moSuffix = ' HU';
+        }
+
+        // Create a line of text to display the mean and any units that were specified (i.e. HU)
+        var meanText = 'Mean: ' + numberWithCommas(meanStdDev.mean.toFixed(2)) + moSuffix;
+        // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
+        var stdDevText = 'StdDev: ' + numberWithCommas(meanStdDev.stdDev.toFixed(2)) + moSuffix;
+
+        // If this image has SUV values to display, concatenate them to the text line
+        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
+          var SUVtext = ' SUV: ';
+
+          meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
+          stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+        }
+
+        // Add these text lines to the array to be displayed in the textbox
+        textLines.push(meanText);
+        textLines.push(stdDevText);
       }
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+      // If the area is a sane value, display it
+      if (area) {
+        // Determine the area suffix based on the pixel spacing in the image.
+        // If pixel spacing is present, use millimeters. Otherwise, use pixels.
+        // This uses Char code 178 for a superscript 2
+        var suffix = ' mm' + String.fromCharCode(178);
 
-    // Define an array to store the rows of text for the textbox
-    var textLines = [];
+        if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+          suffix = ' pixels' + String.fromCharCode(178);
+        }
 
-    // If the mean and standard deviation values are present, display them
-    if (meanStdDev && meanStdDev.mean) {
-      // If the modality is CT, add HU to denote Hounsfield Units
-      var moSuffix = '';
+        // Create a line of text to display the area and its units
+        var areaText = 'Area: ' + numberWithCommas(area.toFixed(2)) + suffix;
 
-      if (modality === 'CT') {
-        moSuffix = ' HU';
+        // Add this text line to the array to be displayed in the textbox
+        textLines.push(areaText);
       }
 
-      // Create a line of text to display the mean and any units that were specified (i.e. HU)
-      var meanText = 'Mean: ' + numberWithCommas(meanStdDev.mean.toFixed(2)) + moSuffix;
-      // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-      var stdDevText = 'StdDev: ' + numberWithCommas(meanStdDev.stdDev.toFixed(2)) + moSuffix;
-
-      // If this image has SUV values to display, concatenate them to the text line
-      if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-        var SUVtext = ' SUV: ';
-
-        meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-        stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.handles.textBox.hasMoved) {
+        // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+        data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
       }
 
-      // Add these text lines to the array to be displayed in the textbox
-      textLines.push(meanText);
-      textLines.push(stdDevText);
-    }
+      // Convert the textbox Image coordinates into Canvas coordinates
+      var textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
 
-    // If the area is a sane value, display it
-    if (area) {
-      // Determine the area suffix based on the pixel spacing in the image.
-      // If pixel spacing is present, use millimeters. Otherwise, use pixels.
-      // This uses Char code 178 for a superscript 2
-      var suffix = ' mm' + String.fromCharCode(178);
-
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
-        suffix = ' pixels' + String.fromCharCode(178);
-      }
-
-      // Create a line of text to display the area and its units
-      var areaText = 'Area: ' + numberWithCommas(area.toFixed(2)) + suffix;
-
-      // Add this text line to the array to be displayed in the textbox
-      textLines.push(areaText);
-    }
-
-    // If the textbox has not been moved by the user, it should be displayed on the right-most
-    // Side of the tool.
-    if (!data.handles.textBox.hasMoved) {
-      // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-      // Note that this calculates it in image coordinates
-      data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-      data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
-    }
-
-    // Convert the textbox Image coordinates into Canvas coordinates
-    var textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
-
-    // Set options for the textbox drawing function
-    var options = {
-      centering: {
-        x: false,
-        y: true
-      }
-    };
-
-    // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
-    var boundingBox = (0, _drawTextBox2.default)(context, textLines, textCoords.x, textCoords.y, color, options);
-
-    // Store the bounding box data in the handle for mouse-dragging and highlighting
-    data.handles.textBox.boundingBox = boundingBox;
-
-    // If the textbox has moved, we would like to draw a line linking it with the tool
-    // This section decides where to draw this line to on the Ellipse based on the location
-    // Of the textbox relative to the ellipse.
-    if (data.handles.textBox.hasMoved) {
-      // Draw dashed link line between tool and text
-
-      // The initial link position is at the center of the
-      // Textbox.
-      var link = {
-        start: {},
-        end: {
-          x: textCoords.x,
-          y: textCoords.y
+      // Set options for the textbox drawing function
+      var options = {
+        centering: {
+          x: false,
+          y: true
         }
       };
 
-      // First we calculate the ellipse points (top, left, right, and bottom)
-      var ellipsePoints = [{
-        // Top middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas
-      }, {
-        // Left middle point of ellipse
-        x: leftCanvas,
-        y: topCanvas + heightCanvas / 2
-      }, {
-        // Bottom middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas + heightCanvas
-      }, {
-        // Right middle point of ellipse
-        x: leftCanvas + widthCanvas,
-        y: topCanvas + heightCanvas / 2
-      }];
+      // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
+      var boundingBox = (0, _drawTextBox2.default)(context, textLines, textCoords.x, textCoords.y, color, options);
 
-      // We obtain the link starting point by finding the closest point on the ellipse to the
-      // Center of the textbox
-      link.start = _externalModules2.default.cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+      // Store the bounding box data in the handle for mouse-dragging and highlighting
+      data.handles.textBox.boundingBox = boundingBox;
 
-      // Next we calculate the corners of the textbox bounding box
-      var boundingBoxPoints = [{
-        // Top middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top
-      }, {
-        // Left middle point of bounding box
-        x: boundingBox.left,
-        y: boundingBox.top + boundingBox.height / 2
-      }, {
-        // Bottom middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top + boundingBox.height
-      }, {
-        // Right middle point of bounding box
-        x: boundingBox.left + boundingBox.width,
-        y: boundingBox.top + boundingBox.height / 2
-      }];
+      // If the textbox has moved, we would like to draw a line linking it with the tool
+      // This section decides where to draw this line to on the Ellipse based on the location
+      // Of the textbox relative to the ellipse.
+      if (data.handles.textBox.hasMoved) {
+        // Draw dashed link line between tool and text
 
-      // Now we recalculate the link endpoint by identifying which corner of the bounding box
-      // Is closest to the start point we just calculated.
-      link.end = _externalModules2.default.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+        // The initial link position is at the center of the
+        // Textbox.
+        var link = {
+          start: {},
+          end: {
+            x: textCoords.x,
+            y: textCoords.y
+          }
+        };
 
-      // Finally we draw the dashed linking line
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-      context.setLineDash([2, 3]);
-      context.moveTo(link.start.x, link.start.y);
-      context.lineTo(link.end.x, link.end.y);
-      context.stroke();
+        // First we calculate the ellipse points (top, left, right, and bottom)
+        var ellipsePoints = [{
+          // Top middle point of ellipse
+          x: leftCanvas + widthCanvas / 2,
+          y: topCanvas
+        }, {
+          // Left middle point of ellipse
+          x: leftCanvas,
+          y: topCanvas + heightCanvas / 2
+        }, {
+          // Bottom middle point of ellipse
+          x: leftCanvas + widthCanvas / 2,
+          y: topCanvas + heightCanvas
+        }, {
+          // Right middle point of ellipse
+          x: leftCanvas + widthCanvas,
+          y: topCanvas + heightCanvas / 2
+        }];
+
+        // We obtain the link starting point by finding the closest point on the ellipse to the
+        // Center of the textbox
+        link.start = _externalModules2.default.cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
+
+        // Next we calculate the corners of the textbox bounding box
+        var boundingBoxPoints = [{
+          // Top middle point of bounding box
+          x: boundingBox.left + boundingBox.width / 2,
+          y: boundingBox.top
+        }, {
+          // Left middle point of bounding box
+          x: boundingBox.left,
+          y: boundingBox.top + boundingBox.height / 2
+        }, {
+          // Bottom middle point of bounding box
+          x: boundingBox.left + boundingBox.width / 2,
+          y: boundingBox.top + boundingBox.height
+        }, {
+          // Right middle point of bounding box
+          x: boundingBox.left + boundingBox.width,
+          y: boundingBox.top + boundingBox.height / 2
+        }];
+
+        // Now we recalculate the link endpoint by identifying which corner of the bounding box
+        // Is closest to the start point we just calculated.
+        link.end = _externalModules2.default.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
+
+        // Finally we draw the dashed linking line
+        context.beginPath();
+        context.strokeStyle = color;
+        context.lineWidth = lineWidth;
+        context.setLineDash([2, 3]);
+        context.moveTo(link.start.x, link.start.y);
+        context.lineTo(link.end.x, link.end.y);
+        context.stroke();
+      }
     }
-
     context.restore();
   }
 }
