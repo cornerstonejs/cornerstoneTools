@@ -4,3 +4,4 @@ node_modules
 coverage
 documentation
 docs/_book
+docs/api.md
