@@ -1,7 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
-import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -410,8 +409,7 @@ function onTouch (e) {
     if (remainingPointers === 2) {
       preventNextPinch = true;
     }
-
-    return pauseEvent(e);
+    break;
 
   case 'rotatemove':
     isPress = false;

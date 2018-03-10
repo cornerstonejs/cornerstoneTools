@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2018-03-02
+### Added
+- Added configuration and functional option to scroll a stack without skipping images (thanks @jdnarvaez)
+- Added support for allowing inputs to be enabled before loading an image (thanks @medihack)
+
+### Fixed
+- Fixed memory leak from use of getToolOption and setToolOption (thanks @nspin)
+- Fixed an exception with crosshairs tool by skipping when image plane is not ready
+- Fixed incorrect scroll direction
+- Fixed a bug when activating stackScroll before stackScrollTouchDrag at the same time (thanks @vaibhav2383)
+
+
 ## [2.0.0] - 2017-12-13
 ### Added
 - Began the [Getting Started guide](https://tools.cornerstonejs.org/essentials/getting-started.html) (thanks @dannyrb)

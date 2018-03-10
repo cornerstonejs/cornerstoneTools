@@ -1,7 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
-import pauseEvent from '../util/pauseEvent.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 let isClickEvent = true;
@@ -176,9 +175,6 @@ function mouseDown (e) {
 
     // Update the last points
     lastPoints = copyPoints(currentPoints);
-
-    // Prevent left click selection of DOM elements
-    return pauseEvent(e);
   }
 
   // Hook mouseup so we can unbind our event listeners
@@ -238,8 +234,6 @@ function mouseDown (e) {
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
-
-  return pauseEvent(e);
 }
 
 function mouseMove (e) {

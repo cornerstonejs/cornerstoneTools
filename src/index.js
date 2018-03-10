@@ -1,4 +1,5 @@
 export { default as external } from './externalModules.js';
+export { default as EVENTS } from './events.js';
 
 export { default as referenceLines } from './referenceLines/index.js';
 export { default as orientation } from './orientation/index.js';
@@ -15,7 +16,7 @@ export { projectPatientPointToImagePlane,
 
 export { default as pointInsideBoundingBox } from './util/pointInsideBoundingBox.js';
 export { default as pointInEllipse } from './util/pointInEllipse.js';
-export { default as pauseEvent } from './util/pauseEvent.js';
+export { default as makeUnselectable } from './util/makeUnselectable.js';
 export { default as isMouseButtonEnabled } from './util/isMouseButtonEnabled.js';
 export { default as getRGBPixels } from './util/getRGBPixels.js';
 export { getDefaultSimultaneousRequests,
