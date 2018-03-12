@@ -5,6 +5,11 @@ const context = path.join(rootPath, "src");
 const outputPath = path.join(rootPath, 'dist');
 const bannerPlugin = require('./plugins/banner');
 
+// Current directory + up two directories + path
+function resolve (dir) {
+  return path.resolve(__dirname, '../..', dir);
+}
+
 module.exports = {
   context: context,
   entry: {
@@ -17,6 +22,13 @@ module.exports = {
     libraryTarget: 'umd',
     path: outputPath,
     umdNamedDefine: true
+  },
+  resolve: {
+    extensions: ['.js', '.json'],
+    alias: {
+      '@': resolve('src'),
+      '@tools': resolve('src/tools')
+    }
   },
   devtool: 'source-map',
   externals: {
