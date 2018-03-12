@@ -13,7 +13,8 @@ function resolve (dir) {
 module.exports = {
   context: context,
   entry: {
-    cornerstoneTools: './index.js'
+    cornerstoneTools: './index.js',
+    tools: './tools/index.js'
   },
   target: 'web',
   output: {
