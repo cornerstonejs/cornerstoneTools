@@ -1,6 +1,6 @@
-import EVENTS from '../events.js';
-import external from '../externalModules.js';
-import triggerEvent from '../util/triggerEvent.js';
+import EVENTS from '@/events.js';
+import external from '@/externalModules.js';
+import triggerEvent from '@/util/triggerEvent.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   const cornerstone = external.cornerstone;

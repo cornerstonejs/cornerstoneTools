@@ -1,5 +1,5 @@
-import external from '../externalModules.js';
-import { getMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
+import external from '@/externalModules.js';
+import { getMaxSimultaneousRequests } from '@/util/getMaxSimultaneousRequests.js';
 
 const requestPool = {
   interaction: [],

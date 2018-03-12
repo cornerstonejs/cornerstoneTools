@@ -1,5 +1,5 @@
-import external from '../externalModules.js';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
+import external from '@/externalModules.js';
+import pointInsideBoundingBox from '@/util/pointInsideBoundingBox.js';
 
 export default function (element, handles, coords, distanceThreshold) {
   let nearbyHandle;

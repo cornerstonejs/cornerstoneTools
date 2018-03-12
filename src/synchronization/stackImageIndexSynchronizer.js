@@ -1,6 +1,6 @@
-import external from '../externalModules.js';
-import { getToolState } from '../stateManagement/toolState.js';
-import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import external from '@/externalModules.js';
+import { getToolState } from '@/stateManagement/toolState.js';
+import loadHandlerManager from '@/stateManagement/loadHandlerManager.js';
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position

@@ -1,4 +1,4 @@
-import external from '../externalModules.js';
+import external from '@/externalModules.js';
 
 /**
  * Sets the canvas context transformation matrix so it is scaled to show text
