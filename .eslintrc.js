@@ -5,6 +5,13 @@ module.exports = {
     'node': true,
     'mocha': true
   },
+  'settings': {
+    'import/resolver': {
+      'webpack': {
+        'config': 'config/webpack/webpack-base.js'
+      }
+    }
+  },
   'extends': 'eslint:recommended',
   'plugins': ['import'],
   'parserOptions': {
