@@ -5,4 +5,3 @@ coverage
 documentation
 docs/_book
 package-lock.json
-/dist/*
