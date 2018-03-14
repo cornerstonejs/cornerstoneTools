@@ -1,6 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
+import { clearToolOptionsByElement } from '../toolOptions.js';
 
 function unique (array) {
   return array.filter(function (value, index, self) {
@@ -10,6 +11,7 @@ function unique (array) {
 
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
+// @param event can contain more than one event, separated by a space
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;
@@ -162,7 +164,9 @@ function Synchronizer (event, handler) {
     sourceElements.push(element);
 
     // Subscribe to the event
-    element.addEventListener(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.addEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -210,7 +214,9 @@ function Synchronizer (event, handler) {
     sourceElements.splice(index, 1);
 
     // Stop listening for the event
-    element.removeEventListener(event, onEvent);
+    event.split(' ').forEach((oneEvent) => {
+      element.removeEventListener(oneEvent, onEvent);
+    });
 
     // Update the initial distances between elements
     that.getDistances();
@@ -272,6 +278,7 @@ function Synchronizer (event, handler) {
     const element = e.detail.element;
 
     that.remove(element);
+    clearToolOptionsByElement(element);
   }
 
   this.updateDisableHandlers = function () {

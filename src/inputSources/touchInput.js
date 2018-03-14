@@ -1,7 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
-import pauseEvent from '../util/pauseEvent.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -29,6 +28,12 @@ const toolType = 'touchInput';
 function onTouch (e) {
   const cornerstone = external.cornerstone;
   const element = e.currentTarget || e.srcEvent.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
   let eventType,
     scaleChange,
     delta,
@@ -64,7 +69,7 @@ function onTouch (e) {
     eventData = {
       event: e,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       currentPoints,
       type: eventType,
@@ -93,7 +98,7 @@ function onTouch (e) {
     eventData = {
       event: e,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       currentPoints,
       type: eventType,
@@ -133,7 +138,7 @@ function onTouch (e) {
       event: e,
       startPoints,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       direction: e.scale < 1 ? 1 : -1,
       scaleChange,
@@ -171,7 +176,7 @@ function onTouch (e) {
       eventData = {
         event: e,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element,
         startPoints,
         currentPoints: startPoints,
@@ -221,7 +226,7 @@ function onTouch (e) {
       eventData = {
         event: e,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element,
         currentPoints,
         type: eventType,
@@ -256,7 +261,7 @@ function onTouch (e) {
       eventData = {
         event: e,
         viewport: cornerstone.getViewport(element),
-        image: cornerstone.getEnabledElement(element).image,
+        image: enabledElement.image,
         element,
         startPoints,
         currentPoints: startPoints,
@@ -320,7 +325,7 @@ function onTouch (e) {
 
     eventData = {
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       startPoints,
       lastPoints,
@@ -387,7 +392,7 @@ function onTouch (e) {
     eventData = {
       event: e.srcEvent,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       startPoints,
       lastPoints,
@@ -404,8 +409,7 @@ function onTouch (e) {
     if (remainingPointers === 2) {
       preventNextPinch = true;
     }
-
-    return pauseEvent(e);
+    break;
 
   case 'rotatemove':
     isPress = false;
@@ -419,7 +423,7 @@ function onTouch (e) {
     eventData = {
       event: e.srcEvent,
       viewport: cornerstone.getViewport(element),
-      image: cornerstone.getEnabledElement(element).image,
+      image: enabledElement.image,
       element,
       rotation,
       type: eventType

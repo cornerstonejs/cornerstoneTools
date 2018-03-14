@@ -4,4 +4,8 @@ node_modules
 coverage
 documentation
 docs/_book
+<<<<<<< HEAD
 package-lock.json
+=======
+docs/api.md
+>>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a

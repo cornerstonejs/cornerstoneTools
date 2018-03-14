@@ -20,6 +20,9 @@ module.exports = {
   frameworks: ['mocha'],
   reporters: ['progress', 'coverage'],
   files: [
+    'node_modules/phantomjs-polyfill-find-index/findIndex-polyfill.js',
+    'node_modules/phantomjs-polyfill-find/find-polyfill.js',
+    'node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js',
     'node_modules/cornerstone-core/dist/cornerstone.js',
     'node_modules/cornerstone-math/dist/cornerstoneMath.js',
     'node_modules/hammerjs/hammer.js',

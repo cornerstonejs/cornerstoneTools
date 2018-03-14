@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## [2.1.0] - 2018-01-05
 ### Changed
 Overhauled and expanded the functionality of the freehandROI tool:
@@ -14,6 +15,19 @@ Overhauled and expanded the functionality of the freehandROI tool:
 - Disallows the user to cross lines (using a orientation algorithm).
 - Fixed a UI bug, where upon editing the first node the line connecting the first and last nodes would not reactively update.
 - The textbox-polygon tether snaps to nearest node of the polygon when moved.
+=======
+## [2.1.0] - 2018-03-02
+### Added
+- Added configuration and functional option to scroll a stack without skipping images (thanks @jdnarvaez)
+- Added support for allowing inputs to be enabled before loading an image (thanks @medihack)
+
+### Fixed
+- Fixed memory leak from use of getToolOption and setToolOption (thanks @nspin)
+- Fixed an exception with crosshairs tool by skipping when image plane is not ready
+- Fixed incorrect scroll direction
+- Fixed a bug when activating stackScroll before stackScrollTouchDrag at the same time (thanks @vaibhav2383)
+
+>>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 ## [2.0.0] - 2017-12-13
 ### Added

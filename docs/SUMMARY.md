@@ -20,7 +20,7 @@ While this documentation grows, the [old GitHub wiki](https://github.com/corners
   - [Anatomy of a Tool](custom-tools/anatomy-of-a-tool.md)
   - [Simple Tools](custom-tools/simple-tools.md)
 - API Reference
-  - [.enable(element)](api/enable-element.md)
+  - [Generated API Docs](api.md)
 - Guides
   - [Migrating Major Versions](guides/migrating-major-versions.md)
 - [Contributing](contributing.md)
