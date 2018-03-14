@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-/*! cornerstone-tools - 2.0.0 - 2018-03-14 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
-=======
-/*! cornerstone-tools - 2.1.0 - 2018-03-08 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+/*! cornerstone-tools - 2.1.0 - 2018-03-14 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -1007,11 +1003,7 @@ var _externalModules = __webpack_require__(0);
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
-<<<<<<< HEAD
-var _toolCoordinates = __webpack_require__(37);
-=======
-var _toolCoordinates = __webpack_require__(35);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _toolCoordinates = __webpack_require__(36);
 
 var _toolCoordinates2 = _interopRequireDefault(_toolCoordinates);
 
@@ -1019,11 +1011,7 @@ var _getHandleNearImagePoint = __webpack_require__(21);
 
 var _getHandleNearImagePoint2 = _interopRequireDefault(_getHandleNearImagePoint);
 
-<<<<<<< HEAD
 var _handleActivator = __webpack_require__(23);
-=======
-var _handleActivator = __webpack_require__(36);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 var _handleActivator2 = _interopRequireDefault(_handleActivator);
 
@@ -3241,35 +3229,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-<<<<<<< HEAD
-exports.default = function (e) {
-  if (e.stopPropagation) {
-    e.stopPropagation();
-  }
-
-  if (e.preventDefault) {
-    e.preventDefault();
-  }
-
-  e.cancelBubble = true;
-  e.returnValue = false;
-
-  return false;
-};
-
-/***/ }),
-/* 35 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-=======
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 exports.default = function (element, x, y, width, height) {
   if (!element) {
     throw new Error('getRGBPixels: parameter element must not be undefined');
@@ -3312,11 +3271,7 @@ var _externalModules2 = _interopRequireDefault(_externalModules);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-<<<<<<< HEAD
-/* 36 */
-=======
-/* 34 */
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3347,11 +3302,7 @@ var _externalModules2 = _interopRequireDefault(_externalModules);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-<<<<<<< HEAD
-/* 37 */
-=======
-/* 35 */
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3378,67 +3329,7 @@ var toolCoordinates = {
 exports.default = toolCoordinates;
 
 /***/ }),
-<<<<<<< HEAD
-/* 38 */
-=======
-/* 36 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (element, handles, canvasPoint, distanceThreshold) {
-  if (!distanceThreshold) {
-    distanceThreshold = 6;
-  }
-
-  var activeHandle = getActiveHandle(handles);
-  var nearbyHandle = (0, _getHandleNearImagePoint2.default)(element, handles, canvasPoint, distanceThreshold);
-
-  if (activeHandle !== nearbyHandle) {
-    if (nearbyHandle !== undefined) {
-      nearbyHandle.active = true;
-    }
-
-    if (activeHandle !== undefined) {
-      activeHandle.active = false;
-    }
-
-    return true;
-  }
-
-  return false;
-};
-
-var _getHandleNearImagePoint = __webpack_require__(21);
-
-var _getHandleNearImagePoint2 = _interopRequireDefault(_getHandleNearImagePoint);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function getActiveHandle(handles) {
-  var activeHandle = void 0;
-
-  Object.keys(handles).forEach(function (name) {
-    var handle = handles[name];
-
-    if (handle.active === true) {
-      activeHandle = handle;
-
-      return;
-    }
-  });
-
-  return activeHandle;
-}
-
-/***/ }),
 /* 37 */
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4884,11 +4775,7 @@ var _externalModules = __webpack_require__(0);
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
-<<<<<<< HEAD
-var _toolCoordinates = __webpack_require__(37);
-=======
-var _toolCoordinates = __webpack_require__(35);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _toolCoordinates = __webpack_require__(36);
 
 var _toolCoordinates2 = _interopRequireDefault(_toolCoordinates);
 
@@ -4896,11 +4783,7 @@ var _getHandleNearImagePoint = __webpack_require__(21);
 
 var _getHandleNearImagePoint2 = _interopRequireDefault(_getHandleNearImagePoint);
 
-<<<<<<< HEAD
 var _handleActivator = __webpack_require__(23);
-=======
-var _handleActivator = __webpack_require__(36);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 var _handleActivator2 = _interopRequireDefault(_handleActivator);
 
@@ -5398,11 +5281,7 @@ Object.defineProperty(exports, 'pointInEllipse', {
   }
 });
 
-<<<<<<< HEAD
-var _pauseEvent = __webpack_require__(34);
-=======
 var _makeUnselectable = __webpack_require__(65);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 Object.defineProperty(exports, 'makeUnselectable', {
   enumerable: true,
@@ -5420,11 +5299,7 @@ Object.defineProperty(exports, 'isMouseButtonEnabled', {
   }
 });
 
-<<<<<<< HEAD
-var _getRGBPixels = __webpack_require__(35);
-=======
-var _getRGBPixels = __webpack_require__(33);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _getRGBPixels = __webpack_require__(34);
 
 Object.defineProperty(exports, 'getRGBPixels', {
   enumerable: true,
@@ -5505,11 +5380,7 @@ Object.defineProperty(exports, 'drawArrow', {
   }
 });
 
-<<<<<<< HEAD
-var _copyPoints = __webpack_require__(36);
-=======
-var _copyPoints = __webpack_require__(34);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _copyPoints = __webpack_require__(35);
 
 Object.defineProperty(exports, 'copyPoints', {
   enumerable: true,
@@ -5704,11 +5575,7 @@ Object.defineProperty(exports, 'getElementToolStateManager', {
   }
 });
 
-<<<<<<< HEAD
-var _toolCoordinates = __webpack_require__(37);
-=======
-var _toolCoordinates = __webpack_require__(35);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _toolCoordinates = __webpack_require__(36);
 
 Object.defineProperty(exports, 'toolCoordinates', {
   enumerable: true,
@@ -5924,11 +5791,7 @@ Object.defineProperty(exports, 'getHandleNearImagePoint', {
   }
 });
 
-<<<<<<< HEAD
 var _handleActivator = __webpack_require__(23);
-=======
-var _handleActivator = __webpack_require__(36);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 Object.defineProperty(exports, 'handleActivator', {
   enumerable: true,
@@ -9714,21 +9577,10 @@ var _externalModules = __webpack_require__(0);
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
-<<<<<<< HEAD
-var _copyPoints = __webpack_require__(36);
+var _copyPoints = __webpack_require__(35);
 
 var _copyPoints2 = _interopRequireDefault(_copyPoints);
 
-var _pauseEvent = __webpack_require__(34);
-
-var _pauseEvent2 = _interopRequireDefault(_pauseEvent);
-
-=======
-var _copyPoints = __webpack_require__(34);
-
-var _copyPoints2 = _interopRequireDefault(_copyPoints);
-
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 var _triggerEvent = __webpack_require__(5);
 
 var _triggerEvent2 = _interopRequireDefault(_triggerEvent);
@@ -10186,23 +10038,11 @@ var _externalModules = __webpack_require__(0);
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
-<<<<<<< HEAD
-var _copyPoints = __webpack_require__(36);
-
-var _copyPoints2 = _interopRequireDefault(_copyPoints);
-
-var _pauseEvent = __webpack_require__(34);
-
-var _pauseEvent2 = _interopRequireDefault(_pauseEvent);
-
-var _preventGhostClick = __webpack_require__(53);
-=======
-var _copyPoints = __webpack_require__(34);
+var _copyPoints = __webpack_require__(35);
 
 var _copyPoints2 = _interopRequireDefault(_copyPoints);
 
 var _preventGhostClick = __webpack_require__(52);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
 
 var _preventGhostClick2 = _interopRequireDefault(_preventGhostClick);
 
@@ -11835,11 +11675,7 @@ var _drawTextBox = __webpack_require__(7);
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
-<<<<<<< HEAD
-var _getRGBPixels = __webpack_require__(35);
-=======
-var _getRGBPixels = __webpack_require__(33);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _getRGBPixels = __webpack_require__(34);
 
 var _getRGBPixels2 = _interopRequireDefault(_getRGBPixels);
 
@@ -14969,11 +14805,7 @@ var _drawTextBox = __webpack_require__(7);
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
-<<<<<<< HEAD
-var _getRGBPixels = __webpack_require__(35);
-=======
-var _getRGBPixels = __webpack_require__(33);
->>>>>>> 0c1b851605b2f46ef4946ce8a5f3ea11edb74a9a
+var _getRGBPixels = __webpack_require__(34);
 
 var _getRGBPixels2 = _interopRequireDefault(_getRGBPixels);
 
