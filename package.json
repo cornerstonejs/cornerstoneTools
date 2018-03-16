@@ -41,7 +41,7 @@
     "webpack:dev": "webpack --progress --config ./config/webpack/webpack-dev",
     "webpack:prod": "webpack --progress --config ./config/webpack/webpack-prod",
     "webpack:watch": "webpack --progress --debug --watch  --config ./config/webpack",
-    "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js",
+    "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
