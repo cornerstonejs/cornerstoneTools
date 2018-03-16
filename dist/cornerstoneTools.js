@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.0.0 - 2018-02-27 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.0.0 - 2018-03-16 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -12051,7 +12051,18 @@ function onImageRendered(e) {
   var config = ellipticalRoi.getConfiguration();
   var context = eventData.canvasContext.canvas.getContext('2d');
   var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  var imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   var modality = void 0;
+  var rowPixelSpacing = void 0;
+  var colPixelSpacing = void 0;
+
+  if (imagePlane) {
+    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
+  }
 
   if (seriesModule) {
     modality = seriesModule.modality;
@@ -12167,13 +12178,8 @@ function onImageRendered(e) {
         }
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
-
       // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = Math.PI * (ellipse.width * columnPixelSpacing / 2) * (ellipse.height * rowPixelSpacing / 2);
+      area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
 
       // If the area value is sane, store it for later retrieval
       if (!isNaN(area)) {
@@ -12221,7 +12227,7 @@ function onImageRendered(e) {
       // This uses Char code 178 for a superscript 2
       var suffix = ' mm' + String.fromCharCode(178);
 
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+      if (!rowPixelSpacing || !colPixelSpacing) {
         suffix = ' pixels' + String.fromCharCode(178);
       }
 
@@ -14298,7 +14304,18 @@ function onImageRendered(e) {
   var config = rectangleRoi.getConfiguration();
   var context = eventData.canvasContext.canvas.getContext('2d');
   var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  var imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   var modality = void 0;
+  var rowPixelSpacing = void 0;
+  var colPixelSpacing = void 0;
+
+  if (imagePlane) {
+    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
+  }
 
   if (seriesModule) {
     modality = seriesModule.modality;
@@ -14414,13 +14431,8 @@ function onImageRendered(e) {
         }
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
-
       // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = ellipse.width * columnPixelSpacing * (ellipse.height * rowPixelSpacing);
+      area = ellipse.width * (colPixelSpacing || 1) * (ellipse.height * (rowPixelSpacing || 1));
 
       // If the area value is sane, store it for later retrieval
       if (!isNaN(area)) {
@@ -14468,7 +14480,7 @@ function onImageRendered(e) {
       // This uses Char code 178 for a superscript 2
       var suffix = ' mm' + String.fromCharCode(178);
 
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+      if (!rowPixelSpacing || !colPixelSpacing) {
         suffix = ' pixels' + String.fromCharCode(178);
       }
 
