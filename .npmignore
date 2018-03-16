@@ -1,6 +1,18 @@
-test
-scripts
-# required for overriding gitignore when publishing using npm
-src
-coverage
-documentation
+## All Non-Dist Directories
+.github/
+build/
+config/
+docs/
+examples/
+src/
+test/
+
+## Root Files
+.babelrc
+.eslintignore
+.gitignore
+.jsdocrc
+.npmignore
+.travis.yml
+changelog.md
+karma.conf.js
