@@ -80,5 +80,11 @@
   },
   "dependencies": {
     "cornerstone-math": "^0.1.6"
-  }
+  },
+  "files": [
+    "dist/cornerstoneTools.js",
+    "dist/cornerstoneTools.js.map",
+    "dist/cornerstoneTools.min.js",
+    "dist/cornerstoneTools.min.js.map"
+  ]
 }
