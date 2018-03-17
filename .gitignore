@@ -1,7 +1,11 @@
-.idea
-bower_components
+## Directorties
 node_modules
-coverage
-documentation
-docs/_book
+coverage/
+dist/
+docs/_book/
+
+## Files
 docs/api.md
+
+## File Types
+.idea

@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes"/>
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
 
@@ -71,6 +71,7 @@
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
 <script src="../exampleImageLoader.js"></script>
@@ -94,7 +95,7 @@
     cornerstoneTools.touchInput.enable(element);
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
-       
+
         // Enable all tools we want to use with this element
         cornerstoneTools.wwwcTouchDrag.activate(element);
         cornerstoneTools.zoomTouchPinch.activate(element);

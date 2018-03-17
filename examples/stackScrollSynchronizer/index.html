@@ -4,7 +4,7 @@
     <!-- support for mobile touch devices -->
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <link href="../cornerstone.min.css" rel="stylesheet">
     <style type="text/css">
         .index {
@@ -23,8 +23,8 @@
                 Stack Scroll Synchronizer Example
             </h1>
             <p>
-                This page contains an example of the scroll stack synchronizer tool.  It detects changes made 
-                to the index within a single viewport and syncronizes the offset with the sychronized elements.  
+                This page contains an example of the scroll stack synchronizer tool.  It detects changes made
+                to the index within a single viewport and syncronizes the offset with the sychronized elements.
                 (e.g. Scrolling will increment / decrement the index of each viewport in the synchronizer).
             </p>
 
@@ -92,6 +92,7 @@
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
 <script src="../exampleImageLoader.js"></script>
@@ -153,7 +154,7 @@
             synchronizer.add(element);
         });
     }
-   
+
     function activate(id){
         document.querySelectorAll('a').forEach(function(elem) {
           elem.classList.remove('active');
