@@ -40,11 +40,13 @@ export default function (element, newImageIdIndex) {
       return;
     }
 
+    let enabledElement;
+
     // Check if the element is still enabled in Cornerstone,
     // If an error is thrown, stop here.
     try {
       // TODO: Add 'isElementEnabled' to Cornerstone?
-      cornerstone.getEnabledElement(element);
+      enabledElement = cornerstone.getEnabledElement(element);
     } catch(error) {
       return;
     }
@@ -53,7 +55,9 @@ export default function (element, newImageIdIndex) {
       stackRenderer.currentImageIdIndex = newImageIdIndex;
       stackRenderer.render(element, toolData.data);
     } else {
-      cornerstone.displayImage(element, image);
+      const viewportProvider = getToolState(element, 'viewportProvider');
+      const viewport = viewportProvider && viewportProvider.data && viewportProvider.data.length > 0 ? viewportProvider.data[0].getViewport(enabledElement, image, stackData) : undefined;
+      cornerstone.displayImage(element, image, viewport);
     }
 
     if (endLoadingHandler) {
