@@ -210,9 +210,11 @@ function startGrabbing () {
   // Begin by grabbing X images
   const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
-  const currentRequests = numRequests.interaction +
-          numRequests.thumbnail +
-          numRequests.prefetch;
+  let currentRequests = 0;
+
+  for (const type in numRequests) {
+    currentRequests += numRequests[type];
+  }
   const requestsToSend = maxSimultaneousRequests - currentRequests;
 
   for (let i = 0; i < requestsToSend; i++) {
