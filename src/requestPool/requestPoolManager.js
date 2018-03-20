@@ -22,7 +22,7 @@ function addRequestPoolType (name, priority, maxRequests) {
   if (requestPool[name] === undefined) {
     requestPool[name] = [];
   }
-  if (numRequests[numRequests] === undefined) {
+  if (numRequests[name] === undefined) {
     numRequests[name] = 0;
   }
 }
