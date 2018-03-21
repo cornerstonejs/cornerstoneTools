@@ -170,13 +170,12 @@ function mouseMoveCallback (e) {
     data.highlight = true;
     data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
     data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-    if (currentHandle) {
-      const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-      const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+    const neighbourIndex = currentHandle === 0 ? data.handles.length - 1 : currentHandle - 1;
+    const lastLineIndex = data.handles[neighbourIndex].lines.length - 1;
+    const lastLine = data.handles[neighbourIndex].lines[lastLineIndex];
 
-      lastLine.x = config.mouseLocation.handles.start.x;
-      lastLine.y = config.mouseLocation.handles.start.y;
-    }
+    lastLine.x = config.mouseLocation.handles.start.x;
+    lastLine.y = config.mouseLocation.handles.start.y;
   }
 
   if (config.freehand) {
