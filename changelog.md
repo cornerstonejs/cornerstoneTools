@@ -5,15 +5,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [2.1.1] - 2018-03-21
+### Added
+- Added general area calculation for irregular polygons of N sides. (thanks @JamesAPetts)
+- Added textbox to show data from the area of the polygons of N sides, it does not affect 'pencil' mode (thanks @JamesAPetts)
+- The textbox-polygon tether snaps to nearest node of the polygon when moved.(thanks @JamesAPetts)
+
 ### Changed
-Overhauled and expanded the functionality of the freehandROI tool:
-- Added general area calculation for irregular polygons of N sides.
-- Finds pixels inside the freehand polygon by means of an even-odd rule algorithm, and calculates the mean and stdev based on the pixels found.
-- Displays these stats in a textbox in a similar fashion to the rectangular and ellipsoidal ROI tools. The text box is disabled for the shift-click 'pencil' mode.
-- Disallows the user to join up to any previous point besides the starting node (i.e. shape must be complete before tool deactivates).
-- Disallows the user to cross lines (using a orientation algorithm).
-- Fixed a UI bug, where upon editing the first node the line connecting the first and last nodes would not reactively update.
-- The textbox-polygon tether snaps to nearest node of the polygon when moved.
+- Disallows the user to join up to any previous point besides the starting node (i.e. shape must be complete before tool deactivates). (thanks @JamesAPetts)
+- Disallows the user to cross lines (using a orientation algorithm).(thanks @JamesAPetts)
+
+### Fixed
+- Fixed a UI bug, where upon editing the first node the line connecting the first and last nodes would not reactively update.(thanks @JamesAPetts)
 
 
 ## [2.1.0] - 2018-03-02
