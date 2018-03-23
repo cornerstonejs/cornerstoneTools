@@ -1,45 +1,38 @@
 import pointInFreehandROI from './pointInFreehandROI.js';
 
-export default function (sp, boundingBox, dataHandles) {
+const statisticsObj = {
+  count: 0,
+  mean: 0.0,
+  variance: 0.0,
+  stdDev: 0.0
+};
 
+export default function (sp, boundingBox, dataHandles) {
   let sum = 0;
   let sumSquared = 0;
-  let count = 0;
   let index = 0;
 
   for (let y = boundingBox.top; y < boundingBox.top + boundingBox.height; y++) {
     for (let x = boundingBox.left; x < boundingBox.left + boundingBox.width; x++) {
-      const point = {
+      if (pointInFreehandROI(dataHandles, {
         x,
         y
-      };
-
-      if (pointInFreehandROI(dataHandles, point)) {
+      })) {
         sum += sp[index];
         sumSquared += sp[index] * sp[index];
-        count++;
+        statisticsObj.count++;
       }
-
       index++;
     }
   }
 
-  if (count === 0) {
-    return {
-      count,
-      mean: 0.0,
-      variance: 0.0,
-      stdDev: 0.0
-    };
+  if (statisticsObj.count === 0) {
+    return statisticsObj;
   }
 
-  const mean = sum / count;
-  const variance = sumSquared / count - mean * mean;
+  statisticsObj.mean = sum / statisticsObj.count;
+  statisticsObj.variance = sumSquared / statisticsObj.count - statisticsObj.mean * statisticsObj.mean;
+  statisticsObj.stdDev = Math.sqrt(statisticsObj.variance);
 
-  return {
-    count,
-    mean,
-    variance,
-    stdDev: Math.sqrt(variance)
-  };
+  return statisticsObj;
 }
