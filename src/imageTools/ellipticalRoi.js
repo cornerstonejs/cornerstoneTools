@@ -112,7 +112,18 @@ function onImageRendered (e) {
   const config = ellipticalRoi.getConfiguration();
   const context = eventData.canvasContext.canvas.getContext('2d');
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let modality;
+  let rowPixelSpacing;
+  let colPixelSpacing;
+
+  if (imagePlane) {
+    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+  } else {
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
+  }
 
   if (seriesModule) {
     modality = seriesModule.modality;
@@ -228,13 +239,8 @@ function onImageRendered (e) {
         }
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      const columnPixelSpacing = image.columnPixelSpacing || 1;
-      const rowPixelSpacing = image.rowPixelSpacing || 1;
-
       // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = Math.PI * (ellipse.width * columnPixelSpacing / 2) * (ellipse.height * rowPixelSpacing / 2);
+      area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
 
       // If the area value is sane, store it for later retrieval
       if (!isNaN(area)) {
@@ -282,7 +288,7 @@ function onImageRendered (e) {
       // This uses Char code 178 for a superscript 2
       let suffix = ` mm${String.fromCharCode(178)}`;
 
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+      if (!rowPixelSpacing || !colPixelSpacing) {
         suffix = ` pixels${String.fromCharCode(178)}`;
       }
 
