@@ -137,11 +137,7 @@ rotate.strategies = {
 
 rotate.strategy = defaultStrategy;
 
-const options = {
-  fireOnTouchStart: true
-};
-
-const rotateTouchDrag = simpleTouchTool(touchStartCallback, toolType, options);
+const rotateTouchDrag = simpleTouchTool(touchStartCallback, toolType);
 
 export {
   rotate,
