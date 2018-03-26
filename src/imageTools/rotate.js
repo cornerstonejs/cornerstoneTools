@@ -1,36 +1,48 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import simpleMouseButtonTool from './simpleMouseButtonTool.js';
-import touchDragTool from './touchDragTool.js';
+import simpleTouchTool from './simpleTouchTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolOptions } from '../toolOptions.js';
 
 const toolType = 'rotate';
 
-// --- Strategies --- //
-function defaultStrategy (eventData) {
-  // Calculate distance from the center of the image
+function defaultStrategy (eventData, initialPoints, initialRotation) {
+  // Calculate the center of the image
   const rect = eventData.element.getBoundingClientRect(eventData.element);
+  const width = eventData.element.clientWidth;
+  const height = eventData.element.clientHeight;
 
-  const points = {
+  const centerPoints = {
+    x: rect.left + width / 2,
+    y: rect.top + height / 2
+  };
+
+  const currentPoints = {
     x: eventData.currentPoints.client.x,
     y: eventData.currentPoints.client.y
   };
 
-  const width = eventData.element.clientWidth;
-  const height = eventData.element.clientHeight;
+  const p0 = centerPoints;
+  const p1 = initialPoints;
+  const p2 = currentPoints;
 
-  const pointsFromCenter = {
-    x: points.x - rect.left - width / 2,
-    // Invert the coordinate system so that up is positive
-    y: -1 * (points.y - rect.top - height / 2)
-  };
+  // Calculate the (interior) angle in degrees from the initial mouse location
+  // To the current mouse location in relation to the center point
+  const p12 = Math.sqrt(Math.pow((p0.x - p1.x), 2) + Math.pow((p0.y - p1.y), 2));
+  const p13 = Math.sqrt(Math.pow((p0.x - p2.x), 2) + Math.pow((p0.y - p2.y), 2));
+  const p23 = Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+  let r = Math.acos(((Math.pow(p12, 2)) + (Math.pow(p13, 2)) - (Math.pow(p23, 2))) /
+    (2 * p12 * p13)) * 180 / Math.PI;
 
-  const rotationRadians = Math.atan2(pointsFromCenter.y, pointsFromCenter.x);
-  const rotationDegrees = rotationRadians * (180 / Math.PI);
-  const rotation = -1 * rotationDegrees + 90;
+  // The direction of the angle (> 0 clockwise, < 0 anti-clockwise)
+  const d = (p1.x - p0.x) * (p2.y - p0.y) - (p1.y - p0.y) * (p2.x - p0.x);
 
-  eventData.viewport.rotation = rotation;
+  if (d < 0) {
+    r = -r;
+  }
+
+  eventData.viewport.rotation = initialRotation + r;
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
@@ -44,23 +56,31 @@ function verticalStrategy (eventData) {
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 }
 
-// --- Mouse event callbacks --- //
-function mouseUpCallback (e) {
-  const eventData = e.detail;
-  const element = eventData.element;
-
-  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-}
-
 function mouseDownCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
   const options = getToolOptions(toolType, element);
 
+  const initialPoints = {
+    x: eventData.currentPoints.client.x,
+    y: eventData.currentPoints.client.y
+  };
+
+  const initialRotation = eventData.viewport.rotation;
+
   if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    const boundDragCallback = dragCallback.bind({}, initialPoints, initialRotation);
+
+    const mouseUpCallback = function (e) {
+      const eventData = e.detail;
+      const element = eventData.element;
+
+      element.removeEventListener(EVENTS.MOUSE_DRAG, boundDragCallback);
+      element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+      element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+    };
+
+    element.addEventListener(EVENTS.MOUSE_DRAG, boundDragCallback);
     element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
@@ -69,10 +89,38 @@ function mouseDownCallback (e) {
   }
 }
 
-function dragCallback (e) {
+function touchStartCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  const initialPoints = {
+    x: eventData.currentPoints.client.x,
+    y: eventData.currentPoints.client.y
+  };
+
+  const initialRotation = eventData.viewport.rotation;
+
+  const boundDragCallback = dragCallback.bind({}, initialPoints, initialRotation);
+
+  const touchEndCallback = function (e) {
+    const eventData = e.detail;
+    const element = eventData.element;
+
+    element.removeEventListener(EVENTS.TOUCH_DRAG, boundDragCallback);
+    element.removeEventListener(EVENTS.TOUCH_END, touchEndCallback);
+  };
+
+  element.addEventListener(EVENTS.TOUCH_DRAG, boundDragCallback);
+  element.addEventListener(EVENTS.TOUCH_END, touchEndCallback);
+
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function dragCallback (initialPoints, initialRotation, e) {
   const eventData = e.detail;
 
-  rotate.strategy(eventData);
+  rotate.strategy(eventData, initialPoints, initialRotation);
   external.cornerstone.setViewport(eventData.element, eventData.viewport);
 
   e.preventDefault();
@@ -89,7 +137,7 @@ rotate.strategies = {
 
 rotate.strategy = defaultStrategy;
 
-const rotateTouchDrag = touchDragTool(dragCallback, toolType);
+const rotateTouchDrag = simpleTouchTool(touchStartCallback, toolType);
 
 export {
   rotate,
