@@ -8,6 +8,9 @@ const numRequests = {};
 let awake = false;
 const grabDelay = 20;
 
+// Init default types
+initDefaultRequestPoolTypes();
+
 function addRequestPoolType (name, priority, maxRequests) {
   const newRequestPoolType = {
     name,
@@ -39,22 +42,27 @@ function getIndex (priority) {
   return index;
 }
 
-// Add default types
-addRequestPoolType('interaction', 30, function () {
-  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+function initDefaultRequestPoolTypes () {
+  // Empty requestPoolTypes
+  requestPoolTypes.length = 0;
 
-  return Math.max(maxSimultaneousRequests, 1);
-});
-addRequestPoolType('thumbnail', 20, function () {
-  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+  // Add default types
+  addRequestPoolType('interaction', 30, function () {
+    const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
-  return Math.max(maxSimultaneousRequests - 2, 1);
-});
-addRequestPoolType('prefetch', 10, function () {
-  const maxSimultaneousRequests = getMaxSimultaneousRequests();
+    return Math.max(maxSimultaneousRequests, 1);
+  });
+  addRequestPoolType('thumbnail', 20, function () {
+    const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
-  return Math.max(maxSimultaneousRequests - 1, 1);
-});
+    return Math.max(maxSimultaneousRequests - 2, 1);
+  });
+  addRequestPoolType('prefetch', 10, function () {
+    const maxSimultaneousRequests = getMaxSimultaneousRequests();
+
+    return Math.max(maxSimultaneousRequests - 1, 1);
+  });
+}
 
 function getMaxRequests (index) {
   if (requestPoolTypes[index] === undefined) {
@@ -254,6 +262,7 @@ function getRequestPool () {
 }
 
 export default {
+  initDefaultRequestPoolTypes,
   addRequestPoolType,
   getRequestPoolTypes,
   addRequest,
