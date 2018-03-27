@@ -31,7 +31,7 @@ function putRequestPoolType (name, priority, maxRequests) {
 }
 
 function getIndex (name, priority) {
-  let priorityIndex = requestPoolTypes.length;
+  let priorityIndex;
 
   for (let i = 0; i < requestPoolTypes.length;) {
     const nextType = requestPoolTypes[i];
@@ -45,11 +45,15 @@ function getIndex (name, priority) {
       // Error: each requestPool type shall have a different priority
       throw new Error(`Can't give priority ${priority} to requestPool type ${name}, because type ${nextType.name} already has this priority`);
     }
-    if (nextType.priority < priority) {
+    if (priorityIndex === undefined && nextType.priority < priority) {
       // Save priorityIndex
       priorityIndex = i;
     }
     i++;
+  }
+
+  if (priorityIndex === undefined) {
+    priorityIndex = requestPoolTypes.length;
   }
 
   return priorityIndex;
