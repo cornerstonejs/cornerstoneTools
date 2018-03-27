@@ -11,14 +11,14 @@ const grabDelay = 20;
 // Init default types
 initDefaultRequestPoolTypes();
 
-function addRequestPoolType (name, priority, maxRequests) {
+function putRequestPoolType (name, priority, maxRequests) {
   const newRequestPoolType = {
     name,
     priority,
     maxRequests
   };
 
-  const index = getIndex(priority);
+  const index = getIndex(name, priority);
 
   requestPoolTypes.splice(index, 0, newRequestPoolType);
 
@@ -30,16 +30,29 @@ function addRequestPoolType (name, priority, maxRequests) {
   }
 }
 
-function getIndex (priority) {
-  let index;
+function getIndex (name, priority) {
+  let priorityIndex = requestPoolTypes.length;
 
-  for (index = 0; index < requestPoolTypes.length; index++) {
-    if (requestPoolTypes[index].priority < priority) {
-      return index;
+  for (let i = 0; i < requestPoolTypes.length;) {
+    const nextType = requestPoolTypes[i];
+
+    if ((nextType.name === name)) {
+      // Delete the already existed requestPoolType
+      requestPoolTypes.splice(i, 1);
+      continue;
     }
+    if (nextType.priority === priority) {
+      // Error: each requestPool type shall have a different priority
+      throw new Error(`Can't give priority ${priority} to requestPool type ${name}, because type ${nextType.name} already has this priority`);
+    }
+    if (nextType.priority < priority) {
+      // Save priorityIndex
+      priorityIndex = i;
+    }
+    i++;
   }
 
-  return index;
+  return priorityIndex;
 }
 
 function initDefaultRequestPoolTypes () {
@@ -47,17 +60,17 @@ function initDefaultRequestPoolTypes () {
   requestPoolTypes.length = 0;
 
   // Add default types
-  addRequestPoolType('interaction', 30, function () {
+  putRequestPoolType('interaction', 30, function () {
     const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
     return Math.max(maxSimultaneousRequests, 1);
   });
-  addRequestPoolType('thumbnail', 20, function () {
+  putRequestPoolType('thumbnail', 20, function () {
     const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
     return Math.max(maxSimultaneousRequests - 2, 1);
   });
-  addRequestPoolType('prefetch', 10, function () {
+  putRequestPoolType('prefetch', 10, function () {
     const maxSimultaneousRequests = getMaxSimultaneousRequests();
 
     return Math.max(maxSimultaneousRequests - 1, 1);
@@ -263,7 +276,7 @@ function getRequestPool () {
 
 export default {
   initDefaultRequestPoolTypes,
-  addRequestPoolType,
+  putRequestPoolType,
   getRequestPoolTypes,
   addRequest,
   clearRequestStack,
