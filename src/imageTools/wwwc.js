@@ -45,7 +45,7 @@ function defaultStrategy (eventData) {
   const deltaY = eventData.deltaPoints.page.y * multiplier;
 
   eventData.viewport.voi.windowWidth += (deltaX);
-  eventData.viewport.voi.windowCenter += (deltaY);
+  eventData.viewport.voi.windowCenter -= (deltaY);
 }
 
 function mouseDragCallback (e) {
