@@ -1,20 +1,20 @@
 /* eslint no-alert:0 */
-import EVENTS from './events.js';
-import external from './externalModules.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 import { mouseButtonTool, touchTool } from './..//base/index.js';
-import drawTextBox from './util/drawTextBox.js';
-import toolStyle from './stateManagement/toolStyle.js';
-import textStyle from './stateManagement/textStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import drawHandles from './manipulators/drawHandles.js';
-import drawArrow from './util/drawArrow.js';
-import moveNewHandle from './manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
-import { addToolState, removeToolState, getToolState } from './stateManagement/toolState.js';
-import { getToolOptions } from './toolOptions.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import drawArrow from './../../util/drawArrow.js';
+import moveNewHandle from './../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import { addToolState, removeToolState, getToolState } from './../../stateManagement/toolState.js';
+import { getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'arrowAnnotate';
 

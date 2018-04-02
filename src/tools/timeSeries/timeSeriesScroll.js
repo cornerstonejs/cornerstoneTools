@@ -1,11 +1,11 @@
-import EVENTS from './events.js';
+import EVENTS from './../../events.js';
 import { mouseWheelTool,
   simpleMouseButtonTool,
-  touchDragTool } from './tools/base/index.js';
+  touchDragTool } from './../../tools/base/index.js';
 import incrementTimePoint from './incrementTimePoint.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import { getToolState } from './stateManagement/toolState.js';
-import { setToolOptions, getToolOptions } from './toolOptions.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'timeSeriesScroll';
 

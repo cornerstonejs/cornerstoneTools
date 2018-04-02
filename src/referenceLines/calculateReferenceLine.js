@@ -1,4 +1,4 @@
-import { planePlaneIntersection, projectPatientPointToImagePlane } from './util/pointProjector.js';
+import { planePlaneIntersection, projectPatientPointToImagePlane } from './../util/pointProjector.js';
 
 // Calculates a reference line between two planes by projecting the top left hand corner and bottom right hand corner
 // Of the reference image onto the target image.  Ideally we would calculate the intersection between the planes but

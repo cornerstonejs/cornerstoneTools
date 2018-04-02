@@ -1,9 +1,9 @@
-import external from './externalModules.js';
-import { mouseButtonRectangleTool, touchTool } from './..//base/index.js';
-import toolStyle from './stateManagement/toolStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import drawHandles from './manipulators/drawHandles.js';
-import { getToolState } from './stateManagement/toolState.js';
+import external from './../../externalModules.js';
+import { mouseButtonRectangleTool, touchTool } from './../base/index.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import { getToolState } from './../../stateManagement/toolState.js';
 
 const toolType = 'highlight';
 

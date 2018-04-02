@@ -1,14 +1,14 @@
-import external from './externalModules.js';
+import external from './../../externalModules.js';
 import {
   mouseButtonTool,
-  touchTool } from './..//base/index.js';
-import drawTextBox from './util/drawTextBox.js';
-import roundToDecimal from './util/roundToDecimal.js';
-import toolStyle from './stateManagement/toolStyle.js';
-import textStyle from './stateManagement/textStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import drawHandles from './manipulators/drawHandles.js';
-import { getToolState } from './stateManagement/toolState.js';
+  touchTool } from './../base/index.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import { getToolState } from './../../stateManagement/toolState.js';
 
 const toolType = 'angle';
 

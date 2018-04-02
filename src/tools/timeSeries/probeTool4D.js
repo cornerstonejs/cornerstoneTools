@@ -1,11 +1,11 @@
-import external from './externalModules.js';
-import { mouseButtonTool } from './tools/base/index.js';
-import drawHandles from './manipulators/drawHandles.js';
-import { getToolState } from './stateManagement/toolState.js';
-import MeasurementManager from './measurementManager/measurementManager.js';
-import LineSampleMeasurement from './measurementManager/lineSampleMeasurement.js';
-import textStyle from './stateManagement/textStyle.js';
-import drawTextBox from './util/drawTextBox.js';
+import external from './../../externalModules.js';
+import { mouseButtonTool } from './../../tools/base/index.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import MeasurementManager from './../../measurementManager/measurementManager.js';
+import LineSampleMeasurement from './../../measurementManager/lineSampleMeasurement.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import drawTextBox from './../../util/drawTextBox.js';
 
 const toolType = 'probe4D';
 

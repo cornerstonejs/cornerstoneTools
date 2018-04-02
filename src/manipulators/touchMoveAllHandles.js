@@ -1,8 +1,8 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
+import EVENTS from './../events.js';
+import external from './../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
-import { removeToolState } from './stateManagement/toolState.js';
-import triggerEvent from './util/triggerEvent.js';
+import { removeToolState } from './../stateManagement/toolState.js';
+import triggerEvent from './../util/triggerEvent.js';
 
 export default function (event, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const touchEventData = event.detail;

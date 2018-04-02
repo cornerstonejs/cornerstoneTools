@@ -1,6 +1,6 @@
 
-import EVENTS from './events.js';
-import external from './externalModules.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 
 export default function (onImageRendered) {
   let configuration = {};

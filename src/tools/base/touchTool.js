@@ -1,12 +1,12 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from './manipulators/touchMoveHandle.js';
-import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
-import touchMoveAllHandles from './manipulators/touchMoveAllHandles.js';
-import { addToolState, removeToolState, getToolState } from './stateManagement/toolState.js';
-import triggerEvent from './util/triggerEvent.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
+import touchMoveHandle from './../../manipulators/touchMoveHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
+import { addToolState, removeToolState, getToolState } from './../../stateManagement/toolState.js';
+import triggerEvent from './../../util/triggerEvent.js';
 
 function deactivateAllHandles (handles) {
   Object.keys(handles).forEach(function (name) {

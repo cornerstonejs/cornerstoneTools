@@ -1,13 +1,13 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import { simpleMouseButtonTool, touchDragTool } from './..//base/index.js';
-import textStyle from './stateManagement/textStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import drawTextBox from './util/drawTextBox.js';
-import getRGBPixels from './util/getRGBPixels.js';
-import calculateSUV from './util/calculateSUV.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import { getToolOptions } from './toolOptions.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import { simpleMouseButtonTool, touchDragTool } from './../base/index.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import getRGBPixels from './../../util/getRGBPixels.js';
+import calculateSUV from './../../util/calculateSUV.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'dragProbe';
 

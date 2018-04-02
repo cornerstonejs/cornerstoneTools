@@ -1,6 +1,6 @@
-import external from './externalModules.js';
-import { getToolState } from './stateManagement/toolState.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
+import external from './../externalModules.js';
+import { getToolState } from './../stateManagement/toolState.js';
+import loadHandlerManager from './../stateManagement/loadHandlerManager.js';
 
 // This function causes any scrolling actions within the stack to propagate to
 // All of the other viewports that are synced

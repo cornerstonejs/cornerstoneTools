@@ -1,5 +1,5 @@
-import external from './externalModules.js';
-import toolStyle from './stateManagement/toolStyle.js';
+import external from './../externalModules.js';
+import toolStyle from './../stateManagement/toolStyle.js';
 
 const handleRadius = 6;
 

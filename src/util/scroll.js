@@ -1,5 +1,5 @@
 import scrollToIndex from './scrollToIndex.js';
-import { getToolState } from './stateManagement/toolState.js';
+import { getToolState } from './../stateManagement/toolState.js';
 
 function scrollWithoutSkipping (stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {

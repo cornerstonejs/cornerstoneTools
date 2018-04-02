@@ -1,9 +1,9 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import requestPoolManager from './requestPool/requestPoolManager.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
-import { addToolState, getToolState } from './stateManagement/toolState.js';
-import { setMaxSimultaneousRequests } from './util/getMaxSimultaneousRequests.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import requestPoolManager from './../../requestPool/requestPoolManager.js';
+import loadHandlerManager from './../../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from './../../stateManagement/toolState.js';
+import { setMaxSimultaneousRequests } from './../../util/getMaxSimultaneousRequests.js';
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';

@@ -1,9 +1,9 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 import { touchDragTool } from './..//base/index.js';
-import { getBrowserInfo } from './util/getMaxSimultaneousRequests.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import { setToolOptions, getToolOptions } from './toolOptions.js';
+import { getBrowserInfo } from './../../util/getMaxSimultaneousRequests.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { setToolOptions, getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'magnify';
 

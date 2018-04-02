@@ -1,14 +1,14 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import toolCoordinates from './stateManagement/toolCoordinates.js';
-import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
-import handleActivator from './manipulators/handleActivator.js';
-import moveHandle from './manipulators/moveHandle.js';
-import moveAllHandles from './manipulators/moveAllHandles.js';
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import { addToolState, removeToolState, getToolState } from './stateManagement/toolState.js';
-import { setToolOptions, getToolOptions } from './toolOptions.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import toolCoordinates from './../../stateManagement/toolCoordinates.js';
+import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
+import handleActivator from './../../manipulators/handleActivator.js';
+import moveHandle from './../../manipulators/moveHandle.js';
+import moveAllHandles from './../../manipulators/moveAllHandles.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { addToolState, removeToolState, getToolState } from './../../stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from './../../toolOptions.js';
 
 export default function (mouseToolInterface, preventHandleOutsideImage) {
   const toolType = mouseToolInterface.toolType;

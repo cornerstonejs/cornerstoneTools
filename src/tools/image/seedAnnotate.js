@@ -1,19 +1,19 @@
 /* eslint no-alert:0 */
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import { mouseButtonTool, touchTool } from './..//base/index.js';
-import drawTextBox from './util/drawTextBox.js';
-import textStyle from './stateManagement/textStyle.js';
-import toolStyle from './stateManagement/toolStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import moveHandle from './manipulators/moveHandle.js';
-import drawHandles from './manipulators/drawHandles.js';
-import drawCircle from './util/drawCircle.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
-import { addToolState, removeToolState, getToolState } from './stateManagement/toolState.js';
-import { getToolOptions } from './toolOptions.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import { mouseButtonTool, touchTool } from './../base/index.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import moveHandle from './../../manipulators/moveHandle.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import drawCircle from './../../util/drawCircle.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import { addToolState, removeToolState, getToolState } from './../../stateManagement/toolState.js';
+import { getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'seedAnnotate';
 

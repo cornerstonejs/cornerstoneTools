@@ -1,4 +1,4 @@
-import external from './externalModules.js';
+import external from './../externalModules.js';
 
 /**
  * Convert an Array to a cornerstoneMath.Vector3

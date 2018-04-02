@@ -1,5 +1,5 @@
-import external from './externalModules.js';
-import { doubleTapTool } from './..//base/index.js';
+import external from './../../externalModules.js';
+import { doubleTapTool } from './../base/index.js';
 
 function fitToWindowStrategy (eventData) {
   external.cornerstone.fitToWindow(eventData.element);

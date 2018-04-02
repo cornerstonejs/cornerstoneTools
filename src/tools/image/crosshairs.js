@@ -1,11 +1,11 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
-import { addToolState, getToolState, clearToolState } from './stateManagement/toolState.js';
-import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
-import { imagePointToPatientPoint } from './util/pointProjector.js';
-import convertToVector3 from './util/convertToVector3.js';
-import { setToolOptions, getToolOptions } from './toolOptions.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import loadHandlerManager from './../../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState, clearToolState } from './../../stateManagement/toolState.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { imagePointToPatientPoint } from './../../util/pointProjector.js';
+import convertToVector3 from './../../util/convertToVector3.js';
+import { setToolOptions, getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'crosshairs';
 

@@ -1,9 +1,9 @@
 /* eslint no-bitwise:0 */
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
-import { addToolState, getToolState } from './stateManagement/toolState.js';
-import triggerEvent from './util/triggerEvent.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import loadHandlerManager from './../../stateManagement/loadHandlerManager.js';
+import { addToolState, getToolState } from './../../stateManagement/toolState.js';
+import triggerEvent from './../../util/triggerEvent.js';
 
 const toolType = 'playClip';
 

@@ -1,6 +1,6 @@
-import external from './externalModules.js';
-import { getToolState } from './stateManagement/toolState.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
+import external from './../../externalModules.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import loadHandlerManager from './../../stateManagement/loadHandlerManager.js';
 
 export default function (element, timePoints, wrap) {
   const toolData = getToolState(element, 'timeSeries');

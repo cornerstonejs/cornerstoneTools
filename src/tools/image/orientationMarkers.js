@@ -1,8 +1,8 @@
-import external from './externalModules.js';
-import orientation from './orientation/index.js';
+import external from './../../externalModules.js';
+import orientation from './../../orientation/index.js';
 import displayTool from './displayTool.js';
-import toolColors from './stateManagement/toolColors.js';
-import drawTextBox from './util/drawTextBox.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawTextBox from './../../util/drawTextBox.js';
 
 function getOrientationMarkers (element) {
   const cornerstone = external.cornerstone;

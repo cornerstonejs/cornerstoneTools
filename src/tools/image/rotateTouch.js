@@ -1,5 +1,5 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 
 function touchRotateCallback (e) {
   const eventData = e.detail;

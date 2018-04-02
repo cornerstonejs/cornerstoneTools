@@ -1,16 +1,16 @@
-import EVENTS from './events.js';
-import external from './externalModules.js';
-import drawTextBox from './util/drawTextBox.js';
-import roundToDecimal from './util/roundToDecimal.js';
-import textStyle from './stateManagement/textStyle.js';
-import toolStyle from './stateManagement/toolStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import moveNewHandle from './manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
-import drawHandles from './manipulators/drawHandles.js';
-import { mouseButtonTool, touchTool } from './..//base/index.js';
-import { addToolState, removeToolState, getToolState } from './stateManagement/toolState.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import moveNewHandle from './../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import { mouseButtonTool, touchTool } from './../base/index.js';
+import { addToolState, removeToolState, getToolState } from './../../stateManagement/toolState.js';
 
 
 const toolType = 'simpleAngle';

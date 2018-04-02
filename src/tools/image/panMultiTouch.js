@@ -1,4 +1,4 @@
-import external from './externalModules.js';
+import external from './../../externalModules.js';
 import { multiTouchDragTool } from './..//base/index.js';
 
 function touchPanCallback (e) {
