@@ -4,17 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [2.1.1] - 2018-03-21
+## [2.1.1] - 2018-04-02
 ### Added
+- Added scale overlay tool
 - Added general area calculation for irregular polygons of N sides. (thanks @JamesAPetts)
 - Added textbox to show data from the area of the polygons of N sides, it does not affect 'pencil' mode (thanks @JamesAPetts)
 - The textbox-polygon tether snaps to nearest node of the polygon when moved.(thanks @JamesAPetts)
 
 ### Changed
+- Improved default strategy of rotate (thanks @medihack)
 - Disallows the user to join up to any previous point besides the starting node (i.e. shape must be complete before tool deactivates). (thanks @JamesAPetts)
 - Disallows the user to cross lines (using a orientation algorithm).(thanks @JamesAPetts)
 
 ### Fixed
+- Fixed the issue that magnify tool displays the previous image when scrolled to the new one while it is in use
 - Fixed a UI bug, where upon editing the first node the line connecting the first and last nodes would not reactively update.(thanks @JamesAPetts)
 
 
