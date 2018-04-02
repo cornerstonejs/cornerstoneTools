@@ -1,18 +1,18 @@
-import EVENTS from '../events.js';
-import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles.js';
-import drawTextBox from '../util/drawTextBox.js';
-import handleActivator from '../manipulators/handleActivator.js';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import freeHandArea from '../util/freeHandArea.js';
-import calculateFreehandStatistics from '../util/calculateFreehandStatistics.js';
-import { freeHandIntersect, freeHandIntersectEnd, freeHandIntersectModify } from '../util/freeHandIntersect.js';
-import calculateSUV from '../util/calculateSUV.js';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import { addToolState, getToolState } from '../stateManagement/toolState.js';
-import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import drawTextBox from './../../util/drawTextBox.js';
+import handleActivator from './../../manipulators/handleActivator.js';
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import freeHandArea from './../../util/freeHandArea.js';
+import calculateFreehandStatistics from './../../util/calculateFreehandStatistics.js';
+import { freeHandIntersect, freeHandIntersectEnd, freeHandIntersectModify } from './../../util/freeHandIntersect.js';
+import calculateSUV from './../../util/calculateSUV.js';
+import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
+import { addToolState, getToolState } from './../../stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from './../../toolOptions.js';
 
 const toolType = 'freehand';
 let configuration = {
