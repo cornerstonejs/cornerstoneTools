@@ -1,7 +1,7 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
+import EVENTS from './events.js';
+import external from './externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
-import triggerEvent from '@/util/triggerEvent.js';
+import triggerEvent from './util/triggerEvent.js';
 
 function getElementToolStateManager (element) {
   const enabledImage = external.cornerstone.getEnabledElement(element);

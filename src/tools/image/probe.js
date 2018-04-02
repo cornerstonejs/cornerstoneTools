@@ -1,12 +1,12 @@
-import external from '@/externalModules.js';
-import { mouseButtonTool, touchTool } from '@tools/base/index.js';
-import toolColors from '@/stateManagement/toolColors.js';
-import textStyle from '@/stateManagement/textStyle.js';
-import drawHandles from '@/manipulators/drawHandles.js';
-import drawTextBox from '@/util/drawTextBox.js';
-import getRGBPixels from '@/util/getRGBPixels.js';
-import calculateSUV from '@/util/calculateSUV.js';
-import { getToolState } from '@/stateManagement/toolState.js';
+import external from './externalModules.js';
+import { mouseButtonTool, touchTool } from './..//base/index.js';
+import toolColors from './stateManagement/toolColors.js';
+import textStyle from './stateManagement/textStyle.js';
+import drawHandles from './manipulators/drawHandles.js';
+import drawTextBox from './util/drawTextBox.js';
+import getRGBPixels from './util/getRGBPixels.js';
+import calculateSUV from './util/calculateSUV.js';
+import { getToolState } from './stateManagement/toolState.js';
 
 const toolType = 'probe';
 

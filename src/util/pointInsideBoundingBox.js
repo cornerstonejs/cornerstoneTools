@@ -1,4 +1,4 @@
-import external from '@/externalModules.js';
+import external from './externalModules.js';
 
 export default function (handle, coords) {
   if (!handle.boundingBox) {

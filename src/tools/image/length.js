@@ -1,10 +1,10 @@
-import external from '@/externalModules.js';
-import { mouseButtonTool, touchTool } from '@tools/base/index.js';
-import drawTextBox from '@/util/drawTextBox.js';
-import toolStyle from '@/stateManagement/toolStyle.js';
-import toolColors from '@/stateManagement/toolColors.js';
-import drawHandles from '@/manipulators/drawHandles.js';
-import { getToolState } from '@/stateManagement/toolState.js';
+import external from './externalModules.js';
+import { mouseButtonTool, touchTool } from './..//base/index.js';
+import drawTextBox from './util/drawTextBox.js';
+import toolStyle from './stateManagement/toolStyle.js';
+import toolColors from './stateManagement/toolColors.js';
+import drawHandles from './manipulators/drawHandles.js';
+import { getToolState } from './stateManagement/toolState.js';
 
 const toolType = 'length';
 

@@ -1,5 +1,5 @@
-import external from '@/externalModules.js';
-import convertToVector3 from '@/util/convertToVector3.js';
+import external from './externalModules.js';
+import convertToVector3 from './util/convertToVector3.js';
 
 export default function (vector) {
   const vec3 = convertToVector3(vector);

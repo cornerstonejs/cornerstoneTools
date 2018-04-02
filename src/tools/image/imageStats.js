@@ -1,5 +1,5 @@
 import displayTool from './displayTool.js';
-import drawTextBox from '@/util/drawTextBox.js';
+import drawTextBox from './util/drawTextBox.js';
 
 function onImageRendered (e) {
   const eventData = e.detail;

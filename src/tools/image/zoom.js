@@ -1,12 +1,12 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
-import isMouseButtonEnabled from '@/util/isMouseButtonEnabled.js';
+import EVENTS from './events.js';
+import external from './externalModules.js';
+import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
 import {
   mouseWheelTool,
   simpleMouseButtonTool,
   touchDragTool,
-  touchPinchTool } from '@tools/base/index.js';
-import { getToolOptions } from '@/toolOptions.js';
+  touchPinchTool } from './..//base/index.js';
+import { getToolOptions } from './toolOptions.js';
 
 const toolType = 'zoom';
 let startPoints;

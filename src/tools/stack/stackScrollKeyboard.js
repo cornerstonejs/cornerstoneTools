@@ -1,5 +1,5 @@
-import scroll from '@/util/scroll.js';
-import { keyboardTool } from '@/tools/base/index.js';
+import scroll from './util/scroll.js';
+import { keyboardTool } from './tools/base/index.js';
 
 const keys = {
   UP: 38,

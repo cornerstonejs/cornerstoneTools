@@ -1,4 +1,4 @@
-import { addToolState, getToolState } from '@/stateManagement/toolState.js';
+import { addToolState, getToolState } from './stateManagement/toolState.js';
 import incrementTimePoint from './incrementTimePoint.js';
 
 const toolType = 'timeSeriesPlayer';

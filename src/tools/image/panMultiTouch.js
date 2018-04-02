@@ -1,5 +1,5 @@
-import external from '@/externalModules.js';
-import { multiTouchDragTool } from '@tools/base/index.js';
+import external from './externalModules.js';
+import { multiTouchDragTool } from './..//base/index.js';
 
 function touchPanCallback (e) {
   const eventData = e.detail;

@@ -1,5 +1,5 @@
-import external from '@/externalModules.js';
-import convertToVector3 from '@/util/convertToVector3.js';
+import external from './externalModules.js';
+import convertToVector3 from './util/convertToVector3.js';
 
 // Projects a patient point to an image point
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {

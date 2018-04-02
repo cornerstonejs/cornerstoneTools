@@ -1,5 +1,5 @@
-import EVENTS from '@/events.js';
-import { setToolOptions } from '@/toolOptions.js';
+import EVENTS from './events.js';
+import { setToolOptions } from './toolOptions.js';
 
 export default function (touchDragCallback, toolType, options) {
   const events = [EVENTS.TOUCH_DRAG];

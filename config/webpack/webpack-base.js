@@ -25,11 +25,7 @@ module.exports = {
     umdNamedDefine: true
   },
   resolve: {
-    extensions: ['.js', '.json'],
-    alias: {
-      '@': resolve('src'),
-      '@tools': resolve('src/tools')
-    }
+    extensions: ['.js', '.json']
   },
   devtool: 'source-map',
   externals: {

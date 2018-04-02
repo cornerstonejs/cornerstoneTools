@@ -1,8 +1,8 @@
-import external from '@/externalModules.js';
+import external from './externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
-import toolColors from '@/stateManagement/toolColors.js';
-import toolStyle from '@/stateManagement/toolStyle.js';
-import convertToVector3 from '@/util/convertToVector3.js';
+import toolColors from './stateManagement/toolColors.js';
+import toolStyle from './stateManagement/toolStyle.js';
+import convertToVector3 from './util/convertToVector3.js';
 
 // Renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {

@@ -1,12 +1,12 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
-import { mouseButtonTool, touchTool } from '@tools/base/index.js';
-import pointInsideBoundingBox from '@/util/pointInsideBoundingBox.js';
-import toolColors from '@/stateManagement/toolColors.js';
-import isMouseButtonEnabled from '@/util/isMouseButtonEnabled.js';
-import drawTextBox from '@/util/drawTextBox.js';
-import { removeToolState, getToolState } from '@/stateManagement/toolState.js';
-import { getToolOptions } from '@/toolOptions.js';
+import EVENTS from './events.js';
+import external from './externalModules.js';
+import { mouseButtonTool, touchTool } from './..//base/index.js';
+import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
+import toolColors from './stateManagement/toolColors.js';
+import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
+import drawTextBox from './util/drawTextBox.js';
+import { removeToolState, getToolState } from './stateManagement/toolState.js';
+import { getToolOptions } from './toolOptions.js';
 
 const toolType = 'textMarker';
 

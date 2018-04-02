@@ -1,9 +1,9 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
-import copyPoints from '@/util/copyPoints.js';
+import EVENTS from './../events.js';
+import external from './../externalModules.js';
+import copyPoints from './../util/copyPoints.js';
 import preventGhostClick from '../inputSources/preventGhostClick.js';
-import triggerEvent from '@/util/triggerEvent.js';
-import { setToolOptions, getToolOptions } from '@/toolOptions.js';
+import triggerEvent from './../util/triggerEvent.js';
+import { setToolOptions, getToolOptions } from './../toolOptions.js';
 
 let startPoints,
   currentPoints,

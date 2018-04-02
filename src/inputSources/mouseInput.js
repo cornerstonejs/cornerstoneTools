@@ -1,7 +1,7 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
-import copyPoints from '@/util/copyPoints.js';
-import triggerEvent from '@/util/triggerEvent.js';
+import EVENTS from './../events.js';
+import external from './../externalModules.js';
+import copyPoints from './../util/copyPoints.js';
+import triggerEvent from './../util/triggerEvent.js';
 
 let isClickEvent = true;
 let preventClickTimeout;

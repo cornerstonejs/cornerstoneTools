@@ -1,12 +1,12 @@
-import EVENTS from '@/events.js';
+import EVENTS from './events.js';
 import { mouseWheelTool,
   multiTouchDragTool,
   simpleMouseButtonTool,
-  touchDragTool } from '@/tools/base/index.js';
-import isMouseButtonEnabled from '@/util/isMouseButtonEnabled.js';
-import scroll from '@/util/scroll.js';
-import { getToolState } from '@/stateManagement/toolState.js';
-import { setToolOptions, getToolOptions } from '@/toolOptions.js';
+  touchDragTool } from './tools/base/index.js';
+import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
+import scroll from './util/scroll.js';
+import { getToolState } from './stateManagement/toolState.js';
+import { setToolOptions, getToolOptions } from './toolOptions.js';
 
 const toolType = 'stackScroll';
 const toolTypeTouchDrag = 'stackScrollTouchDrag';

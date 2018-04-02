@@ -1,8 +1,8 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
+import EVENTS from './events.js';
+import external from './externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
-import { removeToolState } from '@/stateManagement/toolState.js';
-import triggerEvent from '@/util/triggerEvent.js';
+import { removeToolState } from './stateManagement/toolState.js';
+import triggerEvent from './util/triggerEvent.js';
 
 export default function (e, data, toolData, toolType, options, doneMovingCallback) {
   const cornerstone = external.cornerstone;

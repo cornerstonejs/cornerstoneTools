@@ -1,5 +1,5 @@
-import displayTool from '@/tools/image/displayTool.js';
-import { getToolState } from '@/stateManagement/toolState.js';
+import displayTool from './tools/image/displayTool.js';
+import { getToolState } from './stateManagement/toolState.js';
 
 /*
 Display scroll progress bar across bottom of image.

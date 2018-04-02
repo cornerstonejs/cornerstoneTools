@@ -1,11 +1,11 @@
-import EVENTS from '@/events.js';
-import external from '@/externalModules.js';
-import toolStyle from '@/stateManagement/toolStyle.js';
-import toolColors from '@/stateManagement/toolColors.js';
-import { getToolState, addToolState } from '@/stateManagement/toolState.js';
-import getLuminance from '@/util/getLuminance.js';
-import isMouseButtonEnabled from '@/util/isMouseButtonEnabled.js';
-import { setToolOptions, getToolOptions } from '@/toolOptions.js';
+import EVENTS from './events.js';
+import external from './externalModules.js';
+import toolStyle from './stateManagement/toolStyle.js';
+import toolColors from './stateManagement/toolColors.js';
+import { getToolState, addToolState } from './stateManagement/toolState.js';
+import getLuminance from './util/getLuminance.js';
+import isMouseButtonEnabled from './util/isMouseButtonEnabled.js';
+import { setToolOptions, getToolOptions } from './toolOptions.js';
 
 const toolType = 'wwwcRegion';
 
