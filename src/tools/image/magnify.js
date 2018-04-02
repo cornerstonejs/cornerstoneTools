@@ -24,7 +24,7 @@ function mouseUpCallback (e) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
   hideTool(eventData);
 }
 
@@ -49,7 +49,7 @@ function mouseDownCallback (e) {
     element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
     currentPoints = eventData.currentPoints;
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+    element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
     drawMagnificationTool(eventData);
 
     e.preventDefault();
@@ -57,7 +57,7 @@ function mouseDownCallback (e) {
   }
 }
 
-function newImageCallback (e) {
+function imageRenderedCallback (e) {
   const eventData = e.detail;
 
   eventData.currentPoints = currentPoints;
@@ -70,7 +70,7 @@ function dragEndCallback (e) {
 
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
   element.removeEventListener(EVENTS.TOUCH_END, dragEndCallback);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
   hideTool(eventData);
 }
 

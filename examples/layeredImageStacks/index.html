@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <!-- support for mobile touch devices -->
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-  
-  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
   <link href="../dialogPolyfill.css" rel="stylesheet">
   <link href="../cornerstone.min.css" rel="stylesheet">
 </head>
@@ -76,6 +76,7 @@
 
 <!-- include the cornerstone tools library -->
 <script src="../../dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
 <script src="../petctImageIdLoader.js"></script>
@@ -239,7 +240,7 @@
       cornerstoneTools.addToolState(element, 'stack', ctStack);
       cornerstoneTools.addToolState(element, 'stack', petStack);
       cornerstoneTools.addToolState(element, 'stackRenderer', renderer);
-      
+
       renderer.render(element);
 
       cornerstoneTools.mouseInput.enable(element);

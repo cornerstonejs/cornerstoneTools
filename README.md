@@ -170,14 +170,18 @@ Getting Started
 
 **Via NPM:** (preferred)
 
-`npm install --save cornerstone-tools`
+_Latest stable release:_
+- `npm install --save cornerstone-tools`
 
+_Pre-release, unstable, mostly for contributors:_
+- `npm install --save cornerstone-tools@next`
 
 **Get a packaged source file:**
 
 [UNPKG](https://unpkg.com/#/) offers a quick/neat solution for grabbing versioned copies of the source. For example:
 
 `https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
+
 
 * For development, to get the latest minified source:
     * `<script src="https://unpkg.com/cornerstone-tools"></script>`
