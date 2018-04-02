@@ -1,6 +1,6 @@
 import displayTool from './displayTool.js';
-import EVENTS from '../events.js';
-import external from '../externalModules.js';
+import EVENTS from '../../events.js';
+import external from '../../externalModules.js';
 
 const scaleOverlaySettings = {
   color: 'white',

@@ -1,5 +1,5 @@
-import EVENTS from '../events.js';
-import { setToolOptions } from '../toolOptions.js';
+import EVENTS from './../../events.js';
+import { setToolOptions } from './../../toolOptions.js';
 
 export default function (touchStartCallback, toolType) {
   if (!toolType) {
