@@ -9,6 +9,9 @@ module.exports = {
     'import/resolver': {
       'webpack': {
         'config': 'config/webpack/webpack-base.js'
+      },
+      'node': {
+        'paths': ['src']
       }
     }
   },
