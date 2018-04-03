@@ -1,4 +1,5 @@
-import { external } from '../externalModules.js';
+import EVENTS from '../events.js';
+import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -15,16 +16,14 @@ let currentPoints;
 let zoomCanvas;
 let zoomElement;
 
-
 /** Remove the magnifying glass when the mouse event ends */
-function mouseUpCallback (e, eventData) {
-  // element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
-  // element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  // element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-  // element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseDrag', dragCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseUp', mouseUpCallback);
-  external.$(eventData.element).off('CornerstoneToolsMouseClick', mouseUpCallback);
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
   hideTool(eventData);
 }
 
@@ -32,26 +31,25 @@ function hideTool (eventData) {
   const element = eventData.element;
 
   element.querySelector('.magnifyTool').style.display = 'none';
-
   // Re-enable the mouse cursor
   document.body.style.cursor = 'default';
   removeZoomElement();
 }
 
 /** Draw the magnifying glass on mouseDown, and begin tracking mouse movements */
-function mouseDownCallback (e, eventData) {
-
+function mouseDownCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
   const options = getToolOptions(toolType, element);
 
-  if (e.isTouchEvent || isMouseButtonEnabled(eventData.which, e.data.mouseButtonMask)) {
-    external.$(element).on('CornerstoneToolsMouseDrag', eventData, dragCallback);
-    external.$(element).on('CornerstoneToolsTouchDrag', eventData, dragCallback);
-    external.$(element).on('CornerstoneToolsMouseUp', eventData, mouseUpCallback);
-    external.$(element).on('CornerstoneToolsTouchEnd', eventData, mouseUpCallback);
-    external.$(element).on('CornerstoneToolsMouseClick', eventData, mouseUpCallback);
+  if (e.isTouchEvent || isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, dragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.addEventListener(EVENTS.TOUCH_END, mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-    external.$(element).on('CornerstoneNewImage', eventData, newImageCallback);
+    element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 
     // Ignore until next event
     drawZoomedElement(eventData);
@@ -63,25 +61,24 @@ function mouseDownCallback (e, eventData) {
   }
 }
 
-function imageRenderedCallback (e) {
-  const eventData = e.detail;
-
+function newImageCallback (e, eventData) {
   eventData.currentPoints = currentPoints;
   drawMagnificationTool(eventData);
 }
 
-function dragEndCallback (e) {
-  const eventData = e.detail;
+function dragEndCallback (e, eventData) {
   const element = eventData.element;
 
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
   element.removeEventListener(EVENTS.TOUCH_END, dragEndCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
   hideTool(eventData);
 }
 
 /** Drag callback is triggered by both the touch and mouse magnify tools */
-function dragCallback (e, eventData) {
+function dragCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
 
   drawMagnificationTool(eventData);
   if (eventData.isTouchEvent === true) {
@@ -102,7 +99,6 @@ function drawMagnificationTool (eventData) {
   }
 
   if (zoomCanvas === undefined) {
-
     return;
   }
 
@@ -294,13 +290,13 @@ const magnify = {
 };
 
 function enableTouch (element) {
-  external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
-  external.$(element).on('CornerstoneToolsTouchStart', mouseDownCallback);
+  element.removeEventListener(EVENTS.TOUCH_START, mouseDownCallback);
+  element.addEventListener(EVENTS.TOUCH_START, mouseDownCallback);
 }
 
 // Disables the reference line tool for the given element
 function disableTouch (element) {
-  external.$(element).off('CornerstoneToolsTouchStart', mouseDownCallback);
+  element.removeEventListener(EVENTS.TOUCH_START, mouseDownCallback);
 }
 
 const magnifyTouchDrag = {
