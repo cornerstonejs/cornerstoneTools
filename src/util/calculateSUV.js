@@ -46,7 +46,7 @@ export default function (image, storedPixelValue) {
   }
 
   const acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
-  const injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
+  const injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds || 0) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
   const durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
   const correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
   const suv = modalityPixelValue * patientWeight / correctedDose * 1000;
