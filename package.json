@@ -1,5 +1,5 @@
 {
-  "name": "cornerstone-tools",
+  "name": "@cleerly/cornerstone-tools",
   "version": "2.2.1-rc",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.min.js",

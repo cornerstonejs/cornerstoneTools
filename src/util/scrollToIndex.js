@@ -36,6 +36,10 @@ export default function (element, newImageIdIndex) {
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
   function doneCallback (image) {
+    if (endLoadingHandler) {
+      endLoadingHandler(element, image);
+    }
+
     if (stackData.currentImageIdIndex !== newImageIdIndex) {
       return;
     }
@@ -55,10 +59,6 @@ export default function (element, newImageIdIndex) {
     } else {
       cornerstone.displayImage(element, image);
     }
-
-    if (endLoadingHandler) {
-      endLoadingHandler(element, image);
-    }
   }
 
   function failCallback (error) {
@@ -74,7 +74,7 @@ export default function (element, newImageIdIndex) {
   }
 
   if (startLoadingHandler) {
-    startLoadingHandler(element);
+    startLoadingHandler(element, stackData.imageIds[newImageIdIndex]);
   }
 
   const eventData = {
