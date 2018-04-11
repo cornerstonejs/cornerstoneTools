@@ -40,7 +40,7 @@ function getOrientationMarkerPositions (element) {
 
   coords = {
     x: enabledElement.image.width / 2,
-    y: enabledElement.image.height - 5
+    y: enabledElement.image.height - 25
   };
   const bottom = cornerstone.pixelToCanvas(element, coords);
 

@@ -29,7 +29,9 @@ export default function (sp, boundingBox, dataHandles) {
       count,
       mean: 0.0,
       variance: 0.0,
-      stdDev: 0.0
+      stdDev: 0.0,
+      minCT: 0.0,
+      maxCT: 0.0
     };
   }
 
@@ -40,6 +42,8 @@ export default function (sp, boundingBox, dataHandles) {
     count,
     mean,
     variance,
-    stdDev: Math.sqrt(variance)
+    stdDev: Math.sqrt(variance),
+    minCT: Math.min(...sp),
+    maxCT: Math.max(...sp)
   };
 }
