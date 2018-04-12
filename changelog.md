@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Improved Magnifying glass tool to display full resolution image (thanks @diego0020!)
+- [fix] Prevents crosshairs tool to throw an exception when no imagePlaneModule metadata is present (to fail gracefully)
 
 ## [2.2.0] - 2018-04-02
 ### Added
