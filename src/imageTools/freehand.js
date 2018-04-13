@@ -120,6 +120,10 @@ function pointNearHandle (eventData, toolIndex) {
     return;
   }
 
+  if (data.visible === false) {
+    return false;
+  }
+
   const mousePoint = eventData.currentPoints.canvas;
 
   for (let i = 0; i < data.handles.length; i++) {
