@@ -137,6 +137,10 @@ function onImageRendered (e) {
 
     const data = toolData.data[i];
 
+    if (data.visible === false) {
+      continue;
+    }
+
     // Apply any shadow settings defined in the tool configuration
     if (config && config.shadow) {
       context.shadowColor = config.shadowColor || '#000000';

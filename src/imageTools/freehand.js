@@ -512,6 +512,10 @@ function onImageRendered (e) {
 
     const data = toolData.data[i];
 
+    if (data.visible === false) {
+      continue;
+    }
+
     if (data.active) {
       color = toolColors.getActiveColor();
       fillColor = toolColors.getFillColor();

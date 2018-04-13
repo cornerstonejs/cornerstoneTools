@@ -116,6 +116,10 @@ function onImageRendered (e) {
 
     const data = toolData.data[i];
 
+    if (data.visible === false) {
+      continue;
+    }
+
     // Differentiate the color of activation tool
     if (data.active) {
       color = toolColors.getActiveColor();

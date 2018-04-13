@@ -105,6 +105,10 @@ function onImageRendered (e) {
 
   const data = toolData.data[0];
 
+  if (data.visible === false) {
+    return;
+  }
+
   if (!data) {
     return;
   }

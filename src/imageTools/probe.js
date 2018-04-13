@@ -61,9 +61,12 @@ function onImageRendered (e) {
   const fontHeight = textStyle.getFontSize();
 
   for (let i = 0; i < toolData.data.length; i++) {
-
     context.save();
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
 
     if (data.active) {
       color = toolColors.getActiveColor();

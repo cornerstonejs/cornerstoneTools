@@ -98,6 +98,11 @@ function onImageRendered (e) {
     }
 
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
+
     const color = toolColors.getColorIfActive(data.active);
 
     // Get the handle positions in canvas coordinates
