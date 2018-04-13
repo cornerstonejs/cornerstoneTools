@@ -5,9 +5,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [2.3.1] - 2018-04-11
+### Fixed
+- fix(visibility) Make tools' visible property actually change their visibility
+- Prevent crosshairs tool from throwing an exception when no imagePlaneModule metadata is present (now it fails gracefully) (thanks @fegemo!)
+
+### Removed
+- Removed unused karma.conf.js file
+
+## [2.3.0] - 2018-04-11
+### Added
+- Added an [example for the scale overlay tool](https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/scaleOverlayTool/index.html) (thanks @evren217)
+
 ### Changed
 - Improved Magnifying glass tool to display full resolution image (thanks @diego0020!)
-- [fix] Prevents crosshairs tool to throw an exception when no imagePlaneModule metadata is present (to fail gracefully)
+- Switch from PhantomJS to ChromeHeadless for tests
+- Updated to Webpack 4
+
+### Fixed
+- Adding a request now wakes up the requestPoolManager. (thanks @adreyfus!)
 
 ## [2.2.0] - 2018-04-02
 ### Added
