@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.2] - 2018-04-18
+##Fixed
+- fix(interaction) No tool interaction when tool is invisible (thanks @floryst)
+
 ## [2.3.1] - 2018-04-11
 ### Fixed
 - fix(visibility) Make tools' visible property actually change their visibility
