@@ -50,6 +50,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearEllipse (element, data, coords, distance) {
+  if (data.visible === false) {
+    return false;
+  }
+
   const cornerstone = external.cornerstone;
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
