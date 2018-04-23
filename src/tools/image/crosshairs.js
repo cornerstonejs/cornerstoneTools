@@ -28,6 +28,10 @@ function chooseLocation (e) {
   const sourceImageId = sourceEnabledElement.image.imageId;
   const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
+  if (!sourceImagePlane) {
+    return;
+  }
+
   // Get currentPoints from mouse cursor on selected element
   const sourceImagePoint = eventData.currentPoints.image;
 

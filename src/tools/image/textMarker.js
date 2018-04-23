@@ -79,6 +79,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   if (!data.handles.end.boundingBox) {
     return;
   }
@@ -109,6 +113,10 @@ function onImageRendered (e) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
 
     let color = toolColors.getToolColor();
 

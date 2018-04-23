@@ -33,6 +33,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
 
@@ -60,9 +64,12 @@ function onImageRendered (e) {
   const fontHeight = textStyle.getFontSize();
 
   for (let i = 0; i < toolData.data.length; i++) {
-
     context.save();
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
 
     if (data.active) {
       color = toolColors.getActiveColor();

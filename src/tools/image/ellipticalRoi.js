@@ -49,6 +49,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearEllipse (element, data, coords, distance) {
+  if (data.visible === false) {
+    return false;
+  }
+
   const cornerstone = external.cornerstone;
   const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
   const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
@@ -135,6 +139,10 @@ function onImageRendered (e) {
     context.save();
 
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
 
     // Apply any shadow settings defined in the tool configuration
     if (config && config.shadow) {

@@ -43,6 +43,10 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   const cornerstone = external.cornerstone;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, data.handles.start),
@@ -97,6 +101,11 @@ function onImageRendered (e) {
     }
 
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
+
     const color = toolColors.getColorIfActive(data.active);
 
     // Get the handle positions in canvas coordinates

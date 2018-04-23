@@ -120,6 +120,10 @@ function pointNearHandle (eventData, toolIndex) {
     return;
   }
 
+  if (data.visible === false) {
+    return false;
+  }
+
   const mousePoint = eventData.currentPoints.canvas;
 
   for (let i = 0; i < data.handles.length; i++) {
@@ -511,6 +515,10 @@ function onImageRendered (e) {
     context.save();
 
     const data = toolData.data[i];
+
+    if (data.visible === false) {
+      continue;
+    }
 
     if (data.active) {
       color = toolColors.getActiveColor();
