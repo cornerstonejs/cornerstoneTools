@@ -10,6 +10,7 @@ import freeHandArea from '../util/freeHandArea.js';
 import calculateFreehandStatistics from '../util/calculateFreehandStatistics.js';
 import { freeHandIntersect, freeHandIntersectEnd, freeHandIntersectModify } from '../util/freeHandIntersect.js';
 import calculateSUV from '../util/calculateSUV.js';
+import triggerEvent from '../util/triggerEvent.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -49,51 +50,6 @@ function createNewMeasurement () {
   };
 
   return measurementData;
-}
-
-// /////// BEGIN ACTIVE TOOL ///////
-function addPoint (eventData) {
-  const toolData = getToolState(eventData.element, toolType);
-
-  if (toolData === undefined) {
-    return;
-  }
-
-  const config = freehand.getConfiguration();
-
-  // Get the toolData from the last-drawn drawing
-  // (this should change when modification is added)
-  const data = toolData.data[config.currentTool];
-
-  const handleData = {
-    x: eventData.currentPoints.image.x,
-    y: eventData.currentPoints.image.y,
-    highlight: true,
-    active: true,
-    lines: []
-  };
-
-    // If this is not the first handle
-  if (data.handles.length) {
-    if (isValidNode(handleData, data.handles)) {
-      // Add the line from the current handle to the new handle
-      data.handles[config.currentHandle - 1].lines.push(eventData.currentPoints.image);
-    } else {
-      return false;
-    }
-  }
-
-  // Add the new handle
-  data.handles.push(handleData);
-
-  // Increment the current handle value
-  config.currentHandle += 1;
-
-  // Reset freehand value
-  config.freehand = false;
-
-  // Force onImageRendered to fire
-  external.cornerstone.updateImage(eventData.element);
 }
 
 function pointNearTool (eventData, toolIndex) {
@@ -164,136 +120,26 @@ function pointNearHandleAllTools (eventData) {
   }
 }
 
+// /////// BEGIN ACTIVE TOOL ///////
+
+// /////// BEGIN ACTIVE TOOL ///////
+
+function mouseDownActivateCallback (e) {
+  const eventData = e.detail;
+
+  startDrawing(eventData);
+  addPoint(eventData);
+
+  e.preventDefault();
+  e.stopPropagation();
+}
+
 // --- Drawing loop ---
 // On first click, add point
 // After first click, on mouse move, record location
 // If mouse comes close to previous point, snap to it
 // On next click, add another point -- continuously
 // On each click, if it intersects with a current point, end drawing loop
-
-function mouseUpCallback (e) {
-  const eventData = e.detail;
-  const element = eventData.element;
-
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-
-  // Check if drawing is finished
-  const toolData = getToolState(eventData.element, toolType);
-
-  if (toolData === undefined) {
-    return;
-  }
-
-  const config = freehand.getConfiguration();
-
-  if (config.movingTextBox === true) {
-    // Place textBox
-    config.movingTextBox = false;
-    // Reset the current handle
-    toolData.data[config.currentTool].invalidated = true;
-    config.currentHandle = 0;
-    config.currentTool = -1;
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-
-    return;
-  }
-
-  if (!eventData.event.shiftKey) {
-    config.freehand = false;
-  }
-
-  external.cornerstone.updateImage(eventData.element);
-}
-
-function mouseMoveCallback (e) {
-  const eventData = e.detail;
-  const toolData = getToolState(eventData.element, toolType);
-
-  if (!toolData) {
-    return;
-  }
-
-  const config = freehand.getConfiguration();
-  const currentTool = config.currentTool;
-
-  // Tool inactive and passively watching for mouse over
-  if (currentTool < 0) {
-    const imageNeedsUpdate = mouseHover(eventData, toolData);
-
-    if (!imageNeedsUpdate) {
-      return;
-    }
-
-  } else {
-    // Tool active
-    const data = toolData.data[currentTool];
-    const currentHandle = config.currentHandle;
-
-    // Set the mouseLocation handle
-    getMouseLocation(eventData);
-
-    if (config.modifying) {
-      // Move the handle
-      data.active = true;
-      data.highlight = true;
-      data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
-      data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-      const neighbourIndex = currentHandle === 0 ? data.handles.length - 1 : currentHandle - 1;
-      const lastLineIndex = data.handles[neighbourIndex].lines.length - 1;
-      const lastLine = data.handles[neighbourIndex].lines[lastLineIndex];
-
-      lastLine.x = config.mouseLocation.handles.start.x;
-      lastLine.y = config.mouseLocation.handles.start.y;
-    }
-
-    if (config.freehand) { // JPETTS - Note: currently disabled
-      data.handles[currentHandle - 1].lines.push(eventData.currentPoints.image);
-    } else {
-      // No snapping in freehand mode
-      const handleNearby = pointNearHandle(eventData, config.currentTool);
-
-      // If there is a handle nearby to snap to
-      // (and it's not the actual mouse handle)
-      if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
-        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
-        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
-      }
-    }
-  }
-
-  // Force onImageRendered
-  external.cornerstone.updateImage(eventData.element);
-}
-
-function mouseDragCallback (e) {
-  const eventData = e.detail;
-  const toolData = getToolState(eventData.element, toolType);
-
-  if (!toolData) {
-    return;
-  }
-
-  const config = freehand.getConfiguration();
-  const currentTool = config.currentTool;
-
-  // Check if the tool is active
-  if (currentTool >= 0) {
-    // Set the mouseLocation handle
-    getMouseLocation(eventData);
-
-    const currentHandle = config.currentHandle;
-
-    if (config.movingTextBox) {
-      // Move the textBox
-      currentHandle.hasMoved = true;
-      currentHandle.x = config.mouseLocation.handles.start.x;
-      currentHandle.y = config.mouseLocation.handles.start.y;
-    }
-  }
-
-  // Update the image
-  external.cornerstone.updateImage(eventData.element);
-}
 
 function startDrawing (eventData) {
   const element = eventData.element;
@@ -313,6 +159,49 @@ function startDrawing (eventData) {
   const toolData = getToolState(eventData.element, toolType);
 
   config.currentTool = toolData.data.length - 1;
+}
+
+function addPoint (eventData) {
+  const toolData = getToolState(eventData.element, toolType);
+
+  if (toolData === undefined) {
+    return;
+  }
+
+  const config = freehand.getConfiguration();
+
+  // Get the toolData from the last-drawn drawing
+  const data = toolData.data[config.currentTool];
+
+  const handleData = {
+    x: eventData.currentPoints.image.x,
+    y: eventData.currentPoints.image.y,
+    highlight: true,
+    active: true,
+    lines: []
+  };
+
+  // If this is not the first handle
+  if (data.handles.length) {
+    if (isValidNode(handleData, data.handles)) {
+      // Add the line from the current handle to the new handle
+      data.handles[config.currentHandle - 1].lines.push(eventData.currentPoints.image);
+    } else {
+      return false;
+    }
+  }
+
+  // Add the new handle
+  data.handles.push(handleData);
+
+  // Increment the current handle value
+  config.currentHandle += 1;
+
+  // Reset freehand value
+  config.freehand = false;
+
+  // Force onImageRendered to fire
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function endDrawing (eventData, handleNearby) {
@@ -346,6 +235,255 @@ function endDrawing (eventData, handleNearby) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+function mouseUpCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+
+  // Check if drawing is finished
+  const toolData = getToolState(eventData.element, toolType);
+
+  if (toolData === undefined) {
+    return;
+  }
+
+  const config = freehand.getConfiguration();
+
+  if (config.movingTextBox === true) {
+    // Place textBox
+    config.movingTextBox = false;
+    // Reset the current handle
+    toolData.data[config.currentTool].invalidated = true;
+    config.currentHandle = 0;
+    config.currentTool = -1;
+    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+
+    return;
+  }
+
+  if (!eventData.event.shiftKey) {
+    config.freehand = false;
+  }
+
+  if (config.modifying) {
+    const currentTool = config.currentTool;
+    // Don't allow the line being modified to intersect other lines
+    if (!freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
+      endDrawing(eventData);
+    } else {
+      const currentHandle = config.currentHandle;
+      const currentHandleData = toolData.data[currentTool].handles[currentHandle];
+      let previousHandleData;
+
+      if (currentHandle === 0) {
+        const lastNodeID = toolData.data[currentTool].handles.length - 1;
+        previousHandleData = toolData.data[currentTool].handles[lastNodeID];
+      } else {
+        previousHandleData = toolData.data[currentTool].handles[currentHandle - 1];
+      }
+
+      // Snap back to previous position
+      currentHandleData.x = config.dragOrigin.x;
+      currentHandleData.y = config.dragOrigin.y;
+
+      // Reconfigure line from previous node
+      previousHandleData.lines[0] = currentHandleData;
+
+
+      endDrawing(eventData);
+    }
+
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  external.cornerstone.updateImage(eventData.element);
+}
+
+// /////// END ACTIVE TOOL ///////
+
+function mouseDownCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+  const options = getToolOptions(toolType, element);
+
+  if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    e.stopPropagation();
+    e.preventDefault();
+    return;
+  }
+
+  const toolData = getToolState(eventData.element, toolType);
+  let handleNearby, toolIndex;
+  const config = freehand.getConfiguration();
+  const currentTool = config.currentTool;
+
+  if (currentTool < 0) {
+    const nearby = pointNearHandleAllTools(eventData);
+
+    if (nearby) {
+      handleNearby = nearby.handleNearby;
+      toolIndex = nearby.toolIndex;
+      // This means the user clicked on the textBox
+      if (handleNearby.hasBoundingBox) {
+        element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+        element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+        config.movingTextBox = true;
+        config.currentHandle = handleNearby;
+        config.currentTool = toolIndex;
+
+        e.preventDefault();
+        e.stopPropagation();
+
+        return;
+      }
+      // This means the user is trying to modify a point
+      if (handleNearby !== undefined) {
+
+        element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+
+        config.dragOrigin = {
+          x: toolData.data[toolIndex].handles[handleNearby].x,
+          y: toolData.data[toolIndex].handles[handleNearby].y
+        }
+
+        // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
+
+        element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+        element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+        element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+
+        config.modifying = true;
+        config.currentHandle = handleNearby;
+        config.currentTool = toolIndex;
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }
+  } else if (currentTool >= 0 && toolData.data[currentTool].active) {
+    handleNearby = pointNearHandle(eventData, currentTool);
+    const lastNodeID = toolData.data[currentTool].handles.length - 1;
+
+    // This means the user is trying to add a point
+    if (handleNearby === undefined) {
+      e.stopPropagation();
+      e.preventDefault();
+      addPoint(eventData);
+
+      return;
+
+    } else if (toolData.data[currentTool].handles.length >= 3) {
+      // Snap if click registered on origin node or on last node placed
+      if ((handleNearby === 0 || handleNearby === lastNodeID) && !freeHandIntersectEnd(toolData.data[currentTool].handles)) {
+        endDrawing(eventData, handleNearby);
+      } else if (eventData.event.shiftKey) {
+        config.freehand = true;
+        toolData.data[currentTool].textBox.freehand = true;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    return;
+  }
+
+}
+
+function mouseMoveCallback (e) {
+  const eventData = e.detail;
+  const toolData = getToolState(eventData.element, toolType);
+
+  if (!toolData) {
+    return;
+  }
+
+  const config = freehand.getConfiguration();
+  const currentTool = config.currentTool;
+
+  // Tool inactive and passively watching for mouse over
+  if (currentTool < 0) {
+    const imageNeedsUpdate = mouseHover(eventData, toolData);
+
+    if (!imageNeedsUpdate) {
+      return;
+    }
+
+  } else {
+    // Tool active
+    const data = toolData.data[currentTool];
+    const currentHandle = config.currentHandle;
+
+    // Set the mouseLocation handle
+    getMouseLocation(eventData);
+
+    if (config.freehand) { // JPETTS - Note: currently disabled
+      data.handles[currentHandle - 1].lines.push(eventData.currentPoints.image);
+    } else {
+      // No snapping in freehand mode
+      const handleNearby = pointNearHandle(eventData, config.currentTool);
+
+      // If there is a handle nearby to snap to
+      // (and it's not the actual mouse handle)
+      if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
+        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
+        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
+      }
+    }
+  }
+
+  // Force onImageRendered
+  external.cornerstone.updateImage(eventData.element);
+}
+
+function mouseDragCallback (e) {
+  const eventData = e.detail;
+  const toolData = getToolState(eventData.element, toolType);
+
+  if (!toolData) {
+    return;
+  }
+
+  const config = freehand.getConfiguration();
+  const currentTool = config.currentTool;
+  const data = toolData.data[currentTool];
+  const currentHandle = config.currentHandle;
+
+  // Set the mouseLocation handle
+  getMouseLocation(eventData);
+
+  // Check if the tool is active
+  if (currentTool >= 0) {
+    if (config.movingTextBox) {
+      // Move the textBox
+      currentHandle.hasMoved = true;
+      currentHandle.x = config.mouseLocation.handles.start.x;
+      currentHandle.y = config.mouseLocation.handles.start.y;
+    }
+
+    if (config.modifying) {
+      // Move the handle
+      data.active = true;
+      data.highlight = true;
+      data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+      data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+      if (currentHandle) {
+        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+        lastLine.x = config.mouseLocation.handles.start.x;
+        lastLine.y = config.mouseLocation.handles.start.y;
+      }
+    }
+  }
+
+  // Update the image
+  external.cornerstone.updateImage(eventData.element);
+}
+
 function isValidNode (newHandle, dataHandles) {
   return !freeHandIntersect(newHandle, dataHandles);
 }
@@ -364,10 +502,8 @@ function mouseHover (eventData, toolData) {
     }
 
     if ((pointNearTool(eventData, i) && !data.active) || (!pointNearTool(eventData, i) && data.active)) {
-      if (!data.lockedForEditing) {
-        data.active = !data.active;
-        imageNeedsUpdate = true;
-      }
+      data.active = !data.active;
+      imageNeedsUpdate = true;
     }
 
     if (data.textBox === true) {
@@ -395,81 +531,9 @@ function getMouseLocation (eventData) {
   config.mouseLocation.handles.start.y = y;
 }
 
-function mouseDownCallback (e) {
-  const eventData = e.detail;
-  const element = eventData.element;
-  const options = getToolOptions(toolType, element);
 
-  if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-    const toolData = getToolState(eventData.element, toolType);
-    let handleNearby, toolIndex;
-    const config = freehand.getConfiguration();
-    const currentTool = config.currentTool;
 
-    if (config.modifying) {
-      // Don't allow the line being modified to intersect other lines
-      if (!freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
-        endDrawing(eventData);
-      }
 
-      return;
-    }
-
-    if (currentTool < 0) {
-      const nearby = pointNearHandleAllTools(eventData);
-
-      if (nearby) {
-        handleNearby = nearby.handleNearby;
-        toolIndex = nearby.toolIndex;
-        // This means the user clicked on the textBox
-        if (handleNearby.hasBoundingBox) {
-          element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-          element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-          config.movingTextBox = true;
-          config.currentHandle = handleNearby;
-          config.currentTool = toolIndex;
-
-          return false;
-        }
-        // This means the user is trying to modify a point
-        if (handleNearby !== undefined) {
-          element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-          element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-          config.modifying = true;
-          config.currentHandle = handleNearby;
-          config.currentTool = toolIndex;
-        }
-      } else {
-        startDrawing(eventData);
-        addPoint(eventData);
-      }
-    } else if (currentTool >= 0 && toolData.data[currentTool].active) {
-      handleNearby = pointNearHandle(eventData, currentTool);
-      const lastNodeID = toolData.data[currentTool].handles.length - 1;
-
-      // Snap if click registered on origin node or on last node placed
-      if ((handleNearby === 0 || handleNearby === lastNodeID) && !freeHandIntersectEnd(toolData.data[currentTool].handles)) {
-        endDrawing(eventData, handleNearby);
-      } else if (eventData.event.shiftKey) {
-        config.freehand = true;
-        toolData.data[currentTool].textBox.freehand = true;
-      } else if (handleNearby === undefined) {
-        addPoint(eventData);
-      } else {
-        // Do not allow user to add point to previous point if not origin node.
-        return false;
-      }
-    }
-
-    // JPETTS Note: removed freehand shiftclick pencil mode, as it is not
-    // Useful for accurate ROI outlining and cannot easily generalise to calculate the statistics.
-
-    e.preventDefault();
-    e.stopPropagation();
-  }
-}
-
-// /////// END ACTIVE TOOL ///////
 
 function numberWithCommas (x) {
   // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
@@ -806,9 +870,10 @@ function onImageRendered (e) {
 // /////// END IMAGE RENDERING ///////
 function enable (element) {
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
@@ -818,9 +883,10 @@ function enable (element) {
 // Disables the reference line tool for the given element
 function disable (element) {
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
@@ -828,28 +894,44 @@ function disable (element) {
 // Visible and interactive
 function activate (element, mouseButtonMask) {
   setToolOptions(toolType, element, { mouseButtonMask });
-
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
 
   external.cornerstone.updateImage(element);
 }
 
 // Visible, but not interactive
-function deactivate (element) {
+function deactivate (element, mouseButtonMask) {
+  setToolOptions(toolType, element, { mouseButtonMask });
+
+  const eventType = EVENTS.TOOL_DEACTIVATED;
+  const statusChangeEventData = {
+    mouseButtonMask,
+    toolType,
+    type: eventType
+  };
+
+  triggerEvent(element, eventType, statusChangeEventData);
+
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
   external.cornerstone.updateImage(element);
 }
