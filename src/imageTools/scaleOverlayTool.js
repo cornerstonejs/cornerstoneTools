@@ -2,7 +2,7 @@ import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 
-const scaleOverlaySettings = {
+const configuration = {
   color: 'white',
   lineWidth: 2,
   shadowColor: 'black',
@@ -14,27 +14,27 @@ function drawLine (context, startPoint, endPoint) {
   context.lineTo(endPoint.x, endPoint.y);
 }
 
-function drawVerticalScalebarIntervals (context, config) {
+function drawVerticalScalebarIntervals (context, imageAttributes) {
   let i = 0;
 
-  while (config.verticalLine.start.y + i * config.verticalMinorTick <= config.vscaleBounds.bottomRight.y) {
+  while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
 
     const startPoint = {
-      x: config.verticalLine.start.x,
-      y: config.verticalLine.start.y + i * config.verticalMinorTick
+      x: imageAttributes.verticalLine.start.x,
+      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
     };
 
     const endPoint = {
       x: 0,
-      y: config.verticalLine.start.y + i * config.verticalMinorTick
+      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
     };
 
     if (i % 5 === 0) {
 
-      endPoint.x = config.verticalLine.start.x - config.majorTickLength;
+      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
     } else {
 
-      endPoint.x = config.verticalLine.start.x - config.minorTickLength;
+      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
     }
 
     drawLine(context, startPoint, endPoint);
@@ -43,25 +43,25 @@ function drawVerticalScalebarIntervals (context, config) {
   }
 }
 
-function drawHorizontalScalebarIntervals (context, config) {
+function drawHorizontalScalebarIntervals (context, imageAttributes) {
   let i = 0;
 
-  while (config.horizontalLine.start.x + i * config.horizontalMinorTick <= config.hscaleBounds.bottomRight.x) {
+  while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
 
     const startPoint = {
-      x: config.horizontalLine.start.x + i * config.horizontalMinorTick,
-      y: config.horizontalLine.start.y
+      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
+      y: imageAttributes.horizontalLine.start.y
     };
 
     const endPoint = {
-      x: config.horizontalLine.start.x + i * config.horizontalMinorTick,
+      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
       y: 0
     };
 
     if (i % 5 === 0) {
-      endPoint.y = config.horizontalLine.start.y - config.majorTickLength;
+      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.majorTickLength;
     } else {
-      endPoint.y = config.horizontalLine.start.y - config.minorTickLength;
+      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
     }
 
     drawLine(context, startPoint, endPoint);
@@ -70,49 +70,49 @@ function drawHorizontalScalebarIntervals (context, config) {
   }
 }
 
-function drawVerticalScalebar (context, config) {
+function drawVerticalScalebar (context, imageAttributes) {
   const startPoint = {
-    x: config.verticalLine.start.x,
-    y: config.verticalLine.start.y
+    x: imageAttributes.verticalLine.start.x,
+    y: imageAttributes.verticalLine.start.y
   };
   const endPoint = {
-    x: config.verticalLine.end.x,
-    y: config.verticalLine.end.y
+    x: imageAttributes.verticalLine.end.x,
+    y: imageAttributes.verticalLine.end.y
   };
 
   context.beginPath();
-  context.strokeStyle = config.color;
-  context.lineWidth = config.lineWidth;
+  context.strokeStyle = imageAttributes.color;
+  context.lineWidth = imageAttributes.lineWidth;
 
   drawLine(context, startPoint, endPoint);
-  drawVerticalScalebarIntervals(context, config);
+  drawVerticalScalebarIntervals(context, imageAttributes);
 
   context.stroke();
 }
 
-function drawHorizontalScalebar (context, config) {
+function drawHorizontalScalebar (context, imageAttributes) {
   const startPoint = {
-    x: config.horizontalLine.start.x,
-    y: config.horizontalLine.start.y
+    x: imageAttributes.horizontalLine.start.x,
+    y: imageAttributes.horizontalLine.start.y
   };
   const endPoint = {
-    x: config.horizontalLine.end.x,
-    y: config.horizontalLine.end.y
+    x: imageAttributes.horizontalLine.end.x,
+    y: imageAttributes.horizontalLine.end.y
   };
 
   drawLine(context, startPoint, endPoint);
-  drawHorizontalScalebarIntervals(context, config);
+  drawHorizontalScalebarIntervals(context, imageAttributes);
 }
 
-function drawScalebars (context, config) {
-  context.shadowColor = config.shadowColor;
-  context.shadowBlur = config.shadowBlur;
-  context.strokeStyle = config.color;
-  context.lineWidth = config.lineWidth;
+function drawScalebars (context, imageAttributes) {
+  context.shadowColor = imageAttributes.shadowColor;
+  context.shadowBlur = imageAttributes.shadowBlur;
+  context.strokeStyle = imageAttributes.color;
+  context.lineWidth = imageAttributes.lineWidth;
 
   context.beginPath();
-  drawVerticalScalebar(context, config);
-  drawHorizontalScalebar(context, config);
+  drawVerticalScalebar(context, imageAttributes);
+  drawHorizontalScalebar(context, imageAttributes);
   context.stroke();
 }
 
@@ -194,7 +194,8 @@ function onImageRendered (e) {
     return;
   }
 
-  const config = Object.assign({}, {
+  const configuration = scaleOverlayTool.getConfiguration();
+  const imageAttributes = Object.assign({}, {
     hscaleBounds,
     vscaleBounds,
     verticalMinorTick: verticalIntervalScale,
@@ -221,12 +222,12 @@ function onImageRendered (e) {
         y: hscaleBounds.bottomRight.y
       }
     }
-  }, scaleOverlaySettings);
+  }, configuration);
 
   context.setTransform(1, 0, 0, 1, 0, 0);
   context.save();
 
-  drawScalebars(context, config);
+  drawScalebars(context, imageAttributes);
   context.restore();
 }
 // /////// END IMAGE RENDERING ///////
@@ -239,6 +240,8 @@ function disable (element) {
 
 // Module exports
 const scaleOverlayTool = displayTool(onImageRendered);
+
+scaleOverlayTool.setConfiguration(configuration);
 
 scaleOverlayTool.disable = disable;
 
