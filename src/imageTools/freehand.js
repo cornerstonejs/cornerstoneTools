@@ -270,16 +270,16 @@ function mouseUpCallback (e) {
 
   if (config.modifying) {
     const currentTool = config.currentTool;
+
     // Don't allow the line being modified to intersect other lines
-    if (!freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
-      endDrawing(eventData);
-    } else {
+    if (freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
       const currentHandle = config.currentHandle;
       const currentHandleData = toolData.data[currentTool].handles[currentHandle];
       let previousHandleData;
 
       if (currentHandle === 0) {
         const lastNodeID = toolData.data[currentTool].handles.length - 1;
+
         previousHandleData = toolData.data[currentTool].handles[lastNodeID];
       } else {
         previousHandleData = toolData.data[currentTool].handles[currentHandle - 1];
@@ -292,10 +292,10 @@ function mouseUpCallback (e) {
       // Reconfigure line from previous node
       previousHandleData.lines[0] = currentHandleData;
 
-
       endDrawing(eventData);
     }
 
+    endDrawing(eventData);
     e.preventDefault();
     e.stopPropagation();
   }
@@ -313,6 +313,7 @@ function mouseDownCallback (e) {
   if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
     e.stopPropagation();
     e.preventDefault();
+
     return;
   }
 
@@ -348,7 +349,7 @@ function mouseDownCallback (e) {
         config.dragOrigin = {
           x: toolData.data[toolIndex].handles[handleNearby].x,
           y: toolData.data[toolIndex].handles[handleNearby].y
-        }
+        };
 
         // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
 
@@ -530,10 +531,6 @@ function getMouseLocation (eventData) {
   y = Math.min(y, eventData.image.height);
   config.mouseLocation.handles.start.y = y;
 }
-
-
-
-
 
 function numberWithCommas (x) {
   // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript

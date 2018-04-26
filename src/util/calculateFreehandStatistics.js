@@ -13,8 +13,6 @@ export default function (sp, boundingBox, dataHandles) {
   let sumSquared = 0;
   let index = 0;
 
-
-
   for (let y = boundingBox.top; y < boundingBox.top + boundingBox.height; y++) {
     for (let x = boundingBox.left; x < boundingBox.left + boundingBox.width; x++) {
       if (pointInFreehandROI(dataHandles, {
