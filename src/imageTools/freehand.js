@@ -458,40 +458,49 @@ function mouseDragCallback (e) {
   }
 
   const config = freehand.getConfiguration();
-  const currentTool = config.currentTool;
-  const data = toolData.data[currentTool];
+  const data = toolData.data[config.currentTool];
   const currentHandle = config.currentHandle;
 
   // Set the mouseLocation handle
   getMouseLocation(eventData);
 
   // Check if the tool is active
-  if (currentTool >= 0) {
+  if (config.currentTool >= 0) {
     if (config.movingTextBox) {
-      // Move the textBox
-      currentHandle.hasMoved = true;
-      currentHandle.x = config.mouseLocation.handles.start.x;
-      currentHandle.y = config.mouseLocation.handles.start.y;
+      dragTextBox(currentHandle);
     }
 
     if (config.modifying) {
-      // Move the handle
-      data.active = true;
-      data.highlight = true;
-      data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
-      data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-      if (currentHandle) {
-        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
-
-        lastLine.x = config.mouseLocation.handles.start.x;
-        lastLine.y = config.mouseLocation.handles.start.y;
-      }
+      dragHandle(currentHandle, data);
     }
   }
 
   // Update the image
   external.cornerstone.updateImage(eventData.element);
+}
+
+function dragTextBox (currentHandle) {
+  const config = freehand.getConfiguration();
+
+  currentHandle.hasMoved = true;
+  currentHandle.x = config.mouseLocation.handles.start.x;
+  currentHandle.y = config.mouseLocation.handles.start.y;
+}
+
+function dragHandle (currentHandle, data) {
+  const config = freehand.getConfiguration();
+
+  data.active = true;
+  data.highlight = true;
+  data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+  data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+  if (currentHandle) {
+    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+    lastLine.x = config.mouseLocation.handles.start.x;
+    lastLine.y = config.mouseLocation.handles.start.y;
+  }
 }
 
 function isValidNode (newHandle, dataHandles) {
