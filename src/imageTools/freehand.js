@@ -245,6 +245,8 @@ function mouseUpCallback (e) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
+  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+
   if (toolData === undefined) {
     return;
   }
