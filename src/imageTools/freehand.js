@@ -238,28 +238,20 @@ function endDrawing (eventData, handleNearby) {
 function mouseUpCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
+  const config = freehand.getConfiguration();
+  const toolData = getToolState(eventData.element, toolType);
 
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-  // Check if drawing is finished
-  const toolData = getToolState(eventData.element, toolType);
-
   if (toolData === undefined) {
     return;
   }
 
-  const config = freehand.getConfiguration();
-
+  // Check if drawing is finished
   if (config.movingTextBox === true) {
-    // Place textBox
-    config.movingTextBox = false;
-    // Reset the current handle
-    toolData.data[config.currentTool].invalidated = true;
-    config.currentHandle = 0;
-    config.currentTool = -1;
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+    dropTextbox(toolData, eventData);
 
     return;
   }
@@ -269,36 +261,55 @@ function mouseUpCallback (e) {
   }
 
   if (config.modifying) {
-    const currentTool = config.currentTool;
+    dropHandle(toolData, eventData);
 
-    // Don't allow the line being modified to intersect other lines
-    if (freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
-      const currentHandle = config.currentHandle;
-      const currentHandleData = toolData.data[currentTool].handles[currentHandle];
-      let previousHandleData;
-
-      if (currentHandle === 0) {
-        const lastNodeID = toolData.data[currentTool].handles.length - 1;
-
-        previousHandleData = toolData.data[currentTool].handles[lastNodeID];
-      } else {
-        previousHandleData = toolData.data[currentTool].handles[currentHandle - 1];
-      }
-
-      // Snap back to previous position
-      currentHandleData.x = config.dragOrigin.x;
-      currentHandleData.y = config.dragOrigin.y;
-
-      // Reconfigure line from previous node
-      previousHandleData.lines[0] = currentHandleData;
-    }
-
-    endDrawing(eventData);
     e.preventDefault();
     e.stopPropagation();
   }
 
   external.cornerstone.updateImage(eventData.element);
+}
+
+function dropTextbox (toolData, eventData) {
+  const element = eventData.element;
+  const config = freehand.getConfiguration();
+
+  config.movingTextBox = false;
+  toolData.data[config.currentTool].invalidated = true;
+  config.currentHandle = 0;
+  config.currentTool = -1;
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+
+  return;
+}
+
+function dropHandle (toolData, eventData) {
+  const config = freehand.getConfiguration();
+  const currentTool = config.currentTool;
+
+  // Don't allow the line being modified to intersect other lines
+  if (freeHandIntersectModify(toolData.data[currentTool].handles, config.currentHandle)) {
+    const currentHandle = config.currentHandle;
+    const currentHandleData = toolData.data[currentTool].handles[currentHandle];
+    let previousHandleData;
+
+    if (currentHandle === 0) {
+      const lastNodeID = toolData.data[currentTool].handles.length - 1;
+
+      previousHandleData = toolData.data[currentTool].handles[lastNodeID];
+    } else {
+      previousHandleData = toolData.data[currentTool].handles[currentHandle - 1];
+    }
+
+    // Snap back to previous position
+    currentHandleData.x = config.dragOrigin.x;
+    currentHandleData.y = config.dragOrigin.y;
+    previousHandleData.lines[0] = currentHandleData;
+  }
+
+  endDrawing(eventData);
+
+  return;
 }
 
 // /////// END ACTIVE TOOL ///////
