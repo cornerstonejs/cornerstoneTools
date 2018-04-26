@@ -39,16 +39,7 @@ function lineSegmentAtPoint (point, lp1, lp2) {
   return fx;
 }
 
-export default function (dataHandles, px, py) {
-  const location = {
-    x: px,
-    y: py
-  };
-
-  return getPointInFreehandROI(dataHandles, location);
-}
-
-export function getPointInFreehandROI (dataHandles, location) {
+export default function (dataHandles, location) {
   // JPETTS - Calculates if "point" is inside the polygon defined by dataHandles by
   // Counting the number of times a ray originating from "point" crosses the
   // Edges of the polygon. Odd === inside, Even === outside.

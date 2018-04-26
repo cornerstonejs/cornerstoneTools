@@ -33,14 +33,24 @@ function getSum (sp, boundingBox, dataHandles) {
 
   for (let y = boundingBox.top; y < boundingBox.top + boundingBox.height; y++) {
     for (let x = boundingBox.left; x < boundingBox.left + boundingBox.width; x++) {
-      if (pointInFreehandROI(dataHandles, x, y)) {
-        sum.value += sp[index];
-        sum.squared += sp[index] * sp[index];
-        sum.count++;
-      }
+      const point = {
+        x,
+        y
+      };
+
+      sumPointIfInFreehandROI(dataHandles, point, sum, sp[index]);
       index++;
     }
   }
 
   return sum;
+}
+
+
+function sumPointIfInFreehandROI (dataHandles, point, sum, pixelValue) {
+  if (pointInFreehandROI(dataHandles, point)) {
+    sum.value += pixelValue;
+    sum.squared += pixelValue * pixelValue;
+    sum.count++;
+  }
 }
