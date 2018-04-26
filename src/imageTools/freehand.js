@@ -466,17 +466,23 @@ function mouseDragCallback (e) {
 
   // Check if the tool is active
   if (config.currentTool >= 0) {
-    if (config.movingTextBox) {
-      dragTextBox(currentHandle);
-    }
-
-    if (config.modifying) {
-      dragHandle(currentHandle, data);
-    }
+    dragHandle(currentHandle, data);
   }
 
   // Update the image
   external.cornerstone.updateImage(eventData.element);
+}
+
+function dragHandle (currentHandle, data) {
+  const config = freehand.getConfiguration();
+
+  if (config.movingTextBox) {
+    dragTextBox(currentHandle);
+  }
+
+  if (config.modifying) {
+    dragNode(currentHandle, data);
+  }
 }
 
 function dragTextBox (currentHandle) {
@@ -487,7 +493,7 @@ function dragTextBox (currentHandle) {
   currentHandle.y = config.mouseLocation.handles.start.y;
 }
 
-function dragHandle (currentHandle, data) {
+function dragNode (currentHandle, data) {
   const config = freehand.getConfiguration();
 
   data.active = true;
@@ -884,12 +890,7 @@ function onImageRendered (e) {
 
 // /////// END IMAGE RENDERING ///////
 function enable (element) {
-  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  removeEventListeners(element);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
@@ -897,24 +898,15 @@ function enable (element) {
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  removeEventListeners(element);
   external.cornerstone.updateImage(element);
 }
 
 // Visible and interactive
 function activate (element, mouseButtonMask) {
   setToolOptions(toolType, element, { mouseButtonMask });
-  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+
+  removeEventListeners(element);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
@@ -937,18 +929,23 @@ function deactivate (element, mouseButtonMask) {
 
   triggerEvent(element, eventType, statusChangeEventData);
 
-  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
-  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  removeEventListeners(element);
 
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 
   external.cornerstone.updateImage(element);
+}
+
+
+function removeEventListeners (element) {
+  element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function getConfiguration () {

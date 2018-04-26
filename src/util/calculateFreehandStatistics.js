@@ -30,13 +30,10 @@ function getSum (sp, boundingBox, dataHandles) {
     count: 0
   };
   let index = 0;
-  
+
   for (let y = boundingBox.top; y < boundingBox.top + boundingBox.height; y++) {
     for (let x = boundingBox.left; x < boundingBox.left + boundingBox.width; x++) {
-      if (pointInFreehandROI(dataHandles, {
-        x,
-        y
-      })) {
+      if (pointInFreehandROI(dataHandles, x, y)) {
         sum.value += sp[index];
         sum.squared += sp[index] * sp[index];
         sum.count++;
