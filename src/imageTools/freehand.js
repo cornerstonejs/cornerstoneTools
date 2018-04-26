@@ -291,8 +291,6 @@ function mouseUpCallback (e) {
 
       // Reconfigure line from previous node
       previousHandleData.lines[0] = currentHandleData;
-
-      endDrawing(eventData);
     }
 
     endDrawing(eventData);
