@@ -61,15 +61,21 @@ export function getPointInFreehandROI (dataHandles, location) {
   let j = dataHandles.length - 1; // The last vertex is the previous one to the first
 
   for (let i = 0; i < dataHandles.length; i++) {
-    // Check if y values of line encapsulate location.y
-    if (isEnclosedY(location.y, dataHandles[i].y, dataHandles[j].y)) {
-      if (isLineRightOfPoint(location, dataHandles[i], dataHandles[j])) {
-        inROI = !inROI;
-      }
+    if (rayFromPointCrosssesLine(location, dataHandles[i], dataHandles[j])) {
+      inROI = !inROI;
     }
 
     j = i; // Here j is previous vertex to i
   }
 
   return inROI;
+}
+
+function rayFromPointCrosssesLine (point, handleI, handleJ) {
+  if (isEnclosedY(point.y, handleI.y, handleJ.y) && isLineRightOfPoint(point, handleI, handleJ)) {
+
+    return true;
+  }
+
+  return false;
 }
