@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.3] - 2018-04-25
+##Fixed
+- fix(scaleOverlayTool) persist tool's default configuration into displayTool instance.
+- fix(travis build) node version is now set to latest LTS version
+
 ## [2.3.2] - 2018-04-18
 ##Fixed
 - fix(interaction) No tool interaction when tool is invisible (thanks @floryst)
