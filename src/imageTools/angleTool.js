@@ -17,6 +17,7 @@ function createNewMeasurement (mouseEventData) {
   const angleData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       start: {
         x: mouseEventData.currentPoints.image.x - 20,
@@ -91,8 +92,6 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  // Activation color
-  let color;
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = angle.getConfiguration();
@@ -115,11 +114,7 @@ function onImageRendered (e) {
     }
 
     // Differentiate the color of activation tool
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    } else {
-      color = toolColors.getToolColor();
-    }
+    const color = toolColors.getColorIfActive(data);
 
     // Draw the line
     context.beginPath();

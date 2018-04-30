@@ -18,6 +18,7 @@ function createNewMeasurement (mouseEventData) {
     visible: true,
     active: true,
     invalidated: true,
+    color: undefined,
     handles: {
       start: {
         x: mouseEventData.currentPoints.image.x,
@@ -170,7 +171,7 @@ function onImageRendered (e) {
     }
 
     // Check which color the rendered tool should be
-    const color = toolColors.getColorIfActive(data.active);
+    const color = toolColors.getColorIfActive(data);
 
     // Convert Image coordinates to Canvas coordinates given the element
     const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);

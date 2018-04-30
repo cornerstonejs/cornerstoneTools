@@ -21,6 +21,7 @@ function createNewMeasurement (mouseEventData) {
   const measurementData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       start: {
         x: mouseEventData.currentPoints.image.x,
@@ -102,7 +103,6 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  let color;
   const lineWidth = toolStyle.getToolWidth();
 
   context.save();
@@ -117,11 +117,7 @@ function onImageRendered (e) {
     return;
   }
 
-  if (data.active) {
-    color = toolColors.getActiveColor();
-  } else {
-    color = toolColors.getToolColor();
-  }
+  const color = toolColors.getColorIfActive(data);
 
   const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
   const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);

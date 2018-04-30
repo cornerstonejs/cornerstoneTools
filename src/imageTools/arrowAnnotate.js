@@ -94,6 +94,7 @@ function createNewMeasurement (eventData) {
   const measurementData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       start: {
         x: eventData.currentPoints.image.x,
@@ -159,7 +160,6 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  let color;
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = arrowAnnotate.getConfiguration();
@@ -179,11 +179,7 @@ function onImageRendered (e) {
       continue;
     }
 
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    } else {
-      color = toolColors.getToolColor();
-    }
+    const color = toolColors.getColorIfActive(data);
 
     // Draw the arrow
     const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);

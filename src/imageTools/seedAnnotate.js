@@ -82,6 +82,7 @@ function createNewMeasurement (mouseEventData) {
   const measurementData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       end: {
         x: mouseEventData.currentPoints.image.x,
@@ -142,7 +143,6 @@ function onImageRendered (e) {
   // We need the canvas width
   const canvasWidth = eventData.canvasContext.canvas.width;
 
-  let color;
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = seedAnnotate.getConfiguration();
@@ -162,11 +162,7 @@ function onImageRendered (e) {
       continue;
     }
 
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    } else {
-      color = toolColors.getToolColor();
-    }
+    const color = toolColors.getColorIfActive(data);
 
     // Draw
     const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);

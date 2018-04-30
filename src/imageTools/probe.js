@@ -17,6 +17,7 @@ function createNewMeasurement (mouseEventData) {
   const measurementData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       end: {
         x: mouseEventData.currentPoints.image.x,
@@ -60,7 +61,6 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  let color;
   const font = textStyle.getFont();
   const fontHeight = textStyle.getFontSize();
 
@@ -72,11 +72,7 @@ function onImageRendered (e) {
       continue;
     }
 
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    } else {
-      color = toolColors.getToolColor();
-    }
+    const color = toolColors.getColorIfActive(data);
 
     // Draw the handles
     drawHandles(context, eventData, data.handles, color);
