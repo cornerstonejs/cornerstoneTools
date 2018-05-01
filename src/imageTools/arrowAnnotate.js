@@ -14,6 +14,7 @@ import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
+import drawLink from '../util/drawLink.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 
@@ -252,51 +253,14 @@ function onImageRendered (e) {
 
       if (data.handles.textBox.hasMoved) {
         // Draw dashed link line between tool and text
-        const link = {
-          start: {},
-          end: {}
-        };
-
         const midpointCanvas = {
           x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
           y: (handleStartCanvas.y + handleEndCanvas.y) / 2
         };
 
-        const points = [handleStartCanvas, handleEndCanvas, midpointCanvas];
+        const linkAnchorPoints = [handleStartCanvas, handleEndCanvas, midpointCanvas];
 
-        link.end.x = textCoords.x;
-        link.end.y = textCoords.y;
-
-        link.start = external.cornerstoneMath.point.findClosestPoint(points, link.end);
-
-        const boundingBoxPoints = [{
-          // Top middle point of bounding box
-          x: boundingBox.left + boundingBox.width / 2,
-          y: boundingBox.top
-        }, {
-          // Left middle point of bounding box
-          x: boundingBox.left,
-          y: boundingBox.top + boundingBox.height / 2
-        }, {
-          // Bottom middle point of bounding box
-          x: boundingBox.left + boundingBox.width / 2,
-          y: boundingBox.top + boundingBox.height
-        }, {
-          // Right middle point of bounding box
-          x: boundingBox.left + boundingBox.width,
-          y: boundingBox.top + boundingBox.height / 2
-        }
-        ];
-
-        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.setLineDash([2, 3]);
-        context.moveTo(link.start.x, link.start.y);
-        context.lineTo(link.end.x, link.end.y);
-        context.stroke();
+        drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
       }
     }
 
