@@ -6,6 +6,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import drawTextBox from '../util/drawTextBox.js';
 import calculateSUV from '../util/calculateSUV.js';
+import drawLink from '../util/drawLink.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'rectangleRoi';
@@ -356,18 +357,8 @@ function onImageRendered (e) {
     if (data.handles.textBox.hasMoved) {
       // Draw dashed link line between tool and text
 
-      // The initial link position is at the center of the
-      // Textbox.
-      const link = {
-        start: {},
-        end: {
-          x: textCoords.x,
-          y: textCoords.y
-        }
-      };
-
       // First we calculate the ellipse points (top, left, right, and bottom)
-      const ellipsePoints = [{
+      const linkAnchorPoints = [{
         // Top middle point of ellipse
         x: leftCanvas + widthCanvas / 2,
         y: topCanvas
@@ -385,41 +376,7 @@ function onImageRendered (e) {
         y: topCanvas + heightCanvas / 2
       }];
 
-      // We obtain the link starting point by finding the closest point on the ellipse to the
-      // Center of the textbox
-      link.start = external.cornerstoneMath.point.findClosestPoint(ellipsePoints, link.end);
-
-      // Next we calculate the corners of the textbox bounding box
-      const boundingBoxPoints = [{
-        // Top middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top
-      }, {
-        // Left middle point of bounding box
-        x: boundingBox.left,
-        y: boundingBox.top + boundingBox.height / 2
-      }, {
-        // Bottom middle point of bounding box
-        x: boundingBox.left + boundingBox.width / 2,
-        y: boundingBox.top + boundingBox.height
-      }, {
-        // Right middle point of bounding box
-        x: boundingBox.left + boundingBox.width,
-        y: boundingBox.top + boundingBox.height / 2
-      }];
-
-      // Now we recalculate the link endpoint by identifying which corner of the bounding box
-      // Is closest to the start point we just calculated.
-      link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
-
-      // Finally we draw the dashed linking line
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-      context.setLineDash([2, 3]);
-      context.moveTo(link.start.x, link.start.y);
-      context.lineTo(link.end.x, link.end.y);
-      context.stroke();
+      drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
     }
 
     context.restore();
