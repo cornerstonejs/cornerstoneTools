@@ -113,15 +113,14 @@ function insertPoint (eventData, insertInfo) {
 
 function getInsertionIndex (insertInfo) {
   // Get lowest index that isn't zero
+  const handleIndexArray = insertInfo.handleIndexArray;
   let insertIndex = Infinity;
-  let arrayContainsZero = false;
+  const arrayContainsZero = handleIndexArray.includes(0);
 
-  for (let i = 0; i < insertInfo.handleIndexArray.length; i++) {
-    const index = insertInfo.handleIndexArray[i];
+  for (let i = 0; i < handleIndexArray.length; i++) {
+    const index = handleIndexArray[i];
 
-    if (index === 0) {
-      arrayContainsZero = true;
-    } else if (index < insertIndex) {
+    if (index !== 0 && index < insertIndex) {
       insertIndex = index;
     }
   }
