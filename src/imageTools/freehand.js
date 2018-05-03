@@ -202,6 +202,15 @@ function addPoint (eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+function endDrawingIfLastNode (eventData, handleNearby, data) {
+  // Snap if click registered on origin handle or on last handle placed
+  const lastHandleID = data.handles.length - 1;
+
+  if ((handleNearby === 0 || handleNearby === lastHandleID) && !freeHandIntersect.end(data.handles)) {
+    endDrawing(eventData, handleNearby);
+  }
+}
+
 function endDrawing (eventData, handleNearby) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -239,28 +248,18 @@ function mouseDownActive (e, toolData, currentTool) {
 
   const handleNearby = pointNearHandle(eventData, currentTool);
 
-  // This means the user is trying to add a point
   if (handleNearby === undefined) {
-    e.stopPropagation();
-    e.preventDefault();
     addPoint(eventData);
-
-    return;
-
   } else if (eventData.event.shiftKey) {
+    // Pencil mode -- Note: early development
     config.freehand = true;
     toolData.data[currentTool].textBox.freehand = true;
   } else if (toolData.data[currentTool].handles.length >= 3) {
-    // Snap if click registered on origin handle or on last handle placed
-    const lastHandleID = toolData.data[currentTool].handles.length - 1;
-
-    if ((handleNearby === 0 || handleNearby === lastHandleID) && !freeHandIntersect.end(toolData.data[currentTool].handles)) {
-      endDrawing(eventData, handleNearby);
-    }
-
-    e.preventDefault();
-    e.stopPropagation();
+    endDrawingIfLastNode(eventData, handleNearby, toolData.data[currentTool]);
   }
+
+  e.preventDefault();
+  e.stopPropagation();
 
   return;
 }
@@ -404,51 +403,59 @@ function mouseDownPassive (e) {
   if (eventData.event.ctrlKey) {
     insertOrDelete(e, nearby);
   } else if (nearby) {
-    modify(e, nearby);
+    modifyObject(e, nearby);
   }
 }
 
-function modify (e, nearby) {
+function modifyObject (e, nearby) {
   const eventData = e.detail;
   const element = eventData.element;
-  const config = freehand.getConfiguration();
   const toolData = getToolState(eventData.element, toolType);
 
   const handleNearby = nearby.handleNearby;
-  const toolIndex = nearby.toolIndex;
 
   if (handleNearby.hasBoundingBox) {
-    // This means the user clicked on the textBox
-    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    config.movingTextBox = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
-
-    e.preventDefault();
-    e.stopPropagation();
-
-    return;
+    modifyTextBox(element, nearby);
   } else if (handleNearby !== undefined) {
-    // This means the user is trying to modify a point
-    element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-
-    config.dragOrigin = {
-      x: toolData.data[toolIndex].handles[handleNearby].x,
-      y: toolData.data[toolIndex].handles[handleNearby].y
-    };
-
-    // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
-    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-
-    config.modifying = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
-    e.preventDefault();
-    e.stopPropagation();
+    modifyHandle(element, nearby, toolData);
   }
+
+  e.preventDefault();
+  e.stopPropagation();
+}
+
+function modifyTextBox (element, nearby) {
+  const config = freehand.getConfiguration();
+  const handleNearby = nearby.handleNearby;
+  const toolIndex = nearby.toolIndex;
+
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  config.movingTextBox = true;
+  config.currentHandle = handleNearby;
+  config.currentTool = toolIndex;
+}
+
+function modifyHandle (element, nearby, toolData) {
+  const config = freehand.getConfiguration();
+  const handleNearby = nearby.handleNearby;
+  const toolIndex = nearby.toolIndex;
+
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+
+  config.dragOrigin = {
+    x: toolData.data[toolIndex].handles[handleNearby].x,
+    y: toolData.data[toolIndex].handles[handleNearby].y
+  };
+
+  // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+
+  config.modifying = true;
+  config.currentHandle = handleNearby;
+  config.currentTool = toolIndex;
 }
 
 function isValidHandle (newHandle, dataHandles) {
