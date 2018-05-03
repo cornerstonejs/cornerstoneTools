@@ -17,9 +17,9 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import dragObject from '../util/freehand/dragObject.js';
 import dropObject from '../util/freehand/dropObject.js';
 import insertOrDelete from '../util/freehand/insertOrDelete.js';
-import freehandArea from '../util/freehand/freehandArea.js';
+import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
-import freehandIntersect from '../util/freehand/freehandIntersect.js';
+import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
 
 const toolType = 'freehand';
@@ -254,7 +254,7 @@ function mouseDownActive (e, toolData, currentTool) {
     // Snap if click registered on origin handle or on last handle placed
     const lastHandleID = toolData.data[currentTool].handles.length - 1;
 
-    if ((handleNearby === 0 || handleNearby === lastHandleID) && !freehandIntersect.end(toolData.data[currentTool].handles)) {
+    if ((handleNearby === 0 || handleNearby === lastHandleID) && !freeHandIntersect.end(toolData.data[currentTool].handles)) {
       endDrawing(eventData, handleNearby);
     }
 
@@ -452,7 +452,7 @@ function modify (e, nearby) {
 }
 
 function isValidHandle (newHandle, dataHandles) {
-  return !freehandIntersect.newHandle(newHandle, dataHandles);
+  return !freeHandIntersect.newHandle(newHandle, dataHandles);
 }
 
 function mouseHover (eventData, toolData) {
@@ -677,7 +677,7 @@ function onImageRendered (e) {
       const rowPixelSpacing = image.rowPixelSpacing || 1;
       const scaling = columnPixelSpacing * rowPixelSpacing;
 
-      area = freehandArea(data.handles, scaling);
+      area = freeHandArea(data.handles, scaling);
 
       // If the area value is sane, store it for later retrieval
       if (!isNaN(area)) {

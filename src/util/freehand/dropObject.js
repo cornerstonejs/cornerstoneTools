@@ -1,5 +1,5 @@
 import { freehand } from '../../imageTools/freehand.js';
-import freehandIntersect from './freehandIntersect.js';
+import freeHandIntersect from './freeHandIntersect.js';
 
 export default function (e, toolData) {
   const eventData = e.detail;
@@ -35,7 +35,7 @@ function dropHandle (eventData, toolData) {
   const currentTool = config.currentTool;
 
   // Don't allow the line being modified to intersect other lines
-  if (freehandIntersect.modify(toolData.data[currentTool].handles, config.currentHandle)) {
+  if (freeHandIntersect.modify(toolData.data[currentTool].handles, config.currentHandle)) {
     const currentHandle = config.currentHandle;
     const currentHandleData = toolData.data[currentTool].handles[currentHandle];
     let previousHandleData;

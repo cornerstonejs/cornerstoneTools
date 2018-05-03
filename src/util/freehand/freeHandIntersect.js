@@ -1,4 +1,4 @@
-// JPETTS orientation algoritm to determine if two lines cross. 
+// JPETTS orientation algoritm to determine if two lines cross.
 // Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
 function newHandle (candidateHandle, dataHandles) {
@@ -130,10 +130,10 @@ function onSegment (p, q, r) {
   return false;
 }
 
-const freehandIntersect = {
+const freeHandIntersect = {
   newHandle,
   end,
   modify
 };
 
-export default freehandIntersect;
+export default freeHandIntersect;
