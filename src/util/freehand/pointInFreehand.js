@@ -1,3 +1,26 @@
+export default function (dataHandles, location) {
+  // JPETTS - Calculates if "point" is inside the polygon defined by dataHandles by
+  // Counting the number of times a ray originating from "point" crosses the
+  // Edges of the polygon. Odd === inside, Even === outside.
+
+  // The bool "inROI" flips every time ray originating from location and
+  // Pointing to the right crosses a linesegment.
+  let inROI = false;
+
+  // Cycle round pairs of points
+  let j = dataHandles.length - 1; // The last vertex is the previous one to the first
+
+  for (let i = 0; i < dataHandles.length; i++) {
+    if (rayFromPointCrosssesLine(location, dataHandles[i], dataHandles[j])) {
+      inROI = !inROI;
+    }
+
+    j = i; // Here j is previous vertex to i
+  }
+
+  return inROI;
+}
+
 function isEnclosedY (yp, y1, y2) {
   if ((y1 < yp && yp < y2) || (y2 < yp && yp < y1)) {
     return true;
@@ -37,29 +60,6 @@ function lineSegmentAtPoint (point, lp1, lp2) {
   };
 
   return fx;
-}
-
-export default function (dataHandles, location) {
-  // JPETTS - Calculates if "point" is inside the polygon defined by dataHandles by
-  // Counting the number of times a ray originating from "point" crosses the
-  // Edges of the polygon. Odd === inside, Even === outside.
-
-  // The bool "inROI" flips every time ray originating from location and
-  // Pointing to the right crosses a linesegment.
-  let inROI = false;
-
-  // Cycle round pairs of points
-  let j = dataHandles.length - 1; // The last vertex is the previous one to the first
-
-  for (let i = 0; i < dataHandles.length; i++) {
-    if (rayFromPointCrosssesLine(location, dataHandles[i], dataHandles[j])) {
-      inROI = !inROI;
-    }
-
-    j = i; // Here j is previous vertex to i
-  }
-
-  return inROI;
 }
 
 function rayFromPointCrosssesLine (point, handleI, handleJ) {
