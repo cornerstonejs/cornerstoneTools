@@ -1,9 +1,15 @@
 import { getToolState } from '../../stateManagement/toolState.js';
-import { ClickedLineData } from './ClickedLineData.js';
 import external from '../../externalModules.js';
 
 const toolType = 'freehand';
 const distanceThreshold = 10;
+
+class ClickedLineData {
+  constructor (toolIndex, handleIndexArray) {
+    this.toolIndex = toolIndex;
+    this.handleIndexArray = handleIndexArray;
+  }
+}
 
 export class FreehandLineFinder {
   /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */

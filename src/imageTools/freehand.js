@@ -20,6 +20,7 @@ import insertOrDelete from '../util/freehand/insertOrDelete.js';
 import freehandArea from '../util/freehand/freehandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freehandIntersect from '../util/freehand/freehandIntersect.js';
+import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -176,13 +177,7 @@ function addPoint (eventData) {
   // Get the toolData from the last-drawn drawing
   const data = toolData.data[config.currentTool];
 
-  const handleData = {
-    x: eventData.currentPoints.image.x,
-    y: eventData.currentPoints.image.y,
-    highlight: true,
-    active: true,
-    lines: []
-  };
+  const handleData = new FreehandHandleData(eventData.currentPoints.image);
 
   // If this is not the first handle
   if (data.handles.length) {

@@ -1,5 +1,6 @@
 import { freehand } from '../../imageTools/freehand.js';
 import { FreehandLineFinder } from './FreehandLineFinder.js';
+import { FreehandHandleData } from './FreehandHandleData.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 
@@ -89,13 +90,7 @@ function insertPoint (eventData, insertInfo) {
     return;
   }
 
-  const handleData = {
-    x: eventData.currentPoints.image.x,
-    y: eventData.currentPoints.image.y,
-    highlight: false,
-    active: false,
-    lines: []
-  };
+  const handleData = new FreehandHandleData(eventData.currentPoints.image);
 
   // Add the new handle
   data.handles.splice(insertIndex, 0, handleData);
