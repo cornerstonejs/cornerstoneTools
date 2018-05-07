@@ -24,6 +24,7 @@ function createNewMeasurement (mouseEventData) {
     visible: true,
     active: true,
     text: config.current,
+    color: undefined,
     handles: {
       end: {
         x: mouseEventData.currentPoints.image.x,
@@ -119,11 +120,7 @@ function onImageRendered (e) {
       continue;
     }
 
-    let color = toolColors.getToolColor();
-
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    }
+    const color = toolColors.getColorIfActive(data);
 
     context.save();
 

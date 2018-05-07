@@ -39,6 +39,7 @@ function createNewMeasurement () {
     visible: true,
     active: true,
     invalidated: true,
+    color: undefined,
     handles: [],
     textBox: {
       active: false,
@@ -595,9 +596,8 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  let color;
   const lineWidth = toolStyle.getToolWidth();
-  let fillColor = toolColors.getFillColor();
+  let fillColor;
 
   for (let i = 0; i < toolData.data.length; i++) {
     context.save();
@@ -608,11 +608,11 @@ function onImageRendered (e) {
       continue;
     }
 
+    const color = toolColors.getColorIfActive(data);
+
     if (data.active) {
-      color = toolColors.getActiveColor();
       fillColor = toolColors.getFillColor();
     } else {
-      color = toolColors.getToolColor();
       fillColor = toolColors.getToolColor();
     }
 
