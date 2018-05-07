@@ -17,6 +17,7 @@ import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawLink from '../util/drawLink.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import lineSegDistance from '../util/lineSegDistance.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -127,17 +128,7 @@ function pointNearTool (element, data, coords) {
     return false;
   }
 
-  const cornerstone = external.cornerstone;
-
-  const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, data.handles.start),
-    end: cornerstone.pixelToCanvas(element, data.handles.end)
-  };
-
-  const distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-
-  return (distanceToPoint < 25);
+  return lineSegDistance(element, data.handles.start, data.handles.end, coords) < 25;
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
