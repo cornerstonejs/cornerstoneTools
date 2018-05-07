@@ -3,7 +3,6 @@ import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import drawTextBox from '../util/drawTextBox.js';
 import handleActivator from '../manipulators/handleActivator.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import freeHandArea from '../util/freeHandArea.js';
@@ -12,7 +11,7 @@ import { freeHandIntersect, freeHandIntersectEnd, freeHandIntersectModify } from
 import calculateSUV from '../util/calculateSUV.js';
 import triggerEvent from '../util/triggerEvent.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
@@ -808,42 +807,14 @@ function onImageRendered (e) {
         data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
       }
 
-      // Convert the textbox Image coordinates into Canvas coordinates
-      const textCoords = cornerstone.pixelToCanvas(element, data.textBox);
-
-      // Set options for the textbox drawing function
-      const textOptions = {
-        centering: {
-          x: false,
-          y: true
-        }
-      };
-
-      // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
-      const boundingBox = drawTextBox(context, textLines, textCoords.x,
-        textCoords.y, color, textOptions);
-
-      // Store the bounding box data in the handle for mouse-dragging and highlighting
-      data.textBox.boundingBox = boundingBox;
-
-      // If the textbox has moved, we would like to draw a line linking it with the tool
-      // This section decides where to draw this line to on the polyBoundingBox based on the location
-      // Of the textbox relative to it.
-      if (data.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-
-        // Get the nodes of the ROI in canvas coordinates
-        const linkAnchorPoints = [];
-
-        for (let i = 0; i < data.handles.length; i++) {
-          linkAnchorPoints.push(cornerstone.pixelToCanvas(element, data.handles[i]));
-        }
-
-        drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
-      }
+      drawLinkedTextBox(context, element, data.textBox, textLines,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
     }
-
     context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    return handles;
   }
 }
 

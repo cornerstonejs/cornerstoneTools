@@ -1,8 +1,7 @@
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import drawTextBox from '../util/drawTextBox.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
@@ -169,37 +168,22 @@ function onImageRendered (e) {
       data.handles.textBox.y = coords.y;
     }
 
-    const textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-
     // Move the textbox slightly to the right and upwards
     // So that it sits beside the length tool handle
-    textCoords.x += 10;
+    const xOffset = 10;
 
-    const options = {
-      centering: {
-        x: false,
-        y: true
-      }
+    drawLinkedTextBox(context, element, data.handles.textBox, text,
+      data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
+    context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    const midpoint = {
+      x: (handles.start.x + handles.end.x) / 2,
+      y: (handles.start.y + handles.end.y) / 2
     };
 
-    // Draw the textbox
-    const boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
-
-    data.handles.textBox.boundingBox = boundingBox;
-
-    if (data.handles.textBox.hasMoved) {
-      // Draw dashed link line between ellipse and text
-      const midpointCanvas = {
-        x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
-        y: (handleStartCanvas.y + handleEndCanvas.y) / 2
-      };
-
-      const linkAnchorPoints = [handleStartCanvas, handleEndCanvas, midpointCanvas];
-
-      drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
-    }
-
-    context.restore();
+    return [handles.start, midpoint, handles.end];
   }
 }
 // /////// END IMAGE RENDERING ///////

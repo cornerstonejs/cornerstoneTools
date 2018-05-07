@@ -3,7 +3,6 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import drawTextBox from '../util/drawTextBox.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -13,7 +12,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import drawCircle from '../util/drawCircle.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 
@@ -223,19 +222,14 @@ function onImageRendered (e) {
         data.handles.textBox.y = coords.y;
       }
 
-      textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-
-      const boundingBox = drawTextBox(context, textPlusCoords, textCoords.x, textCoords.y, color);
-
-      data.handles.textBox.boundingBox = boundingBox;
-
-      if (data.handles.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-        drawLink([], handleCanvas, boundingBox, context, color, lineWidth);
-      }
+      drawLinkedTextBox(context, eventData.element, data.handles.textBox, textPlusCoords,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
     }
-
     context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    return [handles.end];
   }
 }
 // ---- Touch tool ----

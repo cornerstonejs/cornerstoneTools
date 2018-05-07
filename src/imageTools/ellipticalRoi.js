@@ -4,12 +4,11 @@ import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import drawTextBox from '../util/drawTextBox.js';
 import drawEllipse from '../util/drawEllipse.js';
 import pointInEllipse from '../util/pointInEllipse.js';
 import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
 import calculateSUV from '../util/calculateSUV.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 const toolType = 'ellipticalRoi';
@@ -317,53 +316,35 @@ function onImageRendered (e) {
       data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
     }
 
-    // Convert the textbox Image coordinates into Canvas coordinates
-    const textCoords = cornerstone.pixelToCanvas(element, data.handles.textBox);
-
-    // Set options for the textbox drawing function
-    const options = {
-      centering: {
-        x: false,
-        y: true
-      }
-    };
-
-    // Draw the textbox and retrieves it's bounding box for mouse-dragging and highlighting
-    const boundingBox = drawTextBox(context, textLines, textCoords.x,
-      textCoords.y, color, options);
-
-    // Store the bounding box data in the handle for mouse-dragging and highlighting
-    data.handles.textBox.boundingBox = boundingBox;
-
-    // If the textbox has moved, we would like to draw a line linking it with the tool
-    // This section decides where to draw this line to on the Ellipse based on the location
-    // Of the textbox relative to the ellipse.
-    if (data.handles.textBox.hasMoved) {
-      // Draw dashed link line between tool and text
-
-      // First we calculate the ellipse points (top, left, right, and bottom)
-      const linkAnchorPoints = [{
-        // Top middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas
-      }, {
-        // Left middle point of ellipse
-        x: leftCanvas,
-        y: topCanvas + heightCanvas / 2
-      }, {
-        // Bottom middle point of ellipse
-        x: leftCanvas + widthCanvas / 2,
-        y: topCanvas + heightCanvas
-      }, {
-        // Right middle point of ellipse
-        x: leftCanvas + widthCanvas,
-        y: topCanvas + heightCanvas / 2
-      }];
-
-      drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
-    }
-
+    drawLinkedTextBox(context, element, data.handles.textBox, textLines,
+      data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
     context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    // Retrieve the bounds of the ellipse (left, top, width, and height)
+    const left = Math.min(handles.start.x, handles.end.x);
+    const top = Math.min(handles.start.y, handles.end.y);
+    const width = Math.abs(handles.start.x - handles.end.x);
+    const height = Math.abs(handles.start.y - handles.end.y);
+
+    return [{
+      // Top middle point of ellipse
+      x: left + width / 2,
+      y: top
+    }, {
+      // Left middle point of ellipse
+      x: left,
+      y: top + height / 2
+    }, {
+      // Bottom middle point of ellipse
+      x: left + width / 2,
+      y: top + height
+    }, {
+      // Right middle point of ellipse
+      x: left + width,
+      y: top + height / 2
+    }];
   }
 }
 // /////// END IMAGE RENDERING ///////

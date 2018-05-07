@@ -1,9 +1,8 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -198,9 +197,7 @@ function onImageRendered (e) {
 
       let textCoords;
 
-      if (data.handles.textBox.hasMoved) {
-        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-      } else {
+      if (!data.handles.textBox.hasMoved) {
         textCoords = {
           x: handleMiddleCanvas.x,
           y: handleMiddleCanvas.y
@@ -225,26 +222,14 @@ function onImageRendered (e) {
         data.handles.textBox.y = coords.y;
       }
 
-      const options = {
-        centering: {
-          x: false,
-          y: true
-        }
-      };
-
-      const boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
-
-      data.handles.textBox.boundingBox = boundingBox;
-
-      if (data.handles.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-        const linkAnchorPoints = [handleStartCanvas, handleEndCanvas, handleMiddleCanvas];
-
-        drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
-      }
+      drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
     }
-
     context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    return [handles.start, handles.middle, handles.end];
   }
 }
 // /////// END IMAGE RENDERING ///////
