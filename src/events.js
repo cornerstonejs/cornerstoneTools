@@ -14,6 +14,7 @@ const EVENTS = {
   MOUSE_CLICK: 'cornerstonetoolsmouseclick',
   MOUSE_DOUBLE_CLICK: 'cornerstonetoolsmousedoubleclick',
   MOUSE_WHEEL: 'cornerstonetoolsmousewheel',
+  MOUSE_RIGHT_CLICK: 'cornerstonetoolsmouserightclick',
 
   // Touch events
   TOUCH_START: 'cornerstonetoolstouchstart',
