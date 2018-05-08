@@ -6,6 +6,7 @@ import mouseWheelTool from './mouseWheelTool.js';
 import touchPinchTool from './touchPinchTool.js';
 import touchDragTool from './touchDragTool.js';
 import { getToolOptions } from '../toolOptions.js';
+import { clipToBox } from '../util/clip.js';
 
 const toolType = 'zoom';
 let startPoints;
@@ -28,15 +29,6 @@ function changeViewportScale (viewport, ticks) {
   }
 
   return viewport;
-}
-
-function boundPosition (position, width, height) {
-  position.x = Math.max(position.x, 0);
-  position.y = Math.max(position.y, 0);
-  position.x = Math.min(position.x, width);
-  position.y = Math.min(position.y, height);
-
-  return position;
 }
 
 function correctShift (shift, viewport) {
@@ -146,7 +138,7 @@ function translateStrategy (eventData, ticks) {
     // If we are not allowed to zoom outside the image, bound the user-selected position to
     // A point inside the image
     if (config && config.preventZoomOutsideImage) {
-      startPoints.image = boundPosition(startPoints.image, image.width, image.height);
+      clipToBox(startPoints.image, image);
     }
 
     // Calculate the translation value that would place the desired image point in the center

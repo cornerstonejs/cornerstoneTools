@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import clip from '../util/clip.js';
 
 // This function causes the image in the target stack to be set to the one closest
 // To the image in the source stack by image position
@@ -20,7 +21,7 @@ export default function (synchronizer, sourceElement, targetElement) {
   let newImageIdIndex = sourceStackData.currentImageIdIndex;
 
   // Clamp the index
-  newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), targetStackData.imageIds.length - 1);
+  newImageIdIndex = clip(newImageIdIndex, 0, targetStackData.imageIds.length - 1);
 
   // Do nothing if the index has not changed
   if (newImageIdIndex === targetStackData.currentImageIdIndex) {

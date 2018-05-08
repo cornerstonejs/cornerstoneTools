@@ -3,6 +3,7 @@ import external from '../externalModules.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
+import { clipToBox } from '../util/clip.js';
 
 export default function (e, data, toolData, toolType, options, doneMovingCallback) {
   const cornerstone = external.cornerstone;
@@ -24,12 +25,8 @@ export default function (e, data, toolData, toolType, options, doneMovingCallbac
       handle.x += eventData.deltaPoints.image.x;
       handle.y += eventData.deltaPoints.image.y;
 
-      if (options.preventHandleOutsideImage === true) {
-        handle.x = Math.max(handle.x, 0);
-        handle.x = Math.min(handle.x, eventData.image.width);
-
-        handle.y = Math.max(handle.y, 0);
-        handle.y = Math.min(handle.y, eventData.image.height);
+      if (options.preventHandleOutsideImage) {
+        clipToBox(handle, eventData.image);
       }
     });
 

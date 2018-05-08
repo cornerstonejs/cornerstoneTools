@@ -6,6 +6,7 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import clip from '../util/clip.js';
 
 const toolType = 'wwwcRegion';
 
@@ -111,10 +112,8 @@ function applyWWWCRegion (eventData) {
   let top = Math.min(startPoint.y, endPoint.y);
 
   // Bound the rectangle so we don't get undefined pixels
-  left = Math.max(left, 0);
-  left = Math.min(left, eventData.image.width);
-  top = Math.max(top, 0);
-  top = Math.min(top, eventData.image.height);
+  left = clip(left, 0, eventData.image.width);
+  top = clip(top, 0, eventData.image.height);
   width = Math.floor(Math.min(width, Math.abs(eventData.image.width - left)));
   height = Math.floor(Math.min(height, Math.abs(eventData.image.height - top)));
 
