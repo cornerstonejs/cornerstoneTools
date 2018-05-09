@@ -12,6 +12,7 @@ import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import touchTool from './touchTool.js';
+import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 
 
@@ -63,24 +64,8 @@ function pointNearTool (element, data, coords) {
     return false;
   }
 
-  const cornerstone = external.cornerstone;
-  const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, data.handles.start),
-    end: cornerstone.pixelToCanvas(element, data.handles.middle)
-  };
-
-  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  if (distanceToPoint < 25) {
-    return true;
-  }
-
-  lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.middle);
-  lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
-
-  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  return (distanceToPoint < 25);
+  return lineSegDistance(element, data.handles.start, data.handles.middle, coords) < 25 ||
+    lineSegDistance(element, data.handles.middle, data.handles.end, coords) < 25;
 }
 
 function length (vector) {

@@ -8,6 +8,7 @@ import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import lineSegDistance from '../util/lineSegDistance.js';
 
 const toolType = 'angle';
 
@@ -55,25 +56,8 @@ function pointNearTool (element, data, coords) {
     return false;
   }
 
-  const cornerstone = external.cornerstone;
-
-  const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, data.handles.start),
-    end: cornerstone.pixelToCanvas(element, data.handles.end)
-  };
-
-  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  if (distanceToPoint < 5) {
-    return true;
-  }
-
-  lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.start2);
-  lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end2);
-
-  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  return (distanceToPoint < 5);
+  return lineSegDistance(element, data.handles.start, data.handles.end, coords) < 5 ||
+    lineSegDistance(element, data.handles.start2, data.handles.end2, coords) < 5;
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
