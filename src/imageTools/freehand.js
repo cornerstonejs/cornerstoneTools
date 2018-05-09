@@ -32,7 +32,10 @@ let configuration = {
       }
     }
   },
-  freehand: false,
+  pencilMode: false,
+  pencilModeSpacing: 5,
+  handleRadius: 3,
+  invalidColor: 'crimson',
   modifying: false,
   movingTextBox: false,
   currentHandle: 0,
@@ -131,6 +134,12 @@ function pointNearHandleAllTools (eventData) {
 
 function mouseDownActivateCallback (e) {
   const eventData = e.detail;
+  const config = freehand.getConfiguration();
+
+  if (eventData.event.shiftKey) {
+    console.log('pencilMode ...GO!');
+    config.pencilMode = true;
+  }
 
   startDrawing(eventData);
   addPoint(eventData);
@@ -165,6 +174,21 @@ function startDrawing (eventData) {
   config.currentTool = toolData.data.length - 1;
 }
 
+function addPointPencilMode (eventData, dataHandles) {
+  // If in pencilMode, check it is farther than the minimum distance between points.
+  const config = freehand.getConfiguration();
+
+  const mousePoint = config.mouseLocation.handles.start;
+
+  for (let i = 0; i < dataHandles.length; i++) {
+    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.pencilModeSpacing) {
+      return;
+    }
+  }
+
+  addPoint(eventData);
+}
+
 function addPoint (eventData) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -177,26 +201,24 @@ function addPoint (eventData) {
   // Get the toolData from the last-drawn drawing
   const data = toolData.data[config.currentTool];
 
-  const handleData = new FreehandHandleData(eventData.currentPoints.image);
+  const newHandleData = new FreehandHandleData(eventData.currentPoints.image);
 
   // If this is not the first handle
   if (data.handles.length) {
-    if (isValidHandle(handleData, data.handles)) {
+    if (!freeHandIntersect.newHandle(newHandleData, data.handles)) {
       // Add the line from the current handle to the new handle
       data.handles[config.currentHandle - 1].lines.push(eventData.currentPoints.image);
     } else {
-      return false;
+
+      return;
     }
   }
 
   // Add the new handle
-  data.handles.push(handleData);
+  data.handles.push(newHandleData);
 
   // Increment the current handle value
   config.currentHandle += 1;
-
-  // Reset freehand value
-  config.freehand = false;
 
   // Force onImageRendered to fire
   external.cornerstone.updateImage(eventData.element);
@@ -224,6 +246,7 @@ function endDrawing (eventData, handleNearby) {
 
   data.active = false;
   data.highlight = false;
+  data.handles.invalidHandlePlacement = false;
 
   // Connect the end handle to the origin handle
   if (handleNearby !== undefined) {
@@ -238,6 +261,7 @@ function endDrawing (eventData, handleNearby) {
   // Reset the current handle
   config.currentHandle = 0;
   config.currentTool = -1;
+  config.pencilMode = false;
 
   external.cornerstone.updateImage(eventData.element);
 }
@@ -248,13 +272,16 @@ function mouseDownActive (e, toolData, currentTool) {
 
   const handleNearby = pointNearHandle(eventData, currentTool);
 
-  if (handleNearby === undefined) {
+  const data = toolData.data[currentTool];
+
+  if (config.pencilMode === true && !freeHandIntersect.end(data.handles)) {
+    addPointPencilMode(eventData, data.handles);
+    const lastHandlePlaced = config.currentHandle;
+
+    endDrawing(eventData, lastHandlePlaced);
+  } else if (handleNearby === undefined) {
     addPoint(eventData);
-  } else if (eventData.event.shiftKey) {
-    // Pencil mode -- Note: early development
-    config.freehand = true;
-    toolData.data[currentTool].textBox.freehand = true;
-  } else if (toolData.data[currentTool].handles.length >= 3) {
+  } else if (data.handles.length >= 3) {
     endDrawingIfLastNode(eventData, handleNearby, toolData.data[currentTool]);
   }
 
@@ -313,31 +340,70 @@ function mouseMoveCallback (e) {
     }
 
   } else {
-    // Tool active
-    const data = toolData.data[currentTool];
-    const currentHandle = config.currentHandle;
-
-    // Set the mouseLocation handle
-    getMouseLocation(eventData);
-
-    if (config.freehand) { // JPETTS - Note: currently disabled
-      data.handles[currentHandle - 1].lines.push(eventData.currentPoints.image);
-    } else {
-      // No snapping in freehand mode
-      const handleNearby = pointNearHandle(eventData, config.currentTool);
-
-      // If there is a handle nearby to snap to
-      // (and it's not the actual mouse handle)
-      if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
-        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
-        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
-      }
-    }
+    mouseMoveActive(eventData, toolData);
   }
 
   // Force onImageRendered
   external.cornerstone.updateImage(eventData.element);
 }
+
+function mouseMoveActive (eventData, toolData) {
+  const config = freehand.getConfiguration();
+  const currentTool = config.currentTool;
+  const data = toolData.data[currentTool];
+
+  // Set the mouseLocation handle
+  getMouseLocation(eventData);
+
+  checkInvalidHandleLocation(data.handles);
+
+  if (config.pencilMode) {
+    addPointPencilMode(eventData, data.handles);
+  } else {
+    // No snapping in pencilMode mode
+    const handleNearby = pointNearHandle(eventData, config.currentTool);
+
+    // If there is a handle nearby to snap to
+    // (and it's not the actual mouse handle)
+    if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
+      config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
+      config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
+    }
+  }
+}
+
+
+function checkInvalidHandleLocation (dataHandles) {
+  const config = freehand.getConfiguration();
+  const mousePoint = config.mouseLocation.handles.start;
+  let invalidHandlePlacement = true;
+
+  if (config.pencilMode) { // Pencil mode
+    invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+
+    if (invalidHandlePlacement === false) {
+      invalidHandlePlacement = mouseNearOtherPoint(dataHandles, mousePoint);
+    }
+
+  } else { // Normal mode
+    invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+  }
+
+  dataHandles.invalidHandlePlacement = invalidHandlePlacement;
+}
+
+function mouseNearOtherPoint (dataHandles, mousePoint) {
+  const config = freehand.getConfiguration();
+
+  for (let i = 0; i < dataHandles.length - 1; i++) {
+    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.pencilModeSpacing) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
 
 function mouseDragCallback (e) {
   const eventData = e.detail;
@@ -365,7 +431,6 @@ function mouseDragCallback (e) {
 
 function mouseUpCallback (e) {
   const eventData = e.detail;
-  const config = freehand.getConfiguration();
   const element = eventData.element;
   const toolData = getToolState(eventData.element, toolType);
 
@@ -377,10 +442,6 @@ function mouseUpCallback (e) {
 
   if (toolData === undefined) {
     return;
-  }
-
-  if (!eventData.event.shiftKey) {
-    config.freehand = false;
   }
 
   const dropped = dropObject(e, toolData);
@@ -456,10 +517,6 @@ function modifyHandle (element, nearby, toolData) {
   config.modifying = true;
   config.currentHandle = handleNearby;
   config.currentTool = toolIndex;
-}
-
-function isValidHandle (newHandle, dataHandles) {
-  return !freeHandIntersect.newHandle(newHandle, dataHandles);
 }
 
 function mouseHover (eventData, toolData) {
@@ -555,8 +612,14 @@ function onImageRendered (e) {
     }
 
     if (data.active) {
-      color = toolColors.getActiveColor();
-      fillColor = toolColors.getFillColor();
+      if (data.handles.invalidHandlePlacement) {
+        color = config.invalidColor;
+        fillColor = config.invalidColor;
+      } else {
+        color = toolColors.getActiveColor();
+        fillColor = toolColors.getFillColor();
+      }
+
     } else {
       color = toolColors.getToolColor();
       fillColor = toolColors.getToolColor();
@@ -595,16 +658,22 @@ function onImageRendered (e) {
       }
     }
 
-    // If the tool is active, draw a handle at the cursor location
     const options = {
-      fill: fillColor
+      fill: fillColor,
+      handleRadius: config.handleRadius
     };
 
+    // If the tool is active, draw a handle at the cursor location
     if (data.active && !data.polyBoundingBox) {
       drawHandles(context, eventData, config.mouseLocation.handles, color, options);
     }
-    // Draw the handles
-    drawHandles(context, eventData, data.handles, color, options);
+
+    if (!config.pencilMode) {
+      // Draw the handles
+      drawHandles(context, eventData, data.handles, color, options);
+    }
+
+
 
     // Define variables for the area and mean/standard deviation
     let area,
@@ -743,8 +812,8 @@ function onImageRendered (e) {
       textLines.push(areaText);
     }
 
-    // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
-    if (data.polyBoundingBox && !data.textBox.freehand) {
+    // Only render text if polygon ROI has been completed:
+    if (data.polyBoundingBox) {
       // If the textbox has not been moved by the user, it should be displayed on the right-most
       // Side of the tool.
       if (!data.textBox.hasMoved) {

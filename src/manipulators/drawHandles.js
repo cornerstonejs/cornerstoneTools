@@ -1,7 +1,7 @@
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 
-const handleRadius = 6;
+const defaultHandleRadius = 6;
 
 export default function (context, renderData, handles, color, options) {
   context.strokeStyle = color;
@@ -27,6 +27,8 @@ export default function (context, renderData, handles, color, options) {
 
     const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
 
+    const handleRadius = getHandleRadius(options);
+
     context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
     if (options && options.fill) {
@@ -36,4 +38,15 @@ export default function (context, renderData, handles, color, options) {
 
     context.stroke();
   });
+}
+
+function getHandleRadius(options) {
+  let handleRadius;
+  if (options && options.handleRadius) {
+    handleRadius = options.handleRadius;
+  } else {
+    handleRadius = defaultHandleRadius;
+  }
+
+  return handleRadius;
 }

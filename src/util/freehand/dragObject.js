@@ -1,4 +1,5 @@
 import { freehand } from '../../imageTools/freehand.js';
+import freeHandIntersect from './freeHandIntersect.js';
 
 export default function (currentHandle, data) {
   const config = freehand.getConfiguration();
@@ -23,6 +24,7 @@ function dragTextBox (currentHandle) {
 function dragHandle (currentHandle, data) {
   const config = freehand.getConfiguration();
 
+  data.handles.invalidHandlePlacement = freeHandIntersect.modify(data.handles, currentHandle);
   data.active = true;
   data.highlight = true;
   data.handles[currentHandle].x = config.mouseLocation.handles.start.x;

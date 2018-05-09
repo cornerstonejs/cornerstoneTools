@@ -1,5 +1,4 @@
 import { freehand } from '../../imageTools/freehand.js';
-import freeHandIntersect from './freeHandIntersect.js';
 
 export default function (e, toolData) {
   const eventData = e.detail;
@@ -34,24 +33,28 @@ function dropHandle (eventData, toolData) {
   const config = freehand.getConfiguration();
   const currentTool = config.currentTool;
 
+  const dataHandles = toolData.data[currentTool].handles;
+
   // Don't allow the line being modified to intersect other lines
-  if (freeHandIntersect.modify(toolData.data[currentTool].handles, config.currentHandle)) {
+  if (dataHandles.invalidHandlePlacement) {
     const currentHandle = config.currentHandle;
-    const currentHandleData = toolData.data[currentTool].handles[currentHandle];
+    const currentHandleData = dataHandles[currentHandle];
     let previousHandleData;
 
     if (currentHandle === 0) {
-      const lastHandleID = toolData.data[currentTool].handles.length - 1;
+      const lastHandleID = dataHandles.length - 1;
 
-      previousHandleData = toolData.data[currentTool].handles[lastHandleID];
+      previousHandleData = dataHandles[lastHandleID];
     } else {
-      previousHandleData = toolData.data[currentTool].handles[currentHandle - 1];
+      previousHandleData = dataHandles[currentHandle - 1];
     }
 
     // Snap back to previous position
     currentHandleData.x = config.dragOrigin.x;
     currentHandleData.y = config.dragOrigin.y;
     previousHandleData.lines[0] = currentHandleData;
+
+    dataHandles.invalidHandlePlacement = false;
   }
 
   return;
