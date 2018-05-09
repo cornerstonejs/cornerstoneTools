@@ -3,7 +3,6 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import drawTextBox from '../util/drawTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -14,7 +13,7 @@ import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import drawLink from '../util/drawLink.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
@@ -205,9 +204,9 @@ function onImageRendered (e) {
         distance = -distance;
       }
 
-      let textCoords;
-
       if (!data.handles.textBox.hasMoved) {
+        let textCoords;
+
         if (config.arrowFirst) {
           textCoords = {
             x: handleEndCanvas.x - textWidth / 2 + distance,
@@ -232,26 +231,19 @@ function onImageRendered (e) {
         data.handles.textBox.y = coords.y;
       }
 
-      textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-
-      const boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
-
-      data.handles.textBox.boundingBox = boundingBox;
-
-      if (data.handles.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-        const midpointCanvas = {
-          x: (handleStartCanvas.x + handleEndCanvas.x) / 2,
-          y: (handleStartCanvas.y + handleEndCanvas.y) / 2
-        };
-
-        const linkAnchorPoints = [handleStartCanvas, handleEndCanvas, midpointCanvas];
-
-        drawLink(linkAnchorPoints, textCoords, boundingBox, context, color, lineWidth);
-      }
+      drawLinkedTextBox(context, eventData.element, data.handles.textBox, data.text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
     }
-
     context.restore();
+  }
+
+  function textBoxAnchorPoints (handles) {
+    const midpoint = {
+      x: (handles.start.x + handles.end.x) / 2,
+      y: (handles.start.y + handles.end.y) / 2
+    };
+
+    return [handles.start, midpoint, handles.end];
   }
 }
 // ---- Touch tool ----
