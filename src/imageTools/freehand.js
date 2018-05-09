@@ -32,9 +32,8 @@ let configuration = {
       }
     }
   },
-  pencilMode: false,
-  pencilModeSpacing: 5,
-  canComplete: false,
+  activePencilMode: false,
+  spacing: 5,
   activeHandleRadius: 3,
   completeHandleRadius: 6,
   alwaysShowHandles: false,
@@ -78,6 +77,7 @@ function pointNearTool (eventData, toolIndex) {
 
 function pointNearHandle (eventData, toolIndex) {
   const toolData = getToolState(eventData.element, toolType);
+  const config = freehand.getConfiguration();
 
   if (toolData === undefined) {
     return;
@@ -98,7 +98,7 @@ function pointNearHandle (eventData, toolIndex) {
   for (let i = 0; i < data.handles.length; i++) {
     const handleCanvas = external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
 
-    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < 5) {
+    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < config.spacing) {
       return i;
     }
   }
@@ -140,8 +140,7 @@ function mouseDownActivateCallback (e) {
   const config = freehand.getConfiguration();
 
   if (eventData.event.shiftKey) {
-    console.log('pencilMode ...GO!');
-    config.pencilMode = true;
+    config.activePencilMode = true;
   }
 
   startDrawing(eventData);
@@ -184,7 +183,7 @@ function addPointPencilMode (eventData, dataHandles) {
   const mousePoint = config.mouseLocation.handles.start;
 
   for (let i = 0; i < dataHandles.length; i++) {
-    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.pencilModeSpacing) {
+    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.spacing) {
       return;
     }
   }
@@ -266,8 +265,8 @@ function endDrawing (eventData, handleNearby) {
   // Reset the current handle
   config.currentHandle = 0;
   config.currentTool = -1;
-  config.pencilMode = false;
-  config.canComplete = false;
+  config.activePencilMode = false;
+  data.canComplete = false;
 
   external.cornerstone.updateImage(eventData.element);
 }
@@ -280,16 +279,16 @@ function mouseDownActive (e, toolData, currentTool) {
 
   const data = toolData.data[currentTool];
 
-  const validEnd = !freeHandIntersect.end(data.handles) && config.canComplete;
+  const validEnd = !freeHandIntersect.end(data.handles) && data.canComplete;
 
-  if (!freeHandIntersect.end(data.handles) && config.canComplete) {
+  if (!freeHandIntersect.end(data.handles) && data.canComplete) {
     const lastHandlePlaced = config.currentHandle;
     endDrawing(eventData, lastHandlePlaced);
   } else if (handleNearby === undefined) {
     addPoint(eventData);
   }
   /*
-  if (config.pencilMode === true && validEnd) {
+  if (config.activePencilMode === true && validEnd) {
     //addPointPencilMode(eventData, data.handles);
     const lastHandlePlaced = config.currentHandle;
 
@@ -372,12 +371,12 @@ function mouseMoveActive (eventData, toolData) {
   // Set the mouseLocation handle
   getMouseLocation(eventData);
 
-  checkInvalidHandleLocation(data.handles);
+  checkInvalidHandleLocation(data);
 
-  if (config.pencilMode) {
+  if (config.activePencilMode) {
     addPointPencilMode(eventData, data.handles);
   } else {
-    // No snapping in pencilMode mode
+    // No snapping in activePencilMode mode
     const handleNearby = pointNearHandle(eventData, config.currentTool);
 
     // If there is a handle nearby to snap to
@@ -390,28 +389,29 @@ function mouseMoveActive (eventData, toolData) {
 }
 
 
-function checkInvalidHandleLocation (dataHandles) {
+function checkInvalidHandleLocation (data) {
   const config = freehand.getConfiguration();
   const mousePoint = config.mouseLocation.handles.start;
+  const dataHandles = data.handles;
   let invalidHandlePlacement = true;
 
   if (dataHandles.length < 2) {
     return true;
   }
 
-  if (config.pencilMode) { // Pencil mode
+  if (config.activePencilMode) { // Pencil mode
     invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
 
     if (invalidHandlePlacement === false) {
-      invalidHandlePlacement = invalidHandlePencilMode(dataHandles, mousePoint);
+      invalidHandlePlacement = invalidHandlePencilMode(data, mousePoint);
     }
 
   } else { // Normal mode
-    if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.pencilModeSpacing) {
-      config.canComplete = true;
+    if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
+      data.canComplete = true;
       invalidHandlePlacement = false;
     } else {
-      config.canComplete = false;
+      data.canComplete = false;
       invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
     }
   }
@@ -419,19 +419,20 @@ function checkInvalidHandleLocation (dataHandles) {
   dataHandles.invalidHandlePlacement = invalidHandlePlacement;
 }
 
-function invalidHandlePencilMode (dataHandles, mousePoint) {
+function invalidHandlePencilMode (data, mousePoint) {
   const config = freehand.getConfiguration();
+  const dataHandles = data.handles;
 
-  if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.pencilModeSpacing) {
-    config.canComplete = true;
+  if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
+    data.canComplete = true;
     return false;
   }
 
-  config.canComplete = false;
+  data.canComplete = false;
 
   // compare with all other handles appart from the last one
   for (let i = 1; i < dataHandles.length - 1; i++) {
-    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.pencilModeSpacing) {
+    if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.spacing) {
       return true;
     }
   }
@@ -705,7 +706,7 @@ function onImageRendered (e) {
       drawHandles(context, eventData, data.handles, color, options);
     }
 
-    if (config.canComplete) {
+    if (data.canComplete) {
       // draw large handle at the origin if can complete drawing
       options.handleRadius = config.completeHandleRadius;
       drawHandles(context, eventData, [data.handles[0]], color, options);
