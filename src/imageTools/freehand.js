@@ -37,6 +37,7 @@ let configuration = {
   canComplete: false,
   activeHandleRadius: 3,
   completeHandleRadius: 6,
+  alwaysShowHandles: false,
   invalidColor: 'crimson',
   modifying: false,
   movingTextBox: false,
@@ -692,27 +693,52 @@ function onImageRendered (e) {
       }
     }
 
+    // Draw handles
 
+    const options = {
+      fill: fillColor
+    };
+
+    if (config.alwaysShowHandles || data.active && data.polyBoundingBox) {
+      // Render all handles
+      options.handleRadius = config.activeHandleRadius;
+      drawHandles(context, eventData, data.handles, color, options);
+    }
+
+    if (config.canComplete) {
+      // draw large handle at the origin if can complete drawing
+      options.handleRadius = config.completeHandleRadius;
+      drawHandles(context, eventData, [data.handles[0]], color, options);
+    }
+
+    if (data.active && !data.polyBoundingBox) {
+      // draw handle at origin and at mouse if actively drawing
+      options.handleRadius = config.activeHandleRadius;
+      drawHandles(context, eventData, config.mouseLocation.handles, color, options);
+      drawHandles(context, eventData, [data.handles[0]], color, options);
+    }
+
+    /*
     if (data.active) {
       const options = {
         fill: fillColor
       };
 
-      if (config.canComplete) {
-        // draw large handle at the origin if can complete drawing
-        options.handleRadius = config.completeHandleRadius;
-        drawHandles(context, eventData, [data.handles[0]], color, options);
-      } else if (!data.polyBoundingBox) {
+      if (!data.polyBoundingBox) {
         // draw handle at origin and at mouse if drawing
         options.handleRadius = config.activeHandleRadius;
         drawHandles(context, eventData, config.mouseLocation.handles, color, options);
         drawHandles(context, eventData, [data.handles[0]], color, options);
+      } else if (!config.alwaysShowHandles) {
+        // Show all handles on mouseHover
+        const options = {
+          fill: fillColor,
+          handleRadius: config.activeHandleRadius
+        };
+        drawHandles(context, eventData, data.handles, color, options);
       }
-
-      // Draw the handles
-      // drawHandles(context, eventData, data.handles, color, options);
-
     }
+    */
 
     // Define variables for the area and mean/standard deviation
     let area,

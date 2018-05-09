@@ -68,6 +68,8 @@ function deletePoint (eventData, deleteInfo) {
   config.freehand = false;
 
   data.invalidated = true;
+  data.active = true;
+  data.highlight = true;
 
   // Force onImageRendered to fire
   external.cornerstone.updateImage(eventData.element);
@@ -105,6 +107,9 @@ function insertPoint (eventData, insertInfo) {
   } else {
     data.handles[insertIndex].lines.push(data.handles[insertIndex + 1]);
   }
+
+  data.active = true;
+  data.highlight = true;
 
   // Force onImageRendered to fire
   data.invalidated = true;
