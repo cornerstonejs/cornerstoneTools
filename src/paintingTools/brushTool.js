@@ -121,8 +121,10 @@ export default function brushTool (brushToolInterface) {
       const colormap = cornerstone.colors.getColormap(colormapId);
 
       colormap.setNumberOfColors(2);
-      colormap.setColor(0, [0, 30, 0, 100]);
+      colormap.setColor(0, [0, 0, 0, 0]);
       colormap.setColor(1, [255, 0, 0, 255]);
+
+      configuration.colormapId = colormapId;
     }
 
     addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
