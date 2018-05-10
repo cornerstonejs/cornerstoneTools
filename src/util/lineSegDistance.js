@@ -1,3 +1,5 @@
+import external from '../externalModules.js';
+
 export default function (element, start, end, coords) {
   const cornerstone = external.cornerstone;
 
