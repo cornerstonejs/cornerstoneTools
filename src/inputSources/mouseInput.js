@@ -11,7 +11,6 @@ function getEventWhich (event) {
   if (typeof event.buttons !== 'number') {
     return event.which;
   }
-
   if (event.buttons === 0) {
     return 0;
   } else if (event.buttons % 2 === 1) {
@@ -303,10 +302,54 @@ function disable (element) {
   element.removeEventListener('dblclick', mouseDoubleClick);
 }
 
+function mouseRightClick (e) {
+  e.preventDefault();
+  const cornerstone = external.cornerstone;
+  const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
+  const eventType = EVENTS.MOUSE_RIGHT_CLICK;
+
+  const startPoints = {
+    page: external.cornerstoneMath.point.pageToPoint(e),
+    image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+    client: {
+      x: e.clientX,
+      y: e.clientY
+    }
+  };
+
+  startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+
+  const lastPoints = copyPoints(startPoints);
+  const eventData = {
+    event: e,
+    which: e.which,
+    viewport: cornerstone.getViewport(element),
+    image: enabledElement.image,
+    element,
+    startPoints,
+    lastPoints,
+    currentPoints: startPoints,
+    deltaPoints: {
+      x: 0,
+      y: 0
+    },
+    type: eventType
+  };
+
+  triggerEvent(element, eventType, eventData);
+}
+
+
 function enable (element) {
   // Prevent handlers from being attached multiple times
   disable(element);
-
+  element.addEventListener('contextmenu', mouseRightClick);
   element.addEventListener('mousedown', mouseDown);
   element.addEventListener('mousemove', mouseMove);
   element.addEventListener('dblclick', mouseDoubleClick);

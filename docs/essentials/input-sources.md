@@ -43,6 +43,7 @@ Event Name | Meaning
 **cornerstonetoolsmousemove** | ** Mouse move without mouse button held down **
 **cornerstonetoolsmouseclick** | ** Mouse Click **
 **cornerstonetoolsmousedoubleclick** | Two mouse clicks in quick succession. This is fired from the browser's [**dblclick**](https://developer.mozilla.org/en-US/docs/Web/Events/dblclick) event.
+**cornerstonetoolsmouserightclick** | ** Mouse right click **
 
 #### Event Data
 The mouse input events include the following event data:
