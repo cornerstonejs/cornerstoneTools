@@ -94,9 +94,14 @@ function onImageRendered (e) {
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   const { cornerstone } = external;
-  const mouseCoordsCanvas = cornerstone.pixelToCanvas(eventData.element, lastImageCoords);
-  const radiusCanvas = cornerstone.pixelToCanvas(eventData.element, { x: radius, y: radius });
-  context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, radiusCanvas.x, radiusCanvas.y);
+  const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, lastImageCoords);
+  const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
+  const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
+  const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
+  context.beginPath();
+  context.strokeStyle = color;
+  context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, circleRadius, circleRadius, 0, 0, 2 * Math.PI);
+  context.stroke();
 }
 
 const brush = brushTool({
