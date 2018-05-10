@@ -1,6 +1,6 @@
+import external from '../externalModules.js';
 import drawTextBox from './drawTextBox.js';
 import drawLink from './drawLink.js';
-
 
 export default function (context, element, textBox, text,
   handles, textBoxAnchorPoints, color, lineWidth, xOffset, yCenter) {
