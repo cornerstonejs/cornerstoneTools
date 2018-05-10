@@ -135,16 +135,6 @@ function onImageRendered (e) {
     // Store the length inside the tool for outside access
     data.length = length;
 
-    // Set the length text suffix depending on whether or not pixelSpacing is available
-    let suffix = ' mm';
-
-    if (!rowPixelSpacing || !colPixelSpacing) {
-      suffix = ' pixels';
-    }
-
-    // Store the length measurement text
-    const text = `${length.toFixed(2)}${suffix}`;
-
     if (!data.handles.textBox.hasMoved) {
       const coords = {
         x: Math.max(data.handles.start.x, data.handles.end.x)
@@ -166,9 +156,22 @@ function onImageRendered (e) {
     // So that it sits beside the length tool handle
     const xOffset = 10;
 
+    const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+
     drawLinkedTextBox(context, element, data.handles.textBox, text,
       data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
     context.restore();
+  }
+
+  function textBoxText (data, rowPixelSpacing, colPixelSpacing) {
+    // Set the length text suffix depending on whether or not pixelSpacing is available
+    let suffix = ' mm';
+
+    if (!rowPixelSpacing || !colPixelSpacing) {
+      suffix = ' pixels';
+    }
+
+    return `${data.length.toFixed(2)}${suffix}`;
   }
 
   function textBoxAnchorPoints (handles) {

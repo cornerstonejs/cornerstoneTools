@@ -745,6 +745,27 @@ function onImageRendered (e) {
       data.invalidated = false;
     }
 
+    // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
+    if (data.polyBoundingBox && !data.textBox.freehand) {
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.textBox.hasMoved) {
+        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+      }
+
+      const text = textBoxText(data);
+
+      drawLinkedTextBox(context, element, data.textBox, text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+    }
+    context.restore();
+  }
+
+  function textBoxText (data) {
+    const { meanStdDev, meanStdDevSUV, area } = data;
     // Define an array to store the rows of text for the textbox
     const textLines = [];
 
@@ -792,22 +813,6 @@ function onImageRendered (e) {
       // Add this text line to the array to be displayed in the textbox
       textLines.push(areaText);
     }
-
-    // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
-    if (data.polyBoundingBox && !data.textBox.freehand) {
-      // If the textbox has not been moved by the user, it should be displayed on the right-most
-      // Side of the tool.
-      if (!data.textBox.hasMoved) {
-        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-        // Note that this calculates it in image coordinates
-        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
-      }
-
-      drawLinkedTextBox(context, element, data.textBox, textLines,
-        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    }
-    context.restore();
   }
 
   function textBoxAnchorPoints (handles) {
