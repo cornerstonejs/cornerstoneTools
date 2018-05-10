@@ -1,4 +1,4 @@
-import pointInFreehandROI from './pointInFreehandROI.js';
+import pointInFreehand from './pointInFreehand.js';
 
 export default function (sp, boundingBox, dataHandles) {
 
@@ -38,7 +38,7 @@ function getSum (sp, boundingBox, dataHandles) {
         y
       };
 
-      sumPointIfInFreehandROI(dataHandles, point, sum, sp[index]);
+      sumPointIfInFreehand(dataHandles, point, sum, sp[index]);
       index++;
     }
   }
@@ -47,8 +47,8 @@ function getSum (sp, boundingBox, dataHandles) {
 }
 
 
-function sumPointIfInFreehandROI (dataHandles, point, sum, pixelValue) {
-  if (pointInFreehandROI(dataHandles, point)) {
+function sumPointIfInFreehand (dataHandles, point, sum, pixelValue) {
+  if (pointInFreehand(dataHandles, point)) {
     sum.value += pixelValue;
     sum.squared += pixelValue * pixelValue;
     sum.count++;

@@ -1,27 +1,27 @@
 // JPETTS orientation algoritm to determine if two lines cross.
 // Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
-function freeHandIntersect (newHandle, dataHandles) {
+function newHandle (candidateHandle, dataHandles) {
   // Check if the proposed line will intersect any existent line
   const lastHandleId = dataHandles.length - 1;
-  const lastNode = getCoords(dataHandles[lastHandleId]);
-  const newNode = getCoords(newHandle);
+  const lastHandle = getCoords(dataHandles[lastHandleId]);
+  const newHandle = getCoords(candidateHandle);
 
-  return doesIntersectOtherLines(dataHandles, lastNode, newNode, [lastHandleId]);
+  return doesIntersectOtherLines(dataHandles, lastHandle, newHandle, [lastHandleId]);
 }
 
-function freeHandIntersectEnd (dataHandles) {
+function end (dataHandles) {
   // Check if the last line will overlap another line.
   const lastHandleId = dataHandles.length - 1;
-  const lastNode = getCoords(dataHandles[lastHandleId]);
-  const firstNode = getCoords(dataHandles[0]);
+  const lastHandle = getCoords(dataHandles[lastHandleId]);
+  const firstHandle = getCoords(dataHandles[0]);
 
-  return doesIntersectOtherLines(dataHandles, lastNode, firstNode, [lastHandleId, 0]);
+  return doesIntersectOtherLines(dataHandles, lastHandle, firstHandle, [lastHandleId, 0]);
 }
 
-function freeHandIntersectModify (dataHandles, modifiedHandleId) {
+function modify (dataHandles, modifiedHandleId) {
   // Check if the modifiedHandle's previous and next lines will intersect any other line in the polygon
-  const modifiedNode = getCoords(dataHandles[modifiedHandleId]);
+  const modifiedHandle = getCoords(dataHandles[modifiedHandleId]);
 
   // Previous neightbor handle
   let neighborHandleId = modifiedHandleId - 1;
@@ -30,9 +30,9 @@ function freeHandIntersectModify (dataHandles, modifiedHandleId) {
     neighborHandleId = dataHandles.length - 1;
   }
 
-  let neighborNode = getCoords(dataHandles[neighborHandleId]);
+  let neighborHandle = getCoords(dataHandles[neighborHandleId]);
 
-  if (doesIntersectOtherLines(dataHandles, modifiedNode, neighborNode, [modifiedHandleId, neighborHandleId])) {
+  if (doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [modifiedHandleId, neighborHandleId])) {
     return true;
   }
 
@@ -43,9 +43,9 @@ function freeHandIntersectModify (dataHandles, modifiedHandleId) {
     neighborHandleId = modifiedHandleId + 1;
   }
 
-  neighborNode = getCoords(dataHandles[neighborHandleId]);
+  neighborHandle = getCoords(dataHandles[neighborHandleId]);
 
-  return doesIntersectOtherLines(dataHandles, modifiedNode, neighborNode, [modifiedHandleId, neighborHandleId]);
+  return doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [modifiedHandleId, neighborHandleId]);
 }
 
 function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
@@ -130,8 +130,10 @@ function onSegment (p, q, r) {
   return false;
 }
 
-export {
-  freeHandIntersect,
-  freeHandIntersectEnd,
-  freeHandIntersectModify
+const freeHandIntersect = {
+  newHandle,
+  end,
+  modify
 };
+
+export default freeHandIntersect;
