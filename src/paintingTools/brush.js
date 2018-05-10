@@ -20,8 +20,7 @@ let dragging = false;
 function paint (eventData) {
   const configuration = brush.getConfiguration();
   const element = eventData.element;
-  const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
-  const { rows, columns } = layer.image;
+  const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
   const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
   const pixelData = toolData.data[0].pixelData;
@@ -37,9 +36,7 @@ function paint (eventData) {
 
   drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
 
-  layer.invalid = true;
-
-  external.cornerstone.updateImage(element);
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function onMouseUp (e) {
@@ -95,9 +92,11 @@ function onImageRendered (e) {
   const element = eventData.element;
 
   context.setTransform(1, 0, 0, 1, 0, 0);
-  const pointerArray = getCircle(radius, rows, columns, x, y);
 
-  drawBrushOnCanvas(pointerArray, context, color, element);
+  const { cornerstone } = external;
+  const mouseCoordsCanvas = cornerstone.pixelToCanvas(eventData.element, lastImageCoords);
+  const radiusCanvas = cornerstone.pixelToCanvas(eventData.element, { x: radius, y: radius });
+  context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, radiusCanvas.x, radiusCanvas.y);
 }
 
 const brush = brushTool({

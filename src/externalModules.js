@@ -4,6 +4,7 @@ let Hammer = window.Hammer;
 
 export default {
   set cornerstone (cs) {
+    console.warn('erik is testing');
     cornerstone = cs;
   },
   get cornerstone () {

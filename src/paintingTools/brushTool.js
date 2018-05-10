@@ -4,9 +4,9 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import {brush} from "./brush";
 
 const TOOL_STATE_TOOL_TYPE = 'brush';
-let brushLayerId;
 
 export default function brushTool (brushToolInterface) {
   const toolType = brushToolInterface.toolType;
@@ -52,6 +52,9 @@ export default function brushTool (brushToolInterface) {
   }
 
   function onImageRendered (e) {
+    console.log('OnImageRendered to draw pixels');
+    const { cornerstone } = external;
+
     const eventData = e.detail;
     const element = eventData.element;
     const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
@@ -64,17 +67,36 @@ export default function brushTool (brushToolInterface) {
       addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
     }
 
-    const layer = external.cornerstone.getLayer(eventData.element, brushLayerId);
+    const configuration = brushTool.getConfiguration();
+    const colormapId = configuration.colormapId;
+    const colormap = cornerstone.colors.getColormap(colormapId);
+    const colorLut = colormap.createLookupTable();
 
-    layer.image.setPixelData(pixelData);
-    layer.invalid = true;
+    const imageData = new ImageData(eventData.image.width, eventData.image.height);
+    const image = {
+      stats: {},
+      minPixelValue: 0,
+      getPixelData: () => pixelData,
+    };
 
-    external.cornerstone.updateImage(element);
+    cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
 
-    brushToolInterface.onImageRendered(e);
+    window.createImageBitmap(imageData).then((imageBitmap) => {
+      const canvasTopLeft = cornerstone.pixelToCanvas(eventData.element, {x: 0, y: 0});
+      const canvasBottomRight = cornerstone.pixelToCanvas(eventData.element, {x: eventData.image.width, y: eventData.image.height});
+      const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
+      const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
+
+      eventData.canvasContext.drawImage(imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
+
+      // Call the hover event for the brush
+      brushToolInterface.onImageRendered(e);
+    });
   }
 
   function activate (element, mouseButtonMask) {
+    const { cornerstone } = external;
+
     setToolOptions(toolType, element, { mouseButtonMask });
 
     element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
@@ -86,9 +108,9 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
 
-    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const enabledElement = cornerstone.getEnabledElement(element);
     const { width, height } = enabledElement.image;
-    let pixelData = new Uint8ClampedArray(width * height);
+    const pixelData = new Uint8ClampedArray(width * height);
 
     const configuration = brushTool.getConfiguration();
     let colormapId = configuration.colormapId;
@@ -96,58 +118,16 @@ export default function brushTool (brushToolInterface) {
     if (!colormapId) {
       colormapId = 'BrushColorMap';
 
-      const colormap = external.cornerstone.colors.getColormap(colormapId);
+      const colormap = cornerstone.colors.getColormap(colormapId);
 
       colormap.setNumberOfColors(2);
-      colormap.setColor(0, [0, 0, 0, 0]);
+      colormap.setColor(0, [0, 30, 0, 100]);
       colormap.setColor(1, [255, 0, 0, 255]);
-    }
-
-    const labelMapImage = {
-      minPixelValue: 0,
-      maxPixelValue: 1,
-      slope: 1.0,
-      intercept: 0,
-      getPixelData: () => pixelData,
-      rows: enabledElement.image.height,
-      columns: enabledElement.image.width,
-      height,
-      width,
-      pixelData,
-      setPixelData: (data) => {
-        pixelData = data;
-      },
-      colormap: colormapId,
-      color: false,
-      rgba: false,
-      labelmap: true,
-      invert: false,
-      columnPixelSpacing: 1.0,
-      rowPixelSpacing: 1.0,
-      sizeInBytes: enabledElement.image.width * enabledElement.image.height
-    };
-
-    let layer;
-    const options = {
-      viewport: {
-        pixelReplication: true
-      }
-    };
-
-    if (brushLayerId) {
-      layer = external.cornerstone.getLayer(element, brushLayerId);
-    }
-
-    if (!layer) {
-      brushLayerId = external.cornerstone.addLayer(element, labelMapImage, options);
     }
 
     addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
 
-    configuration.brushLayerId = brushLayerId;
     brushTool.setConfiguration(configuration);
-
-    external.cornerstone.updateImage(element);
   }
 
   function deactivate (element) {
