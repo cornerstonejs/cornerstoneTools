@@ -362,23 +362,42 @@ function mouseMoveActive (eventData, toolData) {
 
 function checkInvalidHandleLocation (data) {
   const config = freehand.getConfiguration();
-  const mousePoint = config.mouseLocation.handles.start;
-  const dataHandles = data.handles;
-  let invalidHandlePlacement = true;
 
-  if (dataHandles.length < 2) {
+  if (data.handles.length < 2) {
     return true;
   }
 
-  // Pencil mode
-  if (config.activePencilMode) {
-    invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+  let invalidHandlePlacement;
 
-    if (invalidHandlePlacement === false) {
-      invalidHandlePlacement = invalidHandlePencilMode(data, mousePoint);
-    }
-  // Normal mode
-  } else if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
+  if (config.activePencilMode) { // Pencil mode
+    invalidHandlePlacement = checkHandlesPencilMode(data);
+  } else { // Polygon mode
+    invalidHandlePlacement = checkHandlesPolygonMode(data);
+  }
+
+  data.handles.invalidHandlePlacement = invalidHandlePlacement;
+}
+
+function checkHandlesPencilMode (data) {
+  const config = freehand.getConfiguration();
+  const mousePoint = config.mouseLocation.handles.start;
+  const dataHandles = data.handles;
+  let invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+
+  if (invalidHandlePlacement === false) {
+    invalidHandlePlacement = invalidHandlePencilMode(data, mousePoint);
+  }
+
+  return invalidHandlePlacement;
+}
+
+function checkHandlesPolygonMode (data) {
+  const config = freehand.getConfiguration();
+  const mousePoint = config.mouseLocation.handles.start;
+  const dataHandles = data.handles;
+  let invalidHandlePlacement;
+
+  if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
     data.canComplete = true;
     invalidHandlePlacement = false;
   } else {
@@ -386,7 +405,7 @@ function checkInvalidHandleLocation (data) {
     invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
   }
 
-  dataHandles.invalidHandlePlacement = invalidHandlePlacement;
+  return invalidHandlePlacement;
 }
 
 function invalidHandlePencilMode (data, mousePoint) {

@@ -164,9 +164,9 @@ export class FreehandLineFinder {
   }
 
   static getCanvasPointsFromHandles (handle1, handle2, element) {
-    // Point r from left to right so that we only have one orientation to test.
     const p = [];
 
+    // Point r from left to right so that we only have one orientation to test.
     if (handle1.x < handle2.x) {
       p.push(external.cornerstone.pixelToCanvas(element, handle1));
       p.push(external.cornerstone.pixelToCanvas(element, handle2));

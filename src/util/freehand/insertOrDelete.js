@@ -1,4 +1,3 @@
-import { freehand } from '../../imageTools/freehand.js';
 import { FreehandLineFinder } from './FreehandLineFinder.js';
 import { FreehandHandleData } from './FreehandHandleData.js';
 import { getToolState } from '../../stateManagement/toolState.js';
@@ -31,7 +30,6 @@ export default function (e, nearby) {
 
 
 function deletePoint (eventData, deleteInfo) {
-  const config = freehand.getConfiguration();
   const toolData = getToolState(eventData.element, toolType);
 
   if (toolData === undefined) {
@@ -63,9 +61,6 @@ function deletePoint (eventData, deleteInfo) {
 
   // Remove the handle
   data.handles.splice(deleteHandle, 1);
-
-  // Reset freehand value
-  config.freehand = false;
 
   data.invalidated = true;
   data.active = true;
