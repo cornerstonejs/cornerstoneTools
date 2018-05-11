@@ -40,8 +40,9 @@ export default function (context, renderData, handles, color, options) {
   });
 }
 
-function getHandleRadius(options) {
+function getHandleRadius (options) {
   let handleRadius;
+
   if (options && options.handleRadius) {
     handleRadius = options.handleRadius;
   } else {

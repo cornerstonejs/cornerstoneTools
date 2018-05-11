@@ -198,22 +198,20 @@ function addPoint (eventData) {
     return;
   }
 
+  // Get the toolData from the last-drawn polygon
   const config = freehand.getConfiguration();
-
-  // Get the toolData from the last-drawn drawing
   const data = toolData.data[config.currentTool];
+
+  if (data.handles.invalidHandlePlacement) {
+    return;
+  }
 
   const newHandleData = new FreehandHandleData(eventData.currentPoints.image);
 
   // If this is not the first handle
   if (data.handles.length) {
-    if (!data.handles.invalidHandlePlacement) {
-      // Add the line from the current handle to the new handle
-      data.handles[config.currentHandle - 1].lines.push(eventData.currentPoints.image);
-    } else {
-
-      return;
-    }
+    // Add the line from the current handle to the new handle
+    data.handles[config.currentHandle - 1].lines.push(eventData.currentPoints.image);
   }
 
   // Add the new handle
@@ -225,17 +223,6 @@ function addPoint (eventData) {
   // Force onImageRendered to fire
   external.cornerstone.updateImage(eventData.element);
 }
-
-/*
-function endDrawingIfLastNode (eventData, handleNearby, data) {
-  // Snap if click registered on origin handle or on last handle placed
-  const lastHandleID = data.handles.length - 1;
-
-  if ((handleNearby === 0 || handleNearby === lastHandleID)) {
-    endDrawing(eventData, handleNearby);
-  }
-}
-*/
 
 function endDrawing (eventData, handleNearby) {
   const toolData = getToolState(eventData.element, toolType);
@@ -274,32 +261,16 @@ function endDrawing (eventData, handleNearby) {
 function mouseDownActive (e, toolData, currentTool) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
-
   const handleNearby = pointNearHandle(eventData, currentTool);
-
   const data = toolData.data[currentTool];
-
-  const validEnd = !freeHandIntersect.end(data.handles) && data.canComplete;
 
   if (!freeHandIntersect.end(data.handles) && data.canComplete) {
     const lastHandlePlaced = config.currentHandle;
-    endDrawing(eventData, lastHandlePlaced);
-  } else if (handleNearby === undefined) {
-    addPoint(eventData);
-  }
-  /*
-  if (config.activePencilMode === true && validEnd) {
-    //addPointPencilMode(eventData, data.handles);
-    const lastHandlePlaced = config.currentHandle;
 
     endDrawing(eventData, lastHandlePlaced);
   } else if (handleNearby === undefined) {
     addPoint(eventData);
-  } else if (data.handles.length >= 3 && validEnd) {
-    endDrawing(eventData, config.currentHandle);
-    //endDrawingIfLastNode(eventData, handleNearby, toolData.data[currentTool]);
   }
-  */
 
   e.preventDefault();
   e.stopPropagation();
@@ -399,21 +370,20 @@ function checkInvalidHandleLocation (data) {
     return true;
   }
 
-  if (config.activePencilMode) { // Pencil mode
+  // Pencil mode
+  if (config.activePencilMode) {
     invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
 
     if (invalidHandlePlacement === false) {
       invalidHandlePlacement = invalidHandlePencilMode(data, mousePoint);
     }
-
-  } else { // Normal mode
-    if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
-      data.canComplete = true;
-      invalidHandlePlacement = false;
-    } else {
-      data.canComplete = false;
-      invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
-    }
+  // Normal mode
+  } else if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
+    data.canComplete = true;
+    invalidHandlePlacement = false;
+  } else {
+    data.canComplete = false;
+    invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
   }
 
   dataHandles.invalidHandlePlacement = invalidHandlePlacement;
@@ -425,12 +395,13 @@ function invalidHandlePencilMode (data, mousePoint) {
 
   if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
     data.canComplete = true;
+
     return false;
   }
 
   data.canComplete = false;
 
-  // compare with all other handles appart from the last one
+  // Compare with all other handles appart from the last one
   for (let i = 1; i < dataHandles.length - 1; i++) {
     if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.spacing) {
       return true;
@@ -707,39 +678,17 @@ function onImageRendered (e) {
     }
 
     if (data.canComplete) {
-      // draw large handle at the origin if can complete drawing
+      // Draw large handle at the origin if can complete drawing
       options.handleRadius = config.completeHandleRadius;
       drawHandles(context, eventData, [data.handles[0]], color, options);
     }
 
     if (data.active && !data.polyBoundingBox) {
-      // draw handle at origin and at mouse if actively drawing
+      // Draw handle at origin and at mouse if actively drawing
       options.handleRadius = config.activeHandleRadius;
       drawHandles(context, eventData, config.mouseLocation.handles, color, options);
       drawHandles(context, eventData, [data.handles[0]], color, options);
     }
-
-    /*
-    if (data.active) {
-      const options = {
-        fill: fillColor
-      };
-
-      if (!data.polyBoundingBox) {
-        // draw handle at origin and at mouse if drawing
-        options.handleRadius = config.activeHandleRadius;
-        drawHandles(context, eventData, config.mouseLocation.handles, color, options);
-        drawHandles(context, eventData, [data.handles[0]], color, options);
-      } else if (!config.alwaysShowHandles) {
-        // Show all handles on mouseHover
-        const options = {
-          fill: fillColor,
-          handleRadius: config.activeHandleRadius
-        };
-        drawHandles(context, eventData, data.handles, color, options);
-      }
-    }
-    */
 
     // Define variables for the area and mean/standard deviation
     let area,
