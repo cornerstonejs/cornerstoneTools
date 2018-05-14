@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import clip from '../util/clip.js';
 
 // This function causes any scrolling actions within the stack to propagate to
 // All of the other viewports that are synced
@@ -24,7 +25,7 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
   let newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
 
   // Ensure the index does not exceed the bounds of the stack
-  newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), stackData.imageIds.length - 1);
+  newImageIdIndex = clip(newImageIdIndex, 0, stackData.imageIds.length - 1);
 
   // If the index has not changed, stop here
   if (stackData.currentImageIdIndex === newImageIdIndex) {

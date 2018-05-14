@@ -14,6 +14,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { clipToBox } from '../util/clip.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -549,14 +550,10 @@ function mouseHover (eventData, toolData) {
 function getMouseLocation (eventData) {
   // Set the mouseLocation handle
   const config = freehand.getConfiguration();
-  let x = Math.max(eventData.currentPoints.image.x, 0);
-  let y = Math.max(eventData.currentPoints.image.y, 0);
 
-  x = Math.min(x, eventData.image.width);
-  config.mouseLocation.handles.start.x = x;
-
-  y = Math.min(y, eventData.image.height);
-  config.mouseLocation.handles.start.y = y;
+  config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
+  config.mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+  clipToBox(config.mouseLocation.handles.start, eventData.image);
 }
 
 function numberWithCommas (x) {

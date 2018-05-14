@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import clip from '../util/clip.js';
 
 export default function (element, timePoints, wrap) {
   const toolData = getToolState(element, 'timeSeries');
@@ -25,8 +26,7 @@ export default function (element, timePoints, wrap) {
       newStackIndex = timeSeriesData.stacks.length - 1;
     }
   } else {
-    newStackIndex = Math.min(timeSeriesData.stacks.length - 1, newStackIndex);
-    newStackIndex = Math.max(0, newStackIndex);
+    newStackIndex = clip(newStackIndex, 0, timeSeriesData.stacks.length - 1);
   }
 
   if (newStackIndex !== timeSeriesData.currentStackIndex) {

@@ -1,5 +1,6 @@
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import clip from './clip.js';
 
 function scrollWithoutSkipping (stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {
@@ -52,8 +53,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
 
     newImageIdIndex %= nbImages;
   } else {
-    newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
-    newImageIdIndex = Math.max(0, newImageIdIndex);
+    newImageIdIndex = clip(newImageIdIndex, 0, stackData.imageIds.length - 1);
   }
 
   if (allowSkipping) {

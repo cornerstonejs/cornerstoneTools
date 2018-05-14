@@ -1,6 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
+import { clipToBox } from '../util/clip.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   // Console.log('moveNewHandleTouch');
@@ -22,11 +23,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
 
     if (preventHandleOutsideImage) {
-      handle.x = Math.max(handle.x, 0);
-      handle.x = Math.min(handle.x, eventData.image.width);
-
-      handle.y = Math.max(handle.y, 0);
-      handle.y = Math.min(handle.y, eventData.image.height);
+      clipToBox(handle, eventData.image);
     }
 
     cornerstone.updateImage(element);
@@ -65,11 +62,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
 
     if (preventHandleOutsideImage) {
-      handle.x = Math.max(handle.x, 0);
-      handle.x = Math.min(handle.x, eventData.image.width);
-
-      handle.y = Math.max(handle.y, 0);
-      handle.y = Math.min(handle.y, eventData.image.height);
+      clipToBox(handle, eventData.image);
     }
 
     cornerstone.updateImage(element);
@@ -108,11 +101,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     handle.y = eventData.currentPoints.image.y + distanceFromTouch.y;
 
     if (preventHandleOutsideImage) {
-      handle.x = Math.max(handle.x, 0);
-      handle.x = Math.min(handle.x, eventData.image.width);
-
-      handle.y = Math.max(handle.y, 0);
-      handle.y = Math.min(handle.y, eventData.image.height);
+      clipToBox(handle, eventData.image);
     }
 
     cornerstone.updateImage(element);
