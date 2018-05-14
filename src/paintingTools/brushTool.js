@@ -52,7 +52,6 @@ export default function brushTool (brushToolInterface) {
   }
 
   function onImageRendered (e) {
-    console.log('OnImageRendered to draw pixels');
     const { cornerstone } = external;
 
     const eventData = e.detail;
@@ -87,6 +86,7 @@ export default function brushTool (brushToolInterface) {
       const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
       const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
 
+      eventData.canvasContext.imageSmoothingEnabled = false;
       eventData.canvasContext.drawImage(imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
 
       // Call the hover event for the brush
