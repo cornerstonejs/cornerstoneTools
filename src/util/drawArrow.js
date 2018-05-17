@@ -1,23 +1,14 @@
-import { drawLine, drawJoinedLines } from './drawing.js';
+import external from '../externalModules.js';
+import { drawJoinedLines, drawLine } from './drawing.js';
 
-export default function (context, start, end, color, lineWidth) {
-  // Variables to be used when creating the arrow
-  const headLength = 10;
+
+export default function (context, element, start, end, headLength, color) {
+  const cornerstone = external.cornerstone;
+
+  start = cornerstone.pixelToCanvas(element, start);
+  end = cornerstone.pixelToCanvas(element, end);
 
   const angle = Math.atan2(end.y - start.y, end.x - start.x);
-
-  // Starting path of the arrow from the start square to the end square and drawing the stroke
-  let options = {
-    color,
-    lineWidth
-  };
-
-  drawLine(context, undefined, start, end, options, 'canvas');
-  options = {
-    color,
-    lineWidth,
-    fillStyle: color
-  };
 
   const points = [
     {
@@ -31,5 +22,14 @@ export default function (context, start, end, color, lineWidth) {
     end
   ];
 
-  drawJoinedLines(context, undefined, end, points, options, 'canvas');
+  // Draw the arrow line
+  drawLine(context, element, start, end, { color });
+
+  // Draw the arrow head
+  const options = {
+    color,
+    fillStyle: color
+  };
+
+  drawJoinedLines(context, element, end, points, options);
 }

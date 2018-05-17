@@ -5,7 +5,7 @@ import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
@@ -120,26 +120,17 @@ function onImageRendered (e) {
     }
 
     const color = toolColors.getColorIfActive(data);
+    const options = {
+      centering: {
+        x: true,
+        y: true
+      }
+    };
 
     draw(context, (context) => {
       setShadow(context, config);
-
-      // Draw text
-      context.fillStyle = color;
-      const measureText = context.measureText(data.text);
-
-      data.textWidth = measureText.width + 10;
-
-      const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-      const options = {
-        centering: {
-          x: true,
-          y: true
-        }
-      };
-
-      data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+      data.textWidth = textBoxWidth(context, data.text);
+      data.handles.end.boundingBox = drawTextBox(context, eventData.element, data.text, data.handles.end, 0, -10, color, options);
     });
   }
 }

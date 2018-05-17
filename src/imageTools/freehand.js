@@ -1,6 +1,6 @@
+/* eslint-disable no-loop-func */
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import handleActivator from '../manipulators/handleActivator.js';
@@ -12,6 +12,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
+import handleDistance from '../util/handleDistance.js';
 
 // Freehand tool libraries
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
@@ -104,7 +105,6 @@ function pointNearTool (eventData, toolIndex) {
 */
 function pointNearHandle (eventData, toolIndex) {
   const toolData = getToolState(eventData.element, toolType);
-  const config = freehand.getConfiguration();
 
   if (toolData === undefined) {
     return null;
@@ -123,9 +123,7 @@ function pointNearHandle (eventData, toolIndex) {
   const mousePoint = eventData.currentPoints.canvas;
 
   for (let i = 0; i < data.handles.length; i++) {
-    const handleCanvas = external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
-
-    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < config.spacing) {
+    if (handleDistance(data.handles[i], mousePoint, eventData.element) < 5) {
       return i;
     }
   }
@@ -781,6 +779,7 @@ function onImageRendered (e) {
   const cornerstone = external.cornerstone;
   const image = eventData.image;
   const element = eventData.element;
+  const enabledElement = eventData.enabledElement;
   const config = freehand.getConfiguration();
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   let modality;
@@ -792,50 +791,25 @@ function onImageRendered (e) {
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const lineWidth = toolStyle.getToolWidth();
-
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
+    const color = toolColors.getColorIfActive(data);
 
-    draw(context, (context) => {
-      let color = toolColors.getColorIfActive(data);
-      let fillColor;
+    // If the tool is active, draw a handle at the cursor location
+    const options = {
+      fill: data.active ? toolColors.getFillColor() : toolColors.getToolColor()
+    };
 
-      if (data.active) {
-        if (data.handles.invalidHandlePlacement) {
-          color = config.invalidColor;
-          fillColor = config.invalidColor;
-        } else {
-          color = toolColors.getColorIfActive(data);
-          fillColor = toolColors.getFillColor();
-        }
-
-      } else {
-        fillColor = toolColors.getToolColor();
-      }
-
-      if (data.handles.length) {
-        for (let j = 0; j < data.handles.length; j++) {
-          const points = [...data.handles[j].lines];
-
-          if (j === (data.handles.length - 1) && !data.polyBoundingBox) {
-            // If it's still being actively drawn, keep the last line to
-            // The mouse location
-            points.push(config.mouseLocation.handles.start);
-          }
-          drawJoinedLines(context, eventData.element, data.handles[j], points, { color });
-        }
-      }
-
-      // Draw handles
-
-      const options = {
-        fill: fillColor
-      };
+    // Perform a check to see if the tool has been invalidated. This is to prevent
+    // Unnecessary re-calculation of the area, mean, and standard deviation if the
+    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+    if (data.invalidated && !data.active) {
+      // If the data has been invalidated, and the tool is not currently active,
+      // We need to calculate it again.
 
       if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
         // Render all handles
@@ -940,28 +914,45 @@ function onImageRendered (e) {
         if (!isNaN(area)) {
           data.area = area;
         }
-
-        // Set the invalidated flag to false so that this data won't automatically be recalculated
-        data.invalidated = false;
       }
+    }
+    const textLines = textBoxText(data);
+
+    draw(context, (context) => {
+      if (data.handles.length) {
+        for (let j = 0; j < data.handles.length; j++) {
+          // Draw a line between handle j and j+1
+          const handleStart = data.handles[j];
+          const points = [];
+
+          for (let k = 0; k < data.handles[j].lines.length; k++) {
+            points.push(data.handles[j].lines[k]);
+          }
+          if (j === (data.handles.length - 1)) {
+            if (!data.polyBoundingBox) {
+              // If it's still being actively drawn, keep the last line to
+              // The mouse location
+              points.push(config.mouseLocation.handles.start);
+            }
+          }
+
+          drawJoinedLines(context, eventData.element, handleStart, points, { color });
+        }
+      }
+
+      if (data.active && !data.polyBoundingBox) {
+        drawHandles(context, eventData.element, config.mouseLocation.handles, color, options);
+      }
+      // Draw the handles
+      drawHandles(context, eventData.element, data.handles, color, options);
 
       // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
       if (data.polyBoundingBox && !data.textBox.freehand) {
-        // If the textbox has not been moved by the user, it should be displayed on the right-most
-        // Side of the tool.
-        if (!data.textBox.hasMoved) {
-          // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-          // Note that this calculates it in image coordinates
-          data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-          data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
-        }
-
-        const text = textBoxText(data);
-
-        drawLinkedTextBox(context, element, data.textBox, text,
-          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+        drawLinkedTextBox(context, element, enabledElement, data.textBox, textLines,
+          data.handles, textBoxAnchorPoints, textBoxCoords, color, 0, true);
       }
     });
+    context.restore();
   }
 
   function textBoxText (data) {
@@ -1015,6 +1006,38 @@ function onImageRendered (e) {
     }
 
     return textLines;
+  }
+
+  function textBoxCoords (context, element, enabledElement, handles) {
+    // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+    // Note that this calculates it in image coordinates
+
+    // Retrieve the bounds of the ROI in image coordinates
+    const bounds = {
+      left: handles[0].x,
+      right: handles[0].x,
+      bottom: handles[0].y,
+      top: handles[0].x
+    };
+
+    for (let i = 0; i < handles.length; i++) {
+      bounds.left = Math.min(bounds.left, handles[i].x);
+      bounds.right = Math.max(bounds.right, handles[i].x);
+      bounds.bottom = Math.min(bounds.bottom, handles[i].y);
+      bounds.top = Math.max(bounds.top, handles[i].y);
+    }
+
+    const polyBoundingBox = {
+      left: bounds.left,
+      top: bounds.bottom,
+      width: Math.abs(bounds.right - bounds.left),
+      height: Math.abs(bounds.top - bounds.bottom)
+    };
+
+    return {
+      x: polyBoundingBox.left + polyBoundingBox.width,
+      y: polyBoundingBox.top + polyBoundingBox.height / 2
+    };
   }
 
   function textBoxAnchorPoints (handles) {

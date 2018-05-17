@@ -3,8 +3,6 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import textStyle from '../stateManagement/textStyle.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import moveHandle from '../manipulators/moveHandle.js';
@@ -15,6 +13,8 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import { drawCircle, getNewContext, draw, setShadow } from '../util/drawing.js';
+import handleDistance from '../util/handleDistance.js';
+import { textBoxWidth, textBoxHeight } from '../util/drawTextBox.js';
 
 const toolType = 'seedAnnotate';
 
@@ -114,11 +114,7 @@ function pointNearTool (element, data, coords) {
     return;
   }
 
-  const realCoords = external.cornerstone.pixelToCanvas(element, data.handles.end);
-  const distanceToPoint = external.cornerstoneMath.point.distance(realCoords, coords);
-
-
-  return (distanceToPoint < 25);
+  return handleDistance(data.handles.end, coords, element) < 25;
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
@@ -133,16 +129,10 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   const enabledElement = eventData.enabledElement;
-
-  // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
-
-  // We need the canvas width
-  const canvasWidth = eventData.canvasContext.canvas.width;
-
-  const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = seedAnnotate.getConfiguration();
+  const handleRadius = 6;
+  const handleOptions = { drawHandlesIfActive: (config && config.drawHandlesOnHover) };
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -150,66 +140,44 @@ function onImageRendered (e) {
     if (data.visible === false) {
       continue;
     }
+    const color = toolColors.getColorIfActive(data);
+    const text = textBoxText(data);
 
+    // Draw the circle always at the end of the handle
     draw(context, (context) => {
       setShadow(context, config);
-
-      const color = toolColors.getColorIfActive(data);
-
-      // Draw
-      const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-      // Draw the circle always at the end of the handle
-      const handleRadius = 6;
-
       drawCircle(context, eventData.element, data.handles.end, handleRadius, { color });
-
-      const handleOptions = {
-        drawHandlesIfActive: (config && config.drawHandlesOnHover)
-      };
-
       if (config.drawHandles) {
-        drawHandles(context, eventData, handleCanvas, color, handleOptions);
+        drawHandles(context, eventData.element, cornerstone.pixelToCanvas(eventData.element, data.handles.end), color, handleOptions);
       }
-
-      // Draw the text
       if (data.text && data.text !== '') {
-        const text = textBoxText(data);
-
-        context.font = font;
-
-        // Calculate the text coordinates.
-        const textWidth = context.measureText(text).width + 10;
-        const textHeight = textStyle.getFontSize() + 10;
-
-        let distance = Math.max(textWidth, textHeight) / 2 + 5;
-
-        if (handleCanvas.x > (canvasWidth / 2)) {
-          distance = -distance;
-        }
-
-        let textCoords;
-
-        if (!data.handles.textBox.hasMoved) {
-          textCoords = {
-            x: handleCanvas.x - textWidth / 2 + distance,
-            y: handleCanvas.y - textHeight / 2
-          };
-
-          const transform = cornerstone.internal.getTransform(enabledElement);
-
-          transform.invert();
-
-          const coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-          data.handles.textBox.x = coords.x;
-          data.handles.textBox.y = coords.y;
-        }
-
-        drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
-          data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
+        drawLinkedTextBox(context, eventData.element, enabledElement, data.handles.textBox, text,
+          data.handles, textBoxAnchorPoints, textBoxCoords, color, 0, false);
       }
     });
+  }
+
+  function textBoxCoords (context, element, enabledElement, handles, text) {
+    // Calculate the text coordinates.
+    const handleCanvas = cornerstone.pixelToCanvas(element, handles.end);
+
+    const textWidth = textBoxWidth(context, text);
+    const textHeight = textBoxHeight(context, text);
+    let distance = Math.max(textWidth, textHeight) / 2 + 5;
+
+    if (handleCanvas.x > (context.canvas.width / 2)) {
+      distance = -distance;
+    }
+    const textCoords = {
+      x: handleCanvas.x - textWidth / 2 + distance,
+      y: handleCanvas.y - textHeight / 2
+    };
+
+    const transform = cornerstone.internal.getTransform(enabledElement);
+
+    transform.invert();
+
+    return transform.transformPoint(textCoords.x, textCoords.y);
   }
 
   function textBoxText (data) {

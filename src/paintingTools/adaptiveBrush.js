@@ -3,6 +3,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
+import { getNewContext } from '../util/drawing.js';
 
 // This module is for creating segmentation overlays
 const TOOL_STATE_TOOL_TYPE = 'brush';
@@ -200,7 +201,7 @@ function onImageRendered (e) {
 
   // Draw the hover overlay on top of the pixel data
   const configuration = adaptiveBrush.getConfiguration();
-  const context = eventData.canvasContext;
+  const context = getNewContext(eventData.canvasContext.canvas);
   const color = dragging ? configuration.dragColor : configuration.hoverColor;
   const element = eventData.element;
 
@@ -210,14 +211,9 @@ function onImageRendered (e) {
     currentRadius = configuration.radius;
   }
 
+  const pointerArray = getCircle(currentRadius, rows, columns, x, y);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  if (configuration.active) {
-    const pointerArray = getCircle(currentRadius, rows, columns, x, y);
-
-    drawBrushOnCanvas(pointerArray, context, color, element);
-  }
+  drawBrushOnCanvas(pointerArray, context, color, element);
 }
 
 const adaptiveBrush = brushTool({

@@ -2,7 +2,7 @@ import external from '../externalModules.js';
 import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { getNewContext } from '../util/drawing.js';
 
 function getOrientationMarkers (element) {
@@ -31,31 +31,22 @@ function getOrientationMarkers (element) {
 function getOrientationMarkerPositions (element) {
   const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
-  let coords;
-
-  coords = {
+  const top = {
     x: enabledElement.image.width / 2,
     y: 5
   };
-  const top = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  const bottom = {
     x: enabledElement.image.width / 2,
     y: enabledElement.image.height - 5
   };
-  const bottom = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  const left = {
     x: 5,
     y: enabledElement.image.height / 2
   };
-  const left = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  const right = {
     x: enabledElement.image.width - 10,
     y: enabledElement.image.height / 2
   };
-  const right = cornerstone.pixelToCanvas(element, coords);
 
   return {
     top,
@@ -76,26 +67,23 @@ function onImageRendered (e) {
   }
 
   const coords = getOrientationMarkerPositions(element, markers);
-
   const context = getNewContext(eventData.canvasContext.canvas);
-
   const color = toolColors.getToolColor();
-
   const textWidths = {
-    top: context.measureText(markers.top).width,
-    left: context.measureText(markers.left).width,
-    right: context.measureText(markers.right).width,
-    bottom: context.measureText(markers.bottom).width
+    top: textBoxWidth(context, markers.top, 0),
+    left: textBoxWidth(context, markers.left, 0),
+    right: textBoxWidth(context, markers.right, 0),
+    bottom: textBoxWidth(context, markers.bottom, 0)
   };
 
-  drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);
-  drawTextBox(context, markers.left, coords.left.x - textWidths.left / 2, coords.left.y, color);
+  drawTextBox(context, eventData.element, markers.top, coords.top, -textWidths.top / 2, 0, color);
+  drawTextBox(context, eventData.element, markers.left, coords.left, -textWidths.left / 2, 0, color);
 
   const config = orientationMarkers.getConfiguration();
 
   if (config && config.drawAllMarkers) {
-    drawTextBox(context, markers.right, coords.right.x - textWidths.right / 2, coords.right.y, color);
-    drawTextBox(context, markers.bottom, coords.bottom.x - textWidths.bottom / 2, coords.bottom.y, color);
+    drawTextBox(context, eventData.element, markers.right, coords.right, -textWidths.right / 2, 0, color);
+    drawTextBox(context, eventData.element, markers.bottom, coords.bottom, -textWidths.bottom / 2, 0, color);
   }
 }
 // /////// END IMAGE RENDERING ///////

@@ -1,7 +1,7 @@
 import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, drawLines } from '../util/drawing.js';
 
 const configuration = {
   color: 'white',
@@ -10,12 +10,8 @@ const configuration = {
   shadowBlur: 4
 };
 
-function drawLine (context, startPoint, endPoint) {
-  context.moveTo(startPoint.x, startPoint.y);
-  context.lineTo(endPoint.x, endPoint.y);
-}
-
-function drawVerticalScalebarIntervals (context, imageAttributes) {
+function getVerticalScalebarIntervals (imageAttributes) {
+  const lines = [];
   let i = 0;
 
   while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
@@ -31,20 +27,23 @@ function drawVerticalScalebarIntervals (context, imageAttributes) {
     };
 
     if (i % 5 === 0) {
-
       endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
     } else {
-
       endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
-
+    lines.push({
+      start: startPoint,
+      end: endPoint
+    });
     i++;
   }
+
+  return lines;
 }
 
-function drawHorizontalScalebarIntervals (context, imageAttributes) {
+function getHorizontalScalebarIntervals (imageAttributes) {
+  const lines = [];
   let i = 0;
 
   while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
@@ -65,10 +64,14 @@ function drawHorizontalScalebarIntervals (context, imageAttributes) {
       endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
-
+    lines.push({
+      start: startPoint,
+      end: endPoint
+    });
     i++;
   }
+
+  return lines;
 }
 
 function drawVerticalScalebar (context, imageAttributes) {
@@ -81,13 +84,18 @@ function drawVerticalScalebar (context, imageAttributes) {
     y: imageAttributes.verticalLine.end.y
   };
 
-  const { color, lineWidth } = imageAttributes;
+  const options = {
+    color: imageAttributes.color,
+    lineWidth: imageAttributes.lineWidth
+  };
+  const lines = getVerticalScalebarIntervals(imageAttributes);
 
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawLine(context, startPoint, endPoint);
-    drawVerticalScalebarIntervals(context, imageAttributes);
+  lines.push({
+    start: startPoint,
+    end: endPoint
   });
+
+  drawLines(context, undefined, lines, options);
 }
 
 function drawHorizontalScalebar (context, imageAttributes) {
@@ -99,21 +107,18 @@ function drawHorizontalScalebar (context, imageAttributes) {
     x: imageAttributes.horizontalLine.end.x,
     y: imageAttributes.horizontalLine.end.y
   };
+  const options = {
+    color: imageAttributes.color,
+    lineWidth: imageAttributes.lineWidth
+  };
 
-  drawLine(context, startPoint, endPoint);
-  drawHorizontalScalebarIntervals(context, imageAttributes);
-}
+  const lines = getHorizontalScalebarIntervals(context, imageAttributes);
 
-function drawScalebars (context, imageAttributes) {
-  context.shadowColor = imageAttributes.shadowColor;
-  context.shadowBlur = imageAttributes.shadowBlur;
-  const { color, lineWidth } = imageAttributes;
-
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawVerticalScalebar(context, imageAttributes);
-    drawHorizontalScalebar(context, imageAttributes);
+  lines.push({
+    start: startPoint,
+    end: endPoint
   });
+  drawLines(context, undefined, lines, options);
 }
 
 // Computes the max bound for scales on the image
@@ -151,7 +156,6 @@ function computeScaleBounds (eventData, canvasSize, imageSize, horizontalReducti
 // /////// BEGIN IMAGE RENDERING ///////
 function onImageRendered (e) {
   const eventData = e.detail;
-
   const context = getNewContext(eventData.canvasContext.canvas);
   const { image, viewport } = eventData;
   const cornerstone = external.cornerstone;
@@ -174,8 +178,8 @@ function onImageRendered (e) {
   }
 
   const canvasSize = {
-    width: context.canvas.width,
-    height: context.canvas.height
+    width: eventData.canvasContext.canvas.width,
+    height: eventData.canvasContext.canvas.height
   };
   const imageSize = {
     width: image.width,
@@ -224,8 +228,12 @@ function onImageRendered (e) {
     }
   }, configuration);
 
+  context.shadowColor = imageAttributes.shadowColor;
+  context.shadowBlur = imageAttributes.shadowBlur;
+
   draw(context, (context) => {
-    drawScalebars(context, imageAttributes);
+    drawVerticalScalebar(context, imageAttributes);
+    drawHorizontalScalebar(context, imageAttributes);
   });
 }
 // /////// END IMAGE RENDERING ///////

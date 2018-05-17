@@ -1,13 +1,12 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import clip from '../util/clip.js';
-import { draw, path, setShadow } from '../util/drawing.js';
+import { draw, setShadow, getNewContext, drawRect } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -217,8 +216,7 @@ function dragCallback (e) {
 function onImageRendered (e) {
   const eventData = e.detail;
   const element = eventData.element;
-  const context = eventData.canvasContext;
-  const cornerstone = external.cornerstone;
+  const context = getNewContext(eventData.canvasContext.canvas);
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -232,30 +230,14 @@ function onImageRendered (e) {
     return;
   }
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
   // Set to the active tool color
   const color = toolColors.getActiveColor();
-
-  // Calculate the rectangle parameters
-  const startPointCanvas = cornerstone.pixelToCanvas(element, startPoint);
-  const endPointCanvas = cornerstone.pixelToCanvas(element, endPoint);
-
-  const left = Math.min(startPointCanvas.x, endPointCanvas.x);
-  const top = Math.min(startPointCanvas.y, endPointCanvas.y);
-  const width = Math.abs(startPointCanvas.x - endPointCanvas.x);
-  const height = Math.abs(startPointCanvas.y - endPointCanvas.y);
-
-  const lineWidth = toolStyle.getToolWidth();
   const config = wwwcRegion.getConfiguration();
 
   // Draw the rectangle
   draw(context, (context) => {
     setShadow(context, config);
-    path(context, { color,
-      lineWidth }, (context) => {
-      context.rect(left, top, width, height);
-    });
+    drawRect(context, element, startPoint, endPoint, { color });
   });
 }
 

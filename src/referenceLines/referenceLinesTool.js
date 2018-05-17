@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'referenceLines';
 
@@ -22,7 +23,7 @@ function onImageRendered (e) {
   const renderer = toolData.data[0].renderer;
 
   // Create the canvas context and reset it to the pixel coordinate system
-  const context = eventData.canvasContext.canvas.getContext('2d');
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 

@@ -4,12 +4,12 @@ import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth, textBoxHeight } from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolOptions } from '../toolOptions.js';
-import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
+import { getNewContext, draw, drawCircle, setShadow } from '../util/drawing.js';
 
 const toolType = 'dragProbe';
 
@@ -18,59 +18,46 @@ let dragEventData;
 function defaultStrategy (eventData) {
   const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(eventData.element);
-
   const context = getNewContext(enabledElement.canvas);
-
   const color = toolColors.getActiveColor();
-  const font = textStyle.getFont();
   const fontHeight = textStyle.getFontSize();
   const config = dragProbe.getConfiguration();
-
   const x = Math.round(eventData.currentPoints.image.x);
   const y = Math.round(eventData.currentPoints.image.y);
 
   if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
     return;
   }
+  let str;
+  const text = `${x}, ${y}`;
+
+  if (eventData.image.color) {
+    const rgbPixels = getRGBPixels(eventData.element, x, y, 1, 1);
+
+    str = `R: ${rgbPixels[0]} G: ${rgbPixels[1]} B: ${rgbPixels[2]} A: ${rgbPixels[3]}`;
+  } else {
+    const storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+    const sp = storedPixels[0];
+    const mo = sp * eventData.image.slope + eventData.image.intercept;
+    const suv = calculateSUV(eventData.image, sp);
+
+    // Draw text
+    str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
+    if (suv) {
+      str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
+    }
+  }
+  // Draw text
+  const coords = {
+    // Translate the x/y away from the cursor
+    x: eventData.currentPoints.image.x + 3,
+    y: eventData.currentPoints.image.y - 3
+  };
 
   draw(context, (context) => {
     setShadow(context, config);
-
-    let storedPixels;
-    let text,
-      str;
-
-    if (eventData.image.color) {
-      storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
-      text = `${x}, ${y}`;
-      str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]} A: ${storedPixels[3]}`;
-    } else {
-      storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-      const sp = storedPixels[0];
-      const mo = sp * eventData.image.slope + eventData.image.intercept;
-      const suv = calculateSUV(eventData.image, sp);
-
-      // Draw text
-      text = `${x}, ${y}`;
-      str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
-      if (suv) {
-        str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
-      }
-    }
-
-    // Draw text
-    const coords = {
-      // Translate the x/y away from the cursor
-      x: eventData.currentPoints.image.x + 3,
-      y: eventData.currentPoints.image.y - 3
-    };
-    const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-    context.font = font;
-    context.fillStyle = color;
-
-    drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-    drawTextBox(context, text, textCoords.x, textCoords.y, color);
+    drawTextBox(context, eventData.element, str, coords, 0, fontHeight + 5, color, { pixelCoords: false });
+    drawTextBox(context, eventData.element, text, coords, 0, 0, color, { pixelCoords: false });
   });
 }
 
@@ -79,12 +66,15 @@ function minimalStrategy (eventData) {
   const element = eventData.element;
   const enabledElement = cornerstone.getEnabledElement(element);
   const image = enabledElement.image;
-
   const context = getNewContext(enabledElement.canvas);
-
   const color = toolColors.getActiveColor();
-  const font = textStyle.getFont();
   const config = dragProbe.getConfiguration();
+  const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  let modality;
+
+  if (seriesModule) {
+    modality = seriesModule.modality;
+  }
 
   let toolCoords;
 
@@ -96,24 +86,11 @@ function minimalStrategy (eventData) {
       eventData.currentPoints.page.y - textStyle.getFontSize() / 2);
   }
 
-  if (toolCoords.x < 0 || toolCoords.y < 0 ||
-    toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
-    return;
-  }
+  let storedPixels;
+  let text = '';
 
-  draw(context, (context) => {
-    setShadow(context, config);
-
-    const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-    let modality;
-
-    if (seriesModule) {
-      modality = seriesModule.modality;
-    }
-
-    let storedPixels;
-    let text = '';
-
+  if (!(toolCoords.x < 0 || toolCoords.y < 0 ||
+        toolCoords.x >= image.columns || toolCoords.y >= image.rows)) {
     if (image.color) {
       storedPixels = getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
       text = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
@@ -139,34 +116,28 @@ function minimalStrategy (eventData) {
     }
 
     // Prepare text
-    const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
-
-    context.font = font;
-    context.fillStyle = color;
-
+    const handleRadius = 6;
     // Translate the x/y away from the cursor
     let translation;
-    const handleRadius = 6;
-    const width = context.measureText(text).width;
 
-    if (eventData.isTouchEvent === true) {
+    if (eventData.isTouchEvent) {
       translation = {
-        x: -width / 2 - 5,
-        y: -textStyle.getFontSize() - 10 - 2 * handleRadius
+        x: -textBoxWidth(context, text),
+        y: -textBoxHeight(context, text) - 2 * handleRadius
       };
     } else {
       translation = {
         x: 12,
-        y: -(textStyle.getFontSize() + 10) / 2
+        y: -textBoxHeight(context, text) / 2
       };
     }
 
-    path(context, { color }, (context) => {
-      context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+    draw(context, (context) => {
+      setShadow(context, config);
+      drawCircle(context, element, toolCoords, handleRadius, { color });
+      drawTextBox(context, element, text, toolCoords, translation.x, translation.y, color);
     });
-
-    drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
-  });
+  }
 }
 
 function mouseUpCallback (e) {

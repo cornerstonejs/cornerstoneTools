@@ -17,7 +17,12 @@ function onImageRendered (e) {
     textLines.push(text);
   });
 
-  drawTextBox(context, textLines, 0, 0, 'orange');
+  const coords = {
+    x: 0,
+    y: 0
+  };
+
+  drawTextBox(context, eventData.element, textLines, coords, 0, 0, 'orange', { pixelCoords: false });
 
   textLines.forEach(function (text) {
     console.log(text);

@@ -1,10 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import roundToDecimal from '../util/roundToDecimal.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import textStyle from '../stateManagement/textStyle.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
@@ -14,6 +11,7 @@ import touchTool from './touchTool.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 
 const toolType = 'simpleAngle';
@@ -68,10 +66,6 @@ function pointNearTool (element, data, coords) {
     lineSegDistance(element, data.handles.middle, data.handles.end, coords) < 25;
 }
 
-function length (vector) {
-  return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
-}
-
 // /////// BEGIN IMAGE RENDERING ///////
 function onImageRendered (e) {
   const eventData = e.detail;
@@ -88,8 +82,6 @@ function onImageRendered (e) {
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = simpleAngle.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -99,93 +91,51 @@ function onImageRendered (e) {
       continue;
     }
 
+    // Differentiate the color of activation tool
+    const color = toolColors.getColorIfActive(data);
+    // Default to isotropic pixel size, update suffix to reflect this
+    const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+    const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+
+    const handleOptions = {
+      drawHandlesIfActive: (config && config.drawHandlesOnHover)
+    };
+
+    const text = textBoxText(data, rowPixelSpacing, columnPixelSpacing);
+
     draw(context, (context) => {
       setShadow(context, config);
-
-      // Differentiate the color of activation tool
-      const color = toolColors.getColorIfActive(data);
-
-      const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-      const handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
-
       drawJoinedLines(context, eventData.element, data.handles.start, [data.handles.middle, data.handles.end], { color });
-
-      // Draw the handles
-      const handleOptions = {
-        drawHandlesIfActive: (config && config.drawHandlesOnHover)
-      };
-
-      drawHandles(context, eventData, data.handles, color, handleOptions);
-
-      // Draw the text
-      context.fillStyle = color;
-
-      // Default to isotropic pixel size, update suffix to reflect this
-      const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-      const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-
-      const sideA = {
-        x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-        y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-      };
-
-      const sideB = {
-        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
-        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
-      };
-
-      const sideC = {
-        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-      };
-
-      const sideALength = length(sideA);
-      const sideBLength = length(sideB);
-      const sideCLength = length(sideC);
-
-      // Cosine law
-      let angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
-
-      angle *= (180 / Math.PI);
-
-      data.rAngle = roundToDecimal(angle, 2);
-
-      if (data.rAngle) {
-        const text = textBoxText(data, eventData.image.rowPixelSpacing, eventData.image.columnPixelSpacing);
-
-        const distance = 15;
-
-        let textCoords;
-
-        if (!data.handles.textBox.hasMoved) {
-          textCoords = {
-            x: handleMiddleCanvas.x,
-            y: handleMiddleCanvas.y
-          };
-
-          context.font = font;
-          const textWidth = context.measureText(text).width;
-
-          if (handleMiddleCanvas.x < handleStartCanvas.x) {
-            textCoords.x -= distance + textWidth + 10;
-          } else {
-            textCoords.x += distance;
-          }
-
-          const transform = cornerstone.internal.getTransform(enabledElement);
-
-          transform.invert();
-
-          const coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-          data.handles.textBox.x = coords.x;
-          data.handles.textBox.y = coords.y;
-        }
-
-        drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
-          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+      drawHandles(context, eventData.element, data.handles, color, handleOptions);
+      if (text) {
+        drawLinkedTextBox(context, eventData.element, enabledElement, data.handles.textBox, text,
+          data.handles, textBoxAnchorPoints, textBoxCoords, textBoxCoords, color, 0, true);
       }
     });
+  }
+
+  function textBoxCoords (context, element, enabledElement, handles, text) {
+    const distance = 15;
+
+    const handleStartCanvas = cornerstone.pixelToCanvas(element, handles.start);
+    const handleMiddleCanvas = cornerstone.pixelToCanvas(element, handles.middle);
+
+    const textCoords = {
+      x: handleMiddleCanvas.x,
+      y: handleMiddleCanvas.y
+    };
+
+    if (handleMiddleCanvas.x < handleStartCanvas.x) {
+      textCoords.x -= distance + textBoxWidth(context, text);
+    } else {
+      textCoords.x += distance;
+    }
+
+    const transform = cornerstone.internal.getTransform(enabledElement);
+
+    transform.invert();
+
+    return transform.transformPoint(textCoords.x, textCoords.y);
   }
 
   function textBoxText (data, rowPixelSpacing, columnPixelSpacing) {

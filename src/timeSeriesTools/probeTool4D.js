@@ -4,9 +4,8 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import MeasurementManager from '../measurementManager/measurementManager.js';
 import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
-import textStyle from '../stateManagement/textStyle.js';
 import drawTextBox from '../util/drawTextBox.js';
-import { draw, path } from '../util/drawing.js';
+import { draw, getNewContext } from '../util/drawing.js';
 
 const toolType = 'probe4D';
 
@@ -69,7 +68,6 @@ function createNewMeasurement (mouseEventData) {
 // /////// BEGIN IMAGE RENDERING ///////
 
 function onImageRendered (e) {
-  const cornerstone = external.cornerstone;
   const eventData = e.detail;
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
@@ -79,35 +77,21 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext;
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
+  const context = getNewContext(eventData.canvasContext.canvas);
   const color = 'white';
-  const font = textStyle.getFont();
 
   for (let i = 0; i < toolData.data.length; i++) {
+    const data = toolData.data[i];
+    const coords = {
+      // Translate the x/y away from the cursor
+      x: data.handles.end.x + 3,
+      y: data.handles.end.y - 3
+    };
+    const text = `${data.handles.end.x}, ${data.handles.end.y}`;
+
     draw(context, (context) => {
-      const data = toolData.data[i];
-
-      // Draw the handles
-      path(context, {}, (context) => {
-        drawHandles(context, eventData, data.handles, color);
-      });
-
-      context.font = font;
-
-      const coords = {
-        // Translate the x/y away from the cursor
-        x: data.handles.end.x + 3,
-        y: data.handles.end.y - 3
-      };
-
-      const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-      context.fillStyle = color;
-
-      drawTextBox(context, `${data.handles.end.x}, ${data.handles.end.y}`, textCoords.x, textCoords.y, color);
+      drawHandles(context, eventData.element, data.handles, color);
+      drawTextBox(context, eventData.element, text, coords, 0, 0, color);
     });
   }
 }
