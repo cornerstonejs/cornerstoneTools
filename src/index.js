@@ -6,6 +6,20 @@ export { default as orientation } from './orientation/index.js';
 
 export { default as requestPoolManager } from './requestPool/requestPoolManager.js';
 
+export {
+  getNewContext,
+  draw,
+  path,
+  setShadow,
+  drawLine,
+  drawLines,
+  drawJoinedLines,
+  drawCircle,
+  drawEllipse,
+  drawRect,
+  fillBox,
+  fillTextLines } from './util/drawing.js';
+
 export { default as setContextToDisplayFontSize } from './util/setContextToDisplayFontSize.js';
 export { default as scrollToIndex } from './util/scrollToIndex.js';
 export { default as scroll } from './util/scroll.js';
@@ -26,8 +40,6 @@ export { getDefaultSimultaneousRequests,
 
 export { default as getLuminance } from './util/getLuminance.js';
 export { default as drawTextBox } from './util/drawTextBox.js';
-export { default as drawEllipse } from './util/drawEllipse.js';
-export { default as drawCircle } from './util/drawCircle.js';
 export { default as drawArrow } from './util/drawArrow.js';
 export { default as copyPoints } from './util/copyPoints.js';
 export { default as calculateSUV } from './util/calculateSUV.js';
