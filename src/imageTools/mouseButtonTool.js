@@ -84,8 +84,10 @@ export default function (mouseToolInterface) {
     const element = eventData.element;
     const options = getToolOptions(toolType, element);
 
-    if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-      return;
+    if (eventData.which !== 3) {
+      if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+        return;
+      }
     }
 
     function handleDoneMove () {
@@ -117,6 +119,7 @@ export default function (mouseToolInterface) {
     } else {
       preventHandleOutsideImage = false;
     }
+
 
     for (i = 0; i < toolData.data.length; i++) {
       data = toolData.data[i];

@@ -50,6 +50,9 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
   const cornerstone = external.cornerstone;
 
   const lineSegment = {
@@ -139,10 +142,15 @@ function onImageRendered (e) {
 
     // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
     // Where lines cross to measure angle. For now it will show smallest angle.
-    const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-    const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
-    const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
-    const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
+    const pixelSpacing = eventData.image.data.string('x00181164');
+    const pixelSpacings = pixelSpacing && pixelSpacing.split('\\');
+    const columnPixelSpacing = eventData.image.columnPixelSpacing ? new Number(eventData.image.columnPixelSpacing) : (pixelSpacings ? new Number(pixelSpacings[0]) : 0),
+      rowPixelSpacing = eventData.image.rowPixelSpacing ? new Number(eventData.image.rowPixelSpacing) : (pixelSpacings ? new Number(pixelSpacings[1]) : 0);
+
+    const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
+    const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
+    const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
+    const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
 
     let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
 

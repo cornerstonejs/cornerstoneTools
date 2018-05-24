@@ -5,7 +5,7 @@
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
 
@@ -171,6 +171,7 @@
         // Switch images, if necessary
         if(newImageIdIndex !== stackData.currentImageIdIndex && stackData.imageIds[newImageIdIndex] !== undefined) {
             cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]).then(function(image) {
+                console.log('1111')
                 var viewport = cornerstone.getViewport(targetElement);
                 stackData.currentImageIdIndex = newImageIdIndex;
                 cornerstone.displayImage(targetElement, image, viewport);
@@ -194,9 +195,12 @@
         cornerstoneTools.addToolState(element, 'stack', stack);
 
         // Enable all tools we want to use with this element
-        cornerstoneTools.stackScroll.activate(element, 1);
+        cornerstoneTools.wwwc.activate(element, 1);
         cornerstoneTools.stackScrollWheel.activate(element);
 
+        // cornerstoneTools.scrollIndicator.setConfiguration({
+        //     orientation: 'vertical'
+        // })
         cornerstoneTools.scrollIndicator.enable(element);
 
         function activate(id) {

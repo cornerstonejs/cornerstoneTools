@@ -27,7 +27,8 @@ export default function (context, renderData, handles, color, options) {
 
     const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
 
-    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+    context.rect(handleCanvasCoords.x - 1, handleCanvasCoords.y - 1, 2, 2);
+    // Context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
 
     if (options && options.fill) {
       context.fillStyle = options.fill;

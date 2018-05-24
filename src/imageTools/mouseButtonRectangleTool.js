@@ -105,6 +105,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
     function handleDoneMove () {
       data.active = false;
+
       if (anyHandlesOutsideImage(eventData, data.handles)) {
         // Delete the measurement
         removeToolState(eventData.element, toolType, data);

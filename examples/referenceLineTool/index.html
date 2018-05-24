@@ -5,7 +5,7 @@
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 
     <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../bootstrap.min.css" rel="stylesheet">
 
     <link href="../cornerstone.min.css" rel="stylesheet">
 
@@ -72,7 +72,7 @@
 
     var axialImageIds = [
         'example://1',
-        'example://2'
+        'example://2',
     ];
 
     var axialStack = {
@@ -101,6 +101,7 @@
         // Enable all tools we want to use with this element
         cornerstoneTools.pan.activate(axialElement, 1);
         cornerstoneTools.zoom.activate(axialElement, 4);
+        cornerstoneTools.wwwc.activate(axialElement, 1);
         cornerstoneTools.stackScrollWheel.activate(axialElement);
 
         // Add the enabled elements to the synchronization context
@@ -121,27 +122,27 @@
         cornerstoneTools.referenceLines.tool.enable(coronalElement, synchronizer);
     });
 
-    Promise.all([axialPromise, coronalPromise]).then(function() {
-        function activate(id) {
-            document.querySelectorAll('a').forEach(function(elem) {
-              elem.classList.remove('active');
-            });
-            document.getElementById(id).classList.add('active');
-        }
+    // Promise.all([axialPromise, coronalPromise]).then(function() {
+    //     function activate(id) {
+    //         document.querySelectorAll('a').forEach(function(elem) {
+    //           elem.classList.remove('active');
+    //         });
+    //         document.getElementById(id).classList.add('active');
+    //     }
 
-        document.getElementById('enable').addEventListener('click', function() {
-            activate("enable");
-            cornerstoneTools.referenceLines.tool.enable(coronalElement);
-            cornerstoneTools.referenceLines.tool.enable(axialElement);
-            return false;
-        });
-        document.getElementById('disable').addEventListener('click', function() {
-            activate("disable");
-            cornerstoneTools.referenceLines.tool.disable(coronalElement);
-            cornerstoneTools.referenceLines.tool.disable(axialElement);
-            return false;
-        });
-    });
+    //     document.getElementById('enable').addEventListener('click', function() {
+    //         activate("enable");
+    //         cornerstoneTools.referenceLines.tool.enable(coronalElement);
+    //         cornerstoneTools.referenceLines.tool.enable(axialElement);
+    //         return false;
+    //     });
+    //     document.getElementById('disable').addEventListener('click', function() {
+    //         activate("disable");
+    //         cornerstoneTools.referenceLines.tool.disable(coronalElement);
+    //         cornerstoneTools.referenceLines.tool.disable(axialElement);
+    //         return false;
+    //     });
+    // });
 
 
 

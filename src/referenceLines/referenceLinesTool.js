@@ -4,6 +4,7 @@ import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
 const toolType = 'referenceLines';
+let currentElement;
 
 function onImageRendered (e) {
   const eventData = e.detail;
@@ -11,13 +12,9 @@ function onImageRendered (e) {
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(e.currentTarget, toolType);
 
-  if (toolData === undefined) {
+  if (toolData === undefined || toolData.data[0] === undefined) {
     return;
   }
-
-  // Get the enabled elements associated with this synchronization context and draw them
-  const syncContext = toolData.data[0].synchronizationContext;
-  const enabledElements = syncContext.getSourceElements();
 
   const renderer = toolData.data[0].renderer;
 
@@ -26,24 +23,16 @@ function onImageRendered (e) {
 
   external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
 
-  // Iterate over each referenced element
-  enabledElements.forEach((referenceEnabledElement) => {
-
-    // Don't draw ourselves
-    if (referenceEnabledElement === e.currentTarget) {
-      return;
-    }
-
-    // Render it
-    renderer(context, eventData, e.currentTarget, referenceEnabledElement);
-  });
+  // Render it
+  renderer(context, eventData, e.currentTarget, currentElement);
 }
 
 // Enables the reference line tool for a given element.  Note that a custom renderer
 // Can be provided if you want different rendering (e.g. all reference lines, first/last/active, etc)
-function enable (element, synchronizationContext, renderer) {
+function enable (element, synchronizationContext, activeElement, renderer) {
   renderer = renderer || renderActiveReferenceLine;
 
+  currentElement = activeElement;
   addToolState(element, toolType, {
     synchronizationContext,
     renderer

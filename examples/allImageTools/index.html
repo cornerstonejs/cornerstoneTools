@@ -121,6 +121,8 @@
 
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
+    element.addEventListener('cornerstonetoolsmeasurementadded', function (e) {
+    })
     var imageId = 'example://1';
 
     var config = {
@@ -140,7 +142,7 @@
 
     // image enable the dicomImage element
     cornerstone.enable(element);
-    cornerstone.loadImage(imageId).then(function(image) {
+    cornerstone.loadAndCacheImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
         cornerstoneTools.mouseInput.enable(element);
         cornerstoneTools.mouseWheelInput.enable(element);
@@ -155,6 +157,7 @@
         cornerstoneTools.rectangleRoi.enable(element);
         cornerstoneTools.angle.enable(element);
         cornerstoneTools.highlight.enable(element);
+        cornerstoneTools.freehand.enable(element);
 
         activate("enableWindowLevelTool");
 
@@ -231,6 +234,10 @@
         document.getElementById('freehand').addEventListener('click', function() {
             activate('freehand')
             disableAllTools();
+            let config = Object.assign(cornerstoneTools.freehand.getConfiguration(), {
+                drawHandlesOnHover: true
+            })
+            cornerstoneTools.freehand.setConfiguration(config)
             cornerstoneTools.freehand.activate(element, 1);
         });
     });

@@ -7,9 +7,9 @@ Display scroll progress bar across bottom of image.
 const scrollBarHeight = 6;
 
 const configuration = {
-  backgroundColor: 'rgb(19, 63, 141)',
+  backgroundColor: '#545454',
   fillColor: 'white',
-  orientation: 'horizontal'
+  orientation: 'vertical'
 };
 
 function onImageRendered (e) {
@@ -34,7 +34,7 @@ function onImageRendered (e) {
   if (config.orientation === 'horizontal') {
     context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
   } else {
-    context.fillRect(0, 0, scrollBarHeight, height);
+    context.fillRect(width - scrollBarHeight, 0, scrollBarHeight, height);
   }
 
   // Get current image index
@@ -57,7 +57,7 @@ function onImageRendered (e) {
   if (config.orientation === 'horizontal') {
     context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
   } else {
-    context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+    context.fillRect(width - scrollBarHeight, yPosition, scrollBarHeight, cursorHeight);
   }
 
   context.restore();

@@ -96,7 +96,30 @@ function addPoint (eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-function pointNearTool (eventData, toolIndex) {
+function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
+  for (let i = 0; i < data.handles.length; i++) {
+    const lineSegment = {
+      start: external.cornerstone.pixelToCanvas(element, {
+        x: data.handles[i].x,
+        y: data.handles[i].y
+      }),
+      end: external.cornerstone.pixelToCanvas(element, data.handles[i].lines[0])
+    };
+    const distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+
+    if (distanceToPoint < 25) {
+      return true;
+    }
+  }
+
+  return false;
+}
+
+function pointNearTool2 (eventData, toolIndex) {
   const isPointNearTool = pointNearHandle(eventData, toolIndex);
 
   // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
@@ -118,6 +141,10 @@ function pointNearHandle (eventData, toolIndex) {
 
   if (data.handles === undefined) {
     return;
+  }
+
+  if (data.visible === false) {
+    return false;
   }
 
   const mousePoint = eventData.currentPoints.canvas;
@@ -359,7 +386,7 @@ function mouseHover (eventData, toolData) {
       imageNeedsUpdate = true;
     }
 
-    if ((pointNearTool(eventData, i) && !data.active) || (!pointNearTool(eventData, i) && data.active)) {
+    if ((pointNearTool2(eventData, i) && !data.active) || (!pointNearTool2(eventData, i) && data.active)) {
       if (!data.lockedForEditing) {
         data.active = !data.active;
         imageNeedsUpdate = true;
@@ -887,7 +914,8 @@ const freehand = {
   activate,
   deactivate,
   getConfiguration,
-  setConfiguration
+  setConfiguration,
+  pointNearTool
 };
 
 export { freehand };

@@ -34,6 +34,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
 
