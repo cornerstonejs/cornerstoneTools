@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.5] - 2018-05-28
+### Changed
+- Updated package.json dependencies to latest versions
+
+### Fixed
+- Fixed saveAs for Internet Explorer by adding canvas.msToBlob. Note that for some reason this appears to be lower quality than on other browsers. We may need to implement another approach.
+
 ## [2.3.4] - 2018-05-28
 ### Changed
 - Refactoring / cleanup of tools to clarify how to create new tools.
