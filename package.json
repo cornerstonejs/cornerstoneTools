@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.min.js",
   "keywords": [
