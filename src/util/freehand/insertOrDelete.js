@@ -3,8 +3,18 @@ import { FreehandHandleData } from './FreehandHandleData.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 
+/**
+* @author JamesAPetts
+*/
+
 const toolType = 'freehand';
 
+/**
+* Inserts or deletes a point from a freehand tool.
+*
+* @param {Object} e - The event.
+* @param {Object} nearby - Object containing information about a nearby handle.
+*/
 export default function (e, nearby) {
   const eventData = e.detail;
 
@@ -28,7 +38,12 @@ export default function (e, nearby) {
   e.stopPropagation();
 }
 
-
+/**
+* Deletes a point from a freehand tool.
+*
+* @param {Object} eventData - The data object associated with the event.
+* @param {Object} deleteInfo - Object containing information about which point to delete.
+*/
 function deletePoint (eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -70,7 +85,12 @@ function deletePoint (eventData, deleteInfo) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-
+/**
+* Inserts a new point into a freehand tool.
+*
+* @param {Object} eventData - The data object associated with the event.
+* @param {Object} insertInfo - Object containing information about where to insert the point.
+*/
 function insertPoint (eventData, insertInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -111,6 +131,11 @@ function insertPoint (eventData, insertInfo) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* Gets the handle index of a tool in which to insert the new point.
+*
+* @param {Object} insertInfo - Object containing information about where to insert the point.
+*/
 function getInsertionIndex (insertInfo) {
   // Get lowest index that isn't zero
   const handleIndexArray = insertInfo.handleIndexArray;

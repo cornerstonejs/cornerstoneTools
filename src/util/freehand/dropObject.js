@@ -1,5 +1,16 @@
 import { freehand } from '../../imageTools/freehand.js';
 
+/**
+ * @author JamesAPetts
+ */
+
+/**
+* Places part of the freehand tool when the mouse button is released.
+*
+* @param {Object} e - The event.
+* @param {Object} toolData - The data associated with the freehand tool.
+* @modifies {toolData}
+*/
 export default function (e, toolData) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
@@ -20,6 +31,13 @@ export default function (e, toolData) {
   return null;
 }
 
+/**
+* Places a freehand tool's textBox.
+*
+* @param {Object} eventData - Data object associated with the event.
+* @param {Object} toolData - The data associated with the freehand tool.
+* @modifies {toolData}
+*/
 function dropTextbox (eventData, toolData) {
   const config = freehand.getConfiguration();
 
@@ -29,6 +47,14 @@ function dropTextbox (eventData, toolData) {
   config.currentTool = -1;
 }
 
+/**
+* Places a handle of the freehand tool if the new location is valid.
+* If the new location is invalid the handle snaps back to its previous position.
+*
+* @param {Object} eventData - Data object associated with the event.
+* @param {Object} toolData - The data associated with the freehand tool.
+* @modifies {toolData}
+*/
 function dropHandle (eventData, toolData) {
   const config = freehand.getConfiguration();
   const currentTool = config.currentTool;

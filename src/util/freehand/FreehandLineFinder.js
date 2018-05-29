@@ -1,10 +1,26 @@
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 
+/**
+* @author JamesAPetts
+*/
+
 const toolType = 'freehand';
 const distanceThreshold = 10;
 
+/**
+ * @typedef {Object} ClickedLineData
+ * @property {Number} toolIndex ID of the tool that the line corresponds to.
+ * @property {Object} handleIndexArray An array of the handle indicies that correspond to the line segment.
+ */
 class ClickedLineData {
+
+  /**
+  * Constructs an object containing information about the clicked line.
+  *
+  * @param {Number} toolIndex - The ID of the tool the line corresponds to.
+  * @param {Object} handleIndexArray - An array of the handle indicies that correspond to the line segment.
+  */
   constructor (toolIndex, handleIndexArray) {
     this.toolIndex = toolIndex;
     this.handleIndexArray = handleIndexArray;
@@ -14,10 +30,20 @@ class ClickedLineData {
 export class FreehandLineFinder {
   /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */
 
+  /**
+  * Constructs a linefinder with the eventdata
+  *
+  * @param {Object} eventData - Data object associated with the event.
+  */
   constructor (eventData) {
     this._eventData = eventData;
   }
 
+  /**
+  * Looks for lines near the mouse cursor.
+  *
+  *  @return {ClickedLineData}
+  */
   findLine () {
     this._toolData = getToolState(this._eventData.element, toolType);
     this._mousePoint = this._eventData.currentPoints.canvas;
@@ -42,6 +68,11 @@ export class FreehandLineFinder {
     return null;
   }
 
+  /**
+  * Finds the nearest handle to the mouse cursor for all tools.
+  *
+  * @return {Object} closestHandle - The handle closest to the point.
+  */
   _nearestHandleToPointAllTools () {
     const toolData = this._toolData;
 
@@ -66,6 +97,12 @@ export class FreehandLineFinder {
     return closestHandle;
   }
 
+  /**
+  * Finds the nearest handle to the mouse cursor for a specific tool.
+  *
+  * @param {Number} toolIndex - The index of the particular freehand tool.
+  * @return {Object} An object containing information about the closest handle.
+  */
   _nearestHandleToPoint (toolIndex) {
     const eventData = this._eventData;
     const toolData = this._toolData;
@@ -99,6 +136,12 @@ export class FreehandLineFinder {
     return closest;
   }
 
+  /**
+  * Finds all the lines close to the mouse point for a particular tool.
+  *
+  * @param {Number} toolIndex - The index of the particular freehand tool.
+  * @return {Object} An array of lines close to the mouse point.
+  */
   _getCloseLinesInTool (toolIndex) {
     const toolData = this._toolData;
     const dataHandles = toolData.data[toolIndex].handles;
@@ -120,6 +163,13 @@ export class FreehandLineFinder {
     return closeLines;
   }
 
+  /**
+  * Finds the line the user clicked on from an array of close lines.
+  *
+  * @param {Number} toolIndex - The index of the particular freehand tool.
+  * @param {Object} closeLines - An array of lines close to the mouse point.
+  * @return {ClickedLineData|null} An instance of ClickedLineData containing information about the line, or null if no line is correct.
+  */
   _findCorrectLine (toolIndex, closeLines) {
     // Test if any candidate lines can be projected onto by the mousePoint
     for (let i = 0; i < closeLines.length; i++) {
@@ -132,6 +182,13 @@ export class FreehandLineFinder {
     return null;
   }
 
+  /**
+  * Returns true if the mouse point projects onto the line segment.
+  *
+  * @param {Number} toolIndex - The index of the particular freehand tool.
+  * @param {Object} handleIndexArray - An array of indicies corresponding to the line segment.
+  * @return {Boolean} True if the mouse point projects onto the line segment
+  */
   _pointProjectsToLineSegment (toolIndex, handleIndexArray) {
     const eventData = this._eventData;
     const toolData = this._toolData;
@@ -163,6 +220,14 @@ export class FreehandLineFinder {
     return false;
   }
 
+  /**
+  * Returns the canvas positions from the handle's pixel positions.
+  *
+  * @param {FreehandHandleData} handle1 - The first handle.
+  * @param {FreehandHandleData} handle2 - The second handle.
+  * @param {Object} element - The element on which the handles reside.
+  * @return {Object} An array contsining the handle positions in canvas coordinates.
+  */
   static getCanvasPointsFromHandles (handle1, handle2, element) {
     const p = [];
 
@@ -178,6 +243,12 @@ export class FreehandLineFinder {
     return p;
   }
 
+  /**
+  * Converts a line segment to a vector.
+  *
+  * @param {Object} p - An array of two points respresenting the line segment.
+  * @return {Object} An array containing the x and y components of the vector, as well as a magnitude property.
+  */
   static getLineAsVector (p) {
     const r = [
       p[1].x - p[0].x,
@@ -189,6 +260,12 @@ export class FreehandLineFinder {
     return r;
   }
 
+  /**
+  * Constructs a vector from the direction and magnitude of the line from the the line origin to the mouse cursor.
+  *
+  * @param {Object} p - An array of two points respresenting the line segment.
+  * @return {Object} An array containing the x and y components of the vector.
+  */
   _getLineOriginToMouseAsVector (p) {
     const m = [
       this._mousePoint.x - p[0].x,
@@ -198,7 +275,13 @@ export class FreehandLineFinder {
     return m;
   }
 
-
+  /**
+  * Calculates the perpendicular distance of the mouse cursor from a line segment.
+  *
+  * @param {FreehandHandleData} handle1 - The first handle.
+  * @param {FreehandHandleData} handle2 - The first handle.
+  * @return {Number} The perpendicular distance of the mouse cursor from the line segment.
+  */
   _distanceOfPointfromLine (handle1, handle2) {
     const eventData = this._eventData;
 
@@ -215,6 +298,14 @@ export class FreehandLineFinder {
     return d;
   }
 
+
+  /**
+  * Gets the next handl index from a cyclical array of points.
+  *
+  * @param {Number} currentIndex - The current index.
+  * @param {Number} length - The number of handles in the polygon.
+  * @return {Number} The index of the next handle.
+  */
   static getNextHandleIndex (currentIndex, length) {
     let nextIndex;
 

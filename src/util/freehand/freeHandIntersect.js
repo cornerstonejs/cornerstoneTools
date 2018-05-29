@@ -1,6 +1,16 @@
-// JPETTS orientation algoritm to determine if two lines cross.
-// Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+/**
+* Orientation algoritm to determine if two lines cross.
+* Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+* @author JamesAPetts
+*/
 
+/**
+* Determines whether a new handle causes an intersection of the lines of the polygon.
+*
+* @param {Object} candidateHandle - The new handle to check.
+* @param {Object} dataHandles - data object associated with the tool.
+* @return {Boolean} - Whether the new line intersects with any other lines of the polygon.
+*/
 function newHandle (candidateHandle, dataHandles) {
   // Check if the proposed line will intersect any existent line
   const lastHandleId = dataHandles.length - 1;
@@ -10,8 +20,13 @@ function newHandle (candidateHandle, dataHandles) {
   return doesIntersectOtherLines(dataHandles, lastHandle, newHandle, [lastHandleId]);
 }
 
+/**
+* Checks if the last line of a polygon will intersect the other lines of the polgyon.
+*
+* @param {Object} dataHandles - data object associated with the tool.
+* @return {Boolean} - Whether the last line intersects with any other lines of the polygon.
+*/
 function end (dataHandles) {
-  // Check if the last line will overlap another line.
   const lastHandleId = dataHandles.length - 1;
   const lastHandle = getCoords(dataHandles[lastHandleId]);
   const firstHandle = getCoords(dataHandles[0]);
@@ -19,6 +34,13 @@ function end (dataHandles) {
   return doesIntersectOtherLines(dataHandles, lastHandle, firstHandle, [lastHandleId, 0]);
 }
 
+/**
+* Checks whether the modification of a handle's position causes intersection of the lines of the polygon
+*
+* @param {Object} dataHandles - data object associated with the tool.
+* @param {Number} modifiedHandleId - The id of the handle being modified.
+* @return {Boolean} - Whether the modfication causes any intersections.
+*/
 function modify (dataHandles, modifiedHandleId) {
   // Check if the modifiedHandle's previous and next lines will intersect any other line in the polygon
   const modifiedHandle = getCoords(dataHandles[modifiedHandleId]);
@@ -48,6 +70,15 @@ function modify (dataHandles, modifiedHandleId) {
   return doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [modifiedHandleId, neighborHandleId]);
 }
 
+/**
+* Checks whether the line (p1,q1) intersects any of the other lines in the polygon.
+*
+* @param {Object} dataHandles - data object associated with the tool.
+* @param {Object} p1 - Coordinates of the start of the line.
+* @param {Object} q1 - Coordinates of the end of the line.
+* @param {Object} ignoredHandleIds - Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
+* @return {Boolean} - Whether the line intersects any of the other lines in the polygon.
+*/
 function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
   let j = dataHandles.length - 1;
 
@@ -72,9 +103,16 @@ function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
 
 }
 
+/**
+* Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation algorithm.
+*
+* @param {Object} p1 - Coordinates of the start of the line 1.
+* @param {Object} q1 - Coordinates of the end of the line 1.
+* @param {Object} p1 - Coordinates of the start of the line 2.
+* @param {Object} q1 - Coordinates of the end of the line 2.
+* @return {Boolean} - Whether lines (p1,q1) and (p2,q2) intersect.
+*/
 function doesIntersect (p1, q1, p2, q2) {
-  // Check orientation of points in order to determine
-  // If (p1,q1) and (p2,q2) intersect
   let result = false;
 
   const orient = [
@@ -103,6 +141,12 @@ function doesIntersect (p1, q1, p2, q2) {
   return result;
 }
 
+/*
+* Returns an object with two properties, x and y, from a heavier FreehandHandleData object.
+*
+* @param {Object} dataHandle - data object associated with a single handle in the freehand tool.
+* @return {Object} - An object containing position propeties x and y.
+*/
 function getCoords (dataHandle) {
   return {
     x: dataHandle.x,
@@ -110,6 +154,14 @@ function getCoords (dataHandle) {
   };
 }
 
+/**
+* Checks the orientation of 3 points.
+*
+* @param {Object} p - First point.
+* @param {Object} q - Second point.
+* @param {Object} r - Third point.
+* @return {Number} - 0: Colinear, 1: Clockwise, 2: Anticlockwise
+*/
 function orientation (p, q, r) {
   const orientationValue = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
@@ -117,9 +169,17 @@ function orientation (p, q, r) {
     return 0; // Colinear
   }
 
-  return (orientationValue > 0) ? 1 : 2; // Clockwise or anticlockwise
+  return (orientationValue > 0) ? 1 : 2;
 }
 
+/**
+* Checks if point q lines on the segment (p,r).
+*
+* @param {Object} p - Point p.
+* @param {Object} q - Point q.
+* @param {Object} r - Point r.
+* @return {Boolean} - If q lies on line segment (p,r).
+*/
 function onSegment (p, q, r) {
 
   if (q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) &&

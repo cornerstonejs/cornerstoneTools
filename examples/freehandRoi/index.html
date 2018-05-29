@@ -80,9 +80,10 @@
 
 <script>
     var element = document.getElementById('dicomImage');
+    cornerstoneTools.keyboardInput.enable(element);
 
     var imageId = 'example://1';
-    
+
     cornerstoneTools.toolStyle.setToolWidth(3);
     cornerstoneTools.toolColors.setToolColor("#ffcc33");
     cornerstoneTools.toolColors.setActiveColor("#0099ff");
@@ -93,6 +94,7 @@
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
         cornerstoneTools.mouseInput.enable(element);
+        cornerstoneTools.keyboardInput.enable(element);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.freehand.activate(element, 1);

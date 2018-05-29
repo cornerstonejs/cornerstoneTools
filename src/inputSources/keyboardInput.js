@@ -10,6 +10,8 @@ function keyPress (e) {
   const element = e.currentTarget;
   const enabledElement = cornerstone.getEnabledElement(element);
 
+  console.log('keypressed');
+
   if (!enabledElement.image) {
     return;
   }

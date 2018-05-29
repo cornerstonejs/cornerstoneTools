@@ -43,6 +43,11 @@ let configuration = {
   currentTool: -1
 };
 
+/**
+* Initialises a new freehand data object
+*
+* @return {Object} measurementData - data object
+*/
 function createNewMeasurement () {
   // Create the measurement data for this tool
   const measurementData = {
@@ -64,6 +69,13 @@ function createNewMeasurement () {
   return measurementData;
 }
 
+/**
+* Returns true if the mouse cursor is near a handle
+*
+* @param {Object} eventData - data object associated with an event.
+* @param {Number} toolIndex - the ID of the tool
+* @return {Boolean}
+*/
 function pointNearTool (eventData, toolIndex) {
   const isPointNearTool = pointNearHandle(eventData, toolIndex);
 
@@ -75,18 +87,25 @@ function pointNearTool (eventData, toolIndex) {
   return false;
 }
 
+/**
+* Returns a handle of a particular tool if it is close to the mouse cursor
+*
+* @param {Object} eventData - data object associated with an event.
+* @param {Number} toolIndex - the ID of the tool
+* @return {Number|Object|Boolean}
+*/
 function pointNearHandle (eventData, toolIndex) {
   const toolData = getToolState(eventData.element, toolType);
   const config = freehand.getConfiguration();
 
   if (toolData === undefined) {
-    return;
+    return false;
   }
 
   const data = toolData.data[toolIndex];
 
   if (data.handles === undefined) {
-    return;
+    return false;
   }
 
   if (data.visible === false) {
@@ -110,9 +129,15 @@ function pointNearHandle (eventData, toolIndex) {
     }
   }
 
-  return;
+  return false;
 }
 
+/**
+* Returns a handle if it is close to the mouse cursor (all tools)
+*
+* @param {Object} eventData - data object associated with an event.
+* @return {Object}
+*/
 function pointNearHandleAllTools (eventData) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -135,6 +160,13 @@ function pointNearHandleAllTools (eventData) {
 
 // /////// BEGIN ACTIVE TOOL ///////
 
+/**
+* Event handler for MOUSE_DOWN_ACTIVATE event, if tool is active and
+* the event is not caught by mouseDownCallback
+*
+* @event
+* @param {Object} e - The event.
+*/
 function mouseDownActivateCallback (e) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
@@ -157,6 +189,13 @@ function mouseDownActivateCallback (e) {
 // On next click, add another point -- continuously
 // On each click, if it intersects with a current point, end drawing loop
 
+
+/**
+* Begining of drawing loop when tool is active and a click event happens far
+* from existing handles.
+*
+* @param {Object} eventData - data object associated with an event.
+*/
 function startDrawing (eventData) {
   const element = eventData.element;
 
@@ -176,8 +215,14 @@ function startDrawing (eventData) {
   config.currentTool = toolData.data.length - 1;
 }
 
+/**
+* If in pencilMode, check the mouse position is farther than the minimum
+* distance between points, then add a point.
+*
+* @param {Object} eventData - Data object associated with an event.
+* @param {Object} dataHandles - Data object associated with the tool.
+*/
 function addPointPencilMode (eventData, dataHandles) {
-  // If in pencilMode, check it is farther than the minimum distance between points.
   const config = freehand.getConfiguration();
 
   const mousePoint = config.mouseLocation.handles.start;
@@ -191,6 +236,11 @@ function addPointPencilMode (eventData, dataHandles) {
   addPoint(eventData);
 }
 
+/**
+* Adds a point on mouse click in polygon mode.
+*
+* @param {Object} eventData - data object associated with an event.
+*/
 function addPoint (eventData) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -224,6 +274,12 @@ function addPoint (eventData) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* Ends the active drawing loop and completes the polygon.
+*
+* @param {Object} eventData - data object associated with an event.
+* @param {Object} handleNearby - the handle nearest to the mouse cursor.
+*/
 function endDrawing (eventData, handleNearby) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -258,6 +314,13 @@ function endDrawing (eventData, handleNearby) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* If in pencilMode, check the mouse position is farther than the minimum
+* distance between points, then add a point.
+*
+* @param {Object} eventData - data object associated with an event.
+* @param {Object} dataHandles - data object associated with the tool.
+*/
 function mouseDownActive (e, toolData, currentTool) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
@@ -280,6 +343,12 @@ function mouseDownActive (e, toolData, currentTool) {
 
 // /////// END ACTIVE TOOL ///////
 
+/**
+* Event handler for MOUSE_DOWN event.
+*
+* @event
+* @param {Object} e - The event.
+*/
 function mouseDownCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
@@ -307,6 +376,12 @@ function mouseDownCallback (e) {
 
 }
 
+/**
+* Event handler for MOUSE_MOVE event.
+*
+* @event
+* @param {Object} e - The event.
+*/
 function mouseMoveCallback (e) {
   const eventData = e.detail;
   const toolData = getToolState(eventData.element, toolType);
@@ -334,6 +409,12 @@ function mouseMoveCallback (e) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* Event handler called by mouseMoveCallback when the tool is currently active.
+*
+* @param {Object} eventData - data object associated with an event.
+* @param {Object} toolData - data object associated with the freehand tool.
+*/
 function mouseMoveActive (eventData, toolData) {
   const config = freehand.getConfiguration();
   const currentTool = config.currentTool;
@@ -359,7 +440,12 @@ function mouseMoveActive (eventData, toolData) {
   }
 }
 
-
+/**
+* Returns true if the proposed location of a new handle is invalid.
+*
+* @param {Object} data - data object associated with the tool.
+* @return {Boolean}
+*/
 function checkInvalidHandleLocation (data) {
   const config = freehand.getConfiguration();
 
@@ -378,6 +464,12 @@ function checkInvalidHandleLocation (data) {
   data.handles.invalidHandlePlacement = invalidHandlePlacement;
 }
 
+/**
+* Returns true if the proposed location of a new handle is invalid (in pencilMode).
+*
+* @param {Object} data - data object associated with the tool.
+* @return {Boolean}
+*/
 function checkHandlesPencilMode (data) {
   const config = freehand.getConfiguration();
   const mousePoint = config.mouseLocation.handles.start;
@@ -391,6 +483,12 @@ function checkHandlesPencilMode (data) {
   return invalidHandlePlacement;
 }
 
+/**
+* Returns true if the proposed location of a new handle is invalid (in polygon mode).
+*
+* @param {Object} data - data object associated with the tool.
+* @return {Boolean}
+*/
 function checkHandlesPolygonMode (data) {
   const config = freehand.getConfiguration();
   const mousePoint = config.mouseLocation.handles.start;
@@ -408,6 +506,13 @@ function checkHandlesPolygonMode (data) {
   return invalidHandlePlacement;
 }
 
+/**
+* Returns true if the mouse position is far enough from previous points (in pencilMode).
+*
+* @param {Object} data - data object associated with the tool.
+* @param {Object} mousePoint - the position of the mouse cursor.
+* @return {Boolean}
+*/
 function invalidHandlePencilMode (data, mousePoint) {
   const config = freehand.getConfiguration();
   const dataHandles = data.handles;
@@ -430,7 +535,12 @@ function invalidHandlePencilMode (data, mousePoint) {
   return false;
 }
 
-
+/**
+* Event handler for MOUSE_DRAG event.
+*
+* @event
+* @param {Object} e - The event.
+*/
 function mouseDragCallback (e) {
   const eventData = e.detail;
   const toolData = getToolState(eventData.element, toolType);
@@ -455,6 +565,11 @@ function mouseDragCallback (e) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* Event handler for MOUSE_UP event.
+*
+* @param {Object} e - The event.
+*/
 function mouseUpCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
@@ -483,6 +598,11 @@ function mouseUpCallback (e) {
   external.cornerstone.updateImage(eventData.element);
 }
 
+/**
+* Event handler called by mouseDownCallback when the tool is currently deactive.
+*
+* @param {Object} e - The event.
+*/
 function mouseDownPassive (e) {
   const eventData = e.detail;
   const nearby = pointNearHandleAllTools(eventData);
@@ -494,6 +614,12 @@ function mouseDownPassive (e) {
   }
 }
 
+/**
+* Event handler called by mouseDownPassive which modifies a tool's data.
+*
+* @param {Object} e - The event.
+* @param {Object} nearby - Object containing information about a nearby handle.
+*/
 function modifyObject (e, nearby) {
   const eventData = e.detail;
   const element = eventData.element;
@@ -511,6 +637,12 @@ function modifyObject (e, nearby) {
   e.stopPropagation();
 }
 
+/**
+* Event handler called by mouseDownPassive which modifies a tool's textBox.
+*
+* @param {Object} element - The element associated with the event.
+* @param {Object} nearby - Object containing information about a nearby handle.
+*/
 function modifyTextBox (element, nearby) {
   const config = freehand.getConfiguration();
   const handleNearby = nearby.handleNearby;
@@ -523,6 +655,13 @@ function modifyTextBox (element, nearby) {
   config.currentTool = toolIndex;
 }
 
+/**
+* Event handler called by mouseDownPassive which modifies a tool's handle.
+*
+* @param {Object} element - The element associated with the event.
+* @param {Object} nearby - Object containing information about a nearby handle.
+* @param {Object} toolData - The data associated with the tool.
+*/
 function modifyHandle (element, nearby, toolData) {
   const config = freehand.getConfiguration();
   const handleNearby = nearby.handleNearby;
@@ -545,6 +684,13 @@ function modifyHandle (element, nearby, toolData) {
   config.currentTool = toolIndex;
 }
 
+/**
+* Activates a particular tool when the mouseCursor is near one if it's handles
+* or it's textBox.
+*
+* @param {Object} eventData - The data assoicated with the event.
+* @param {Object} toolData - The data associated with the tool.
+*/
 function mouseHover (eventData, toolData) {
   // Check if user is mousing over a point
   let imageNeedsUpdate = false;
@@ -575,6 +721,31 @@ function mouseHover (eventData, toolData) {
   return imageNeedsUpdate;
 }
 
+/**
+* Event handler for KEY_DOWN event.
+*
+* @param {Object} e - The event.
+*/
+function keyDownCallback (e) {
+  console.log(e);
+  console.log('keyDownTest');
+}
+
+/**
+* Event handler for KEY_UP event.
+*
+* @param {Object} e - The event.
+*/
+function keyUpCallback (e) {
+  console.log(e);
+  console.log('keyUpTest');
+}
+
+/**
+* Gets the current mouse location and stores it in the configuration object.
+*
+* @param {Object} eventData - The data assoicated with the event.
+*/
 function getMouseLocation (eventData) {
   // Set the mouseLocation handle
   const config = freehand.getConfiguration();
@@ -588,9 +759,15 @@ function getMouseLocation (eventData) {
   config.mouseLocation.handles.start.y = y;
 }
 
-function numberWithCommas (x) {
+/**
+* Adds commas as thousand seperators to a Number to increase readability.
+*
+* @param {Number|String} number - A Number or String literal representing a number.
+* @return {String} - A string literal representaton of the number with commas seperating the thousands.
+*/
+function numberWithCommas (number) {
   // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-  const parts = x.toString().split('.');
+  const parts = number.toString().split('.');
 
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
@@ -598,6 +775,12 @@ function numberWithCommas (x) {
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
+/**
+* Event handler for IMAGE_RENDERED event.
+*
+* @event
+* @param {Object} e - The event.
+*/
 function onImageRendered (e) {
   const eventData = e.detail;
 
@@ -869,6 +1052,12 @@ function onImageRendered (e) {
 }
 
 // /////// END IMAGE RENDERING ///////
+/**
+* Attaches event listeners to the element such that is is visible.
+*
+* @param {Object} element - The viewport element to attach event listeners to.
+* @modifies {element}
+*/
 function enable (element) {
   removeEventListeners(element);
 
@@ -876,13 +1065,23 @@ function enable (element) {
   external.cornerstone.updateImage(element);
 }
 
-// Disables the reference line tool for the given element
+/**
+* Disables the reference line tool for the given element.
+*
+* @param {Object} element - The viewport element to attach event listeners to.
+* @modifies {element}
+*/
 function disable (element) {
   removeEventListeners(element);
   external.cornerstone.updateImage(element);
 }
 
-// Visible and interactive
+/**
+* Attaches event listeners to the element such that is is visible, modifiable, and new data can be created.
+*
+* @param {Object} element - The viewport element to attach event listeners to.
+* @modifies {element}
+*/
 function activate (element, mouseButtonMask) {
   setToolOptions(toolType, element, { mouseButtonMask });
 
@@ -892,11 +1091,18 @@ function activate (element, mouseButtonMask) {
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+  element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+  element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
 
   external.cornerstone.updateImage(element);
 }
 
-// Visible, but not interactive
+/**
+* Attaches event listeners to the element such that is is visible and modifiable.
+*
+* @param {Object} element - The viewport element to attach event listeners to.
+* @modifies {element}
+*/
 function deactivate (element, mouseButtonMask) {
   setToolOptions(toolType, element, { mouseButtonMask });
 
@@ -914,11 +1120,18 @@ function deactivate (element, mouseButtonMask) {
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+  element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+  element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
 
   external.cornerstone.updateImage(element);
 }
 
-
+/**
+* Removes event listeners from the element.
+*
+* @param {Object} element - The viewport element to remove event listeners from.
+* @modifies {element}
+*/
 function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
@@ -926,12 +1139,24 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  // TEMP: element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+  // TEMP: element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
 }
 
+/**
+* Get the configuation object for the freehand tool.
+*
+* @return {Object} configuration - The freehand tool's configuration object.
+*/
 function getConfiguration () {
   return configuration;
 }
 
+/**
+* Set the configuation object for the freehand tool.
+*
+* @param {Object} config - The configuration object to set the freehand tool's configuration.
+*/
 function setConfiguration (config) {
   configuration = config;
 }

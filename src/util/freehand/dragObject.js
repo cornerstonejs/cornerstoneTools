@@ -1,6 +1,17 @@
 import { freehand } from '../../imageTools/freehand.js';
 import freeHandIntersect from './freeHandIntersect.js';
 
+/**
+ * @author JamesAPetts
+ */
+
+/**
+* Moves a part of the freehand tool whilst it is dragged by the mouse.
+*
+* @param {Object} currentHandle - The handle being dragged.
+* @param {Object} data - The data associated with the freehand tool being modified.
+* @modifies {currentHandle|data}
+*/
 export default function (currentHandle, data) {
   const config = freehand.getConfiguration();
 
@@ -13,6 +24,12 @@ export default function (currentHandle, data) {
   }
 }
 
+/**
+* Moves a freehand tool's textBox whilst it is dragged by the mouse.
+*
+* @param {Object} currentHandle - The handle being dragged.
+* @modifies {currentHandle}
+*/
 function dragTextBox (currentHandle) {
   const config = freehand.getConfiguration();
 
@@ -21,6 +38,13 @@ function dragTextBox (currentHandle) {
   currentHandle.y = config.mouseLocation.handles.start.y;
 }
 
+/**
+* Moves a handle of the freehand tool whilst it is dragged by the mouse.
+*
+* @param {Object} currentHandle - The handle being dragged.
+* @param {Object} data - The data associated with the freehand tool being modified.
+* @modifies {data}
+*/
 function dragHandle (currentHandle, data) {
   const config = freehand.getConfiguration();
 

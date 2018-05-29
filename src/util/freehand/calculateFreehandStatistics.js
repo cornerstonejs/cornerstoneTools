@@ -1,5 +1,17 @@
 import pointInFreehand from './pointInFreehand.js';
 
+/**
+ * @author JamesAPetts
+ */
+
+/**
+* Calculates the statistics of all the points within the freehand object.
+*
+* @param {Object} sp - An array of the pixel data.
+* @param {Object} boundingBox - Rectangular box enclosing the polygon.
+* @param {Object} dataHandles - Data object associated with the tool.
+* @return {Object} statisticsObj - Object containing the derived statistics.
+*/
 export default function (sp, boundingBox, dataHandles) {
 
   const statisticsObj = {
@@ -23,6 +35,14 @@ export default function (sp, boundingBox, dataHandles) {
   return statisticsObj;
 }
 
+/**
+* Calculates the sum, squared sum and count of all pixels within the polygon.
+*
+* @param {Object} sp - An array of the pixel data.
+* @param {Object} boundingBox - Rectangular box enclosing the polygon.
+* @param {Object} dataHandles - Data object associated with the tool.
+* @return {Object} sum - Object containing the sum, squared sum and pixel count.
+*/
 function getSum (sp, boundingBox, dataHandles) {
   const sum = {
     value: 0,
@@ -46,11 +66,19 @@ function getSum (sp, boundingBox, dataHandles) {
   return sum;
 }
 
-
-function sumPointIfInFreehand (dataHandles, point, sum, pixelValue) {
+/**
+* Adds the pixel to the workingSum if it is within the polygon.
+*
+* @param {Object} dataHandles - Data object associated with the tool.
+* @param {Object} point - The pixel coordinates.
+* @param {Object} workingSum - The working sum, squared sum and pixel count.
+* @param {Object} pixelValue - The pixel value.
+* @modifies {workingSum}
+*/
+function sumPointIfInFreehand (dataHandles, point, workingSum, pixelValue) {
   if (pointInFreehand(dataHandles, point)) {
-    sum.value += pixelValue;
-    sum.squared += pixelValue * pixelValue;
-    sum.count++;
+    workingSum.value += pixelValue;
+    workingSum.squared += pixelValue * pixelValue;
+    workingSum.count++;
   }
 }

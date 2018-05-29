@@ -1,10 +1,21 @@
-export default function (dataHandles, location) {
-  // JPETTS - Calculates if "point" is inside the polygon defined by dataHandles by
-  // Counting the number of times a ray originating from "point" crosses the
-  // Edges of the polygon. Odd === inside, Even === outside.
+/**
+* Calculates if "point" is inside the polygon defined by dataHandles by counting
+* the number of times a ray originating from "point" crosses the edges of the
+* polygon. Odd === inside, Even === outside. The bool "inROI" flips every time
+* the ray originating from location and pointing to the right crosses a
+* linesegment.
+*
+* @author JamesAPetts
+*/
 
-  // The bool "inROI" flips every time ray originating from location and
-  // Pointing to the right crosses a linesegment.
+/**
+* Returns true if the location is inside the polygon defined by dataHandles.
+*
+* @param {Object} dataHandles - Data object associated with the tool.
+* @param {Object} location - The coordinates being queried.
+* @return {Boolean} True if the location is inside the polygon defined by dataHandles.
+*/
+export default function (dataHandles, location) {
   let inROI = false;
 
   // Cycle round pairs of points
@@ -21,6 +32,15 @@ export default function (dataHandles, location) {
   return inROI;
 }
 
+
+/**
+* Returns true if the y-position yp is enclosed within y-positions y1 and y2.
+*
+* @param {Number} yp - The y position of point p.
+* @param {Number} y1 - The y position of point 1.
+* @param {Number} y2 - The y position of point 2.
+* @return {Boolean} True if the y-position yp is enclosed within y-positions y1 and y2.
+*/
 function isEnclosedY (yp, y1, y2) {
   if ((y1 < yp && yp < y2) || (y2 < yp && yp < y1)) {
     return true;
@@ -29,6 +49,14 @@ function isEnclosedY (yp, y1, y2) {
   return false;
 }
 
+/**
+* Returns true if the line segment is to the right of the point.
+*
+* @param {Object} point - The point being queried.
+* @param {Object} lp1 - The first point of the line segment.
+* @param {Object} lp2 - The second point of the line segment.
+* @return {Boolean} True if the line is to the right of the point.
+*/
 function isLineRightOfPoint (point, lp1, lp2) {
   // If both right of point return true
   if (lp1.x > point.x && lp2.x > point.x) {
@@ -52,6 +80,14 @@ function isLineRightOfPoint (point, lp1, lp2) {
   return false;
 }
 
+/**
+* Returns the y value of the line segment at the x value of the point.
+*
+* @param {Object} point - The point being queried.
+* @param {Object} lp1 - The first point of the line segment.
+* @param {Object} lp2 - The second point of the line segment.
+* @return {Object} An object containing the y value as well as the gradient of the line segment.
+*/
 function lineSegmentAtPoint (point, lp1, lp2) {
   const dydx = (lp2.y - lp1.y) / (lp2.x - lp1.x);
   const fx = {
@@ -62,6 +98,14 @@ function lineSegmentAtPoint (point, lp1, lp2) {
   return fx;
 }
 
+/**
+* Returns true if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+*
+* @param {Object} point - The point being queried.
+* @param {Object} handleI - The first handle of the line segment.
+* @param {Object} handleJ - The second handle of the line segment.
+* @return {Boolean} True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+*/
 function rayFromPointCrosssesLine (point, handleI, handleJ) {
   if (isEnclosedY(point.y, handleI.y, handleJ.y) && isLineRightOfPoint(point, handleI, handleJ)) {
 
