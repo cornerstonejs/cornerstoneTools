@@ -31,6 +31,11 @@ let configuration = {
       }
     }
   },
+  keyDown: {
+    shift: false,
+    ctrl: false,
+    alt: false
+  },
   activePencilMode: false,
   spacing: 5,
   activeHandleRadius: 3,
@@ -723,15 +728,43 @@ function mouseHover (eventData, toolData) {
   return imageNeedsUpdate;
 }
 
+const keyCodes = {
+    SHIFT: 16,
+    CTRL: 17,
+    ALT: 18,
+};
+
 /**
 * Event handler for KEY_DOWN event.
 *
 * @param {Object} e - The event.
 */
 function keyDownCallback (e) {
-  console.log(e);
-  console.log('keyDownTest');
+  const eventData = e.detail;
+  const config = freehand.getConfiguration();
+  const keyCode = eventData.keyCode;
+  let imageNeedsUpdate = false;
+
+  if (keyCode === keyCodes.CTRL) {
+    config.keyDown.ctrl = true;
+    imageNeedsUpdate = true;
+  }
+
+  if(keyCode === keyCodes.SHIFT) {
+    config.keyDown.shift = true;
+  }
+
+  if(keyCode === keyCodes.ALT) {
+    config.keyDown.alt = true;
+  }
+
+  if (imageNeedsUpdate) {
+    // Force onImageRendered to fire
+    external.cornerstone.updateImage(eventData.element);
+  }
 }
+
+
 
 /**
 * Event handler for KEY_UP event.
@@ -739,8 +772,28 @@ function keyDownCallback (e) {
 * @param {Object} e - The event.
 */
 function keyUpCallback (e) {
-  console.log(e);
-  console.log('keyUpTest');
+  const eventData = e.detail;
+  const config = freehand.getConfiguration();
+  const keyCode = eventData.keyCode;
+  let imageNeedsUpdate = false;
+
+  if (keyCode === keyCodes.CTRL) {
+    config.keyDown.ctrl = false;
+    imageNeedsUpdate = true;
+  }
+
+  if(keyCode === keyCodes.SHIFT) {
+    config.keyDown.shift = false;
+  }
+
+  if(keyCode === keyCodes.ALT) {
+    config.keyDown.alt = false;
+  }
+
+  if (imageNeedsUpdate) {
+    // Force onImageRendered to fire
+    external.cornerstone.updateImage(eventData.element);
+  }
 }
 
 /**
@@ -875,7 +928,7 @@ function onImageRendered (e) {
       fill: fillColor
     };
 
-    if (config.alwaysShowHandles || data.active && data.polyBoundingBox) {
+    if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
       // Render all handles
       options.handleRadius = config.activeHandleRadius;
       drawHandles(context, eventData, data.handles, color, options);

@@ -36,6 +36,9 @@
             <ul class="list-group">
                 <a id="clearToolData" class="list-group-item">Clear drawing</a>
             </ul>
+            <ul class="col-xs-12 col-sm-2">
+                <div id="keyPressed">Holding:</div>
+            </ul>
             <br/>
         </div>
         <div class="col-xs-10">
@@ -87,6 +90,44 @@
     var element = document.getElementById('dicomImage');
     var imageId = 'example://1';
 
+    function onKeyDown(e) {
+        var data = e.detail;
+        var keyCode = data.keyCode;
+        var keyName;
+        var keys = {
+            SHIFT: 16,
+            CTRL: 17,
+            ALT: 18,
+            UP: 38,
+            DOWN: 40
+        };
+        if (keyCode === keys.UP) {
+            keyName = 'Up arrow';
+        } else if (keyCode === keys.DOWN) {
+            keyName = 'Down arrow';
+        } else if (keyCode === keys.SHIFT) {
+            keyName = 'Shift';
+        } else if (keyCode === keys.CTRL) {
+            keyName = 'Ctrl';
+        }else if (keyCode === keys.ALT) {
+            keyName = 'Alt';
+        } else {
+            keyName = String.fromCharCode(keyCode);
+        }
+
+        document.getElementById('keyPressed').textContent = "Holding: " + keyName;
+    }
+
+    function onKeyUp(e) {
+        document.getElementById('keyPressed').textContent = "Holding: ";
+    }
+
+    element.tabIndex = 0;
+    element.focus();
+
+    element.addEventListener("cornerstonetoolskeydown", onKeyDown);
+    element.addEventListener("cornerstonetoolskeyup", onKeyUp);
+
     cornerstoneTools.toolStyle.setToolWidth(3);
     cornerstoneTools.toolColors.setToolColor("#ffcc33");
     cornerstoneTools.toolColors.setActiveColor("#0099ff");
@@ -94,19 +135,16 @@
 
     // image enable the dicomImage element
     cornerstone.enable(element);
+    cornerstoneTools.keyboardInput.enable(element);
+    cornerstoneTools.mouseInput.enable(element);
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
-        cornerstoneTools.mouseInput.enable(element);
-        cornerstoneTools.keyboardInput.enable(element);
-
-        // Set the div to focused, so keypress events are handled
-        element.tabIndex = 0;
-        element.focus();
 
         // Enable all tools we want to use with this element
         cornerstoneTools.freehand.activate(element, 1);
 
         activate("activate");
+
 
         function activate(id)
         {
@@ -118,21 +156,25 @@
         document.getElementById('disable').addEventListener('click', function() {
             activate("disable");
             cornerstoneTools.freehand.disable(element);
+            element.focus();
             return false;
         });
         document.getElementById('enable').addEventListener('click', function() {
             activate("enable");
             cornerstoneTools.freehand.enable(element);
+            element.focus();
             return false;
         });
         document.getElementById('activate').addEventListener('click', function() {
             activate("activate");
             cornerstoneTools.freehand.activate(element, 1);
+            element.focus();
             return false;
         });
         document.getElementById('deactivate').addEventListener('click', function() {
             activate("deactivate");
             cornerstoneTools.freehand.deactivate(element, 1);
+            element.focus();
             return false;
         });
 
@@ -141,6 +183,7 @@
             // Note that this only works on ImageId-specific tool state managers (for now)
             toolStateManager.clear(element);
             cornerstone.updateImage(element);
+            element.focus();
         });
     });
 
