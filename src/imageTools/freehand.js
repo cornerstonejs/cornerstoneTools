@@ -80,7 +80,7 @@ function pointNearTool (eventData, toolIndex) {
   const isPointNearTool = pointNearHandle(eventData, toolIndex);
 
   // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
-  if (isPointNearTool || isPointNearTool === 0) {
+  if (isPointNearTool !== null) {
     return true;
   }
 
@@ -99,17 +99,17 @@ function pointNearHandle (eventData, toolIndex) {
   const config = freehand.getConfiguration();
 
   if (toolData === undefined) {
-    return false;
+    return null;
   }
 
   const data = toolData.data[toolIndex];
 
   if (data.handles === undefined) {
-    return false;
+    return null;
   }
 
   if (data.visible === false) {
-    return false;
+    return null;
   }
 
   const mousePoint = eventData.currentPoints.canvas;
@@ -129,7 +129,7 @@ function pointNearHandle (eventData, toolIndex) {
     }
   }
 
-  return false;
+  return null;
 }
 
 /**
@@ -149,7 +149,7 @@ function pointNearHandleAllTools (eventData) {
 
   for (let toolIndex = 0; toolIndex < toolData.data.length; toolIndex++) {
     handleNearby = pointNearHandle(eventData, toolIndex);
-    if (handleNearby !== undefined) {
+    if (handleNearby !== null) {
       return {
         handleNearby,
         toolIndex
@@ -331,7 +331,7 @@ function mouseDownActive (e, toolData, currentTool) {
     const lastHandlePlaced = config.currentHandle;
 
     endDrawing(eventData, lastHandlePlaced);
-  } else if (handleNearby === undefined) {
+  } else if (handleNearby === null) {
     addPoint(eventData);
   }
 
@@ -433,7 +433,7 @@ function mouseMoveActive (eventData, toolData) {
 
     // If there is a handle nearby to snap to
     // (and it's not the actual mouse handle)
-    if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
+    if (handleNearby !== null && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
       config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
       config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
     }
@@ -609,7 +609,7 @@ function mouseDownPassive (e) {
 
   if (eventData.event.ctrlKey) {
     insertOrDelete(e, nearby);
-  } else if (nearby) {
+  } else if (nearby !== undefined) {
     modifyObject(e, nearby);
   }
 }

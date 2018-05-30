@@ -18,10 +18,7 @@ const toolType = 'freehand';
 export default function (e, nearby) {
   const eventData = e.detail;
 
-
-  console.log(nearby);
-
-  if (nearby.handleNearby || nearby.handleNearby === 0) {
+  if (nearby && nearby.handleNearby !== null) {
     const deleteInfo = {
       toolIndex: nearby.toolIndex,
       handleIndex: nearby.handleNearby
@@ -64,9 +61,6 @@ function deletePoint (eventData, deleteInfo) {
   if (data.handles.length <= 3) {
     return;
   }
-
-  console.log(`deleteHandle: ${deleteHandle}`);
-  console.log(`data.handles.length: ${data.handles.length}`);
 
   // Link the line of the previous handle to the one after handles[deleteHandle];
   if (deleteHandle === data.handles.length - 1) {
