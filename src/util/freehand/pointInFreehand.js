@@ -62,6 +62,12 @@ function isLineRightOfPoint (point, lp1, lp2) {
   if (lp1.x > point.x && lp2.x > point.x) {
     return true;
   }
+
+  // catch when line is vertical.
+  if (lp1.x === lp2.x) {
+    return (point.x < lp1.x);
+  }
+
   // Put leftmost point in lp1
   if (lp1.x > lp2.x) {
     const lptemp = lp1;

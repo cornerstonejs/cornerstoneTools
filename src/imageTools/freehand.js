@@ -315,11 +315,11 @@ function endDrawing (eventData, handleNearby) {
 }
 
 /**
-* If in pencilMode, check the mouse position is farther than the minimum
-* distance between points, then add a point.
+* Event handler called by mouseDownCallback when the tool is currently active.
 *
-* @param {Object} eventData - data object associated with an event.
-* @param {Object} dataHandles - data object associated with the tool.
+* @param {Object} e - The event.
+* @param {Object} toolData - The data object associated with the freehand tool.
+* @param {Number} currentTool - The ID of the active freehand polygon.
 */
 function mouseDownActive (e, toolData, currentTool) {
   const eventData = e.detail;
