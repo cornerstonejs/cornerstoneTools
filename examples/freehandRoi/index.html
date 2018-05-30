@@ -54,12 +54,17 @@
     <div class="row">
         <div class="col-xs-12">
             <h3>Functionality</h3>
+            <h4>Polygon Mode</h4>
             <ul>
                 <li>Click to draw a point</li>
                 <li>Keep clicking to draw a shape</li>
-                <li>Hold Shift while dragging to draw freehand</li>
-                <li>End the shape by connecting it to one of the other nodes</li>
-                <li>Click elsewhere to start a new shape</li>
+                <li>End the shape by connecting it to the origin node without crossing any lines.</li>
+            </ul>
+            <h4>Pencil Mode</h4>
+            <ul>
+                <li>Shift-click to start drawing</li>
+                <li>Move the mouse to draw the shape</li>
+                <li>End the shape by mousing over the origin and clicking.</li>
             </ul>
         </div>
     </div>
@@ -80,8 +85,6 @@
 
 <script>
     var element = document.getElementById('dicomImage');
-    cornerstoneTools.keyboardInput.enable(element);
-
     var imageId = 'example://1';
 
     cornerstoneTools.toolStyle.setToolWidth(3);
@@ -132,7 +135,7 @@
         document.getElementById('clearToolData').addEventListener('click', function() {
             var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
             // Note that this only works on ImageId-specific tool state managers (for now)
-            toolStateManager.clear(element)
+            toolStateManager.clear(element);
             cornerstone.updateImage(element);
         });
     });

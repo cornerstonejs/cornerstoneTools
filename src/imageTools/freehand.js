@@ -1141,8 +1141,8 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  // TEMP: element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
-  // TEMP: element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
+  element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+  element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
 }
 
 /**
