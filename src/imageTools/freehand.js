@@ -493,13 +493,15 @@ function checkHandlesPolygonMode (data) {
   const config = freehand.getConfiguration();
   const mousePoint = config.mouseLocation.handles.start;
   const dataHandles = data.handles;
-  let invalidHandlePlacement;
+  let invalidHandlePlacement = false;
+  data.canComplete = false;
 
-  if (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing) {
+  const mouseAtOriginHandle = (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing);
+
+  if (mouseAtOriginHandle && !freeHandIntersect.end(dataHandles)) {
     data.canComplete = true;
     invalidHandlePlacement = false;
   } else {
-    data.canComplete = false;
     invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
   }
 
