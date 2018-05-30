@@ -99,6 +99,10 @@
         cornerstoneTools.mouseInput.enable(element);
         cornerstoneTools.keyboardInput.enable(element);
 
+        // Set the div to focused, so keypress events are handled
+        element.tabIndex = 0;
+        element.focus();
+
         // Enable all tools we want to use with this element
         cornerstoneTools.freehand.activate(element, 1);
 
