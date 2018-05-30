@@ -63,7 +63,7 @@ function isLineRightOfPoint (point, lp1, lp2) {
     return true;
   }
 
-  // catch when line is vertical.
+  // Catch when line is vertical.
   if (lp1.x === lp2.x) {
     return (point.x < lp1.x);
   }
