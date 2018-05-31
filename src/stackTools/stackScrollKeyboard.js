@@ -16,7 +16,7 @@ function keyDownCallback (e) {
 
   let images = 1;
 
-  if (keyCode === keys.DOWN) {
+  if (keyCode === keys.UP) {
     images = -1;
   }
 
