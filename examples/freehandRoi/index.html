@@ -90,36 +90,70 @@
     var element = document.getElementById('dicomImage');
     var imageId = 'example://1';
 
-    function onKeyDown(e) {
-        var data = e.detail;
-        var keyCode = data.keyCode;
-        var keyName;
-        var keys = {
-            SHIFT: 16,
-            CTRL: 17,
-            ALT: 18,
-            UP: 38,
-            DOWN: 40
-        };
-        if (keyCode === keys.UP) {
-            keyName = 'Up arrow';
-        } else if (keyCode === keys.DOWN) {
-            keyName = 'Down arrow';
-        } else if (keyCode === keys.SHIFT) {
-            keyName = 'Shift';
-        } else if (keyCode === keys.CTRL) {
-            keyName = 'Ctrl';
-        }else if (keyCode === keys.ALT) {
-            keyName = 'Alt';
-        } else {
-            keyName = String.fromCharCode(keyCode);
-        }
+    const keyCodes = {
+        SHIFT: 16,
+        CTRL: 17,
+        ALT: 18
+    };
 
-        document.getElementById('keyPressed').textContent = "Holding: " + keyName;
+    const config = {
+      ctrl: false,
+      shift: false,
+      alt: false
+    };
+
+    function onKeyDown(e) {
+      const data = e.detail;
+      const keyCode = data.keyCode;
+
+      if (keyCode === keyCodes.CTRL) {
+        config.ctrl = true;
+      } else if (keyCode === keyCodes.SHIFT) {
+        config.shift = true;
+      } else if (keyCode === keyCodes.ALT) {
+        config.alt = true;
+      }
+
+      let keyName = '';
+
+      if (config.ctrl) {
+        keyName += ' Ctrl';
+      }
+      if (config.shift) {
+        keyName += ' Shift';
+      }
+      if (config.alt) {
+        keyName += ' Alt';
+      }
+
+      document.getElementById('keyPressed').textContent = "Holding:" + keyName;
     }
 
     function onKeyUp(e) {
-        document.getElementById('keyPressed').textContent = "Holding: ";
+      const data = e.detail;
+      const keyCode = data.keyCode;
+
+      if (keyCode === keyCodes.CTRL) {
+        config.ctrl = false;
+      } else if (keyCode === keyCodes.SHIFT) {
+        config.shift = false;
+      } else if (keyCode === keyCodes.ALT) {
+        config.alt = false;
+      }
+
+      let keyName = '';
+
+      if (config.ctrl) {
+        keyName += ' Ctrl';
+      }
+      if (config.shift) {
+        keyName += ' Shift';
+      }
+      if (config.alt) {
+        keyName += ' Alt';
+      }
+
+      document.getElementById('keyPressed').textContent = "Holding:" + keyName;
     }
 
     element.tabIndex = 0;
