@@ -42,18 +42,15 @@ export class FreehandLineFinder {
   /**
   * Looks for lines near the mouse cursor.
   *
+  *  @public
   *  @return {ClickedLineData}
   */
   findLine () {
-    this._toolData = getToolState(this._eventData.element, toolType);
-    this._mousePoint = this._eventData.currentPoints.canvas;
+    const closestToolIndex = this.findTool();
 
-    if (!this._toolData) {
+    if (closestToolIndex === null) {
       return null;
     }
-
-    const closestHandle = this._nearestHandleToPointAllTools();
-    const closestToolIndex = closestHandle.toolIndex;
 
     const closeLines = this._getCloseLinesInTool(closestToolIndex);
 
@@ -66,6 +63,24 @@ export class FreehandLineFinder {
 
     // Return null if no valid close lines found.
     return null;
+  }
+
+  /**
+  * Looks for tools near the mouse cursor.
+  *
+  *  @public
+  *  @return {ClickedLineData}
+  */
+  findTool() {
+    this._toolData = getToolState(this._eventData.element, toolType);
+    this._mousePoint = this._eventData.currentPoints.canvas;
+
+    if (!this._toolData) {
+      return null;
+    }
+
+    const closestHandle = this._nearestHandleToPointAllTools();
+    return closestHandle.toolIndex;
   }
 
   /**
