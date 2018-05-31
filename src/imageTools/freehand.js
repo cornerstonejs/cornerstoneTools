@@ -11,6 +11,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { clipToBox } from '../util/clip.js';
 
 // Freehand tool libraries
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
@@ -738,14 +739,10 @@ function mouseHover (eventData, toolData) {
 function getMouseLocation (eventData) {
   // Set the mouseLocation handle
   const config = freehand.getConfiguration();
-  let x = Math.max(eventData.currentPoints.image.x, 0);
-  let y = Math.max(eventData.currentPoints.image.y, 0);
 
-  x = Math.min(x, eventData.image.width);
-  config.mouseLocation.handles.start.x = x;
-
-  y = Math.min(y, eventData.image.height);
-  config.mouseLocation.handles.start.y = y;
+  config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
+  config.mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+  clipToBox(config.mouseLocation.handles.start, eventData.image);
 }
 
 /**
@@ -970,6 +967,27 @@ function onImageRendered (e) {
       data.invalidated = false;
     }
 
+    // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
+    if (data.polyBoundingBox && !data.textBox.freehand) {
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.textBox.hasMoved) {
+        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+      }
+
+      const text = textBoxText(data);
+
+      drawLinkedTextBox(context, element, data.textBox, text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+    }
+    context.restore();
+  }
+
+  function textBoxText (data) {
+    const { meanStdDev, meanStdDevSUV, area } = data;
     // Define an array to store the rows of text for the textbox
     const textLines = [];
 
@@ -1018,21 +1036,7 @@ function onImageRendered (e) {
       textLines.push(areaText);
     }
 
-    // Only render text if polygon ROI has been completed:
-    if (data.polyBoundingBox) {
-      // If the textbox has not been moved by the user, it should be displayed on the right-most
-      // Side of the tool.
-      if (!data.textBox.hasMoved) {
-        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-        // Note that this calculates it in image coordinates
-        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
-      }
-
-      drawLinkedTextBox(context, element, data.textBox, textLines,
-        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    }
-    context.restore();
+    return textLines;
   }
 
   function textBoxAnchorPoints (handles) {

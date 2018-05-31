@@ -2,6 +2,13 @@ export default function saveAs (element, filename, mimetype = 'image/png') {
   // Setting the default value for mimetype to image/png
   const canvas = element.querySelector('canvas');
 
+  // If we are using IE, use canvas.msToBlob
+  if (canvas.msToBlob) {
+    const blob = canvas.msToBlob();
+
+    return window.navigator.msSaveBlob(blob, filename);
+  }
+
   // Thanks to Ken Fyrstenber
   // http://stackoverflow.com/questions/18480474/how-to-save-an-image-from-canvas
   const lnk = document.createElement('a');
@@ -14,7 +21,7 @@ export default function saveAs (element, filename, mimetype = 'image/png') {
   // Pushed as 'download' in HTML5 capable browsers
   lnk.href = canvas.toDataURL(mimetype, 1);
 
-  // / create a 'fake' click-event to trigger the download
+  // Create a 'fake' click-event to trigger the download
   if (document.createEvent) {
     const e = document.createEvent('MouseEvents');
 

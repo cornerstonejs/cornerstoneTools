@@ -6,13 +6,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.5] - 2018-05-28
+### Changed
+- Updated package.json dependencies to latest versions
+
+### Fixed
+- Fixed saveAs for Internet Explorer by adding canvas.msToBlob. Note that for some reason this appears to be lower quality than on other browsers. We may need to implement another approach.
+
+## [2.3.4] - 2018-05-28
+### Changed
+- Refactoring / cleanup of tools to clarify how to create new tools.
+
+drawLink, drawLinkedTextBox, and lineSegDistance functions were added to make each tool code as similar as possible. (thanks @timleslie)
+
+- Each tool was given a textBoxText function to clearly separate where the information for it's text callout comes from (thanks @timleslie)
+- .color attribute added to tool data for each tool. This can be used to specify for each individual tool instance, which color it should be while active.
+- Refactoring and cleanup of Freehand tool ahead of major changes (thanks @JamesAPetts)
+
+### Fixed
+- Stack Scroll Synchronizer's (stackImagePosition, stackImagePositionOffset, stackScroll) will now verify, after an image has been loaded, if it is still intended to be displayed. This prevents the appearance of 'jumping' of a synchronized stack while scrolling.
+- Fixed incorrect statistical calculations in Freehand tool (thanks @JamesAPetts)
+
 ## [2.3.3] - 2018-04-25
-##Fixed
+### Fixed
 - fix(scaleOverlayTool) persist tool's default configuration into displayTool instance.
 - fix(travis build) node version is now set to latest LTS version
 
 ## [2.3.2] - 2018-04-18
-##Fixed
+### Fixed
 - fix(interaction) No tool interaction when tool is invisible (thanks @floryst)
 
 ## [2.3.1] - 2018-04-11

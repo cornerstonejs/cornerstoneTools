@@ -179,19 +179,12 @@ function onImageRendered (e) {
 
     // Draw the text
     if (data.text && data.text !== '') {
+      const text = textBoxText(data);
+
       context.font = font;
 
-      let textPlusCoords = '';
-
-      if (config.showCoordinates) {
-        textPlusCoords = `${data.text} x: ${Math.round(data.handles.end.x)
-        } y: ${Math.round(data.handles.end.y)}`;
-      } else {
-        textPlusCoords = data.text;
-      }
-
       // Calculate the text coordinates.
-      const textWidth = context.measureText(textPlusCoords).width + 10;
+      const textWidth = context.measureText(text).width + 10;
       const textHeight = textStyle.getFontSize() + 10;
 
       let distance = Math.max(textWidth, textHeight) / 2 + 5;
@@ -218,10 +211,23 @@ function onImageRendered (e) {
         data.handles.textBox.y = coords.y;
       }
 
-      drawLinkedTextBox(context, eventData.element, data.handles.textBox, textPlusCoords,
+      drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
         data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
     }
     context.restore();
+  }
+
+  function textBoxText (data) {
+    let textPlusCoords = '';
+
+    if (config.showCoordinates) {
+      textPlusCoords = `${data.text} x: ${Math.round(data.handles.end.x)
+      } y: ${Math.round(data.handles.end.y)}`;
+    } else {
+      textPlusCoords = data.text;
+    }
+
+    return textPlusCoords;
   }
 
   function textBoxAnchorPoints (handles) {

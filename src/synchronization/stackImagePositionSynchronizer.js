@@ -56,6 +56,9 @@ export default function (synchronizer, sourceElement, targetElement) {
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
+  stackData.currentImageIdIndex = newImageIdIndex;
+  const newImageId = stackData.imageIds[newImageIdIndex];
+
   if (startLoadingHandler) {
     startLoadingHandler(targetElement);
   }
@@ -64,15 +67,18 @@ export default function (synchronizer, sourceElement, targetElement) {
     let loader;
 
     if (stackData.preventCache === true) {
-      loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+      loader = cornerstone.loadImage(newImageId);
     } else {
-      loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+      loader = cornerstone.loadAndCacheImage(newImageId);
     }
 
     loader.then(function (image) {
       const viewport = cornerstone.getViewport(targetElement);
 
-      stackData.currentImageIdIndex = newImageIdIndex;
+      if (stackData.currentImageIdIndex !== newImageIdIndex) {
+        return;
+      }
+
       synchronizer.displayImage(targetElement, image, viewport);
       if (endLoadingHandler) {
         endLoadingHandler(targetElement, image);

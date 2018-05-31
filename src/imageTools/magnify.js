@@ -3,6 +3,7 @@ import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { clipToBox } from '../util/clip.js';
 
 const toolType = 'magnify';
 
@@ -123,12 +124,7 @@ function drawMagnificationTool (eventData) {
   // Calculate the on-canvas location of the mouse pointer / touch
   const canvasLocation = external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
-
-  canvasLocation.x = Math.max(canvasLocation.x, 0);
-  canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
-
-  canvasLocation.y = Math.max(canvasLocation.y, 0);
-  canvasLocation.y = Math.min(canvasLocation.y, canvas.height);
+  clipToBox(canvasLocation, canvas);
 
   // Clear the rectangle
   zoomCtx.clearRect(0, 0, magnifySize, magnifySize);

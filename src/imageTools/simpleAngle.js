@@ -137,11 +137,6 @@ function onImageRendered (e) {
     // Default to isotropic pixel size, update suffix to reflect this
     const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
     const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-    let suffix = '';
-
-    if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
-      suffix = ' (isotropic)';
-    }
 
     const sideA = {
       x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
@@ -167,11 +162,10 @@ function onImageRendered (e) {
 
     angle *= (180 / Math.PI);
 
-    const rAngle = roundToDecimal(angle, 2);
+    data.rAngle = roundToDecimal(angle, 2);
 
-    if (rAngle) {
-      const str = '00B0'; // Degrees symbol
-      const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
+    if (data.rAngle) {
+      const text = textBoxText(data, eventData.image.rowPixelSpacing, eventData.image.columnPixelSpacing);
 
       const distance = 15;
 
@@ -206,6 +200,13 @@ function onImageRendered (e) {
         data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
     }
     context.restore();
+  }
+
+  function textBoxText (data, rowPixelSpacing, columnPixelSpacing) {
+    const suffix = (!rowPixelSpacing || !columnPixelSpacing) ? ' (isotropic)' : '';
+    const str = '00B0'; // Degrees symbol
+
+    return data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
   }
 
   function textBoxAnchorPoints (handles) {
