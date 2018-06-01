@@ -1,5 +1,6 @@
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
+import { ClickedLineData } from './ClickedLineData.js';
 
 /**
 * @author JamesAPetts
@@ -7,25 +8,6 @@ import external from '../../externalModules.js';
 
 const toolType = 'freehand';
 const distanceThreshold = 10;
-
-/**
- * @typedef {Object} ClickedLineData
- * @property {Number} toolIndex ID of the tool that the line corresponds to.
- * @property {Object} handleIndexArray An array of the handle indicies that correspond to the line segment.
- */
-class ClickedLineData {
-
-  /**
-  * Constructs an object containing information about the clicked line.
-  *
-  * @param {Number} toolIndex - The ID of the tool the line corresponds to.
-  * @param {Object} handleIndexArray - An array of the handle indicies that correspond to the line segment.
-  */
-  constructor (toolIndex, handleIndexArray) {
-    this.toolIndex = toolIndex;
-    this.handleIndexArray = handleIndexArray;
-  }
-}
 
 export class FreehandLineFinder {
   /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */
@@ -71,7 +53,7 @@ export class FreehandLineFinder {
   *  @public
   *  @return {ClickedLineData}
   */
-  findTool() {
+  findTool () {
     this._toolData = getToolState(this._eventData.element, toolType);
     this._mousePoint = this._eventData.currentPoints.canvas;
 
@@ -80,6 +62,7 @@ export class FreehandLineFinder {
     }
 
     const closestHandle = this._nearestHandleToPointAllTools();
+
     return closestHandle.toolIndex;
   }
 

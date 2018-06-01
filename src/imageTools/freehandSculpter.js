@@ -1,16 +1,16 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { freehand } from './freehand.js';
-import triggerEvent from '../util/triggerEvent.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { ClickedLineData } from '../util/freehand/ClickedLineData.js';
+import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
 import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
+import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
 
 const toolType = 'freehandSculpter';
 const referencedToolType = 'freehand';
@@ -29,75 +29,13 @@ let configuration = {
     alt: false
   },
   active: false,
-  spacing: 5,
-  toolSize: null,
+  minSpacing: 5,
+  maxSpacing: 20,
+  toolSizeImage: null,
+  toolSizeCanvas: null,
   currentTool: null,
   color: toolColors.getActiveColor()
 };
-
-/**
-* Returns a handle of a particular tool if it is close to the mouse cursor
-*
-* @param {Object} eventData - data object associated with an event.
-* @param {Number} toolIndex - the ID of the tool
-* @return {Number|Object|Boolean}
-*/
-function pointNearHandle (eventData, toolIndex) {
-  const toolData = getToolState(eventData.element, referencedToolType);
-  const config = freehand.getConfiguration();
-
-  if (toolData === undefined) {
-    return null;
-  }
-
-  const data = toolData.data[toolIndex];
-
-  if (data.handles === undefined) {
-    return null;
-  }
-
-  if (data.visible === false) {
-    return null;
-  }
-
-  const mousePoint = eventData.currentPoints.canvas;
-
-  for (let i = 0; i < data.handles.length; i++) {
-    const handleCanvas = external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
-
-    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < config.spacing) {
-      return i;
-    }
-  }
-
-  return null;
-}
-
-/**
-* Returns a handle if it is close to the mouse cursor (all tools)
-*
-* @param {Object} eventData - data object associated with an event.
-* @return {Object}
-*/
-function pointNearHandleAllTools (eventData) {
-  const toolData = getToolState(eventData.element, referencedToolType);
-
-  if (!toolData) {
-    return;
-  }
-
-  let handleNearby;
-
-  for (let toolIndex = 0; toolIndex < toolData.data.length; toolIndex++) {
-    handleNearby = pointNearHandle(eventData, toolIndex);
-    if (handleNearby !== null) {
-      return {
-        handleNearby,
-        toolIndex
-      };
-    }
-  }
-}
 
 // /////// BEGIN ACTIVE TOOL ///////
 
@@ -122,32 +60,11 @@ function mouseDownCallback (e) {
   }
 
   if (eventData.event.ctrlKey) {
-    const freehandFinder = new FreehandLineFinder(eventData);
-    const toolIndex = freehandFinder.findTool();
-
-    config.currentTool = toolIndex;
-    activateFreehandTool(element, toolIndex);
+    selectFreehandTool(eventData);
     imageNeedsUpdate = true;
-
-    console.log(`Changed focus to toolIndex: ${toolIndex}`);
-  } else {
-    if (config.currentTool !== null) {
-      config.toolSize = getDistanceToClosestHandleInTool(eventData, config.currentTool);
-      console.log(config.toolSize);
-      config.active = true;
-      console.log('toolActive');
-
-      getMouseLocation(eventData);
-
-      // Begin mouseDragCallback loop - call mouseUpCallback at end of drag or straight away if just a click.
-      element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-
-      element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-      element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-      element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-
-      imageNeedsUpdate = true;
-    }
+  } else if (config.currentTool !== null) {
+    beginSculpting(eventData);
+    imageNeedsUpdate = true;
   }
 
   console.log(`focused tool: ${config.currentTool}`);
@@ -158,8 +75,34 @@ function mouseDownCallback (e) {
   }
 }
 
+/**
+* Select the freehand tool to be edited.
+*
+* @param {Object} eventData - Data object associated with the event.
+*/
+function selectFreehandTool (eventData) {
+  const config = freehandSculpter.getConfiguration();
+  const element = eventData.element;
+
+  const freehandFinder = new FreehandLineFinder(eventData);
+  const toolIndex = freehandFinder.findTool();
+
+  config.currentTool = toolIndex;
+  activateFreehandTool(element, toolIndex);
+
+  console.log(`Changed focus to toolIndex: ${toolIndex}`);
+}
+
+
+/**
+* Activate the selected freehand tool and deactivate others.
+*
+* @param {Object} element - The parent element of the freehand tool.
+* @param {Number} toolIndex - The ID of the freehand tool.
+*/
 function activateFreehandTool (element, toolIndex) {
   const toolData = getToolState(element, referencedToolType);
+
   for (let i = 0; i < toolData.data.length; i++) {
     if (i === toolIndex) {
       toolData.data[i].active = true;
@@ -167,6 +110,30 @@ function activateFreehandTool (element, toolIndex) {
       toolData.data[i].active = false;
     }
   }
+}
+
+/**
+* Choose the tool radius from the mouse position relative to the active freehand
+* tool, and begin sculpting.
+*
+* @param {Object} eventData - Data object associated with the event.
+*/
+function beginSculpting (eventData) {
+  const config = freehandSculpter.getConfiguration();
+  const element = eventData.element;
+
+  getDistanceToClosestHandleInTool(eventData);
+  config.active = true;
+  console.log('toolActive');
+
+  getMouseLocation(eventData);
+
+  // Begin mouseDragCallback loop - call mouseUpCallback at end of drag or straight away if just a click.
+  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 }
 
 /**
@@ -178,8 +145,6 @@ function activateFreehandTool (element, toolIndex) {
 function mouseMoveCallback (e) {
   const eventData = e.detail;
   const toolData = getToolState(eventData.element, referencedToolType);
-  const config = freehandSculpter.getConfiguration();
-  let imageNeedsUpdate = false;
 
   if (!toolData) {
     return;
@@ -187,24 +152,35 @@ function mouseMoveCallback (e) {
 
 }
 
-function getDistanceToClosestHandleInTool (eventData, toolIndex) {
+function getDistanceToClosestHandleInTool (eventData) {
   const config = freehandSculpter.getConfiguration();
+  const toolIndex = config.currentTool;
   const toolData = getToolState(eventData.element, referencedToolType);
-
   const dataHandles = toolData.data[toolIndex].handles;
+
+  const mousePointImage = eventData.currentPoints.image;
   const mousePointCanvas = eventData.currentPoints.canvas;
 
-  let closest = Infinity;
+  let closestImage = Infinity;
+  let closestCanvas = Infinity;
 
   for (let i = 0; i < dataHandles.length; i++) {
-    const handlesCanvas = external.cornerstone.pixelToCanvas(eventData.element, dataHandles[i]);
-    const distance = external.cornerstoneMath.point.distance(handlesCanvas, mousePointCanvas);
-    if (distance < closest) {
-      closest = distance;
+    const handleImage = dataHandles[i];
+    const distanceImage = external.cornerstoneMath.point.distance(handleImage, mousePointImage);
+
+    if (distanceImage < closestImage) {
+      closestImage = distanceImage;
+      const handlesCanvas = external.cornerstone.pixelToCanvas(eventData.element, dataHandles[i]);
+
+      closestCanvas = external.cornerstoneMath.point.distance(handlesCanvas, mousePointCanvas);
     }
   }
 
-  return closest;
+  config.toolSizeImage = closestImage;
+  config.toolSizeCanvas = closestCanvas;
+
+  console.log(config.toolSizeImage);
+  console.log(config.toolSizeCanvas);
 }
 
 /**
@@ -221,15 +197,153 @@ function mouseDragCallback (e) {
     return;
   }
 
-  const config = freehand.getConfiguration();
-  const data = toolData.data[config.currentTool];
+  const config = freehandSculpter.getConfiguration();
+  const dataHandles = toolData.data[config.currentTool].handles;
 
   // Set the mouseLocation handle
   getMouseLocation(eventData);
+  sculpt(eventData, dataHandles);
 
   // Update the image
   external.cornerstone.updateImage(eventData.element);
 }
+
+function sculpt (eventData, dataHandles) {
+  const element = eventData.element;
+  const config = freehandSculpter.getConfiguration();
+  const toolSize = config.toolSizeImage;
+  const mousePoint = eventData.currentPoints.image;
+  const mousePointCanvas = eventData.currentPoints.canvas;
+
+  pushHandles(dataHandles, toolSize, mousePoint);
+
+  const indiciesToInsertAfter = findNewHandleIndicies(element, dataHandles);
+
+  // TODO insert new points
+  let newIndexModifier = 0;
+  for (let i = 0; i < indiciesToInsertAfter.length; i++) {
+    const insertIndex = indiciesToInsertAfter[i] + 1 + newIndexModifier;
+    insertHandleRadially(eventData, dataHandles, insertIndex);
+    newIndexModifier++;
+  }
+
+
+
+  // TODO Cycle around points and combine close
+  //      Points (really delete one and move another).
+}
+
+function pushHandles (dataHandles, toolSize, mousePoint) {
+  for (let i = 0; i < dataHandles.length; i++) {
+    // Push point if inside circle, to edge of circle.
+    const handle = dataHandles[i];
+    const distanceToHandle = external.cornerstoneMath.point.distance(handle, mousePoint);
+
+    if (distanceToHandle < toolSize) {
+      // Push handle
+
+      const directionUnitVector = {
+        x: (handle.x - mousePoint.x) / distanceToHandle,
+        y: (handle.y - mousePoint.y) / distanceToHandle
+      };
+
+      handle.x = mousePoint.x + (toolSize * directionUnitVector.x);
+      handle.y = mousePoint.y + (toolSize * directionUnitVector.y);
+
+      // Push lines
+      let lastHandleId;
+      if (i === 0 ) {
+        lastHandleId = dataHandles.length - 1;
+      } else {
+        lastHandleId = i - 1;
+      }
+
+      dataHandles[lastHandleId].lines.pop();
+      dataHandles[lastHandleId].lines.push(handle);
+    }
+  }
+}
+
+function findNewHandleIndicies (element, dataHandles) {
+  const config = freehandSculpter.getConfiguration();
+  const maxSpacing = config.maxSpacing;
+
+  const indiciesToInsertAfter = [];
+  for (let i = 0; i < dataHandles.length; i++) {
+    const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
+    let nextHandleCanvas;
+    if (i === dataHandles.length - 1) {
+      nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[0]);
+    } else {
+      nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i + 1]);
+    }
+
+    const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
+    if (distanceToNextHandleCanvas > maxSpacing) {
+      indiciesToInsertAfter.push(i);
+    }
+  }
+
+  return indiciesToInsertAfter;
+}
+
+function insertHandleRadially (eventData, dataHandles, insertIndex) {
+  const element = eventData.element;
+  const config = freehandSculpter.getConfiguration();
+  const toolSize = config.toolSizeImage;
+  const mousePoint = eventData.currentPoints.image;
+
+  const previousIndex = insertIndex - 1;
+  let nextIndex;
+  if (insertIndex === dataHandles.length) {
+    nextIndex = 0;
+  } else {
+    // A 'GOTCHA' here: The line bellow is true as we haven't inserted our handle yet!
+    nextIndex = insertIndex;
+  }
+
+  // Calculate insert position: half way between the handles, then pushed out
+  // Radially to the edge of the freehandSculpter.
+  const midPoint = {
+    x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
+    y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
+  }
+
+
+  const distanceToMidPoint = external.cornerstoneMath.point.distance(mousePoint, midPoint);
+
+  const directionUnitVector = {
+    x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
+    y: (midPoint.y - mousePoint.y) / distanceToMidPoint
+  };
+
+  const insertPosition = {
+    x: mousePoint.x + (toolSize * directionUnitVector.x),
+    y: mousePoint.y + (toolSize * directionUnitVector.y)
+  }
+
+  // TODO insert the point at the correct index.
+
+  // Add the new handle
+  const handleData = new FreehandHandleData(insertPosition);
+  dataHandles.splice(insertIndex, 0, handleData);
+
+  // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
+  dataHandles[previousIndex].lines.pop();
+  dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
+
+  // Add the line from the inserted handle to the handle after
+  if (insertIndex === dataHandles.length - 1) {
+    dataHandles[insertIndex].lines.push(dataHandles[0]);
+  } else {
+    dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
+  }
+
+
+}
+
+
+
 
 /**
 * Event handler for MOUSE_UP event.
@@ -287,7 +401,7 @@ function onImageRendered (e) {
   if (config.active) {
     const options = {
       fill: null,
-      handleRadius: config.toolSize
+      handleRadius: config.toolSizeCanvas
     };
 
     // Draw large handle at the mouse
@@ -313,6 +427,14 @@ function enable (element) {
 * @modifies {element}
 */
 function disable (element) {
+  const config = freehandSculpter.getConfiguration();
+  const toolData = getToolState(element, referencedToolType);
+
+  config.currentTool = null;
+  for (let i = 0; i < toolData.data.length; i++) {
+    toolData.data[i].active = false;
+  }
+
   removeEventListeners(element);
   external.cornerstone.updateImage(element);
 }
@@ -327,7 +449,7 @@ function activate (element, mouseButtonMask) {
   setToolOptions(toolType, element, { mouseButtonMask });
 
   // Change freehand to "enable", such that it is visible and interactive by
-  // by proxy via freehandSculpter.
+  // By proxy via freehandSculpter.
   freehand.enable(element);
 
   removeEventListeners(element);
@@ -347,7 +469,7 @@ function activate (element, mouseButtonMask) {
 * @param {Object} element - The viewport element to attach event listeners to.
 * @modifies {element}
 */
-function deactivate (element, mouseButtonMask) {
+function deactivate (element) {
   disable(element);
 }
 
