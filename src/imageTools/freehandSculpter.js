@@ -4,7 +4,6 @@ import { freehand } from './freehand.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import { ClickedLineData } from '../util/freehand/ClickedLineData.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
@@ -213,21 +212,17 @@ function sculpt (eventData, dataHandles) {
   const config = freehandSculpter.getConfiguration();
   const toolSize = config.toolSizeImage;
   const mousePoint = eventData.currentPoints.image;
-  const mousePointCanvas = eventData.currentPoints.canvas;
 
   pushHandles(dataHandles, toolSize, mousePoint);
+  insertNewHandles(eventData, dataHandles);
 
-  const indiciesToInsertAfter = findNewHandleIndicies(element, dataHandles);
+  if (dataHandles.length > 3) { // Don't merge handles if it would destroy the polygon.
+    const closePairs = findCloseHandlePairs(element, dataHandles);
 
-  // TODO insert new points
-  let newIndexModifier = 0;
-  for (let i = 0; i < indiciesToInsertAfter.length; i++) {
-    const insertIndex = indiciesToInsertAfter[i] + 1 + newIndexModifier;
-    insertHandleRadially(eventData, dataHandles, insertIndex);
-    newIndexModifier++;
+    mergeCloseHandles(eventData, dataHandles, closePairs);
+    console.log(`closePairs: ${closePairs.length}`);
+    console.log();
   }
-
-
 
   // TODO Cycle around points and combine close
   //      Points (really delete one and move another).
@@ -252,7 +247,8 @@ function pushHandles (dataHandles, toolSize, mousePoint) {
 
       // Push lines
       let lastHandleId;
-      if (i === 0 ) {
+
+      if (i === 0) {
         lastHandleId = dataHandles.length - 1;
       } else {
         lastHandleId = i - 1;
@@ -264,14 +260,51 @@ function pushHandles (dataHandles, toolSize, mousePoint) {
   }
 }
 
+function insertNewHandles (eventData, dataHandles) {
+  const element = eventData.element;
+  const indiciesToInsertAfter = findNewHandleIndicies(element, dataHandles);
+  let newIndexModifier = 0;
+
+  for (let i = 0; i < indiciesToInsertAfter.length; i++) {
+    const insertIndex = indiciesToInsertAfter[i] + 1 + newIndexModifier;
+
+    insertHandleRadially(eventData, dataHandles, insertIndex);
+    newIndexModifier++;
+  }
+}
+
+function mergeCloseHandles (eventData, dataHandles, closePairs) {
+  const element = eventData.element;
+  let removedIndexModifier = 0;
+
+  for (let i = 0; i < closePairs.length; i++) {
+    const pair = [
+      closePairs[i][0] - removedIndexModifier,
+      closePairs[i][1] - removedIndexModifier
+    ];
+
+    combineHandles(eventData, dataHandles, pair);
+    removedIndexModifier++;
+  }
+
+  // Recursively remove problem childs
+  const newClosePairs = findCloseHandlePairs(element, dataHandles);
+
+  console.log(`newClosePairs: ${newClosePairs.length}`);
+  if (closePairs.length) {
+    mergeCloseHandles(eventData, dataHandles, newClosePairs);
+  }
+}
+
 function findNewHandleIndicies (element, dataHandles) {
   const config = freehandSculpter.getConfiguration();
   const maxSpacing = config.maxSpacing;
-
   const indiciesToInsertAfter = [];
+
   for (let i = 0; i < dataHandles.length; i++) {
     const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
     let nextHandleCanvas;
+
     if (i === dataHandles.length - 1) {
       nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[0]);
     } else {
@@ -279,6 +312,7 @@ function findNewHandleIndicies (element, dataHandles) {
     }
 
     const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
+
     if (distanceToNextHandleCanvas > maxSpacing) {
       indiciesToInsertAfter.push(i);
     }
@@ -287,18 +321,79 @@ function findNewHandleIndicies (element, dataHandles) {
   return indiciesToInsertAfter;
 }
 
+function findCloseHandlePairs (element, dataHandles) {
+  const config = freehandSculpter.getConfiguration();
+  const minSpacing = config.minSpacing;
+  const closePairs = [];
+  let length = dataHandles.length;
+
+  for (let i = 0; i < length; i++) {
+    const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
+    let nextHandleId;
+
+    if (i === dataHandles.length - 1) {
+      nextHandleId = 0;
+    } else {
+      nextHandleId = i + 1;
+    }
+
+    const nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[nextHandleId]);
+    const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
+
+    if (distanceToNextHandleCanvas < minSpacing) {
+      closePairs.push([
+        i,
+        nextHandleId
+      ]);
+      i++; // Don't double count pairs in order to prevent your polygon collapsing to a singularity.
+
+      if (i === 0) {
+        length -= 1; // Don't check last node if first in pair to avoid double counting.
+      }
+    }
+  }
+
+  return closePairs;
+}
+
+function combineHandles (eventData, dataHandles, handlePair) {
+  // Calculate combine position: half way between the handles.
+  const midPoint = {
+    x: (dataHandles[handlePair[0]].x + dataHandles[handlePair[1]].x) / 2.0,
+    y: (dataHandles[handlePair[0]].y + dataHandles[handlePair[1]].y) / 2.0
+  };
+
+  // Move first point to midpoint
+  dataHandles[handlePair[0]].x = midPoint.x;
+  dataHandles[handlePair[0]].y = midPoint.y;
+
+  // Link first point to handle that second point links to.
+  let handleAfterPairId;
+
+  if (handlePair[1] === dataHandles.length - 1) {
+    handleAfterPairId = 0;
+  } else {
+    handleAfterPairId = handlePair[1] + 1;
+  }
+
+  dataHandles[handlePair[0]].lines.pop();
+  dataHandles[handlePair[0]].lines.push(dataHandles[handleAfterPairId]);
+
+  // Remove the handle
+  dataHandles.splice(handlePair[1], 1);
+}
+
 function insertHandleRadially (eventData, dataHandles, insertIndex) {
-  const element = eventData.element;
   const config = freehandSculpter.getConfiguration();
   const toolSize = config.toolSizeImage;
   const mousePoint = eventData.currentPoints.image;
-
   const previousIndex = insertIndex - 1;
   let nextIndex;
+
   if (insertIndex === dataHandles.length) {
     nextIndex = 0;
   } else {
-    // A 'GOTCHA' here: The line bellow is true as we haven't inserted our handle yet!
+    // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
     nextIndex = insertIndex;
   }
 
@@ -307,8 +402,7 @@ function insertHandleRadially (eventData, dataHandles, insertIndex) {
   const midPoint = {
     x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
     y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
-  }
-
+  };
 
   const distanceToMidPoint = external.cornerstoneMath.point.distance(mousePoint, midPoint);
 
@@ -320,12 +414,11 @@ function insertHandleRadially (eventData, dataHandles, insertIndex) {
   const insertPosition = {
     x: mousePoint.x + (toolSize * directionUnitVector.x),
     y: mousePoint.y + (toolSize * directionUnitVector.y)
-  }
-
-  // TODO insert the point at the correct index.
+  };
 
   // Add the new handle
   const handleData = new FreehandHandleData(insertPosition);
+
   dataHandles.splice(insertIndex, 0, handleData);
 
   // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
@@ -338,11 +431,7 @@ function insertHandleRadially (eventData, dataHandles, insertIndex) {
   } else {
     dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
   }
-
-
 }
-
-
 
 
 /**
@@ -367,7 +456,17 @@ function mouseUpCallback (e) {
   e.preventDefault();
   e.stopPropagation();
 
-  external.cornerstone.updateImage(eventData.element);
+  triggerStatisticsCalculation(eventData);
+}
+
+function triggerStatisticsCalculation (eventData) {
+  const config = freehandSculpter.getConfiguration();
+  const element = eventData.element;
+  const toolData = getToolState(element, referencedToolType);
+  const data = toolData.data[config.currentTool];
+
+  data.invalidated = true;
+  external.cornerstone.updateImage(element);
 }
 
 /**

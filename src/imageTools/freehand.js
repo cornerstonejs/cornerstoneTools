@@ -967,7 +967,7 @@ function onImageRendered (e) {
       data.invalidated = false;
     }
 
-    // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
+    // Only render text if polygon has been completed.
     if (data.polyBoundingBox && !data.textBox.freehand) {
       // If the textbox has not been moved by the user, it should be displayed on the right-most
       // Side of the tool.
