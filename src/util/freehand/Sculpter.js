@@ -115,8 +115,6 @@ export class Sculpter {
       const closePairs = this._findCloseHandlePairs();
 
       this._mergeCloseHandles(closePairs);
-      console.log(`closePairs: ${closePairs.length}`);
-      console.log();
     }
   }
 
@@ -143,7 +141,6 @@ export class Sculpter {
     // Recursively remove problem childs
     const newClosePairs = this._findCloseHandlePairs();
 
-    console.log(`newClosePairs: ${newClosePairs.length}`);
     if (newClosePairs.length) {
       this._mergeCloseHandles(newClosePairs);
     }

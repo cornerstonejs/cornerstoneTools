@@ -71,8 +71,6 @@ function mouseDownCallback (e) {
     imageNeedsUpdate = true;
   }
 
-  console.log(`focused tool: ${config.currentTool}`);
-
   if (imageNeedsUpdate) {
     // Force onImageRendered
     external.cornerstone.updateImage(eventData.element);
@@ -93,19 +91,18 @@ function selectFreehandTool (eventData) {
 
   config.currentTool = toolIndex;
   activateFreehandTool(element, toolIndex);
-
-  console.log(`Changed focus to toolIndex: ${toolIndex}`);
 }
-
 
 /**
 * Activate the selected freehand tool and deactivate others.
 *
 * @param {Object} element - The parent element of the freehand tool.
 * @param {Number} toolIndex - The ID of the freehand tool.
+* @return {Boolean} True if the tool was activated
 */
 function activateFreehandTool (element, toolIndex) {
   const toolData = getToolState(element, referencedToolType);
+  const activated = false;
 
   for (let i = 0; i < toolData.data.length; i++) {
     if (i === toolIndex) {
@@ -114,6 +111,8 @@ function activateFreehandTool (element, toolIndex) {
       toolData.data[i].active = false;
     }
   }
+
+  return activated;
 }
 
 /**
@@ -128,7 +127,6 @@ function initialiseSculpting (eventData) {
 
   getDistanceToClosestHandleInTool(eventData);
   config.active = true;
-  console.log('toolActive');
 
   getMouseLocation(eventData);
 
@@ -170,9 +168,6 @@ function getDistanceToClosestHandleInTool (eventData) {
 
   config.toolSizeImage = closestImage;
   config.toolSizeCanvas = closestCanvas;
-
-  console.log(config.toolSizeImage);
-  console.log(config.toolSizeCanvas);
 }
 
 /**
@@ -215,7 +210,6 @@ function mouseUpCallback (e) {
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
   config.active = false;
-  console.log('toolDeactive');
 
   e.preventDefault();
   e.stopPropagation();
