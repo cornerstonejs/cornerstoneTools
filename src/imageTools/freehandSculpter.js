@@ -323,6 +323,7 @@ function activate (element, mouseButtonMask) {
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
 
+  element.focus();
   external.cornerstone.updateImage(element);
 }
 

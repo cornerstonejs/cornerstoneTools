@@ -3207,6 +3207,7 @@ function activate(element, mouseButtonMask) {
   element.addEventListener(_events2.default.KEY_DOWN, _keysHeld.keyDownCallback);
   element.addEventListener(_events2.default.KEY_UP, _keysHeld.keyUpCallback);
 
+  element.focus();
   _externalModules2.default.cornerstone.updateImage(element);
 }
 
@@ -3651,6 +3652,7 @@ function activate(element, mouseButtonMask) {
   element.addEventListener(_events2.default.KEY_DOWN, _keysHeld.keyDownCallback);
   element.addEventListener(_events2.default.KEY_UP, _keysHeld.keyUpCallback);
 
+  element.focus();
   _externalModules2.default.cornerstone.updateImage(element);
 }
 
