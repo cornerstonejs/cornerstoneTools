@@ -9,12 +9,13 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
 import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
-import sculpt from '../util/freehand/sculpt.js';
+import { Sculpter } from '../util/freehand/Sculpter.js';
 
 /**
 * @author JamesAPetts
 */
 
+const sculpter = new Sculpter();
 const toolType = 'freehandSculpter';
 const referencedToolType = 'freehand';
 let configuration = {
@@ -193,7 +194,7 @@ function mouseDragCallback (e) {
 
   // Set the mouseLocation handle
   getMouseLocation(eventData);
-  sculpt(eventData, dataHandles);
+  sculpter.sculpt(eventData, dataHandles);
 
   // Update the image
   external.cornerstone.updateImage(eventData.element);
