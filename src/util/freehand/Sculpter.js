@@ -1,6 +1,7 @@
 import external from '../../externalModules.js';
 import { freehandSculpter } from '../../imageTools/freehandSculpter.js';
 import { FreehandHandleData } from './FreehandHandleData.js';
+import { clipToBox } from '../clip.js';
 
 export class Sculpter {
   /* eslint no-underscore-dangle: ["error", { "allowAfterThis": true }] */
@@ -37,6 +38,7 @@ export class Sculpter {
 
     this._eventData = eventData;
     this._element = eventData.element;
+    this._image = eventData.image;
     this._mousePoint = eventData.currentPoints.image;
     this._dataHandles = dataHandles;
     this._toolSize = config.toolSizeImage;
@@ -67,8 +69,15 @@ export class Sculpter {
           y: (handle.y - mousePoint.y) / distanceToHandle
         };
 
-        handle.x = mousePoint.x + (toolSize * directionUnitVector.x);
-        handle.y = mousePoint.y + (toolSize * directionUnitVector.y);
+        const position = {
+          x: mousePoint.x + (toolSize * directionUnitVector.x),
+          y: mousePoint.y + (toolSize * directionUnitVector.y)
+        };
+
+        clipToBox(position, this._image);
+
+        handle.x = position.x;
+        handle.y = position.y;
 
         // Push lines
         let lastHandleId;
@@ -99,6 +108,101 @@ export class Sculpter {
 
       this._insertHandleRadially(insertIndex);
       newIndexModifier++;
+    }
+  }
+
+  /**
+  * Returns an array of indicies that describe where new handles should be
+  * inserted (where the distance between subsequent handles is >
+  * config.maxSpacing).
+  *
+  * @return {Object} An array of indicies that describe where new handles should be inserted.
+  */
+  _findNewHandleIndicies () {
+    const dataHandles = this._dataHandles;
+    const indiciesToInsertAfter = [];
+
+    for (let i = 0; i < dataHandles.length; i++) {
+      const handleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
+      let nextHandleCanvas;
+
+      if (i === dataHandles.length - 1) {
+        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[0]);
+      } else {
+        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i + 1]);
+      }
+
+      const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
+
+      if (distanceToNextHandleCanvas > this._maxSpacing) {
+        indiciesToInsertAfter.push(i);
+      }
+    }
+
+    return indiciesToInsertAfter;
+  }
+
+  /**
+  * Inserts a handle on the surface of the circle defined by toolSize and the
+  * mousePoint.
+  *
+  * @param {Object} insertIndex - The index to insert the new handle.
+  */
+  _insertHandleRadially (insertIndex) {
+    const dataHandles = this._dataHandles;
+    const mousePoint = this._mousePoint;
+    const toolSize = this._toolSize;
+    const previousIndex = insertIndex - 1;
+    let nextIndex;
+
+    if (insertIndex === dataHandles.length) {
+      nextIndex = 0;
+    } else {
+      // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
+      nextIndex = insertIndex;
+    }
+
+    // Calculate insert position: half way between the handles, then pushed out
+    // Radially to the edge of the freehandSculpter.
+    const midPoint = {
+      x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
+      y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
+    };
+
+    const distanceToMidPoint = external.cornerstoneMath.point.distance(mousePoint, midPoint);
+
+    let insertPosition;
+
+    if (distanceToMidPoint < toolSize) {
+      const directionUnitVector = {
+        x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
+        y: (midPoint.y - mousePoint.y) / distanceToMidPoint
+      };
+
+      insertPosition = {
+        x: mousePoint.x + (toolSize * directionUnitVector.x),
+        y: mousePoint.y + (toolSize * directionUnitVector.y)
+      };
+    } else {
+      insertPosition = midPoint;
+    }
+
+    clipToBox(insertPosition, this._image);
+
+    // Add the new handle
+    const handleData = new FreehandHandleData(insertPosition);
+
+    dataHandles.splice(insertIndex, 0, handleData);
+
+    // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
+    dataHandles[previousIndex].lines.pop();
+    dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
+
+    // Add the line from the inserted handle to the handle after
+    if (insertIndex === dataHandles.length - 1) {
+      dataHandles[insertIndex].lines.push(dataHandles[0]);
+    } else {
+      dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
     }
   }
 
@@ -144,37 +248,6 @@ export class Sculpter {
     if (newClosePairs.length) {
       this._mergeCloseHandles(newClosePairs);
     }
-  }
-
-  /**
-  * Returns an array of indicies that describe where new handles should be
-  * inserted (where the distance between subsequent handles is >
-  * config.maxSpacing).
-  *
-  * @return {Object} An array of indicies that describe where new handles should be inserted.
-  */
-  _findNewHandleIndicies () {
-    const dataHandles = this._dataHandles;
-    const indiciesToInsertAfter = [];
-
-    for (let i = 0; i < dataHandles.length; i++) {
-      const handleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
-      let nextHandleCanvas;
-
-      if (i === dataHandles.length - 1) {
-        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[0]);
-      } else {
-        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i + 1]);
-      }
-
-      const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
-
-      if (distanceToNextHandleCanvas > this._maxSpacing) {
-        indiciesToInsertAfter.push(i);
-      }
-    }
-
-    return indiciesToInsertAfter;
   }
 
   /**
@@ -233,6 +306,8 @@ export class Sculpter {
       y: (dataHandles[handlePair[0]].y + dataHandles[handlePair[1]].y) / 2.0
     };
 
+    clipToBox(midPoint, this._image);
+
     // Move first point to midpoint
     dataHandles[handlePair[0]].x = midPoint.x;
     dataHandles[handlePair[0]].y = midPoint.y;
@@ -251,62 +326,6 @@ export class Sculpter {
 
     // Remove the handle
     dataHandles.splice(handlePair[1], 1);
-  }
-
-  /**
-  * Inserts a handle on the surface of the circle defined by toolSize and the
-  * mousePoint.
-  *
-  * @param {Object} insertIndex - The index to insert the new handle.
-  */
-  _insertHandleRadially (insertIndex) {
-    const dataHandles = this._dataHandles;
-    const mousePoint = this._mousePoint;
-    const toolSize = this._toolSize;
-    const previousIndex = insertIndex - 1;
-    let nextIndex;
-
-    if (insertIndex === dataHandles.length) {
-      nextIndex = 0;
-    } else {
-      // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
-      nextIndex = insertIndex;
-    }
-
-    // Calculate insert position: half way between the handles, then pushed out
-    // Radially to the edge of the freehandSculpter.
-    const midPoint = {
-      x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
-      y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
-    };
-
-    const distanceToMidPoint = external.cornerstoneMath.point.distance(mousePoint, midPoint);
-
-    const directionUnitVector = {
-      x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
-      y: (midPoint.y - mousePoint.y) / distanceToMidPoint
-    };
-
-    const insertPosition = {
-      x: mousePoint.x + (toolSize * directionUnitVector.x),
-      y: mousePoint.y + (toolSize * directionUnitVector.y)
-    };
-
-    // Add the new handle
-    const handleData = new FreehandHandleData(insertPosition);
-
-    dataHandles.splice(insertIndex, 0, handleData);
-
-    // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
-    dataHandles[previousIndex].lines.pop();
-    dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
-
-    // Add the line from the inserted handle to the handle after
-    if (insertIndex === dataHandles.length - 1) {
-      dataHandles[insertIndex].lines.push(dataHandles[0]);
-    } else {
-      dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
-    }
   }
 
 }

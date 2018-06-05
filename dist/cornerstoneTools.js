@@ -19220,6 +19220,8 @@ var _freehandSculpter = __webpack_require__(/*! ../../imageTools/freehandSculpte
 
 var _FreehandHandleData = __webpack_require__(/*! ./FreehandHandleData.js */ "./util/freehand/FreehandHandleData.js");
 
+var _clip = __webpack_require__(/*! ../clip.js */ "./util/clip.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -19269,6 +19271,7 @@ var Sculpter = exports.Sculpter = function () {
 
       this._eventData = eventData;
       this._element = eventData.element;
+      this._image = eventData.image;
       this._mousePoint = eventData.currentPoints.image;
       this._dataHandles = dataHandles;
       this._toolSize = config.toolSizeImage;
@@ -19302,8 +19305,15 @@ var Sculpter = exports.Sculpter = function () {
             y: (handle.y - mousePoint.y) / distanceToHandle
           };
 
-          handle.x = mousePoint.x + toolSize * directionUnitVector.x;
-          handle.y = mousePoint.y + toolSize * directionUnitVector.y;
+          var position = {
+            x: mousePoint.x + toolSize * directionUnitVector.x,
+            y: mousePoint.y + toolSize * directionUnitVector.y
+          };
+
+          (0, _clip.clipToBox)(position, this._image);
+
+          handle.x = position.x;
+          handle.y = position.y;
 
           // Push lines
           var lastHandleId = void 0;
@@ -19337,6 +19347,107 @@ var Sculpter = exports.Sculpter = function () {
 
         this._insertHandleRadially(insertIndex);
         newIndexModifier++;
+      }
+    }
+
+    /**
+    * Returns an array of indicies that describe where new handles should be
+    * inserted (where the distance between subsequent handles is >
+    * config.maxSpacing).
+    *
+    * @return {Object} An array of indicies that describe where new handles should be inserted.
+    */
+
+  }, {
+    key: '_findNewHandleIndicies',
+    value: function _findNewHandleIndicies() {
+      var dataHandles = this._dataHandles;
+      var indiciesToInsertAfter = [];
+
+      for (var i = 0; i < dataHandles.length; i++) {
+        var handleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
+        var nextHandleCanvas = void 0;
+
+        if (i === dataHandles.length - 1) {
+          nextHandleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[0]);
+        } else {
+          nextHandleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[i + 1]);
+        }
+
+        var distanceToNextHandleCanvas = _externalModules2.default.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
+
+        if (distanceToNextHandleCanvas > this._maxSpacing) {
+          indiciesToInsertAfter.push(i);
+        }
+      }
+
+      return indiciesToInsertAfter;
+    }
+
+    /**
+    * Inserts a handle on the surface of the circle defined by toolSize and the
+    * mousePoint.
+    *
+    * @param {Object} insertIndex - The index to insert the new handle.
+    */
+
+  }, {
+    key: '_insertHandleRadially',
+    value: function _insertHandleRadially(insertIndex) {
+      var dataHandles = this._dataHandles;
+      var mousePoint = this._mousePoint;
+      var toolSize = this._toolSize;
+      var previousIndex = insertIndex - 1;
+      var nextIndex = void 0;
+
+      if (insertIndex === dataHandles.length) {
+        nextIndex = 0;
+      } else {
+        // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
+        nextIndex = insertIndex;
+      }
+
+      // Calculate insert position: half way between the handles, then pushed out
+      // Radially to the edge of the freehandSculpter.
+      var midPoint = {
+        x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
+        y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
+      };
+
+      var distanceToMidPoint = _externalModules2.default.cornerstoneMath.point.distance(mousePoint, midPoint);
+
+      var insertPosition = void 0;
+
+      if (distanceToMidPoint < toolSize) {
+        var directionUnitVector = {
+          x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
+          y: (midPoint.y - mousePoint.y) / distanceToMidPoint
+        };
+
+        insertPosition = {
+          x: mousePoint.x + toolSize * directionUnitVector.x,
+          y: mousePoint.y + toolSize * directionUnitVector.y
+        };
+      } else {
+        insertPosition = midPoint;
+      }
+
+      (0, _clip.clipToBox)(insertPosition, this._image);
+
+      // Add the new handle
+      var handleData = new _FreehandHandleData.FreehandHandleData(insertPosition);
+
+      dataHandles.splice(insertIndex, 0, handleData);
+
+      // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
+      dataHandles[previousIndex].lines.pop();
+      dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
+
+      // Add the line from the inserted handle to the handle after
+      if (insertIndex === dataHandles.length - 1) {
+        dataHandles[insertIndex].lines.push(dataHandles[0]);
+      } else {
+        dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
       }
     }
 
@@ -19386,40 +19497,6 @@ var Sculpter = exports.Sculpter = function () {
       if (newClosePairs.length) {
         this._mergeCloseHandles(newClosePairs);
       }
-    }
-
-    /**
-    * Returns an array of indicies that describe where new handles should be
-    * inserted (where the distance between subsequent handles is >
-    * config.maxSpacing).
-    *
-    * @return {Object} An array of indicies that describe where new handles should be inserted.
-    */
-
-  }, {
-    key: '_findNewHandleIndicies',
-    value: function _findNewHandleIndicies() {
-      var dataHandles = this._dataHandles;
-      var indiciesToInsertAfter = [];
-
-      for (var i = 0; i < dataHandles.length; i++) {
-        var handleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
-        var nextHandleCanvas = void 0;
-
-        if (i === dataHandles.length - 1) {
-          nextHandleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[0]);
-        } else {
-          nextHandleCanvas = _externalModules2.default.cornerstone.pixelToCanvas(this._element, dataHandles[i + 1]);
-        }
-
-        var distanceToNextHandleCanvas = _externalModules2.default.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
-
-        if (distanceToNextHandleCanvas > this._maxSpacing) {
-          indiciesToInsertAfter.push(i);
-        }
-      }
-
-      return indiciesToInsertAfter;
     }
 
     /**
@@ -19481,6 +19558,8 @@ var Sculpter = exports.Sculpter = function () {
         y: (dataHandles[handlePair[0]].y + dataHandles[handlePair[1]].y) / 2.0
       };
 
+      (0, _clip.clipToBox)(midPoint, this._image);
+
       // Move first point to midpoint
       dataHandles[handlePair[0]].x = midPoint.x;
       dataHandles[handlePair[0]].y = midPoint.y;
@@ -19499,65 +19578,6 @@ var Sculpter = exports.Sculpter = function () {
 
       // Remove the handle
       dataHandles.splice(handlePair[1], 1);
-    }
-
-    /**
-    * Inserts a handle on the surface of the circle defined by toolSize and the
-    * mousePoint.
-    *
-    * @param {Object} insertIndex - The index to insert the new handle.
-    */
-
-  }, {
-    key: '_insertHandleRadially',
-    value: function _insertHandleRadially(insertIndex) {
-      var dataHandles = this._dataHandles;
-      var mousePoint = this._mousePoint;
-      var toolSize = this._toolSize;
-      var previousIndex = insertIndex - 1;
-      var nextIndex = void 0;
-
-      if (insertIndex === dataHandles.length) {
-        nextIndex = 0;
-      } else {
-        // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
-        nextIndex = insertIndex;
-      }
-
-      // Calculate insert position: half way between the handles, then pushed out
-      // Radially to the edge of the freehandSculpter.
-      var midPoint = {
-        x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
-        y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
-      };
-
-      var distanceToMidPoint = _externalModules2.default.cornerstoneMath.point.distance(mousePoint, midPoint);
-
-      var directionUnitVector = {
-        x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
-        y: (midPoint.y - mousePoint.y) / distanceToMidPoint
-      };
-
-      var insertPosition = {
-        x: mousePoint.x + toolSize * directionUnitVector.x,
-        y: mousePoint.y + toolSize * directionUnitVector.y
-      };
-
-      // Add the new handle
-      var handleData = new _FreehandHandleData.FreehandHandleData(insertPosition);
-
-      dataHandles.splice(insertIndex, 0, handleData);
-
-      // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
-      dataHandles[previousIndex].lines.pop();
-      dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
-
-      // Add the line from the inserted handle to the handle after
-      if (insertIndex === dataHandles.length - 1) {
-        dataHandles[insertIndex].lines.push(dataHandles[0]);
-      } else {
-        dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
-      }
     }
   }]);
 
