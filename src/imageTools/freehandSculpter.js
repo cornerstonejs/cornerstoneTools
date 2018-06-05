@@ -9,7 +9,11 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
 import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
-import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
+import sculpt from '../util/freehand/sculpt.js';
+
+/**
+* @author JamesAPetts
+*/
 
 const toolType = 'freehandSculpter';
 const referencedToolType = 'freehand';
@@ -62,7 +66,7 @@ function mouseDownCallback (e) {
     selectFreehandTool(eventData);
     imageNeedsUpdate = true;
   } else if (config.currentTool !== null) {
-    beginSculpting(eventData);
+    initialiseSculpting(eventData);
     imageNeedsUpdate = true;
   }
 
@@ -117,7 +121,7 @@ function activateFreehandTool (element, toolIndex) {
 *
 * @param {Object} eventData - Data object associated with the event.
 */
-function beginSculpting (eventData) {
+function initialiseSculpting (eventData) {
   const config = freehandSculpter.getConfiguration();
   const element = eventData.element;
 
@@ -128,29 +132,17 @@ function beginSculpting (eventData) {
   getMouseLocation(eventData);
 
   // Begin mouseDragCallback loop - call mouseUpCallback at end of drag or straight away if just a click.
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-
   element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 }
 
 /**
-* Event handler for MOUSE_MOVE event.
+* Calculates the distance to the closest handle in the tool, and stores the
+* result in config.toolSizeImage and config.toolSizeCanvas.
 *
-* @event
-* @param {Object} e - The event.
+* @param {Object} eventData - Data object associated with the event.
 */
-function mouseMoveCallback (e) {
-  const eventData = e.detail;
-  const toolData = getToolState(eventData.element, referencedToolType);
-
-  if (!toolData) {
-    return;
-  }
-
-}
-
 function getDistanceToClosestHandleInTool (eventData) {
   const config = freehandSculpter.getConfiguration();
   const toolIndex = config.currentTool;
@@ -207,233 +199,6 @@ function mouseDragCallback (e) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-function sculpt (eventData, dataHandles) {
-  const element = eventData.element;
-  const config = freehandSculpter.getConfiguration();
-  const toolSize = config.toolSizeImage;
-  const mousePoint = eventData.currentPoints.image;
-
-  pushHandles(dataHandles, toolSize, mousePoint);
-  insertNewHandles(eventData, dataHandles);
-
-  if (dataHandles.length > 3) { // Don't merge handles if it would destroy the polygon.
-    const closePairs = findCloseHandlePairs(element, dataHandles);
-
-    mergeCloseHandles(eventData, dataHandles, closePairs);
-    console.log(`closePairs: ${closePairs.length}`);
-    console.log();
-  }
-
-  // TODO Cycle around points and combine close
-  //      Points (really delete one and move another).
-}
-
-function pushHandles (dataHandles, toolSize, mousePoint) {
-  for (let i = 0; i < dataHandles.length; i++) {
-    // Push point if inside circle, to edge of circle.
-    const handle = dataHandles[i];
-    const distanceToHandle = external.cornerstoneMath.point.distance(handle, mousePoint);
-
-    if (distanceToHandle < toolSize) {
-      // Push handle
-
-      const directionUnitVector = {
-        x: (handle.x - mousePoint.x) / distanceToHandle,
-        y: (handle.y - mousePoint.y) / distanceToHandle
-      };
-
-      handle.x = mousePoint.x + (toolSize * directionUnitVector.x);
-      handle.y = mousePoint.y + (toolSize * directionUnitVector.y);
-
-      // Push lines
-      let lastHandleId;
-
-      if (i === 0) {
-        lastHandleId = dataHandles.length - 1;
-      } else {
-        lastHandleId = i - 1;
-      }
-
-      dataHandles[lastHandleId].lines.pop();
-      dataHandles[lastHandleId].lines.push(handle);
-    }
-  }
-}
-
-function insertNewHandles (eventData, dataHandles) {
-  const element = eventData.element;
-  const indiciesToInsertAfter = findNewHandleIndicies(element, dataHandles);
-  let newIndexModifier = 0;
-
-  for (let i = 0; i < indiciesToInsertAfter.length; i++) {
-    const insertIndex = indiciesToInsertAfter[i] + 1 + newIndexModifier;
-
-    insertHandleRadially(eventData, dataHandles, insertIndex);
-    newIndexModifier++;
-  }
-}
-
-function mergeCloseHandles (eventData, dataHandles, closePairs) {
-  const element = eventData.element;
-  let removedIndexModifier = 0;
-
-  for (let i = 0; i < closePairs.length; i++) {
-    const pair = [
-      closePairs[i][0] - removedIndexModifier,
-      closePairs[i][1] - removedIndexModifier
-    ];
-
-    combineHandles(eventData, dataHandles, pair);
-    removedIndexModifier++;
-  }
-
-  // Recursively remove problem childs
-  const newClosePairs = findCloseHandlePairs(element, dataHandles);
-
-  console.log(`newClosePairs: ${newClosePairs.length}`);
-  if (closePairs.length) {
-    mergeCloseHandles(eventData, dataHandles, newClosePairs);
-  }
-}
-
-function findNewHandleIndicies (element, dataHandles) {
-  const config = freehandSculpter.getConfiguration();
-  const maxSpacing = config.maxSpacing;
-  const indiciesToInsertAfter = [];
-
-  for (let i = 0; i < dataHandles.length; i++) {
-    const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
-    let nextHandleCanvas;
-
-    if (i === dataHandles.length - 1) {
-      nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[0]);
-    } else {
-      nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i + 1]);
-    }
-
-    const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
-
-    if (distanceToNextHandleCanvas > maxSpacing) {
-      indiciesToInsertAfter.push(i);
-    }
-  }
-
-  return indiciesToInsertAfter;
-}
-
-function findCloseHandlePairs (element, dataHandles) {
-  const config = freehandSculpter.getConfiguration();
-  const minSpacing = config.minSpacing;
-  const closePairs = [];
-  let length = dataHandles.length;
-
-  for (let i = 0; i < length; i++) {
-    const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
-    let nextHandleId;
-
-    if (i === dataHandles.length - 1) {
-      nextHandleId = 0;
-    } else {
-      nextHandleId = i + 1;
-    }
-
-    const nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[nextHandleId]);
-    const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
-
-    if (distanceToNextHandleCanvas < minSpacing) {
-      closePairs.push([
-        i,
-        nextHandleId
-      ]);
-      i++; // Don't double count pairs in order to prevent your polygon collapsing to a singularity.
-
-      if (i === 0) {
-        length -= 1; // Don't check last node if first in pair to avoid double counting.
-      }
-    }
-  }
-
-  return closePairs;
-}
-
-function combineHandles (eventData, dataHandles, handlePair) {
-  // Calculate combine position: half way between the handles.
-  const midPoint = {
-    x: (dataHandles[handlePair[0]].x + dataHandles[handlePair[1]].x) / 2.0,
-    y: (dataHandles[handlePair[0]].y + dataHandles[handlePair[1]].y) / 2.0
-  };
-
-  // Move first point to midpoint
-  dataHandles[handlePair[0]].x = midPoint.x;
-  dataHandles[handlePair[0]].y = midPoint.y;
-
-  // Link first point to handle that second point links to.
-  let handleAfterPairId;
-
-  if (handlePair[1] === dataHandles.length - 1) {
-    handleAfterPairId = 0;
-  } else {
-    handleAfterPairId = handlePair[1] + 1;
-  }
-
-  dataHandles[handlePair[0]].lines.pop();
-  dataHandles[handlePair[0]].lines.push(dataHandles[handleAfterPairId]);
-
-  // Remove the handle
-  dataHandles.splice(handlePair[1], 1);
-}
-
-function insertHandleRadially (eventData, dataHandles, insertIndex) {
-  const config = freehandSculpter.getConfiguration();
-  const toolSize = config.toolSizeImage;
-  const mousePoint = eventData.currentPoints.image;
-  const previousIndex = insertIndex - 1;
-  let nextIndex;
-
-  if (insertIndex === dataHandles.length) {
-    nextIndex = 0;
-  } else {
-    // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
-    nextIndex = insertIndex;
-  }
-
-  // Calculate insert position: half way between the handles, then pushed out
-  // Radially to the edge of the freehandSculpter.
-  const midPoint = {
-    x: (dataHandles[previousIndex].x + dataHandles[nextIndex].x) / 2.0,
-    y: (dataHandles[previousIndex].y + dataHandles[nextIndex].y) / 2.0
-  };
-
-  const distanceToMidPoint = external.cornerstoneMath.point.distance(mousePoint, midPoint);
-
-  const directionUnitVector = {
-    x: (midPoint.x - mousePoint.x) / distanceToMidPoint,
-    y: (midPoint.y - mousePoint.y) / distanceToMidPoint
-  };
-
-  const insertPosition = {
-    x: mousePoint.x + (toolSize * directionUnitVector.x),
-    y: mousePoint.y + (toolSize * directionUnitVector.y)
-  };
-
-  // Add the new handle
-  const handleData = new FreehandHandleData(insertPosition);
-
-  dataHandles.splice(insertIndex, 0, handleData);
-
-  // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
-  dataHandles[previousIndex].lines.pop();
-  dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
-
-  // Add the line from the inserted handle to the handle after
-  if (insertIndex === dataHandles.length - 1) {
-    dataHandles[insertIndex].lines.push(dataHandles[0]);
-  } else {
-    dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
-  }
-}
-
-
 /**
 * Event handler for MOUSE_UP event.
 *
@@ -448,8 +213,6 @@ function mouseUpCallback (e) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-
   config.active = false;
   console.log('toolDeactive');
 
@@ -459,6 +222,11 @@ function mouseUpCallback (e) {
   triggerStatisticsCalculation(eventData);
 }
 
+/**
+* Triggers a re-calculation of a freehand tool's stats after editing.
+*
+* @param {Object} eventData - Data object associated with the event.
+*/
 function triggerStatisticsCalculation (eventData) {
   const config = freehandSculpter.getConfiguration();
   const element = eventData.element;
@@ -553,7 +321,6 @@ function activate (element, mouseButtonMask) {
 
   removeEventListeners(element);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
@@ -583,7 +350,6 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
 }
