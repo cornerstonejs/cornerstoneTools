@@ -293,8 +293,11 @@ function disable (element) {
   const toolData = getToolState(element, referencedToolType);
 
   config.currentTool = null;
-  for (let i = 0; i < toolData.data.length; i++) {
-    toolData.data[i].active = false;
+
+  if (toolData) {
+    for (let i = 0; i < toolData.data.length; i++) {
+      toolData.data[i].active = false;
+    }
   }
 
   removeEventListeners(element);
