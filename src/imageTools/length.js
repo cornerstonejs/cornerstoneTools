@@ -126,8 +126,8 @@ function onImageRendered (e) {
     context.fillStyle = color;
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-    const dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
-    const dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
+    const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+    const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
 
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
