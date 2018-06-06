@@ -57,41 +57,47 @@ export class Sculpter {
     const toolSize = this._toolSize;
 
     for (let i = 0; i < dataHandles.length; i++) {
+      const distanceToHandle = external.cornerstoneMath.point.distance(dataHandles[i], mousePoint);
+
       // Push point if inside circle, to edge of circle.
-      const handle = dataHandles[i];
-      const distanceToHandle = external.cornerstoneMath.point.distance(handle, mousePoint);
-
       if (distanceToHandle < toolSize) {
-        // Push handle
-
-        const directionUnitVector = {
-          x: (handle.x - mousePoint.x) / distanceToHandle,
-          y: (handle.y - mousePoint.y) / distanceToHandle
-        };
-
-        const position = {
-          x: mousePoint.x + (toolSize * directionUnitVector.x),
-          y: mousePoint.y + (toolSize * directionUnitVector.y)
-        };
-
-        clipToBox(position, this._image);
-
-        handle.x = position.x;
-        handle.y = position.y;
-
-        // Push lines
-        let lastHandleId;
-
-        if (i === 0) {
-          lastHandleId = dataHandles.length - 1;
-        } else {
-          lastHandleId = i - 1;
-        }
-
-        dataHandles[lastHandleId].lines.pop();
-        dataHandles[lastHandleId].lines.push(handle);
+        this._pushOneHandle(i, distanceToHandle);
       }
     }
+  }
+
+  /**
+  * Pushes by one handle.
+  *
+  * @param {Number} i - The index of the handle to push.
+  * @param {Number} distanceToHandle - The distance between the mouse cursor and the handle.
+  */
+  _pushOneHandle (i, distanceToHandle) {
+    const dataHandles = this._dataHandles;
+    const handle = dataHandles[i];
+    const mousePoint = this._mousePoint;
+    const toolSize = this._toolSize;
+
+    const directionUnitVector = {
+      x: (handle.x - mousePoint.x) / distanceToHandle,
+      y: (handle.y - mousePoint.y) / distanceToHandle
+    };
+
+    const position = {
+      x: mousePoint.x + (toolSize * directionUnitVector.x),
+      y: mousePoint.y + (toolSize * directionUnitVector.y)
+    };
+
+    clipToBox(position, this._image);
+
+    handle.x = position.x;
+    handle.y = position.y;
+
+    // Push lines
+    const lastHandleIndex = Sculpter.getPreviousHandleIndex(i, dataHandles.length);
+
+    dataHandles[lastHandleIndex].lines.pop();
+    dataHandles[lastHandleIndex].lines.push(handle);
   }
 
   /**
@@ -124,14 +130,9 @@ export class Sculpter {
 
     for (let i = 0; i < dataHandles.length; i++) {
       const handleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
-      let nextHandleCanvas;
+      const nextHandleIndex = Sculpter.getNextHandleIndex(i, dataHandles.length);
 
-      if (i === dataHandles.length - 1) {
-        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[0]);
-      } else {
-        nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i + 1]);
-      }
-
+      const nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[nextHandleIndex]);
       const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
 
       if (distanceToNextHandleCanvas > this._maxSpacing) {
@@ -150,17 +151,38 @@ export class Sculpter {
   */
   _insertHandleRadially (insertIndex) {
     const dataHandles = this._dataHandles;
-    const mousePoint = this._mousePoint;
-    const toolSize = this._toolSize;
-    const previousIndex = insertIndex - 1;
-    let nextIndex;
 
-    if (insertIndex === dataHandles.length) {
-      nextIndex = 0;
+    const previousIndex = insertIndex - 1;
+    const nextIndex = Sculpter.getNextHandleIndexBeforeInsert(insertIndex, dataHandles.length);
+    const insertPosition = this._getInsertPosition(insertIndex, previousIndex, nextIndex);
+    const handleData = new FreehandHandleData(insertPosition);
+
+    dataHandles.splice(insertIndex, 0, handleData);
+
+    // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
+    dataHandles[previousIndex].lines.pop();
+    dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
+
+    // Add the line from the inserted handle to the handle after
+    if (insertIndex === dataHandles.length - 1) {
+      dataHandles[insertIndex].lines.push(dataHandles[0]);
     } else {
-      // A 'GOTCHA' here: The line bellow is correct, as we haven't inserted our handle yet!
-      nextIndex = insertIndex;
+      dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
     }
+  }
+
+  /**
+  * Calculates the position that a new handle should be inserted.
+  *
+  * @param {Number} insertIndex - The index to insert the new handle.
+  * @param {Number} previousIndex - The previous index.
+  * @param {Number} nextIndex - The next index.
+  * @returns {Object} The position the handle should be inserted.
+  */
+  _getInsertPosition (insertIndex, previousIndex, nextIndex) {
+    const toolSize = this._toolSize;
+    const mousePoint = this._mousePoint;
+    const dataHandles = this._dataHandles;
 
     // Calculate insert position: half way between the handles, then pushed out
     // Radially to the edge of the freehandSculpter.
@@ -189,21 +211,7 @@ export class Sculpter {
 
     clipToBox(insertPosition, this._image);
 
-    // Add the new handle
-    const handleData = new FreehandHandleData(insertPosition);
-
-    dataHandles.splice(insertIndex, 0, handleData);
-
-    // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
-    dataHandles[previousIndex].lines.pop();
-    dataHandles[previousIndex].lines.push(dataHandles[insertIndex]);
-
-    // Add the line from the inserted handle to the handle after
-    if (insertIndex === dataHandles.length - 1) {
-      dataHandles[insertIndex].lines.push(dataHandles[0]);
-    } else {
-      dataHandles[insertIndex].lines.push(dataHandles[insertIndex + 1]);
-    }
+    return insertPosition;
   }
 
   /**
@@ -212,7 +220,6 @@ export class Sculpter {
   *
   * @param {Object} eventData - Data object associated with the event.
   * @param {Object} dataHandles - Data object containing tool handle data.
-  * @modifies {this._dataHandles}
   */
   _consolidateHandles () {
     if (this._dataHandles.length > 3) { // Don't merge handles if it would destroy the polygon.
@@ -227,16 +234,13 @@ export class Sculpter {
   * merged in an iterative fashion to prevent generating a singularity in some
   * edge cases.
   *
-  * @param {Object} closePairs - An array of pairs of handle IDs.
+  * @param {Object} closePairs - An array of pairs of handle indicies.
   */
   _mergeCloseHandles (closePairs) {
     let removedIndexModifier = 0;
 
     for (let i = 0; i < closePairs.length; i++) {
-      const pair = [
-        closePairs[i][0] - removedIndexModifier,
-        closePairs[i][1] - removedIndexModifier
-      ];
+      const pair = Sculpter.getCorrectedPair(closePairs[i], removedIndexModifier);
 
       this._combineHandles(pair);
       removedIndexModifier++;
@@ -259,33 +263,33 @@ export class Sculpter {
   */
   _findCloseHandlePairs () {
     const dataHandles = this._dataHandles;
+    const element = this._element;
     const closePairs = [];
 
     let length = dataHandles.length;
 
     for (let i = 0; i < length; i++) {
-      const handleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[i]);
-      let nextHandleId;
+      const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
+      const nextHandleIndex = Sculpter.getNextHandleIndex(i, dataHandles.length);
 
-      if (i === dataHandles.length - 1) {
-        nextHandleId = 0;
-      } else {
-        nextHandleId = i + 1;
-      }
-
-      const nextHandleCanvas = external.cornerstone.pixelToCanvas(this._element, dataHandles[nextHandleId]);
+      const nextHandleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[nextHandleIndex]);
       const distanceToNextHandleCanvas = external.cornerstoneMath.point.distance(handleCanvas, nextHandleCanvas);
 
       if (distanceToNextHandleCanvas < this._minSpacing) {
-        closePairs.push([
+        const pair = [
           i,
-          nextHandleId
-        ]);
-        i++; // Don't double count pairs in order to prevent your polygon collapsing to a singularity.
+          nextHandleIndex
+        ];
 
+        closePairs.push(pair);
+
+        // Don't check last node if first in pair to avoid double counting.
         if (i === 0) {
-          length -= 1; // Don't check last node if first in pair to avoid double counting.
+          length -= 1;
         }
+
+        // Don't double count pairs in order to prevent your polygon collapsing to a singularity.
+        i++;
       }
     }
 
@@ -295,7 +299,7 @@ export class Sculpter {
   /**
   * Combines two handles defined by the indicies in handlePairs.
   *
-  * @param {Object} handlePair - A pair of handle IDs.
+  * @param {Object} handlePair - A pair of handle indicies.
   */
   _combineHandles (handlePair) {
     const dataHandles = this._dataHandles;
@@ -313,19 +317,82 @@ export class Sculpter {
     dataHandles[handlePair[0]].y = midPoint.y;
 
     // Link first point to handle that second point links to.
-    let handleAfterPairId;
-
-    if (handlePair[1] === dataHandles.length - 1) {
-      handleAfterPairId = 0;
-    } else {
-      handleAfterPairId = handlePair[1] + 1;
-    }
+    const handleAfterPairIndex = Sculpter.getNextHandleIndex(handlePair[1], dataHandles.length);
 
     dataHandles[handlePair[0]].lines.pop();
-    dataHandles[handlePair[0]].lines.push(dataHandles[handleAfterPairId]);
+    dataHandles[handlePair[0]].lines.push(dataHandles[handleAfterPairIndex]);
 
-    // Remove the handle
+    // Remove the latter handle
     dataHandles.splice(handlePair[1], 1);
+  }
+
+  /**
+  * Returns the next handle index.
+  *
+  * @param {Number} i - The handle index.
+  * @param {Number} length - The length of the polygon.
+  * @returns {Number} The next handle index.
+  */
+  static getNextHandleIndex (i, length) {
+    if (i === length - 1) {
+      return 0;
+    }
+
+    return i + 1;
+  }
+
+  /**
+  * Returns the next handle index, with a correction considering a handle is
+  * about to be inserted.
+  *
+  * @param {Number} insertIndex - The index in which the handle is being inserted.
+  * @param {Number} length - The length of the polygon.
+  * @returns {Number} The next handle index.
+  */
+  static getNextHandleIndexBeforeInsert (insertIndex, length) {
+    if (insertIndex === length) {
+      return 0;
+    }
+    // Index correction here: The line bellow is correct, as we haven't inserted our handle yet!
+
+    return insertIndex;
+  }
+
+  /**
+  * Returns the previous handle index.
+  *
+  * @param {Number} i - The handle index.
+  * @param {Number} length - The length of the polygon.
+  * @returns {Number} The previous handle index.
+  */
+  static getPreviousHandleIndex (i, length) {
+    if (i === 0) {
+      return length - 1;
+    }
+
+    return i - 1;
+  }
+
+  /**
+  * Given a pair of indicies, and the number of points already removed,
+  * convert to the correct live indicies.
+  *
+  * @param {Object} pair - A pairs of handle indicies.
+  * @param {Number} removedIndexModifier - The number of handles already removed.
+  * @returns {Object} - The corrected pair of handle indicies.
+  */
+  static getCorrectedPair (pair, removedIndexModifier) {
+    const correctedPair = [
+      pair[0] - removedIndexModifier,
+      pair[1] - removedIndexModifier
+    ];
+
+    // Deal with edge case of last node + first node.
+    if (correctedPair[1] < 0) {
+      correctedPair[1] = 0;
+    }
+
+    return correctedPair;
   }
 
 }

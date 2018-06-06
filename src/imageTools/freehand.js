@@ -111,11 +111,7 @@ function pointNearHandle (eventData, toolIndex) {
 
   const data = toolData.data[toolIndex];
 
-  if (data.handles === undefined) {
-    return null;
-  }
-
-  if (data.visible === false) {
+  if (data.handles === undefined || data.visible === false) {
     return null;
   }
 
@@ -986,9 +982,14 @@ function onImageRendered (e) {
     context.restore();
   }
 
+  /**
+  * Define an array to store the rows of text for the textbox
+  *
+  * @param {Object} data - Data object associated with the tool.
+  * @returns {Object} Array containing the lines of text to be displayed.
+  */
   function textBoxText (data) {
     const { meanStdDev, meanStdDevSUV, area } = data;
-    // Define an array to store the rows of text for the textbox
     const textLines = [];
 
     // If the mean and standard deviation values are present, display them
