@@ -13,9 +13,12 @@ function defaultStrategy (eventData, initialPoints, initialRotation) {
   const width = eventData.element.clientWidth;
   const height = eventData.element.clientHeight;
 
+  const scale = eventData.viewport.scale;
+  const translation = eventData.viewport.translation;
+
   const centerPoints = {
-    x: rect.left + width / 2,
-    y: rect.top + height / 2
+    x: rect.left + width / 2 + translation.x * scale,
+    y: rect.top + height / 2 + translation.y * scale
   };
 
   const currentPoints = {
