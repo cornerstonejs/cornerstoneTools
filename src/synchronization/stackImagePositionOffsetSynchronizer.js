@@ -20,8 +20,6 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
   const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
 
   if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
-    // Console.log('No position found for image ' + sourceImage.imageId);
-
     return;
   }
 
@@ -43,8 +41,6 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
 
     if (imagePlane === undefined || imagePlane.imagePositionPatient === undefined) {
-      // Console.log('No position found for image ' + imageId);
-
       return;
     }
 
