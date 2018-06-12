@@ -18,6 +18,11 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
   const cornerstone = external.cornerstone;
   const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
+
+  if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
+    return;
+  }
+
   const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
 
   const stackToolDataSource = getToolState(targetElement, 'stack');
@@ -34,6 +39,11 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
 
   stackData.imageIds.forEach(function (imageId, index) {
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+
+    if (imagePlane === undefined || imagePlane.imagePositionPatient === undefined) {
+      return;
+    }
+
     const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
     const distance = finalPosition.distanceToSquared(imagePosition);
 
