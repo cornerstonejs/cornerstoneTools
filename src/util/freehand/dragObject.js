@@ -2,10 +2,6 @@ import { freehand } from '../../imageTools/freehand.js';
 import freeHandIntersect from './freeHandIntersect.js';
 
 /**
- * @author JamesAPetts
- */
-
-/**
 * Moves a part of the freehand tool whilst it is dragged by the mouse.
 *
 * @param {Object} currentHandle - The handle being dragged.

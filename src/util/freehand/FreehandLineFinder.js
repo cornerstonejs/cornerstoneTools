@@ -1,10 +1,6 @@
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 
-/**
-* @author JamesAPetts
-*/
-
 const toolType = 'freehand';
 const distanceThreshold = 10;
 

@@ -4,7 +4,6 @@ import { freehand } from '../../imageTools/freehand.js';
 /**
 * Triggers held down buttons such that we can update the image on CTRL click
 * to show all points, for example.
-* @author JamesAPetts
 */
 
 /**

@@ -1,10 +1,6 @@
 import { freehand } from '../../imageTools/freehand.js';
 
 /**
- * @author JamesAPetts
- */
-
-/**
 * Places part of the freehand tool when the mouse button is released.
 *
 * @param {Object} e - The event.
@@ -82,6 +78,4 @@ function dropHandle (eventData, toolData) {
 
     dataHandles.invalidHandlePlacement = false;
   }
-
-  return;
 }

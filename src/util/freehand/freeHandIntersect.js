@@ -1,7 +1,6 @@
 /**
 * Orientation algoritm to determine if two lines cross.
 * Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-* @author JamesAPetts
 */
 
 /**
