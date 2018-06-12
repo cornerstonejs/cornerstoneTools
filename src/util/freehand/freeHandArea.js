@@ -1,3 +1,11 @@
+
+/**
+* Calculates the area of a freehand tool polygon.
+*
+* @param {Object} dataHandles - data object associated with the tool.
+* @param {Object} scaling - Area scaling of image.
+* @return {Number} - The area of the polygon.
+*/
 export default function (dataHandles, scaling) {
   let freeHandArea = 0;
   let j = dataHandles.length - 1; // The last vertex is the previous one to the first
