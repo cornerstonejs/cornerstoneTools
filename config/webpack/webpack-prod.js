@@ -2,7 +2,7 @@ const merge = require('./merge');
 const baseConfig = require('./webpack-base');
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-const devConfig = {
+const prodConfig = {
   output: {
     filename: '[name].min.js'
   },
@@ -16,4 +16,4 @@ const devConfig = {
   },
 };
 
-module.exports = merge(baseConfig, devConfig);
+module.exports = merge(baseConfig, prodConfig);
