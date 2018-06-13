@@ -52,9 +52,9 @@ export function setShadow (context, options) {
   }
 }
 
-export function drawLine (context, element, start, end, options) {
+export function drawLine (context, element, start, end, options, coordSystem = 'pixel') {
   path(context, options, (context) => {
-    if (element) {
+    if (coordSystem === 'pixel') {
       const cornerstone = external.cornerstone;
 
       start = cornerstone.pixelToCanvas(element, start);
@@ -66,13 +66,13 @@ export function drawLine (context, element, start, end, options) {
   });
 }
 
-export function drawLines (context, element, lines, options) {
+export function drawLines (context, element, lines, options, coordSystem = 'pixel') {
   path(context, options, (context) => {
     lines.forEach((line) => {
       let start = line.start;
       let end = line.end;
 
-      if (element) {
+      if (coordSystem === 'pixel') {
         const cornerstone = external.cornerstone;
 
         start = cornerstone.pixelToCanvas(element, start);
@@ -85,9 +85,9 @@ export function drawLines (context, element, lines, options) {
   });
 }
 
-export function drawJoinedLines (context, element, start, points, options) {
+export function drawJoinedLines (context, element, start, points, options, coordSystem = 'pixel') {
   path(context, options, (context) => {
-    if (element) {
+    if (coordSystem === 'pixel') {
       const cornerstone = external.cornerstone;
 
       start = cornerstone.pixelToCanvas(element, start);
@@ -100,8 +100,8 @@ export function drawJoinedLines (context, element, start, points, options) {
   });
 }
 
-export function drawCircle (context, element, center, radius, options) {
-  if (element) {
+export function drawCircle (context, element, center, radius, options, coordSystem = 'pixel') {
+  if (coordSystem === 'pixel') {
     center = external.cornerstone.pixelToCanvas(element, center);
   }
 
@@ -110,9 +110,9 @@ export function drawCircle (context, element, center, radius, options) {
   });
 }
 
-export function drawEllipse (context, element, corner1, corner2, options) {
+export function drawEllipse (context, element, corner1, corner2, options, coordSystem = 'pixel') {
   // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
-  if (element) {
+  if (coordSystem === 'pixel') {
     corner1 = external.cornerstone.pixelToCanvas(element, corner1);
     corner2 = external.cornerstone.pixelToCanvas(element, corner2);
   }
@@ -139,8 +139,8 @@ export function drawEllipse (context, element, corner1, corner2, options) {
   });
 }
 
-export function drawRect (context, element, corner1, corner2, options) {
-  if (element) {
+export function drawRect (context, element, corner1, corner2, options, coordSystem = 'pixel') {
+  if (coordSystem === 'pixel') {
     const cornerstone = external.cornerstone;
 
     corner1 = cornerstone.pixelToCanvas(element, corner1);
