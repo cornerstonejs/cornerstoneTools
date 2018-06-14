@@ -1,3 +1,7 @@
+import * as drawing from './util/drawing.js';
+
+export { drawing };
+
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
 
@@ -5,20 +9,6 @@ export { default as referenceLines } from './referenceLines/index.js';
 export { default as orientation } from './orientation/index.js';
 
 export { default as requestPoolManager } from './requestPool/requestPoolManager.js';
-
-export {
-  getNewContext,
-  draw,
-  path,
-  setShadow,
-  drawLine,
-  drawLines,
-  drawJoinedLines,
-  // DrawCircle, Not exposed by default until deprecated util/drawCircle.js is removed.
-  // DrawEllipse, Not exposed by default until deprecated util/drawEllipse.js is removed.
-  drawRect,
-  fillBox,
-  fillTextLines } from './util/drawing.js';
 
 export { default as setContextToDisplayFontSize } from './util/setContextToDisplayFontSize.js';
 export { default as scrollToIndex } from './util/scrollToIndex.js';
