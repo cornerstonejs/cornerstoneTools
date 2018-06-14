@@ -1,6 +1,8 @@
 // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
 
-// @deprecated Use drawing.js:drawEllipse()
+/**
+ * @deprecated Use drawing.js:drawEllipse()
+ */
 export default function (context, x, y, w, h) {
   const kappa = 0.5522848,
     ox = (w / 2) * kappa, // Control point offset horizontal

@@ -1,4 +1,6 @@
-// @deprecated Use drawing.js:drawCircle()
+/**
+ * @deprecated Use drawing.js:drawCircle()
+ */
 export default function (context, start, color, lineWidth) {
   const handleRadius = 6;
 
