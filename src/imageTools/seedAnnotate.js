@@ -9,12 +9,12 @@ import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import moveHandle from '../manipulators/moveHandle.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import drawCircle from '../util/drawCircle.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { drawCircle } from '../util/drawing.js';
 
 const toolType = 'seedAnnotate';
 
@@ -167,7 +167,9 @@ function onImageRendered (e) {
     const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
     // Draw the circle always at the end of the handle
-    drawCircle(context, handleCanvas, color, lineWidth);
+    const handleRadius = 6;
+
+    drawCircle(context, eventData.element, data.handles.end, handleRadius, { color });
 
     const handleOptions = {
       drawHandlesIfActive: (config && config.drawHandlesOnHover)
