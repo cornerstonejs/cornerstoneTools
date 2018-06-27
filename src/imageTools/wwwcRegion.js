@@ -7,6 +7,7 @@ import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import clip from '../util/clip.js';
+import { draw } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -249,21 +250,19 @@ function onImageRendered (e) {
   const config = wwwcRegion.getConfiguration();
 
   // Draw the rectangle
-  context.save();
+  draw(context, (context) => {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
 
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.rect(left, top, width, height);
-  context.stroke();
-
-  context.restore();
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.rect(left, top, width, height);
+    context.stroke();
+  });
 }
 
 // --- Mouse tool enable / disable --- ///

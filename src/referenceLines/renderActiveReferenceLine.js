@@ -3,6 +3,7 @@ import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import convertToVector3 from '../util/convertToVector3.js';
+import { draw } from '../util/drawing.js';
 
 // Renders the active reference line
 export default function (context, eventData, targetElement, referenceElement) {
@@ -67,12 +68,12 @@ export default function (context, eventData, targetElement, referenceElement) {
   // Draw the referenceLines
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  context.save();
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.moveTo(refLineStartCanvas.x, refLineStartCanvas.y);
-  context.lineTo(refLineEndCanvas.x, refLineEndCanvas.y);
-  context.stroke();
-  context.restore();
+  draw(context, (context) => {
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.moveTo(refLineStartCanvas.x, refLineStartCanvas.y);
+    context.lineTo(refLineEndCanvas.x, refLineEndCanvas.y);
+    context.stroke();
+  });
 }

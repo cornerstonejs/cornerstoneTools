@@ -9,7 +9,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'angle';
 
@@ -81,69 +81,68 @@ function onImageRendered (e) {
   const cornerstone = external.cornerstone;
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    // Configurable shadow
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    // Differentiate the color of activation tool
-    const color = toolColors.getColorIfActive(data);
+    draw(context, (context) => {
+      // Configurable shadow
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+      }
 
-    // Draw the line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
+      // Differentiate the color of activation tool
+      const color = toolColors.getColorIfActive(data);
 
-    let handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    let handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+      // Draw the line
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
 
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      let handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      let handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-    handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
-    handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
 
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
+      handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
+      handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
 
-    // Draw the handles
-    drawHandles(context, eventData, data.handles);
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      context.stroke();
 
-    // Draw the text
-    context.fillStyle = color;
+      // Draw the handles
+      drawHandles(context, eventData, data.handles);
 
-    // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-    // Where lines cross to measure angle. For now it will show smallest angle.
-    const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-    const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
-    const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
-    const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
+      // Draw the text
+      context.fillStyle = color;
 
-    let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+      // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+      // Where lines cross to measure angle. For now it will show smallest angle.
+      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
+      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
+      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
+      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
 
-    angle *= (180 / Math.PI);
+      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
 
-    const rAngle = roundToDecimal(angle, 2);
-    const str = '00B0'; // Degrees symbol
-    const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+      angle *= (180 / Math.PI);
 
-    const textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
-    const textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+      const rAngle = roundToDecimal(angle, 2);
+      const str = '00B0'; // Degrees symbol
+      const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
-    context.font = font;
-    drawTextBox(context, text, textX, textY, color);
-    context.restore();
+      const textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
+      const textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+
+      context.font = font;
+      drawTextBox(context, text, textX, textY, color);
+    });
   }
 }
 // /////// END IMAGE RENDERING ///////

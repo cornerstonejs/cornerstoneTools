@@ -5,7 +5,7 @@ import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'highlight';
 
@@ -104,8 +104,6 @@ function onImageRendered (e) {
 
   const lineWidth = toolStyle.getToolWidth();
 
-  context.save();
-
   const data = toolData.data[0];
 
   if (data.visible === false) {
@@ -116,43 +114,44 @@ function onImageRendered (e) {
     return;
   }
 
-  const color = toolColors.getColorIfActive(data);
+  draw(context, (context) => {
+    const color = toolColors.getColorIfActive(data);
 
-  const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-  const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+    const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-  const rect = {
-    left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
-    top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
-    width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
-    height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
-  };
+    const rect = {
+      left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
+      top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
+      width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+      height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+    };
 
-    // Draw dark fill outside the rectangle
-  context.beginPath();
-  context.strokeStyle = 'transparent';
+      // Draw dark fill outside the rectangle
+    context.beginPath();
+    context.strokeStyle = 'transparent';
 
-  context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+    context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
 
-  context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-  context.stroke();
-  context.fillStyle = 'rgba(0,0,0,0.7)';
-  context.fill();
-  context.closePath();
+    context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+    context.stroke();
+    context.fillStyle = 'rgba(0,0,0,0.7)';
+    context.fill();
+    context.closePath();
 
-  // Draw dashed stroke rectangle
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.setLineDash([4]);
-  context.strokeRect(rect.left, rect.top, rect.width, rect.height);
+    // Draw dashed stroke rectangle
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.setLineDash([4]);
+    context.strokeRect(rect.left, rect.top, rect.width, rect.height);
 
-  // Strange fix, but restore doesn't seem to reset the line dashes?
-  context.setLineDash([]);
+    // Strange fix, but restore doesn't seem to reset the line dashes?
+    context.setLineDash([]);
 
-  // Draw the handles last, so they will be on top of the overlay
-  drawHandles(context, eventData, data.handles, color);
-  context.restore();
+    // Draw the handles last, so they will be on top of the overlay
+    drawHandles(context, eventData, data.handles, color);
+  });
 }
 // /////// END IMAGE RENDERING ///////
 

@@ -1,4 +1,5 @@
 import external from '../externalModules.js';
+import { draw } from '../util/drawing.js';
 
 function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) {
   const getPixelIndex = (x, y) => (y * columns) + x;
@@ -10,7 +11,7 @@ function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) 
   });
 }
 
-function drawBrushOnCanvas (pointerArray, canvasContext, color, element) {
+function drawBrushOnCanvas (pointerArray, context, color, element) {
   const canvasPtTL = external.cornerstone.pixelToCanvas(element, { x: 0,
     y: 0 });
   const canvasPtBR = external.cornerstone.pixelToCanvas(element, { x: 1,
@@ -18,19 +19,18 @@ function drawBrushOnCanvas (pointerArray, canvasContext, color, element) {
   const sizeX = canvasPtBR.x - canvasPtTL.x;
   const sizeY = canvasPtBR.y - canvasPtTL.y;
 
-  canvasContext.save();
-  canvasContext.fillStyle = color;
+  draw(context, (context) => {
+    context.fillStyle = color;
 
-  pointerArray.forEach((point) => {
-    const canvasPt = external.cornerstone.pixelToCanvas(element, {
-      x: point[0],
-      y: point[1]
+    pointerArray.forEach((point) => {
+      const canvasPt = external.cornerstone.pixelToCanvas(element, {
+        x: point[0],
+        y: point[1]
+      });
+
+      context.fillRect(canvasPt.x, canvasPt.y, sizeX, sizeY);
     });
-
-    canvasContext.fillRect(canvasPt.x, canvasPt.y, sizeX, sizeY);
   });
-
-  canvasContext.restore();
 }
 
 export { drawBrushPixels, drawBrushOnCanvas };

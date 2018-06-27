@@ -9,7 +9,7 @@ import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolOptions } from '../toolOptions.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'dragProbe';
 
@@ -26,57 +26,56 @@ function defaultStrategy (eventData) {
   const fontHeight = textStyle.getFontSize();
   const config = dragProbe.getConfiguration();
 
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
   const x = Math.round(eventData.currentPoints.image.x);
   const y = Math.round(eventData.currentPoints.image.y);
-
-  let storedPixels;
-  let text,
-    str;
 
   if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
     return;
   }
 
-  if (eventData.image.color) {
-    storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
-    text = `${x}, ${y}`;
-    str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]} A: ${storedPixels[3]}`;
-  } else {
-    storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-    const sp = storedPixels[0];
-    const mo = sp * eventData.image.slope + eventData.image.intercept;
-    const suv = calculateSUV(eventData.image, sp);
+  draw(context, (context) => {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
+
+    let storedPixels;
+    let text,
+      str;
+
+    if (eventData.image.color) {
+      storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
+      text = `${x}, ${y}`;
+      str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]} A: ${storedPixels[3]}`;
+    } else {
+      storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+      const sp = storedPixels[0];
+      const mo = sp * eventData.image.slope + eventData.image.intercept;
+      const suv = calculateSUV(eventData.image, sp);
+
+      // Draw text
+      text = `${x}, ${y}`;
+      str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
+      if (suv) {
+        str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
+      }
+    }
 
     // Draw text
-    text = `${x}, ${y}`;
-    str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
-    if (suv) {
-      str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
-    }
-  }
+    const coords = {
+      // Translate the x/y away from the cursor
+      x: eventData.currentPoints.image.x + 3,
+      y: eventData.currentPoints.image.y - 3
+    };
+    const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-  // Draw text
-  const coords = {
-    // Translate the x/y away from the cursor
-    x: eventData.currentPoints.image.x + 3,
-    y: eventData.currentPoints.image.y - 3
-  };
-  const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+    context.font = font;
+    context.fillStyle = color;
 
-  context.font = font;
-  context.fillStyle = color;
-
-  drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-  drawTextBox(context, text, textCoords.x, textCoords.y, color);
-  context.restore();
+    drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+    drawTextBox(context, text, textCoords.x, textCoords.y, color);
+  });
 }
 
 function minimalStrategy (eventData) {
@@ -91,21 +90,6 @@ function minimalStrategy (eventData) {
   const font = textStyle.getFont();
   const config = dragProbe.getConfiguration();
 
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-  let modality;
-
-  if (seriesModule) {
-    modality = seriesModule.modality;
-  }
-
   let toolCoords;
 
   if (eventData.isTouchEvent === true) {
@@ -116,68 +100,82 @@ function minimalStrategy (eventData) {
       eventData.currentPoints.page.y - textStyle.getFontSize() / 2);
   }
 
-  let storedPixels;
-  let text = '';
-
   if (toolCoords.x < 0 || toolCoords.y < 0 ||
-        toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
+    toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
     return;
   }
 
-  if (image.color) {
-    storedPixels = getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-    text = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
-  } else {
-    storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-    const sp = storedPixels[0];
-    const mo = sp * eventData.image.slope + eventData.image.intercept;
-
-    const modalityPixelValueText = parseFloat(mo.toFixed(2));
-
-    if (modality === 'CT') {
-      text += `HU: ${modalityPixelValueText}`;
-    } else if (modality === 'PT') {
-      text += modalityPixelValueText;
-      const suv = calculateSUV(eventData.image, sp);
-
-      if (suv) {
-        text += ` SUV: ${parseFloat(suv.toFixed(2))}`;
-      }
-    } else {
-      text += modalityPixelValueText;
+  draw(context, (context) => {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
     }
-  }
 
-  // Prepare text
-  const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
+    const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+    let modality;
 
-  context.font = font;
-  context.fillStyle = color;
+    if (seriesModule) {
+      modality = seriesModule.modality;
+    }
 
-  // Translate the x/y away from the cursor
-  let translation;
-  const handleRadius = 6;
-  const width = context.measureText(text).width;
+    let storedPixels;
+    let text = '';
 
-  if (eventData.isTouchEvent === true) {
-    translation = {
-      x: -width / 2 - 5,
-      y: -textStyle.getFontSize() - 10 - 2 * handleRadius
-    };
-  } else {
-    translation = {
-      x: 12,
-      y: -(textStyle.getFontSize() + 10) / 2
-    };
-  }
+    if (image.color) {
+      storedPixels = getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+      text = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+    } else {
+      storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+      const sp = storedPixels[0];
+      const mo = sp * eventData.image.slope + eventData.image.intercept;
 
-  context.beginPath();
-  context.strokeStyle = color;
-  context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-  context.stroke();
+      const modalityPixelValueText = parseFloat(mo.toFixed(2));
 
-  drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
-  context.restore();
+      if (modality === 'CT') {
+        text += `HU: ${modalityPixelValueText}`;
+      } else if (modality === 'PT') {
+        text += modalityPixelValueText;
+        const suv = calculateSUV(eventData.image, sp);
+
+        if (suv) {
+          text += ` SUV: ${parseFloat(suv.toFixed(2))}`;
+        }
+      } else {
+        text += modalityPixelValueText;
+      }
+    }
+
+    // Prepare text
+    const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
+
+    context.font = font;
+    context.fillStyle = color;
+
+    // Translate the x/y away from the cursor
+    let translation;
+    const handleRadius = 6;
+    const width = context.measureText(text).width;
+
+    if (eventData.isTouchEvent === true) {
+      translation = {
+        x: -width / 2 - 5,
+        y: -textStyle.getFontSize() - 10 - 2 * handleRadius
+      };
+    } else {
+      translation = {
+        x: 12,
+        y: -(textStyle.getFontSize() + 10) / 2
+      };
+    }
+
+    context.beginPath();
+    context.strokeStyle = color;
+    context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+    context.stroke();
+
+    drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
+  });
 }
 
 function mouseUpCallback (e) {
