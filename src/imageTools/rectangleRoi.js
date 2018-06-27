@@ -7,6 +7,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'rectangleRoi';
 
@@ -131,7 +132,6 @@ function onImageRendered (e) {
   const element = eventData.element;
   const lineWidth = toolStyle.getToolWidth();
   const config = rectangleRoi.getConfiguration();
-  const context = eventData.canvasContext.canvas.getContext('2d');
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let modality;
@@ -150,7 +150,7 @@ function onImageRendered (e) {
     modality = seriesModule.modality;
   }
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   // If we have tool data for this element - iterate over each set and draw it
   for (let i = 0; i < toolData.data.length; i++) {

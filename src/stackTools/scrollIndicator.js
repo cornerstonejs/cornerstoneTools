@@ -1,5 +1,6 @@
 import displayTool from '../imageTools/displayTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { getNewContext } from '../util/drawing.js';
 
 /*
 Display scroll progress bar across bottom of image.
@@ -22,9 +23,8 @@ function onImageRendered (e) {
     return false;
   }
 
-  const context = eventData.enabledElement.canvas.getContext('2d');
+  const context = getNewContext(eventData.enabledElement.canvas);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
   context.save();
 
   const config = scrollIndicator.getConfiguration();

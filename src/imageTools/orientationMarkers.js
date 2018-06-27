@@ -3,6 +3,7 @@ import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawTextBox from '../util/drawTextBox.js';
+import { getNewContext } from '../util/drawing.js';
 
 function getOrientationMarkers (element) {
   const cornerstone = external.cornerstone;
@@ -76,9 +77,7 @@ function onImageRendered (e) {
 
   const coords = getOrientationMarkerPositions(element, markers);
 
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const color = toolColors.getToolColor();
 

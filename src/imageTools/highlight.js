@@ -5,6 +5,7 @@ import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'highlight';
 
@@ -99,9 +100,7 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   // We have tool data for this elemen
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
 
