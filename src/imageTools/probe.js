@@ -8,6 +8,7 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'probe';
 
@@ -57,9 +58,7 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const font = textStyle.getFont();
   const fontHeight = textStyle.getFontSize();

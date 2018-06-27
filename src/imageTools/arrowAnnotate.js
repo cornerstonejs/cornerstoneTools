@@ -17,6 +17,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -146,9 +147,7 @@ function onImageRendered (e) {
   const cornerstone = external.cornerstone;
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();

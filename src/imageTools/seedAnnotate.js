@@ -14,7 +14,7 @@ import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
-import { drawCircle } from '../util/drawing.js';
+import { drawCircle, getNewContext } from '../util/drawing.js';
 
 const toolType = 'seedAnnotate';
 
@@ -135,9 +135,7 @@ function onImageRendered (e) {
   const enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   // We need the canvas width
   const canvasWidth = eventData.canvasContext.canvas.width;

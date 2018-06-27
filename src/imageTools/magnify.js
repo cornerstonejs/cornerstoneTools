@@ -4,6 +4,7 @@ import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'magnify';
 
@@ -111,13 +112,7 @@ function drawMagnificationTool (eventData) {
   // The 'not' magnifyTool class here is necessary because cornerstone places
   // No classes of it's own on the canvas we want to select
   const canvas = element.querySelector('canvas:not(.magnifyTool)');
-  const context = canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  const zoomCtx = magnifyCanvas.getContext('2d');
-
-  zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
+  const zoomCtx = getNewContext(magnifyCanvas);
 
   const getSize = magnifySize;
 

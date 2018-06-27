@@ -8,6 +8,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawTextBox from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'textMarker';
 
@@ -107,9 +108,7 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const config = textMarker.getConfiguration();
 

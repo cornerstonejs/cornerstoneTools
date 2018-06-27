@@ -6,12 +6,12 @@ import { toolStyle, textStyle } from '../index.js';
  * @typedef {(String|CanvasGradient|CanvasPattern)} FillStyle
  */
 
- /**
+/**
  * A {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeStyle|color, gradient or pattern} to use for the lines around shapes.
  * @typedef {(String|CanvasGradient|CanvasPattern)} StrokeStyle
  */
 
- /**
+/**
  * @callback ContextFn
  * @param {CanvasRenderingContext2D} context
  */

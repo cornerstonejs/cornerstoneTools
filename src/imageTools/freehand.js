@@ -22,6 +22,7 @@ import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -789,9 +790,7 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
   let fillColor;

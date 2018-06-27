@@ -9,6 +9,7 @@ import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolOptions } from '../toolOptions.js';
+import { getNewContext } from '../util/drawing.js';
 
 const toolType = 'dragProbe';
 
@@ -18,9 +19,7 @@ function defaultStrategy (eventData) {
   const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(eventData.element);
 
-  const context = enabledElement.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(enabledElement.canvas);
 
   const color = toolColors.getActiveColor();
   const font = textStyle.getFont();
@@ -86,9 +85,7 @@ function minimalStrategy (eventData) {
   const enabledElement = cornerstone.getEnabledElement(element);
   const image = enabledElement.image;
 
-  const context = enabledElement.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(enabledElement.canvas);
 
   const color = toolColors.getActiveColor();
   const font = textStyle.getFont();

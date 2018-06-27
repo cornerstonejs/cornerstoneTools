@@ -13,6 +13,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import touchTool from './touchTool.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
+import { getNewContext } from '../util/drawing.js';
 
 
 const toolType = 'simpleAngle';
@@ -85,9 +86,7 @@ function onImageRendered (e) {
   const enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
