@@ -13,7 +13,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import touchTool from './touchTool.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 
 const toolType = 'simpleAngle';
@@ -114,13 +114,12 @@ function onImageRendered (e) {
       const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
       // Draw the line
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-      context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
-      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-      context.stroke();
+      path(context, { color,
+        lineWidth }, (context) => {
+        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+        context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
+        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      });
 
       // Draw the handles
       const handleOptions = {

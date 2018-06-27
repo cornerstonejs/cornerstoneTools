@@ -22,7 +22,7 @@ import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -826,28 +826,26 @@ function onImageRendered (e) {
           handleStart = data.handles[j];
           const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
 
-          context.beginPath();
-          context.strokeStyle = color;
-          context.lineWidth = lineWidth;
-          context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+          path(context, { color,
+            lineWidth }, (context) => {
+            context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
 
-          for (let k = 0; k < data.handles[j].lines.length; k++) {
-            const lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
+            for (let k = 0; k < data.handles[j].lines.length; k++) {
+              const lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
 
-            context.lineTo(lineCanvas.x, lineCanvas.y);
-            context.stroke();
-          }
-
-          const mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
-
-          if (j === (data.handles.length - 1)) {
-            if (!data.polyBoundingBox) {
-              // If it's still being actively drawn, keep the last line to
-              // The mouse location
-              context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
-              context.stroke();
+              context.lineTo(lineCanvas.x, lineCanvas.y);
             }
-          }
+
+            const mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
+
+            if (j === (data.handles.length - 1)) {
+              if (!data.polyBoundingBox) {
+                // If it's still being actively drawn, keep the last line to
+                // The mouse location
+                context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
+              }
+            }
+          });
         }
       }
 

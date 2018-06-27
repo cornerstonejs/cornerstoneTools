@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
+import { path } from '../util/drawing.js';
 
 const defaultHandleRadius = 6;
 
@@ -17,26 +18,17 @@ export default function (context, renderData, handles, color, options) {
       return;
     }
 
-    context.beginPath();
+    const lineWidth = handle.active ? toolStyle.getActiveWidth() : toolStyle.getToolWidth();
+    const fillStyle = options && options.fill;
 
-    if (handle.active) {
-      context.lineWidth = toolStyle.getActiveWidth();
-    } else {
-      context.lineWidth = toolStyle.getToolWidth();
-    }
+    path(context, { lineWidth,
+      fillStyle }, (context) => {
+      const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
 
-    const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
+      const handleRadius = getHandleRadius(options);
 
-    const handleRadius = getHandleRadius(options);
-
-    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
-
-    if (options && options.fill) {
-      context.fillStyle = options.fill;
-      context.fill();
-    }
-
-    context.stroke();
+      context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+    });
   });
 }
 

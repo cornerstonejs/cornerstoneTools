@@ -9,7 +9,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 const toolType = 'angle';
 
@@ -97,24 +97,21 @@ function onImageRendered (e) {
 
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);
-
-      // Draw the line
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-
       let handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
       let handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      // Draw the line
+      path(context, { color,
+        lineWidth }, (context) => {
+        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
 
-      handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
-      handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
+        handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
+        handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
 
-      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-      context.stroke();
+        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      });
 
       // Draw the handles
       drawHandles(context, eventData, data.handles);

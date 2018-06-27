@@ -1,4 +1,5 @@
 import external from '../externalModules.js';
+import { path } from './drawing.js';
 
 export default function (linkAnchorPoints, refPoint, boundingBox, context, color, lineWidth) {
   // Draw a link from "the closest anchor point to refPoint" to "the nearest midpoint on the bounding box".
@@ -29,11 +30,12 @@ export default function (linkAnchorPoints, refPoint, boundingBox, context, color
   const end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, start);
 
   // Finally we draw the dashed linking line
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.setLineDash([2, 3]);
-  context.moveTo(start.x, start.y);
-  context.lineTo(end.x, end.y);
-  context.stroke();
+  const lineDash = [2, 3];
+
+  path(context, { color,
+    lineWidth,
+    lineDash }, (context) => {
+    context.moveTo(start.x, start.y);
+    context.lineTo(end.x, end.y);
+  });
 }
