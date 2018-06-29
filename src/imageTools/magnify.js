@@ -63,12 +63,15 @@ function mouseDownCallback (e) {
   }
 }
 
-function newImageCallback (e, eventData) {
+function newImageCallback (e) {
+  const eventData = e.detail;
+
   eventData.currentPoints = currentPoints;
   drawMagnificationTool(eventData);
 }
 
-function dragEndCallback (e, eventData) {
+function dragEndCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
