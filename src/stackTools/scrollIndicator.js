@@ -1,6 +1,6 @@
 import displayTool from '../imageTools/displayTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 /*
 Display scroll progress bar across bottom of image.
@@ -25,42 +25,38 @@ function onImageRendered (e) {
 
   const context = getNewContext(eventData.enabledElement.canvas);
 
-  context.save();
+  draw(context, (context) => {
+    const config = scrollIndicator.getConfiguration();
 
-  const config = scrollIndicator.getConfiguration();
+    // Draw indicator background
+    context.fillStyle = config.backgroundColor;
+    if (config.orientation === 'horizontal') {
+      context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+    } else {
+      context.fillRect(0, 0, scrollBarHeight, height);
+    }
 
-  // Draw indicator background
-  context.fillStyle = config.backgroundColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
-  } else {
-    context.fillRect(0, 0, scrollBarHeight, height);
-  }
+    // Get current image index
+    const stackData = getToolState(element, 'stack');
 
-  // Get current image index
-  const stackData = getToolState(element, 'stack');
+    if (stackData && stackData.data && stackData.data.length) {
+      const imageIds = stackData.data[0].imageIds;
+      const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
+      // Draw current image cursor
+      const cursorWidth = width / imageIds.length;
+      const cursorHeight = height / imageIds.length;
+      const xPosition = cursorWidth * currentImageIdIndex;
+      const yPosition = cursorHeight * currentImageIdIndex;
 
-  const imageIds = stackData.data[0].imageIds;
-  const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
-
-  // Draw current image cursor
-  const cursorWidth = width / imageIds.length;
-  const cursorHeight = height / imageIds.length;
-  const xPosition = cursorWidth * currentImageIdIndex;
-  const yPosition = cursorHeight * currentImageIdIndex;
-
-  context.fillStyle = config.fillColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
-  } else {
-    context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
-  }
-
-  context.restore();
+      context.fillStyle = config.fillColor;
+      if (config.orientation === 'horizontal') {
+        context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+      } else {
+        context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+      }
+    }
+  });
 }
 
 const scrollIndicator = displayTool(onImageRendered);

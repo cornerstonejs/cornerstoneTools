@@ -17,7 +17,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -154,88 +154,87 @@ function onImageRendered (e) {
   const config = arrowAnnotate.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    const color = toolColors.getColorIfActive(data);
-
-    // Draw the arrow
-    const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    // Config.arrowFirst = false;
-    if (config.arrowFirst) {
-      drawArrow(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
-    } else {
-      drawArrow(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
-    }
-
-    const handleOptions = {
-      drawHandlesIfActive: (config && config.drawHandlesOnHover)
-    };
-
-    if (config.drawHandles) {
-      drawHandles(context, eventData, data.handles, color, handleOptions);
-    }
-
-    const text = textBoxText(data);
-
-    // Draw the text
-    if (text && text !== '') {
-      context.font = font;
-
-      // Calculate the text coordinates.
-      const textWidth = context.measureText(text).width + 10;
-      const textHeight = textStyle.getFontSize() + 10;
-
-      let distance = Math.max(textWidth, textHeight) / 2 + 5;
-
-      if (handleEndCanvas.x < handleStartCanvas.x) {
-        distance = -distance;
+    draw(context, (context) => {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      if (!data.handles.textBox.hasMoved) {
-        let textCoords;
+      const color = toolColors.getColorIfActive(data);
 
-        if (config.arrowFirst) {
-          textCoords = {
-            x: handleEndCanvas.x - textWidth / 2 + distance,
-            y: handleEndCanvas.y - textHeight / 2
-          };
-        } else {
-          // If the arrow is at the End position, the text should
-          // Be placed near the Start position
-          textCoords = {
-            x: handleStartCanvas.x - textWidth / 2 - distance,
-            y: handleStartCanvas.y - textHeight / 2
-          };
+      // Draw the arrow
+      const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      // Config.arrowFirst = false;
+      if (config.arrowFirst) {
+        drawArrow(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
+      } else {
+        drawArrow(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
+      }
+
+      const handleOptions = {
+        drawHandlesIfActive: (config && config.drawHandlesOnHover)
+      };
+
+      if (config.drawHandles) {
+        drawHandles(context, eventData, data.handles, color, handleOptions);
+      }
+
+      const text = textBoxText(data);
+
+      // Draw the text
+      if (text && text !== '') {
+        context.font = font;
+
+        // Calculate the text coordinates.
+        const textWidth = context.measureText(text).width + 10;
+        const textHeight = textStyle.getFontSize() + 10;
+
+        let distance = Math.max(textWidth, textHeight) / 2 + 5;
+
+        if (handleEndCanvas.x < handleStartCanvas.x) {
+          distance = -distance;
         }
 
-        const transform = cornerstone.internal.getTransform(enabledElement);
+        if (!data.handles.textBox.hasMoved) {
+          let textCoords;
 
-        transform.invert();
+          if (config.arrowFirst) {
+            textCoords = {
+              x: handleEndCanvas.x - textWidth / 2 + distance,
+              y: handleEndCanvas.y - textHeight / 2
+            };
+          } else {
+            // If the arrow is at the End position, the text should
+            // Be placed near the Start position
+            textCoords = {
+              x: handleStartCanvas.x - textWidth / 2 - distance,
+              y: handleStartCanvas.y - textHeight / 2
+            };
+          }
 
-        const coords = transform.transformPoint(textCoords.x, textCoords.y);
+          const transform = cornerstone.internal.getTransform(enabledElement);
 
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
+          transform.invert();
+
+          const coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
+        }
+
+        drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
+          data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
       }
-
-      drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
-        data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
-    }
-    context.restore();
+    });
   }
 
   function textBoxText (data) {

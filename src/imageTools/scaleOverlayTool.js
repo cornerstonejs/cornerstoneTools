@@ -1,7 +1,7 @@
 import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const configuration = {
   color: 'white',
@@ -225,10 +225,9 @@ function onImageRendered (e) {
     }
   }, configuration);
 
-  context.save();
-
-  drawScalebars(context, imageAttributes);
-  context.restore();
+  draw(context, (context) => {
+    drawScalebars(context, imageAttributes);
+  });
 }
 // /////// END IMAGE RENDERING ///////
 
