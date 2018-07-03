@@ -322,6 +322,7 @@ function activate (element, mouseButtonMask) {
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
+  element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 
   element.focus();
   external.cornerstone.updateImage(element);
@@ -351,6 +352,7 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
+  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 }
 
 /**
