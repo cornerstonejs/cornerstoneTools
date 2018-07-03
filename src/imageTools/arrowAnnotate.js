@@ -17,7 +17,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -161,11 +161,7 @@ function onImageRendered (e) {
     }
 
     draw(context, (context) => {
-      if (config && config.shadow) {
-        context.shadowColor = config.shadowColor || '#000000';
-        context.shadowOffsetX = config.shadowOffsetX || 1;
-        context.shadowOffsetY = config.shadowOffsetY || 1;
-      }
+      setShadow(context, config);
 
       const color = toolColors.getColorIfActive(data);
 

@@ -9,7 +9,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
 
 const toolType = 'angle';
 
@@ -89,11 +89,7 @@ function onImageRendered (e) {
 
     draw(context, (context) => {
       // Configurable shadow
-      if (config && config.shadow) {
-        context.shadowColor = config.shadowColor || '#000000';
-        context.shadowOffsetX = config.shadowOffsetX || 1;
-        context.shadowOffsetY = config.shadowOffsetY || 1;
-      }
+      setShadow(context, config);
 
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);
