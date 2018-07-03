@@ -8,6 +8,7 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawTextBox from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'textMarker';
 
@@ -107,9 +108,7 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const config = textMarker.getConfiguration();
 
@@ -122,32 +121,30 @@ function onImageRendered (e) {
 
     const color = toolColors.getColorIfActive(data);
 
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
-    // Draw text
-    context.fillStyle = color;
-    const measureText = context.measureText(data.text);
-
-    data.textWidth = measureText.width + 10;
-
-    const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    const options = {
-      centering: {
-        x: true,
-        y: true
+    draw(context, (context) => {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
-    };
 
-    data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+      // Draw text
+      context.fillStyle = color;
+      const measureText = context.measureText(data.text);
 
-    context.restore();
+      data.textWidth = measureText.width + 10;
+
+      const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      const options = {
+        centering: {
+          x: true,
+          y: true
+        }
+      };
+
+      data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+    });
   }
 }
 

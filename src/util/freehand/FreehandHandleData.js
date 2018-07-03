@@ -1,6 +1,3 @@
-/**
-* @author JamesAPetts
-*/
 
 /**
  * @typedef {Object} FreehandHandleData

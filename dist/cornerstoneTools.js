@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.3.5 - 2018-06-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.3.6 - 2018-07-03 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -244,6 +244,8 @@ var _lineSegDistance = __webpack_require__(/*! ../util/lineSegDistance.js */ "./
 
 var _lineSegDistance2 = _interopRequireDefault(_lineSegDistance);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'angle';
@@ -307,79 +309,82 @@ function onImageRendered(e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var font = _textStyle2.default.getFont();
   var config = angle.getConfiguration();
   var cornerstone = _externalModules2.default.cornerstone;
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    // Configurable shadow
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    // Differentiate the color of activation tool
-    var color = _toolColors2.default.getColorIfActive(data);
+    (0, _drawing.draw)(context, function (context) {
+      // Configurable shadow
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+      }
 
-    // Draw the line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
+      // Differentiate the color of activation tool
+      var color = _toolColors2.default.getColorIfActive(data);
 
-    var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+      // Draw the line
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
 
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-    handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
-    handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
 
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
+      handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
+      handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
 
-    // Draw the handles
-    (0, _drawHandles2.default)(context, eventData, data.handles);
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      context.stroke();
 
-    // Draw the text
-    context.fillStyle = color;
+      // Draw the handles
+      (0, _drawHandles2.default)(context, eventData, data.handles);
 
-    // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-    // Where lines cross to measure angle. For now it will show smallest angle.
-    var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-    var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
-    var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
-    var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
+      // Draw the text
+      context.fillStyle = color;
 
-    var _angle = Math.acos(Math.abs((dx1 * dx2 + dy1 * dy2) / (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))));
+      // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+      // Where lines cross to measure angle. For now it will show smallest angle.
+      var dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
+      var dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
+      var dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
+      var dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
 
-    _angle *= 180 / Math.PI;
+      var angle = Math.acos(Math.abs((dx1 * dx2 + dy1 * dy2) / (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))));
 
-    var rAngle = (0, _roundToDecimal2.default)(_angle, 2);
-    var str = '00B0'; // Degrees symbol
-    var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+      angle *= 180 / Math.PI;
 
-    var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
-    var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+      var rAngle = (0, _roundToDecimal2.default)(angle, 2);
+      var str = '00B0'; // Degrees symbol
+      var text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
 
-    context.font = font;
-    (0, _drawTextBox2.default)(context, text, textX, textY, color);
-    context.restore();
+      var textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
+      var textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
+
+      context.font = font;
+      (0, _drawTextBox2.default)(context, text, textX, textY, color);
+    });
+  };
+
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 }
 // /////// END IMAGE RENDERING ///////
@@ -487,13 +492,15 @@ var _lineSegDistance = __webpack_require__(/*! ../util/lineSegDistance.js */ "./
 
 var _lineSegDistance2 = _interopRequireDefault(_lineSegDistance);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/* eslint no-alert:0 */
 var toolType = 'arrowAnnotate';
 
 // Define a callback to get your text annotation
 // This could be used, e.g. to open a modal
+/* eslint no-alert:0 */
 function getTextCallback(doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Enter your annotation:'));
 }
@@ -618,96 +625,99 @@ function onImageRendered(e) {
   var cornerstone = _externalModules2.default.cornerstone;
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var font = _textStyle2.default.getFont();
   var config = arrowAnnotate.getConfiguration();
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    var color = _toolColors2.default.getColorIfActive(data);
-
-    // Draw the arrow
-    var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    // Config.arrowFirst = false;
-    if (config.arrowFirst) {
-      (0, _drawArrow2.default)(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
-    } else {
-      (0, _drawArrow2.default)(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
-    }
-
-    var handleOptions = {
-      drawHandlesIfActive: config && config.drawHandlesOnHover
-    };
-
-    if (config.drawHandles) {
-      (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
-    }
-
-    var text = textBoxText(data);
-
-    // Draw the text
-    if (text && text !== '') {
-      context.font = font;
-
-      // Calculate the text coordinates.
-      var textWidth = context.measureText(text).width + 10;
-      var textHeight = _textStyle2.default.getFontSize() + 10;
-
-      var distance = Math.max(textWidth, textHeight) / 2 + 5;
-
-      if (handleEndCanvas.x < handleStartCanvas.x) {
-        distance = -distance;
+    (0, _drawing.draw)(context, function (context) {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      if (!data.handles.textBox.hasMoved) {
-        var textCoords = void 0;
+      var color = _toolColors2.default.getColorIfActive(data);
 
-        if (config.arrowFirst) {
-          textCoords = {
-            x: handleEndCanvas.x - textWidth / 2 + distance,
-            y: handleEndCanvas.y - textHeight / 2
-          };
-        } else {
-          // If the arrow is at the End position, the text should
-          // Be placed near the Start position
-          textCoords = {
-            x: handleStartCanvas.x - textWidth / 2 - distance,
-            y: handleStartCanvas.y - textHeight / 2
-          };
+      // Draw the arrow
+      var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      // Config.arrowFirst = false;
+      if (config.arrowFirst) {
+        (0, _drawArrow2.default)(context, handleEndCanvas, handleStartCanvas, color, lineWidth);
+      } else {
+        (0, _drawArrow2.default)(context, handleStartCanvas, handleEndCanvas, color, lineWidth);
+      }
+
+      var handleOptions = {
+        drawHandlesIfActive: config && config.drawHandlesOnHover
+      };
+
+      if (config.drawHandles) {
+        (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
+      }
+
+      var text = textBoxText(data);
+
+      // Draw the text
+      if (text && text !== '') {
+        context.font = font;
+
+        // Calculate the text coordinates.
+        var textWidth = context.measureText(text).width + 10;
+        var textHeight = _textStyle2.default.getFontSize() + 10;
+
+        var distance = Math.max(textWidth, textHeight) / 2 + 5;
+
+        if (handleEndCanvas.x < handleStartCanvas.x) {
+          distance = -distance;
         }
 
-        var transform = cornerstone.internal.getTransform(enabledElement);
+        if (!data.handles.textBox.hasMoved) {
+          var textCoords = void 0;
 
-        transform.invert();
+          if (config.arrowFirst) {
+            textCoords = {
+              x: handleEndCanvas.x - textWidth / 2 + distance,
+              y: handleEndCanvas.y - textHeight / 2
+            };
+          } else {
+            // If the arrow is at the End position, the text should
+            // Be placed near the Start position
+            textCoords = {
+              x: handleStartCanvas.x - textWidth / 2 - distance,
+              y: handleStartCanvas.y - textHeight / 2
+            };
+          }
 
-        var coords = transform.transformPoint(textCoords.x, textCoords.y);
+          var transform = cornerstone.internal.getTransform(enabledElement);
 
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
+          transform.invert();
+
+          var coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
+        }
+
+        (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
       }
+    });
+  };
 
-      (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
-    }
-    context.restore();
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data) {
@@ -1374,6 +1384,8 @@ var _isMouseButtonEnabled2 = _interopRequireDefault(_isMouseButtonEnabled);
 
 var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'dragProbe';
@@ -1384,66 +1396,63 @@ function defaultStrategy(eventData) {
   var cornerstone = _externalModules2.default.cornerstone;
   var enabledElement = cornerstone.getEnabledElement(eventData.element);
 
-  var context = enabledElement.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(enabledElement.canvas);
 
   var color = _toolColors2.default.getActiveColor();
   var font = _textStyle2.default.getFont();
   var fontHeight = _textStyle2.default.getFontSize();
   var config = dragProbe.getConfiguration();
 
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
   var x = Math.round(eventData.currentPoints.image.x);
   var y = Math.round(eventData.currentPoints.image.y);
-
-  var storedPixels = void 0;
-  var text = void 0,
-      str = void 0;
 
   if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
     return;
   }
 
-  if (eventData.image.color) {
-    storedPixels = (0, _getRGBPixels2.default)(eventData.element, x, y, 1, 1);
-    text = x + ', ' + y;
-    str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
-  } else {
-    storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-    var sp = storedPixels[0];
-    var mo = sp * eventData.image.slope + eventData.image.intercept;
-    var suv = (0, _calculateSUV2.default)(eventData.image, sp);
+  (0, _drawing.draw)(context, function (context) {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
+
+    var storedPixels = void 0;
+    var text = void 0,
+        str = void 0;
+
+    if (eventData.image.color) {
+      storedPixels = (0, _getRGBPixels2.default)(eventData.element, x, y, 1, 1);
+      text = x + ', ' + y;
+      str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2] + ' A: ' + storedPixels[3];
+    } else {
+      storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+      var sp = storedPixels[0];
+      var mo = sp * eventData.image.slope + eventData.image.intercept;
+      var suv = (0, _calculateSUV2.default)(eventData.image, sp);
+
+      // Draw text
+      text = x + ', ' + y;
+      str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+      if (suv) {
+        str += ' SUV: ' + parseFloat(suv.toFixed(3));
+      }
+    }
 
     // Draw text
-    text = x + ', ' + y;
-    str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-    if (suv) {
-      str += ' SUV: ' + parseFloat(suv.toFixed(3));
-    }
-  }
+    var coords = {
+      // Translate the x/y away from the cursor
+      x: eventData.currentPoints.image.x + 3,
+      y: eventData.currentPoints.image.y - 3
+    };
+    var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-  // Draw text
-  var coords = {
-    // Translate the x/y away from the cursor
-    x: eventData.currentPoints.image.x + 3,
-    y: eventData.currentPoints.image.y - 3
-  };
-  var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+    context.font = font;
+    context.fillStyle = color;
 
-  context.font = font;
-  context.fillStyle = color;
-
-  (0, _drawTextBox2.default)(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-  (0, _drawTextBox2.default)(context, text, textCoords.x, textCoords.y, color);
-  context.restore();
+    (0, _drawTextBox2.default)(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+    (0, _drawTextBox2.default)(context, text, textCoords.x, textCoords.y, color);
+  });
 }
 
 function minimalStrategy(eventData) {
@@ -1452,28 +1461,11 @@ function minimalStrategy(eventData) {
   var enabledElement = cornerstone.getEnabledElement(element);
   var image = enabledElement.image;
 
-  var context = enabledElement.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(enabledElement.canvas);
 
   var color = _toolColors2.default.getActiveColor();
   var font = _textStyle2.default.getFont();
   var config = dragProbe.getConfiguration();
-
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-  var modality = void 0;
-
-  if (seriesModule) {
-    modality = seriesModule.modality;
-  }
 
   var toolCoords = void 0;
 
@@ -1483,67 +1475,81 @@ function minimalStrategy(eventData) {
     toolCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y - _textStyle2.default.getFontSize() / 2);
   }
 
-  var storedPixels = void 0;
-  var text = '';
-
   if (toolCoords.x < 0 || toolCoords.y < 0 || toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
     return;
   }
 
-  if (image.color) {
-    storedPixels = (0, _getRGBPixels2.default)(element, toolCoords.x, toolCoords.y, 1, 1);
-    text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
-  } else {
-    storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-    var sp = storedPixels[0];
-    var mo = sp * eventData.image.slope + eventData.image.intercept;
-
-    var modalityPixelValueText = parseFloat(mo.toFixed(2));
-
-    if (modality === 'CT') {
-      text += 'HU: ' + modalityPixelValueText;
-    } else if (modality === 'PT') {
-      text += modalityPixelValueText;
-      var suv = (0, _calculateSUV2.default)(eventData.image, sp);
-
-      if (suv) {
-        text += ' SUV: ' + parseFloat(suv.toFixed(2));
-      }
-    } else {
-      text += modalityPixelValueText;
+  (0, _drawing.draw)(context, function (context) {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
     }
-  }
 
-  // Prepare text
-  var textCoords = cornerstone.pixelToCanvas(element, toolCoords);
+    var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+    var modality = void 0;
 
-  context.font = font;
-  context.fillStyle = color;
+    if (seriesModule) {
+      modality = seriesModule.modality;
+    }
 
-  // Translate the x/y away from the cursor
-  var translation = void 0;
-  var handleRadius = 6;
-  var width = context.measureText(text).width;
+    var storedPixels = void 0;
+    var text = '';
 
-  if (eventData.isTouchEvent === true) {
-    translation = {
-      x: -width / 2 - 5,
-      y: -_textStyle2.default.getFontSize() - 10 - 2 * handleRadius
-    };
-  } else {
-    translation = {
-      x: 12,
-      y: -(_textStyle2.default.getFontSize() + 10) / 2
-    };
-  }
+    if (image.color) {
+      storedPixels = (0, _getRGBPixels2.default)(element, toolCoords.x, toolCoords.y, 1, 1);
+      text = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+    } else {
+      storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+      var sp = storedPixels[0];
+      var mo = sp * eventData.image.slope + eventData.image.intercept;
 
-  context.beginPath();
-  context.strokeStyle = color;
-  context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-  context.stroke();
+      var modalityPixelValueText = parseFloat(mo.toFixed(2));
 
-  (0, _drawTextBox2.default)(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
-  context.restore();
+      if (modality === 'CT') {
+        text += 'HU: ' + modalityPixelValueText;
+      } else if (modality === 'PT') {
+        text += modalityPixelValueText;
+        var suv = (0, _calculateSUV2.default)(eventData.image, sp);
+
+        if (suv) {
+          text += ' SUV: ' + parseFloat(suv.toFixed(2));
+        }
+      } else {
+        text += modalityPixelValueText;
+      }
+    }
+
+    // Prepare text
+    var textCoords = cornerstone.pixelToCanvas(element, toolCoords);
+
+    context.font = font;
+    context.fillStyle = color;
+
+    // Translate the x/y away from the cursor
+    var translation = void 0;
+    var handleRadius = 6;
+    var width = context.measureText(text).width;
+
+    if (eventData.isTouchEvent === true) {
+      translation = {
+        x: -width / 2 - 5,
+        y: -_textStyle2.default.getFontSize() - 10 - 2 * handleRadius
+      };
+    } else {
+      translation = {
+        x: 12,
+        y: -(_textStyle2.default.getFontSize() + 10) / 2
+      };
+    }
+
+    context.beginPath();
+    context.strokeStyle = color;
+    context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
+    context.stroke();
+
+    (0, _drawTextBox2.default)(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
+  });
 }
 
 function mouseUpCallback(e) {
@@ -1654,10 +1660,6 @@ var _drawHandles = __webpack_require__(/*! ../manipulators/drawHandles.js */ "./
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
-var _drawEllipse = __webpack_require__(/*! ../util/drawEllipse.js */ "./util/drawEllipse.js");
-
-var _drawEllipse2 = _interopRequireDefault(_drawEllipse);
-
 var _pointInEllipse = __webpack_require__(/*! ../util/pointInEllipse.js */ "./util/pointInEllipse.js");
 
 var _pointInEllipse2 = _interopRequireDefault(_pointInEllipse);
@@ -1675,6 +1677,8 @@ var _drawLinkedTextBox = __webpack_require__(/*! ../util/drawLinkedTextBox.js */
 var _drawLinkedTextBox2 = _interopRequireDefault(_drawLinkedTextBox);
 
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1782,7 +1786,6 @@ function onImageRendered(e) {
   var element = eventData.element;
   var lineWidth = _toolStyle2.default.getToolWidth();
   var config = ellipticalRoi.getConfiguration();
-  var context = eventData.canvasContext.canvas.getContext('2d');
   var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   var imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   var modality = void 0;
@@ -1801,145 +1804,136 @@ function onImageRendered(e) {
     modality = seriesModule.modality;
   }
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   // If we have tool data for this element - iterate over each set and draw it
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
 
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    // Apply any shadow settings defined in the tool configuration
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
+    (0, _drawing.draw)(context, function (context) {
+      // Apply any shadow settings defined in the tool configuration
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+      }
 
-    // Check which color the rendered tool should be
-    var color = _toolColors2.default.getColorIfActive(data);
+      // Check which color the rendered tool should be
+      var color = _toolColors2.default.getColorIfActive(data);
 
-    // Convert Image coordinates to Canvas coordinates given the element
-    var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    var handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+      // Draw the ellipse on the canvas
+      (0, _drawing.drawEllipse)(context, element, data.handles.start, data.handles.end, { color: color });
 
-    // Retrieve the bounds of the ellipse (left, top, width, and height)
-    // In Canvas coordinates
-    var leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
-    var topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
-    var widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
-    var heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
+      // If the tool configuration specifies to only draw the handles on hover / active,
+      // Follow this logic
+      if (config && config.drawHandlesOnHover) {
+        // Draw the handles if the tool is active
+        if (data.active === true) {
+          (0, _drawHandles2.default)(context, eventData, data.handles, color);
+        } else {
+          // If the tool is inactive, draw the handles only if each specific handle is being
+          // Hovered over
+          var handleOptions = {
+            drawHandlesIfActive: true
+          };
 
-    // Draw the ellipse on the canvas
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    (0, _drawEllipse2.default)(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
-    context.closePath();
-
-    // If the tool configuration specifies to only draw the handles on hover / active,
-    // Follow this logic
-    if (config && config.drawHandlesOnHover) {
-      // Draw the handles if the tool is active
-      if (data.active === true) {
-        (0, _drawHandles2.default)(context, eventData, data.handles, color);
+          (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
+        }
       } else {
-        // If the tool is inactive, draw the handles only if each specific handle is being
-        // Hovered over
-        var handleOptions = {
-          drawHandlesIfActive: true
+        // If the tool has no configuration settings, always draw the handles
+        (0, _drawHandles2.default)(context, eventData, data.handles, color);
+      }
+
+      // Define variables for the area and mean/standard deviation
+      var area = void 0,
+          meanStdDev = void 0,
+          meanStdDevSUV = void 0;
+
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else {
+        // If the data has been invalidated, we need to calculate it again
+
+        // Retrieve the bounds of the ellipse in image coordinates
+        var ellipse = {
+          left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+          top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+          width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+          height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
         };
 
-        (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
-      }
-    } else {
-      // If the tool has no configuration settings, always draw the handles
-      (0, _drawHandles2.default)(context, eventData, data.handles, color);
-    }
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ellipse bounds cover
+          var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
-    // Define variables for the area and mean/standard deviation
-    var area = void 0,
-        meanStdDev = void 0,
-        meanStdDevSUV = void 0;
+          // Calculate the mean & standard deviation from the pixels and the ellipse details
+          meanStdDev = (0, _calculateEllipseStatistics2.default)(pixels, ellipse);
 
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else {
-      // If the data has been invalidated, we need to calculate it again
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
 
-      // Retrieve the bounds of the ellipse in image coordinates
-      var ellipse = {
-        left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
-        top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-        width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
-        height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
-      };
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ellipse bounds cover
-        var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
-
-        // Calculate the mean & standard deviation from the pixels and the ellipse details
-        meanStdDev = (0, _calculateEllipseStatistics2.default)(pixels, ellipse);
-
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
-
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        // Calculate the image area from the ellipse dimensions and pixel spacing
+        area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
         }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
-
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.handles.textBox.hasMoved) {
+        // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+        data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
       }
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+      var text = textBoxText(data);
 
-    // If the textbox has not been moved by the user, it should be displayed on the right-most
-    // Side of the tool.
-    if (!data.handles.textBox.hasMoved) {
-      // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-      // Note that this calculates it in image coordinates
-      data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-      data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
-    }
+      (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+    });
+  };
 
-    var text = textBoxText(data);
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
 
-    (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    context.restore();
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data) {
@@ -2140,10 +2134,14 @@ var _freeHandIntersect2 = _interopRequireDefault(_freeHandIntersect);
 
 var _FreehandHandleData = __webpack_require__(/*! ../util/freehand/FreehandHandleData.js */ "./util/freehand/FreehandHandleData.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// Freehand tool libraries
 var toolType = 'freehand';
+
+// Freehand tool libraries
+
 var configuration = {
   mouseLocation: {
     handles: {
@@ -2231,7 +2229,11 @@ function pointNearHandle(eventData, toolIndex) {
 
   var data = toolData.data[toolIndex];
 
-  if (data.handles === undefined || data.visible === false) {
+  if (data.handles === undefined) {
+    return null;
+  }
+
+  if (data.visible === false) {
     return null;
   }
 
@@ -2904,211 +2906,209 @@ function onImageRendered(e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
-  var fillColor = void 0;
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    var color = _toolColors2.default.getColorIfActive(data);
+    (0, _drawing.draw)(context, function (context) {
+      var color = _toolColors2.default.getColorIfActive(data);
+      var fillColor = void 0;
 
-    if (data.active) {
-      if (data.handles.invalidHandlePlacement) {
-        color = config.invalidColor;
-        fillColor = config.invalidColor;
-      } else {
-        color = _toolColors2.default.getColorIfActive(data);
-        fillColor = _toolColors2.default.getFillColor();
-      }
-    } else {
-      fillColor = _toolColors2.default.getToolColor();
-    }
-
-    var handleStart = void 0;
-
-    if (data.handles.length) {
-      for (var j = 0; j < data.handles.length; j++) {
-        // Draw a line between handle j and j+1
-        handleStart = data.handles[j];
-        var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-
-        for (var k = 0; k < data.handles[j].lines.length; k++) {
-          var lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
-
-          context.lineTo(lineCanvas.x, lineCanvas.y);
-          context.stroke();
+      if (data.active) {
+        if (data.handles.invalidHandlePlacement) {
+          color = config.invalidColor;
+          fillColor = config.invalidColor;
+        } else {
+          color = _toolColors2.default.getColorIfActive(data);
+          fillColor = _toolColors2.default.getFillColor();
         }
+      } else {
+        fillColor = _toolColors2.default.getToolColor();
+      }
 
-        var mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
+      var handleStart = void 0;
 
-        if (j === data.handles.length - 1) {
-          if (!data.polyBoundingBox) {
-            // If it's still being actively drawn, keep the last line to
-            // The mouse location
-            context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
+      if (data.handles.length) {
+        for (var j = 0; j < data.handles.length; j++) {
+          // Draw a line between handle j and j+1
+          handleStart = data.handles[j];
+          var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
+
+          context.beginPath();
+          context.strokeStyle = color;
+          context.lineWidth = lineWidth;
+          context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+
+          for (var k = 0; k < data.handles[j].lines.length; k++) {
+            var lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
+
+            context.lineTo(lineCanvas.x, lineCanvas.y);
             context.stroke();
+          }
+
+          var mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
+
+          if (j === data.handles.length - 1) {
+            if (!data.polyBoundingBox) {
+              // If it's still being actively drawn, keep the last line to
+              // The mouse location
+              context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
+              context.stroke();
+            }
           }
         }
       }
-    }
 
-    // Draw handles
+      // Draw handles
 
-    var options = {
-      fill: fillColor
-    };
-
-    if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
-      // Render all handles
-      options.handleRadius = config.activeHandleRadius;
-      (0, _drawHandles2.default)(context, eventData, data.handles, color, options);
-    }
-
-    if (data.canComplete) {
-      // Draw large handle at the origin if can complete drawing
-      options.handleRadius = config.completeHandleRadius;
-      (0, _drawHandles2.default)(context, eventData, [data.handles[0]], color, options);
-    }
-
-    if (data.active && !data.polyBoundingBox) {
-      // Draw handle at origin and at mouse if actively drawing
-      options.handleRadius = config.activeHandleRadius;
-      (0, _drawHandles2.default)(context, eventData, config.mouseLocation.handles, color, options);
-      (0, _drawHandles2.default)(context, eventData, [data.handles[0]], color, options);
-    }
-
-    // Define variables for the area and mean/standard deviation
-    var area = void 0,
-        meanStdDev = void 0,
-        meanStdDevSUV = void 0;
-
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else if (!data.active) {
-      // If the data has been invalidated, and the tool is not currently active,
-      // We need to calculate it again.
-
-      // Retrieve the bounds of the ROI in image coordinates
-      var bounds = {
-        left: data.handles[0].x,
-        right: data.handles[0].x,
-        bottom: data.handles[0].y,
-        top: data.handles[0].x
+      var options = {
+        fill: fillColor
       };
 
-      for (var _i = 0; _i < data.handles.length; _i++) {
-        bounds.left = Math.min(bounds.left, data.handles[_i].x);
-        bounds.right = Math.max(bounds.right, data.handles[_i].x);
-        bounds.bottom = Math.min(bounds.bottom, data.handles[_i].y);
-        bounds.top = Math.max(bounds.top, data.handles[_i].y);
+      if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
+        // Render all handles
+        options.handleRadius = config.activeHandleRadius;
+        (0, _drawHandles2.default)(context, eventData, data.handles, color, options);
       }
 
-      var polyBoundingBox = {
-        left: bounds.left,
-        top: bounds.bottom,
-        width: Math.abs(bounds.right - bounds.left),
-        height: Math.abs(bounds.top - bounds.bottom)
-      };
+      if (data.canComplete) {
+        // Draw large handle at the origin if can complete drawing
+        options.handleRadius = config.completeHandleRadius;
+        (0, _drawHandles2.default)(context, eventData, [data.handles[0]], color, options);
+      }
 
-      // Store the bounding box information for the text box
-      data.polyBoundingBox = polyBoundingBox;
+      if (data.active && !data.polyBoundingBox) {
+        // Draw handle at origin and at mouse if actively drawing
+        options.handleRadius = config.activeHandleRadius;
+        (0, _drawHandles2.default)(context, eventData, config.mouseLocation.handles, color, options);
+        (0, _drawHandles2.default)(context, eventData, [data.handles[0]], color, options);
+      }
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ROI bounds cover
-        var pixels = cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
+      // Define variables for the area and mean/standard deviation
+      var area = void 0,
+          meanStdDev = void 0,
+          meanStdDevSUV = void 0;
 
-        // Calculate the mean & standard deviation from the pixels and the object shape
-        meanStdDev = (0, _calculateFreehandStatistics2.default)(pixels, polyBoundingBox, data.handles);
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else if (!data.active) {
+        // If the data has been invalidated, and the tool is not currently active,
+        // We need to calculate it again.
 
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
+        // Retrieve the bounds of the ROI in image coordinates
+        var bounds = {
+          left: data.handles[0].x,
+          right: data.handles[0].x,
+          bottom: data.handles[0].y,
+          top: data.handles[0].x
+        };
 
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+        for (var _i = 0; _i < data.handles.length; _i++) {
+          bounds.left = Math.min(bounds.left, data.handles[_i].x);
+          bounds.right = Math.max(bounds.right, data.handles[_i].x);
+          bounds.bottom = Math.min(bounds.bottom, data.handles[_i].y);
+          bounds.top = Math.max(bounds.top, data.handles[_i].y);
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        var polyBoundingBox = {
+          left: bounds.left,
+          top: bounds.bottom,
+          width: Math.abs(bounds.right - bounds.left),
+          height: Math.abs(bounds.top - bounds.bottom)
+        };
+
+        // Store the bounding box information for the text box
+        data.polyBoundingBox = polyBoundingBox;
+
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ROI bounds cover
+          var pixels = cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
+
+          // Calculate the mean & standard deviation from the pixels and the object shape
+          meanStdDev = (0, _calculateFreehandStatistics2.default)(pixels, polyBoundingBox, data.handles);
+
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
+
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
+
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
+
+        // Retrieve the pixel spacing values, and if they are not
+        // Real non-zero values, set them to 1
+        var columnPixelSpacing = image.columnPixelSpacing || 1;
+        var rowPixelSpacing = image.rowPixelSpacing || 1;
+        var scaling = columnPixelSpacing * rowPixelSpacing;
+
+        area = (0, _freeHandArea2.default)(data.handles, scaling);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
+        }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
-      var scaling = columnPixelSpacing * rowPixelSpacing;
+      // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
+      if (data.polyBoundingBox && !data.textBox.freehand) {
+        // If the textbox has not been moved by the user, it should be displayed on the right-most
+        // Side of the tool.
+        if (!data.textBox.hasMoved) {
+          // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+          // Note that this calculates it in image coordinates
+          data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+          data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+        }
 
-      area = (0, _freeHandArea2.default)(data.handles, scaling);
+        var text = textBoxText(data);
 
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+        (0, _drawLinkedTextBox2.default)(context, element, data.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
       }
+    });
+  };
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
 
-    // Only render text if polygon has been completed.
-    if (data.polyBoundingBox && !data.textBox.freehand) {
-      // If the textbox has not been moved by the user, it should be displayed on the right-most
-      // Side of the tool.
-      if (!data.textBox.hasMoved) {
-        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-        // Note that this calculates it in image coordinates
-        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
-      }
-
-      var text = textBoxText(data);
-
-      (0, _drawLinkedTextBox2.default)(context, element, data.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    }
-    context.restore();
+    if (_ret === 'continue') continue;
   }
 
-  /**
-  * Define an array to store the rows of text for the textbox
-  *
-  * @param {Object} data - Data object associated with the tool.
-  * @returns {Object} Array containing the lines of text to be displayed.
-  */
   function textBoxText(data) {
     var meanStdDev = data.meanStdDev,
         meanStdDevSUV = data.meanStdDevSUV,
         area = data.area;
+    // Define an array to store the rows of text for the textbox
 
     var textLines = [];
 
@@ -3208,7 +3208,6 @@ function activate(element, mouseButtonMask) {
   element.addEventListener(_events2.default.KEY_DOWN, _keysHeld.keyDownCallback);
   element.addEventListener(_events2.default.KEY_UP, _keysHeld.keyUpCallback);
 
-  element.focus();
   _externalModules2.default.cornerstone.updateImage(element);
 }
 
@@ -3283,7 +3282,8 @@ var freehand = {
   activate: activate,
   deactivate: deactivate,
   getConfiguration: getConfiguration,
-  setConfiguration: setConfiguration
+  setConfiguration: setConfiguration,
+  pointNearTool: pointNearTool
 };
 
 exports.freehand = freehand;
@@ -3340,10 +3340,6 @@ var _FreehandLineFinder = __webpack_require__(/*! ../util/freehand/FreehandLineF
 var _Sculpter = __webpack_require__(/*! ../util/freehand/Sculpter.js */ "./util/freehand/Sculpter.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
-* @author JamesAPetts
-*/
 
 var sculpter = new _Sculpter.Sculpter();
 var toolType = 'freehandSculpter';
@@ -3548,6 +3544,38 @@ function mouseUpCallback(e) {
 }
 
 /**
+* Event handler for NEW_IMAGE event.
+*
+* @param {Object} e - The event.
+*/
+function newImageCallback(e) {
+  var eventData = e.detail;
+  var element = eventData.element;
+
+  deselectAllTools(element);
+}
+
+/**
+* Deactivates all freehand ROIs and change currentTool to null
+*
+* @param {Object} e - The event.
+*/
+function deselectAllTools(element) {
+  var config = freehandSculpter.getConfiguration();
+  var toolData = (0, _toolState.getToolState)(element, referencedToolType);
+
+  config.currentTool = null;
+
+  if (toolData) {
+    for (var i = 0; i < toolData.data.length; i++) {
+      toolData.data[i].active = false;
+    }
+  }
+
+  _externalModules2.default.cornerstone.updateImage(element);
+}
+
+/**
 * Triggers a re-calculation of a freehand tool's stats after editing.
 *
 * @param {Object} eventData - Data object associated with the event.
@@ -3619,19 +3647,8 @@ function enable(element) {
 * @modifies {element}
 */
 function disable(element) {
-  var config = freehandSculpter.getConfiguration();
-  var toolData = (0, _toolState.getToolState)(element, referencedToolType);
-
-  config.currentTool = null;
-
-  if (toolData) {
-    for (var i = 0; i < toolData.data.length; i++) {
-      toolData.data[i].active = false;
-    }
-  }
-
+  deselectAllTools(element);
   removeEventListeners(element);
-  _externalModules2.default.cornerstone.updateImage(element);
 }
 
 /**
@@ -3652,6 +3669,7 @@ function activate(element, mouseButtonMask) {
   element.addEventListener(_events2.default.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(_events2.default.KEY_DOWN, _keysHeld.keyDownCallback);
   element.addEventListener(_events2.default.KEY_UP, _keysHeld.keyUpCallback);
+  element.addEventListener(_events2.default.NEW_IMAGE, newImageCallback);
 
   element.focus();
   _externalModules2.default.cornerstone.updateImage(element);
@@ -3681,6 +3699,7 @@ function removeEventListeners(element) {
   element.removeEventListener(_events2.default.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(_events2.default.KEY_DOWN, _keysHeld.keyDownCallback);
   element.removeEventListener(_events2.default.KEY_UP, _keysHeld.keyUpCallback);
+  element.removeEventListener(_events2.default.NEW_IMAGE, newImageCallback);
 }
 
 /**
@@ -3755,6 +3774,8 @@ var _drawHandles = __webpack_require__(/*! ../manipulators/drawHandles.js */ "./
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3850,13 +3871,9 @@ function onImageRendered(e) {
 
   var cornerstone = _externalModules2.default.cornerstone;
   // We have tool data for this elemen
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
-
-  context.save();
 
   var data = toolData.data[0];
 
@@ -3868,43 +3885,44 @@ function onImageRendered(e) {
     return;
   }
 
-  var color = _toolColors2.default.getColorIfActive(data);
+  (0, _drawing.draw)(context, function (context) {
+    var color = _toolColors2.default.getColorIfActive(data);
 
-  var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-  var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+    var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-  var rect = {
-    left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
-    top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
-    width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
-    height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
-  };
+    var rect = {
+      left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
+      top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
+      width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+      height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+    };
 
-  // Draw dark fill outside the rectangle
-  context.beginPath();
-  context.strokeStyle = 'transparent';
+    // Draw dark fill outside the rectangle
+    context.beginPath();
+    context.strokeStyle = 'transparent';
 
-  context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+    context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
 
-  context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-  context.stroke();
-  context.fillStyle = 'rgba(0,0,0,0.7)';
-  context.fill();
-  context.closePath();
+    context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+    context.stroke();
+    context.fillStyle = 'rgba(0,0,0,0.7)';
+    context.fill();
+    context.closePath();
 
-  // Draw dashed stroke rectangle
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.setLineDash([4]);
-  context.strokeRect(rect.left, rect.top, rect.width, rect.height);
+    // Draw dashed stroke rectangle
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.setLineDash([4]);
+    context.strokeRect(rect.left, rect.top, rect.width, rect.height);
 
-  // Strange fix, but restore doesn't seem to reset the line dashes?
-  context.setLineDash([]);
+    // Strange fix, but restore doesn't seem to reset the line dashes?
+    context.setLineDash([]);
 
-  // Draw the handles last, so they will be on top of the overlay
-  (0, _drawHandles2.default)(context, eventData, data.handles, color);
-  context.restore();
+    // Draw the handles last, so they will be on top of the overlay
+    (0, _drawHandles2.default)(context, eventData, data.handles, color);
+  });
 }
 // /////// END IMAGE RENDERING ///////
 
@@ -3954,6 +3972,8 @@ var _drawTextBox = __webpack_require__(/*! ../util/drawTextBox.js */ "./util/dra
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function onImageRendered(e) {
@@ -3961,9 +3981,7 @@ function onImageRendered(e) {
   var image = eventData.image;
   var stats = image.stats;
 
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var textLines = [];
 
@@ -4083,6 +4101,8 @@ var _lineSegDistance = __webpack_require__(/*! ../util/lineSegDistance.js */ "./
 
 var _lineSegDistance2 = _interopRequireDefault(_lineSegDistance);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'length';
@@ -4143,12 +4163,10 @@ function onImageRendered(e) {
 
   var cornerstone = _externalModules2.default.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
   var image = eventData.image,
       element = eventData.element;
 
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var config = length.getConfiguration();
@@ -4164,81 +4182,86 @@ function onImageRendered(e) {
     colPixelSpacing = image.columnPixelSpacing;
   }
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    // Configurable shadow
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    var color = _toolColors2.default.getColorIfActive(data);
-
-    // Get the handle positions in canvas coordinates
-    var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    var handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
-    // Draw the measurement line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
-
-    // Draw the handles
-    var handleOptions = {
-      drawHandlesIfActive: config && config.drawHandlesOnHover
-    };
-
-    (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
-
-    // Draw the text
-    context.fillStyle = color;
-
-    // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-    var dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
-    var dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
-
-    // Calculate the length, and create the text variable with the millimeters or pixels suffix
-    var _length = Math.sqrt(dx * dx + dy * dy);
-
-    // Store the length inside the tool for outside access
-    data.length = _length;
-
-    if (!data.handles.textBox.hasMoved) {
-      var coords = {
-        x: Math.max(data.handles.start.x, data.handles.end.x)
-      };
-
-      // Depending on which handle has the largest x-value,
-      // Set the y-value for the text box
-      if (coords.x === data.handles.start.x) {
-        coords.y = data.handles.start.y;
-      } else {
-        coords.y = data.handles.end.y;
+    (0, _drawing.draw)(context, function (context) {
+      // Configurable shadow
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      data.handles.textBox.x = coords.x;
-      data.handles.textBox.y = coords.y;
-    }
+      var color = _toolColors2.default.getColorIfActive(data);
 
-    // Move the textbox slightly to the right and upwards
-    // So that it sits beside the length tool handle
-    var xOffset = 10;
+      // Get the handle positions in canvas coordinates
+      var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+      var handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-    var text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+      // Draw the measurement line
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      context.stroke();
 
-    (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
-    context.restore();
+      // Draw the handles
+      var handleOptions = {
+        drawHandlesIfActive: config && config.drawHandlesOnHover
+      };
+
+      (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
+
+      // Draw the text
+      context.fillStyle = color;
+
+      // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+      var dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+      var dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+
+      // Calculate the length, and create the text variable with the millimeters or pixels suffix
+      var length = Math.sqrt(dx * dx + dy * dy);
+
+      // Store the length inside the tool for outside access
+      data.length = length;
+
+      if (!data.handles.textBox.hasMoved) {
+        var coords = {
+          x: Math.max(data.handles.start.x, data.handles.end.x)
+        };
+
+        // Depending on which handle has the largest x-value,
+        // Set the y-value for the text box
+        if (coords.x === data.handles.start.x) {
+          coords.y = data.handles.start.y;
+        } else {
+          coords.y = data.handles.end.y;
+        }
+
+        data.handles.textBox.x = coords.x;
+        data.handles.textBox.y = coords.y;
+      }
+
+      // Move the textbox slightly to the right and upwards
+      // So that it sits beside the length tool handle
+      var xOffset = 10;
+
+      var text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+
+      (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
+    });
+  };
+
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
@@ -4316,6 +4339,8 @@ var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.j
 
 var _clip = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'magnify';
@@ -4377,12 +4402,15 @@ function mouseDownCallback(e) {
   }
 }
 
-function newImageCallback(e, eventData) {
+function newImageCallback(e) {
+  var eventData = e.detail;
+
   eventData.currentPoints = currentPoints;
   drawMagnificationTool(eventData);
 }
 
-function dragEndCallback(e, eventData) {
+function dragEndCallback(e) {
+  var eventData = e.detail;
   var element = eventData.element;
 
   element.removeEventListener(_events2.default.TOUCH_DRAG_END, dragEndCallback);
@@ -4426,13 +4454,7 @@ function drawMagnificationTool(eventData) {
   // The 'not' magnifyTool class here is necessary because cornerstone places
   // No classes of it's own on the canvas we want to select
   var canvas = element.querySelector('canvas:not(.magnifyTool)');
-  var context = canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  var zoomCtx = magnifyCanvas.getContext('2d');
-
-  zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
+  var zoomCtx = (0, _drawing.getNewContext)(magnifyCanvas);
 
   var getSize = magnifySize;
 
@@ -5451,6 +5473,8 @@ var _drawTextBox = __webpack_require__(/*! ../util/drawTextBox.js */ "./util/dra
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function getOrientationMarkers(element) {
@@ -5525,9 +5549,7 @@ function onImageRendered(e) {
 
   var coords = getOrientationMarkerPositions(element, markers);
 
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var color = _toolColors2.default.getToolColor();
 
@@ -5756,6 +5778,8 @@ var _calculateSUV2 = _interopRequireDefault(_calculateSUV);
 
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'probe';
@@ -5804,68 +5828,71 @@ function onImageRendered(e) {
 
   var cornerstone = _externalModules2.default.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var font = _textStyle2.default.getFont();
   var fontHeight = _textStyle2.default.getFontSize();
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    var color = _toolColors2.default.getColorIfActive(data);
+    (0, _drawing.draw)(context, function (context) {
 
-    // Draw the handles
-    (0, _drawHandles2.default)(context, eventData, data.handles, color);
+      var color = _toolColors2.default.getColorIfActive(data);
 
-    var x = Math.round(data.handles.end.x);
-    var y = Math.round(data.handles.end.y);
-    var storedPixels = void 0;
+      // Draw the handles
+      (0, _drawHandles2.default)(context, eventData, data.handles, color);
 
-    var text = void 0,
-        str = void 0;
+      var x = Math.round(data.handles.end.x);
+      var y = Math.round(data.handles.end.y);
+      var storedPixels = void 0;
 
-    if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
-      return;
-    }
+      var text = void 0,
+          str = void 0;
 
-    if (eventData.image.color) {
-      text = x + ', ' + y;
-      storedPixels = (0, _getRGBPixels2.default)(eventData.element, x, y, 1, 1);
-      str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
-    } else {
-      storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-      var sp = storedPixels[0];
-      var mo = sp * eventData.image.slope + eventData.image.intercept;
-      var suv = (0, _calculateSUV2.default)(eventData.image, sp);
+      if (x >= 0 && y >= 0 && x < eventData.image.columns && y < eventData.image.rows) {
+        if (eventData.image.color) {
+          text = x + ', ' + y;
+          storedPixels = (0, _getRGBPixels2.default)(eventData.element, x, y, 1, 1);
+          str = 'R: ' + storedPixels[0] + ' G: ' + storedPixels[1] + ' B: ' + storedPixels[2];
+        } else {
+          storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+          var sp = storedPixels[0];
+          var mo = sp * eventData.image.slope + eventData.image.intercept;
+          var suv = (0, _calculateSUV2.default)(eventData.image, sp);
 
-      // Draw text
-      text = x + ', ' + y;
-      str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
-      if (suv) {
-        str += ' SUV: ' + parseFloat(suv.toFixed(3));
+          // Draw text
+          text = x + ', ' + y;
+          str = 'SP: ' + sp + ' MO: ' + parseFloat(mo.toFixed(3));
+          if (suv) {
+            str += ' SUV: ' + parseFloat(suv.toFixed(3));
+          }
+        }
+
+        var coords = {
+          // Translate the x/y away from the cursor
+          x: data.handles.end.x + 3,
+          y: data.handles.end.y - 3
+        };
+        var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+
+        context.font = font;
+        context.fillStyle = color;
+
+        (0, _drawTextBox2.default)(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+        (0, _drawTextBox2.default)(context, text, textCoords.x, textCoords.y, color);
       }
-    }
+    });
+  };
 
-    var coords = {
-      // Translate the x/y away from the cursor
-      x: data.handles.end.x + 3,
-      y: data.handles.end.y - 3
-    };
-    var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
 
-    context.font = font;
-    context.fillStyle = color;
-
-    (0, _drawTextBox2.default)(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-    (0, _drawTextBox2.default)(context, text, textCoords.x, textCoords.y, color);
-    context.restore();
+    if (_ret === 'continue') continue;
   }
 }
 // /////// END IMAGE RENDERING ///////
@@ -5938,6 +5965,8 @@ var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./s
 var _drawLinkedTextBox = __webpack_require__(/*! ../util/drawLinkedTextBox.js */ "./util/drawLinkedTextBox.js");
 
 var _drawLinkedTextBox2 = _interopRequireDefault(_drawLinkedTextBox);
+
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6063,7 +6092,6 @@ function onImageRendered(e) {
   var element = eventData.element;
   var lineWidth = _toolStyle2.default.getToolWidth();
   var config = rectangleRoi.getConfiguration();
-  var context = eventData.canvasContext.canvas.getContext('2d');
   var seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   var imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   var modality = void 0;
@@ -6082,145 +6110,151 @@ function onImageRendered(e) {
     modality = seriesModule.modality;
   }
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   // If we have tool data for this element - iterate over each set and draw it
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
 
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    // Apply any shadow settings defined in the tool configuration
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
+    (0, _drawing.draw)(context, function (context) {
+      // Apply any shadow settings defined in the tool configuration
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+      }
 
-    // Check which color the rendered tool should be
-    var color = _toolColors2.default.getColorIfActive(data);
+      // Check which color the rendered tool should be
+      var color = _toolColors2.default.getColorIfActive(data);
 
-    // Convert Image coordinates to Canvas coordinates given the element
-    var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    var handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+      // Convert Image coordinates to Canvas coordinates given the element
+      var handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+      var handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-    // Retrieve the bounds of the ellipse (left, top, width, and height)
-    // In Canvas coordinates
-    var leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
-    var topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
-    var widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
-    var heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
+      // Retrieve the bounds of the ellipse (left, top, width, and height)
+      // In Canvas coordinates
+      var leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
+      var topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
+      var widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
+      var heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
 
-    // Draw the rectangle on the canvas
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
-    context.stroke();
+      // Draw the rectangle on the canvas
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
+      context.stroke();
 
-    // If the tool configuration specifies to only draw the handles on hover / active,
-    // Follow this logic
-    if (config && config.drawHandlesOnHover) {
-      // Draw the handles if the tool is active
-      if (data.active === true) {
-        (0, _drawHandles2.default)(context, eventData, data.handles, color);
+      // If the tool configuration specifies to only draw the handles on hover / active,
+      // Follow this logic
+      if (config && config.drawHandlesOnHover) {
+        // Draw the handles if the tool is active
+        if (data.active === true) {
+          (0, _drawHandles2.default)(context, eventData, data.handles, color);
+        } else {
+          // If the tool is inactive, draw the handles only if each specific handle is being
+          // Hovered over
+          var handleOptions = {
+            drawHandlesIfActive: true
+          };
+
+          (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
+        }
       } else {
-        // If the tool is inactive, draw the handles only if each specific handle is being
-        // Hovered over
-        var handleOptions = {
-          drawHandlesIfActive: true
+        // If the tool has no configuration settings, always draw the handles
+        (0, _drawHandles2.default)(context, eventData, data.handles, color);
+      }
+
+      // Define variables for the area and mean/standard deviation
+      var area = void 0,
+          meanStdDev = void 0,
+          meanStdDevSUV = void 0;
+
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else {
+        // If the data has been invalidated, we need to calculate it again
+
+        // Retrieve the bounds of the ellipse in image coordinates
+        var ellipse = {
+          left: Math.min(data.handles.start.x, data.handles.end.x),
+          top: Math.min(data.handles.start.y, data.handles.end.y),
+          width: Math.abs(data.handles.start.x - data.handles.end.x),
+          height: Math.abs(data.handles.start.y - data.handles.end.y)
         };
 
-        (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
-      }
-    } else {
-      // If the tool has no configuration settings, always draw the handles
-      (0, _drawHandles2.default)(context, eventData, data.handles, color);
-    }
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ellipse bounds cover
+          var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
-    // Define variables for the area and mean/standard deviation
-    var area = void 0,
-        meanStdDev = void 0,
-        meanStdDevSUV = void 0;
+          // Calculate the mean & standard deviation from the pixels and the ellipse details
+          meanStdDev = calculateMeanStdDev(pixels, ellipse);
 
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else {
-      // If the data has been invalidated, we need to calculate it again
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
 
-      // Retrieve the bounds of the ellipse in image coordinates
-      var ellipse = {
-        left: Math.min(data.handles.start.x, data.handles.end.x),
-        top: Math.min(data.handles.start.y, data.handles.end.y),
-        width: Math.abs(data.handles.start.x - data.handles.end.x),
-        height: Math.abs(data.handles.start.y - data.handles.end.y)
-      };
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ellipse bounds cover
-        var pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
-
-        // Calculate the mean & standard deviation from the pixels and the ellipse details
-        meanStdDev = calculateMeanStdDev(pixels, ellipse);
-
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
-
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: (0, _calculateSUV2.default)(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: (0, _calculateSUV2.default)(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        // Calculate the image area from the ellipse dimensions and pixel spacing
+        area = ellipse.width * (colPixelSpacing || 1) * (ellipse.height * (rowPixelSpacing || 1));
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
         }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = ellipse.width * (colPixelSpacing || 1) * (ellipse.height * (rowPixelSpacing || 1));
+      var text = textBoxText(data);
 
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.handles.textBox.hasMoved) {
+        // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+        data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
       }
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+      (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+    });
+  };
 
-    var text = textBoxText(data);
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
 
-    // If the textbox has not been moved by the user, it should be displayed on the right-most
-    // Side of the tool.
-    if (!data.handles.textBox.hasMoved) {
-      // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-      // Note that this calculates it in image coordinates
-      data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-      data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
-    }
-
-    (0, _drawLinkedTextBox2.default)(context, element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    context.restore();
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data) {
@@ -6374,9 +6408,12 @@ function defaultStrategy(eventData, initialPoints, initialRotation) {
   var width = eventData.element.clientWidth;
   var height = eventData.element.clientHeight;
 
+  var scale = eventData.viewport.scale;
+  var translation = eventData.viewport.translation;
+
   var centerPoints = {
-    x: rect.left + width / 2,
-    y: rect.top + height / 2
+    x: rect.left + width / 2 + translation.x * scale,
+    y: rect.top + height / 2 + translation.y * scale
   };
 
   var currentPoints = {
@@ -6634,6 +6671,8 @@ var _externalModules = __webpack_require__(/*! ../externalModules.js */ "./exter
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var configuration = {
@@ -6786,7 +6825,7 @@ function computeScaleBounds(eventData, canvasSize, imageSize, horizontalReductio
 function onImageRendered(e) {
   var eventData = e.detail;
 
-  var context = eventData.canvasContext.canvas.getContext('2d');
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
   var image = eventData.image,
       viewport = eventData.viewport;
 
@@ -6860,11 +6899,9 @@ function onImageRendered(e) {
     }
   }, configuration);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.save();
-
-  drawScalebars(context, imageAttributes);
-  context.restore();
+  (0, _drawing.draw)(context, function (context) {
+    drawScalebars(context, imageAttributes);
+  });
 }
 // /////// END IMAGE RENDERING ///////
 
@@ -6940,10 +6977,6 @@ var _drawHandles = __webpack_require__(/*! ../manipulators/drawHandles.js */ "./
 
 var _drawHandles2 = _interopRequireDefault(_drawHandles);
 
-var _drawCircle = __webpack_require__(/*! ../util/drawCircle.js */ "./util/drawCircle.js");
-
-var _drawCircle2 = _interopRequireDefault(_drawCircle);
-
 var _isMouseButtonEnabled = __webpack_require__(/*! ../util/isMouseButtonEnabled.js */ "./util/isMouseButtonEnabled.js");
 
 var _isMouseButtonEnabled2 = _interopRequireDefault(_isMouseButtonEnabled);
@@ -6959,6 +6992,8 @@ var _drawLinkedTextBox2 = _interopRequireDefault(_drawLinkedTextBox);
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 
 var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.js");
+
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7080,9 +7115,7 @@ function onImageRendered(e) {
   var enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   // We need the canvas width
   var canvasWidth = eventData.canvasContext.canvas.width;
@@ -7091,74 +7124,81 @@ function onImageRendered(e) {
   var font = _textStyle2.default.getFont();
   var config = seedAnnotate.getConfiguration();
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    var color = _toolColors2.default.getColorIfActive(data);
-
-    // Draw
-    var handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    // Draw the circle always at the end of the handle
-    (0, _drawCircle2.default)(context, handleCanvas, color, lineWidth);
-
-    var handleOptions = {
-      drawHandlesIfActive: config && config.drawHandlesOnHover
-    };
-
-    if (config.drawHandles) {
-      (0, _drawHandles2.default)(context, eventData, handleCanvas, color, handleOptions);
-    }
-
-    // Draw the text
-    if (data.text && data.text !== '') {
-      var text = textBoxText(data);
-
-      context.font = font;
-
-      // Calculate the text coordinates.
-      var textWidth = context.measureText(text).width + 10;
-      var textHeight = _textStyle2.default.getFontSize() + 10;
-
-      var distance = Math.max(textWidth, textHeight) / 2 + 5;
-
-      if (handleCanvas.x > canvasWidth / 2) {
-        distance = -distance;
+    (0, _drawing.draw)(context, function (context) {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      var textCoords = void 0;
+      var color = _toolColors2.default.getColorIfActive(data);
 
-      if (!data.handles.textBox.hasMoved) {
-        textCoords = {
-          x: handleCanvas.x - textWidth / 2 + distance,
-          y: handleCanvas.y - textHeight / 2
-        };
+      // Draw
+      var handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-        var transform = cornerstone.internal.getTransform(enabledElement);
+      // Draw the circle always at the end of the handle
+      var handleRadius = 6;
 
-        transform.invert();
+      (0, _drawing.drawCircle)(context, eventData.element, data.handles.end, handleRadius, { color: color });
 
-        var coords = transform.transformPoint(textCoords.x, textCoords.y);
+      var handleOptions = {
+        drawHandlesIfActive: config && config.drawHandlesOnHover
+      };
 
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
+      if (config.drawHandles) {
+        (0, _drawHandles2.default)(context, eventData, handleCanvas, color, handleOptions);
       }
 
-      (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
-    }
-    context.restore();
+      // Draw the text
+      if (data.text && data.text !== '') {
+        var text = textBoxText(data);
+
+        context.font = font;
+
+        // Calculate the text coordinates.
+        var textWidth = context.measureText(text).width + 10;
+        var textHeight = _textStyle2.default.getFontSize() + 10;
+
+        var distance = Math.max(textWidth, textHeight) / 2 + 5;
+
+        if (handleCanvas.x > canvasWidth / 2) {
+          distance = -distance;
+        }
+
+        var textCoords = void 0;
+
+        if (!data.handles.textBox.hasMoved) {
+          textCoords = {
+            x: handleCanvas.x - textWidth / 2 + distance,
+            y: handleCanvas.y - textHeight / 2
+          };
+
+          var transform = cornerstone.internal.getTransform(enabledElement);
+
+          transform.invert();
+
+          var coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
+        }
+
+        (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
+      }
+    });
+  };
+
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data) {
@@ -7432,6 +7472,8 @@ var _lineSegDistance2 = _interopRequireDefault(_lineSegDistance);
 
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'simpleAngle';
@@ -7503,120 +7545,123 @@ function onImageRendered(e) {
   var enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var lineWidth = _toolStyle2.default.getToolWidth();
   var font = _textStyle2.default.getFont();
   var config = simpleAngle.getConfiguration();
 
-  for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
-    // Differentiate the color of activation tool
-    var color = _toolColors2.default.getColorIfActive(data);
-
-    var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    var handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
-    var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    // Draw the line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
-
-    // Draw the handles
-    var handleOptions = {
-      drawHandlesIfActive: config && config.drawHandlesOnHover
-    };
-
-    (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
-
-    // Draw the text
-    context.fillStyle = color;
-
-    // Default to isotropic pixel size, update suffix to reflect this
-    var columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-    var rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-
-    var sideA = {
-      x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-    };
-
-    var sideB = {
-      x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
-    };
-
-    var sideC = {
-      x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-    };
-
-    var sideALength = length(sideA);
-    var sideBLength = length(sideB);
-    var sideCLength = length(sideC);
-
-    // Cosine law
-    var angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
-
-    angle *= 180 / Math.PI;
-
-    data.rAngle = (0, _roundToDecimal2.default)(angle, 2);
-
-    if (data.rAngle) {
-      var text = textBoxText(data, eventData.image.rowPixelSpacing, eventData.image.columnPixelSpacing);
-
-      var distance = 15;
-
-      var textCoords = void 0;
-
-      if (!data.handles.textBox.hasMoved) {
-        textCoords = {
-          x: handleMiddleCanvas.x,
-          y: handleMiddleCanvas.y
-        };
-
-        context.font = font;
-        var textWidth = context.measureText(text).width;
-
-        if (handleMiddleCanvas.x < handleStartCanvas.x) {
-          textCoords.x -= distance + textWidth + 10;
-        } else {
-          textCoords.x += distance;
-        }
-
-        var transform = cornerstone.internal.getTransform(enabledElement);
-
-        transform.invert();
-
-        var coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
+    (0, _drawing.draw)(context, function (context) {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    }
-    context.restore();
+      // Differentiate the color of activation tool
+      var color = _toolColors2.default.getColorIfActive(data);
+
+      var handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      var handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
+      var handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      // Draw the line
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      context.stroke();
+
+      // Draw the handles
+      var handleOptions = {
+        drawHandlesIfActive: config && config.drawHandlesOnHover
+      };
+
+      (0, _drawHandles2.default)(context, eventData, data.handles, color, handleOptions);
+
+      // Draw the text
+      context.fillStyle = color;
+
+      // Default to isotropic pixel size, update suffix to reflect this
+      var columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+      var rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+
+      var sideA = {
+        x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+      };
+
+      var sideB = {
+        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
+      };
+
+      var sideC = {
+        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+      };
+
+      var sideALength = length(sideA);
+      var sideBLength = length(sideB);
+      var sideCLength = length(sideC);
+
+      // Cosine law
+      var angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
+
+      angle *= 180 / Math.PI;
+
+      data.rAngle = (0, _roundToDecimal2.default)(angle, 2);
+
+      if (data.rAngle) {
+        var text = textBoxText(data, eventData.image.rowPixelSpacing, eventData.image.columnPixelSpacing);
+
+        var distance = 15;
+
+        var textCoords = void 0;
+
+        if (!data.handles.textBox.hasMoved) {
+          textCoords = {
+            x: handleMiddleCanvas.x,
+            y: handleMiddleCanvas.y
+          };
+
+          context.font = font;
+          var textWidth = context.measureText(text).width;
+
+          if (handleMiddleCanvas.x < handleStartCanvas.x) {
+            textCoords.x -= distance + textWidth + 10;
+          } else {
+            textCoords.x += distance;
+          }
+
+          var transform = cornerstone.internal.getTransform(enabledElement);
+
+          transform.invert();
+
+          var coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
+        }
+
+        (0, _drawLinkedTextBox2.default)(context, eventData.element, data.handles.textBox, text, data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+      }
+    });
+  };
+
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 
   function textBoxText(data, rowPixelSpacing, columnPixelSpacing) {
@@ -7916,6 +7961,8 @@ var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./s
 
 var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'textMarker';
@@ -8015,47 +8062,49 @@ function onImageRendered(e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  var context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  var context = (0, _drawing.getNewContext)(eventData.canvasContext.canvas);
 
   var config = textMarker.getConfiguration();
 
-  for (var i = 0; i < toolData.data.length; i++) {
+  var _loop = function _loop(i) {
     var data = toolData.data[i];
 
     if (data.visible === false) {
-      continue;
+      return 'continue';
     }
 
     var color = _toolColors2.default.getColorIfActive(data);
 
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
-    // Draw text
-    context.fillStyle = color;
-    var measureText = context.measureText(data.text);
-
-    data.textWidth = measureText.width + 10;
-
-    var textCoords = _externalModules2.default.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    var options = {
-      centering: {
-        x: true,
-        y: true
+    (0, _drawing.draw)(context, function (context) {
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
-    };
 
-    data.handles.end.boundingBox = (0, _drawTextBox2.default)(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+      // Draw text
+      context.fillStyle = color;
+      var measureText = context.measureText(data.text);
 
-    context.restore();
+      data.textWidth = measureText.width + 10;
+
+      var textCoords = _externalModules2.default.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      var options = {
+        centering: {
+          x: true,
+          y: true
+        }
+      };
+
+      data.handles.end.boundingBox = (0, _drawTextBox2.default)(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+    });
+  };
+
+  for (var i = 0; i < toolData.data.length; i++) {
+    var _ret = _loop(i);
+
+    if (_ret === 'continue') continue;
   }
 }
 
@@ -8954,6 +9003,8 @@ var _clip = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
 
 var _clip2 = _interopRequireDefault(_clip);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'wwwcRegion';
@@ -9197,21 +9248,19 @@ function onImageRendered(e) {
   var config = wwwcRegion.getConfiguration();
 
   // Draw the rectangle
-  context.save();
+  (0, _drawing.draw)(context, function (context) {
+    if (config && config.shadow) {
+      context.shadowColor = config.shadowColor || '#000000';
+      context.shadowOffsetX = config.shadowOffsetX || 1;
+      context.shadowOffsetY = config.shadowOffsetY || 1;
+    }
 
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.rect(left, top, width, height);
-  context.stroke();
-
-  context.restore();
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.rect(left, top, width, height);
+    context.stroke();
+  });
 }
 
 // --- Mouse tool enable / disable --- ///
@@ -9674,6 +9723,8 @@ exports.zoomTouchDrag = zoomTouchDrag;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.getToolOptions = exports.setToolOptions = exports.version = exports.adaptiveBrush = exports.brush = exports.zoomTouchDrag = exports.zoomTouchPinch = exports.zoomWheel = exports.zoom = exports.wwwcRegionTouch = exports.wwwcRegion = exports.wwwcTouchDrag = exports.wwwc = exports.touchTool = exports.touchPinchTool = exports.touchDragTool = exports.textMarkerTouch = exports.textMarker = exports.simpleMouseButtonTool = exports.simpleAngleTouch = exports.simpleAngle = exports.seedAnnotateTouch = exports.seedAnnotate = exports.scaleOverlayTool = exports.saveAs = exports.rotateTouch = exports.rotateTouchDrag = exports.rotate = exports.rectangleRoiTouch = exports.rectangleRoi = exports.probeTouch = exports.probe = exports.panMultiTouch = exports.panTouchDrag = exports.pan = exports.orientationMarkers = exports.multiTouchDragTool = exports.mouseWheelTool = exports.mouseButtonTool = exports.mouseButtonRectangleTool = exports.magnifyTouchDrag = exports.magnify = exports.lengthTouch = exports.length = exports.keyboardTool = exports.imageStats = exports.highlightTouch = exports.highlight = exports.freehandSculpter = exports.freehand = exports.ellipticalRoiTouch = exports.ellipticalRoi = exports.dragProbeTouch = undefined;
+exports.dragProbe = exports.doubleTapZoom = exports.doubleTapTool = exports.displayTool = exports.crosshairsTouch = exports.crosshairs = exports.arrowAnnotateTouch = exports.arrowAnnotate = exports.angleTouch = exports.angle = exports.touchInput = exports.preventGhostClick = exports.mouseWheelInput = exports.mouseInput = exports.keyboardInput = exports.touchMoveHandle = exports.touchMoveAllHandles = exports.moveNewHandleTouch = exports.moveNewHandle = exports.moveHandle = exports.moveAllHandles = exports.handleActivator = exports.getHandleNearImagePoint = exports.drawHandles = exports.anyHandlesOutsideImage = exports.stopClip = exports.playClip = exports.stackRenderers = exports.scrollIndicator = exports.stackPrefetch = exports.stackScrollMultiTouch = exports.stackScrollTouchDrag = exports.stackScrollWheel = exports.stackScroll = exports.stackScrollKeyboard = exports.appState = exports.globalFrameOfReferenceSpecificToolStateManager = exports.newFrameOfReferenceSpecificToolStateManager = exports.globalImageIdSpecificToolStateManager = exports.newImageIdSpecificToolStateManager = exports.loadHandlerManager = exports.addStackStateManager = exports.newStackSpecificToolStateManager = exports.stackSpecificStateManager = exports.textStyle = exports.newTimeSeriesSpecificToolStateManager = exports.addTimeSeriesStateManager = exports.toolColors = exports.toolCoordinates = exports.getElementToolStateManager = exports.setElementToolStateManager = exports.clearToolState = exports.removeToolState = exports.getToolState = exports.addToolState = exports.toolStyle = exports.panZoomSynchronizer = exports.stackImageIndexSynchronizer = exports.stackImagePositionOffsetSynchronizer = exports.stackImagePositionSynchronizer = exports.stackScrollSynchronizer = exports.Synchronizer = exports.updateImageSynchronizer = exports.wwwcSynchronizer = exports.timeSeriesScrollTouchDrag = exports.timeSeriesScrollWheel = exports.timeSeriesScroll = exports.timeSeriesPlayer = exports.incrementTimePoint = exports.probeTool4D = exports.calculateEllipseStatistics = exports.calculateSUV = exports.copyPoints = exports.drawArrow = exports.drawCircle = exports.drawEllipse = exports.drawTextBox = exports.getLuminance = exports.isMobileDevice = exports.getBrowserInfo = exports.getMaxSimultaneousRequests = exports.getDefaultSimultaneousRequests = exports.getRGBPixels = exports.isMouseButtonEnabled = exports.makeUnselectable = exports.pointInEllipse = exports.pointInsideBoundingBox = exports.planePlaneIntersection = exports.imagePointToPatientPoint = exports.projectPatientPointToImagePlane = exports.roundToDecimal = exports.scroll = exports.scrollToIndex = exports.setContextToDisplayFontSize = exports.requestPoolManager = exports.orientation = exports.referenceLines = exports.EVENTS = exports.external = exports.drawing = undefined;
 
 var _externalModules = __webpack_require__(/*! ./externalModules.js */ "./externalModules.js");
 
@@ -10917,7 +10968,15 @@ Object.defineProperty(exports, 'getToolOptions', {
   }
 });
 
+var _drawing = __webpack_require__(/*! ./util/drawing.js */ "./util/drawing.js");
+
+var drawing = _interopRequireWildcard(_drawing);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+exports.drawing = drawing;
 
 /***/ }),
 
@@ -13992,6 +14051,8 @@ var _externalModules = __webpack_require__(/*! ../externalModules.js */ "./exter
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function drawBrushPixels(pointerArray, storedPixels, brushPixelValue, columns) {
@@ -14006,7 +14067,7 @@ function drawBrushPixels(pointerArray, storedPixels, brushPixelValue, columns) {
   });
 }
 
-function drawBrushOnCanvas(pointerArray, canvasContext, color, element) {
+function drawBrushOnCanvas(pointerArray, context, color, element) {
   var canvasPtTL = _externalModules2.default.cornerstone.pixelToCanvas(element, { x: 0,
     y: 0 });
   var canvasPtBR = _externalModules2.default.cornerstone.pixelToCanvas(element, { x: 1,
@@ -14014,19 +14075,18 @@ function drawBrushOnCanvas(pointerArray, canvasContext, color, element) {
   var sizeX = canvasPtBR.x - canvasPtTL.x;
   var sizeY = canvasPtBR.y - canvasPtTL.y;
 
-  canvasContext.save();
-  canvasContext.fillStyle = color;
+  (0, _drawing.draw)(context, function (context) {
+    context.fillStyle = color;
 
-  pointerArray.forEach(function (point) {
-    var canvasPt = _externalModules2.default.cornerstone.pixelToCanvas(element, {
-      x: point[0],
-      y: point[1]
+    pointerArray.forEach(function (point) {
+      var canvasPt = _externalModules2.default.cornerstone.pixelToCanvas(element, {
+        x: point[0],
+        y: point[1]
+      });
+
+      context.fillRect(canvasPt.x, canvasPt.y, sizeX, sizeY);
     });
-
-    canvasContext.fillRect(canvasPt.x, canvasPt.y, sizeX, sizeY);
   });
-
-  canvasContext.restore();
 }
 
 exports.drawBrushPixels = drawBrushPixels;
@@ -14323,14 +14383,14 @@ exports.default = function (context, eventData, targetElement, referenceElement)
   // Draw the referenceLines
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  context.save();
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.moveTo(refLineStartCanvas.x, refLineStartCanvas.y);
-  context.lineTo(refLineEndCanvas.x, refLineEndCanvas.y);
-  context.stroke();
-  context.restore();
+  (0, _drawing.draw)(context, function (context) {
+    context.beginPath();
+    context.strokeStyle = color;
+    context.lineWidth = lineWidth;
+    context.moveTo(refLineStartCanvas.x, refLineStartCanvas.y);
+    context.lineTo(refLineEndCanvas.x, refLineEndCanvas.y);
+    context.stroke();
+  });
 };
 
 var _externalModules = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
@@ -14352,6 +14412,8 @@ var _toolStyle2 = _interopRequireDefault(_toolStyle);
 var _convertToVector = __webpack_require__(/*! ../util/convertToVector3.js */ "./util/convertToVector3.js");
 
 var _convertToVector2 = _interopRequireDefault(_convertToVector);
+
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -15030,6 +15092,8 @@ var _displayTool2 = _interopRequireDefault(_displayTool);
 
 var _toolState = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /*
@@ -15053,45 +15117,40 @@ function onImageRendered(e) {
     return false;
   }
 
-  var context = eventData.enabledElement.canvas.getContext('2d');
+  var context = (0, _drawing.getNewContext)(eventData.enabledElement.canvas);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.save();
+  (0, _drawing.draw)(context, function (context) {
+    var config = scrollIndicator.getConfiguration();
 
-  var config = scrollIndicator.getConfiguration();
+    // Draw indicator background
+    context.fillStyle = config.backgroundColor;
+    if (config.orientation === 'horizontal') {
+      context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+    } else {
+      context.fillRect(0, 0, scrollBarHeight, height);
+    }
 
-  // Draw indicator background
-  context.fillStyle = config.backgroundColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
-  } else {
-    context.fillRect(0, 0, scrollBarHeight, height);
-  }
+    // Get current image index
+    var stackData = (0, _toolState.getToolState)(element, 'stack');
 
-  // Get current image index
-  var stackData = (0, _toolState.getToolState)(element, 'stack');
+    if (stackData && stackData.data && stackData.data.length) {
+      var imageIds = stackData.data[0].imageIds;
+      var currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
+      // Draw current image cursor
+      var cursorWidth = width / imageIds.length;
+      var cursorHeight = height / imageIds.length;
+      var xPosition = cursorWidth * currentImageIdIndex;
+      var yPosition = cursorHeight * currentImageIdIndex;
 
-  var imageIds = stackData.data[0].imageIds;
-  var currentImageIdIndex = stackData.data[0].currentImageIdIndex;
-
-  // Draw current image cursor
-  var cursorWidth = width / imageIds.length;
-  var cursorHeight = height / imageIds.length;
-  var xPosition = cursorWidth * currentImageIdIndex;
-  var yPosition = cursorHeight * currentImageIdIndex;
-
-  context.fillStyle = config.fillColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
-  } else {
-    context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
-  }
-
-  context.restore();
+      context.fillStyle = config.fillColor;
+      if (config.orientation === 'horizontal') {
+        context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+      } else {
+        context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+      }
+    }
+  });
 }
 
 var scrollIndicator = (0, _displayTool2.default)(onImageRendered);
@@ -17131,6 +17190,11 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
   var cornerstone = _externalModules2.default.cornerstone;
   var sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
   var sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
+
+  if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
+    return;
+  }
+
   var sourceImagePosition = (0, _convertToVector2.default)(sourceImagePlane.imagePositionPatient);
 
   var stackToolDataSource = (0, _toolState.getToolState)(targetElement, 'stack');
@@ -17147,6 +17211,11 @@ exports.default = function (synchronizer, sourceElement, targetElement, eventDat
 
   stackData.imageIds.forEach(function (imageId, index) {
     var imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
+
+    if (imagePlane === undefined || imagePlane.imagePositionPatient === undefined) {
+      return;
+    }
+
     var imagePosition = (0, _convertToVector2.default)(imagePlane.imagePositionPatient);
     var distance = finalPosition.distanceToSquared(imagePosition);
 
@@ -17654,6 +17723,8 @@ var _drawTextBox = __webpack_require__(/*! ../util/drawTextBox.js */ "./util/dra
 
 var _drawTextBox2 = _interopRequireDefault(_drawTextBox);
 
+var _drawing = __webpack_require__(/*! ../util/drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var toolType = 'probe4D';
@@ -17734,30 +17805,33 @@ function onImageRendered(e) {
   var color = 'white';
   var font = _textStyle2.default.getFont();
 
+  var _loop = function _loop(i) {
+    (0, _drawing.draw)(context, function (context) {
+      var data = toolData.data[i];
+
+      // Draw the handles
+      context.beginPath();
+      (0, _drawHandles2.default)(context, eventData, data.handles, color);
+      context.stroke();
+
+      context.font = font;
+
+      var coords = {
+        // Translate the x/y away from the cursor
+        x: data.handles.end.x + 3,
+        y: data.handles.end.y - 3
+      };
+
+      var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+
+      context.fillStyle = color;
+
+      (0, _drawTextBox2.default)(context, data.handles.end.x + ', ' + data.handles.end.y, textCoords.x, textCoords.y, color);
+    });
+  };
+
   for (var i = 0; i < toolData.data.length; i++) {
-    context.save();
-    var data = toolData.data[i];
-
-    // Draw the handles
-    context.beginPath();
-    (0, _drawHandles2.default)(context, eventData, data.handles, color);
-    context.stroke();
-
-    context.font = font;
-
-    var coords = {
-      // Translate the x/y away from the cursor
-      x: data.handles.end.x + 3,
-      y: data.handles.end.y - 3
-    };
-
-    var textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-    context.fillStyle = color;
-
-    (0, _drawTextBox2.default)(context, data.handles.end.x + ', ' + data.handles.end.y, textCoords.x, textCoords.y, color);
-
-    context.restore();
+    _loop(i);
   }
 }
 // /////// END IMAGE RENDERING ///////
@@ -18656,11 +18730,6 @@ exports.default = function (context, textLines, x, y, color, options) {
   var fontSize = _textStyle2.default.getFontSize();
   var backgroundColor = _textStyle2.default.getBackgroundColor();
 
-  context.save();
-  context.font = font;
-  context.textBaseline = 'top';
-  context.strokeStyle = color;
-
   // Find the longest text width in the array of text data
   var maxWidth = 0;
 
@@ -18672,47 +18741,51 @@ exports.default = function (context, textLines, x, y, color, options) {
     maxWidth = Math.max(maxWidth, width);
   });
 
-  // Draw the background box with padding
-  context.fillStyle = backgroundColor;
-
   // Calculate the bounding box for this text box
   var boundingBox = {
     width: maxWidth + padding * 2,
     height: padding + textLines.length * (fontSize + padding)
   };
 
-  if (options && options.centering && options.centering.x === true) {
-    x -= boundingBox.width / 2;
-  }
+  (0, _drawing.draw)(context, function (context) {
+    context.font = font;
+    context.textBaseline = 'top';
+    context.strokeStyle = color;
 
-  if (options && options.centering && options.centering.y === true) {
-    y -= boundingBox.height / 2;
-  }
+    // Draw the background box with padding
+    context.fillStyle = backgroundColor;
 
-  boundingBox.left = x;
-  boundingBox.top = y;
+    if (options && options.centering && options.centering.x === true) {
+      x -= boundingBox.width / 2;
+    }
 
-  if (options && options.debug === true) {
-    context.fillStyle = '#FF0000';
-  }
+    if (options && options.centering && options.centering.y === true) {
+      y -= boundingBox.height / 2;
+    }
 
-  context.fillRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
+    boundingBox.left = x;
+    boundingBox.top = y;
 
-  // Draw each of the text lines on top of the background box
-  textLines.forEach(function (text, index) {
-    context.fillStyle = color;
+    if (options && options.debug === true) {
+      context.fillStyle = '#FF0000';
+    }
 
-    /* Var ypos;
-        if (index === 0) {
-            ypos = y + index * (fontSize + padding);
-        } else {
-            ypos = y + index * (fontSize + padding * 2);
-        }*/
+    context.fillRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
 
-    context.fillText(text, x + padding, y + padding + index * (fontSize + padding));
+    // Draw each of the text lines on top of the background box
+    textLines.forEach(function (text, index) {
+      context.fillStyle = color;
+
+      /* Var ypos;
+          if (index === 0) {
+              ypos = y + index * (fontSize + padding);
+          } else {
+              ypos = y + index * (fontSize + padding * 2);
+          }*/
+
+      context.fillText(text, x + padding, y + padding + index * (fontSize + padding));
+    });
   });
-
-  context.restore();
 
   // Return the bounding box so it can be used for pointNearHandle
   return boundingBox;
@@ -18722,7 +18795,379 @@ var _textStyle = __webpack_require__(/*! ../stateManagement/textStyle.js */ "./s
 
 var _textStyle2 = _interopRequireDefault(_textStyle);
 
+var _drawing = __webpack_require__(/*! ./drawing.js */ "./util/drawing.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+
+/***/ "./util/drawing.js":
+/*!*************************!*\
+  !*** ./util/drawing.js ***!
+  \*************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.getNewContext = getNewContext;
+exports.draw = draw;
+exports.path = path;
+exports.setShadow = setShadow;
+exports.drawLine = drawLine;
+exports.drawLines = drawLines;
+exports.drawJoinedLines = drawJoinedLines;
+exports.drawCircle = drawCircle;
+exports.drawEllipse = drawEllipse;
+exports.drawRect = drawRect;
+exports.fillBox = fillBox;
+exports.fillTextLines = fillTextLines;
+
+var _externalModules = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
+
+var _externalModules2 = _interopRequireDefault(_externalModules);
+
+var _index = __webpack_require__(/*! ../index.js */ "./index.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * A {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle|color, gradient or pattern} to use inside shapes.
+ * @typedef {(String|CanvasGradient|CanvasPattern)} FillStyle
+ */
+
+/**
+ * A {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeStyle|color, gradient or pattern} to use for the lines around shapes.
+ * @typedef {(String|CanvasGradient|CanvasPattern)} StrokeStyle
+ */
+
+/**
+ * @callback ContextFn
+ * @param {CanvasRenderingContext2D} context
+ */
+
+/**
+ * Create a new {@link CanvasRenderingContext2D|context} object for the given {@link HTMLCanvasElement|canvas}
+ * and set the transform to the {@link https://www.w3.org/TR/2dcontext/#transformations|identity transform}.
+ *
+ * @param {HTMLCanvasElement} canvas
+ * @returns {CanvasRenderingContext2D}
+ */
+function getNewContext(canvas) {
+  var context = canvas.getContext('2d');
+
+  context.setTransform(1, 0, 0, 1, 0, 0);
+
+  return context;
+}
+
+/**
+ * This function manages the {@link https://www.w3.org/TR/2dcontext/#the-canvas-state|save/restore}
+ * pattern for working in a new context state stack. The parameter `fn` is passed the `context` and can
+ * execute any API calls in a clean stack.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {ContextFn} fn - A function which performs drawing operations within the given context.
+ */
+function draw(context, fn) {
+  context.save();
+  fn(context);
+  context.restore();
+}
+
+/**
+ * This function manages the beginPath/stroke pattern for working with
+ * {@link https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas|path objects}.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {Object} options
+ * @param {StrokeStyle} options.color -  The stroke style of the path.
+ * @param {Number} options.lineWidth -  The width of lines in the path. If null, no line width is set.
+ *     If undefined then toolStyle.getToolWidth() is set.
+ * @param {FillStyle} options.fillStyle - The style to fill the path with. If undefined then no filling is done.
+ * @param {Number[]} options.lineDash - The {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash|dash pattern}
+ *     to use on the lines.
+ * @param {ContextFn} fn - A drawing function to execute with the provided stroke pattern.
+ */
+function path(context, options, fn) {
+  var color = options.color,
+      lineWidth = options.lineWidth,
+      fillStyle = options.fillStyle,
+      lineDash = options.lineDash;
+
+
+  context.beginPath();
+  context.strokeStyle = color || context.strokeStyle;
+  context.lineWidth = lineWidth || lineWidth === undefined && _index.toolStyle.getToolWidth() || context.lineWidth;
+  if (lineDash) {
+    context.setLineDash(lineDash);
+  }
+
+  fn(context);
+
+  if (fillStyle) {
+    context.fillStyle = fillStyle;
+    context.fill();
+  }
+  context.stroke();
+  if (lineDash) {
+    context.setLineDash([]);
+  }
+}
+
+/**
+ * Set the {@link https://www.w3.org/TR/2dcontext/#shadows|shadow} properties of the context.
+ * Each property is set on the context object if defined, otherwise a default value is set.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {Object} options
+ * @param {Boolean} options.shadow - Whether to set any shadow options
+ * @param {String} options.shadowColor - Default value: #000000
+ * @param {Number} options.shadowOffsetX - Default value: 1
+ * @param {Number} options.shadowOffsetY - Default value: 1
+ */
+function setShadow(context, options) {
+  if (options.shadow) {
+    context.shadowColor = options.shadowColor || '#000000';
+    context.shadowOffsetX = options.shadowOffsetX || 1;
+    context.shadowOffsetY = options.shadowOffsetY || 1;
+  }
+}
+
+/**
+ * Draw a line between `start` and `end`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object} start - `{ x, y } in either pixel or canvas coordinates.
+ * @param {Object} end - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawLine(context, element, start, end, options) {
+  var coordSystem = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'pixel';
+
+  path(context, options, function (context) {
+    if (coordSystem === 'pixel') {
+      var cornerstone = _externalModules2.default.cornerstone;
+
+      start = cornerstone.pixelToCanvas(element, start);
+      end = cornerstone.pixelToCanvas(element, end);
+    }
+
+    context.moveTo(start.x, start.y);
+    context.lineTo(end.x, end.y);
+  });
+}
+
+/**
+ * Draw multiple lines.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object[]} lines - `[{ start: {x, y}, end: { x, y }]` An array of `start`, `end` pairs.
+ *     Each point is `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawLines(context, element, lines, options) {
+  var coordSystem = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 'pixel';
+
+  path(context, options, function (context) {
+    lines.forEach(function (line) {
+      var start = line.start;
+      var end = line.end;
+
+      if (coordSystem === 'pixel') {
+        var cornerstone = _externalModules2.default.cornerstone;
+
+        start = cornerstone.pixelToCanvas(element, start);
+        end = cornerstone.pixelToCanvas(element, end);
+      }
+
+      context.moveTo(start.x, start.y);
+      context.lineTo(end.x, end.y);
+    });
+  });
+}
+
+/**
+ * Draw a series of joined lines, starting at `start` and then going to each point in `points`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object} start - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object[]} points - `[{ x, y }]` An array of points in either pixel or canvas coordinates.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawJoinedLines(context, element, start, points, options) {
+  var coordSystem = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'pixel';
+
+  path(context, options, function (context) {
+    if (coordSystem === 'pixel') {
+      var cornerstone = _externalModules2.default.cornerstone;
+
+      start = cornerstone.pixelToCanvas(element, start);
+      points = points.map(function (p) {
+        return cornerstone.pixelToCanvas(element, p);
+      });
+    }
+    context.moveTo(start.x, start.y);
+    points.forEach(function (_ref) {
+      var x = _ref.x,
+          y = _ref.y;
+
+      context.lineTo(x, y);
+    });
+  });
+}
+
+/**
+ * Draw a circle with given `center` and `radius`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object} center - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {number} radius - The circle's radius in canvas units.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawCircle(context, element, center, radius, options) {
+  var coordSystem = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'pixel';
+
+  if (coordSystem === 'pixel') {
+    center = _externalModules2.default.cornerstone.pixelToCanvas(element, center);
+  }
+
+  path(context, options, function (context) {
+    context.arc(center.x, center.y, radius, 0, 2 * Math.PI);
+  });
+}
+
+/**
+ * Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object} corner1 - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} corner2 - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawEllipse(context, element, corner1, corner2, options) {
+  var coordSystem = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'pixel';
+
+  // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
+  if (coordSystem === 'pixel') {
+    corner1 = _externalModules2.default.cornerstone.pixelToCanvas(element, corner1);
+    corner2 = _externalModules2.default.cornerstone.pixelToCanvas(element, corner2);
+  }
+  var x = Math.min(corner1.x, corner2.x);
+  var y = Math.min(corner1.y, corner2.y);
+  var w = Math.abs(corner1.x - corner2.x);
+  var h = Math.abs(corner1.y - corner2.y);
+
+  var kappa = 0.5522848,
+      ox = w / 2 * kappa,
+      // Control point offset horizontal
+  oy = h / 2 * kappa,
+      // Control point offset vertical
+  xe = x + w,
+      // X-end
+  ye = y + h,
+      // Y-end
+  xm = x + w / 2,
+      // X-middle
+  ym = y + h / 2; // Y-middle
+
+  path(context, options, function (context) {
+    context.moveTo(x, ym);
+    context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    context.closePath();
+  });
+}
+
+/**
+ * Draw a rectangle defined by `corner1` and `corner2`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element - The DOM Element to draw on
+ * @param {Object} corner1 - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} corner2 - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} options - See {@link path}
+ * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
+ *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+ *     is used to transform the points from pixel to canvas coordinates.
+ */
+function drawRect(context, element, corner1, corner2, options) {
+  var coordSystem = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'pixel';
+
+  if (coordSystem === 'pixel') {
+    var cornerstone = _externalModules2.default.cornerstone;
+
+    corner1 = cornerstone.pixelToCanvas(element, corner1);
+    corner2 = cornerstone.pixelToCanvas(element, corner2);
+  }
+
+  var left = Math.min(corner1.x, corner2.x);
+  var top = Math.min(corner1.y, corner2.y);
+  var width = Math.abs(corner1.x - corner2.x);
+  var height = Math.abs(corner1.y - corner2.y);
+
+  path(context, options, function (context) {
+    context.rect(left, top, width, height);
+  });
+}
+
+/**
+ * Draw a filled rectangle defined by `boundingBox` using the style defined by `fillStyle`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {Object} boundingBox - `{ left, top, width, height }` in canvas coordinates.
+ * @param {FillStyle} fillStyle - The fillStyle to apply to the region.
+ */
+function fillBox(context, boundingBox, fillStyle) {
+  context.fillStyle = fillStyle;
+  context.fillRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
+}
+
+/**
+ * Draw multiple lines of text within a bounding box.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {Object} boundingBox - `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
+ * @param {String[]} textLines - The text to be displayed.
+ * @param {FillStyle} fillStyle - The fillStyle to apply to the text.
+ * @param {Number} padding - The amount of padding above/below each line in canvas units. Note this gives an inter-line spacing of `2*padding`.
+ */
+function fillTextLines(context, boundingBox, textLines, fillStyle, padding) {
+  var fontSize = _index.textStyle.getFontSize();
+
+  context.font = _index.textStyle.getFont();
+  context.textBaseline = 'top';
+  context.fillStyle = fillStyle;
+  textLines.forEach(function (text, index) {
+    context.fillText(text, boundingBox.left + padding, boundingBox.top + padding + index * (fontSize + padding));
+  });
+}
 
 /***/ }),
 
@@ -18785,10 +19230,6 @@ Object.defineProperty(exports, "__esModule", {
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
-* @author JamesAPetts
-*/
-
-/**
  * @typedef {Object} FreehandHandleData
  * @property {Number} x The x position.
  * @property {Number} y The y position.
@@ -18848,10 +19289,6 @@ var _ClickedLineData = __webpack_require__(/*! ./ClickedLineData.js */ "./util/f
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
-* @author JamesAPetts
-*/
 
 var toolType = 'freehand';
 var distanceThreshold = 10;
@@ -19760,10 +20197,6 @@ function getSum(sp, boundingBox, dataHandles) {
 
 
 /**
- * @author JamesAPetts
- */
-
-/**
 * Calculates the statistics of all the points within the freehand object.
 *
 * @param {Object} sp - An array of the pixel data.
@@ -19840,8 +20273,6 @@ function dragTextBox(currentHandle) {
 
 /**
 * Moves a part of the freehand tool whilst it is dragged by the mouse.
-*
-*  @author JamesAPetts
 *
 * @param {Object} currentHandle - The handle being dragged.
 * @param {Object} data - The data associated with the freehand tool being modified.
@@ -19929,10 +20360,6 @@ function dropTextbox(eventData, toolData) {
 
 
 /**
- * @author JamesAPetts
- */
-
-/**
 * Places part of the freehand tool when the mouse button is released.
 *
 * @param {Object} e - The event.
@@ -19966,8 +20393,6 @@ function dropHandle(eventData, toolData) {
 
     dataHandles.invalidHandlePlacement = false;
   }
-
-  return;
 }
 
 /***/ }),
@@ -20018,7 +20443,6 @@ Object.defineProperty(exports, "__esModule", {
 /**
 * Orientation algoritm to determine if two lines cross.
 * Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-* @author JamesAPetts
 */
 
 /**
@@ -20263,10 +20687,6 @@ var _externalModules2 = _interopRequireDefault(_externalModules);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
-* @author JamesAPetts
-*/
-
 var toolType = 'freehand';
 
 /**
@@ -20429,7 +20849,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /**
 * Triggers held down buttons such that we can update the image on CTRL click
 * to show all points, for example.
-* @author JamesAPetts
 */
 
 /**
@@ -20565,8 +20984,6 @@ function isEnclosedY(yp, y1, y2) {
 * polygon. Odd === inside, Even === outside. The bool "inROI" flips every time
 * the ray originating from location and pointing to the right crosses a
 * linesegment.
-*
-* @author JamesAPetts
 */
 
 /**
@@ -21272,6 +21689,10 @@ exports.default = function (element, images) {
   }
 };
 
+var _events = __webpack_require__(/*! ../events.js */ "./events.js");
+
+var _events2 = _interopRequireDefault(_events);
+
 var _scrollToIndex = __webpack_require__(/*! ./scrollToIndex.js */ "./util/scrollToIndex.js");
 
 var _scrollToIndex2 = _interopRequireDefault(_scrollToIndex);
@@ -21301,7 +21722,7 @@ function scrollWithoutSkipping(stackData, pendingEvent, element) {
 
       if (index === pendingEvent.index) {
         stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener('cornerstonenewimage', newImageHandler);
+        element.removeEventListener(_events2.default.NEW_IMAGE, newImageHandler);
 
         if (stackData.pending.length > 0) {
           scrollWithoutSkipping(stackData, stackData.pending[0], element);
@@ -21309,7 +21730,7 @@ function scrollWithoutSkipping(stackData, pendingEvent, element) {
       }
     };
 
-    element.addEventListener('cornerstonenewimage', newImageHandler);
+    element.addEventListener(_events2.default.NEW_IMAGE, newImageHandler);
 
     (0, _scrollToIndex2.default)(element, pendingEvent.index);
   }
@@ -21560,7 +21981,7 @@ function triggerEvent(el, type) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.default = '2.3.5';
+exports.default = '2.3.6';
 
 /***/ })
 

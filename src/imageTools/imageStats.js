@@ -1,14 +1,13 @@
 import displayTool from './displayTool.js';
 import drawTextBox from '../util/drawTextBox.js';
+import { getNewContext } from '../util/drawing.js';
 
 function onImageRendered (e) {
   const eventData = e.detail;
   const image = eventData.image;
   const stats = image.stats;
 
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const textLines = [];
 

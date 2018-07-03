@@ -11,10 +11,6 @@ import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
 import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
 import { Sculpter } from '../util/freehand/Sculpter.js';
 
-/**
-* @author JamesAPetts
-*/
-
 const sculpter = new Sculpter();
 const toolType = 'freehandSculpter';
 const referencedToolType = 'freehand';
@@ -218,6 +214,39 @@ function mouseUpCallback (e) {
 }
 
 /**
+* Event handler for NEW_IMAGE event.
+*
+* @param {Object} e - The event.
+*/
+function newImageCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  deselectAllTools(element);
+}
+
+/**
+* Deactivates all freehand ROIs and change currentTool to null
+*
+* @param {Object} e - The event.
+*/
+function deselectAllTools (element) {
+  const config = freehandSculpter.getConfiguration();
+  const toolData = getToolState(element, referencedToolType);
+
+  config.currentTool = null;
+
+  if (toolData) {
+    for (let i = 0; i < toolData.data.length; i++) {
+      toolData.data[i].active = false;
+    }
+  }
+
+  external.cornerstone.updateImage(element);
+}
+
+
+/**
 * Triggers a re-calculation of a freehand tool's stats after editing.
 *
 * @param {Object} eventData - Data object associated with the event.
@@ -289,19 +318,8 @@ function enable (element) {
 * @modifies {element}
 */
 function disable (element) {
-  const config = freehandSculpter.getConfiguration();
-  const toolData = getToolState(element, referencedToolType);
-
-  config.currentTool = null;
-
-  if (toolData) {
-    for (let i = 0; i < toolData.data.length; i++) {
-      toolData.data[i].active = false;
-    }
-  }
-
+  deselectAllTools(element);
   removeEventListeners(element);
-  external.cornerstone.updateImage(element);
 }
 
 /**

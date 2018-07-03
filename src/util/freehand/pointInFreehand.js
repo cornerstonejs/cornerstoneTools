@@ -4,8 +4,6 @@
 * polygon. Odd === inside, Even === outside. The bool "inROI" flips every time
 * the ray originating from location and pointing to the right crosses a
 * linesegment.
-*
-* @author JamesAPetts
 */
 
 /**

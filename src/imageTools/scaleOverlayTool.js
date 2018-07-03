@@ -1,6 +1,7 @@
 import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const configuration = {
   color: 'white',
@@ -152,7 +153,7 @@ function computeScaleBounds (eventData, canvasSize, imageSize, horizontalReducti
 function onImageRendered (e) {
   const eventData = e.detail;
 
-  const context = eventData.canvasContext.canvas.getContext('2d');
+  const context = getNewContext(eventData.canvasContext.canvas);
   const { image, viewport } = eventData;
   const cornerstone = external.cornerstone;
 
@@ -224,11 +225,9 @@ function onImageRendered (e) {
     }
   }, configuration);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.save();
-
-  drawScalebars(context, imageAttributes);
-  context.restore();
+  draw(context, (context) => {
+    drawScalebars(context, imageAttributes);
+  });
 }
 // /////// END IMAGE RENDERING ///////
 

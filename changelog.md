@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.6] - 2018-06-06
+### Fixed
+- Fixed X and Y values on Length tool (thanks @catalinaduplat)
+
 ## [2.3.5] - 2018-05-28
 ### Changed
 - Updated package.json dependencies to latest versions

@@ -8,6 +8,7 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'probe';
 
@@ -57,68 +58,65 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const font = textStyle.getFont();
   const fontHeight = textStyle.getFontSize();
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    const color = toolColors.getColorIfActive(data);
+    draw(context, (context) => {
 
-    // Draw the handles
-    drawHandles(context, eventData, data.handles, color);
+      const color = toolColors.getColorIfActive(data);
 
-    const x = Math.round(data.handles.end.x);
-    const y = Math.round(data.handles.end.y);
-    let storedPixels;
+      // Draw the handles
+      drawHandles(context, eventData, data.handles, color);
 
-    let text,
-      str;
+      const x = Math.round(data.handles.end.x);
+      const y = Math.round(data.handles.end.y);
+      let storedPixels;
 
-    if (x < 0 || y < 0 || x >= eventData.image.columns || y >= eventData.image.rows) {
-      return;
-    }
+      let text,
+        str;
 
-    if (eventData.image.color) {
-      text = `${x}, ${y}`;
-      storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
-      str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
-    } else {
-      storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-      const sp = storedPixels[0];
-      const mo = sp * eventData.image.slope + eventData.image.intercept;
-      const suv = calculateSUV(eventData.image, sp);
+      if (x >= 0 && y >= 0 && x < eventData.image.columns && y < eventData.image.rows) {
+        if (eventData.image.color) {
+          text = `${x}, ${y}`;
+          storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
+          str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+        } else {
+          storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+          const sp = storedPixels[0];
+          const mo = sp * eventData.image.slope + eventData.image.intercept;
+          const suv = calculateSUV(eventData.image, sp);
 
-      // Draw text
-      text = `${x}, ${y}`;
-      str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
-      if (suv) {
-        str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
+          // Draw text
+          text = `${x}, ${y}`;
+          str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
+          if (suv) {
+            str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
+          }
+        }
+
+        const coords = {
+          // Translate the x/y away from the cursor
+          x: data.handles.end.x + 3,
+          y: data.handles.end.y - 3
+        };
+        const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+
+        context.font = font;
+        context.fillStyle = color;
+
+        drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+        drawTextBox(context, text, textCoords.x, textCoords.y, color);
       }
-    }
-
-    const coords = {
-      // Translate the x/y away from the cursor
-      x: data.handles.end.x + 3,
-      y: data.handles.end.y - 3
-    };
-    const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-    context.font = font;
-    context.fillStyle = color;
-
-    drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-    drawTextBox(context, text, textCoords.x, textCoords.y, color);
-    context.restore();
+    });
   }
 }
 // /////// END IMAGE RENDERING ///////

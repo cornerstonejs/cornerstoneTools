@@ -1,10 +1,6 @@
 import pointInFreehand from './pointInFreehand.js';
 
 /**
- * @author JamesAPetts
- */
-
-/**
 * Calculates the statistics of all the points within the freehand object.
 *
 * @param {Object} sp - An array of the pixel data.

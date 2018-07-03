@@ -2,10 +2,6 @@ import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 import { ClickedLineData } from './ClickedLineData.js';
 
-/**
-* @author JamesAPetts
-*/
-
 const toolType = 'freehand';
 const distanceThreshold = 10;
 

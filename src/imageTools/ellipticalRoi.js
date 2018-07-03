@@ -4,12 +4,12 @@ import touchTool from './touchTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import drawEllipse from '../util/drawEllipse.js';
 import pointInEllipse from '../util/pointInEllipse.js';
 import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
 import calculateSUV from '../util/calculateSUV.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { drawEllipse, getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'ellipticalRoi';
 
@@ -115,7 +115,6 @@ function onImageRendered (e) {
   const element = eventData.element;
   const lineWidth = toolStyle.getToolWidth();
   const config = ellipticalRoi.getConfiguration();
-  const context = eventData.canvasContext.canvas.getContext('2d');
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let modality;
@@ -134,146 +133,130 @@ function onImageRendered (e) {
     modality = seriesModule.modality;
   }
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   // If we have tool data for this element - iterate over each set and draw it
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    // Apply any shadow settings defined in the tool configuration
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
+    draw(context, (context) => {
+      // Apply any shadow settings defined in the tool configuration
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
+      }
 
-    // Check which color the rendered tool should be
-    const color = toolColors.getColorIfActive(data);
+      // Check which color the rendered tool should be
+      const color = toolColors.getColorIfActive(data);
 
-    // Convert Image coordinates to Canvas coordinates given the element
-    const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+      // Draw the ellipse on the canvas
+      drawEllipse(context, element, data.handles.start, data.handles.end, { color });
 
-    // Retrieve the bounds of the ellipse (left, top, width, and height)
-    // In Canvas coordinates
-    const leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
-    const topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
-    const widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
-    const heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
+      // If the tool configuration specifies to only draw the handles on hover / active,
+      // Follow this logic
+      if (config && config.drawHandlesOnHover) {
+        // Draw the handles if the tool is active
+        if (data.active === true) {
+          drawHandles(context, eventData, data.handles, color);
+        } else {
+          // If the tool is inactive, draw the handles only if each specific handle is being
+          // Hovered over
+          const handleOptions = {
+            drawHandlesIfActive: true
+          };
 
-    // Draw the ellipse on the canvas
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    drawEllipse(context, leftCanvas, topCanvas, widthCanvas, heightCanvas);
-    context.closePath();
-
-    // If the tool configuration specifies to only draw the handles on hover / active,
-    // Follow this logic
-    if (config && config.drawHandlesOnHover) {
-      // Draw the handles if the tool is active
-      if (data.active === true) {
-        drawHandles(context, eventData, data.handles, color);
+          drawHandles(context, eventData, data.handles, color, handleOptions);
+        }
       } else {
-        // If the tool is inactive, draw the handles only if each specific handle is being
-        // Hovered over
-        const handleOptions = {
-          drawHandlesIfActive: true
+        // If the tool has no configuration settings, always draw the handles
+        drawHandles(context, eventData, data.handles, color);
+      }
+
+      // Define variables for the area and mean/standard deviation
+      let area,
+        meanStdDev,
+        meanStdDevSUV;
+
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else {
+        // If the data has been invalidated, we need to calculate it again
+
+        // Retrieve the bounds of the ellipse in image coordinates
+        const ellipse = {
+          left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+          top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
+          width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
+          height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
-      }
-    } else {
-      // If the tool has no configuration settings, always draw the handles
-      drawHandles(context, eventData, data.handles, color);
-    }
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ellipse bounds cover
+          const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
 
-    // Define variables for the area and mean/standard deviation
-    let area,
-      meanStdDev,
-      meanStdDevSUV;
+          // Calculate the mean & standard deviation from the pixels and the ellipse details
+          meanStdDev = calculateEllipseStatistics(pixels, ellipse);
 
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else {
-      // If the data has been invalidated, we need to calculate it again
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
 
-      // Retrieve the bounds of the ellipse in image coordinates
-      const ellipse = {
-        left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
-        top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-        width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
-        height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
-      };
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ellipse bounds cover
-        const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
-
-        // Calculate the mean & standard deviation from the pixels and the ellipse details
-        meanStdDev = calculateEllipseStatistics(pixels, ellipse);
-
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
-
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        // Calculate the image area from the ellipse dimensions and pixel spacing
+        area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
         }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Calculate the image area from the ellipse dimensions and pixel spacing
-      area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
-
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+      // If the textbox has not been moved by the user, it should be displayed on the right-most
+      // Side of the tool.
+      if (!data.handles.textBox.hasMoved) {
+        // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+        // Note that this calculates it in image coordinates
+        data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
+        data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
       }
 
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
+      const text = textBoxText(data);
 
-    // If the textbox has not been moved by the user, it should be displayed on the right-most
-    // Side of the tool.
-    if (!data.handles.textBox.hasMoved) {
-      // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-      // Note that this calculates it in image coordinates
-      data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-      data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
-    }
-
-    const text = textBoxText(data);
-
-    drawLinkedTextBox(context, element, data.handles.textBox, text,
-      data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    context.restore();
+      drawLinkedTextBox(context, element, data.handles.textBox, text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+    });
   }
 
   function textBoxText (data) {

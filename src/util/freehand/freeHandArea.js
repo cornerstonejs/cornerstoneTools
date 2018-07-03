@@ -1,6 +1,3 @@
-/**
- * @author JamesAPetts
- */
 
 /**
 * Calculates the area of a freehand tool polygon.

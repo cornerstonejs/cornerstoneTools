@@ -1,3 +1,7 @@
+import * as drawing from './util/drawing.js';
+
+export { drawing };
+
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
 

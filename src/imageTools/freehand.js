@@ -22,6 +22,7 @@ import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -111,7 +112,11 @@ function pointNearHandle (eventData, toolIndex) {
 
   const data = toolData.data[toolIndex];
 
-  if (data.handles === undefined || data.visible === false) {
+  if (data.handles === undefined) {
+    return null;
+  }
+
+  if (data.visible === false) {
     return null;
   }
 
@@ -785,211 +790,203 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
-  let fillColor;
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    let color = toolColors.getColorIfActive(data);
+    draw(context, (context) => {
+      let color = toolColors.getColorIfActive(data);
+      let fillColor;
 
-    if (data.active) {
-      if (data.handles.invalidHandlePlacement) {
-        color = config.invalidColor;
-        fillColor = config.invalidColor;
-      } else {
-        color = toolColors.getColorIfActive(data);
-        fillColor = toolColors.getFillColor();
-      }
-
-    } else {
-      fillColor = toolColors.getToolColor();
-    }
-
-    let handleStart;
-
-    if (data.handles.length) {
-      for (let j = 0; j < data.handles.length; j++) {
-        // Draw a line between handle j and j+1
-        handleStart = data.handles[j];
-        const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-
-        for (let k = 0; k < data.handles[j].lines.length; k++) {
-          const lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
-
-          context.lineTo(lineCanvas.x, lineCanvas.y);
-          context.stroke();
+      if (data.active) {
+        if (data.handles.invalidHandlePlacement) {
+          color = config.invalidColor;
+          fillColor = config.invalidColor;
+        } else {
+          color = toolColors.getColorIfActive(data);
+          fillColor = toolColors.getFillColor();
         }
 
-        const mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
+      } else {
+        fillColor = toolColors.getToolColor();
+      }
 
-        if (j === (data.handles.length - 1)) {
-          if (!data.polyBoundingBox) {
-            // If it's still being actively drawn, keep the last line to
-            // The mouse location
-            context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
+      let handleStart;
+
+      if (data.handles.length) {
+        for (let j = 0; j < data.handles.length; j++) {
+          // Draw a line between handle j and j+1
+          handleStart = data.handles[j];
+          const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
+
+          context.beginPath();
+          context.strokeStyle = color;
+          context.lineWidth = lineWidth;
+          context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+
+          for (let k = 0; k < data.handles[j].lines.length; k++) {
+            const lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
+
+            context.lineTo(lineCanvas.x, lineCanvas.y);
             context.stroke();
+          }
+
+          const mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
+
+          if (j === (data.handles.length - 1)) {
+            if (!data.polyBoundingBox) {
+              // If it's still being actively drawn, keep the last line to
+              // The mouse location
+              context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
+              context.stroke();
+            }
           }
         }
       }
-    }
 
-    // Draw handles
+      // Draw handles
 
-    const options = {
-      fill: fillColor
-    };
-
-    if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
-      // Render all handles
-      options.handleRadius = config.activeHandleRadius;
-      drawHandles(context, eventData, data.handles, color, options);
-    }
-
-    if (data.canComplete) {
-      // Draw large handle at the origin if can complete drawing
-      options.handleRadius = config.completeHandleRadius;
-      drawHandles(context, eventData, [data.handles[0]], color, options);
-    }
-
-    if (data.active && !data.polyBoundingBox) {
-      // Draw handle at origin and at mouse if actively drawing
-      options.handleRadius = config.activeHandleRadius;
-      drawHandles(context, eventData, config.mouseLocation.handles, color, options);
-      drawHandles(context, eventData, [data.handles[0]], color, options);
-    }
-
-    // Define variables for the area and mean/standard deviation
-    let area,
-      meanStdDev,
-      meanStdDevSUV;
-
-    // Perform a check to see if the tool has been invalidated. This is to prevent
-    // Unnecessary re-calculation of the area, mean, and standard deviation if the
-    // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-    if (data.invalidated === false) {
-      // If the data is not invalidated, retrieve it from the toolData
-      meanStdDev = data.meanStdDev;
-      meanStdDevSUV = data.meanStdDevSUV;
-      area = data.area;
-    } else if (!data.active) {
-      // If the data has been invalidated, and the tool is not currently active,
-      // We need to calculate it again.
-
-      // Retrieve the bounds of the ROI in image coordinates
-      const bounds = {
-        left: data.handles[0].x,
-        right: data.handles[0].x,
-        bottom: data.handles[0].y,
-        top: data.handles[0].x
+      const options = {
+        fill: fillColor
       };
 
-      for (let i = 0; i < data.handles.length; i++) {
-        bounds.left = Math.min(bounds.left, data.handles[i].x);
-        bounds.right = Math.max(bounds.right, data.handles[i].x);
-        bounds.bottom = Math.min(bounds.bottom, data.handles[i].y);
-        bounds.top = Math.max(bounds.top, data.handles[i].y);
+      if (config.alwaysShowHandles || config.keyDown.ctrl || data.active && data.polyBoundingBox) {
+        // Render all handles
+        options.handleRadius = config.activeHandleRadius;
+        drawHandles(context, eventData, data.handles, color, options);
       }
 
-      const polyBoundingBox = {
-        left: bounds.left,
-        top: bounds.bottom,
-        width: Math.abs(bounds.right - bounds.left),
-        height: Math.abs(bounds.top - bounds.bottom)
-      };
+      if (data.canComplete) {
+        // Draw large handle at the origin if can complete drawing
+        options.handleRadius = config.completeHandleRadius;
+        drawHandles(context, eventData, [data.handles[0]], color, options);
+      }
 
-      // Store the bounding box information for the text box
-      data.polyBoundingBox = polyBoundingBox;
+      if (data.active && !data.polyBoundingBox) {
+        // Draw handle at origin and at mouse if actively drawing
+        options.handleRadius = config.activeHandleRadius;
+        drawHandles(context, eventData, config.mouseLocation.handles, color, options);
+        drawHandles(context, eventData, [data.handles[0]], color, options);
+      }
 
-      // First, make sure this is not a color image, since no mean / standard
-      // Deviation will be calculated for color images.
-      if (!image.color) {
-        // Retrieve the array of pixels that the ROI bounds cover
-        const pixels = cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
+      // Define variables for the area and mean/standard deviation
+      let area,
+        meanStdDev,
+        meanStdDevSUV;
 
-        // Calculate the mean & standard deviation from the pixels and the object shape
-        meanStdDev = calculateFreehandStatistics(pixels, polyBoundingBox, data.handles);
+      // Perform a check to see if the tool has been invalidated. This is to prevent
+      // Unnecessary re-calculation of the area, mean, and standard deviation if the
+      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+      if (data.invalidated === false) {
+        // If the data is not invalidated, retrieve it from the toolData
+        meanStdDev = data.meanStdDev;
+        meanStdDevSUV = data.meanStdDevSUV;
+        area = data.area;
+      } else if (!data.active) {
+        // If the data has been invalidated, and the tool is not currently active,
+        // We need to calculate it again.
 
-        if (modality === 'PT') {
-          // If the image is from a PET scan, use the DICOM tags to
-          // Calculate the SUV from the mean and standard deviation.
+        // Retrieve the bounds of the ROI in image coordinates
+        const bounds = {
+          left: data.handles[0].x,
+          right: data.handles[0].x,
+          bottom: data.handles[0].y,
+          top: data.handles[0].x
+        };
 
-          // Note that because we are using modality pixel values from getPixels, and
-          // The calculateSUV routine also rescales to modality pixel values, we are first
-          // Returning the values to storedPixel values before calcuating SUV with them.
-          // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-          meanStdDevSUV = {
-            mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-            stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-          };
+        for (let i = 0; i < data.handles.length; i++) {
+          bounds.left = Math.min(bounds.left, data.handles[i].x);
+          bounds.right = Math.max(bounds.right, data.handles[i].x);
+          bounds.bottom = Math.min(bounds.bottom, data.handles[i].y);
+          bounds.top = Math.max(bounds.top, data.handles[i].y);
         }
 
-        // If the mean and standard deviation values are sane, store them for later retrieval
-        if (meanStdDev && !isNaN(meanStdDev.mean)) {
-          data.meanStdDev = meanStdDev;
-          data.meanStdDevSUV = meanStdDevSUV;
+        const polyBoundingBox = {
+          left: bounds.left,
+          top: bounds.bottom,
+          width: Math.abs(bounds.right - bounds.left),
+          height: Math.abs(bounds.top - bounds.bottom)
+        };
+
+        // Store the bounding box information for the text box
+        data.polyBoundingBox = polyBoundingBox;
+
+        // First, make sure this is not a color image, since no mean / standard
+        // Deviation will be calculated for color images.
+        if (!image.color) {
+          // Retrieve the array of pixels that the ROI bounds cover
+          const pixels = cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
+
+          // Calculate the mean & standard deviation from the pixels and the object shape
+          meanStdDev = calculateFreehandStatistics(pixels, polyBoundingBox, data.handles);
+
+          if (modality === 'PT') {
+            // If the image is from a PET scan, use the DICOM tags to
+            // Calculate the SUV from the mean and standard deviation.
+
+            // Note that because we are using modality pixel values from getPixels, and
+            // The calculateSUV routine also rescales to modality pixel values, we are first
+            // Returning the values to storedPixel values before calcuating SUV with them.
+            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+            meanStdDevSUV = {
+              mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
+              stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+            };
+          }
+
+          // If the mean and standard deviation values are sane, store them for later retrieval
+          if (meanStdDev && !isNaN(meanStdDev.mean)) {
+            data.meanStdDev = meanStdDev;
+            data.meanStdDevSUV = meanStdDevSUV;
+          }
         }
+
+        // Retrieve the pixel spacing values, and if they are not
+        // Real non-zero values, set them to 1
+        const columnPixelSpacing = image.columnPixelSpacing || 1;
+        const rowPixelSpacing = image.rowPixelSpacing || 1;
+        const scaling = columnPixelSpacing * rowPixelSpacing;
+
+        area = freeHandArea(data.handles, scaling);
+
+        // If the area value is sane, store it for later retrieval
+        if (!isNaN(area)) {
+          data.area = area;
+        }
+
+        // Set the invalidated flag to false so that this data won't automatically be recalculated
+        data.invalidated = false;
       }
 
-      // Retrieve the pixel spacing values, and if they are not
-      // Real non-zero values, set them to 1
-      const columnPixelSpacing = image.columnPixelSpacing || 1;
-      const rowPixelSpacing = image.rowPixelSpacing || 1;
-      const scaling = columnPixelSpacing * rowPixelSpacing;
+      // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
+      if (data.polyBoundingBox && !data.textBox.freehand) {
+        // If the textbox has not been moved by the user, it should be displayed on the right-most
+        // Side of the tool.
+        if (!data.textBox.hasMoved) {
+          // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+          // Note that this calculates it in image coordinates
+          data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+          data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+        }
 
-      area = freeHandArea(data.handles, scaling);
+        const text = textBoxText(data);
 
-      // If the area value is sane, store it for later retrieval
-      if (!isNaN(area)) {
-        data.area = area;
+        drawLinkedTextBox(context, element, data.textBox, text,
+          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
       }
-
-      // Set the invalidated flag to false so that this data won't automatically be recalculated
-      data.invalidated = false;
-    }
-
-    // Only render text if polygon has been completed.
-    if (data.polyBoundingBox && !data.textBox.freehand) {
-      // If the textbox has not been moved by the user, it should be displayed on the right-most
-      // Side of the tool.
-      if (!data.textBox.hasMoved) {
-        // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-        // Note that this calculates it in image coordinates
-        data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-        data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
-      }
-
-      const text = textBoxText(data);
-
-      drawLinkedTextBox(context, element, data.textBox, text,
-        data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
-    }
-    context.restore();
+    });
   }
 
-  /**
-  * Define an array to store the rows of text for the textbox
-  *
-  * @param {Object} data - Data object associated with the tool.
-  * @returns {Object} Array containing the lines of text to be displayed.
-  */
   function textBoxText (data) {
     const { meanStdDev, meanStdDevSUV, area } = data;
+    // Define an array to store the rows of text for the textbox
     const textLines = [];
 
     // If the mean and standard deviation values are present, display them
@@ -1088,7 +1085,6 @@ function activate (element, mouseButtonMask) {
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
 
-  element.focus();
   external.cornerstone.updateImage(element);
 }
 
@@ -1163,7 +1159,8 @@ const freehand = {
   activate,
   deactivate,
   getConfiguration,
-  setConfiguration
+  setConfiguration,
+  pointNearTool
 };
 
 export { freehand };

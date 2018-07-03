@@ -7,6 +7,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
+import { getNewContext, draw } from '../util/drawing.js';
 
 const toolType = 'length';
 
@@ -66,10 +67,8 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
+  const context = getNewContext(eventData.canvasContext.canvas);
   const { image, element } = eventData;
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
 
   const lineWidth = toolStyle.getToolWidth();
   const config = length.getConfiguration();
@@ -86,81 +85,80 @@ function onImageRendered (e) {
   }
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    // Configurable shadow
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
     const data = toolData.data[i];
 
     if (data.visible === false) {
       continue;
     }
 
-    const color = toolColors.getColorIfActive(data);
-
-    // Get the handle positions in canvas coordinates
-    const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
-    // Draw the measurement line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
-
-    // Draw the handles
-    const handleOptions = {
-      drawHandlesIfActive: (config && config.drawHandlesOnHover)
-    };
-
-    drawHandles(context, eventData, data.handles, color, handleOptions);
-
-    // Draw the text
-    context.fillStyle = color;
-
-    // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-    const dx = (data.handles.end.x - data.handles.start.x) * (rowPixelSpacing || 1);
-    const dy = (data.handles.end.y - data.handles.start.y) * (colPixelSpacing || 1);
-
-    // Calculate the length, and create the text variable with the millimeters or pixels suffix
-    const length = Math.sqrt(dx * dx + dy * dy);
-
-    // Store the length inside the tool for outside access
-    data.length = length;
-
-    if (!data.handles.textBox.hasMoved) {
-      const coords = {
-        x: Math.max(data.handles.start.x, data.handles.end.x)
-      };
-
-      // Depending on which handle has the largest x-value,
-      // Set the y-value for the text box
-      if (coords.x === data.handles.start.x) {
-        coords.y = data.handles.start.y;
-      } else {
-        coords.y = data.handles.end.y;
+    draw(context, (context) => {
+      // Configurable shadow
+      if (config && config.shadow) {
+        context.shadowColor = config.shadowColor || '#000000';
+        context.shadowOffsetX = config.shadowOffsetX || 1;
+        context.shadowOffsetY = config.shadowOffsetY || 1;
       }
 
-      data.handles.textBox.x = coords.x;
-      data.handles.textBox.y = coords.y;
-    }
+      const color = toolColors.getColorIfActive(data);
 
-    // Move the textbox slightly to the right and upwards
-    // So that it sits beside the length tool handle
-    const xOffset = 10;
+      // Get the handle positions in canvas coordinates
+      const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
+      const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
 
-    const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+      // Draw the measurement line
+      context.beginPath();
+      context.strokeStyle = color;
+      context.lineWidth = lineWidth;
+      context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
+      context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
+      context.stroke();
 
-    drawLinkedTextBox(context, element, data.handles.textBox, text,
-      data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
-    context.restore();
+      // Draw the handles
+      const handleOptions = {
+        drawHandlesIfActive: (config && config.drawHandlesOnHover)
+      };
+
+      drawHandles(context, eventData, data.handles, color, handleOptions);
+
+      // Draw the text
+      context.fillStyle = color;
+
+      // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+      const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+      const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+
+      // Calculate the length, and create the text variable with the millimeters or pixels suffix
+      const length = Math.sqrt(dx * dx + dy * dy);
+
+      // Store the length inside the tool for outside access
+      data.length = length;
+
+      if (!data.handles.textBox.hasMoved) {
+        const coords = {
+          x: Math.max(data.handles.start.x, data.handles.end.x)
+        };
+
+        // Depending on which handle has the largest x-value,
+        // Set the y-value for the text box
+        if (coords.x === data.handles.start.x) {
+          coords.y = data.handles.start.y;
+        } else {
+          coords.y = data.handles.end.y;
+        }
+
+        data.handles.textBox.x = coords.x;
+        data.handles.textBox.y = coords.y;
+      }
+
+      // Move the textbox slightly to the right and upwards
+      // So that it sits beside the length tool handle
+      const xOffset = 10;
+
+      const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+
+      drawLinkedTextBox(context, element, data.handles.textBox, text,
+        data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
+    });
   }
 
   function textBoxText (data, rowPixelSpacing, colPixelSpacing) {
