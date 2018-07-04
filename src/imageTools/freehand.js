@@ -22,7 +22,7 @@ import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, drawJoinedLines } from '../util/drawing.js';
 
 const toolType = 'freehand';
 let configuration = {
@@ -818,34 +818,16 @@ function onImageRendered (e) {
         fillColor = toolColors.getToolColor();
       }
 
-      let handleStart;
-
       if (data.handles.length) {
         for (let j = 0; j < data.handles.length; j++) {
-          // Draw a line between handle j and j+1
-          handleStart = data.handles[j];
-          const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, handleStart);
+          const points = [...data.handles[j].lines];
 
-          path(context, { color,
-            lineWidth }, (context) => {
-            context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-
-            for (let k = 0; k < data.handles[j].lines.length; k++) {
-              const lineCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles[j].lines[k]);
-
-              context.lineTo(lineCanvas.x, lineCanvas.y);
-            }
-
-            const mouseLocationCanvas = cornerstone.pixelToCanvas(eventData.element, config.mouseLocation.handles.start);
-
-            if (j === (data.handles.length - 1)) {
-              if (!data.polyBoundingBox) {
-                // If it's still being actively drawn, keep the last line to
-                // The mouse location
-                context.lineTo(mouseLocationCanvas.x, mouseLocationCanvas.y);
-              }
-            }
-          });
+          if (j === (data.handles.length - 1) && !data.polyBoundingBox) {
+            // If it's still being actively drawn, keep the last line to
+            // The mouse location
+            points.push(config.mouseLocation.handles.start);
+          }
+          drawJoinedLines(context, eventData.element, data.handles[j], points, { color });
         }
       }
 

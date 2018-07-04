@@ -3,13 +3,12 @@ import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
 
 const toolType = 'angle';
 
@@ -75,7 +74,6 @@ function onImageRendered (e) {
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const lineWidth = toolStyle.getToolWidth();
   const font = textStyle.getFont();
   const config = angle.getConfiguration();
   const cornerstone = external.cornerstone;
@@ -93,21 +91,8 @@ function onImageRendered (e) {
 
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);
-      let handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-      let handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-      // Draw the line
-      path(context, { color,
-        lineWidth }, (context) => {
-        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-
-        handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
-        handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
-
-        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-      });
+      drawJoinedLines(context, eventData.element, data.handles.end, [data.handles.start, data.handles.end2], { color });
 
       // Draw the handles
       drawHandles(context, eventData, data.handles);
@@ -129,6 +114,9 @@ function onImageRendered (e) {
       const rAngle = roundToDecimal(angle, 2);
       const str = '00B0'; // Degrees symbol
       const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+
+      const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
+      const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
 
       const textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
       const textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
