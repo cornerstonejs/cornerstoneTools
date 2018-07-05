@@ -2,6 +2,7 @@
 node_modules
 coverage/
 docs/_book/
+dist/
 
 ## Files
 docs/api.md
