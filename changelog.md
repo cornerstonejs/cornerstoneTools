@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.7] - 2018-07-05
+### Added
+- Added an utility file drawing.js to make it simpler to draw shapes (thanks @timleslie)
+
+### Changed
+- Revamped freehandROI pencil mode and added handle editing (thanks @JamesAPetts)
+- Deprecated drawCircle.js and drawEllipse.js files and recommended use of drawing.js instead (thanks @timleslie)
+- Replaced all duplicated context declarations and its initial transformation with getNewContext (thanks @timleslie)
+- Using EVENTS.NEW_IMAGE constant instead of 'cornerstonenewimage' string on scroll.js
+- Changed the way things are drawn. Making use of draw method of drawing.js to follow W3C canvas state save/restore specification (thanks @timleslie)
+
+### Fixed
+- Fixed incorrect center point for rotation calculations on rotation tool (thanks @medihack)
+- Prevent stackImagePositionOffsetSynchronizer from throwing an exception when no imagePlane is set (thanks @freund17)
+- Fixed errors being thrown after usage of magnify tool (thanks @dlwire)
+
 ## [2.3.6] - 2018-06-06
 ### Fixed
 - Fixed X and Y values on Length tool (thanks @catalinaduplat)
