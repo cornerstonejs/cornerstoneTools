@@ -5,20 +5,28 @@ import external from '../externalModules.js';
 const toolType = 'eraser';
 
 function eventListeners (event) {
-  return {
-    activate: function (element) {
-      element.addEventListener(event, deleteNearbyMeasurement);
-    },
-    deactivate: function (element) {
-      element.removeEventListener(event, deleteNearbyMeasurement);
-    },
-    disable: function (element) {
-      element.removeEventListener(event, deleteNearbyMeasurement);
-    },
-    enable: function (element) {
-      element.removeEventListener(event, deleteNearbyMeasurement);
-    }
+  function activate (element) {
+    element.addEventListener(event, deleteNearbyMeasurement);
   }
+
+  function deactivate (element) {
+    element.removeEventListener(event, deleteNearbyMeasurement);
+  }
+
+  function disable (element) {
+    element.removeEventListener(event, deleteNearbyMeasurement);
+  }
+
+  function enable (element) {
+    element.removeEventListener(event, deleteNearbyMeasurement);
+  }
+
+  return {
+    activate,
+    deactivate,
+    disable,
+    enable
+  };
 }
 
 function pointNearTool () {
@@ -44,17 +52,21 @@ function deleteNearbyMeasurement (mouseEventData) {
   });
 }
 
-const eraser = {
-  ...eventListeners(EVENTS.MOUSE_CLICK),
-  pointNearTool,
-  toolType
-};
+const eraser = Object.assign({},
+  eventListeners(EVENTS.MOUSE_CLICK),
+  {
+    pointNearTool,
+    toolType
+  }
+);
 
-const eraserTouch = {
-  ...eventListeners(EVENTS.TOUCH_PRESS),
-  pointNearTool,
-  toolType
-}
+const eraserTouch = Object.assign({},
+  eventListeners(EVENTS.TOUCH_PRESS),
+  {
+    pointNearTool,
+    toolType
+  }
+);
 
 export {
   eraser,
