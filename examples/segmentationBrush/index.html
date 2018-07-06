@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <!-- support for mobile touch devices -->
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-  
+
   <link href="../bootstrap.min.css" rel="stylesheet">
   <link href="../dialogPolyfill.css" rel="stylesheet">
   <link href="../cornerstone.min.css" rel="stylesheet">
@@ -35,7 +35,7 @@
           </div>
         </div>
       </div>
-      
+
       <div class="col-xs-3">
         <h5>Controls:</h5>
         <ul>
@@ -54,7 +54,7 @@
                 <option value="adaptiveBrush">Adaptive</option>
             </select>
         </div>
-        
+
         <div class="row">
           <label for="radiusSlider">Radius: <span id="valBox">3</span>px</label>
           <input id="radiusSlider" type="range" min="1" max="20" value="20" steps="1" style="width: 200px"/>
@@ -66,7 +66,7 @@
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
-  
+
 <script src="../cornerstoneMath.min.js"></script>
 
 <!-- include the cornerstone tools library -->
@@ -89,7 +89,7 @@
 
   colormap.setNumberOfColors(2);
   colormap.setColor(0, [0, 0, 0, 0]);
-  colormap.setColor(1, [200, 0, 0, 255]);
+  colormap.setColor(1, [200, 0, 0, 100]);
 
   configuration.colormapId = colormapId;
 
@@ -110,7 +110,7 @@
       imageIds: imageIds
   };
 
-  cornerstone.enable(element);  
+  cornerstone.enable(element);
   cornerstone.loadImage(imageIds[0]).then(function(image) {
     cornerstone.addLayer(element, image);
     cornerstone.updateImage(element);
@@ -125,7 +125,7 @@
     cornerstoneTools.mouseWheelInput.enable(element);
     cornerstoneTools.stackScrollWheel.activate(element);
     cornerstoneTools.pan.activate(element, 2);
-    cornerstoneTools.zoom.activate(element, 4);    
+    cornerstoneTools.zoom.activate(element, 4);
     cornerstoneTools[toolType].activate(element, 1);
   });
 
@@ -142,7 +142,7 @@
     }
     cornerstoneTools[toolType].setConfiguration(configuration);
   });
-  
+
   var radiusSlider = document.getElementById('radiusSlider');
   radiusSlider.addEventListener('input', function(){
     var configuration = cornerstoneTools[toolType].getConfiguration();
@@ -164,7 +164,7 @@
     configuration.radius = parseInt(radius, 10);
     configuration.draw = drawValue;
     cornerstoneTools[toolType].setConfiguration(configuration);
-    
+
     cornerstoneTools[toolType].activate(element, 1);
     cornerstone.updateImage(element, true);
   });
