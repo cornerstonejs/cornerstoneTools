@@ -1,37 +1,9 @@
 import * as cornerstoneTools from '../index.js';
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
+import simpleMouseButtonTool from './simpleMouseButtonTool.js';
+import simpleTouchTool from './simpleTouchTool.js';
 
 const toolType = 'eraser';
-
-function eventListeners (event) {
-  function activate (element) {
-    element.addEventListener(event, deleteNearbyMeasurement);
-  }
-
-  function deactivate (element) {
-    element.removeEventListener(event, deleteNearbyMeasurement);
-  }
-
-  function disable (element) {
-    element.removeEventListener(event, deleteNearbyMeasurement);
-  }
-
-  function enable (element) {
-    element.removeEventListener(event, deleteNearbyMeasurement);
-  }
-
-  return {
-    activate,
-    deactivate,
-    disable,
-    enable
-  };
-}
-
-function pointNearTool () {
-  return false;
-}
 
 function deleteNearbyMeasurement (mouseEventData) {
   const coords = mouseEventData.detail.currentPoints.canvas;
@@ -52,21 +24,8 @@ function deleteNearbyMeasurement (mouseEventData) {
   });
 }
 
-const eraser = Object.assign({},
-  eventListeners(EVENTS.MOUSE_CLICK),
-  {
-    pointNearTool,
-    toolType
-  }
-);
-
-const eraserTouch = Object.assign({},
-  eventListeners(EVENTS.TOUCH_PRESS),
-  {
-    pointNearTool,
-    toolType
-  }
-);
+const eraser = simpleMouseButtonTool(deleteNearbyMeasurement, toolType);
+const eraserTouch = simpleTouchTool(deleteNearbyMeasurement, toolType);
 
 export {
   eraser,

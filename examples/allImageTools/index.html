@@ -241,6 +241,19 @@
         document.getElementById('eraser').addEventListener('click', function() {
             activate('eraser');
             disableAllTools();
+
+            // In order for the eraser to work, other tools must be in the 'enable'
+            // state. This allows eraser to receive mouse click events on other tools'
+            // data.
+            cornerstoneTools.probe.enable(element, 1);
+            cornerstoneTools.length.enable(element, 1);
+            cornerstoneTools.ellipticalRoi.enable(element, 1);
+            cornerstoneTools.rectangleRoi.enable(element, 1);
+            cornerstoneTools.angle.enable(element, 1);
+            cornerstoneTools.highlight.enable(element, 1);
+            cornerstoneTools.freehand.enable(element, 1);
+            cornerstoneTools.eraser.enable(element, 1);
+
             cornerstoneTools.eraser.activate(element, 1);
         })
     });
