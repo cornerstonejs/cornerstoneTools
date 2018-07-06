@@ -20,6 +20,5 @@ export default function (context, x, y, w, h) {
     context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
     context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-    context.closePath();
   });
 }
