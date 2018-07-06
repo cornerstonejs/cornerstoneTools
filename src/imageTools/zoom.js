@@ -226,7 +226,14 @@ function dragCallback (e) {
     return false;
   }
 
-  const ticks = eventData.deltaPoints.page.y / 100;
+  let ticks = eventData.deltaPoints.page.y / 100;
+
+  // Allow inversion of the mouse drag scroll via a configuration option
+  const config = zoom.getConfiguration();
+
+  if (config && config.invert) {
+    ticks *= -1;
+  }
 
   zoom.strategy(eventData, ticks);
 
