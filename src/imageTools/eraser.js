@@ -15,7 +15,8 @@ function deleteNearbyMeasurement (mouseEventData) {
 
     if (toolState) {
       toolState.data.forEach(function (data) {
-        if(tool.pointNearTool(element, data, coords)) {
+        if(typeof tool.pointNearTool === 'function' &&
+          tool.pointNearTool(element, data, coords)) {
           cornerstoneTools.removeToolState(element, toolName, data);
           external.cornerstone.updateImage(element);
         }
