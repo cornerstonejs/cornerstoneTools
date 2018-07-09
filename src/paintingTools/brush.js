@@ -3,7 +3,6 @@ import { getToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
-import { globalImageIdSpecificToolStateManager } from '../stateManagement/imageIdSpecificStateManager.js';
 
 // This module is for creating segmentation overlays
 
@@ -42,8 +41,6 @@ function paint (eventData) {
   drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
 
   layer.invalid = true;
-
-  console.log(globalImageIdSpecificToolStateManager.saveToolState());
 
   external.cornerstone.updateImage(element);
 }

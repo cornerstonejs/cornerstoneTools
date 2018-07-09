@@ -76,7 +76,7 @@ export default function brushTool (brushToolInterface) {
 
   function decreaseRadius () {
     const configuration = brushTool.getConfiguration();
-    
+
     configuration.radius = clip(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
   }
 
