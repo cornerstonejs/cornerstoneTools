@@ -13709,8 +13709,6 @@ var _getCircle2 = _interopRequireDefault(_getCircle);
 
 var _drawBrush = __webpack_require__(/*! ./drawBrush.js */ "./paintingTools/drawBrush.js");
 
-var _imageIdSpecificStateManager = __webpack_require__(/*! ../stateManagement/imageIdSpecificStateManager.js */ "./stateManagement/imageIdSpecificStateManager.js");
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // This module is for creating segmentation overlays
@@ -13754,8 +13752,6 @@ function paint(eventData) {
   (0, _drawBrush.drawBrushPixels)(pointerArray, pixelData, brushPixelValue, columns);
 
   layer.invalid = true;
-
-  console.log(_imageIdSpecificStateManager.globalImageIdSpecificToolStateManager.saveToolState());
 
   _externalModules2.default.cornerstone.updateImage(element);
 }
@@ -14139,6 +14135,9 @@ function brushTool(brushToolInterface) {
         pixelReplication: true
       }
     };
+
+    // TEMP add the layer
+    _externalModules2.default.cornerstone.addLayer(element, element.image);
 
     if (brushLayerId) {
       layer = _externalModules2.default.cornerstone.getLayer(element, brushLayerId);

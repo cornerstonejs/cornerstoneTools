@@ -263,6 +263,9 @@ export default function brushTool (brushToolInterface) {
       }
     };
 
+    // TEMP add the layer
+    external.cornerstone.addLayer(element, element.image);
+
     if (brushLayerId) {
       layer = external.cornerstone.getLayer(element, brushLayerId);
     }
