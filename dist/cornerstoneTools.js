@@ -13891,7 +13891,7 @@ function brushTool(brushToolInterface) {
   function keyDownCallback(e) {
     console.log('brushTool.keyDownCallback');
 
-    _brushToolKeyInterface2.default.onKeyDown(e, brushTool.getConfiguration());
+    _brushToolKeyInterface2.default.onKeyDown(e, toolType);
   }
 
   function mouseMoveCallback(e) {
@@ -18308,6 +18308,10 @@ var _externalModules = __webpack_require__(/*! ../../externalModules.js */ "./ex
 
 var _externalModules2 = _interopRequireDefault(_externalModules);
 
+var _brush = __webpack_require__(/*! ../../paintingTools/brush.js */ "./paintingTools/brush.js");
+
+var _adaptiveBrush = __webpack_require__(/*! ../../paintingTools/adaptiveBrush.js */ "./paintingTools/adaptiveBrush.js");
+
 var _updateBrushDrawColor = __webpack_require__(/*! ./updateBrushDrawColor.js */ "./util/brush/updateBrushDrawColor.js");
 
 var _updateBrushDrawColor2 = _interopRequireDefault(_updateBrushDrawColor);
@@ -18325,12 +18329,13 @@ var brushToolKeyInterface = {
 exports.default = brushToolKeyInterface;
 
 
-function onKeyDown(e, brushToolConfig) {
+function onKeyDown(e, toolType) {
   var eventData = e.detail;
+  var configuration = getConfiguration(toolType);
   var imageNeedsUpdate = false;
 
-  imageNeedsUpdate = changeToolSize(eventData, brushToolConfig) || imageNeedsUpdate;
-  imageNeedsUpdate = changeSegmentation(eventData, brushToolConfig) || imageNeedsUpdate;
+  imageNeedsUpdate = changeToolSize(eventData, configuration) || imageNeedsUpdate;
+  imageNeedsUpdate = changeSegmentation(eventData, configuration) || imageNeedsUpdate;
 
   if (imageNeedsUpdate) {
     // Force onImageRendered to fire
@@ -18338,15 +18343,27 @@ function onKeyDown(e, brushToolConfig) {
   }
 }
 
+function getConfiguration(toolType) {
+  console.log(_brush.brush);
+
+  if (toolType === 'brush') {
+    return _brush.brush.getConfiguration();
+  } else if (toolType === 'adaptiveBrush') {
+    return _adaptiveBrush.adaptiveBrush.getConfiguration();
+  }
+
+  throw 'unknown brushTool: \'' + toolType + '\'';
+}
+
 function changeToolSize(eventData, configuration) {
   var keyCode = eventData.keyCode;
   var imageNeedsUpdate = false;
 
   if (keyCode === 109 || keyCode === 173) {
-    configuration.radius = (0, _clip2.default)(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+    decreaseRadius(configuration);
     imageNeedsUpdate = true;
   } else if (keyCode === 61 || keyCode === 107) {
-    configuration.radius = (0, _clip2.default)(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+    increaseRadius(configuration);
     imageNeedsUpdate = true;
   }
 
@@ -18358,30 +18375,46 @@ function changeSegmentation(eventData, configuration) {
   var imageNeedsUpdate = false;
 
   if (keyCode === 219) {
-    var numberOfColors = getNumberOfColors(configuration);
 
-    configuration.draw -= 1;
-
-    if (configuration.draw < 0) {
-      configuration.draw = numberOfColors - 1;
-    }
-
-    (0, _updateBrushDrawColor2.default)(configuration);
     imageNeedsUpdate = true;
   } else if (keyCode === 221) {
-    var _numberOfColors = getNumberOfColors(configuration);
-
-    configuration.draw += 1;
-
-    if (configuration.draw === _numberOfColors - 1) {
-      configuration.draw = 0;
-    }
-
-    (0, _updateBrushDrawColor2.default)(configuration);
+    nextSegmentation(configuration);
     imageNeedsUpdate = true;
   }
 
   return imageNeedsUpdate;
+}
+
+function increaseRadius(configuration) {
+  configuration.radius = (0, _clip2.default)(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+}
+
+function decreaseRadius(configuration) {
+  configuration.radius = (0, _clip2.default)(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+}
+
+function nextSegmentation(configuration) {
+  var numberOfColors = getNumberOfColors(configuration);
+
+  configuration.draw += 1;
+
+  if (configuration.draw === numberOfColors - 1) {
+    configuration.draw = 0;
+  }
+
+  (0, _updateBrushDrawColor2.default)(configuration);
+}
+
+function previousSegmentation(configuration) {
+  var numberOfColors = getNumberOfColors(configuration);
+
+  configuration.draw -= 1;
+
+  if (configuration.draw < 0) {
+    configuration.draw = numberOfColors - 1;
+  }
+
+  (0, _updateBrushDrawColor2.default)(configuration);
 }
 
 function getNumberOfColors(brushToolConfig) {

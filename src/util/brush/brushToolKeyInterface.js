@@ -1,19 +1,22 @@
 import external from '../../externalModules.js';
+import { brush } from '../../paintingTools/brush.js';
+import { adaptiveBrush } from '../../paintingTools/adaptiveBrush.js';
 import updateBrushDrawColor from './updateBrushDrawColor.js';
 import clip from '../clip.js';
 
 const brushToolKeyInterface = {
-  onKeyDown
+  onKeyDown,
 };
 
 export default brushToolKeyInterface;
 
-function onKeyDown (e, brushToolConfig) {
+function onKeyDown (e, toolType) {
   const eventData = e.detail;
+  const configuration = getConfiguration(toolType);
   let imageNeedsUpdate = false;
 
-  imageNeedsUpdate = changeToolSize(eventData, brushToolConfig) || imageNeedsUpdate;
-  imageNeedsUpdate = changeSegmentation(eventData, brushToolConfig) || imageNeedsUpdate;
+  imageNeedsUpdate = changeToolSize(eventData, configuration) || imageNeedsUpdate;
+  imageNeedsUpdate = changeSegmentation(eventData, configuration) || imageNeedsUpdate;
 
   if (imageNeedsUpdate) {
     // Force onImageRendered to fire
@@ -21,15 +24,25 @@ function onKeyDown (e, brushToolConfig) {
   }
 }
 
+function getConfiguration (toolType) {
+  if (toolType === 'brush') {
+    return brush.getConfiguration();
+  } else if (toolType === 'adaptiveBrush') {
+    return adaptiveBrush.getConfiguration();
+  }
+
+  throw `unknown brushTool: \'${toolType}\'`;
+}
+
 function changeToolSize (eventData, configuration) {
   const keyCode = eventData.keyCode;
   let imageNeedsUpdate = false;
 
   if (keyCode === 109 || keyCode === 173) {
-    configuration.radius = clip(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+    decreaseRadius(configuration);
     imageNeedsUpdate = true;
   } else if (keyCode === 61 || keyCode === 107) {
-    configuration.radius = clip(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+    increaseRadius(configuration);
     imageNeedsUpdate = true;
   }
 
@@ -41,30 +54,46 @@ function changeSegmentation (eventData, configuration) {
   let imageNeedsUpdate = false;
 
   if (keyCode === 219) {
-    const numberOfColors = getNumberOfColors(configuration);
 
-    configuration.draw -= 1;
-
-    if (configuration.draw < 0) {
-      configuration.draw = numberOfColors - 1;
-    }
-
-    updateBrushDrawColor(configuration);
     imageNeedsUpdate = true;
   } else if (keyCode === 221) {
-    const numberOfColors = getNumberOfColors(configuration);
-
-    configuration.draw += 1;
-
-    if (configuration.draw === numberOfColors - 1) {
-      configuration.draw = 0;
-    }
-
-    updateBrushDrawColor(configuration);
+    nextSegmentation(configuration);
     imageNeedsUpdate = true;
   }
 
   return imageNeedsUpdate;
+}
+
+function increaseRadius (configuration) {
+  configuration.radius = clip(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+}
+
+function decreaseRadius (configuration) {
+  configuration.radius = clip(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+}
+
+function nextSegmentation (configuration) {
+  const numberOfColors = getNumberOfColors(configuration);
+
+  configuration.draw += 1;
+
+  if (configuration.draw === numberOfColors - 1) {
+    configuration.draw = 0;
+  }
+
+  updateBrushDrawColor(configuration);
+}
+
+function previousSegmentation (configuration) {
+  const numberOfColors = getNumberOfColors(configuration);
+
+  configuration.draw -= 1;
+
+  if (configuration.draw < 0) {
+    configuration.draw = numberOfColors - 1;
+  }
+
+  updateBrushDrawColor(configuration);
 }
 
 function getNumberOfColors (brushToolConfig) {

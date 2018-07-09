@@ -16,7 +16,7 @@ export default function brushTool (brushToolInterface) {
   function keyDownCallback (e) {
     console.log('brushTool.keyDownCallback');
 
-    brushToolKeyInterface.onKeyDown(e, brushTool.getConfiguration());
+    brushToolKeyInterface.onKeyDown(e, toolType);
   }
 
   function mouseMoveCallback (e) {
