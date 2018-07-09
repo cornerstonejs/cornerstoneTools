@@ -13872,13 +13872,9 @@ var _isMouseButtonEnabled2 = _interopRequireDefault(_isMouseButtonEnabled);
 
 var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.js");
 
-var _brushToolKeyInterface = __webpack_require__(/*! ../util/brush/brushToolKeyInterface.js */ "./util/brush/brushToolKeyInterface.js");
+var _clip = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
 
-var _brushToolKeyInterface2 = _interopRequireDefault(_brushToolKeyInterface);
-
-var _updateBrushDrawColor = __webpack_require__(/*! ../util/brush/updateBrushDrawColor.js */ "./util/brush/updateBrushDrawColor.js");
-
-var _updateBrushDrawColor2 = _interopRequireDefault(_updateBrushDrawColor);
+var _clip2 = _interopRequireDefault(_clip);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13889,9 +13885,104 @@ function brushTool(brushToolInterface) {
   var toolType = brushToolInterface.toolType;
 
   function keyDownCallback(e) {
-    console.log('brushTool.keyDownCallback');
+    var eventData = e.detail;
+    var imageNeedsUpdate = false;
 
-    _brushToolKeyInterface2.default.onKeyDown(e, toolType);
+    imageNeedsUpdate = keyDownChangeToolSize(eventData) || imageNeedsUpdate;
+    imageNeedsUpdate = keyDownChangeSegmentation(eventData) || imageNeedsUpdate;
+
+    if (imageNeedsUpdate) {
+      // Force onImageRendered to fire
+      _externalModules2.default.cornerstone.updateImage(eventData.element);
+    }
+  }
+
+  function keyDownChangeToolSize(eventData) {
+    var keyCode = eventData.keyCode;
+    var imageNeedsUpdate = false;
+
+    if (keyCode === 109 || keyCode === 173) {
+      decreaseRadius();
+      imageNeedsUpdate = true;
+    } else if (keyCode === 61 || keyCode === 107) {
+      increaseRadius();
+      imageNeedsUpdate = true;
+    }
+
+    return imageNeedsUpdate;
+  }
+
+  function keyDownChangeSegmentation(eventData) {
+    var keyCode = eventData.keyCode;
+    var imageNeedsUpdate = false;
+
+    if (keyCode === 219) {
+      previousSegmentation();
+      imageNeedsUpdate = true;
+    } else if (keyCode === 221) {
+      nextSegmentation();
+      imageNeedsUpdate = true;
+    }
+
+    return imageNeedsUpdate;
+  }
+
+  function changeDrawColor(drawId) {
+    var configuration = brushTool.getConfiguration();
+    var colormap = _externalModules2.default.cornerstone.colors.getColormap(configuration.colormapId);
+
+    configuration.draw = drawId;
+    var colorArray = colormap.getColor(configuration.draw);
+
+    console.log(drawId);
+
+    configuration.hoverColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 1.0 )';
+    configuration.dragColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 0.8 )';
+  }
+
+  function increaseRadius() {
+    var configuration = brushTool.getConfiguration();
+
+    configuration.radius = (0, _clip2.default)(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+  }
+
+  function decreaseRadius() {
+    var configuration = brushTool.getConfiguration();
+
+    configuration.radius = (0, _clip2.default)(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+  }
+
+  function nextSegmentation() {
+    var configuration = brushTool.getConfiguration();
+    var numberOfColors = getNumberOfColors();
+
+    var drawId = configuration.draw + 1;
+
+    if (drawId === numberOfColors - 1) {
+      drawId = 0;
+    }
+
+    changeDrawColor(drawId);
+  }
+
+  function previousSegmentation() {
+    var configuration = brushTool.getConfiguration();
+    var numberOfColors = getNumberOfColors();
+
+    var drawId = configuration.draw - 1;
+
+    if (drawId < 0) {
+      drawId = numberOfColors - 1;
+    }
+
+    changeDrawColor(drawId);
+  }
+
+  function getNumberOfColors() {
+    var configuration = brushTool.getConfiguration();
+    var colormap = _externalModules2.default.cornerstone.colors.getColormap(configuration.colormapId);
+
+    return colormap.getNumberOfColors();
   }
 
   function mouseMoveCallback(e) {
@@ -14072,13 +14163,6 @@ function brushTool(brushToolInterface) {
     element.removeEventListener(_events2.default.KEY_DOWN, keyDownCallback);
   }
 
-  function changeDrawColor(id) {
-    var configuration = brushTool.getConfiguration();
-
-    configuration.draw = id;
-    (0, _updateBrushDrawColor2.default)(configuration);
-  }
-
   var brushTool = (0, _mouseButtonTool2.default)({
     mouseMoveCallback: mouseMoveCallback,
     mouseDownActivateCallback: mouseDownActivateCallback,
@@ -14089,6 +14173,10 @@ function brushTool(brushToolInterface) {
   brushTool.keyDownCallback = keyDownCallback;
   brushTool.activate = activate;
   brushTool.changeDrawColor = changeDrawColor;
+  brushTool.increaseRadius = increaseRadius;
+  brushTool.decreaseRadius = decreaseRadius;
+  brushTool.nextSegmentation = nextSegmentation;
+  brushTool.previousSegmentation = previousSegmentation;
 
   return brushTool;
 }
@@ -18287,171 +18375,6 @@ exports.setToolOptions = setToolOptions;
 exports.clearToolOptions = clearToolOptions;
 exports.clearToolOptionsByToolType = clearToolOptionsByToolType;
 exports.clearToolOptionsByElement = clearToolOptionsByElement;
-
-/***/ }),
-
-/***/ "./util/brush/brushToolKeyInterface.js":
-/*!*********************************************!*\
-  !*** ./util/brush/brushToolKeyInterface.js ***!
-  \*********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _externalModules = __webpack_require__(/*! ../../externalModules.js */ "./externalModules.js");
-
-var _externalModules2 = _interopRequireDefault(_externalModules);
-
-var _brush = __webpack_require__(/*! ../../paintingTools/brush.js */ "./paintingTools/brush.js");
-
-var _adaptiveBrush = __webpack_require__(/*! ../../paintingTools/adaptiveBrush.js */ "./paintingTools/adaptiveBrush.js");
-
-var _updateBrushDrawColor = __webpack_require__(/*! ./updateBrushDrawColor.js */ "./util/brush/updateBrushDrawColor.js");
-
-var _updateBrushDrawColor2 = _interopRequireDefault(_updateBrushDrawColor);
-
-var _clip = __webpack_require__(/*! ../clip.js */ "./util/clip.js");
-
-var _clip2 = _interopRequireDefault(_clip);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var brushToolKeyInterface = {
-  onKeyDown: onKeyDown
-};
-
-exports.default = brushToolKeyInterface;
-
-
-function onKeyDown(e, toolType) {
-  var eventData = e.detail;
-  var configuration = getConfiguration(toolType);
-  var imageNeedsUpdate = false;
-
-  imageNeedsUpdate = changeToolSize(eventData, configuration) || imageNeedsUpdate;
-  imageNeedsUpdate = changeSegmentation(eventData, configuration) || imageNeedsUpdate;
-
-  if (imageNeedsUpdate) {
-    // Force onImageRendered to fire
-    _externalModules2.default.cornerstone.updateImage(eventData.element);
-  }
-}
-
-function getConfiguration(toolType) {
-  console.log(_brush.brush);
-
-  if (toolType === 'brush') {
-    return _brush.brush.getConfiguration();
-  } else if (toolType === 'adaptiveBrush') {
-    return _adaptiveBrush.adaptiveBrush.getConfiguration();
-  }
-
-  throw 'unknown brushTool: \'' + toolType + '\'';
-}
-
-function changeToolSize(eventData, configuration) {
-  var keyCode = eventData.keyCode;
-  var imageNeedsUpdate = false;
-
-  if (keyCode === 109 || keyCode === 173) {
-    decreaseRadius(configuration);
-    imageNeedsUpdate = true;
-  } else if (keyCode === 61 || keyCode === 107) {
-    increaseRadius(configuration);
-    imageNeedsUpdate = true;
-  }
-
-  return imageNeedsUpdate;
-}
-
-function changeSegmentation(eventData, configuration) {
-  var keyCode = eventData.keyCode;
-  var imageNeedsUpdate = false;
-
-  if (keyCode === 219) {
-
-    imageNeedsUpdate = true;
-  } else if (keyCode === 221) {
-    nextSegmentation(configuration);
-    imageNeedsUpdate = true;
-  }
-
-  return imageNeedsUpdate;
-}
-
-function increaseRadius(configuration) {
-  configuration.radius = (0, _clip2.default)(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
-}
-
-function decreaseRadius(configuration) {
-  configuration.radius = (0, _clip2.default)(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
-}
-
-function nextSegmentation(configuration) {
-  var numberOfColors = getNumberOfColors(configuration);
-
-  configuration.draw += 1;
-
-  if (configuration.draw === numberOfColors - 1) {
-    configuration.draw = 0;
-  }
-
-  (0, _updateBrushDrawColor2.default)(configuration);
-}
-
-function previousSegmentation(configuration) {
-  var numberOfColors = getNumberOfColors(configuration);
-
-  configuration.draw -= 1;
-
-  if (configuration.draw < 0) {
-    configuration.draw = numberOfColors - 1;
-  }
-
-  (0, _updateBrushDrawColor2.default)(configuration);
-}
-
-function getNumberOfColors(brushToolConfig) {
-  var colormap = _externalModules2.default.cornerstone.colors.getColormap(brushToolConfig.colormapId);
-
-  return colormap.getNumberOfColors();
-}
-
-/***/ }),
-
-/***/ "./util/brush/updateBrushDrawColor.js":
-/*!********************************************!*\
-  !*** ./util/brush/updateBrushDrawColor.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = function (configuration) {
-  var colormap = _externalModules2.default.cornerstone.colors.getColormap(configuration.colormapId);
-  var colorArray = colormap.getColor(configuration.draw);
-
-  configuration.hoverColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 1.0 )';
-  configuration.dragColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 0.8 )';
-};
-
-var _externalModules = __webpack_require__(/*! ../../externalModules.js */ "./externalModules.js");
-
-var _externalModules2 = _interopRequireDefault(_externalModules);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
 

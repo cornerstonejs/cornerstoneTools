@@ -4,8 +4,7 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
-import brushToolKeyInterface from '../util/brush/brushToolKeyInterface.js';
-import updateBrushDrawColor from '../util/brush/updateBrushDrawColor.js';
+import clip from '../util/clip.js';
 
 const TOOL_STATE_TOOL_TYPE = 'brush';
 let brushLayerId;
@@ -14,9 +13,104 @@ export default function brushTool (brushToolInterface) {
   const toolType = brushToolInterface.toolType;
 
   function keyDownCallback (e) {
-    console.log('brushTool.keyDownCallback');
+    const eventData = e.detail;
+    let imageNeedsUpdate = false;
 
-    brushToolKeyInterface.onKeyDown(e, toolType);
+    imageNeedsUpdate = keyDownChangeToolSize(eventData) || imageNeedsUpdate;
+    imageNeedsUpdate = keyDownChangeSegmentation(eventData) || imageNeedsUpdate;
+
+    if (imageNeedsUpdate) {
+      // Force onImageRendered to fire
+      external.cornerstone.updateImage(eventData.element);
+    }
+  }
+
+  function keyDownChangeToolSize (eventData) {
+    const keyCode = eventData.keyCode;
+    let imageNeedsUpdate = false;
+
+    if (keyCode === 109 || keyCode === 173) {
+      decreaseRadius();
+      imageNeedsUpdate = true;
+    } else if (keyCode === 61 || keyCode === 107) {
+      increaseRadius();
+      imageNeedsUpdate = true;
+    }
+
+    return imageNeedsUpdate;
+  }
+
+  function keyDownChangeSegmentation (eventData) {
+    const keyCode = eventData.keyCode;
+    let imageNeedsUpdate = false;
+
+    if (keyCode === 219) {
+      previousSegmentation();
+      imageNeedsUpdate = true;
+    } else if (keyCode === 221) {
+      nextSegmentation();
+      imageNeedsUpdate = true;
+    }
+
+    return imageNeedsUpdate;
+  }
+
+  function changeDrawColor (drawId) {
+    const configuration = brushTool.getConfiguration();
+    const colormap = external.cornerstone.colors.getColormap(configuration.colormapId);
+
+    configuration.draw = drawId;
+    const colorArray = colormap.getColor(configuration.draw);
+
+    console.log(drawId);
+
+    configuration.hoverColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+    configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
+  }
+
+  function increaseRadius () {
+    const configuration = brushTool.getConfiguration();
+
+    configuration.radius = clip(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+  }
+
+  function decreaseRadius () {
+    const configuration = brushTool.getConfiguration();
+    
+    configuration.radius = clip(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+  }
+
+  function nextSegmentation () {
+    const configuration = brushTool.getConfiguration();
+    const numberOfColors = getNumberOfColors();
+
+    let drawId = configuration.draw + 1;
+
+    if (drawId === numberOfColors - 1) {
+      drawId = 0;
+    }
+
+    changeDrawColor(drawId);
+  }
+
+  function previousSegmentation () {
+    const configuration = brushTool.getConfiguration();
+    const numberOfColors = getNumberOfColors();
+
+    let drawId = configuration.draw - 1;
+
+    if (drawId < 0) {
+      drawId = numberOfColors - 1;
+    }
+
+    changeDrawColor(drawId);
+  }
+
+  function getNumberOfColors () {
+    const configuration = brushTool.getConfiguration();
+    const colormap = external.cornerstone.colors.getColormap(configuration.colormapId);
+
+    return colormap.getNumberOfColors();
   }
 
   function mouseMoveCallback (e) {
@@ -192,13 +286,6 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   }
 
-  function changeDrawColor (id) {
-    const configuration = brushTool.getConfiguration();
-
-    configuration.draw = id;
-    updateBrushDrawColor(configuration);
-  }
-
   const brushTool = mouseButtonTool({
     mouseMoveCallback,
     mouseDownActivateCallback,
@@ -209,6 +296,10 @@ export default function brushTool (brushToolInterface) {
   brushTool.keyDownCallback = keyDownCallback;
   brushTool.activate = activate;
   brushTool.changeDrawColor = changeDrawColor;
+  brushTool.increaseRadius = increaseRadius;
+  brushTool.decreaseRadius = decreaseRadius;
+  brushTool.nextSegmentation = nextSegmentation;
+  brushTool.previousSegmentation = previousSegmentation;
 
   return brushTool;
 }

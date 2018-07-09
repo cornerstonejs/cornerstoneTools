@@ -38,9 +38,16 @@
 
       <div class="col-xs-3">
 
-        <div class="row">
+        <label for="toolColor">Color</label>
+        <div class="row" id="toolColor">
           <button id="drawPrev" class="btn btn-primary">Prev Color</button>
           <button id="drawNext" class="btn btn-primary">Next Color</button>
+        </div>
+
+        <label for="toolSize">Size</label>
+        <div class="row" id="toolSize">
+          <button id="drawDecrease" class="btn btn-primary">-</button>
+          <button id="drawIncrease" class="btn btn-primary">+</button>
         </div>
         <div class="row">
             <label for="toolType">Type</label>
@@ -106,9 +113,6 @@
   cornerstone.loadImage(imageIds[0]).then(function(image) {
     cornerstone.addLayer(element, image);
     cornerstone.updateImage(element);
-    const viewport = cornerstone.getViewport(element);
-    viewport.pixelReplication = true;
-    cornerstone.setViewport(element, viewport);
 
     cornerstoneTools.addStackStateManager(element, ['stack']);
     cornerstoneTools.addToolState(element, 'stack', stack);
@@ -156,6 +160,24 @@
     console.log(drawId);
 
     cornerstoneTools[toolType].changeDrawColor(drawId);
+
+    element.focus();
+  });
+
+  const drawIncreaseButton = document.getElementById('drawIncrease');
+  drawIncreaseButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+
+    cornerstoneTools[toolType].increaseRadius();
+
+    element.focus();
+  });
+
+  const drawDecreaseButton = document.getElementById('drawDecrease');
+  drawDecreaseButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+
+    cornerstoneTools[toolType].decreaseRadius();
 
     element.focus();
   });
