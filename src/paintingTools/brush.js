@@ -3,15 +3,19 @@ import { getToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
+import { globalImageIdSpecificToolStateManager } from '../stateManagement/imageIdSpecificStateManager.js';
 
 // This module is for creating segmentation overlays
+
 const TOOL_STATE_TOOL_TYPE = 'brush';
 const toolType = 'brush';
 const configuration = {
   draw: 1,
-  radius: 3,
-  hoverColor: 'green',
-  dragColor: 'yellow'
+  radius: 5,
+  minRadius: 1,
+  maxRadius: 20,
+  hoverColor: 'rgba(230, 25, 75, 1.0)',
+  dragColor: 'rgba(230, 25, 75, 0.8)'
 };
 
 let lastImageCoords;
@@ -38,6 +42,8 @@ function paint (eventData) {
   drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
 
   layer.invalid = true;
+
+  console.log(globalImageIdSpecificToolStateManager.saveToolState());
 
   external.cornerstone.updateImage(element);
 }

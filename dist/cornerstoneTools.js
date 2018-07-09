@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.3.6 - 2018-07-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.3.6 - 2018-07-09 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -13440,11 +13440,12 @@ var TOOL_STATE_TOOL_TYPE = 'brush';
 var toolType = 'adaptiveBrush';
 var configuration = {
   draw: 1,
-  radius: 3,
+  radius: 5,
   tolerance: 5,
   minRadius: 1,
-  hoverColor: 'green',
-  dragColor: 'yellow'
+  maxRadius: 20,
+  hoverColor: 'rgba(230, 25, 75, 1.0)',
+  dragColor: 'rgba(230, 25, 75, 0.8)'
 };
 
 var lastImageCoords = void 0;
@@ -13649,7 +13650,11 @@ function onImageRendered(e) {
   var color = dragging ? configuration.dragColor : configuration.hoverColor;
   var element = eventData.element;
 
-  currentRadius = currentRadius || configuration.radius;
+  if (dragging) {
+    currentRadius = currentRadius || configuration.radius;
+  } else {
+    currentRadius = configuration.radius;
+  }
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -13704,16 +13709,21 @@ var _getCircle2 = _interopRequireDefault(_getCircle);
 
 var _drawBrush = __webpack_require__(/*! ./drawBrush.js */ "./paintingTools/drawBrush.js");
 
+var _imageIdSpecificStateManager = __webpack_require__(/*! ../stateManagement/imageIdSpecificStateManager.js */ "./stateManagement/imageIdSpecificStateManager.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // This module is for creating segmentation overlays
+
 var TOOL_STATE_TOOL_TYPE = 'brush';
 var toolType = 'brush';
 var configuration = {
   draw: 1,
-  radius: 3,
-  hoverColor: 'green',
-  dragColor: 'yellow'
+  radius: 5,
+  minRadius: 1,
+  maxRadius: 20,
+  hoverColor: 'rgba(230, 25, 75, 1.0)',
+  dragColor: 'rgba(230, 25, 75, 0.8)'
 };
 
 var lastImageCoords = void 0;
@@ -13744,6 +13754,8 @@ function paint(eventData) {
   (0, _drawBrush.drawBrushPixels)(pointerArray, pixelData, brushPixelValue, columns);
 
   layer.invalid = true;
+
+  console.log(_imageIdSpecificStateManager.globalImageIdSpecificToolStateManager.saveToolState());
 
   _externalModules2.default.cornerstone.updateImage(element);
 }
@@ -13860,6 +13872,14 @@ var _isMouseButtonEnabled2 = _interopRequireDefault(_isMouseButtonEnabled);
 
 var _toolOptions = __webpack_require__(/*! ../toolOptions.js */ "./toolOptions.js");
 
+var _brushToolKeyInterface = __webpack_require__(/*! ../util/brush/brushToolKeyInterface.js */ "./util/brush/brushToolKeyInterface.js");
+
+var _brushToolKeyInterface2 = _interopRequireDefault(_brushToolKeyInterface);
+
+var _updateBrushDrawColor = __webpack_require__(/*! ../util/brush/updateBrushDrawColor.js */ "./util/brush/updateBrushDrawColor.js");
+
+var _updateBrushDrawColor2 = _interopRequireDefault(_updateBrushDrawColor);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var TOOL_STATE_TOOL_TYPE = 'brush';
@@ -13867,6 +13887,12 @@ var brushLayerId = void 0;
 
 function brushTool(brushToolInterface) {
   var toolType = brushToolInterface.toolType;
+
+  function keyDownCallback(e) {
+    console.log('brushTool.keyDownCallback');
+
+    _brushToolKeyInterface2.default.onKeyDown(e, brushTool.getConfiguration());
+  }
 
   function mouseMoveCallback(e) {
     brushToolInterface.onMouseMove(e);
@@ -13931,6 +13957,32 @@ function brushTool(brushToolInterface) {
     brushToolInterface.onImageRendered(e);
   }
 
+  function setBrushColormap(colormapId) {
+    var colormap = _externalModules2.default.cornerstone.colors.getColormap(colormapId);
+
+    colormap.setNumberOfColors(20);
+    colormap.setColor(0, [255, 255, 255, 0]);
+    colormap.setColor(1, [230, 25, 75, 102]);
+    colormap.setColor(2, [60, 180, 175, 102]);
+    colormap.setColor(3, [255, 225, 25, 102]);
+    colormap.setColor(4, [0, 130, 200, 102]);
+    colormap.setColor(5, [245, 130, 48, 102]);
+    colormap.setColor(6, [145, 30, 180, 102]);
+    colormap.setColor(7, [70, 240, 240, 102]);
+    colormap.setColor(8, [240, 50, 230, 102]);
+    colormap.setColor(9, [210, 245, 60, 102]);
+    colormap.setColor(10, [250, 190, 190, 102]);
+    colormap.setColor(11, [0, 128, 128, 102]);
+    colormap.setColor(12, [230, 190, 255, 102]);
+    colormap.setColor(13, [170, 110, 40, 102]);
+    colormap.setColor(14, [255, 250, 200, 102]);
+    colormap.setColor(15, [128, 0, 0, 102]);
+    colormap.setColor(16, [170, 255, 195, 102]);
+    colormap.setColor(17, [128, 128, 0, 102]);
+    colormap.setColor(18, [255, 215, 180, 102]);
+    colormap.setColor(19, [0, 0, 128, 102]);
+  }
+
   function activate(element, mouseButtonMask) {
     (0, _toolOptions.setToolOptions)(toolType, element, { mouseButtonMask: mouseButtonMask });
 
@@ -13943,6 +13995,9 @@ function brushTool(brushToolInterface) {
     element.removeEventListener(_events2.default.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(_events2.default.MOUSE_MOVE, mouseMoveCallback);
 
+    element.removeEventListener(_events2.default.KEY_DOWN, keyDownCallback);
+    element.addEventListener(_events2.default.KEY_DOWN, keyDownCallback);
+
     var enabledElement = _externalModules2.default.cornerstone.getEnabledElement(element);
     var _enabledElement$image = enabledElement.image,
         width = _enabledElement$image.width,
@@ -13954,13 +14009,11 @@ function brushTool(brushToolInterface) {
     var colormapId = configuration.colormapId;
 
     if (!colormapId) {
+      var _configuration = brushTool.getConfiguration();
+
       colormapId = 'BrushColorMap';
-
-      var colormap = _externalModules2.default.cornerstone.colors.getColormap(colormapId);
-
-      colormap.setNumberOfColors(2);
-      colormap.setColor(0, [0, 0, 0, 0]);
-      colormap.setColor(1, [255, 0, 0, 255]);
+      setBrushColormap(colormapId);
+      _configuration.colormapId = colormapId;
     }
 
     var labelMapImage = {
@@ -14016,6 +14069,14 @@ function brushTool(brushToolInterface) {
     element.removeEventListener(_events2.default.IMAGE_RENDERED, onImageRendered);
     element.removeEventListener(_events2.default.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(_events2.default.MOUSE_MOVE, mouseMoveCallback);
+    element.removeEventListener(_events2.default.KEY_DOWN, keyDownCallback);
+  }
+
+  function changeDrawColor(id) {
+    var configuration = brushTool.getConfiguration();
+
+    configuration.draw = id;
+    (0, _updateBrushDrawColor2.default)(configuration);
   }
 
   var brushTool = (0, _mouseButtonTool2.default)({
@@ -14025,7 +14086,9 @@ function brushTool(brushToolInterface) {
     deactivate: deactivate
   });
 
+  brushTool.keyDownCallback = keyDownCallback;
   brushTool.activate = activate;
+  brushTool.changeDrawColor = changeDrawColor;
 
   return brushTool;
 }
@@ -18224,6 +18287,138 @@ exports.setToolOptions = setToolOptions;
 exports.clearToolOptions = clearToolOptions;
 exports.clearToolOptionsByToolType = clearToolOptionsByToolType;
 exports.clearToolOptionsByElement = clearToolOptionsByElement;
+
+/***/ }),
+
+/***/ "./util/brush/brushToolKeyInterface.js":
+/*!*********************************************!*\
+  !*** ./util/brush/brushToolKeyInterface.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _externalModules = __webpack_require__(/*! ../../externalModules.js */ "./externalModules.js");
+
+var _externalModules2 = _interopRequireDefault(_externalModules);
+
+var _updateBrushDrawColor = __webpack_require__(/*! ./updateBrushDrawColor.js */ "./util/brush/updateBrushDrawColor.js");
+
+var _updateBrushDrawColor2 = _interopRequireDefault(_updateBrushDrawColor);
+
+var _clip = __webpack_require__(/*! ../clip.js */ "./util/clip.js");
+
+var _clip2 = _interopRequireDefault(_clip);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var brushToolKeyInterface = {
+  onKeyDown: onKeyDown
+};
+
+exports.default = brushToolKeyInterface;
+
+
+function onKeyDown(e, brushToolConfig) {
+  var eventData = e.detail;
+  var imageNeedsUpdate = false;
+
+  imageNeedsUpdate = changeToolSize(eventData, brushToolConfig) || imageNeedsUpdate;
+  imageNeedsUpdate = changeSegmentation(eventData, brushToolConfig) || imageNeedsUpdate;
+
+  if (imageNeedsUpdate) {
+    // Force onImageRendered to fire
+    _externalModules2.default.cornerstone.updateImage(eventData.element);
+  }
+}
+
+function changeToolSize(eventData, configuration) {
+  var keyCode = eventData.keyCode;
+  var imageNeedsUpdate = false;
+
+  if (keyCode === 109 || keyCode === 173) {
+    configuration.radius = (0, _clip2.default)(configuration.radius - 1, configuration.minRadius, configuration.maxRadius);
+    imageNeedsUpdate = true;
+  } else if (keyCode === 61 || keyCode === 107) {
+    configuration.radius = (0, _clip2.default)(configuration.radius + 1, configuration.minRadius, configuration.maxRadius);
+    imageNeedsUpdate = true;
+  }
+
+  return imageNeedsUpdate;
+}
+
+function changeSegmentation(eventData, configuration) {
+  var keyCode = eventData.keyCode;
+  var imageNeedsUpdate = false;
+
+  if (keyCode === 219) {
+    var numberOfColors = getNumberOfColors(configuration);
+
+    configuration.draw -= 1;
+
+    if (configuration.draw < 0) {
+      configuration.draw = numberOfColors - 1;
+    }
+
+    (0, _updateBrushDrawColor2.default)(configuration);
+    imageNeedsUpdate = true;
+  } else if (keyCode === 221) {
+    var _numberOfColors = getNumberOfColors(configuration);
+
+    configuration.draw += 1;
+
+    if (configuration.draw === _numberOfColors - 1) {
+      configuration.draw = 0;
+    }
+
+    (0, _updateBrushDrawColor2.default)(configuration);
+    imageNeedsUpdate = true;
+  }
+
+  return imageNeedsUpdate;
+}
+
+function getNumberOfColors(brushToolConfig) {
+  var colormap = _externalModules2.default.cornerstone.colors.getColormap(brushToolConfig.colormapId);
+
+  return colormap.getNumberOfColors();
+}
+
+/***/ }),
+
+/***/ "./util/brush/updateBrushDrawColor.js":
+/*!********************************************!*\
+  !*** ./util/brush/updateBrushDrawColor.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = function (configuration) {
+  var colormap = _externalModules2.default.cornerstone.colors.getColormap(configuration.colormapId);
+  var colorArray = colormap.getColor(configuration.draw);
+
+  configuration.hoverColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 1.0 )';
+  configuration.dragColor = 'rgba(' + colorArray[[0]] + ', ' + colorArray[[1]] + ', ' + colorArray[[2]] + ', 0.8 )';
+};
+
+var _externalModules = __webpack_require__(/*! ../../externalModules.js */ "./externalModules.js");
+
+var _externalModules2 = _interopRequireDefault(_externalModules);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
 

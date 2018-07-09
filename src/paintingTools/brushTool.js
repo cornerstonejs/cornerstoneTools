@@ -4,12 +4,20 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import mouseButtonTool from '../imageTools/mouseButtonTool.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import brushToolKeyInterface from '../util/brush/brushToolKeyInterface.js';
+import updateBrushDrawColor from '../util/brush/updateBrushDrawColor.js';
 
 const TOOL_STATE_TOOL_TYPE = 'brush';
 let brushLayerId;
 
 export default function brushTool (brushToolInterface) {
   const toolType = brushToolInterface.toolType;
+
+  function keyDownCallback (e) {
+    console.log('brushTool.keyDownCallback');
+
+    brushToolKeyInterface.onKeyDown(e, brushTool.getConfiguration());
+  }
 
   function mouseMoveCallback (e) {
     brushToolInterface.onMouseMove(e);
@@ -74,6 +82,32 @@ export default function brushTool (brushToolInterface) {
     brushToolInterface.onImageRendered(e);
   }
 
+  function setBrushColormap (colormapId) {
+    const colormap = external.cornerstone.colors.getColormap(colormapId);
+
+    colormap.setNumberOfColors(20);
+    colormap.setColor(0, [255, 255, 255, 0]);
+    colormap.setColor(1, [230, 25, 75, 102]);
+    colormap.setColor(2, [60, 180, 175, 102]);
+    colormap.setColor(3, [255, 225, 25, 102]);
+    colormap.setColor(4, [0, 130, 200, 102]);
+    colormap.setColor(5, [245, 130, 48, 102]);
+    colormap.setColor(6, [145, 30, 180, 102]);
+    colormap.setColor(7, [70, 240, 240, 102]);
+    colormap.setColor(8, [240, 50, 230, 102]);
+    colormap.setColor(9, [210, 245, 60, 102]);
+    colormap.setColor(10, [250, 190, 190, 102]);
+    colormap.setColor(11, [0, 128, 128, 102]);
+    colormap.setColor(12, [230, 190, 255, 102]);
+    colormap.setColor(13, [170, 110, 40, 102]);
+    colormap.setColor(14, [255, 250, 200, 102]);
+    colormap.setColor(15, [128, 0, 0, 102]);
+    colormap.setColor(16, [170, 255, 195, 102]);
+    colormap.setColor(17, [128, 128, 0, 102]);
+    colormap.setColor(18, [255, 215, 180, 102]);
+    colormap.setColor(19, [0, 0, 128, 102]);
+  }
+
   function activate (element, mouseButtonMask) {
     setToolOptions(toolType, element, { mouseButtonMask });
 
@@ -86,6 +120,9 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
 
+    element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+    element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+
     const enabledElement = external.cornerstone.getEnabledElement(element);
     const { width, height } = enabledElement.image;
     let pixelData = new Uint8ClampedArray(width * height);
@@ -94,13 +131,11 @@ export default function brushTool (brushToolInterface) {
     let colormapId = configuration.colormapId;
 
     if (!colormapId) {
+      const configuration = brushTool.getConfiguration();
+
       colormapId = 'BrushColorMap';
-
-      const colormap = external.cornerstone.colors.getColormap(colormapId);
-
-      colormap.setNumberOfColors(2);
-      colormap.setColor(0, [0, 0, 0, 0]);
-      colormap.setColor(1, [255, 0, 0, 255]);
+      setBrushColormap(colormapId);
+      configuration.colormapId = colormapId;
     }
 
     const labelMapImage = {
@@ -154,6 +189,14 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+    element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+  }
+
+  function changeDrawColor (id) {
+    const configuration = brushTool.getConfiguration();
+
+    configuration.draw = id;
+    updateBrushDrawColor(configuration);
   }
 
   const brushTool = mouseButtonTool({
@@ -163,7 +206,9 @@ export default function brushTool (brushToolInterface) {
     deactivate
   });
 
+  brushTool.keyDownCallback = keyDownCallback;
   brushTool.activate = activate;
+  brushTool.changeDrawColor = changeDrawColor;
 
   return brushTool;
 }
