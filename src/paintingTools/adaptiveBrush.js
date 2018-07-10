@@ -215,7 +215,7 @@ function onImageRendered (e) {
 
   if (configuration.active) {
     const pointerArray = getCircle(currentRadius, rows, columns, x, y);
-    
+
     drawBrushOnCanvas(pointerArray, context, color, element);
   }
 }

@@ -63,8 +63,6 @@ export default function brushTool (brushToolInterface) {
     configuration.draw = drawId;
     const colorArray = colormap.getColor(configuration.draw);
 
-    console.log(drawId);
-
     configuration.hoverColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
     configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
   }
@@ -87,7 +85,7 @@ export default function brushTool (brushToolInterface) {
 
     let drawId = configuration.draw + 1;
 
-    if (drawId === numberOfColors - 1) {
+    if (drawId === numberOfColors) {
       drawId = 0;
     }
 
@@ -297,7 +295,7 @@ export default function brushTool (brushToolInterface) {
     element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 
     const configuration = brushTool.getConfiguration();
-    
+
     configuration.active = false;
   }
 

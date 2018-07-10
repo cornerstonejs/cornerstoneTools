@@ -145,9 +145,6 @@
       drawId = 0;
     }
 
-    console.log(drawId);
-
-
     cornerstoneTools[toolType].changeDrawColor(drawId);
 
     element.focus();
@@ -162,8 +159,6 @@
     if (drawId < 0 ) {
       drawId = numberOfColors - 1;
     }
-
-    console.log(drawId);
 
     cornerstoneTools[toolType].changeDrawColor(drawId);
 
@@ -192,8 +187,6 @@
   deactivateButton.addEventListener('click', function(){
     cornerstoneTools.brush.deactivate(element);
     cornerstoneTools.adaptiveBrush.deactivate(element);
-
-    console.log('deactivate');
 
     cornerstone.updateImage(element, true);
     element.focus();

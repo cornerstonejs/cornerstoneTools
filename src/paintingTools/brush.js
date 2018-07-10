@@ -100,10 +100,9 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-
   if (configuration.active) {
     const pointerArray = getCircle(radius, rows, columns, x, y);
-    
+
     drawBrushOnCanvas(pointerArray, context, color, element);
   }
 }
