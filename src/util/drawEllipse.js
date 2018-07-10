@@ -1,3 +1,5 @@
+import { path } from './drawing.js';
+
 // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
 
 /**
@@ -12,12 +14,11 @@ export default function (context, x, y, w, h) {
     xm = x + w / 2, // X-middle
     ym = y + h / 2; // Y-middle
 
-  context.beginPath();
-  context.moveTo(x, ym);
-  context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-  context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-  context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-  context.closePath();
-  context.stroke();
+  path(context, {}, (context) => {
+    context.moveTo(x, ym);
+    context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+    context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
+    context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+  });
 }

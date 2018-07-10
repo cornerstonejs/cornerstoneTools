@@ -1,7 +1,7 @@
 import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 const configuration = {
   color: 'white',
@@ -81,14 +81,13 @@ function drawVerticalScalebar (context, imageAttributes) {
     y: imageAttributes.verticalLine.end.y
   };
 
-  context.beginPath();
-  context.strokeStyle = imageAttributes.color;
-  context.lineWidth = imageAttributes.lineWidth;
+  const { color, lineWidth } = imageAttributes;
 
-  drawLine(context, startPoint, endPoint);
-  drawVerticalScalebarIntervals(context, imageAttributes);
-
-  context.stroke();
+  path(context, { color,
+    lineWidth }, (context) => {
+    drawLine(context, startPoint, endPoint);
+    drawVerticalScalebarIntervals(context, imageAttributes);
+  });
 }
 
 function drawHorizontalScalebar (context, imageAttributes) {
@@ -108,13 +107,13 @@ function drawHorizontalScalebar (context, imageAttributes) {
 function drawScalebars (context, imageAttributes) {
   context.shadowColor = imageAttributes.shadowColor;
   context.shadowBlur = imageAttributes.shadowBlur;
-  context.strokeStyle = imageAttributes.color;
-  context.lineWidth = imageAttributes.lineWidth;
+  const { color, lineWidth } = imageAttributes;
 
-  context.beginPath();
-  drawVerticalScalebar(context, imageAttributes);
-  drawHorizontalScalebar(context, imageAttributes);
-  context.stroke();
+  path(context, { color,
+    lineWidth }, (context) => {
+    drawVerticalScalebar(context, imageAttributes);
+    drawHorizontalScalebar(context, imageAttributes);
+  });
 }
 
 // Computes the max bound for scales on the image

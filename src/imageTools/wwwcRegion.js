@@ -7,7 +7,7 @@ import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import clip from '../util/clip.js';
-import { draw } from '../util/drawing.js';
+import { draw, path } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -257,11 +257,10 @@ function onImageRendered (e) {
       context.shadowOffsetY = config.shadowOffsetY || 1;
     }
 
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.rect(left, top, width, height);
-    context.stroke();
+    path(context, { color,
+      lineWidth }, (context) => {
+      context.rect(left, top, width, height);
+    });
   });
 }
 

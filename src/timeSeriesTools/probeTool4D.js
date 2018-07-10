@@ -6,7 +6,7 @@ import MeasurementManager from '../measurementManager/measurementManager.js';
 import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
 import textStyle from '../stateManagement/textStyle.js';
 import drawTextBox from '../util/drawTextBox.js';
-import { draw } from '../util/drawing.js';
+import { draw, path } from '../util/drawing.js';
 
 const toolType = 'probe4D';
 
@@ -91,9 +91,9 @@ function onImageRendered (e) {
       const data = toolData.data[i];
 
       // Draw the handles
-      context.beginPath();
-      drawHandles(context, eventData, data.handles, color);
-      context.stroke();
+      path(context, {}, (context) => {
+        drawHandles(context, eventData, data.handles, color);
+      });
 
       context.font = font;
 

@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.min.js",
   "keywords": [
@@ -30,6 +30,7 @@
     "eslint-fix": "eslint -c .eslintrc.js --fix src",
     "prepublish": "yarn run build",
     "start": "npm run webpack",
+    "start:dev": "webpack-dev-server --config ./config/webpack/webpack-dev",
     "test": "npm run test:chrome",
     "test:watch": "karma start config/karma/karma-watch.js",
     "test:chrome": "karma start config/karma/karma-chrome.js",
@@ -75,7 +76,8 @@
     "shx": "^0.2.2",
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "^4.9.1",
-    "webpack-cli": "^2.1.4"
+    "webpack-cli": "^2.1.4",
+    "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
     "cornerstone-math": "^0.1.6"

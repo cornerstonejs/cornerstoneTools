@@ -7,7 +7,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 const toolType = 'rectangleRoi';
 
@@ -183,11 +183,10 @@ function onImageRendered (e) {
       const heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
 
       // Draw the rectangle on the canvas
-      context.beginPath();
-      context.strokeStyle = color;
-      context.lineWidth = lineWidth;
-      context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
-      context.stroke();
+      path(context, { color,
+        lineWidth }, (context) => {
+        context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
+      });
 
       // If the tool configuration specifies to only draw the handles on hover / active,
       // Follow this logic
