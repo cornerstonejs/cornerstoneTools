@@ -160,6 +160,7 @@ export default function brushTool (brushToolInterface) {
     const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
     let pixelData;
 
+
     if (toolData) {
       pixelData = toolData.data[0].pixelData;
     } else {
@@ -223,6 +224,8 @@ export default function brushTool (brushToolInterface) {
     let pixelData = new Uint8ClampedArray(width * height);
 
     const configuration = brushTool.getConfiguration();
+
+    configuration.active = true;
     let colormapId = configuration.colormapId;
 
     if (!colormapId) {
@@ -290,6 +293,12 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
+
+    element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+
+    const configuration = brushTool.getConfiguration();
+    
+    configuration.active = false;
   }
 
   const brushTool = mouseButtonTool({

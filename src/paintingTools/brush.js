@@ -14,7 +14,8 @@ const configuration = {
   minRadius: 1,
   maxRadius: 20,
   hoverColor: 'rgba(230, 25, 75, 1.0)',
-  dragColor: 'rgba(230, 25, 75, 0.8)'
+  dragColor: 'rgba(230, 25, 75, 0.8)',
+  active: false
 };
 
 let lastImageCoords;
@@ -98,9 +99,13 @@ function onImageRendered (e) {
   const element = eventData.element;
 
   context.setTransform(1, 0, 0, 1, 0, 0);
-  const pointerArray = getCircle(radius, rows, columns, x, y);
 
-  drawBrushOnCanvas(pointerArray, context, color, element);
+
+  if (configuration.active) {
+    const pointerArray = getCircle(radius, rows, columns, x, y);
+    
+    drawBrushOnCanvas(pointerArray, context, color, element);
+  }
 }
 
 const brush = brushTool({

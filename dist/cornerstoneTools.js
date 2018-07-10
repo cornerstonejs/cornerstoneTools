@@ -13445,7 +13445,8 @@ var configuration = {
   minRadius: 1,
   maxRadius: 20,
   hoverColor: 'rgba(230, 25, 75, 1.0)',
-  dragColor: 'rgba(230, 25, 75, 0.8)'
+  dragColor: 'rgba(230, 25, 75, 0.8)',
+  active: false
 };
 
 var lastImageCoords = void 0;
@@ -13658,9 +13659,11 @@ function onImageRendered(e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  var pointerArray = (0, _getCircle2.default)(currentRadius, rows, columns, x, y);
+  if (configuration.active) {
+    var pointerArray = (0, _getCircle2.default)(currentRadius, rows, columns, x, y);
 
-  (0, _drawBrush.drawBrushOnCanvas)(pointerArray, context, color, element);
+    (0, _drawBrush.drawBrushOnCanvas)(pointerArray, context, color, element);
+  }
 }
 
 var adaptiveBrush = (0, _brushTool2.default)({
@@ -13721,7 +13724,8 @@ var configuration = {
   minRadius: 1,
   maxRadius: 20,
   hoverColor: 'rgba(230, 25, 75, 1.0)',
-  dragColor: 'rgba(230, 25, 75, 0.8)'
+  dragColor: 'rgba(230, 25, 75, 0.8)',
+  active: false
 };
 
 var lastImageCoords = void 0;
@@ -13813,9 +13817,12 @@ function onImageRendered(e) {
   var element = eventData.element;
 
   context.setTransform(1, 0, 0, 1, 0, 0);
-  var pointerArray = (0, _getCircle2.default)(radius, rows, columns, x, y);
 
-  (0, _drawBrush.drawBrushOnCanvas)(pointerArray, context, color, element);
+  if (configuration.active) {
+    var pointerArray = (0, _getCircle2.default)(radius, rows, columns, x, y);
+
+    (0, _drawBrush.drawBrushOnCanvas)(pointerArray, context, color, element);
+  }
 }
 
 var brush = (0, _brushTool2.default)({
@@ -14094,6 +14101,8 @@ function brushTool(brushToolInterface) {
     var pixelData = new Uint8ClampedArray(width * height);
 
     var configuration = brushTool.getConfiguration();
+
+    configuration.active = true;
     var colormapId = configuration.colormapId;
 
     if (!colormapId) {
@@ -14163,6 +14172,12 @@ function brushTool(brushToolInterface) {
     element.removeEventListener(_events2.default.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(_events2.default.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(_events2.default.KEY_DOWN, keyDownCallback);
+
+    element.addEventListener(_events2.default.IMAGE_RENDERED, onImageRendered);
+
+    var configuration = brushTool.getConfiguration();
+
+    configuration.active = false;
   }
 
   var brushTool = (0, _mouseButtonTool2.default)({

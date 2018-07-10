@@ -57,6 +57,11 @@
             </select>
         </div>
 
+        <label for="toolDeactivate">Deactivate</label>
+        <div class="row" id="toolDeactivate">
+          <button id="deactivate" class="btn btn-primary">Deactivate</button>
+        </div>
+
       </div>
 
       <div class="col-xs-9">
@@ -183,6 +188,17 @@
     element.focus();
   });
 
+  const deactivateButton = document.getElementById('deactivate');
+  deactivateButton.addEventListener('click', function(){
+    cornerstoneTools.brush.deactivate(element);
+    cornerstoneTools.adaptiveBrush.deactivate(element);
+
+    console.log('deactivate');
+
+    cornerstone.updateImage(element, true);
+    element.focus();
+  });
+
   const toolTypeSelect = document.getElementById('toolType');
   toolTypeSelect.addEventListener('change', function(){
     cornerstoneTools.brush.deactivate(element);
@@ -193,5 +209,7 @@
     cornerstone.updateImage(element, true);
     element.focus();
   });
+
+
 </script>
 </html>
