@@ -1157,7 +1157,8 @@ const freehand = {
   activate,
   deactivate,
   getConfiguration,
-  setConfiguration
+  setConfiguration,
+  pointNearTool
 };
 
 export { freehand };
