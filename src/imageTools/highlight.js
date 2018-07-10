@@ -5,7 +5,7 @@ import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, path } from '../util/drawing.js';
 
 const toolType = 'highlight';
 
@@ -115,7 +115,7 @@ function onImageRendered (e) {
   }
 
   draw(context, (context) => {
-    const color = toolColors.getColorIfActive(data);
+
 
     const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
     const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
@@ -128,26 +128,26 @@ function onImageRendered (e) {
     };
 
       // Draw dark fill outside the rectangle
-    context.beginPath();
-    context.strokeStyle = 'transparent';
 
-    context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+    let color = 'transparent';
+    const fillStyle = 'rgba(0,0,0,0.7)';
 
-    context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
-    context.stroke();
-    context.fillStyle = 'rgba(0,0,0,0.7)';
-    context.fill();
-    context.closePath();
+    path(context, { color,
+      fillStyle }, (context) => {
+      context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
+      context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
+    });
+
+    color = toolColors.getColorIfActive(data);
 
     // Draw dashed stroke rectangle
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.setLineDash([4]);
-    context.strokeRect(rect.left, rect.top, rect.width, rect.height);
+    const lineDash = [4];
 
-    // Strange fix, but restore doesn't seem to reset the line dashes?
-    context.setLineDash([]);
+    path(context, { color,
+      lineWidth,
+      lineDash }, (context) => {
+      context.rect(rect.left, rect.top, rect.width, rect.height);
+    });
 
     // Draw the handles last, so they will be on top of the overlay
     drawHandles(context, eventData, data.handles, color);
