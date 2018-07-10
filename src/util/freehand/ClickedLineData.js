@@ -1,8 +1,4 @@
 /**
-* @author JamesAPetts
-*/
-
-/**
  * @typedef {Object} ClickedLineData
  * @property {Number} toolIndex ID of the tool that the line corresponds to.
  * @property {Object} handleIndexArray An array of the handle indicies that correspond to the line segment.

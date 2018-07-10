@@ -9,9 +9,6 @@ export class Sculpter {
   /**
   * Sculpts the freehand ROI with the circular freehandSculpter tool, moving,
   * adding and removing handles as necessary.
-  *
-  * @author JamesAPetts
-  *
   * @param {Object} eventData - Data object associated with the event.
   * @param {Object} dataHandles - Data object containing tool handle data.
   */
