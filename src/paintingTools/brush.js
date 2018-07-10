@@ -4,6 +4,22 @@ import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
 
+/* Safari and Edge polyfill for createImageBitmap
+ * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
+ */
+if (!('createImageBitmap' in window)) {
+  window.createImageBitmap = async function createImageBitmap (blob) {
+    console.log('polyfilling!');
+    return new Promise((resolve,reject) => {
+      let img = document.createElement('img');
+      img.addEventListener('load', function() {
+        resolve(this);
+      });
+      img.src = URL.createObjectURL(blob);
+    });
+  }
+}
+
 // This module is for creating segmentation overlays
 const TOOL_STATE_TOOL_TYPE = 'brush';
 const toolType = 'brush';
