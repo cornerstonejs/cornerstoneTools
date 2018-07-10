@@ -9,11 +9,13 @@ const TOOL_STATE_TOOL_TYPE = 'brush';
 const toolType = 'adaptiveBrush';
 const configuration = {
   draw: 1,
-  radius: 3,
+  radius: 5,
   tolerance: 5,
   minRadius: 1,
-  hoverColor: 'green',
-  dragColor: 'yellow'
+  maxRadius: 20,
+  hoverColor: 'rgba(230, 25, 75, 1.0)',
+  dragColor: 'rgba(230, 25, 75, 0.8)',
+  active: false
 };
 
 let lastImageCoords;
@@ -202,13 +204,20 @@ function onImageRendered (e) {
   const color = dragging ? configuration.dragColor : configuration.hoverColor;
   const element = eventData.element;
 
-  currentRadius = currentRadius || configuration.radius;
+  if (dragging) {
+    currentRadius = currentRadius || configuration.radius;
+  } else {
+    currentRadius = configuration.radius;
+  }
+
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  const pointerArray = getCircle(currentRadius, rows, columns, x, y);
+  if (configuration.active) {
+    const pointerArray = getCircle(currentRadius, rows, columns, x, y);
 
-  drawBrushOnCanvas(pointerArray, context, color, element);
+    drawBrushOnCanvas(pointerArray, context, color, element);
+  }
 }
 
 const adaptiveBrush = brushTool({
