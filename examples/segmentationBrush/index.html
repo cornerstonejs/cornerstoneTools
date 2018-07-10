@@ -116,9 +116,7 @@
 
   cornerstone.enable(element);
   cornerstone.loadImage(imageIds[0]).then(function(image) {
-    // TEMP -- This line demonstrates the issue experienced in the OHIF viewer. Ideally displayImage would be called first and then the tool deals with adding an additional layer.
     cornerstone.displayImage(element, image);
-    // TEMP -- Use these two lines instead to render correctly (adds the image as the first layer instead):
 
     cornerstoneTools.addStackStateManager(element, ['stack']);
     cornerstoneTools.addToolState(element, 'stack', stack);
