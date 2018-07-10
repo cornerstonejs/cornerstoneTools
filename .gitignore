@@ -1,8 +1,8 @@
 ## Directorties
 node_modules
 coverage/
-docs/_book/
 dist/
+docs/_book/
 
 ## Files
 docs/api.md
