@@ -8,6 +8,7 @@ import clip from '../util/clip.js';
 
 const TOOL_STATE_TOOL_TYPE = 'brush';
 let brushLayerId;
+let imageLayerId;
 
 export default function brushTool (brushToolInterface) {
   const toolType = brushToolInterface.toolType;
@@ -263,8 +264,10 @@ export default function brushTool (brushToolInterface) {
       }
     };
 
-    // TEMP add the layer
-    external.cornerstone.addLayer(element, element.image);
+    // Add imageLayer if it doesn't exist.
+    if (!imageLayerId) {
+      imageLayerId = external.cornerstone.addLayer(element, external.cornerstone.getEnabledElement(element).image);
+    }
 
     if (brushLayerId) {
       layer = external.cornerstone.getLayer(element, brushLayerId);

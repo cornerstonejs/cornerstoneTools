@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 2.3.6 - 2018-07-09 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 2.3.6 - 2018-07-10 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -13876,6 +13876,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var TOOL_STATE_TOOL_TYPE = 'brush';
 var brushLayerId = void 0;
+var imageLayerId = void 0;
 
 function brushTool(brushToolInterface) {
   var toolType = brushToolInterface.toolType;
@@ -14136,8 +14137,10 @@ function brushTool(brushToolInterface) {
       }
     };
 
-    // TEMP add the layer
-    _externalModules2.default.cornerstone.addLayer(element, element.image);
+    // Add imageLayer if it doesn't exist.
+    if (!imageLayerId) {
+      imageLayerId = _externalModules2.default.cornerstone.addLayer(element, _externalModules2.default.cornerstone.getEnabledElement(element).image);
+    }
 
     if (brushLayerId) {
       layer = _externalModules2.default.cornerstone.getLayer(element, brushLayerId);
