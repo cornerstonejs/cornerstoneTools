@@ -4,7 +4,7 @@ import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, fillBox } from '../util/drawing.js';
 
 const toolType = 'magnify';
 
@@ -115,7 +115,7 @@ function drawMagnificationTool (eventData) {
   // The 'not' magnifyTool class here is necessary because cornerstone places
   // No classes of it's own on the canvas we want to select
   const canvas = element.querySelector('canvas:not(.magnifyTool)');
-  const zoomCtx = getNewContext(magnifyCanvas);
+  const context = getNewContext(magnifyCanvas);
 
   const getSize = magnifySize;
 
@@ -125,11 +125,17 @@ function drawMagnificationTool (eventData) {
   clipToBox(canvasLocation, canvas);
 
   // Clear the rectangle
-  zoomCtx.clearRect(0, 0, magnifySize, magnifySize);
-  zoomCtx.fillStyle = 'transparent';
+  context.clearRect(0, 0, magnifySize, magnifySize);
 
   // Fill it with the pixels that the mouse is clicking on
-  zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
+  const boundingBox = {
+    left: 0,
+    top: 0,
+    width: magnifySize,
+    height: magnifySize
+  };
+
+  fillBox(context, boundingBox, 'transparent');
 
   const copyFrom = {
     x: canvasLocation.x * magnificationLevel - 0.5 * getSize,
@@ -146,7 +152,7 @@ function drawMagnificationTool (eventData) {
   copyFrom.x = Math.min(copyFrom.x, zoomCanvas.width);
   copyFrom.y = Math.min(copyFrom.y, zoomCanvas.height);
 
-  zoomCtx.drawImage(zoomCanvas, copyFrom.x, copyFrom.y, getSize, getSize, 0, 0, getSize, getSize);
+  context.drawImage(zoomCanvas, copyFrom.x, copyFrom.y, getSize, getSize, 0, 0, getSize, getSize);
 
   // Place the magnification tool at the same location as the pointer
   magnifyCanvas.style.top = `${canvasLocation.y - 0.5 * magnifySize}px`;
