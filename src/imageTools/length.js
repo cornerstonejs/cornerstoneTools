@@ -7,7 +7,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 
 const toolType = 'length';
 
@@ -97,16 +97,8 @@ function onImageRendered (e) {
 
       const color = toolColors.getColorIfActive(data);
 
-      // Get the handle positions in canvas coordinates
-      const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-      const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
       // Draw the measurement line
-      path(context, { color,
-        lineWidth }, (context) => {
-        context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-        context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-      });
+      drawLine(context, element, data.handles.start, data.handles.end, { color });
 
       // Draw the handles
       const handleOptions = {
