@@ -200,6 +200,10 @@ function mouseDownCallback (e) {
 function imageRenderedCallback () {
   if (dragEventData) {
     dragProbe.strategy(dragEventData);
+    
+    if(dragEventData.element){
+       dragEventData.element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+    }
     dragEventData = null;
   }
 }
@@ -210,7 +214,9 @@ function imageRenderedCallback () {
 function dragCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
-
+  
+  element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  
   dragEventData = eventData;
   external.cornerstone.updateImage(element);
 
