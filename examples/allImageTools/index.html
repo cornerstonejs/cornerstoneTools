@@ -37,7 +37,7 @@
                 <a id="angle" class="list-group-item">Angle</a>
                 <a id="highlight" class="list-group-item">Highlight</a>
                 <a id="freehand" class="list-group-item">Freeform ROI</a>
-                <a id="eraser" class="list-group-item">Eraser</a>
+                <!-- <a id="eraser" class="list-group-item">Eraser</a> @TODO uncomment in 2.3.8 -->
             </ul>
             <div class="checkbox">
               <label><input type="checkbox" id="chkshadow">Apply shadow</label>
@@ -84,7 +84,7 @@
                         <li>Rectangle ROI - A rectangular ROI that shows mean, stddev and area</li>
                         <li>Highlight - Darkens the image around a rectangular ROI</li>
                         <li>Angle - Cobb angle tool</li>
-                        <li>Eraser - Erases marks from other tools</li>
+                        <!-- <li>Eraser - Erases marks from other tools</li> @TODO uncomment with 2.3.8 -->
                     </ul>
                 </li>
                 <li>Use the activated tool by dragging the left mouse button</li>
@@ -158,7 +158,7 @@
         cornerstoneTools.rectangleRoi.enable(element);
         cornerstoneTools.angle.enable(element);
         cornerstoneTools.highlight.enable(element);
-        cornerstoneTools.eraser.enable(element);
+        // cornerstoneTools.eraser.enable(element); Uncomment this with release 2.3.8
 
         activate("enableWindowLevelTool");
 
@@ -184,7 +184,7 @@
             cornerstoneTools.angle.deactivate(element, 1);
             cornerstoneTools.highlight.deactivate(element, 1);
             cornerstoneTools.freehand.deactivate(element, 1);
-            cornerstoneTools.eraser.deactivate(element, 1);
+            // cornerstoneTools.eraser.deactivate(element, 1); @TODO: Uncomment this with release 2.3.8
         }
 
         // Tool button event handlers that set the new active tool
@@ -238,24 +238,25 @@
             disableAllTools();
             cornerstoneTools.freehand.activate(element, 1);
         });
-        document.getElementById('eraser').addEventListener('click', function() {
-            activate('eraser');
-            disableAllTools();
+        // @TODO: Uncomment this with release 2.3.8, the eraser tool isn't in 2.3.7
+        // document.getElementById('eraser').addEventListener('click', function() {
+        //     activate('eraser');
+        //     disableAllTools();
 
-            // In order for the eraser to work, other tools must be in the 'enable'
-            // state. This allows eraser to receive mouse click events on other tools'
-            // data.
-            cornerstoneTools.probe.enable(element, 1);
-            cornerstoneTools.length.enable(element, 1);
-            cornerstoneTools.ellipticalRoi.enable(element, 1);
-            cornerstoneTools.rectangleRoi.enable(element, 1);
-            cornerstoneTools.angle.enable(element, 1);
-            cornerstoneTools.highlight.enable(element, 1);
-            cornerstoneTools.freehand.enable(element, 1);
-            cornerstoneTools.eraser.enable(element, 1);
+        //     // In order for the eraser to work, other tools must be in the 'enable'
+        //     // state. This allows eraser to receive mouse click events on other tools'
+        //     // data.
+        //     cornerstoneTools.probe.enable(element, 1);
+        //     cornerstoneTools.length.enable(element, 1);
+        //     cornerstoneTools.ellipticalRoi.enable(element, 1);
+        //     cornerstoneTools.rectangleRoi.enable(element, 1);
+        //     cornerstoneTools.angle.enable(element, 1);
+        //     cornerstoneTools.highlight.enable(element, 1);
+        //     cornerstoneTools.freehand.enable(element, 1);
+        //     cornerstoneTools.eraser.enable(element, 1);
 
-            cornerstoneTools.eraser.activate(element, 1);
-        })
+        //     cornerstoneTools.eraser.activate(element, 1);
+        // });
     });
 
 
