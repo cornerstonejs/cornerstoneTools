@@ -4,7 +4,7 @@ import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext, fillBox } from '../util/drawing.js';
 
 const toolType = 'magnify';
 
@@ -129,7 +129,14 @@ function drawMagnificationTool (eventData) {
   zoomCtx.fillStyle = 'transparent';
 
   // Fill it with the pixels that the mouse is clicking on
-  zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
+  const boundingBox = {
+    left: 0,
+    top: 0,
+    width: magnifySize,
+    height: magnifySize
+  };
+
+  fillBox(zoomCtx, boundingBox, 'transparent');
 
   const copyFrom = {
     x: canvasLocation.x * magnificationLevel - 0.5 * getSize,

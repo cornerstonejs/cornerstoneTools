@@ -1,7 +1,6 @@
 import external from '../externalModules.js';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
@@ -100,9 +99,6 @@ function onImageRendered (e) {
 
   const cornerstone = external.cornerstone;
   // We have tool data for this elemen
-  const context = getNewContext(eventData.canvasContext.canvas);
-
-  const lineWidth = toolStyle.getToolWidth();
 
   const data = toolData.data[0];
 
@@ -114,43 +110,41 @@ function onImageRendered (e) {
     return;
   }
 
+  const context = getNewContext(eventData.canvasContext.canvas);
+  const color = toolColors.getColorIfActive(data);
+
+  const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+  const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+  const rect = {
+    left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
+    top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
+    width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
+    height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
+  };
+
+  // Draw dark fill outside the rectangle
+  const options1 = {
+    color: 'transparent',
+    lineWidth: null,
+    fillStyle: 'rgba(0,0,0,0.7)'
+  };
+  // Draw dashed stroke rectangle
+  const options2 = {
+    color,
+    lineDash: [4]
+  };
+
   draw(context, (context) => {
-
-
-    const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
-
-    const rect = {
-      left: Math.min(handleStartCanvas.x, handleEndCanvas.x),
-      top: Math.min(handleStartCanvas.y, handleEndCanvas.y),
-      width: Math.abs(handleStartCanvas.x - handleEndCanvas.x),
-      height: Math.abs(handleStartCanvas.y - handleEndCanvas.y)
-    };
-
-      // Draw dark fill outside the rectangle
-
-    let color = 'transparent';
-    const fillStyle = 'rgba(0,0,0,0.7)';
-
-    path(context, { color,
-      fillStyle }, (context) => {
+    path(context, options1, (context) => {
       context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
       context.rect(rect.width + rect.left, rect.top, -rect.width, rect.height);
     });
-
-    color = toolColors.getColorIfActive(data);
-
-    // Draw dashed stroke rectangle
-    const lineDash = [4];
-
-    path(context, { color,
-      lineWidth,
-      lineDash }, (context) => {
+    path(context, options2, (context) => {
       context.rect(rect.left, rect.top, rect.width, rect.height);
     });
-
     // Draw the handles last, so they will be on top of the overlay
-    drawHandles(context, eventData, data.handles, color);
+    drawHandles(context, eventData.element, data.handles, color);
   });
 }
 // /////// END IMAGE RENDERING ///////

@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import { draw } from '../util/drawing.js';
+import { draw, fillBox } from '../util/drawing.js';
 
 function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) {
   const getPixelIndex = (x, y) => (y * columns) + x;
@@ -19,16 +19,23 @@ function drawBrushOnCanvas (pointerArray, context, color, element) {
   const sizeX = canvasPtBR.x - canvasPtTL.x;
   const sizeY = canvasPtBR.y - canvasPtTL.y;
 
+  const boundingBoxes = pointerArray.map((point) => {
+    const canvasPt = external.cornerstone.pixelToCanvas(element, {
+      x: point[0],
+      y: point[1]
+    });
+
+    return {
+      x: canvasPt.x,
+      y: canvasPt.y,
+      width: sizeX,
+      height: sizeY
+    };
+  });
+
   draw(context, (context) => {
-    context.fillStyle = color;
-
-    pointerArray.forEach((point) => {
-      const canvasPt = external.cornerstone.pixelToCanvas(element, {
-        x: point[0],
-        y: point[1]
-      });
-
-      context.fillRect(canvasPt.x, canvasPt.y, sizeX, sizeY);
+    boundingBoxes.forEach((boundingBox) => {
+      fillBox(context, boundingBox, color);
     });
   });
 }

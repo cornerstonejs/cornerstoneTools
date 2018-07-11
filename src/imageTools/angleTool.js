@@ -1,9 +1,7 @@
-import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
@@ -74,9 +72,7 @@ function onImageRendered (e) {
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const font = textStyle.getFont();
   const config = angle.getConfiguration();
-  const cornerstone = external.cornerstone;
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -85,44 +81,33 @@ function onImageRendered (e) {
       continue;
     }
 
+    // Differentiate the color of activation tool
+    const color = toolColors.getColorIfActive(data);
+
+    // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+    // Where lines cross to measure angle. For now it will show smallest angle.
+    const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
+    const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
+    const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
+    const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
+
+    let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+
+    angle *= (180 / Math.PI);
+
+    const rAngle = roundToDecimal(angle, 2);
+    const text = rAngle.toString() + String.fromCharCode(0xB0); // Degrees symbol
+
+    const coords = {
+      x: (data.handles.start2.x + data.handles.end2.x) / 2,
+      y: (data.handles.start2.y + data.handles.end2.y) / 2
+    };
+
     draw(context, (context) => {
-      // Configurable shadow
       setShadow(context, config);
-
-      // Differentiate the color of activation tool
-      const color = toolColors.getColorIfActive(data);
-
       drawJoinedLines(context, eventData.element, data.handles.end, [data.handles.start, data.handles.end2], { color });
-
-      // Draw the handles
-      drawHandles(context, eventData, data.handles);
-
-      // Draw the text
-      context.fillStyle = color;
-
-      // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-      // Where lines cross to measure angle. For now it will show smallest angle.
-      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
-      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * eventData.image.rowPixelSpacing;
-      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * eventData.image.columnPixelSpacing;
-      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * eventData.image.rowPixelSpacing;
-
-      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-
-      angle *= (180 / Math.PI);
-
-      const rAngle = roundToDecimal(angle, 2);
-      const str = '00B0'; // Degrees symbol
-      const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
-
-      const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
-      const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
-
-      const textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
-      const textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
-
-      context.font = font;
-      drawTextBox(context, text, textX, textY, color);
+      drawHandles(context, eventData.element, data.handles);
+      drawTextBox(context, eventData.element, text, coords, 0, 0, color);
     });
   }
 }
