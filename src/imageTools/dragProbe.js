@@ -218,6 +218,22 @@ function dragCallback (e) {
   e.stopPropagation();
 }
 
+function touchStartCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+}
+
+function touchEndCallback (e) {
+  const eventData = e.detail;
+  const element = eventData.element;
+
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+
+  external.cornerstone.updateImage(element);
+}
+
 const dragProbe = simpleMouseButtonTool(mouseDownCallback, toolType);
 
 dragProbe.strategies = {
@@ -228,7 +244,9 @@ dragProbe.strategies = {
 dragProbe.strategy = defaultStrategy;
 
 const options = {
-  fireOnTouchStart: true
+  fireOnTouchStart: true,
+  touchStartCallback,
+  touchEndCallback
 };
 
 const dragProbeTouch = touchDragTool(dragCallback, toolType, options);
