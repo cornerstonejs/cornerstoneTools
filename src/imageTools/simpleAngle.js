@@ -13,7 +13,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import touchTool from './touchTool.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
 
 
 const toolType = 'simpleAngle';
@@ -100,11 +100,7 @@ function onImageRendered (e) {
     }
 
     draw(context, (context) => {
-      if (config && config.shadow) {
-        context.shadowColor = config.shadowColor || '#000000';
-        context.shadowOffsetX = config.shadowOffsetX || 1;
-        context.shadowOffsetY = config.shadowOffsetY || 1;
-      }
+      setShadow(context, config);
 
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);

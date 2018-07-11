@@ -7,7 +7,7 @@ import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import clip from '../util/clip.js';
-import { draw, path } from '../util/drawing.js';
+import { draw, path, setShadow } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -251,12 +251,7 @@ function onImageRendered (e) {
 
   // Draw the rectangle
   draw(context, (context) => {
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
+    setShadow(context, config);
     path(context, { color,
       lineWidth }, (context) => {
       context.rect(left, top, width, height);

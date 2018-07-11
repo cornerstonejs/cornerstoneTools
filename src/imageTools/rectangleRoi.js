@@ -7,7 +7,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
 
 const toolType = 'rectangleRoi';
 
@@ -162,11 +162,7 @@ function onImageRendered (e) {
 
     draw(context, (context) => {
       // Apply any shadow settings defined in the tool configuration
-      if (config && config.shadow) {
-        context.shadowColor = config.shadowColor || '#000000';
-        context.shadowOffsetX = config.shadowOffsetX || 1;
-        context.shadowOffsetY = config.shadowOffsetY || 1;
-      }
+      setShadow(context, config);
 
       // Check which color the rendered tool should be
       const color = toolColors.getColorIfActive(data);
