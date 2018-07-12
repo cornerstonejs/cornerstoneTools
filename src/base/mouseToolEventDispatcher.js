@@ -14,6 +14,9 @@ import isMouseButtonEnabled from './../util/isMouseButtonEnabled.js';
 
 const cornerstone = external.cornerstone;
 
+// Todo: better place for this
+let isAwaitingMouseUp = false;
+
 const getActiveToolsForElement = function (element, tools) {
   return tools.filter(
     (tool) => tool.element === element && tool.mode === 'active'
@@ -44,6 +47,9 @@ const enable = function (element) {
  * @param {*} evt
  */
 function mouseMove (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
   console.log('mouseMove');
   const eventData = evt.detail;
   const element = eventData.element;
@@ -82,6 +88,9 @@ function mouseMove (evt) {
  * @returns
  */
 function mouseDown (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
   console.log('mouseDown');
   const eventData = evt.detail;
   const element = eventData.element;
@@ -214,6 +223,9 @@ function mouseDown (evt) {
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
 function mouseDownActivate (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
   console.log('mouseDownActivate');
   const eventData = evt.detail;
   const element = eventData.element;
@@ -277,9 +289,7 @@ function onImageRendered (evt) {
 //   Const mouseDoubleClick = mouseToolInterface.mouseDoubleClickCallback;
 
 function addNewMeasurement (mouseEventData, tool) {
-  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
-
   const measurementData = tool.createNewMeasurement(mouseEventData);
 
   if (!measurementData) {
@@ -289,16 +299,7 @@ function addNewMeasurement (mouseEventData, tool) {
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(mouseEventData.element, tool.name, measurementData);
 
-  // Since we are dragging to another place to drop the end point, we can just activate
-  // The end point and let the moveHandle move it for us.
-  // Element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-  // Element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDown);
-  // Element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
-
-  // If (mouseDoubleClick) {
-  // Element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
-  // }
-
+  isAwaitingMouseUp = true;
   cornerstone.updateImage(element);
 
   let handleMover;
@@ -324,6 +325,7 @@ function addNewMeasurement (mouseEventData, tool) {
     measurementData.handles.end,
     // On mouse up
     function () {
+      console.log('addNewMeasurement: mouseUp');
       measurementData.active = false;
       measurementData.invalidated = true;
       //   If (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
@@ -331,14 +333,7 @@ function addNewMeasurement (mouseEventData, tool) {
       //     RemoveToolState(element, toolType, measurementData);
       //   }
 
-      //   Element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-      //   Element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
-      //   Element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
-
-      //   If (mouseDoubleClick) {
-      //     Element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
-      //   }
-
+      isAwaitingMouseUp = false;
       cornerstone.updateImage(element);
     },
     preventHandleOutsideImage
