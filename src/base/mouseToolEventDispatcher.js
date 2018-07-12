@@ -6,6 +6,7 @@ import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import toolCoordinates from './../stateManagement/toolCoordinates.js';
 // Manipulators
 import getHandleNearImagePoint from './../manipulators/getHandleNearImagePoint.js';
+import handleActivator from './../manipulators/handleActivator.js';
 import moveAllHandles from './../manipulators/moveAllHandles.js';
 import moveHandle from './../manipulators/moveHandle.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
@@ -65,15 +66,47 @@ function mouseMove (evt) {
 
   // Filter out tools w/ no data
   tools = tools.filter((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
+    const toolState = getToolState(element, tool.name);
 
-    return toolState && toolState.length > 0;
+    return toolState && toolState.data.length > 0;
   });
 
-  // Find closest or most recently touched tool?
-  // - Iterate over each tool's data?
-  // - Use new distanceFromTool method on baseAnnotationTool (if it exist?)
-  // Use closest or most recently touched w/ handleActivator and/or pointNearTool
+  // Iterate over each tool, and each tool's data
+  // Activate any handles we're hovering over, or whole tools if we're near the tool
+  // If we've changed the state of anything, redrawn the image
+  let imageNeedsUpdate = false;
+
+  for (let t = 0; t < tools.length; t++) {
+    const tool = tools[t];
+    const coords = eventData.currentPoints.canvas;
+    const toolState = getToolState(eventData.element, tool.name);
+
+    for (let d = 0; d < toolState.data.length; d++) {
+      const data = toolState.data[d];
+
+      // Hovering a handle?
+      if (handleActivator(eventData.element, data.handles, coords) === true) {
+        imageNeedsUpdate = true;
+      }
+
+      // Tool data's 'active' does not match coordinates
+      // TODO: can't we just do an if/else and save on a pointNearTool check?
+      const nearToolAndNotMarkedActive =
+        tool.pointNearTool(eventData.element, data, coords) && !data.active;
+      const notNearToolAndMarkedActive =
+        !tool.pointNearTool(eventData.element, data, coords) && data.active;
+
+      if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
+        data.active = !data.active;
+        imageNeedsUpdate = true;
+      }
+    }
+  }
+
+  // Tool data activation status changed, redraw the image
+  if (imageNeedsUpdate === true) {
+    cornerstone.updateImage(eventData.element);
+  }
 }
 
 // Note: if we find a match, we need to record that we're holding down on a tool
@@ -109,9 +142,9 @@ function mouseDown (evt) {
 
   // Filter out tools w/ no data
   tools = tools.filter((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
+    const toolState = getToolState(element, tool.name);
 
-    return toolState && toolState.length > 0;
+    return toolState && toolState.data.length > 0;
   });
 
   // Find tools with handles we can move
