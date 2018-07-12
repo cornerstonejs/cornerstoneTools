@@ -3,7 +3,6 @@ import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
 import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
@@ -74,7 +73,6 @@ function onImageRendered (e) {
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const font = textStyle.getFont();
   const config = angle.getConfiguration();
   const cornerstone = external.cornerstone;
 
@@ -97,9 +95,6 @@ function onImageRendered (e) {
       // Draw the handles
       drawHandles(context, eventData, data.handles);
 
-      // Draw the text
-      context.fillStyle = color;
-
       // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
       // Where lines cross to measure angle. For now it will show smallest angle.
       const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * eventData.image.columnPixelSpacing;
@@ -121,7 +116,6 @@ function onImageRendered (e) {
       const textX = (handleStartCanvas.x + handleEndCanvas.x) / 2;
       const textY = (handleStartCanvas.y + handleEndCanvas.y) / 2;
 
-      context.font = font;
       drawTextBox(context, text, textX, textY, color);
     });
   }

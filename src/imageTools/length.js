@@ -107,9 +107,6 @@ function onImageRendered (e) {
 
       drawHandles(context, eventData, data.handles, color, handleOptions);
 
-      // Draw the text
-      context.fillStyle = color;
-
       // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
       const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
       const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);

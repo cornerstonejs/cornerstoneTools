@@ -3,7 +3,6 @@ import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
@@ -14,6 +13,7 @@ import touchTool from './touchTool.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 
 const toolType = 'simpleAngle';
@@ -89,7 +89,6 @@ function onImageRendered (e) {
   const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = simpleAngle.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -116,9 +115,6 @@ function onImageRendered (e) {
       };
 
       drawHandles(context, eventData, data.handles, color, handleOptions);
-
-      // Draw the text
-      context.fillStyle = color;
 
       // Default to isotropic pixel size, update suffix to reflect this
       const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
@@ -163,11 +159,11 @@ function onImageRendered (e) {
             y: handleMiddleCanvas.y
           };
 
-          context.font = font;
-          const textWidth = context.measureText(text).width;
+          const padding = 5;
+          const textWidth = textBoxWidth(context, text, padding);
 
           if (handleMiddleCanvas.x < handleStartCanvas.x) {
-            textCoords.x -= distance + textWidth + 10;
+            textCoords.x -= distance + textWidth;
           } else {
             textCoords.x += distance;
           }

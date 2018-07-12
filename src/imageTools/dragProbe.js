@@ -4,7 +4,7 @@ import simpleMouseButtonTool from './simpleMouseButtonTool.js';
 import touchDragTool from './touchDragTool.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
@@ -22,7 +22,6 @@ function defaultStrategy (eventData) {
   const context = getNewContext(enabledElement.canvas);
 
   const color = toolColors.getActiveColor();
-  const font = textStyle.getFont();
   const fontHeight = textStyle.getFontSize();
   const config = dragProbe.getConfiguration();
 
@@ -66,9 +65,6 @@ function defaultStrategy (eventData) {
     };
     const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-    context.font = font;
-    context.fillStyle = color;
-
     drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
   });
@@ -83,7 +79,6 @@ function minimalStrategy (eventData) {
   const context = getNewContext(enabledElement.canvas);
 
   const color = toolColors.getActiveColor();
-  const font = textStyle.getFont();
   const config = dragProbe.getConfiguration();
 
   let toolCoords;
@@ -141,17 +136,15 @@ function minimalStrategy (eventData) {
     // Prepare text
     const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
 
-    context.font = font;
-    context.fillStyle = color;
-
     // Translate the x/y away from the cursor
     let translation;
     const handleRadius = 6;
-    const width = context.measureText(text).width;
+    const padding = 5;
+    const width = textBoxWidth(context, text, padding);
 
     if (eventData.isTouchEvent === true) {
       translation = {
-        x: -width / 2 - 5,
+        x: -width / 2,
         y: -textStyle.getFontSize() - 10 - 2 * handleRadius
       };
     } else {
