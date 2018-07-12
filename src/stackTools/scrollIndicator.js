@@ -1,6 +1,6 @@
 import displayTool from '../imageTools/displayTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw } from '../util/drawing.js';
+import { getNewContext, draw, fillBox } from '../util/drawing.js';
 
 /*
 Display scroll progress bar across bottom of image.
@@ -29,12 +29,24 @@ function onImageRendered (e) {
     const config = scrollIndicator.getConfiguration();
 
     // Draw indicator background
-    context.fillStyle = config.backgroundColor;
+    let boundingBox;
+
     if (config.orientation === 'horizontal') {
-      context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
+      boundingBox = {
+        left: 0,
+        top: height - scrollBarHeight,
+        width,
+        heigh: scrollBarHeight
+      };
     } else {
-      context.fillRect(0, 0, scrollBarHeight, height);
+      boundingBox = {
+        left: 0,
+        top: 0,
+        width: scrollBarHeight,
+        height
+      };
     }
+    fillBox(context, boundingBox, config.backgroundColor);
 
     // Get current image index
     const stackData = getToolState(element, 'stack');
@@ -49,12 +61,22 @@ function onImageRendered (e) {
       const xPosition = cursorWidth * currentImageIdIndex;
       const yPosition = cursorHeight * currentImageIdIndex;
 
-      context.fillStyle = config.fillColor;
       if (config.orientation === 'horizontal') {
-        context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
+        boundingBox = {
+          left: xPosition,
+          top: height - scrollBarHeight,
+          cursorWidth,
+          scrollBarHeight
+        };
       } else {
-        context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
+        boundingBox = {
+          left: 0,
+          top: yPosition,
+          width: scrollBarHeight,
+          heigh: cursorHeight
+        };
       }
+      fillBox(context, boundingBox, config.fillColor);
     }
   });
 }
