@@ -9,7 +9,7 @@ import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { getToolOptions } from '../toolOptions.js';
-import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawCircle } from '../util/drawing.js';
 
 const toolType = 'dragProbe';
 
@@ -161,10 +161,7 @@ function minimalStrategy (eventData) {
       };
     }
 
-    path(context, { color }, (context) => {
-      context.arc(textCoords.x, textCoords.y, handleRadius, 0, 2 * Math.PI);
-    });
-
+    drawCircle(context, element, textCoords, handleRadius, { color }, 'canvas');
     drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
   });
 }
