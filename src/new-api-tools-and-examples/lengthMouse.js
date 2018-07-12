@@ -1,4 +1,5 @@
 /* eslint no-loop-func: 0 */ // --> OFF
+import external from './../externalModules.js';
 import baseMouseAnnotationTool from './../base/baseMouseAnnotationTool.js';
 // State
 import { getToolState } from './../stateManagement/toolState.js';
@@ -10,6 +11,8 @@ import drawHandles from './../manipulators/drawHandles.js';
 import { getNewContext, draw, setShadow, drawLine } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import lineSegDistance from './../util/lineSegDistance.js';
+
+const cornerstone = external.cornerstone;
 
 export default class extends baseMouseAnnotationTool {
   constructor () {
@@ -82,19 +85,19 @@ export default class extends baseMouseAnnotationTool {
     const eventData = evt.detail;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
-    const toolData = getToolState(evt.currentTarget, this.toolName);
+    const toolData = getToolState(evt.currentTarget, this.name);
 
+    console.log(toolData);
     if (!toolData) {
       return;
     }
 
-    const cornerstone = external.cornerstone;
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = length.getConfiguration();
+    const config = this.getConfiguration();
     const imagePlane = cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId

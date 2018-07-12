@@ -1,14 +1,18 @@
 import EVENTS from './../events.js';
+import external from './../externalModules.js';
 // State
-import state from './../store/index.js';
-import { getToolState } from './../stateManagement/toolState.js';
+import { state } from './../store/index.js';
+import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import toolCoordinates from './../stateManagement/toolCoordinates.js';
 // Manipulators
 import getHandleNearImagePoint from './../manipulators/getHandleNearImagePoint.js';
-import moveHandle from './../manipulators/moveHandle.js';
 import moveAllHandles from './../manipulators/moveAllHandles.js';
+import moveHandle from './../manipulators/moveHandle.js';
+import moveNewHandle from '../manipulators/moveNewHandle.js';
 // Util
 import isMouseButtonEnabled from './../util/isMouseButtonEnabled.js';
+
+const cornerstone = external.cornerstone;
 
 const getActiveToolsForElement = function (element, tools) {
   return tools.filter(
@@ -24,20 +28,23 @@ const getInteractiveToolsForElement = function (element, tools) {
   );
 };
 
-export default {
-  enable
-  // Disable
-};
-
 const enable = function (element) {
-  element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMove);
-  element.addEventListener(EVENTS.MOUSE_DOWN, this.mouseDown);
-  element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, this.mouseDownActivate);
-  element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, this.mouseDoubleClick);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, this.onImageRendered);
+  console.log('enable', element);
+  element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
+  element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
+  element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
+  element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
+/**
+ * This is mostly used to update the [un]hover state
+ * of a tool.
+ *
+ * @param {*} evt
+ */
 function mouseMove (evt) {
+  console.log('mouseMove');
   const eventData = evt.detail;
   const element = eventData.element;
 
@@ -51,9 +58,11 @@ function mouseMove (evt) {
   let tools = getInteractiveToolsForElement(element, state.tools);
 
   // Filter out tools w/ no data
-  tools = tools.filter(
-    (tool) => getToolState(eventData.element, tool.toolName).length > 0
-  );
+  tools = tools.filter((tool) => {
+    const toolState = getToolState(eventData.element, tool.name);
+
+    return toolState && toolState.length > 0;
+  });
 
   // Find closest or most recently touched tool?
   // - Iterate over each tool's data?
@@ -64,7 +73,16 @@ function mouseMove (evt) {
 // Note: if we find a match, we need to record that we're holding down on a tool
 // So we don't fire the mouse_move event listener
 // On pick-up, we need to "release", so we can re-enable the mouse_move listener
+/**
+ * MouseDown is called before MouseDownActivate. If MouseDown
+ * finds an existing tool to interact with, it can prevent the
+ * event from bubbling to MouseDownActivate.
+ *
+ * @param {*} evt
+ * @returns
+ */
 function mouseDown (evt) {
+  console.log('mouseDown');
   const eventData = evt.detail;
   const element = eventData.element;
   const coords = eventData.currentPoints.canvas;
@@ -81,13 +99,15 @@ function mouseDown (evt) {
   );
 
   // Filter out tools w/ no data
-  tools = tools.filter(
-    (tool) => getToolState(eventData.element, tool.toolName).length > 0
-  );
+  tools = tools.filter((tool) => {
+    const toolState = getToolState(eventData.element, tool.name);
+
+    return toolState && toolState.length > 0;
+  });
 
   // Find tools with handles we can move
   const toolsWithMoveableHandles = tools.filter((tool) => {
-    const toolState = getToolState(eventData.element, tool.toolName);
+    const toolState = getToolState(eventData.element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
       if (
@@ -110,7 +130,7 @@ function mouseDown (evt) {
   if (toolsWithMoveableHandles.length > 0) {
     const toolState = getToolState(
       eventData.element,
-      toolsWithMoveableHandles[0].toolName
+      toolsWithMoveableHandles[0].name
     );
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -128,7 +148,7 @@ function mouseDown (evt) {
         data.active = true;
         moveHandle(
           eventData,
-          toolsWithMoveableHandles[0].toolName,
+          toolsWithMoveableHandles[0].name,
           data,
           handle,
           () => {}, // HandleDoneMove,
@@ -148,7 +168,7 @@ function mouseDown (evt) {
   // First tool with a point near us
   // See if there is a tool we can move
   tools = tools.find((tool) => {
-    const toolState = getToolState(eventData.element, tool.toolName);
+    const toolState = getToolState(eventData.element, tool.name);
     const opt = tool.options || {
       deleteIfHandleOutsideImage: true,
       preventHandleOutsideImage: false
@@ -165,7 +185,7 @@ function mouseDown (evt) {
           evt,
           data,
           toolState,
-          tool.toolName,
+          tool.name,
           opt,
           () => {} /* HandleDoneMove */
         );
@@ -194,16 +214,20 @@ function mouseDown (evt) {
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
 function mouseDownActivate (evt) {
+  console.log('mouseDownActivate');
   const eventData = evt.detail;
   const element = eventData.element;
 
   // Filter out disabled and enabled
   let tools = getActiveToolsForElement(element, state.tools);
 
+  console.log('activeTools', tools);
+
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
+  console.log('activeTools for mouse button', tools);
 
   if (tools.length === 0) {
     return;
@@ -212,7 +236,9 @@ function mouseDownActivate (evt) {
   const activeTool = tools[0];
 
   if (activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement();
+    activeTool.addNewMeasurement(eventData, activeTool);
+  } else {
+    addNewMeasurement(eventData, activeTool);
   }
 
   evt.preventDefault();
@@ -224,6 +250,7 @@ function mouseDoubleClick () {}
 function onImageRendered (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
+
   const toolsToRender = state.tools.filter(
     (tool) =>
       tool.element === element &&
@@ -249,78 +276,76 @@ function onImageRendered (evt) {
 //     MouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback;
 //   Const mouseDoubleClick = mouseToolInterface.mouseDoubleClickCallback;
 
-//   // /////// BEGIN ACTIVE TOOL ///////
-//   Function addNewMeasurement (mouseEventData) {
-//     Const cornerstone = external.cornerstone;
-//     Const element = mouseEventData.element;
+function addNewMeasurement (mouseEventData, tool) {
+  const cornerstone = external.cornerstone;
+  const element = mouseEventData.element;
 
-//     Const measurementData = mouseToolInterface.createNewMeasurement(
-//       MouseEventData
-//     );
+  const measurementData = tool.createNewMeasurement(mouseEventData);
 
-//     If (!measurementData) {
-//       Return;
-//     }
+  if (!measurementData) {
+    return;
+  }
 
-//     // Associate this data with this imageId so we can render it and manipulate it
-//     AddToolState(mouseEventData.element, toolType, measurementData);
+  // Associate this data with this imageId so we can render it and manipulate it
+  addToolState(mouseEventData.element, tool.name, measurementData);
 
-//     // Since we are dragging to another place to drop the end point, we can just activate
-//     // The end point and let the moveHandle move it for us.
-//     Element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-//     Element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDown);
-//     Element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
+  // Since we are dragging to another place to drop the end point, we can just activate
+  // The end point and let the moveHandle move it for us.
+  // Element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
+  // Element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDown);
+  // Element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
 
-//     If (mouseDoubleClick) {
-//       Element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
-//     }
+  // If (mouseDoubleClick) {
+  // Element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
+  // }
 
-//     Cornerstone.updateImage(element);
+  cornerstone.updateImage(element);
 
-//     Let handleMover;
+  let handleMover;
 
-//     If (Object.keys(measurementData.handles).length === 1) {
-//       HandleMover = moveHandle;
-//     } else {
-//       HandleMover = moveNewHandle;
-//     }
+  if (Object.keys(measurementData.handles).length === 1) {
+    handleMover = moveHandle;
+  } else {
+    handleMover = moveNewHandle;
+  }
 
-//     Let preventHandleOutsideImage;
+  let preventHandleOutsideImage;
 
-//     If (
-//       MouseToolInterface.options &&
-//       MouseToolInterface.options.preventHandleOutsideImage !== undefined
-//     ) {
-//       PreventHandleOutsideImage =
-//         MouseToolInterface.options.preventHandleOutsideImage;
-//     } else {
-//       PreventHandleOutsideImage = false;
-//     }
+  if (tool.options && tool.options.preventHandleOutsideImage !== undefined) {
+    preventHandleOutsideImage = tool.options.preventHandleOutsideImage;
+  } else {
+    preventHandleOutsideImage = false;
+  }
 
-//     HandleMover(
-//       MouseEventData,
-//       ToolType,
-//       MeasurementData,
-//       MeasurementData.handles.end,
-//       Function () {
-//         MeasurementData.active = false;
-//         MeasurementData.invalidated = true;
-//         If (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
-//           // Delete the measurement
-//           RemoveToolState(element, toolType, measurementData);
-//         }
+  handleMover(
+    mouseEventData,
+    tool.name,
+    measurementData,
+    measurementData.handles.end,
+    // On mouse up
+    function () {
+      measurementData.active = false;
+      measurementData.invalidated = true;
+      //   If (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
+      //     // Delete the measurement
+      //     RemoveToolState(element, toolType, measurementData);
+      //   }
 
-//         Element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-//         Element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
-//         Element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
+      //   Element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
+      //   Element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
+      //   Element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
 
-//         If (mouseDoubleClick) {
-//           Element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
-//         }
+      //   If (mouseDoubleClick) {
+      //     Element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
+      //   }
 
-//         Cornerstone.updateImage(element);
-//       },
-//       PreventHandleOutsideImage
-//     );
-//   }
-// }
+      cornerstone.updateImage(element);
+    },
+    preventHandleOutsideImage
+  );
+}
+
+export default {
+  enable
+  // Disable
+};
