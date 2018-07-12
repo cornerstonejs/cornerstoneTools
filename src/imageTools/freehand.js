@@ -84,8 +84,8 @@ function createNewMeasurement () {
 * @param {Number} toolIndex - the ID of the tool
 * @return {Boolean}
 */
-function pointNearTool (eventData, toolIndex) {
-  const isPointNearTool = pointNearHandle(eventData, toolIndex);
+function pointNearTool (element, data, coords) {
+  const isPointNearTool = pointNearHandle(element, data, coords);
 
   // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
   if (isPointNearTool !== null) {
@@ -102,15 +102,8 @@ function pointNearTool (eventData, toolIndex) {
 * @param {Number} toolIndex - the ID of the tool
 * @return {Number|Object|Boolean}
 */
-function pointNearHandle (eventData, toolIndex) {
-  const toolData = getToolState(eventData.element, toolType);
+function pointNearHandle (element, data, coords) {
   const config = freehand.getConfiguration();
-
-  if (toolData === undefined) {
-    return null;
-  }
-
-  const data = toolData.data[toolIndex];
 
   if (data.handles === undefined) {
     return null;
@@ -120,19 +113,17 @@ function pointNearHandle (eventData, toolIndex) {
     return null;
   }
 
-  const mousePoint = eventData.currentPoints.canvas;
-
   for (let i = 0; i < data.handles.length; i++) {
-    const handleCanvas = external.cornerstone.pixelToCanvas(eventData.element, data.handles[i]);
+    const handleCanvas = external.cornerstone.pixelToCanvas(element, data.handles[i]);
 
-    if (external.cornerstoneMath.point.distance(handleCanvas, mousePoint) < config.spacing) {
+    if (external.cornerstoneMath.point.distance(handleCanvas, coords) < config.spacing) {
       return i;
     }
   }
 
   // Check to see if mouse in bounding box of textbox
   if (data.textBox) {
-    if (pointInsideBoundingBox(data.textBox, mousePoint)) {
+    if (pointInsideBoundingBox(data.textBox, coords)) {
       return data.textBox;
     }
   }
@@ -147,7 +138,9 @@ function pointNearHandle (eventData, toolIndex) {
 * @return {Object}
 */
 function pointNearHandleAllTools (eventData) {
-  const toolData = getToolState(eventData.element, toolType);
+  const element = eventData.element;
+  const coords = eventData.currentPoints.canvas;
+  const toolData = getToolState(element, toolType);
 
   if (!toolData) {
     return;
@@ -156,7 +149,7 @@ function pointNearHandleAllTools (eventData) {
   let handleNearby;
 
   for (let toolIndex = 0; toolIndex < toolData.data.length; toolIndex++) {
-    handleNearby = pointNearHandle(eventData, toolIndex);
+    handleNearby = pointNearHandle(element, toolData.data[toolIndex], coords);
     if (handleNearby !== null) {
       return {
         handleNearby,
@@ -332,8 +325,10 @@ function endDrawing (eventData, handleNearby) {
 function mouseDownActive (e, toolData, currentTool) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
-  const handleNearby = pointNearHandle(eventData, currentTool);
+  const element = eventData.element;
   const data = toolData.data[currentTool];
+  const coords = eventData.currentPoints.canvas;
+  const handleNearby = pointNearHandle(element, data, coords);
 
   if (!freeHandIntersect.end(data.handles) && data.canComplete) {
     const lastHandlePlaced = config.currentHandle;
@@ -426,18 +421,19 @@ function mouseMoveCallback (e) {
 function mouseMoveActive (eventData, toolData) {
   const config = freehand.getConfiguration();
   const currentTool = config.currentTool;
+  const element = eventData.element;
   const data = toolData.data[currentTool];
+  const coords = eventData.currentPoints.canvas;
 
   // Set the mouseLocation handle
   getMouseLocation(eventData);
-
   checkInvalidHandleLocation(data);
 
   if (config.activePencilMode) {
     addPointPencilMode(eventData, data.handles);
   } else {
     // No snapping in activePencilMode mode
-    const handleNearby = pointNearHandle(eventData, config.currentTool);
+    const handleNearby = pointNearHandle(element, data, coords);
 
     // If there is a handle nearby to snap to
     // (and it's not the actual mouse handle)
@@ -708,14 +704,15 @@ function mouseHover (eventData, toolData) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     // Get the cursor position in canvas coordinates
-    const coords = eventData.currentPoints.canvas;
+    const element = eventData.element;
     const data = toolData.data[i];
+    const coords = eventData.currentPoints.canvas;
 
-    if (handleActivator(eventData.element, data.handles, coords) === true) {
+    if (handleActivator(element, data.handles, coords) === true) {
       imageNeedsUpdate = true;
     }
 
-    if ((pointNearTool(eventData, i) && !data.active) || (!pointNearTool(eventData, i) && data.active)) {
+    if ((pointNearTool(element, data, coords) && !data.active) || (!pointNearTool(element, data, coords) && data.active)) {
       data.active = !data.active;
       imageNeedsUpdate = true;
     }
