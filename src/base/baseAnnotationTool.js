@@ -1,8 +1,8 @@
 import baseTool from './baseTool.js';
 
 export default class extends baseTool {
-  constructor (toolName) {
-    super(toolName);
+  constructor (name) {
+    super(name);
 
     this.hats = '';
   }

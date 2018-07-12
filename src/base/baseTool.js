@@ -1,10 +1,13 @@
 export default class {
-  constructor (toolName) {
-    this.toolName = toolName;
+  constructor (name) {
+    this.name = name;
     this.mode = 'disabled';
+    this.element = undefined;
+
+    //
+    this.data = {};
     this.options = {};
     this.configuration = {};
-    this.element = undefined;
   }
 
   getConfiguration () {

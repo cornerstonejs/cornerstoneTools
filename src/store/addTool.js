@@ -1,5 +1,5 @@
-import { state } from 'index.js';
-import getTool from '../store/getTool.js';
+import { state } from './index.js';
+import getTool from './../store/getTool.js';
 
 /**
  *

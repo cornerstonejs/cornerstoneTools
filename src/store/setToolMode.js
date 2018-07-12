@@ -1,7 +1,9 @@
-import EVENTS from '../events.js';
-import { cornerstone } from '../externalModules.js';
-import triggerEvent from '../util/triggerEvent.js';
-import getTool from '../store/getTool.js';
+import EVENTS from './../events.js';
+import external from './../externalModules.js';
+import triggerEvent from './../util/triggerEvent.js';
+import getTool from './../store/getTool.js';
+
+const cornerstone = external.cornerstone;
 
 /**
  * Sets a tool's state to 'active'. Active tools are rendered,
@@ -66,7 +68,7 @@ const setToolPassive = setToolMode.bind(
  * @param {*} changeEvent
  * @returns
  */
-function setToolMode (element, toolName, options, mode, changeEvent) {
+function setToolMode (mode, changeEvent, element, toolName, options) {
   const tool = getTool(element, toolName);
 
   if (!tool) {
@@ -96,7 +98,8 @@ function setToolMode (element, toolName, options, mode, changeEvent) {
   }
 
   // Trigger Update
-  cornerstone.updateImage(element);
+  // Todo: don't error out if image hasn't been loaded...
+  // Cornerstone.updateImage(element);
 }
 
 export { setToolActive, setToolDisabled, setToolEnabled, setToolPassive };
