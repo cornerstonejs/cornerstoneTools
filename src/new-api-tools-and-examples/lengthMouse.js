@@ -65,7 +65,7 @@ export default class extends baseMouseAnnotationTool {
    * @returns
    */
   pointNearTool (element, data, coords) {
-    if (this.data.visible === false) {
+    if (data.visible === false) {
       return false;
     }
 
@@ -87,7 +87,6 @@ export default class extends baseMouseAnnotationTool {
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
-    console.log(toolData);
     if (!toolData) {
       return;
     }

@@ -51,7 +51,6 @@ function mouseMove (evt) {
   if (isAwaitingMouseUp) {
     return;
   }
-  console.log('mouseMove');
   const eventData = evt.detail;
   const element = eventData.element;
 

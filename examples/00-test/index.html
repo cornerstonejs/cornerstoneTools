@@ -26,8 +26,8 @@
 		<div class="row">
 			<div class="col-xs-2">
 				<ul class="list-group">
-					<a id="enableLength" class="list-group-item">Length</a>
-					<a id="angle" class="list-group-item">Angle</a>
+					<a id="lengthBtn" class="list-group-item">Mouse Length</a>
+					<a id="angleBtn" class="list-group-item">Mouse Angle</a>
 				</ul>
 				<br/>
 			</div>
@@ -68,7 +68,12 @@
 	// NEW
 	const lengthMouseTool = new cornerstoneTools.lengthMouse();
 	cornerstoneTools.addTool(element, lengthMouseTool)
+	const angleMouseTool = new cornerstoneTools.angleMouse();
+	cornerstoneTools.addTool(element, angleMouseTool)
+
+	// Default active tool
 	cornerstoneTools.setToolActive(element, lengthMouseTool.name, { mouseButtonMask: 1 })
+
 	// Todo: Marry these two?
 	cornerstoneTools.mouseInput.enable(element);
 	cornerstoneTools.mouseToolEventDispatcher.enable(element);
@@ -77,6 +82,16 @@
 	cornerstone.loadImage(imageId).then(function (image) {
 		cornerstone.displayImage(element, image);
 	});
+
+	document.getElementById('lengthBtn').addEventListener('click', (evt) => {
+		cornerstoneTools.setToolPassive(element, angleMouseTool.name)
+		cornerstoneTools.setToolActive(element, lengthMouseTool.name, { mouseButtonMask: 1 })
+	})
+
+	document.getElementById('angleBtn').addEventListener('click', (evt) => {
+		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
+		cornerstoneTools.setToolActive(element, angleMouseTool.name, { mouseButtonMask: 1 })
+	})
 </script>
 
 </html>

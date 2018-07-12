@@ -9,6 +9,9 @@ export {
   default as lengthMouse
 } from './new-api-tools-and-examples/lengthMouse.js';
 export {
+  default as angleMouse
+} from './new-api-tools-and-examples/angleMouse.js';
+export {
   setToolActive,
   setToolEnabled,
   setToolDisabled,
