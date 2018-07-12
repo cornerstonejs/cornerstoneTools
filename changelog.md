@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.8] - 2018-07-12
+### Added
+- Added Webpack-web-server and hotReloader for development
+- Added invert effect on mouse zoom (thanks @posegae)
+- Added tool data docs page
+- Added new tool Eraser that Erases marks from other tools (thanks @dlwire)
+- Added Freehand Sculpter tool (#431) (thanks @JamesAPetts)
+
+### Changed
+- Changed more functions drawing.js being applied to the tools: path, drawLine, setShadow (thanks @timleslie)
+
+### Fixed
+- Fixed dragProbe touch issue (issue/390)
+- Fixed paintbrush tool, Improvements to brush tool and example (issue/434) (thanks @JamesAPetts)
+
 ## [2.3.7] - 2018-07-05
 ### Added
 - Added an utility file drawing.js to make it simpler to draw shapes (thanks @timleslie)
