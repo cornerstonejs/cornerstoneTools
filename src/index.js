@@ -3,6 +3,9 @@ import * as drawing from './util/drawing.js';
 // TEST
 export { default as addTool } from './store/addTool.js';
 export {
+  default as mouseToolEventDispatcher
+} from './base/mouseToolEventDispatcher.js';
+export {
   default as lengthMouse
 } from './new-api-tools-and-examples/lengthMouse.js';
 export {
