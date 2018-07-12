@@ -1,5 +1,18 @@
 import * as drawing from './util/drawing.js';
 
+// TEST
+export { default as addTool } from './store/addTool.js';
+export {
+  default as lengthMouse
+} from './new-api-tools-and-examples/lengthMouse.js';
+export {
+  setToolActive,
+  setToolEnabled,
+  setToolDisabled,
+  setToolPassive
+} from './store/setToolMode.js';
+// END TEST
+
 export { drawing };
 
 export { default as external } from './externalModules.js';
