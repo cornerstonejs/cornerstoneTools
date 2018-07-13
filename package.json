@@ -32,6 +32,7 @@
     "start": "npm run webpack",
     "start:dev": "webpack-dev-server --config ./config/webpack/webpack-dev",
     "test": "npm run test:chrome",
+    "test:unit": "jest",
     "test:watch": "karma start config/karma/karma-watch.js",
     "test:chrome": "karma start config/karma/karma-chrome.js",
     "test:firefox": "karma start config/karma/karma-firefox.js",
