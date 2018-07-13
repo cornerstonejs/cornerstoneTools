@@ -66,6 +66,7 @@
     "istanbul": "^0.4.5",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jest": "^23.4.0",
+    "jest-junit": "^5.1.0",
     "karma": "^2.0.2",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
