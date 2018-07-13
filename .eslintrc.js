@@ -1,9 +1,10 @@
 module.exports = {
-  'env': {
-    'browser': true,
-    'es6': true,
-    'node': true,
-    'mocha': true
+  env: {
+    browser: true,
+    es6: true,
+    node: true,
+    mocha: true,
+    jest: true
   },
   'extends': 'eslint:recommended',
   'plugins': ['import'],
