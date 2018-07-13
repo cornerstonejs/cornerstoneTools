@@ -1,5 +1,7 @@
 # cornerstone-tools@next
 
+[![CircleCI](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg)](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext) [![Coverage Status](https://coveralls.io/repos/github/cornerstonejs/cornerstoneTools/badge.svg?branch=vNext)](https://coveralls.io/github/cornerstonejs/cornerstoneTools?branch=vNext)
+
 The `cornerstone-tools` vNext branch is a preview branch for upcoming major API changes. When new changes are merged, if all tests are passing, a new version is cut and published to NPM under the `next` tag. When enough progress has been made, a more formal deprecation and adoption strategy will be announced as this API replaces v2.
 
 You can track [this version's progress here](https://github.com/cornerstonejs/cornerstoneTools/projects/1). Any/all help in determining our API target, completing issues, finding bugs, etc. is appreciated.

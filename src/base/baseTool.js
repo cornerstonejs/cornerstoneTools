@@ -6,28 +6,28 @@ export default class {
 
     //
     this.data = {};
-    this.options = {};
-    this.configuration = {};
+    this._options = {};
+    this._configuration = {};
   }
 
-  getConfiguration () {
-    return this.configuration;
+  get configuration () {
+    return this._configuration;
   }
 
-  setConfiguration (config) {
-    this.configuration = config;
+  set configuration (configuration) {
+    this._configuration = configuration;
   }
 
   // ToolOptions.js
-  getOptions () {
-    return this.options;
+  get options () {
+    return this._options;
   }
 
-  setOptions (options) {
-    this.options = options;
+  set options (options) {
+    this._options = options;
   }
 
   clearOptions () {
-    this.options = {};
+    this._options = {};
   }
 }
