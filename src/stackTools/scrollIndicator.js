@@ -65,8 +65,8 @@ function onImageRendered (e) {
         boundingBox = {
           left: xPosition,
           top: height - scrollBarHeight,
-          cursorWidth,
-          scrollBarHeight
+          width: cursorWidth,
+          height: scrollBarHeight
         };
       } else {
         boundingBox = {
