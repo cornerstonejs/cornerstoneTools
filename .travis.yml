@@ -1,4 +1,7 @@
 language: node_js
+branches:
+  except:
+    - vNext
 node_js:
   - "lts/*"
 addons:
