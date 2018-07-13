@@ -4,6 +4,7 @@ jobs:
     branches:
       only:
         - vNext
+        - pull/*
     docker:
       - image: circleci/node:7.10
     working_directory: ~/repo
