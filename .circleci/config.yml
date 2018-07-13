@@ -2,9 +2,8 @@ version: 2
 jobs:
   build:
     branches:
-      only:
-        - vNext
-        - pull/*
+      ignore:
+        - master
     docker:
       - image: circleci/node:7.10
     working_directory: ~/repo
