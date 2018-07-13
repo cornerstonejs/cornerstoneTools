@@ -36,7 +36,7 @@ function onImageRendered (e) {
         left: 0,
         top: height - scrollBarHeight,
         width,
-        heigh: scrollBarHeight
+        height: scrollBarHeight
       };
     } else {
       boundingBox = {
@@ -73,7 +73,7 @@ function onImageRendered (e) {
           left: 0,
           top: yPosition,
           width: scrollBarHeight,
-          heigh: cursorHeight
+          height: cursorHeight
         };
       }
       fillBox(context, boundingBox, config.fillColor);
