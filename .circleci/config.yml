@@ -24,6 +24,7 @@ jobs:
       - run:
           name: "JavaScript Test Suite"
           environment:
+            COVERALLS_SERVICE_NAME: circleci
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
           command: npm run test:ci
       - store_test_results:
