@@ -51,7 +51,9 @@ function pointNearTool (element, data, coords) {
     return false;
   }
 
-  return lineSegDistance(element, data.handles.start, data.handles.end, coords) < 25;
+  return (
+    lineSegDistance(element, data.handles.start, data.handles.end, coords) < 25
+  );
 }
 
 // /////// BEGIN IMAGE RENDERING ///////
@@ -72,13 +74,18 @@ function onImageRendered (e) {
 
   const lineWidth = toolStyle.getToolWidth();
   const config = length.getConfiguration();
-  const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
+  const imagePlane = cornerstone.metaData.get(
+    'imagePlaneModule',
+    image.imageId
+  );
   let rowPixelSpacing;
   let colPixelSpacing;
 
   if (imagePlane) {
-    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+    rowPixelSpacing =
+      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing =
+      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
   } else {
     rowPixelSpacing = image.rowPixelSpacing;
     colPixelSpacing = image.columnPixelSpacing;
@@ -98,11 +105,13 @@ function onImageRendered (e) {
       const color = toolColors.getColorIfActive(data);
 
       // Draw the measurement line
-      drawLine(context, element, data.handles.start, data.handles.end, { color });
+      drawLine(context, element, data.handles.start, data.handles.end, {
+        color
+      });
 
       // Draw the handles
       const handleOptions = {
-        drawHandlesIfActive: (config && config.drawHandlesOnHover)
+        drawHandlesIfActive: config && config.drawHandlesOnHover
       };
 
       drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -111,8 +120,10 @@ function onImageRendered (e) {
       context.fillStyle = color;
 
       // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-      const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
-      const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+      const dx =
+        (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+      const dy =
+        (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
 
       // Calculate the length, and create the text variable with the millimeters or pixels suffix
       const length = Math.sqrt(dx * dx + dy * dy);
@@ -143,8 +154,18 @@ function onImageRendered (e) {
 
       const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
-      drawLinkedTextBox(context, element, data.handles.textBox, text,
-        data.handles, textBoxAnchorPoints, color, lineWidth, xOffset, true);
+      drawLinkedTextBox(
+        context,
+        element,
+        data.handles.textBox,
+        text,
+        data.handles,
+        textBoxAnchorPoints,
+        color,
+        lineWidth,
+        xOffset,
+        true
+      );
     });
   }
 
@@ -185,7 +206,4 @@ const lengthTouch = touchTool({
   toolType
 });
 
-export {
-  length,
-  lengthTouch
-};
+export { length, lengthTouch };
