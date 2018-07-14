@@ -1,9 +1,4 @@
 language: node_js
-node_js:
-  - "lts/*"
-addons:
-  chrome: stable
-cache:
-  yarn: true
-  directories:
-    - node_modules
+branches:
+  only:
+    - master
