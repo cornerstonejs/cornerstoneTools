@@ -73,23 +73,26 @@ jobs:
       - run:
           name: Publish package
           command: npm publish
-          
+
 workflows:
   version: 2
-  build_test_deploy:
+  build-test-deploy:
     jobs:
-      - build
+      - build:
+        filters:
+          branches:
+            ignore: master
       # Merge
       - test-merge:
-        filters:
-          branches:
-            only: vNext
-        requires:
-          - build
+          filters:
+            branches:
+              only: vNext
+          requires:
+            - build
       # Pull Requests
       - test-pr:
-        filters:
-          branches:
-            ignore: vNext
-        requires:
-          - build
+          filters:
+            branches:
+              ignore: vNext
+          requires:
+            - build
