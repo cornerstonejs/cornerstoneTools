@@ -90,5 +90,5 @@ workflows:
       #       - build
       # Pull Requests
       - test-pr:
-        requires:
-          - build
+          requires:
+            - build
