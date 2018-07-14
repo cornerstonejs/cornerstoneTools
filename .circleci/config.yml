@@ -1,7 +1,6 @@
 version: 2
-
 jobs:
-  setup:
+  build:
     docker:
         - image: circleci/node:7.10
           environment:
@@ -22,11 +21,6 @@ jobs:
         - persist_to_workspace:
           root: ~/repo
           paths: .
-#  lint:
-#      # Check for linting errors/warnings  
-#      - run:
-#          name: "JavaScript Linter"
-#          command: yarn lint -- --format junit -o reports/junit/js-lint-results.xml
   test-merge:
     steps:
       - attach_workspace:
@@ -63,7 +57,6 @@ jobs:
       - persist_to_workspace:
         root: ~/repo
         paths: .
-
   deploy:
     steps:
       - attach_workspace:
@@ -74,25 +67,22 @@ jobs:
       - run:
           name: Publish package
           command: npm publish
-            
-
 workflows:
   version: 2
-
   my_workflow:
     jobs:
-      - setup
+      - build
       # Merge
       - test-merge:
         filters:
           branches:
             only: vNext
         requires:
-          - setup
+          - build
       # Pull Requests
       - test-pr:
         filters:
           branches:
             ignore: vNext
         requires:
-          - setup
+          - build
