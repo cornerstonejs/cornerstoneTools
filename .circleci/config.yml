@@ -1,34 +1,37 @@
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:7.10
+
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/node:7.10
-        environment:
-          COVERALLS_SERVICE_NAME: circleci
-          COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-      working_directory: ~/repo
-      steps:
-        - checkout
-        - restore_cache:
-            keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-        - run: npm install
-        - save_cache:
-            paths:
-              - node_modules
-            key: v1-dependencies-{{ checksum "package.json" }}
-        - persist_to_workspace:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - persist_to_workspace:
           root: ~/repo
           paths: .
   test-merge:
+    <<: *defaults
     steps:
       - attach_workspace:
-        at: ~/repo
+          at: ~/repo
       - run:
           name: "JavaScript Test Suite"
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+            COVERALLS_SERVICE_NAME: circleci
+            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
           command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
       # Store our test results + Output
       - store_test_results:
@@ -37,12 +40,13 @@ jobs:
           path: reports/junit
       # Allows deploy to pickup where this job leaves off
       - persist_to_workspace:
-        root: ~/repo
-        paths: .
+          root: ~/repo
+          paths: .
   test-pr:
+    <<: *defaults
     steps:
       - attach_workspace:
-        at: ~/repo
+          at: ~/repo
       - run:
           name: "JavaScript Test Suite"
           environment:
@@ -58,6 +62,7 @@ jobs:
         root: ~/repo
         paths: .
   deploy:
+    <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
