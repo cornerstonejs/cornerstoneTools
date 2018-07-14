@@ -78,21 +78,13 @@ workflows:
   version: 2
   build-test-deploy:
     jobs:
-      - build:
-        filters:
-          branches:
-            ignore: master
+      - build
       # Merge
-      - test-merge:
-          filters:
-            branches:
-              only: vNext
-          requires:
-            - build
+      # - test-merge:
+      #     filters:
+      #       branches:
+      #         only: vNext
+      #     requires:
+      #       - build
       # Pull Requests
-      - test-pr:
-          filters:
-            branches:
-              ignore: vNext
-          requires:
-            - build
+      - test-pr
