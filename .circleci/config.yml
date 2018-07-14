@@ -71,13 +71,17 @@ jobs:
           at: ~/repo
       - run:
           name: Authenticate with registry
-          command: echo "//registry.npmjs.org/:_authToken=$npm_TOKEN" > ~/repo/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Bump version number
+          command: npm version 3 0 $CIRCLE_BUILD_NUM
       - run:
           name: Publish package
-          command: npm publish
+          command: npm publish --tag next
 
 workflows:
   version: 2
+  # Pull Requests
   build-test:
     jobs:
       - setup:
@@ -87,6 +91,7 @@ workflows:
       - test-pr:
           requires:
             - setup
+  # Merges to vNext
   build-test-deploy:
     jobs:
       - setup:
@@ -96,3 +101,6 @@ workflows:
       - test-merge:
           requires:
             - setup
+      - deploy:
+          requires:
+            - test-merge
