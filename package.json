@@ -32,7 +32,6 @@
     "start:dev": "webpack-dev-server --config ./config/webpack/webpack-dev",
     "test": "npm run test:chrome",
     "test:unit": "jest",
-    "test:ci": "npm run test:unit -- --coverage --coverageReporters=text-lcov --ci | coveralls ",
     "test:watch": "karma start config/karma/karma-watch.js",
     "test:chrome": "karma start config/karma/karma-chrome.js",
     "test:firefox": "karma start config/karma/karma-firefox.js",

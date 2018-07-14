@@ -1,13 +1,13 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: circleci/node:7.10
+
 jobs:
-  build:
-    branches:
-      only:
-        - vNext
-        - pull/*
-    docker:
-      - image: circleci/node:7.10
-    working_directory: ~/repo
+  setup:
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -19,15 +19,88 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-#      - run:
-#          name: "JavaScript Linter"
-#          command: yarn lint -- --format junit -o reports/junit/js-lint-results.xml
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  test-merge:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
       - run:
           name: "JavaScript Test Suite"
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-          command: npm run test:ci
+            COVERALLS_SERVICE_NAME: circleci
+            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls
+      # Store our test results + Output
       - store_test_results:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
+      # Allows deploy to pickup where this job leaves off
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  test-pr:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: "JavaScript Test Suite"
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+            COVERALLS_SERVICE_NAME: circleci
+            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov
+      # Store our test results + Output
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+      # Allows deploy to pickup where this job leaves off
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  deploy:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Bump version number
+          command: npm version 3 0 $CIRCLE_BUILD_NUM
+      - run:
+          name: Publish package
+          command: npm publish --tag next
+
+workflows:
+  version: 2
+  # Pull Requests
+  build-test:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              ignore: vNext
+      - test-pr:
+          requires:
+            - setup
+  # Merges to vNext
+  build-test-deploy:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              only: vNext
+      - test-merge:
+          requires:
+            - setup
+      - deploy:
+          requires:
+            - test-merge
