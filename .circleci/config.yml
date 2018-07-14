@@ -2,10 +2,13 @@ version: 2
 jobs:
   build:
     branches:
-      ignore:
-        - master
+      only:
+        - vNext
     docker:
       - image: circleci/node:7.10
+        environment:
+          COVERALLS_SERVICE_NAME: circleci
+          COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
     working_directory: ~/repo
     steps:
       - checkout
@@ -24,8 +27,6 @@ jobs:
       - run:
           name: "JavaScript Test Suite"
           environment:
-            COVERALLS_SERVICE_NAME: circleci
-            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
           command: npm run test:ci
       - store_test_results:
