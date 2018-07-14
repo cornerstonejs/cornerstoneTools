@@ -6,7 +6,7 @@ defaults: &defaults
     - image: circleci/node:7.10
 
 jobs:
-  build:
+  setup:
     <<: *defaults
     steps:
       - checkout
@@ -78,17 +78,21 @@ jobs:
 
 workflows:
   version: 2
-  build-test-deploy:
+  build-test:
     jobs:
-      - build
-      # Merge
-      # - test-merge:
-      #     filters:
-      #       branches:
-      #         only: vNext
-      #     requires:
-      #       - build
-      # Pull Requests
+      - setup:
+          filters:
+            branches:
+              ignore: vNext
       - test-pr:
           requires:
-            - build
+            - setup
+  build-test-deploy:
+    jobs:
+      - setup:
+          filters:
+            branches:
+              only: vNext
+      - test-merge:
+          requires:
+            - setup
