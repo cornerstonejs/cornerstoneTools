@@ -1,9 +1,10 @@
+version: 2
+
 defaults: &defaults
   working_directory: ~/repo
   docker:
     - image: circleci/node:7.10
 
-version: 2
 jobs:
   build:
     <<: *defaults
@@ -72,6 +73,7 @@ jobs:
       - run:
           name: Publish package
           command: npm publish
+          
 workflows:
   version: 2
   build_test_deploy:
