@@ -52,6 +52,8 @@ jobs:
           name: "JavaScript Test Suite"
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+            COVERALLS_SERVICE_NAME: circleci
+            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
           command: npm run test:unit -- --coverage --coverageReporters=text-lcov
       # Store our test results + Output
       - store_test_results:
@@ -60,8 +62,8 @@ jobs:
           path: reports/junit
       # Allows deploy to pickup where this job leaves off
       - persist_to_workspace:
-        root: ~/repo
-        paths: .
+          root: ~/repo
+          paths: .
   deploy:
     <<: *defaults
     steps:
@@ -87,4 +89,6 @@ workflows:
       #     requires:
       #       - build
       # Pull Requests
-      - test-pr
+      - test-pr:
+        requires:
+          - build
