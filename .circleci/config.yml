@@ -103,4 +103,4 @@ workflows:
             - setup
       - deploy:
           requires:
-            - test-merge
+            - test-pr
