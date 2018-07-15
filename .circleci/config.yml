@@ -98,7 +98,7 @@ workflows:
           filters:
             branches:
               ignore: vNext
-      - test-merge:
+      - test-pr:
           requires:
             - setup
       - deploy:
