@@ -5,6 +5,7 @@ dist/
 docs/_book/
 
 ## Files
+.npmrc
 docs/api.md
 
 ## File Types
