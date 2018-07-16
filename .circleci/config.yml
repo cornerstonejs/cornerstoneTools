@@ -77,8 +77,6 @@ jobs:
   #     # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - run: 
           name: Write NPM Token to ~/.npmrc
-          environment:
-            NPM_TOKEN: $NPM_TOKEN
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       # - run: git config --global user.email "danny.ri.brown@gmail.com"
       # - run: git config --global user.name "Daniel Brown"
@@ -90,6 +88,8 @@ jobs:
           command: npm publish --tag next || true
       - store_artifacts:
           path: ~/.npm/_logs
+      - store_artifacts:
+          path: ~/repo/.npmrc
 
 workflows:
   version: 2
