@@ -4,9 +4,6 @@ defaults: &defaults
   working_directory: ~/repo
   docker:
     - image: circleci/node:latest
-  dependencies:
-    pre:
-      - echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
 
 jobs:
   setup:
@@ -22,35 +19,35 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  test-merge:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      - run:
-          name: "JavaScript Test Suite"
-          environment:
-            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-            COVERALLS_SERVICE_NAME: circleci
-            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-          command: npm run test:ci
-      # Store our test results + Output
-      - store_test_results:
-          path: reports/junit
-      - store_artifacts:
-          path: reports/junit
-      # Allows deploy to pickup where this job leaves off
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  test-pr:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
+      # - persist_to_workspace:
+      #     root: ~/repo
+      #     paths: .
+  # test-merge:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/repo
+  #     - run:
+  #         name: "JavaScript Test Suite"
+  #         environment:
+  #           JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
+  #           COVERALLS_SERVICE_NAME: circleci
+  #           COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+  #         command: npm run test:ci
+  #     # Store our test results + Output
+  #     - store_test_results:
+  #         path: reports/junit
+  #     - store_artifacts:
+  #         path: reports/junit
+  #     # Allows deploy to pickup where this job leaves off
+  #     - persist_to_workspace:
+  #         root: ~/repo
+  #         paths: .
+  # test-pr:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/repo
       - run:
           name: "JavaScript Test Suite"
           environment:
@@ -64,15 +61,15 @@ jobs:
       - store_artifacts:
           path: reports/junit
       # Allows deploy to pickup where this job leaves off
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
-  deploy:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      # - persist_to_workspace:
+      #     root: ~/repo
+      #     paths: .
+  # deploy:
+  #   <<: *defaults
+  #   steps:
+  #     - attach_workspace:
+  #         at: ~/repo
+  #     # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - run: 
           name: Write NPM Token to ~/.npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
@@ -110,9 +107,9 @@ workflows:
           filters:
             branches:
               ignore: vNext
-      - test-pr:
-          requires:
-            - setup
-      - deploy:
-          requires:
-            - test-pr
+      # - test-pr:
+      #     requires:
+      #       - setup
+      # - deploy:
+      #     requires:
+      #       - test-pr
