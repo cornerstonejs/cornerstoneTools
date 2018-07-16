@@ -4,14 +4,11 @@ defaults: &defaults
   working_directory: ~/repo
   docker:
     - image: circleci/node:latest
-    # environment variables for all commands executed in the primary container
-    # environment:
-    #   JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-    #   COVERALLS_SERVICE_NAME: circleci
-    #   COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
 
 jobs:
-  setup:
+
+  # Run on successful merge/commit to vNext
+  test-merge:
     <<: *defaults
     steps:
       - checkout
@@ -24,41 +21,43 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      # - persist_to_workspace:
-      #     root: ~/repo
-      #     paths: .
-  # test-merge:
-  #   <<: *defaults
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/repo
-  #     - run:
-  #         name: "JavaScript Test Suite"
-  #         environment:
-  #           JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-  #           COVERALLS_SERVICE_NAME: circleci
-  #           COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-  #         command: npm run test:ci
-  #     # Store our test results + Output
-  #     - store_test_results:
-  #         path: reports/junit
-  #     - store_artifacts:
-  #         path: reports/junit
-  #     # Allows deploy to pickup where this job leaves off
-  #     - persist_to_workspace:
-  #         root: ~/repo
-  #         paths: .
-  # test-pr:
-  #   <<: *defaults
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/repo
       - run:
-          name: "JavaScript Test Suite"
+          name: Jest Tests && Coveralls Report
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
             COVERALLS_SERVICE_NAME: circleci
             COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+          command: npm run test:ci
+      # Store our test results + Output
+      - store_test_results:
+          path: reports/junit
+      - store_artifacts:
+          path: reports/junit
+      # Allows deploy to pickup where this job leaves off
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+  
+  # Note: We do not expose project environment variables
+  # to pull requests from forks (security reasons). This
+  # job should never rely on such an environment variable.
+  test-pr:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+      - run: npm install
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Jest Tests && Coverage Report
+          environment:
+            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
           command: npm run test:unit -- --coverage --coverageReporters=text-lcov
       # Store our test results + Output
       - store_test_results:
@@ -66,54 +65,42 @@ jobs:
       - store_artifacts:
           path: reports/junit
       # Allows deploy to pickup where this job leaves off
-      # - persist_to_workspace:
-      #     root: ~/repo
-      #     paths: .
-  # deploy:
-  #   <<: *defaults
-  #   steps:
-  #     - attach_workspace:
-  #         at: ~/repo
-  #     # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  # Used to publish latest under @next tag
+  deploy:
+    <<: *defaults
+    steps:
       - run: 
           name: Write NPM Token to ~/.npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
-      # - run: git config --global user.email "danny.ri.brown@gmail.com"
-      # - run: git config --global user.name "Daniel Brown"
       - run:
           name: Bump version number
           command: sh ~/repo/.circleci/version.sh
       - run:
           name: Publish package
-          command: npm publish --tag next || true
-      - store_artifacts:
-          path: ~/.npm/_logs
-      - store_artifacts:
-          path: ~/repo/.npmrc
-      - run: printenv
+          command: npm publish --tag next
 
 workflows:
   version: 2
+
   # Pull Requests
   build-test:
     jobs:
-      - setup:
-          filters:
-            branches:
-              only: vNext
       - test-pr:
-          requires:
-            - setup
-  # Merges to vNext
-  build-test-deploy:
-    jobs:
-      - setup:
           filters:
             branches:
               ignore: vNext
-      # - test-pr:
-      #     requires:
-      #       - setup
-      # - deploy:
-      #     requires:
-      #       - test-pr
+
+  # Merges to vNext
+  build-test-deploy:
+    jobs:
+      - test-merge:
+          filters:
+            branches:
+              only: vNext
+      - deploy:
+          requires:
+            - test-merge
