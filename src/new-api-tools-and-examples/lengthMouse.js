@@ -17,7 +17,6 @@ const cornerstone = external.cornerstone;
 export default class extends baseMouseAnnotationTool {
   constructor () {
     super('lengthMouse');
-    console.log(`my name is ${this.name}`);
   }
 
   /**
