@@ -79,7 +79,7 @@ jobs:
           name: Bump version number
           environment:
             BUILD_NUMBER: $CIRCLE_BUILD_NUM
-          command: npm version "3.0.0-alpha.$BUILD_NUM"
+          command: npm version "3.0.0-alpha.$BUILD_NUMBER"
       - run: 
           name: Write NPM Token to ~/.npmrc
           environment:
