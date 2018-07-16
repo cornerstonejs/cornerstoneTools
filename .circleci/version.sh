@@ -10,6 +10,8 @@ then
 
 	echo "Found package version: $NEW_PACKAGE_VERSION"
 
+	printenv
+	echo "Circle Build Num: $CIRCLE_BUILD_NUM"
 	NEW_PACKAGE_VERSION=$(echo $PACKAGE_VERSION | sed -e "s/^\([0-9]*\.[0-9]*\.[0-9]*\-[a-z]*\).[0-9]*$/\1.$CIRCLE_BUILD_NUM/")
 	echo "Setting version to: $NEW_PACKAGE_VERSION"
 	# uses npm-version to set version in package.json
