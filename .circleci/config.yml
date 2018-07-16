@@ -90,6 +90,7 @@ jobs:
           path: ~/.npm/_logs
       - store_artifacts:
           path: ~/repo/.npmrc
+      - run: printenv
 
 workflows:
   version: 2
