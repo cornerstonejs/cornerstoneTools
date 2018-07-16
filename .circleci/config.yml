@@ -89,7 +89,7 @@ jobs:
           name: Publish package
           command: npm cache clean && npm publish --tag next || true
       - store_artifacts:
-          path: ~/.npm/_logs/2018-07-16T15_48_22_951Z-debug.log
+          path: ~/.npm/_logs
 
 workflows:
   version: 2
