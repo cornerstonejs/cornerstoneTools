@@ -1,4 +1,9 @@
 import LengthMouse from './lengthMouse.js';
+import { getToolState } from './../stateManagement/toolState.js';
+
+jest.mock('./../stateManagement/toolState.js', () => ({
+  getToolState: jest.fn()
+}));
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -14,6 +19,8 @@ describe('lengthMouse.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
+    console.warn = jest.fn();
+    console.warn.mockClear();
   });
 
   describe('default values', () => {
@@ -79,5 +86,69 @@ describe('lengthMouse.js', () => {
     });
   });
 
-  describe('pointNearTool', () => {});
+  describe('pointNearTool', () => {
+    let element, coords;
+
+    beforeEach(() => {
+      element = jest.fn();
+      coords = jest.fn();
+    });
+
+    // Todo: Not sure we want all of our methods to check for valid params.
+    it('emits a console warning when measurementData without start/end handles are supplied', () => {
+      const instantiatedTool = new LengthMouse();
+      const noHandlesMeasurementData = {
+        handles: {}
+      };
+
+      instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
+
+      expect(console.warn).toHaveBeenCalled();
+      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+    });
+
+    it('returns false when measurement data is null or undefined', () => {
+      const instantiatedTool = new LengthMouse();
+      const nullMeasurementData = null;
+
+      const isPointNearTool = instantiatedTool.pointNearTool(
+        element,
+        nullMeasurementData,
+        coords
+      );
+
+      expect(isPointNearTool).toBe(false);
+    });
+
+    it('returns false when measurement data is not visible', () => {
+      const instantiatedTool = new LengthMouse();
+      const notVisibleMeasurementData = {
+        visible: false
+      };
+
+      const isPointNearTool = instantiatedTool.pointNearTool(
+        element,
+        notVisibleMeasurementData,
+        coords
+      );
+
+      expect(isPointNearTool).toBe(false);
+    });
+  });
+
+  describe('renderToolData', () => {
+    it('returns undefined when no toolData exists for the tool', () => {
+      const instantiatedTool = new LengthMouse();
+      const mockEvent = {
+        detail: undefined,
+        currentTarget: undefined
+      };
+
+      getToolState.mockReturnValueOnce(undefined);
+
+      const renderResult = instantiatedTool.renderToolData(mockEvent);
+
+      expect(renderResult).toBe(undefined);
+    });
+  });
 });
