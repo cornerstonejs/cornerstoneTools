@@ -218,9 +218,6 @@ export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
 export {
   default as multiTouchDragTool
 } from './imageTools/multiTouchDragTool.js';
-export {
-  default as orientationMarkers
-} from './imageTools/orientationMarkers.js';
 
 export { pan, panTouchDrag } from './imageTools/pan.js';
 export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
