@@ -27,6 +27,19 @@ export default class extends baseMouseAnnotationTool {
    * @returns
    */
   createNewMeasurement (eventData) {
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      console.error(
+        `required eventData not supplieed to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
     return {
       visible: true,
       active: true,
