@@ -32,7 +32,7 @@
     "start": "npm run webpack",
     "start:dev": "webpack-dev-server --config ./config/webpack/webpack-dev",
     "test": "npm run test:chrome",
-    "test:unit": "jest",
+    "test:unit": "jest \\.test\\.js$",
     "test:ci": "npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls",
     "test:watch": "karma start config/karma/karma-watch.js",
     "test:chrome": "karma start config/karma/karma-chrome.js",
@@ -94,6 +94,7 @@
     "dist/cornerstoneTools.min.js.map"
   ],
   "jest": {
+    "verbose": true,
     "moduleFileExtensions": [
       "js"
     ],
@@ -101,6 +102,7 @@
       "node_modules"
     ],
     "reporters": [
+      "default",
       "jest-junit"
     ],
     "collectCoverageFrom": [

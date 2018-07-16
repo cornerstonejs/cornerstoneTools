@@ -17,7 +17,6 @@ const cornerstone = external.cornerstone;
 export default class extends baseMouseAnnotationTool {
   constructor () {
     super('lengthMouse');
-    console.log(`my name is ${this.name}`);
   }
 
   /**
@@ -27,6 +26,19 @@ export default class extends baseMouseAnnotationTool {
    * @returns
    */
   createNewMeasurement (eventData) {
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      console.error(
+        `required eventData not supplieed to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
     return {
       visible: true,
       active: true,
@@ -65,7 +77,17 @@ export default class extends baseMouseAnnotationTool {
    * @returns
    */
   pointNearTool (element, data, coords) {
-    if (data.visible === false) {
+    const hasStartAndEndHandles =
+      data && data.handles && data.handles.start && data.handles.end;
+    const validParameters = hasStartAndEndHandles;
+
+    if (!validParameters) {
+      console.warn(
+        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      );
+    }
+
+    if (!validParameters || data.visible === false) {
       return false;
     }
 
@@ -83,8 +105,6 @@ export default class extends baseMouseAnnotationTool {
    */
   renderToolData (evt) {
     const eventData = evt.detail;
-
-    // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
