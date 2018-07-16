@@ -80,6 +80,8 @@ jobs:
           environment:
             NPM_TOKEN: $NPM_TOKEN
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run: git config --global user.email "danny.ri.brown@gmail.com"
+      - run: git config --global user.name "Daniel Brown"
       - run:
           name: Bump version number
           environment:
