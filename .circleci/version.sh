@@ -21,7 +21,7 @@ then
 	git add .
 	git commit --allow-empty -m "Version Bump"
 	# Push quietly to prevent showing the token in log
-	git push -q https://${GITHUB_TOKEN}@github.com/cornerstonejs/cornerstoneTools.git vNext
+	# git push -q https://${GITHUB_TOKEN}@github.com/cornerstonejs/cornerstoneTools.git vNext
 else
   	echo "Don't forget to update the build version!"
 fi
