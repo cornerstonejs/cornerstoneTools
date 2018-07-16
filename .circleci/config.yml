@@ -75,14 +75,16 @@ jobs:
   #     - attach_workspace:
   #         at: ~/repo
   #     # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
+      - run:
+          name: Bump version number
+          environment:
+            BUILD_NUMBER: $CIRCLE_BUILD_NUM
+          command: npm version 3.0.0-alpha.$BUILD_NUMBER
       - run: 
           name: Write NPM Token to ~/.npmrc
           environment:
-            NPM_LOCAL_TOKEN: $NPM_TOKEN
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_LOCAL_TOKEN" > ~/repo/.npmrc
-      # - run:
-      #     name: Bump version number
-      #     command: npm version 3.0.1-alpha
+            NPM_TOKEN: $NPM_TOKEN
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
           name: Publish package
           command: npm publish --tag next
