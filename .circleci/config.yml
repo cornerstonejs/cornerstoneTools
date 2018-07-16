@@ -64,10 +64,6 @@ jobs:
           path: reports/junit
       - store_artifacts:
           path: reports/junit
-      # Allows deploy to pickup where this job leaves off
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
 
   # Used to publish latest under @next tag
   deploy:
