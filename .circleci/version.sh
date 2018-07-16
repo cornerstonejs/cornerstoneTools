@@ -8,7 +8,7 @@ then
 		| sed 's/[",]//g' \
 		| tr -d '[[:space:]]')
 
-	echo "Found package version: $NEW_PACKAGE_VERSION"
+	echo "Found package version: $PACKAGE_VERSION"
 
 	printenv
 	echo "Circle Build Num: $CIRCLE_BUILD_NUM"

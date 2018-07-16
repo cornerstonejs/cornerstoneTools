@@ -84,9 +84,6 @@ jobs:
       # - run: git config --global user.name "Daniel Brown"
       - run:
           name: Bump version number
-          environment:
-            CI: $CI
-            CIRCLE_BUILD_NUM: $CIRCLE_BUILD_NUM
           command: sh ~/repo/.circleci/version.sh
       - run:
           name: Publish package
