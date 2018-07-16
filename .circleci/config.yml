@@ -77,7 +77,9 @@ jobs:
   #     # - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - run: 
           name: Write NPM Token to ~/.npmrc
-          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/repo/.npmrc
+          environment:
+            NPM_LOCAL_TOKEN: $NPM_TOKEN
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_LOCAL_TOKEN" > ~/repo/.npmrc
       # - run:
       #     name: Bump version number
       #     command: npm version 3.0.1-alpha
