@@ -38,7 +38,7 @@ jobs:
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
             COVERALLS_SERVICE_NAME: circleci
-            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+            COVERALLS_SERVICE_JOB_ID: ${CIRCLE_BUILD_NUM}
           command: npm run test:ci
       # Store our test results + Output
       - store_test_results:
@@ -59,7 +59,7 @@ jobs:
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
             COVERALLS_SERVICE_NAME: circleci
-            COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
+            COVERALLS_SERVICE_JOB_ID: ${CIRCLE_BUILD_NUM}
           command: npm run test:unit -- --coverage --coverageReporters=text-lcov
       # Store our test results + Output
       - store_test_results:
@@ -79,13 +79,13 @@ jobs:
       - run: 'echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc'
       - run:
           name: Add auth token
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> ~/.npmrc
       # - run:
       #     name: Who am i?
       #     command: npm whoami
       - run:
           name: Bump version number
-          command: npm version 3.0.$CIRCLE_BUILD_NUM
+          command: npm version 3.0.${CIRCLE_BUILD_NUM}
       - run:
           name: Publish package
           command: npm publish --tag next
