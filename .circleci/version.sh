@@ -8,19 +8,20 @@ then
 		| sed 's/[",]//g' \
 		| tr -d '[[:space:]]')
 
-	echo "Found package version: $PACKAGE_VERSION"
-
-	printenv
-	echo "Circle Build Num: $CIRCLE_BUILD_NUM"
 	NEW_PACKAGE_VERSION=$(echo $PACKAGE_VERSION | sed -e "s/^\([0-9]*\.[0-9]*\.[0-9]*\-[a-z]*\).[0-9]*$/\1.$CIRCLE_BUILD_NUM/")
+	echo "Found package version: $PACKAGE_VERSION"
 	echo "Setting version to: $NEW_PACKAGE_VERSION"
 	# uses npm-version to set version in package.json
 	# see https://docs.npmjs.com/cli/version
 	npm version $NEW_PACKAGE_VERSION --no-git-tag-version
-	# git add package.json
-	# git add package-lock.json
-	# git add .
-	# git commit -m "updated version to $newversion [ci skip]"
+	#
+	git config credential.helper 'cache --timeout=120'
+	git config user.email "danny.ri.brown@gmail.com"
+	git config user.name "Daniel Brown"
+	git add .
+	git commit --allow-empty -m "Version Bump"
+	# Push quietly to prevent showing the token in log
+	git push -q https://${GITHUB_TOKEN}@github.com/cornerstonejs/cornerstoneTools.git vNext
 else
   	echo "Don't forget to update the build version!"
 fi

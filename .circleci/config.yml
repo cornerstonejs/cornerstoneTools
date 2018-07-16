@@ -89,14 +89,6 @@ jobs:
           name: Publish package
           command: npm publish --tag next
 
-      # - run: 
-      #     name: Install dot-json package
-      #     command: npm install dot-json
-
-      # - run:
-      #     name: Write version to package.json
-      #     command: $(yarn bin)/dot-json package.json version ${CIRCLE_TAG:1}
-
 workflows:
   version: 2
   # Pull Requests
