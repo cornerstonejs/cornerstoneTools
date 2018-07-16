@@ -83,7 +83,7 @@ jobs:
           command: npm adduser
       - run:
           name: Who am i?
-          command: npm whomi
+          command: npm whoami
       - run:
           name: Bump version number
           command: npm version 3.0.$CIRCLE_BUILD_NUM
