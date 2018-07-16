@@ -8,8 +8,8 @@ then
   npm version $newversion --no-git-tag-version
   # git add package.json
   # git add package-lock.json
-  git add .
-  git commit -m "updated version to $newversion [ci skip]"
+  # git add .
+  # git commit -m "updated version to $newversion [ci skip]"
 else
   echo "Don't forget to update the build version!"
 fi
