@@ -69,18 +69,12 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      # - run:
-      #     name: Set git email
-      #     command: git config --global user.email "danny.ri.brown@gmail.com"
-      # - run:
-      #     name: Set git name
-      #     command: git config --global user.name "dannyrb"
       - run:
           name: Authenticate with registry
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
-          name: Add User
-          command: npm adduser
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - run:
           name: Who am i?
           command: npm whoami
