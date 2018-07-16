@@ -14,6 +14,7 @@ then
 	# uses npm-version to set version in package.json
 	# see https://docs.npmjs.com/cli/version
 	npm version $NEW_PACKAGE_VERSION --no-git-tag-version
+	npm run webpack
 	#
 	git config credential.helper 'cache --timeout=120'
 	git config user.email "danny.ri.brown@gmail.com"
