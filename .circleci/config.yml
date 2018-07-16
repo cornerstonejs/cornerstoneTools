@@ -72,9 +72,10 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
+      - run: echo -e "$NPM_USER\n$NPM_PASS\n$NPM_EMAIL" | npm login
       - run:
           name: Add auth token
-          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" >> ~/.npmrc
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run: git add . && git commit
       - run:
           name: Bump version number
