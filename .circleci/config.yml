@@ -87,7 +87,7 @@ jobs:
           command: sh ~/repo/.circleci/version.sh
       - run:
           name: Publish package
-          command: npm cache clean && npm publish --tag next || true
+          command: npm publish --tag next || true
       - store_artifacts:
           path: ~/.npm/_logs
 
