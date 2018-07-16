@@ -69,7 +69,9 @@ jobs:
   deploy:
     <<: *defaults
     steps:
-      - run: 
+      - attach_workspace:
+          at: ~/repo
+      - run:
           name: Write NPM Token to ~/.npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
       - run:
