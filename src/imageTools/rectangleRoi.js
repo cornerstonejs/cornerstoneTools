@@ -7,7 +7,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import { getNewContext, draw, path, setShadow } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawRect } from '../util/drawing.js';
 
 const toolType = 'rectangleRoi';
 
@@ -167,22 +167,8 @@ function onImageRendered (e) {
       // Check which color the rendered tool should be
       const color = toolColors.getColorIfActive(data);
 
-      // Convert Image coordinates to Canvas coordinates given the element
-      const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-      const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-
-      // Retrieve the bounds of the ellipse (left, top, width, and height)
-      // In Canvas coordinates
-      const leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
-      const topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
-      const widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
-      const heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
-
       // Draw the rectangle on the canvas
-      path(context, { color,
-        lineWidth }, (context) => {
-        context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
-      });
+      drawRect(context, element, data.handles.start, data.handles.end, { color });
 
       // If the tool configuration specifies to only draw the handles on hover / active,
       // Follow this logic

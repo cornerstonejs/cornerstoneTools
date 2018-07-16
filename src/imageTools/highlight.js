@@ -1,11 +1,10 @@
 import external from '../externalModules.js';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, path, drawRect } from '../util/drawing.js';
 
 const toolType = 'highlight';
 
@@ -102,8 +101,6 @@ function onImageRendered (e) {
   // We have tool data for this elemen
   const context = getNewContext(eventData.canvasContext.canvas);
 
-  const lineWidth = toolStyle.getToolWidth();
-
   const data = toolData.data[0];
 
   if (data.visible === false) {
@@ -139,15 +136,13 @@ function onImageRendered (e) {
     });
 
     color = toolColors.getColorIfActive(data);
+    const options = {
+      color,
+      lineDash: [4]
+    };
 
-    // Draw dashed stroke rectangle
-    const lineDash = [4];
-
-    path(context, { color,
-      lineWidth,
-      lineDash }, (context) => {
-      context.rect(rect.left, rect.top, rect.width, rect.height);
-    });
+    // Dashed stroke rectangle
+    drawRect(context, eventData.element, data.handles.start, data.handles.end, options);
 
     // Draw the handles last, so they will be on top of the overlay
     drawHandles(context, eventData, data.handles, color);
