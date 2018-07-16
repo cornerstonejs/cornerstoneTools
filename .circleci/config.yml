@@ -78,8 +78,9 @@ jobs:
       - run:
           name: Bump version number
           environment:
+            CI: $CI
             CIRCLE_BUILD_NUM: $CIRCLE_BUILD_NUM
-          command: npm version 3.0.0-$CIRCLE_BUILD_NUM
+          command: sh ~/repo/.circleci/version.sh
       - run: 
           name: Write NPM Token to ~/.npmrc
           environment:
