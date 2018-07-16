@@ -133,7 +133,6 @@
 
 	document.getElementById('chkshadow').addEventListener('change', function () {
 		cornerstoneTools.length.setConfiguration({ shadow: this.checked });
-		cornerstoneTools.angle.setConfiguration({ shadow: this.checked });
 		cornerstone.updateImage(element);
 	});
 
@@ -152,7 +151,6 @@
 		cornerstoneTools.length.enable(element);
 		cornerstoneTools.ellipticalRoi.enable(element);
 		cornerstoneTools.rectangleRoi.enable(element);
-		cornerstoneTools.angle.enable(element);
 		// cornerstoneTools.eraser.enable(element); Uncomment this with release 2.3.8
 
 		activate("enableWindowLevelTool");
@@ -175,7 +173,6 @@
 			cornerstoneTools.length.deactivate(element, 1);
 			cornerstoneTools.ellipticalRoi.deactivate(element, 1);
 			cornerstoneTools.rectangleRoi.deactivate(element, 1);
-			cornerstoneTools.angle.deactivate(element, 1);
 			cornerstoneTools.freehand.deactivate(element, 1);
 			// cornerstoneTools.eraser.deactivate(element, 1); @TODO: Uncomment this with release 2.3.8
 		}
@@ -216,11 +213,6 @@
 			disableAllTools();
 			cornerstoneTools.rectangleRoi.activate(element, 1);
 		});
-		document.getElementById('angle').addEventListener('click', function () {
-			activate('angle')
-			disableAllTools();
-			cornerstoneTools.angle.activate(element, 1);
-		});
 		document.getElementById('freehand').addEventListener('click', function () {
 			activate('freehand')
 			disableAllTools();
@@ -238,7 +230,6 @@
 		//     cornerstoneTools.length.enable(element, 1);
 		//     cornerstoneTools.ellipticalRoi.enable(element, 1);
 		//     cornerstoneTools.rectangleRoi.enable(element, 1);
-		//     cornerstoneTools.angle.enable(element, 1);
 		//     cornerstoneTools.freehand.enable(element, 1);
 		//     cornerstoneTools.eraser.enable(element, 1);
 

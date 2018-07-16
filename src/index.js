@@ -190,7 +190,6 @@ export {
 } from './inputSources/preventGhostClick.js';
 export { default as touchInput } from './inputSources/touchInput.js';
 
-export { angle, angleTouch } from './imageTools/angleTool.js';
 export {
   arrowAnnotate,
   arrowAnnotateTouch
