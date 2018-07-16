@@ -80,7 +80,7 @@ jobs:
       #     command: npm whoami
       - run:
           name: Bump version number
-          command: npm version 3.0.$CIRCLE_BUILD_NUM
+          command: npm version 3.0.1-alpha
       - run:
           name: Publish package
           command: npm publish --tag next
