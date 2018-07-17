@@ -3,6 +3,8 @@ import baseAnnotationTool from './baseAnnotationTool.js';
 export default class extends baseAnnotationTool {
   constructor (name) {
     super(name);
+
+    this.isAnnotationTool = true;
   }
 
   mouseMove (evt) {
