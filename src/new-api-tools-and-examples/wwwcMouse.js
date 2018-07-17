@@ -12,7 +12,9 @@ const cornerstone = external.cornerstone;
  *
  * @param eventData
  */
-function defaultStrategy (eventData) {
+function basicLevelingStrategy (evt) {
+  const eventData = evt.detail;
+
   const maxVOI =
     eventData.image.maxPixelValue * eventData.image.slope +
     eventData.image.intercept;
@@ -31,39 +33,17 @@ function defaultStrategy (eventData) {
 
 export default class extends baseMouseDragTool {
   constructor () {
-    super('wwwcMouse');
-
-    this.strategies = {
-      default: defaultStrategy
+    const strategies = {
+      basicLevelingStrategy
     };
 
-    this.strategy = defaultStrategy;
-
-    this.isAwaitingMouseUp = false;
+    super('wwwcMouse', strategies);
   }
 
-  mouseDownActivate (evt) {
-    console.log('wwwcMouse mouseDown');
-    const eventData = evt.detail;
-    const element = eventData.element;
+  mouseDragCallback (evt) {
+    console.log('wwwcMouse mouseDragCallback');
 
-    this.isAwaitingMouseUp = true;
-  }
-
-  mouseMove (evt) {
-    console.log('wwwcMouse mouseMove');
-    // If (!this.isAwaitingMouseUp) {
-    //   Return;
-    // }
-
-    const eventData = evt.detail;
-    const element = eventData.element;
-
-    this.strategy(eventData);
-    external.cornerstone.setViewport(element, eventData.viewport);
-  }
-
-  mouseUp (evt) {
-    this.isAwaitingMouseUp = false;
+    this.applyActiveStrategy(evt);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }

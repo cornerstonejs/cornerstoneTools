@@ -284,7 +284,6 @@ function mouseDrag (evt) {
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
-  console.log('activeTools for mouse button', tools);
 
   if (tools.length === 0) {
     return;
@@ -292,8 +291,8 @@ function mouseDrag (evt) {
 
   const activeTool = tools[0];
 
-  if (activeTool.mouseMove) {
-    activeTool.mouseMove(evt);
+  if (activeTool.mouseDragCallback) {
+    activeTool.mouseDragCallback(evt);
   }
 }
 
