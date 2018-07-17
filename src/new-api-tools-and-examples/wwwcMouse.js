@@ -41,8 +41,6 @@ export default class extends baseMouseDragTool {
   }
 
   mouseDragCallback (evt) {
-    console.log('wwwcMouse mouseDragCallback');
-
     this.applyActiveStrategy(evt);
     external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
