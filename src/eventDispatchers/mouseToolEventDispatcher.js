@@ -32,11 +32,23 @@ const getInteractiveToolsForElement = function (element, tools) {
   );
 };
 
+/**
+ * These listeners are emitted in order, and can be cancelled/prevented from bubbling
+ * by any previous event.
+ * - mouseMove: used to update the [un]hover state of a tool (highlighting)
+ * - mouseDown: check to see if we are close to an existing annotation, grab it
+ * - mouseDownActivate: createNewMeasurement (usually)
+ * - mouseDrag: update measurement or apply strategy (wwwc)
+ * - mouseDoubleClick: usually a one-time apply specialty action
+ * - onImageRendered: redraw visible tool data
+ * @param {*} element
+ */
 const enable = function (element) {
   console.log('enable', element);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
   element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDrag);
   element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
@@ -120,10 +132,10 @@ function mouseMove (evt) {
  * @returns
  */
 function mouseDown (evt) {
+  console.log('mouseDown');
   if (isAwaitingMouseUp) {
     return;
   }
-  console.log('mouseDown');
   const eventData = evt.detail;
   const element = eventData.element;
   const coords = eventData.currentPoints.canvas;
@@ -252,17 +264,50 @@ function mouseDown (evt) {
   // }
 }
 
-// Todo: We could simplify this if we only allow one active
-// Tool per mouse button mask?
-function mouseDownActivate (evt) {
+// Tools like wwwc. Non-annotation tools w/ specific
+// Down + mouse behavior
+// TODO: I don't like filtering in drag because it's such
+// A high frequency event. Anything we can do to reduce
+// Repeat math here would be a big help
+function mouseDrag (evt) {
+  console.log('mouseDrag');
   if (isAwaitingMouseUp) {
     return;
   }
-  console.log('mouseDownActivate');
   const eventData = evt.detail;
   const element = eventData.element;
 
-  // Filter out disabled and enabled
+  // Filter out disabled, enabled, and passive
+  let tools = getActiveToolsForElement(element, state.tools);
+
+  // Filter out tools that do not match mouseButtonMask
+  tools = tools.filter((tool) =>
+    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  );
+  console.log('activeTools for mouse button', tools);
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  const activeTool = tools[0];
+
+  if (activeTool.mouseMove) {
+    activeTool.mouseMove(evt);
+  }
+}
+
+// Todo: We could simplify this if we only allow one active
+// Tool per mouse button mask?
+function mouseDownActivate (evt) {
+  console.log('mouseDownActivate');
+  if (isAwaitingMouseUp) {
+    return;
+  }
+  const eventData = evt.detail;
+  const element = eventData.element;
+
+  // Filter out disabled, enabled, and passive
   let tools = getActiveToolsForElement(element, state.tools);
 
   console.log('activeTools', tools);
@@ -279,14 +324,12 @@ function mouseDownActivate (evt) {
 
   const activeTool = tools[0];
 
+  // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(eventData, activeTool);
-  } else {
-    addNewMeasurement(eventData, activeTool);
+    activeTool.addNewMeasurement(evt, activeTool);
+  } else if (activeTool.isAnnotationTool) {
+    addNewMeasurement(evt, activeTool);
   }
-
-  evt.preventDefault();
-  evt.stopPropagation();
 }
 
 function mouseDoubleClick () {}
@@ -310,17 +353,11 @@ function onImageRendered (evt) {
   });
 }
 
-// Export default function (mouseToolInterface) {
-//   Let configuration = {};
-//   Const toolType = mouseToolInterface.toolType;
-
-//   Const mouseMove = mouseToolInterface.mouseMoveCallback || mouseMoveCallback;
-//   Const mouseDown = mouseToolInterface.mouseDownCallback || mouseDownCallback;
-//   Const mouseDownActivate =
-//     MouseToolInterface.mouseDownActivateCallback || mouseDownActivateCallback;
-//   Const mouseDoubleClick = mouseToolInterface.mouseDoubleClickCallback;
-
-function addNewMeasurement (mouseEventData, tool) {
+function addNewMeasurement (evt, tool) {
+  //
+  evt.preventDefault();
+  evt.stopPropagation();
+  const mouseEventData = evt.detail;
   const element = mouseEventData.element;
   const measurementData = tool.createNewMeasurement(mouseEventData);
 
