@@ -1,7 +1,7 @@
 import displayTool from './displayTool.js';
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import { getNewContext, draw, path } from '../util/drawing.js';
+import { getNewContext, draw, drawLines, drawLine } from '../util/drawing.js';
 
 const configuration = {
   color: 'white',
@@ -10,110 +10,70 @@ const configuration = {
   shadowBlur: 4
 };
 
-function drawLine (context, startPoint, endPoint) {
-  context.moveTo(startPoint.x, startPoint.y);
-  context.lineTo(endPoint.x, endPoint.y);
-}
-
-function drawVerticalScalebarIntervals (context, imageAttributes) {
+function drawVerticalScalebarIntervals (imageAttributes) {
   let i = 0;
+  const lines = [];
 
   while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
 
-    const startPoint = {
+    const start = {
       x: imageAttributes.verticalLine.start.x,
       y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
     };
 
-    const endPoint = {
+    const end = {
       x: 0,
       y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
     };
 
     if (i % 5 === 0) {
 
-      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
+      end.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
     } else {
 
-      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
+      end.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
-
+    lines.push({
+      start,
+      end
+    });
     i++;
   }
+
+  return lines;
 }
 
-function drawHorizontalScalebarIntervals (context, imageAttributes) {
+function drawHorizontalScalebarIntervals (imageAttributes) {
   let i = 0;
+  const lines = [];
 
   while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
 
-    const startPoint = {
+    const start = {
       x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
       y: imageAttributes.horizontalLine.start.y
     };
 
-    const endPoint = {
+    const end = {
       x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
       y: 0
     };
 
     if (i % 5 === 0) {
-      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.majorTickLength;
+      end.y = imageAttributes.horizontalLine.start.y - imageAttributes.majorTickLength;
     } else {
-      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
+      end.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
-
+    lines.push({
+      start,
+      end
+    });
     i++;
   }
-}
 
-function drawVerticalScalebar (context, imageAttributes) {
-  const startPoint = {
-    x: imageAttributes.verticalLine.start.x,
-    y: imageAttributes.verticalLine.start.y
-  };
-  const endPoint = {
-    x: imageAttributes.verticalLine.end.x,
-    y: imageAttributes.verticalLine.end.y
-  };
-
-  const { color, lineWidth } = imageAttributes;
-
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawLine(context, startPoint, endPoint);
-    drawVerticalScalebarIntervals(context, imageAttributes);
-  });
-}
-
-function drawHorizontalScalebar (context, imageAttributes) {
-  const startPoint = {
-    x: imageAttributes.horizontalLine.start.x,
-    y: imageAttributes.horizontalLine.start.y
-  };
-  const endPoint = {
-    x: imageAttributes.horizontalLine.end.x,
-    y: imageAttributes.horizontalLine.end.y
-  };
-
-  drawLine(context, startPoint, endPoint);
-  drawHorizontalScalebarIntervals(context, imageAttributes);
-}
-
-function drawScalebars (context, imageAttributes) {
-  context.shadowColor = imageAttributes.shadowColor;
-  context.shadowBlur = imageAttributes.shadowBlur;
-  const { color, lineWidth } = imageAttributes;
-
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawVerticalScalebar(context, imageAttributes);
-    drawHorizontalScalebar(context, imageAttributes);
-  });
+  return lines;
 }
 
 // Computes the max bound for scales on the image
@@ -224,8 +184,23 @@ function onImageRendered (e) {
     }
   }, configuration);
 
+  const { color, lineWidth } = imageAttributes;
+  const options = {
+    color,
+    lineWidth
+  };
+  const vertLines = drawVerticalScalebarIntervals(imageAttributes);
+  const horizLines = drawHorizontalScalebarIntervals(imageAttributes);
+
   draw(context, (context) => {
-    drawScalebars(context, imageAttributes);
+    context.shadowColor = imageAttributes.shadowColor;
+    context.shadowBlur = imageAttributes.shadowBlur;
+
+    drawLine(context, undefined, imageAttributes.verticalLine.start, imageAttributes.verticalLine.end, options, 'canvas');
+    drawLine(context, undefined, imageAttributes.horizontalLine.start, imageAttributes.horizontalLine.end, options, 'canvas');
+
+    drawLines(context, undefined, vertLines, options, 'canvas');
+    drawLines(context, undefined, horizLines, options, 'canvas');
   });
 }
 // /////// END IMAGE RENDERING ///////
