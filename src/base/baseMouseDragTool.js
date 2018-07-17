@@ -1,16 +1,14 @@
 import baseTool from './baseTool.js';
 
 class baseMouseDragTool extends baseTool {
-  constructor (name) {
-    super(name);
+  constructor (name, strategies, defaultStrategy) {
+    super(name, strategies, defaultStrategy);
+
+    this.isMouseTool = true;
   }
 
-  mouseDown (evt) {
-    console.warn(`mouseDown not implemented for ${this.toolName}`);
-  }
-
-  mouseMove (evt) {
-    console.warn(`mouseDown not implemented for ${this.toolName}`);
+  mouseDragCallback (evt) {
+    console.warn(`mouseDragCallback not implemented for ${this.toolName}`);
   }
 }
 

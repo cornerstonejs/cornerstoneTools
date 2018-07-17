@@ -1,10 +1,10 @@
 import baseAnnotationTool from './baseAnnotationTool.js';
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
-    super(name);
+  constructor (name, strategies, defaultStrategy) {
+    super(name, strategies, defaultStrategy);
 
-    this.isAnnotationTool = true;
+    this.isMouseTool = true;
   }
 
   mouseMove (evt) {
