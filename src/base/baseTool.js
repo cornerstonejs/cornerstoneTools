@@ -1,8 +1,14 @@
 export default class {
-  constructor (name) {
+  constructor (name, strategies, defaultStrategy) {
     this.name = name;
     this.mode = 'disabled';
     this.element = undefined;
+
+    // Todo: should this live in baseTool?
+    this.strategies = strategies || {};
+    this.defaultStrategy =
+      defaultStrategy || Object.keys(this.strategies)[0] || undefined;
+    this.activeStrategy = this.defaultStrategy;
 
     //
     this.data = {};
@@ -29,5 +35,15 @@ export default class {
 
   clearOptions () {
     this._options = {};
+  }
+
+  /**
+   *
+   *
+   * @param {*} evt
+   * @returns Any
+   */
+  applyActiveStrategy (evt) {
+    return this.strategies[this.activeStrategy](evt);
   }
 }

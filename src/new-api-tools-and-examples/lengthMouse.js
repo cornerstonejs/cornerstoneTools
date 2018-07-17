@@ -116,7 +116,7 @@ export default class extends baseMouseAnnotationTool {
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = this.getConfiguration();
+    const config = this.configuration;
     const imagePlane = cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId

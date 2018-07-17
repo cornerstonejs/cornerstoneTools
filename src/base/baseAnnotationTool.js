@@ -1,10 +1,10 @@
 import baseTool from './baseTool.js';
 
 export default class extends baseTool {
-  constructor (name) {
-    super(name);
+  constructor (name, strategies, defaultStrategy) {
+    super(name, strategies, defaultStrategy);
 
-    this.hats = '';
+    this.isAnnotationTool = true;
   }
 
   createNewMeasurement (evt) {

@@ -4,13 +4,16 @@ import * as drawing from './util/drawing.js';
 export { default as addTool } from './store/addTool.js';
 export {
   default as mouseToolEventDispatcher
-} from './base/mouseToolEventDispatcher.js';
+} from './eventDispatchers/mouseToolEventDispatcher.js';
 export {
   default as lengthMouse
 } from './new-api-tools-and-examples/lengthMouse.js';
 export {
   default as angleMouse
 } from './new-api-tools-and-examples/angleMouse.js';
+export {
+  default as wwwcMouse
+} from './new-api-tools-and-examples/wwwcMouse.js';
 export {
   setToolActive,
   setToolEnabled,
