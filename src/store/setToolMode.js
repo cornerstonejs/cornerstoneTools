@@ -80,7 +80,7 @@ function setToolMode (mode, changeEvent, element, toolName, options) {
   // Set mode & options
   tool.mode = mode;
   if (options) {
-    tool.setOptions(options);
+    tool.options = options;
   }
 
   // Call tool's hook for this event, if one exists

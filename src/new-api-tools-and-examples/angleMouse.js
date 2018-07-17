@@ -117,7 +117,7 @@ export default class extends baseMouseAnnotationTool {
 
     const lineWidth = toolStyle.getToolWidth();
     const font = textStyle.getFont();
-    const config = this.getConfiguration();
+    const config = this.configuration;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -275,9 +275,12 @@ export default class extends baseMouseAnnotationTool {
     }
   }
 
-  addNewMeasurement (eventData) {
-    const measurementData = this.createNewMeasurement(eventData);
-    const element = eventData.element;
+  addNewMeasurement (evt) {
+    evt.preventDefault();
+    evt.stopPropagation();
+    const mouseEventData = evt.detail;
+    const measurementData = this.createNewMeasurement(mouseEventData);
+    const element = mouseEventData.element;
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
@@ -289,7 +292,7 @@ export default class extends baseMouseAnnotationTool {
     cornerstone.updateImage(element);
 
     moveNewHandle(
-      eventData,
+      mouseEventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
@@ -325,7 +328,7 @@ export default class extends baseMouseAnnotationTool {
         cornerstone.updateImage(element);
 
         moveNewHandle(
-          eventData,
+          mouseEventData,
           this.name,
           measurementData,
           measurementData.handles.end,
