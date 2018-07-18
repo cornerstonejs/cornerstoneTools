@@ -34,6 +34,7 @@
 
 				<ul class="list-group">
 					<a id="lengthTouchBtn" class="list-group-item">Touch Length</a>
+					<a id="wwwcTouchBtn" class="list-group-item">Touch WWWC</a>
 				</ul>
 				<br/>
 			</div>
@@ -83,11 +84,14 @@
 	cornerstoneTools.addTool(element, lengthMouseTool)
 	const lengthTouchTool = new cornerstoneTools.lengthTouch();
 	cornerstoneTools.addTool(element, lengthTouchTool)
-
+	//
 	const angleMouseTool = new cornerstoneTools.angleMouse();
 	cornerstoneTools.addTool(element, angleMouseTool)
+	//
 	const wwwcMouseTool = new cornerstoneTools.wwwcMouse();
 	cornerstoneTools.addTool(element, wwwcMouseTool)
+	const wwwcTouchTool = new cornerstoneTools.wwwcTouch();
+	cornerstoneTools.addTool(element, wwwcTouchTool)
 
 	// Default active tool
 	cornerstoneTools.setToolActive(element, lengthMouseTool.name, { mouseButtonMask: 1 })
@@ -111,6 +115,7 @@
 
 		// Touch
 		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
+		cornerstoneTools.setToolPassive(element, wwwcTouchTool.name)
 	})
 
 	document.getElementById('angleBtn').addEventListener('click', (evt) => {
@@ -120,6 +125,7 @@
 
 		// Touch
 		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
+		cornerstoneTools.setToolPassive(element, wwwcTouchTool.name)
 	})
 
 	document.getElementById('wwwcBtn').addEventListener('click', (evt) => {
@@ -129,6 +135,7 @@
 
 		// Touch
 		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
+		cornerstoneTools.setToolPassive(element, wwwcTouchTool.name)
 	})
 
 	// Touch Group
@@ -137,7 +144,17 @@
 		cornerstoneTools.setToolPassive(element, wwwcMouseTool.name)
 		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
 		// Touch
+		cornerstoneTools.setToolPassive(element, wwwcTouchTool.name)
 		cornerstoneTools.setToolActive(element, lengthTouchTool.name)
+	})
+
+	document.getElementById('wwwcTouchBtn').addEventListener('click', (evt) => {
+		cornerstoneTools.setToolPassive(element, angleMouseTool.name)
+		cornerstoneTools.setToolPassive(element, wwwcMouseTool.name)
+		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
+		// Touch
+		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
+		cornerstoneTools.setToolActive(element, wwwcTouchTool.name)
 	})
 </script>
 
