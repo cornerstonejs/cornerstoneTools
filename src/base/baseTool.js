@@ -13,7 +13,7 @@ export default class {
     //
     this.data = {};
     this._options = {};
-    this._configuration = {};
+    this._configuration = Object.assign({}, configuration);
   }
 
   get configuration () {
@@ -44,6 +44,6 @@ export default class {
    * @returns Any
    */
   applyActiveStrategy (evt) {
-    return this.strategies[this.activeStrategy](evt);
+    return this.strategies[this.activeStrategy](evt, this.configuration);
   }
 }
