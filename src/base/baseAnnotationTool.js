@@ -1,8 +1,13 @@
 import baseTool from './baseTool.js';
 
 export default class extends baseTool {
-  constructor (name, strategies, defaultStrategy) {
-    super(name, strategies, defaultStrategy);
+  constructor ({ name, strategies, defaultStrategy, configuration }) {
+    super({
+      name,
+      strategies,
+      defaultStrategy,
+      configuration
+    });
 
     this.isAnnotationTool = true;
   }
