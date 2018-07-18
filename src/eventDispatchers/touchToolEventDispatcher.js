@@ -1,7 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 // State
-import { state } from './../store/index.js';
+import { getters } from './../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from '../manipulators/touchMoveHandle.js';
@@ -57,7 +57,7 @@ function tap (evt) {
   const element = evt.detail.element;
   const coords = evt.detail.currentPoints.canvas;
 
-  tools = getActiveToolsForElement(element, state.tools);
+  tools = getActiveToolsForElement(element, getters.touchTools());
   tools = getToolsWithDataForElement(element, tools);
 
   // Deactivate everything
@@ -180,7 +180,10 @@ function tap (evt) {
   // TODO: What would this be? First active tool?
   // Or should _always_ pass through to our larger event handler that checks
   // All tools anyway?
-  const allActiveTools = getActiveToolsForElement(element, state.tools);
+  const allActiveTools = getActiveToolsForElement(
+    element,
+    getters.touchTools()
+  );
 
   if (allActiveTools.length > 0 && allActiveTools[0].touchStartActiveCallback) {
     allActiveTools[0].touchStartActiveCallback(evt);
@@ -203,7 +206,7 @@ function touchStart (evt) {
   const element = eventData.element;
   const coords = eventData.startPoints.canvas;
 
-  tools = getInteractiveToolsForElement(element, state.tools);
+  tools = getInteractiveToolsForElement(element, getters.touchTools());
   tools = getToolsWithDataForElement(element, tools);
 
   // Find all tools w/ handles that we are near
@@ -320,7 +323,7 @@ function touchStartActive (evt) {
   }
 
   const element = evt.detail.element;
-  const tools = getActiveToolsForElement(element, state.tools);
+  const tools = getActiveToolsForElement(element, getters.touchTools());
   const activeTool = tools[0];
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
@@ -345,13 +348,15 @@ function onImageRendered (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const toolsToRender = state.tools.filter(
-    (tool) =>
-      tool.element === element &&
-      (tool.mode === 'active' ||
-        tool.mode === 'passive' ||
-        tool.mode === 'enabled')
-  );
+  const toolsToRender = getters.
+    touchTools().
+    filter(
+      (tool) =>
+        tool.element === element &&
+        (tool.mode === 'active' ||
+          tool.mode === 'passive' ||
+          tool.mode === 'enabled')
+    );
 
   toolsToRender.forEach((tool) => {
     if (tool.renderToolData) {

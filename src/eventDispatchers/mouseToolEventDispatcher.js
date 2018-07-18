@@ -1,7 +1,7 @@
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
 // State
-import { state } from './../store/index.js';
+import { getters } from './../store/index.js';
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import toolCoordinates from './../stateManagement/toolCoordinates.js';
 // Manipulators
@@ -64,7 +64,7 @@ function mouseMove (evt) {
   // TODO: instead of filtering these for every interaction, we can change our
   // State's structure to always know these values.
   // Filter out disabled and enabled
-  tools = getInteractiveToolsForElement(element, state.tools);
+  tools = getInteractiveToolsForElement(element, getters.mouseTools());
   tools = getToolsWithDataForElement(element, tools);
 
   // Iterate over each tool, and each tool's data
@@ -130,7 +130,7 @@ function mouseDown (evt) {
   // TODO: instead of filtering these for every interaction, we can change our
   // State's structure to always know these values.
   // Filter out disabled and enabled
-  tools = getInteractiveToolsForElement(element, state.tools);
+  tools = getInteractiveToolsForElement(element, getters.mouseTools());
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
@@ -257,7 +257,7 @@ function mouseDrag (evt) {
   const element = eventData.element;
 
   // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(element, state.tools);
+  let tools = getActiveToolsForElement(element, getters.mouseTools());
 
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
@@ -286,7 +286,7 @@ function mouseDownActivate (evt) {
   const element = eventData.element;
 
   // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(element, state.tools);
+  let tools = getActiveToolsForElement(element, getters.mouseTools());
 
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
@@ -313,13 +313,15 @@ function onImageRendered (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const toolsToRender = state.tools.filter(
-    (tool) =>
-      tool.element === element &&
-      (tool.mode === 'active' ||
-        tool.mode === 'passive' ||
-        tool.mode === 'enabled')
-  );
+  const toolsToRender = getters.
+    mouseTools().
+    filter(
+      (tool) =>
+        tool.element === element &&
+        (tool.mode === 'active' ||
+          tool.mode === 'passive' ||
+          tool.mode === 'enabled')
+    );
 
   toolsToRender.forEach((tool) => {
     if (tool.renderToolData) {
