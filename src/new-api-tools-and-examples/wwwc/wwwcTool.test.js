@@ -1,5 +1,5 @@
-import WwwcMouse from './wwwcMouse.js';
-import external from './../externalModules.js';
+import WwwcTool from './wwwcTool.js';
+import external from './../../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
@@ -8,16 +8,16 @@ jest.mock('./../externalModules.js', () => ({
 }));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
-describe('wwwcMouse.js', () => {
+describe('wwwcTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "wwwcMouse"', () => {
-      const instantiatedTool = new WwwcMouse();
+    it('has a default name of "wwwcTool"', () => {
+      const instantiatedTool = new WwwcTool();
 
-      expect(instantiatedTool.name).toEqual('wwwcMouse');
+      expect(instantiatedTool.name).toEqual('wwwcTool');
     });
 
     it('uses "basicLevelingStrategy" as a default strategy', () => {
-      const instantiatedTool = new WwwcMouse();
+      const instantiatedTool = new WwwcTool();
 
       expect(instantiatedTool.defaultStrategy).toEqual('basicLevelingStrategy');
     });
@@ -30,7 +30,7 @@ describe('wwwcMouse.js', () => {
         viewport: jest.fn()
       }
     };
-    const instantiatedTool = new WwwcMouse();
+    const instantiatedTool = new WwwcTool();
 
     instantiatedTool.applyActiveStrategy = jest.fn();
     instantiatedTool.mouseDragCallback(mockEvt);
@@ -45,7 +45,7 @@ describe('wwwcMouse.js', () => {
         viewport: jest.fn()
       }
     };
-    const instantiatedTool = new WwwcMouse();
+    const instantiatedTool = new WwwcTool();
 
     instantiatedTool.applyActiveStrategy = jest.fn();
     instantiatedTool.mouseDragCallback(mockEvt);

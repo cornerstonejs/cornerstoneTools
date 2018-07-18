@@ -1,8 +1,4 @@
-/* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseMouseDragTool from './../base/baseMouseDragTool.js';
-
-const cornerstone = external.cornerstone;
+import baseTool from './../../base/baseTool.js';
 
 /**
  * Here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -12,7 +8,7 @@ const cornerstone = external.cornerstone;
  *
  * @param eventData
  */
-function basicLevelingStrategy (evt) {
+function basicLevelingStrategy (evt, { orientation }) {
   const eventData = evt.detail;
 
   const maxVOI =
@@ -27,21 +23,27 @@ function basicLevelingStrategy (evt) {
   const deltaX = eventData.deltaPoints.page.x * multiplier;
   const deltaY = eventData.deltaPoints.page.y * multiplier;
 
-  eventData.viewport.voi.windowWidth += deltaX;
-  eventData.viewport.voi.windowCenter += deltaY;
+  if (orientation === 0) {
+    eventData.viewport.voi.windowWidth += deltaX;
+    eventData.viewport.voi.windowCenter += deltaY;
+  } else {
+    eventData.viewport.voi.windowWidth += deltaY;
+    eventData.viewport.voi.windowCenter += deltaX;
+  }
 }
 
-export default class extends baseMouseDragTool {
-  constructor () {
+export default class extends baseTool {
+  constructor (name) {
     const strategies = {
       basicLevelingStrategy
     };
 
-    super('wwwcMouse', strategies);
-  }
-
-  mouseDragCallback (evt) {
-    this.applyActiveStrategy(evt);
-    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+    super({
+      name,
+      strategies,
+      configuration: {
+        orientation: 0
+      }
+    });
   }
 }
