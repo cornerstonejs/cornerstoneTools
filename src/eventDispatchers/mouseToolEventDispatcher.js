@@ -253,16 +253,17 @@ function mouseDrag (evt) {
   if (isAwaitingMouseUp) {
     return;
   }
+
+  let tools;
   const eventData = evt.detail;
   const element = eventData.element;
 
   // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(element, getters.mouseTools());
-
-  // Filter out tools that do not match mouseButtonMask
+  tools = getActiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
+  tools = tools.filter((tool) => typeof tool.mouseDragCallback === 'function');
 
   if (tools.length === 0) {
     return;
@@ -270,9 +271,7 @@ function mouseDrag (evt) {
 
   const activeTool = tools[0];
 
-  if (activeTool.mouseDragCallback) {
-    activeTool.mouseDragCallback(evt);
-  }
+  activeTool.mouseDragCallback(evt);
 }
 
 // Todo: We could simplify this if we only allow one active
