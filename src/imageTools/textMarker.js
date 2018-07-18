@@ -5,7 +5,7 @@ import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
@@ -125,10 +125,9 @@ function onImageRendered (e) {
       setShadow(context, config);
 
       // Draw text
-      context.fillStyle = color;
-      const measureText = context.measureText(data.text);
+      const padding = 5;
 
-      data.textWidth = measureText.width + 10;
+      data.textWidth = textBoxWidth(context, data.text, padding);
 
       const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 

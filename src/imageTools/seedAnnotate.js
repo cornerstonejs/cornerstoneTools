@@ -15,6 +15,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
 import { drawCircle, getNewContext, draw, setShadow } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 const toolType = 'seedAnnotate';
 
@@ -141,7 +142,6 @@ function onImageRendered (e) {
   const canvasWidth = eventData.canvasContext.canvas.width;
 
   const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = seedAnnotate.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -176,10 +176,9 @@ function onImageRendered (e) {
       if (data.text && data.text !== '') {
         const text = textBoxText(data);
 
-        context.font = font;
-
         // Calculate the text coordinates.
-        const textWidth = context.measureText(text).width + 10;
+        const padding = 5;
+        const textWidth = textBoxWidth(context, text, padding);
         const textHeight = textStyle.getFontSize() + 10;
 
         let distance = Math.max(textWidth, textHeight) / 2 + 5;

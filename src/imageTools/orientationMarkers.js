@@ -2,7 +2,7 @@ import external from '../externalModules.js';
 import orientation from '../orientation/index.js';
 import displayTool from './displayTool.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { getNewContext } from '../util/drawing.js';
 
 function getOrientationMarkers (element) {
@@ -82,10 +82,10 @@ function onImageRendered (e) {
   const color = toolColors.getToolColor();
 
   const textWidths = {
-    top: context.measureText(markers.top).width,
-    left: context.measureText(markers.left).width,
-    right: context.measureText(markers.right).width,
-    bottom: context.measureText(markers.bottom).width
+    top: textBoxWidth(context, markers.top, 0),
+    left: textBoxWidth(context, markers.left, 0),
+    right: textBoxWidth(context, markers.right, 0),
+    bottom: textBoxWidth(context, markers.bottom, 0)
   };
 
   drawTextBox(context, markers.top, coords.top.x - textWidths.top / 2, coords.top.y, color);

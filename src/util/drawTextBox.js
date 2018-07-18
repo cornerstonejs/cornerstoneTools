@@ -1,6 +1,29 @@
 import textStyle from '../stateManagement/textStyle.js';
 import { draw, fillTextLines, fillBox } from './drawing.js';
 
+/**
+ * Compute the width of the box required to display the given `text` with a given `padding`.
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {String} text - The text to find the width of.
+ * @param {Number} padding - The padding to apply on either end of the text.
+ */
+export function textBoxWidth (context, text, padding) {
+  const font = textStyle.getFont();
+  const origFont = context.font;
+
+  if (font && font !== origFont) {
+    context.font = font;
+  }
+  const width = context.measureText(text).width;
+
+  if (font && font !== origFont) {
+    context.font = origFont;
+  }
+
+  return width + 2 * padding;
+}
+
 export default function (context, textLines, x, y, color, options) {
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {
     textLines = [textLines];
@@ -15,7 +38,7 @@ export default function (context, textLines, x, y, color, options) {
 
   textLines.forEach(function (text) {
     // Get the text width in the current font
-    const width = context.measureText(text).width;
+    const width = textBoxWidth(context, text, padding);
 
     // Find the maximum with for all the text rows;
     maxWidth = Math.max(maxWidth, width);
@@ -23,7 +46,7 @@ export default function (context, textLines, x, y, color, options) {
 
   // Calculate the bounding box for this text box
   const boundingBox = {
-    width: maxWidth + (padding * 2),
+    width: maxWidth,
     height: padding + textLines.length * (fontSize + padding)
   };
 

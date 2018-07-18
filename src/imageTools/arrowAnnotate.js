@@ -18,6 +18,7 @@ import { addToolState, removeToolState, getToolState } from '../stateManagement/
 import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -150,7 +151,6 @@ function onImageRendered (e) {
   const context = getNewContext(eventData.canvasContext.canvas);
 
   const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = arrowAnnotate.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -188,10 +188,9 @@ function onImageRendered (e) {
 
       // Draw the text
       if (text && text !== '') {
-        context.font = font;
-
         // Calculate the text coordinates.
-        const textWidth = context.measureText(text).width + 10;
+        const padding = 5;
+        const textWidth = textBoxWidth(context, text, padding);
         const textHeight = textStyle.getFontSize() + 10;
 
         let distance = Math.max(textWidth, textHeight) / 2 + 5;
