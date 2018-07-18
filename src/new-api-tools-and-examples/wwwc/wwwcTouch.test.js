@@ -1,4 +1,4 @@
-import WwwcMouse from './wwwcMouse.js';
+import WwwcTouch from './wwwcTouch.js';
 import external from './../../externalModules.js';
 
 jest.mock('./../../externalModules.js', () => ({
@@ -7,53 +7,55 @@ jest.mock('./../../externalModules.js', () => ({
   }
 }));
 
-describe('wwwcMouse.js', () => {
-  it('has a default name of "wwwcMouse"', () => {
-    const defaultName = 'wwwcMouse';
-    const instantiatedTool = new WwwcMouse();
+describe('wwwcTouch.js', () => {
+  it('has a default name of "wwwcTouch"', () => {
+    const defaultName = 'wwwcTouch';
+    const instantiatedTool = new WwwcTouch();
 
     expect(instantiatedTool.name).toEqual(defaultName);
   });
 
   it('can be created with a custom tool name', () => {
     const customToolName = 'customToolName';
-    const instantiatedTool = new WwwcMouse(customToolName);
+    const instantiatedTool = new WwwcTouch(customToolName);
 
     expect(instantiatedTool.name).toEqual(customToolName);
   });
 
-  it('is a mouse tool', () => {
-    const instantiatedTool = new WwwcMouse();
+  it('is a touch tool', () => {
+    const instantiatedTool = new WwwcTouch();
 
-    expect(instantiatedTool.isMouseTool).toBe(true);
+    expect(instantiatedTool.isTouchTool).toBe(true);
   });
 
-  it('mouseDragCallback applies the active strategy', () => {
+  it('touchDragCallback applies the active strategy', () => {
     const mockEvt = {
+      stopImmediatePropagation: jest.fn(),
       detail: {
         element: jest.fn(),
         viewport: jest.fn()
       }
     };
-    const instantiatedTool = new WwwcMouse();
+    const instantiatedTool = new WwwcTouch();
 
     instantiatedTool.applyActiveStrategy = jest.fn();
-    instantiatedTool.mouseDragCallback(mockEvt);
+    instantiatedTool.touchDragCallback(mockEvt);
 
     expect(instantiatedTool.applyActiveStrategy).toHaveBeenCalled();
   });
 
-  it('mouseDragCallback updates the viewport', () => {
+  it('touchDragCallback updates the viewport', () => {
     const mockEvt = {
+      stopImmediatePropagation: jest.fn(),
       detail: {
         element: jest.fn(),
         viewport: jest.fn()
       }
     };
-    const instantiatedTool = new WwwcMouse();
+    const instantiatedTool = new WwwcTouch();
 
     instantiatedTool.applyActiveStrategy = jest.fn();
-    instantiatedTool.mouseDragCallback(mockEvt);
+    instantiatedTool.touchDragCallback(mockEvt);
 
     expect(external.cornerstone.setViewport).lastCalledWith(
       mockEvt.detail.element,
