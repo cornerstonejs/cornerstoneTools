@@ -1,29 +1,34 @@
 import WwwcMouse from './wwwcMouse.js';
-import external from './../externalModules.js';
+import external from './../../externalModules.js';
 
-jest.mock('./../externalModules.js', () => ({
+jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     setViewport: jest.fn()
   }
 }));
 
-// TODO: Not sure if this is the best place to test the tool's strategies?
 describe('wwwcMouse.js', () => {
-  describe('default values', () => {
-    it('has a default name of "wwwcMouse"', () => {
-      const instantiatedTool = new WwwcMouse();
+  it('has a default name of "wwwcMouse"', () => {
+    const defaultName = 'wwwcMouse';
+    const instantiatedTool = new WwwcMouse();
 
-      expect(instantiatedTool.name).toEqual('wwwcMouse');
-    });
-
-    it('uses "basicLevelingStrategy" as a default strategy', () => {
-      const instantiatedTool = new WwwcMouse();
-
-      expect(instantiatedTool.defaultStrategy).toEqual('basicLevelingStrategy');
-    });
+    expect(instantiatedTool.name).toEqual(defaultName);
   });
 
-  it('calls `applyActiveStrategy` in mouseDragCallback', () => {
+  it('can be created with a custom tool name', () => {
+    const customToolName = 'customToolName';
+    const instantiatedTool = new WwwcMouse(customToolName);
+
+    expect(instantiatedTool.name).toEqual(customToolName);
+  });
+
+  it('is a mouse tool', () => {
+    const instantiatedTool = new WwwcMouse();
+
+    expect(instantiatedTool.isMouseTool).toBe(true);
+  });
+
+  it('mouseDragCallback applies the active strategy', () => {
     const mockEvt = {
       detail: {
         element: jest.fn(),
@@ -38,7 +43,7 @@ describe('wwwcMouse.js', () => {
     expect(instantiatedTool.applyActiveStrategy).toHaveBeenCalled();
   });
 
-  it('calls `cornerstone`\'s setViewport with an updated viewport', () => {
+  it('mouseDragCallback updates the viewport', () => {
     const mockEvt = {
       detail: {
         element: jest.fn(),

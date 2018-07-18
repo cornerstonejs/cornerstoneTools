@@ -23,8 +23,10 @@ import roundToDecimal from './../util/roundToDecimal.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseMouseAnnotationTool {
-  constructor () {
-    super('simpleAngle');
+  constructor (name) {
+    super({
+      name: name || 'angleMouse'
+    });
     console.log(`my name is ${this.name}`);
   }
 

@@ -1,8 +1,13 @@
 import baseAnnotationTool from './baseAnnotationTool.js';
 
 export default class extends baseAnnotationTool {
-  constructor (name, strategies, defaultStrategy) {
-    super(name, strategies, defaultStrategy);
+  constructor ({ name, strategies, defaultStrategy, configuration }) {
+    super({
+      name,
+      strategies,
+      defaultStrategy,
+      configuration
+    });
 
     this.isMouseTool = true;
   }

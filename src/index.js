@@ -1,6 +1,7 @@
 import * as drawing from './util/drawing.js';
 
 // TEST
+export { default as store } from './store/index.js';
 export { default as addTool } from './store/addTool.js';
 export {
   setToolActive,
@@ -29,7 +30,10 @@ export {
 // WWWC
 export {
   default as wwwcMouse
-} from './new-api-tools-and-examples/wwwcMouse.js';
+} from './new-api-tools-and-examples/wwwc/wwwcMouse.js';
+export {
+  default as wwwcTouch
+} from './new-api-tools-and-examples/wwwc/wwwcTouch.js';
 // END TEST
 
 export { drawing };
@@ -248,7 +252,6 @@ export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
 export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
 export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export {
   zoom,

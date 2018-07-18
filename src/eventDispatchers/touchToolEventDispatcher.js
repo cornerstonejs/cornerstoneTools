@@ -28,6 +28,7 @@ let isAwaitingTouchUp = false;
  * by any previous event.
  * - tap:
  * - touchStart: check to see if we are close to an existing annotation, grab it
+ * - touchDrag:
  * - touchStartActive: createNewMeasurement (usually)
  * - touchPress:
  * - doubleTap: usually a one-time apply specialty action
@@ -38,6 +39,8 @@ const enable = function (element) {
   console.log('enableTouch', element);
   element.addEventListener(EVENTS.TAP, tap);
   element.addEventListener(EVENTS.TOUCH_START, touchStart);
+  element.addEventListener(EVENTS.TOUCH_DRAG, touchDrag);
+  element.addEventListener(EVENTS.TOUCH_END, touchEnd);
   // Mouse equivelant is `mouse_down_activate`
   // Should the naming pattern here match?
   element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchStartActive);
@@ -314,6 +317,35 @@ function touchStart (evt) {
 
     return;
   }
+}
+
+// TODO:
+// Note: some touchDrag tools don't want to fire on touchStart
+// Drag tools have an option `fireOnTouchStart` used to filter
+// Them out of TOUCH_START handler
+// Active: dragTool only
+// Or tool has `touchDragCallback` method
+function touchDrag (evt) {
+  console.log('touchDrag');
+
+  let tools;
+  const element = evt.detail.element;
+
+  tools = getActiveToolsForElement(element, getters.touchTools());
+  tools = tools.filter((tool) => typeof tool.touchDragCallback === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+  const firstActiveTool = tools[0];
+
+  firstActiveTool.touchDragCallback(evt);
+}
+
+// Active: dragTool only
+// Or tool has `touchEndCallbach` method
+function touchEnd (evt) {
+  console.log('touchDrag');
 }
 
 function touchStartActive (evt) {
