@@ -1,7 +1,7 @@
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
 // State
-import { state } from './../store/index.js';
+import { getters } from './../store/index.js';
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import toolCoordinates from './../stateManagement/toolCoordinates.js';
 // Manipulators
@@ -12,25 +12,15 @@ import moveHandle from './../manipulators/moveHandle.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 // Util
 import isMouseButtonEnabled from './../util/isMouseButtonEnabled.js';
+// Todo: Where should these live?
+import getActiveToolsForElement from './../store/getActiveToolsForElement.js';
+import getInteractiveToolsForElement from './../store/getInteractiveToolsForElement.js';
+import getToolsWithDataForElement from './../store/getToolsWithDataForElement.js';
 
 const cornerstone = external.cornerstone;
 
 // Todo: better place for this
 let isAwaitingMouseUp = false;
-
-const getActiveToolsForElement = function (element, tools) {
-  return tools.filter(
-    (tool) => tool.element === element && tool.mode === 'active'
-  );
-};
-
-const getInteractiveToolsForElement = function (element, tools) {
-  return tools.filter(
-    (tool) =>
-      tool.element === element &&
-      (tool.mode === 'active' || tool.mode === 'passive')
-  );
-};
 
 /**
  * These listeners are emitted in order, and can be cancelled/prevented from bubbling
@@ -63,6 +53,7 @@ function mouseMove (evt) {
   if (isAwaitingMouseUp) {
     return;
   }
+  let tools;
   const eventData = evt.detail;
   const element = eventData.element;
 
@@ -73,14 +64,8 @@ function mouseMove (evt) {
   // TODO: instead of filtering these for every interaction, we can change our
   // State's structure to always know these values.
   // Filter out disabled and enabled
-  let tools = getInteractiveToolsForElement(element, state.tools);
-
-  // Filter out tools w/ no data
-  tools = tools.filter((tool) => {
-    const toolState = getToolState(element, tool.name);
-
-    return toolState && toolState.data.length > 0;
-  });
+  tools = getInteractiveToolsForElement(element, getters.mouseTools());
+  tools = getToolsWithDataForElement(element, tools);
 
   // Iterate over each tool, and each tool's data
   // Activate any handles we're hovering over, or whole tools if we're near the tool
@@ -136,6 +121,7 @@ function mouseDown (evt) {
   if (isAwaitingMouseUp) {
     return;
   }
+  let tools;
   const eventData = evt.detail;
   const element = eventData.element;
   const coords = eventData.currentPoints.canvas;
@@ -144,19 +130,12 @@ function mouseDown (evt) {
   // TODO: instead of filtering these for every interaction, we can change our
   // State's structure to always know these values.
   // Filter out disabled and enabled
-  let tools = getInteractiveToolsForElement(element, state.tools);
-
+  tools = getInteractiveToolsForElement(element, getters.mouseTools());
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
-
-  // Filter out tools w/ no data
-  tools = tools.filter((tool) => {
-    const toolState = getToolState(element, tool.name);
-
-    return toolState && toolState.data.length > 0;
-  });
+  tools = getToolsWithDataForElement(element, tools);
 
   // Find tools with handles we can move
   const toolsWithMoveableHandles = tools.filter((tool) => {
@@ -278,7 +257,7 @@ function mouseDrag (evt) {
   const element = eventData.element;
 
   // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(element, state.tools);
+  let tools = getActiveToolsForElement(element, getters.mouseTools());
 
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
@@ -307,15 +286,12 @@ function mouseDownActivate (evt) {
   const element = eventData.element;
 
   // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(element, state.tools);
-
-  console.log('activeTools', tools);
+  let tools = getActiveToolsForElement(element, getters.mouseTools());
 
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
-  console.log('activeTools for mouse button', tools);
 
   if (tools.length === 0) {
     return;
@@ -337,13 +313,15 @@ function onImageRendered (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const toolsToRender = state.tools.filter(
-    (tool) =>
-      tool.element === element &&
-      (tool.mode === 'active' ||
-        tool.mode === 'passive' ||
-        tool.mode === 'enabled')
-  );
+  const toolsToRender = getters.
+    mouseTools().
+    filter(
+      (tool) =>
+        tool.element === element &&
+        (tool.mode === 'active' ||
+          tool.mode === 'passive' ||
+          tool.mode === 'enabled')
+    );
 
   toolsToRender.forEach((tool) => {
     if (tool.renderToolData) {
@@ -365,7 +343,7 @@ function addNewMeasurement (evt, tool) {
   }
 
   // Associate this data with this imageId so we can render it and manipulate it
-  addToolState(mouseEventData.element, tool.name, measurementData);
+  addToolState(element, tool.name, measurementData);
 
   isAwaitingMouseUp = true;
   cornerstone.updateImage(element);

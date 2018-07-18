@@ -1,7 +1,9 @@
-import LengthMouse from './lengthMouse.js';
-import { getToolState } from './../stateManagement/toolState.js';
+import LengthTool from './lengthTool.js';
+import { getToolState } from './../../stateManagement/toolState.js';
 
-jest.mock('./../stateManagement/toolState.js', () => ({
+jest.mock('./../../manipulators/drawHandles.js');
+jest.mock('./../../util/drawing.js');
+jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
@@ -15,7 +17,7 @@ const goodMouseEventData = {
   }
 };
 
-describe('lengthMouse.js', () => {
+describe('lengthTool.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -24,16 +26,17 @@ describe('lengthMouse.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "lengthMouse"', () => {
-      const instantiatedTool = new LengthMouse();
+    it('sets its name to the first value passed to the constructor', () => {
+      const exampleToolName = 'exampleToolName';
+      const instantiatedTool = new LengthTool(exampleToolName);
 
-      expect(instantiatedTool.name).toEqual('lengthMouse');
+      expect(instantiatedTool.name).toEqual(exampleToolName);
     });
   });
 
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
 
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
@@ -45,7 +48,7 @@ describe('lengthMouse.js', () => {
 
     // Todo: create a more formal definition of a tool measurement object
     it('returns a tool measurement object', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -55,7 +58,7 @@ describe('lengthMouse.js', () => {
     });
 
     it('returns a measurement with a start and end handle at the eventData\'s x and y', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -76,7 +79,7 @@ describe('lengthMouse.js', () => {
     });
 
     it('returns a measurement with a textBox handle', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -96,7 +99,7 @@ describe('lengthMouse.js', () => {
 
     // Todo: Not sure we want all of our methods to check for valid params.
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
       const noHandlesMeasurementData = {
         handles: {}
       };
@@ -108,7 +111,7 @@ describe('lengthMouse.js', () => {
     });
 
     it('returns false when measurement data is null or undefined', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
       const nullMeasurementData = null;
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -121,7 +124,7 @@ describe('lengthMouse.js', () => {
     });
 
     it('returns false when measurement data is not visible', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
       const notVisibleMeasurementData = {
         visible: false
       };
@@ -138,7 +141,7 @@ describe('lengthMouse.js', () => {
 
   describe('renderToolData', () => {
     it('returns undefined when no toolData exists for the tool', () => {
-      const instantiatedTool = new LengthMouse();
+      const instantiatedTool = new LengthTool('toolName');
       const mockEvent = {
         detail: undefined,
         currentTarget: undefined

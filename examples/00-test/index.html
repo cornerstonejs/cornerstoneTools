@@ -31,6 +31,11 @@
 					<a id="wwwcBtn" class="list-group-item">Mouse WWWC</a>
 				</ul>
 				<br/>
+
+				<ul class="list-group">
+					<a id="lengthTouchBtn" class="list-group-item">Touch Length</a>
+				</ul>
+				<br/>
 			</div>
 			<div class="col-xs-10">
 				<div style="width:512px;height:512px;position:relative;display:inline-block;color:white;" oncontextmenu="return false" class='cornerstone-enabled-image'
@@ -46,6 +51,13 @@
 			</div>
 		</div>
 </body>
+
+<!-- include the hammer.fakemultitouch so we can test with a mouse -->
+<script src="../touch-emulator.js"></script>
+<script>TouchEmulator();</script>
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="../hammer.min.js"></script>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
@@ -69,6 +81,9 @@
 	// NEW
 	const lengthMouseTool = new cornerstoneTools.lengthMouse();
 	cornerstoneTools.addTool(element, lengthMouseTool)
+	const lengthTouchTool = new cornerstoneTools.lengthTouch();
+	cornerstoneTools.addTool(element, lengthTouchTool)
+
 	const angleMouseTool = new cornerstoneTools.angleMouse();
 	cornerstoneTools.addTool(element, angleMouseTool)
 	const wwwcMouseTool = new cornerstoneTools.wwwcMouse();
@@ -80,6 +95,9 @@
 	// Todo: Marry these two?
 	cornerstoneTools.mouseInput.enable(element);
 	cornerstoneTools.mouseToolEventDispatcher.enable(element);
+	//
+	cornerstoneTools.touchInput.enable(element);
+	cornerstoneTools.touchToolEventDispatcher.enable(element);
 	// END NEW
 
 	cornerstone.loadImage(imageId).then(function (image) {
@@ -90,18 +108,36 @@
 		cornerstoneTools.setToolPassive(element, angleMouseTool.name)
 		cornerstoneTools.setToolPassive(element, wwwcMouseTool.name)
 		cornerstoneTools.setToolActive(element, lengthMouseTool.name, { mouseButtonMask: 1 })
+
+		// Touch
+		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
 	})
 
 	document.getElementById('angleBtn').addEventListener('click', (evt) => {
 		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
 		cornerstoneTools.setToolPassive(element, wwwcMouseTool.name)
 		cornerstoneTools.setToolActive(element, angleMouseTool.name, { mouseButtonMask: 1 })
+
+		// Touch
+		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
 	})
 
 	document.getElementById('wwwcBtn').addEventListener('click', (evt) => {
 		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
 		cornerstoneTools.setToolPassive(element, angleMouseTool.name)
 		cornerstoneTools.setToolActive(element, wwwcMouseTool.name, { mouseButtonMask: 1 })
+
+		// Touch
+		cornerstoneTools.setToolPassive(element, lengthTouchTool.name)
+	})
+
+	// Touch Group
+	document.getElementById('lengthTouchBtn').addEventListener('click', (evt) => {
+		cornerstoneTools.setToolPassive(element, angleMouseTool.name)
+		cornerstoneTools.setToolPassive(element, wwwcMouseTool.name)
+		cornerstoneTools.setToolPassive(element, lengthMouseTool.name)
+		// Touch
+		cornerstoneTools.setToolActive(element, lengthTouchTool.name)
 	})
 </script>
 
