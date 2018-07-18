@@ -278,12 +278,14 @@ export default class extends baseAnnotationTool {
     }
   }
 
+  // Todo: biggest difference is between moveNewHandleTouch, and moveNewHandle
+  // Followed by the events we disable/enable listening for when grabbing a handle
   addNewMeasurement (evt) {
     evt.preventDefault();
     evt.stopPropagation();
-    const mouseEventData = evt.detail;
-    const measurementData = this.createNewMeasurement(mouseEventData);
-    const element = mouseEventData.element;
+    const eventData = evt.detail;
+    const measurementData = this.createNewMeasurement(eventData);
+    const element = evt.detail.element;
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
@@ -291,11 +293,13 @@ export default class extends baseAnnotationTool {
     // Since we are dragging to another place to drop the end point, we can just activate
     // The end point and let the moveHandle move it for us.
     // Disable:
-    // - move, drag, down, down_activate
+    // - MOUSE: move, drag, down, down_activate
+    // - TOUCH: tap, drag, start, start_active
     cornerstone.updateImage(element);
 
+    // TODO: moveNewHandleTouch
     moveNewHandle(
-      mouseEventData,
+      eventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
@@ -330,8 +334,9 @@ export default class extends baseAnnotationTool {
         measurementData.handles.end.active = true;
         cornerstone.updateImage(element);
 
+        // TODO: moveNewHandleTouch
         moveNewHandle(
-          mouseEventData,
+          eventData,
           this.name,
           measurementData,
           measurementData.handles.end,
