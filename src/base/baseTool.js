@@ -1,5 +1,5 @@
 export default class {
-  constructor ({ name, strategies, defaultStrategy, configuration }) {
+  constructor ({ name, strategies, defaultStrategy, configuration } = {}) {
     this.name = name;
     this.mode = 'disabled';
     this.element = undefined;
