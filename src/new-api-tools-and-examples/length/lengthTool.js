@@ -20,8 +20,8 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
-    super(name);
+  constructor (name, strategies, defaultStrategy) {
+    super(name, strategies, defaultStrategy);
   }
 
   /**

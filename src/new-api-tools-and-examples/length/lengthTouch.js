@@ -1,8 +1,8 @@
-import lengthGeneric from './lengthGeneric.js';
+import lengthTool from './lengthTool.js';
 
-export default class extends lengthGeneric {
-  constructor () {
-    super('lengthTouch');
+export default class extends lengthTool {
+  constructor (name) {
+    super(name || 'lengthTouch');
 
     this.isTouchTool = true;
   }

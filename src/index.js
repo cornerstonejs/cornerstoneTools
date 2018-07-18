@@ -3,29 +3,33 @@ import * as drawing from './util/drawing.js';
 // TEST
 export { default as addTool } from './store/addTool.js';
 export {
+  setToolActive,
+  setToolEnabled,
+  setToolDisabled,
+  setToolPassive
+} from './store/setToolMode.js';
+// DISPATCHERS
+export {
   default as mouseToolEventDispatcher
 } from './eventDispatchers/mouseToolEventDispatcher.js';
 export {
   default as touchToolEventDispatcher
 } from './eventDispatchers/touchToolEventDispatcher.js';
+// LENGTH
 export {
   default as lengthMouse
 } from './new-api-tools-and-examples/length/lengthMouse.js';
 export {
   default as lengthTouch
 } from './new-api-tools-and-examples/length/lengthTouch.js';
+// ANGLE
 export {
   default as angleMouse
 } from './new-api-tools-and-examples/angleMouse.js';
+// WWWC
 export {
   default as wwwcMouse
 } from './new-api-tools-and-examples/wwwcMouse.js';
-export {
-  setToolActive,
-  setToolEnabled,
-  setToolDisabled,
-  setToolPassive
-} from './store/setToolMode.js';
 // END TEST
 
 export { drawing };

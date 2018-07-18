@@ -1,8 +1,8 @@
-import lengthGeneric from './lengthGeneric.js';
+import lengthTool from './lengthTool.js';
 
-export default class extends lengthGeneric {
-  constructor () {
-    super('lengthMouse');
+export default class extends lengthTool {
+  constructor (name) {
+    super(name || 'lengthMouse');
 
     this.isMouseTool = true;
   }
