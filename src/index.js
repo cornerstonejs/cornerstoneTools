@@ -248,7 +248,6 @@ export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
 export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
 export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export {
   zoom,
