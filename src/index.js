@@ -26,7 +26,10 @@ export {
 // ANGLE
 export {
   default as angleMouse
-} from './new-api-tools-and-examples/angleMouse.js';
+} from './new-api-tools-and-examples/angle/angleMouse.js';
+export {
+  default as angleTouch
+} from './new-api-tools-and-examples/angle/angleTouch.js';
 // WWWC
 export {
   default as wwwcMouse

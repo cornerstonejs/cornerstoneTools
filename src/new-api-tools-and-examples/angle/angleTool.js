@@ -1,33 +1,34 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseMouseAnnotationTool from './../base/baseMouseAnnotationTool.js';
+/* eslint class-methods-use-this: 0 */ // --> OFF
+import external from './../../externalModules.js';
+import baseAnnotationTool from './../../base/baseAnnotationTool.js';
 // State
-import textStyle from './../stateManagement/textStyle.js';
-import { addToolState, getToolState } from './../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import {
+  addToolState,
+  getToolState
+} from './../../stateManagement/toolState.js';
+import toolStyle from '../../stateManagement/toolStyle.js';
+import toolColors from '../../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
-import moveNewHandle from '../manipulators/moveNewHandle.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import moveNewHandle from '../../manipulators/moveNewHandle.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawJoinedLines
-} from './../util/drawing.js';
-import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
-import lineSegDistance from './../util/lineSegDistance.js';
-import roundToDecimal from './../util/roundToDecimal.js';
+} from './../../util/drawing.js';
+import drawLinkedTextBox from './../../util/drawLinkedTextBox.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
 
 const cornerstone = external.cornerstone;
 
-export default class extends baseMouseAnnotationTool {
+export default class extends baseAnnotationTool {
   constructor (name) {
-    super({
-      name: name || 'angleMouse'
-    });
-    console.log(`my name is ${this.name}`);
+    super({ name });
   }
 
   /**
