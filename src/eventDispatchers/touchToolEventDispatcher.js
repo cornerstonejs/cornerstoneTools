@@ -28,7 +28,7 @@ let isAwaitingTouchUp = false;
  * by any previous event.
  * - tap:
  * - touchStart: check to see if we are close to an existing annotation, grab it
- * - touchStartActivate: createNewMeasurement (usually)
+ * - touchStartActive: createNewMeasurement (usually)
  * - touchPress:
  * - doubleTap: usually a one-time apply specialty action
  * - onImageRendered: redraw visible tool data
@@ -38,13 +38,16 @@ const enable = function (element) {
   console.log('enableTouch', element);
   element.addEventListener(EVENTS.TAP, tap);
   element.addEventListener(EVENTS.TOUCH_START, touchStart);
-  element.addEventListener(EVENTS.TOUSH_START_ACTIVATE, touchStartActivate);
+  // Mouse equivelant is `mouse_down_activate`
+  // Should the naming pattern here match?
+  element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchStartActive);
   element.addEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.addEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
 function tap (evt) {
+  console.log('tap');
   if (isAwaitingTouchUp) {
     return;
   }
@@ -179,19 +182,17 @@ function tap (evt) {
   // All tools anyway?
   const allActiveTools = getActiveToolsForElement(element, state.tools);
 
-  if (
-    allActiveTools.length > 0 &&
-    allActiveTools[0].touchStartActivateCallback
-  ) {
-    allActiveTools[0].touchStartActivateCallback(evt);
+  if (allActiveTools.length > 0 && allActiveTools[0].touchStartActiveCallback) {
+    allActiveTools[0].touchStartActiveCallback(evt);
   } else {
-    touchStartActivate(evt);
+    touchStartActive(evt);
   }
 
   return false;
 }
 
 function touchStart (evt) {
+  console.log('touchStart');
   if (isAwaitingTouchUp) {
     return;
   }
@@ -312,7 +313,8 @@ function touchStart (evt) {
   }
 }
 
-function touchStartActivate (evt) {
+function touchStartActive (evt) {
+  console.log('touchStartActive');
   if (isAwaitingTouchUp) {
     return;
   }
@@ -359,6 +361,7 @@ function onImageRendered (evt) {
 }
 
 function addNewMeasurement (evt, tool) {
+  console.log('touch: addNewMeasurement');
   //
   evt.preventDefault();
   evt.stopPropagation();
