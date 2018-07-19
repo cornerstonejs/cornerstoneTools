@@ -22,6 +22,9 @@ function Synchronizer (event, handler) {
   const initialData = {};
   let eventHandler = handler;
 
+  // This setting can be disabled to easily prevent the synchronizer from working.
+  this.enabled = true;
+
   this.setHandler = function (handler) {
     eventHandler = handler;
   };
@@ -106,6 +109,12 @@ function Synchronizer (event, handler) {
   };
 
   function fireEvent (sourceElement, eventData) {
+
+    // If the synchronizer is disabled, bail out.
+    if(!that.enabled) {
+      return;
+    }
+
     // Broadcast an event that something changed
     if (!sourceElements.length || !targetElements.length) {
       return;
