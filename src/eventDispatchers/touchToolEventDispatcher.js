@@ -360,7 +360,7 @@ function touchStartActive (evt) {
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(evt, activeTool);
+    activeTool.addNewMeasurement(evt, 'touch');
   } else if (activeTool.isAnnotationTool) {
     addNewMeasurement(evt, activeTool);
   }
