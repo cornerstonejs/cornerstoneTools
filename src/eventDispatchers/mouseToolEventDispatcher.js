@@ -300,7 +300,7 @@ function mouseDownActivate (evt) {
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(evt, activeTool);
+    activeTool.addNewMeasurement(evt, 'mouse');
   } else if (activeTool.isAnnotationTool) {
     addNewMeasurement(evt, activeTool);
   }

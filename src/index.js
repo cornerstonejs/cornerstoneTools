@@ -16,27 +16,10 @@ export {
 export {
   default as touchToolEventDispatcher
 } from './eventDispatchers/touchToolEventDispatcher.js';
-// LENGTH
-export {
-  default as lengthMouse
-} from './new-api-tools-and-examples/length/lengthMouse.js';
-export {
-  default as lengthTouch
-} from './new-api-tools-and-examples/length/lengthTouch.js';
-// ANGLE
-export {
-  default as angleMouse
-} from './new-api-tools-and-examples/angle/angleMouse.js';
-export {
-  default as angleTouch
-} from './new-api-tools-and-examples/angle/angleTouch.js';
-// WWWC
-export {
-  default as wwwcMouse
-} from './new-api-tools-and-examples/wwwc/wwwcMouse.js';
-export {
-  default as wwwcTouch
-} from './new-api-tools-and-examples/wwwc/wwwcTouch.js';
+// TOOLS
+export { default as lengthTool } from './fancy-tools/lengthTool.js';
+export { default as angleTool } from './fancy-tools/angleTool.js';
+export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
 // END TEST
 
 export { drawing };

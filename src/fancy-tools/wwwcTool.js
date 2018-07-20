@@ -1,4 +1,5 @@
-import baseTool from './../../base/baseTool.js';
+import external from './../externalModules.js';
+import baseTool from './../base/baseTool.js';
 
 /**
  * Here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -39,11 +40,24 @@ export default class extends baseTool {
     };
 
     super({
-      name,
+      name: name || 'wwwc',
       strategies,
+      supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
         orientation: 0
       }
     });
+  }
+
+  mouseDragCallback (evt) {
+    this.applyActiveStrategy(evt);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+
+  touchDragCallback (evt) {
+    // Prevent CornerstoneToolsTouchStartActive from killing any press events
+    evt.stopImmediatePropagation();
+    this.applyActiveStrategy(evt);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }

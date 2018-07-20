@@ -4,54 +4,54 @@
 <head>
 	<!-- support for mobile touch devices -->
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	<style>
+		#app {
+			font-family: "Avenir", Helvetica, Arial, sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			text-align: center;
+			color: #333;
+			margin-top: 60px;
+		}
 
-	<!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-	<link href="../bootstrap.min.css" rel="stylesheet">
+		.wrapper,
+		.canvas {
+			width: 512px;
+			margin: 0 auto;
+			height: 512px;
+		}
 
-	<link href="../cornerstone.min.css" rel="stylesheet">
+		button {
+			text-transform: uppercase;
+			margin: 0.5em 1em;
+			border: 0;
+			border-bottom: 2px solid #ccc;
+			background: transparent;
+			outline: 0;
+			cursor: pointer;
+		}
 
+		button.is-active,
+		button:hover {
+			border-bottom: 2px solid #4ea;
+		}
+	</style>
 </head>
 
 <body>
-	<div class="container">
-		<div class="page-header">
-			<h1>
-				Updated API Concept
-			</h1>
-			<a href="../index.html">Go back to the Examples page</a>
-		</div>
+	<div id="app">
+		<h1>
+			Updated API Concept
+		</h1>
 
-		<br>
+		<div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
+			<button data-tool="length">Length</button>
+			<button data-tool="angle">Angle</button>
+			<button data-tool="wwwc">WWWC</button>
 
-		<div class="row">
-			<div class="col-xs-2">
-				<ul class="list-group">
-					<a id="lengthBtn" class="list-group-item">Mouse Length</a>
-					<a id="angleBtn" class="list-group-item">Mouse Angle</a>
-					<a id="wwwcBtn" class="list-group-item">Mouse WWWC</a>
-				</ul>
-				<br/>
-
-				<ul class="list-group">
-					<a id="lengthTouchBtn" class="list-group-item">Touch Length</a>
-					<a id="angleTouchBtn" class="list-group-item">Touch Angle</a>
-					<a id="wwwcTouchBtn" class="list-group-item">Touch WWWC</a>
-				</ul>
-				<br/>
-			</div>
-			<div class="col-xs-10">
-				<div style="width:512px;height:512px;position:relative;display:inline-block;color:white;" oncontextmenu="return false" class='cornerstone-enabled-image'
-				 unselectable='on' onselectstart='return false;' onmousedown='return false;'>
-					<div id="dicomImage" style="width:512px;height:512px;top:0px;left:0px; position:absolute;">
-					</div>
-				</div>
-			</div>
+			<div class="canvas" oncontextmenu="return false" />
 		</div>
-		<div class="row">
-			<div class="col-xs-12">
-				<h3>Functionality</h3>
-			</div>
-		</div>
+	</div>
 </body>
 
 <!-- include the hammer.fakemultitouch so we can test with a mouse -->
@@ -76,28 +76,9 @@
 
 <script>
 	const imageId = 'example://1';
-	const element = document.getElementById('dicomImage');
+	var element = document.getElementsByClassName('canvas')[0];
 
 	cornerstone.enable(element);
-
-	// NEW
-	const lengthMouseTool = new cornerstoneTools.lengthMouse();
-	cornerstoneTools.addTool(element, lengthMouseTool)
-	const lengthTouchTool = new cornerstoneTools.lengthTouch();
-	cornerstoneTools.addTool(element, lengthTouchTool)
-	//
-	const angleMouseTool = new cornerstoneTools.angleMouse();
-	cornerstoneTools.addTool(element, angleMouseTool)
-	const angleTouchTool = new cornerstoneTools.angleTouch();
-	cornerstoneTools.addTool(element, angleTouchTool)
-	//
-	const wwwcMouseTool = new cornerstoneTools.wwwcMouse();
-	cornerstoneTools.addTool(element, wwwcMouseTool)
-	const wwwcTouchTool = new cornerstoneTools.wwwcTouch();
-	cornerstoneTools.addTool(element, wwwcTouchTool)
-
-	// Default active tool
-	cornerstoneTools.setToolActive(element, lengthMouseTool.name, { mouseButtonMask: 1 })
 
 	// Todo: Marry these two?
 	cornerstoneTools.mouseInput.enable(element);
@@ -117,26 +98,26 @@
 		})
 	}
 
-	function activateMouseTool(toolName) {
-		setAllToolsPassive();
-		cornerstoneTools.setToolActive(element, toolName, { mouseButtonMask: 1 })
-	}
+	// Iterate over all tool buttons
+	const toolButtons = document.querySelectorAll('button');
+	Array.from(toolButtons).forEach(toolBtn => {
+		// Add the tool
+		const toolName = toolBtn.getAttribute('data-tool');
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		if (apiTool) {
+			const tool = new apiTool();
+			cornerstoneTools.addTool(element, tool);
+		}
 
-	function activateTouchTool(toolName) {
-		setAllToolsPassive();
-		cornerstoneTools.setToolActive(element, toolName)
-	}
+		// Setup button listener
+		toolBtn.addEventListener('click', (evt) => {
+			setAllToolsPassive();
+			cornerstoneTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+		});
+	});
 
-
-	// Mouse
-	document.getElementById('lengthBtn').addEventListener('click', (evt) => activateMouseTool(lengthMouseTool.name));
-	document.getElementById('angleBtn').addEventListener('click', (evt) => activateMouseTool(angleMouseTool.name));
-	document.getElementById('wwwcBtn').addEventListener('click', (evt) => activateMouseTool(wwwcMouseTool.name));
-
-	// Touch Group
-	document.getElementById('lengthTouchBtn').addEventListener('click', (evt) => activateTouchTool(lengthTouchTool.name));
-	document.getElementById('wwwcTouchBtn').addEventListener('click', (evt) => activateTouchTool(wwwcTouchTool.name));
-	document.getElementById('angleTouchBtn').addEventListener('click', (evt) => activateTouchTool(angleTouchTool.name));
+	// Activate first tool
+	cornerstoneTools.setToolActive(element, cornerstoneTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 </script>
 
 </html>

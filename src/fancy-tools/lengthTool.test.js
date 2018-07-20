@@ -1,9 +1,9 @@
 import LengthTool from './lengthTool.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import { getToolState } from './../stateManagement/toolState.js';
 
-jest.mock('./../../manipulators/drawHandles.js');
-jest.mock('./../../util/drawing.js');
-jest.mock('./../../stateManagement/toolState.js', () => ({
+jest.mock('./../manipulators/drawHandles.js');
+jest.mock('./../util/drawing.js');
+jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
@@ -26,11 +26,18 @@ describe('lengthTool.js', () => {
   });
 
   describe('default values', () => {
-    it('sets its name to the first value passed to the constructor', () => {
-      const exampleToolName = 'exampleToolName';
-      const instantiatedTool = new LengthTool(exampleToolName);
+    it('has a default name of "length"', () => {
+      const defaultName = 'length';
+      const instantiatedTool = new LengthTool();
 
-      expect(instantiatedTool.name).toEqual(exampleToolName);
+      expect(instantiatedTool.name).toEqual(defaultName);
+    });
+
+    it('can be created with a custom tool name', () => {
+      const customToolName = 'customToolName';
+      const instantiatedTool = new LengthTool(customToolName);
+
+      expect(instantiatedTool.name).toEqual(customToolName);
     });
   });
 
