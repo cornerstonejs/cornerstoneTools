@@ -1,8 +1,15 @@
 export default class {
-  constructor ({ name, strategies, defaultStrategy, configuration } = {}) {
+  constructor ({
+    name,
+    strategies,
+    defaultStrategy,
+    configuration,
+    supportedInteractionTypes
+  } = {}) {
     this.name = name;
     this.mode = 'disabled';
     this.element = undefined;
+    this.supportedInteractionTypes = supportedInteractionTypes || [];
 
     // Todo: should this live in baseTool?
     this.strategies = strategies || {};

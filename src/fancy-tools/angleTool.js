@@ -1,37 +1,40 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
-import external from './../../externalModules.js';
-import baseAnnotationTool from './../../base/baseAnnotationTool.js';
+import external from './../externalModules.js';
+import baseAnnotationTool from './../base/baseAnnotationTool.js';
 // State
-import textStyle from './../../stateManagement/textStyle.js';
+import textStyle from './../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
   removeToolState
-} from './../../stateManagement/toolState.js';
-import toolStyle from '../../stateManagement/toolStyle.js';
-import toolColors from '../../stateManagement/toolColors.js';
+} from './../stateManagement/toolState.js';
+import toolStyle from './../stateManagement/toolStyle.js';
+import toolColors from './../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../../manipulators/drawHandles.js';
-import moveNewHandle from '../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import drawHandles from './../manipulators/drawHandles.js';
+import moveNewHandle from './../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawJoinedLines
-} from './../../util/drawing.js';
-import drawLinkedTextBox from './../../util/drawLinkedTextBox.js';
-import lineSegDistance from './../../util/lineSegDistance.js';
-import roundToDecimal from './../../util/roundToDecimal.js';
+} from './../util/drawing.js';
+import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
+import lineSegDistance from './../util/lineSegDistance.js';
+import roundToDecimal from './../util/roundToDecimal.js';
 
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
   constructor (name) {
-    super({ name });
+    super({
+      name: name || 'angle',
+      supportedInteractionTypes: ['mouse', 'touch']
+    });
 
     this.preventNewMeasurement = false;
   }
@@ -283,7 +286,7 @@ export default class extends baseAnnotationTool {
     }
   }
 
-  addNewMeasurement (evt) {
+  addNewMeasurement (evt, interactionType) {
     if (this.preventNewMeasurement) {
       return;
     }
@@ -297,7 +300,8 @@ export default class extends baseAnnotationTool {
     const element = evt.detail.element;
     // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
     // All take the same parameters, but register events differentlIy.
-    const handleMover = this.isMouseTool ? moveNewHandle : moveNewHandleTouch;
+    const handleMover =
+      interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
