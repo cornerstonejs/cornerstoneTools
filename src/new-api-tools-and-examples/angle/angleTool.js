@@ -1,33 +1,39 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseMouseAnnotationTool from './../base/baseMouseAnnotationTool.js';
+/* eslint class-methods-use-this: 0 */ // --> OFF
+import external from './../../externalModules.js';
+import baseAnnotationTool from './../../base/baseAnnotationTool.js';
 // State
-import textStyle from './../stateManagement/textStyle.js';
-import { addToolState, getToolState } from './../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import {
+  addToolState,
+  getToolState,
+  removeToolState
+} from './../../stateManagement/toolState.js';
+import toolStyle from '../../stateManagement/toolStyle.js';
+import toolColors from '../../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
-import moveNewHandle from '../manipulators/moveNewHandle.js';
+import drawHandles from './../../manipulators/drawHandles.js';
+import moveNewHandle from '../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawJoinedLines
-} from './../util/drawing.js';
-import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
-import lineSegDistance from './../util/lineSegDistance.js';
-import roundToDecimal from './../util/roundToDecimal.js';
+} from './../../util/drawing.js';
+import drawLinkedTextBox from './../../util/drawLinkedTextBox.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
 
 const cornerstone = external.cornerstone;
 
-export default class extends baseMouseAnnotationTool {
+export default class extends baseAnnotationTool {
   constructor (name) {
-    super({
-      name: name || 'angleMouse'
-    });
-    console.log(`my name is ${this.name}`);
+    super({ name });
+
+    this.preventNewMeasurement = false;
   }
 
   /**
@@ -278,72 +284,58 @@ export default class extends baseMouseAnnotationTool {
   }
 
   addNewMeasurement (evt) {
+    if (this.preventNewMeasurement) {
+      return;
+    }
+
+    this.preventNewMeasurement = true;
     evt.preventDefault();
     evt.stopPropagation();
-    const mouseEventData = evt.detail;
-    const measurementData = this.createNewMeasurement(mouseEventData);
-    const element = mouseEventData.element;
+
+    const eventData = evt.detail;
+    const measurementData = this.createNewMeasurement(eventData);
+    const element = evt.detail.element;
+    // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
+    // All take the same parameters, but register events differentlIy.
+    const handleMover = this.isMouseTool ? moveNewHandle : moveNewHandleTouch;
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
-
-    // Since we are dragging to another place to drop the end point, we can just activate
-    // The end point and let the moveHandle move it for us.
-    // Disable:
-    // - move, drag, down, down_activate
     cornerstone.updateImage(element);
 
-    moveNewHandle(
-      mouseEventData,
+    // Step 1, create start and second middle
+    handleMover(
+      eventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
       () => {
         measurementData.active = false;
-        // End if any handle is outside image, re-add listeners
-        // If (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-        //   // Delete the measurement
-        //   RemoveToolState(element, toolType, measurementData);
-
-        //   Element.addEventListener(
-        //     EVENTS.MOUSE_MOVE,
-        //     SimpleAngle.mouseMoveCallback
-        //   );
-        //   Element.addEventListener(
-        //     EVENTS.MOUSE_DRAG,
-        //     SimpleAngle.mouseMoveCallback
-        //   );
-        //   Element.addEventListener(
-        //     EVENTS.MOUSE_DOWN,
-        //     SimpleAngle.mouseDownCallback
-        //   );
-        //   Element.addEventListener(
-        //     EVENTS.MOUSE_DOWN_ACTIVATE,
-        //     SimpleAngle.mouseDownActivateCallback
-        //   );
-        //   Cornerstone.updateImage(element);
-
-        //   Return;
-        // }
-
         measurementData.handles.end.active = true;
-        cornerstone.updateImage(element);
 
-        moveNewHandle(
-          mouseEventData,
+        // TODO: `anyHandlesOutsideImage` deletion should be a config setting
+        // TODO: Maybe globally? Mayber per tool?
+        // If any handle is outside image, delete and abort
+        if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
+          // Delete the measurement
+          removeToolState(element, this.name, measurementData);
+          this.preventNewMeasurement = false;
+        }
+
+        cornerstone.updateImage(element);
+        // Step 2, place middle handle and drag end handle
+        handleMover(
+          eventData,
           this.name,
           measurementData,
           measurementData.handles.end,
-          function () {
+          () => {
             measurementData.active = false;
-            // If (
-            //   AnyHandlesOutsideImage(mouseEventData, measurementData.handles)
-            // ) {
-            //   // Delete the measurement
-            //   RemoveToolState(element, toolType, measurementData);
-            // }
-
-            // TODO: Re-add event listeners
+            if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
+              // Delete the measurement
+              removeToolState(element, this.name, measurementData);
+            }
+            this.preventNewMeasurement = false;
             cornerstone.updateImage(element);
           }
         );

@@ -26,7 +26,10 @@ export {
 // ANGLE
 export {
   default as angleMouse
-} from './new-api-tools-and-examples/angleMouse.js';
+} from './new-api-tools-and-examples/angle/angleMouse.js';
+export {
+  default as angleTouch
+} from './new-api-tools-and-examples/angle/angleTouch.js';
 // WWWC
 export {
   default as wwwcMouse
@@ -243,7 +246,6 @@ export { rotate, rotateTouchDrag } from './imageTools/rotate.js';
 export { default as rotateTouch } from './imageTools/rotateTouch.js';
 export { default as saveAs } from './imageTools/saveAs.js';
 export { default as scaleOverlayTool } from './imageTools/scaleOverlayTool.js';
-export { simpleAngle, simpleAngleTouch } from './imageTools/simpleAngle.js';
 export {
   default as simpleMouseButtonTool
 } from './imageTools/simpleMouseButtonTool.js';

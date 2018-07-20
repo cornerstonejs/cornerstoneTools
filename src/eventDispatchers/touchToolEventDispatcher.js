@@ -345,7 +345,7 @@ function touchDrag (evt) {
 // Active: dragTool only
 // Or tool has `touchEndCallbach` method
 function touchEnd (evt) {
-  console.log('touchDrag');
+  console.log('touchEnd');
 }
 
 function touchStartActive (evt) {
