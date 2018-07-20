@@ -1,4 +1,11 @@
 import WwwcTool from './wwwcTool.js';
+import external from './../externalModules.js';
+
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    setViewport: jest.fn()
+  }
+}));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('wwwcTool.js', () => {
