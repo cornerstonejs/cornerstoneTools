@@ -46,6 +46,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchStartActive);
   element.addEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.addEventListener(EVENTS.DOUBLE_TAP, doubleTap);
+  element.addEventListener(EVENTS.TOUCH_PINCH, touchPinch);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
@@ -374,6 +375,26 @@ function touchPress (evt) {
 function doubleTap (evt) {
   // Active?
   console.warn('doubleTap not implemented');
+}
+
+function touchPinch (evt) {
+  console.log('touchPinch');
+  if (isAwaitingTouchUp) {
+    return;
+  }
+
+  let tools;
+  const element = evt.detail.element;
+
+  // Filter out disabled, enabled, and passive
+  tools = getActiveToolsForElement(element, getters.touchTools());
+  tools = tools.filter((tool) => typeof tool.touchPinchCallback === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  tools[0].touchPinchCallback(evt);
 }
 
 function onImageRendered (evt) {
