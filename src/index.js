@@ -20,6 +20,13 @@ export {
 export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
+export { default as zoomTool } from './fancy-tools/zoomTool.js';
+export {
+  default as zoomTouchPinchTool
+} from './fancy-tools/zoomTouchPinchTool.js';
+export {
+  default as zoomMouseWheelTool
+} from './fancy-tools/zoomMouseWheelTool.js';
 // END TEST
 
 export { drawing };
@@ -238,12 +245,6 @@ export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
 export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
-export {
-  zoom,
-  zoomWheel,
-  zoomTouchPinch,
-  zoomTouchDrag
-} from './imageTools/zoom.js';
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';

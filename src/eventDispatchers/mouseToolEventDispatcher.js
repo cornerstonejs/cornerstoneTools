@@ -34,12 +34,13 @@ let isAwaitingMouseUp = false;
  * @param {*} element
  */
 const enable = function (element) {
-  console.log('enable', element);
+  console.log('enableMouseDispatcher:', element);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
   element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDrag);
   element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
+  element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
@@ -306,7 +307,29 @@ function mouseDownActivate (evt) {
   }
 }
 
-function mouseDoubleClick () {}
+function mouseDoubleClick (evt) {
+  console.warn('mouseDoubleClick');
+}
+
+function mouseWheel (evt) {
+  console.log('mouseWheel');
+  if (isAwaitingMouseUp) {
+    return;
+  }
+
+  let tools;
+  const element = evt.detail.element;
+
+  // Filter out disabled, enabled, and passive
+  tools = getActiveToolsForElement(element, getters.mouseTools());
+  tools = tools.filter((tool) => typeof tool.mouseWheelCallback === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  tools[0].mouseWheelCallback(evt);
+}
 
 function onImageRendered (evt) {
   const eventData = evt.detail;

@@ -48,6 +48,9 @@
 			<button data-tool="length">Length</button>
 			<button data-tool="angle">Angle</button>
 			<button data-tool="wwwc">WWWC</button>
+			<button data-tool="zoom">Zoom</button>
+			<button data-tool="zoomTouchPinch">ZoomTouchPinch</button>
+			<button data-tool="zoomMouseWheel">ZoomMouseWheel</button>
 
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
@@ -86,6 +89,8 @@
 	//
 	cornerstoneTools.touchInput.enable(element);
 	cornerstoneTools.touchToolEventDispatcher.enable(element);
+	//
+	cornerstoneTools.mouseWheelInput.enable(element);
 	// END NEW
 
 	cornerstone.loadImage(imageId).then(function (image) {
