@@ -309,6 +309,28 @@ function mouseDownActivate (evt) {
 
 function mouseDoubleClick (evt) {
   console.warn('mouseDoubleClick');
+
+  let tools;
+  const eventData = evt.detail;
+  const element = eventData.element;
+
+  // Filter out disabled, enabled, and passive
+  tools = getActiveToolsForElement(element, getters.mouseTools());
+  tools = tools.filter((tool) =>
+    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  );
+  tools = tools.filter((tool) => typeof tool.mouseDoublClickCallback === 'function');
+
+  console.log('mouseDoubleClick tools:');
+  console.log(tools);
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  const activeTool = tools[0];
+
+  activeTool.mouseDoublClickCallback(evt);
 }
 
 function mouseWheel (evt) {
