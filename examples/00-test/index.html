@@ -57,9 +57,10 @@
 	</div>
 </body>
 
-<!-- include the hammer.fakemultitouch so we can test with a mouse -->
+<!-- include the hammer.fakemultitouch so we can test with a mouse
 <script src="../touch-emulator.js"></script>
 <script>TouchEmulator();</script>
+-->
 
 <!-- include the hammer.js library for touch gestures-->
 <script src="../hammer.min.js"></script>
@@ -109,6 +110,7 @@
 		// Add the tool
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
+
 		if (apiTool) {
 			const tool = new apiTool();
 			cornerstoneTools.addTool(element, tool);
