@@ -21,6 +21,7 @@ export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
 export { default as zoomTool } from './fancy-tools/zoomTool.js';
+export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
 export {
   default as zoomTouchPinchTool
 } from './fancy-tools/zoomTouchPinchTool.js';
@@ -210,10 +211,10 @@ export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
 export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
-export {
-  ellipticalRoi,
-  ellipticalRoiTouch
-} from './imageTools/ellipticalRoi.js';
+// export {
+//   ellipticalRoi,
+//   ellipticalRoiTouch
+// } from './imageTools/ellipticalRoi.js';
 export { eraser, eraserTouch } from './imageTools/eraser.js';
 export { freehand } from './imageTools/freehand.js';
 export { freehandSculpter } from './imageTools/freehandSculpter.js';
