@@ -53,4 +53,15 @@ export default class extends baseTool {
   onImageRendered (evt) {
     throw new Error('Method onImageRendered not implemented in subclass.');
   }
+
+  /**
+  * OPTIONAL -- Used to check if there is a valid target for the tool, that
+  * isn't necessarily its own toolData. (e.g. the freehandSculpter)
+  *
+  * @param {*} evt
+  * @returns {Boolean} - True if the target is manipulatable by the tool.
+  *
+  * isValidTarget (evt) {}
+  */
+
 }

@@ -19,6 +19,7 @@ import insertOrDelete from '../util/freehand/insertOrDelete.js';
 import freeHandArea from '../util/freehand/freeHandArea.js';
 import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
 import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
+import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
 import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
@@ -113,6 +114,21 @@ export default class extends baseAnnotationTool {
     // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
     if (isPointNearTool !== null) {
       return true;
+    }
+
+    return false;
+  }
+
+
+  isValidTarget (eventData, data, coords) {
+    if (eventData.event.ctrlKey) {
+      const freehandLineFinder = new FreehandLineFinder(eventData);
+      const insertInfo = freehandLineFinder.findLine();
+
+      if (insertInfo) {
+        this._insertInfo = insertInfo;
+        return true;
+      }
     }
 
     return false;
