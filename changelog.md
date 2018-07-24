@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [2.3.9] - 2018-07-24
+### Changed
+- Make use of drawRect, drawCircle and drawLine in the tools (thanks @timleslie)
+
 ## [2.3.8] - 2018-07-12
 ### Added
 - Added Webpack-web-server and hotReloader for development
