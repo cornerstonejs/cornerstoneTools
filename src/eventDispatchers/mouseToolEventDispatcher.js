@@ -143,6 +143,23 @@ function mouseDown (evt) {
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
+
+  // Check if any tool has a special reason to grab the current event
+  for (let t = 0; t < tools.length; t++) {
+
+    if (typeof tools[t].mouseDownCallback === 'function' &&
+        typeof tools[t].isValidTarget === 'function' &&
+        tools[t].isValidTarget(eventData)) {
+      tools[t].mouseDownCallback(evt);
+
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      return;
+      }
+  }
+
   tools = getToolsWithDataForElement(element, tools);
 
   // Find tools with handles we can move
