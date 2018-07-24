@@ -11,11 +11,11 @@ export default function (currentHandle, data) {
   const config = this.configuration;
 
   if (config.movingTextBox) {
-    dragTextBox(currentHandle);
+    dragTextBox.call(this, currentHandle);
   }
 
   if (config.modifying) {
-    dragHandle(currentHandle, data);
+    dragHandle.call(this, currentHandle, data);
   }
 }
 

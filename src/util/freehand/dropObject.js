@@ -11,13 +11,13 @@ export default function (e, toolData) {
 
   // Check if drawing is finished
   if (config.movingTextBox === true) {
-    dropTextbox(eventData, toolData);
+    dropTextbox.call(this, eventData, toolData);
 
     return 'textBox';
   }
 
   if (config.modifying) {
-    dropHandle(eventData, toolData);
+    dropHandle.call(this, eventData, toolData);
 
     return 'handle';
   }

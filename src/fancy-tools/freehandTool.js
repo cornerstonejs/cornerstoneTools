@@ -33,6 +33,12 @@ export default class extends baseAnnotationTool {
       supportedInteractionTypes: ['mouse'],
       configuration: defaultFreehandConfiguration()
     });
+
+    // Create bound functions for callbacks
+    this.mouseDownCallback = this.mouseDownCallback.bind(this);
+    this.mouseMoveCallback = this.mouseMoveCallback.bind(this);
+    this.mouseUpCallback = this.mouseUpCallback.bind(this);
+    this.mouseDragCallback = this.mouseDragCallback.bind(this);
   }
 
   // BEGIN Implementation of baseAnnotationTool methods //
@@ -59,21 +65,24 @@ export default class extends baseAnnotationTool {
       return;
     }
 
-    return {
+    const measurementData = {
       visible: true,
       active: true,
       invalidated: true,
       color: undefined,
-      handles: [],
-      textBox: {
-        active: false,
-        hasMoved: false,
-        movesIndependently: false,
-        drawnIndependently: true,
-        allowedOutsideImage: true,
-        hasBoundingBox: true
-      }
+      handles: []
     };
+
+    measurementData.handles.textBox = {
+      active: false,
+      hasMoved: false,
+      movesIndependently: false,
+      drawnIndependently: true,
+      allowedOutsideImage: true,
+      hasBoundingBox: true
+    }
+
+    return measurementData;
   }
 
   /**
@@ -307,19 +316,19 @@ export default class extends baseAnnotationTool {
         }
 
         // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
-        if (data.polyBoundingBox && !data.textBox.freehand) {
+        if (data.polyBoundingBox && !data.handles.textBox.freehand) {
           // If the textbox has not been moved by the user, it should be displayed on the right-most
           // Side of the tool.
-          if (!data.textBox.hasMoved) {
+          if (!data.handles.textBox.hasMoved) {
             // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
             // Note that this calculates it in image coordinates
-            data.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
-            data.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+            data.handles.textBox.x = data.polyBoundingBox.left + data.polyBoundingBox.width;
+            data.handles.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
           }
 
           const text = textBoxText.call(this, data);
 
-          drawLinkedTextBox(context, element, data.textBox, text,
+          drawLinkedTextBox(context, element, data.handles.textBox, text,
             data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
         }
       });
@@ -515,15 +524,13 @@ export default class extends baseAnnotationTool {
   mouseUpCallback (evt) {
     //console.log('in mouseUpCallback');
     const eventData = evt.detail;
+    const element = eventData.element;
     const toolData = getToolState(eventData.element, this.name);
 
-    /* TODO -- workout how this should operate.
-    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-    element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-    */
+    element.removeEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
 
     if (toolData === undefined) {
       return;
@@ -534,6 +541,8 @@ export default class extends baseAnnotationTool {
     if (dropped === 'handle') {
       this._endDrawing(eventData);
     }
+
+    mouseToolEventDispatcher.setIsAwaitingMouseUp(false);
 
     evt.preventDefault(); // TODO -- Do we still need this here?
     evt.stopPropagation();
@@ -557,6 +566,8 @@ export default class extends baseAnnotationTool {
 
     // Block event distpatcher whilst drawing
     mouseToolEventDispatcher.setIsAwaitingMouseUp(true);
+
+    this._referencedElement = element;
 
     this._activateDraw(element);
 
@@ -672,6 +683,7 @@ export default class extends baseAnnotationTool {
     data.canComplete = false;
 
     if (config.drawing) {
+      console.log('ending drawing');
       config.drawing = false;
       mouseToolEventDispatcher.setIsAwaitingMouseUp(false);
       this._deactivateDraw(eventData.element);
@@ -711,9 +723,9 @@ export default class extends baseAnnotationTool {
     }
 
     // Check to see if mouse in bounding box of textbox
-    if (data.textBox) {
-      if (pointInsideBoundingBox(data.textBox, coords)) {
-        return data.textBox;
+    if (data.handles.textBox) {
+      if (pointInsideBoundingBox(data.handles.textBox, coords)) {
+        return data.handles.textBox;
       }
     }
 
@@ -844,8 +856,11 @@ export default class extends baseAnnotationTool {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolData = getToolState(eventData.element, this.name);
-
     const handleNearby = nearby.handleNearby;
+
+    // Interupt eventDispatchers
+    console.log('isAwaitingMouseUp = true');
+    mouseToolEventDispatcher.setIsAwaitingMouseUp(true);
 
     if (handleNearby.hasBoundingBox) {
       this._modifyTextBox(element, nearby);
@@ -855,25 +870,6 @@ export default class extends baseAnnotationTool {
 
     evt.preventDefault();
     evt.stopPropagation();
-  }
-
-  /**
-  * Event handler called by mouseDownPassive which modifies a tool's textBox.
-  *
-  * @private
-  * @param {Object} element - The element associated with the event.
-  * @param {Object} nearby - Object containing information about a nearby handle.
-  */
-  _modifyTextBox (element, nearby) {
-    //console.log('in _modifyTextBox');
-    const config = this.configuration;
-    const handleNearby = nearby.handleNearby;
-    const toolIndex = nearby.toolIndex;
-
-    // TODO -- SET AWAIT MOUSE UP = TRUE SOMEHOW
-    config.movingTextBox = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
   }
 
   /**
@@ -890,21 +886,40 @@ export default class extends baseAnnotationTool {
     const handleNearby = nearby.handleNearby;
     const toolIndex = nearby.toolIndex;
 
-    // TODO -- SET AWAIT MOUSE UP = TRUE SOMEHOW
-
     config.dragOrigin = {
       x: toolData.data[toolIndex].handles[handleNearby].x,
       y: toolData.data[toolIndex].handles[handleNearby].y
     };
 
-    /* TODO -- Link this up and sort this out properly
     // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
-    element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    */
+    element.addEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
 
     config.modifying = true;
+    config.currentHandle = handleNearby;
+    config.currentTool = toolIndex;
+  }
+
+  /**
+  * Event handler called by mouseDownPassive which modifies a tool's textBox.
+  *
+  * @private
+  * @param {Object} element - The element associated with the event.
+  * @param {Object} nearby - Object containing information about a nearby handle.
+  */
+  _modifyTextBox (element, nearby) {
+    //console.log('in _modifyTextBox');
+    const config = this.configuration;
+    const handleNearby = nearby.handleNearby;
+    const toolIndex = nearby.toolIndex;
+
+    // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
+    element.addEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
+
+    config.movingTextBox = true;
     config.currentHandle = handleNearby;
     config.currentTool = toolIndex;
   }
@@ -1050,7 +1065,7 @@ export default class extends baseAnnotationTool {
       const coords = eventData.currentPoints.canvas;
 
       if (data.textBox === true) {
-        if (pointInsideBoundingBox(data.textBox, coords)) {
+        if (pointInsideBoundingBox(data.handles.textBox, coords)) {
           data.active = !data.active;
           data.highlight = !data.highlight;
           imageNeedsUpdate = true;
@@ -1088,8 +1103,8 @@ export default class extends baseAnnotationTool {
   _activateDraw (element) {
     this._deactivateDraw(element);
 
-    element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback.bind(this));
-    element.addEventListener(EVENTS.MOUSE_DOWN, this.mouseDownCallback.bind(this));
+    element.addEventListener(EVENTS.MOUSE_DOWN, this.mouseDownCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
 
     external.cornerstone.updateImage(element);
   }
@@ -1102,10 +1117,16 @@ export default class extends baseAnnotationTool {
   * @modifies {element}
   */
   _deactivateDraw (element) {
-    element.removeEventListener(EVENTS.MOUSE_DOWN, this.mouseDownCallback.bind(this));
-    element.removeEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback.bind(this));
-    element.removeEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback.bind(this));
-    element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback.bind(this));
+    console.log('deactivating functions:');
+
+    console.log(this._referencedElement);
+
+    element.removeEventListener(EVENTS.MOUSE_DOWN, this.mouseDownCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
+    element.removeEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
+
+    external.cornerstone.updateImage(element);
   }
 
 }

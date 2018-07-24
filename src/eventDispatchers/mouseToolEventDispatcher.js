@@ -145,26 +145,6 @@ function mouseDown (evt) {
   );
   tools = getToolsWithDataForElement(element, tools);
 
-  // If the active tool is 'drawing' and has its own mouseDown handler, give it priority.
-  /*
-  for (let i = 0; i < tools.length; i++) {
-    const activeTool = tools[i];
-
-    if (activeTool &&
-        activeTool.configuration &&
-        activeTool.configuration.drawing &&
-        typeof activeTool.mouseDownCallback === 'function') {
-      activeTool.mouseDownCallback(evt);
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
-
-      return;
-    }
-  }
-  */
-
-
   // Find tools with handles we can move
   const toolsWithMoveableHandles = tools.filter((tool) => {
     const toolState = getToolState(eventData.element, tool.name);
@@ -188,9 +168,11 @@ function mouseDown (evt) {
   // We'll just grab the first one we encounter for now
 
   if (toolsWithMoveableHandles.length > 0) {
+    const activeTool = toolsWithMoveableHandles[0];
+
     const toolState = getToolState(
       eventData.element,
-      toolsWithMoveableHandles[0].name
+      activeTool.name
     );
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -203,7 +185,15 @@ function mouseDown (evt) {
         distance
       );
 
-      if (handle) {
+      // Use custom handler if it exists
+      if (typeof activeTool.mouseDownCallback === 'function') {
+        activeTool.mouseDownCallback(evt);
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        return;
+      } else if (handle) {
         // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
         data.active = true;
         moveHandle(

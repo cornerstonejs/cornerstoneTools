@@ -631,7 +631,6 @@ function modifyObject (e, nearby) {
   const eventData = e.detail;
   const element = eventData.element;
   const toolData = getToolState(eventData.element, toolType);
-
   const handleNearby = nearby.handleNearby;
 
   if (handleNearby.hasBoundingBox) {
