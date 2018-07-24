@@ -1,4 +1,3 @@
-import { freehand } from '../../imageTools/freehand.js';
 import freeHandIntersect from './freeHandIntersect.js';
 
 /**
@@ -9,7 +8,7 @@ import freeHandIntersect from './freeHandIntersect.js';
 * @modifies {currentHandle|data}
 */
 export default function (currentHandle, data) {
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
 
   if (config.movingTextBox) {
     dragTextBox(currentHandle);
@@ -27,7 +26,7 @@ export default function (currentHandle, data) {
 * @modifies {currentHandle}
 */
 function dragTextBox (currentHandle) {
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
 
   currentHandle.hasMoved = true;
   currentHandle.x = config.mouseLocation.handles.start.x;
@@ -42,7 +41,7 @@ function dragTextBox (currentHandle) {
 * @modifies {data}
 */
 function dragHandle (currentHandle, data) {
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
 
   data.handles.invalidHandlePlacement = freeHandIntersect.modify(data.handles, currentHandle);
   data.active = true;

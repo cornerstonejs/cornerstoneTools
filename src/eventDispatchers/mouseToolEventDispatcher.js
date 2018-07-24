@@ -19,7 +19,7 @@ import getToolsWithDataForElement from './../store/getToolsWithDataForElement.js
 
 const cornerstone = external.cornerstone;
 
-// Todo: better place for this
+// TODO: better place for this
 let isAwaitingMouseUp = false;
 
 /**
@@ -97,6 +97,12 @@ function mouseMove (evt) {
         data.active = !data.active;
         imageNeedsUpdate = true;
       }
+
+      // Call the tool's mouseMoveCallback if it exists.
+      if (typeof tool.mouseMoveCallback === 'function') {
+        tool.mouseMoveCallback(evt);
+      }
+
     }
   }
 
@@ -118,10 +124,11 @@ function mouseMove (evt) {
  * @returns
  */
 function mouseDown (evt) {
-  console.log('mouseDown');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDown');
+
   let tools;
   const eventData = evt.detail;
   const element = eventData.element;
@@ -137,6 +144,26 @@ function mouseDown (evt) {
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
   tools = getToolsWithDataForElement(element, tools);
+
+  // If the active tool is 'drawing' and has its own mouseDown handler, give it priority.
+  /*
+  for (let i = 0; i < tools.length; i++) {
+    const activeTool = tools[i];
+
+    if (activeTool &&
+        activeTool.configuration &&
+        activeTool.configuration.drawing &&
+        typeof activeTool.mouseDownCallback === 'function') {
+      activeTool.mouseDownCallback(evt);
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      return;
+    }
+  }
+  */
+
 
   // Find tools with handles we can move
   const toolsWithMoveableHandles = tools.filter((tool) => {
@@ -250,10 +277,10 @@ function mouseDown (evt) {
 // A high frequency event. Anything we can do to reduce
 // Repeat math here would be a big help
 function mouseDrag (evt) {
-  console.log('mouseDrag');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDrag');
 
   let tools;
   const eventData = evt.detail;
@@ -278,10 +305,11 @@ function mouseDrag (evt) {
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
 function mouseDownActivate (evt) {
-  console.log('mouseDownActivate');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDownActivate');
+
   const eventData = evt.detail;
   const element = eventData.element;
 
@@ -308,6 +336,9 @@ function mouseDownActivate (evt) {
 }
 
 function mouseDoubleClick (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
   console.warn('mouseDoubleClick');
 
   let tools;
@@ -321,9 +352,6 @@ function mouseDoubleClick (evt) {
   );
   tools = tools.filter((tool) => typeof tool.mouseDoublClickCallback === 'function');
 
-  console.log('mouseDoubleClick tools:');
-  console.log(tools);
-
   if (tools.length === 0) {
     return;
   }
@@ -334,10 +362,10 @@ function mouseDoubleClick (evt) {
 }
 
 function mouseWheel (evt) {
-  console.log('mouseWheel');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseWheel');
 
   let tools;
   const element = evt.detail.element;
@@ -430,7 +458,21 @@ function addNewMeasurement (evt, tool) {
   );
 }
 
+function setIsAwaitingMouseUp (bool) {
+  if (typeof bool === 'boolean') {
+    isAwaitingMouseUp = bool;
+  } else {
+    throw new Error('Attempting to see mouseToolEventDispatcher.isAwaitingMouseUp to a non-boolean.');
+  }
+}
+
+function getIsAwaitingMouseUp () {
+  return isAwaitingMouseUp;
+}
+
 export default {
-  enable
+  enable,
+  getIsAwaitingMouseUp,
+  setIsAwaitingMouseUp
   // Disable
 };

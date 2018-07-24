@@ -307,6 +307,11 @@ export default class extends baseAnnotationTool {
     addToolState(element, this.name, measurementData);
     cornerstone.updateImage(element);
 
+
+    // TEMP
+    this.configuration.drawing = true;
+    // TEMP
+
     // Step 1, create start and second middle
     handleMover(
       eventData,
@@ -346,6 +351,7 @@ export default class extends baseAnnotationTool {
       }
     );
   }
+
 }
 
 function length (vector) {
