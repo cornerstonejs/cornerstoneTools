@@ -11,17 +11,10 @@ import drawHandles from './../manipulators/drawHandles.js';
 import { getNewContext, draw, path, setShadow } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import calculateSUV from '../util/calculateSUV.js';
+//
+import numberWithCommas from './shared/numbersWithCommas.js';
 
 const cornerstone = external.cornerstone;
-
-const numberWithCommas = (x) => {
-  // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-  const parts = x.toString().split('.');
-
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-  return parts.join('.');
-};
 
 export default class extends baseAnnotationTool {
   constructor (name) {
@@ -114,9 +107,12 @@ export default class extends baseAnnotationTool {
       height: Math.abs(startCanvas.y - endCanvas.y)
     };
 
-    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(rect, coords);
+    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
+      rect,
+      coords
+    );
 
-    return (distanceToPoint < 5);
+    return distanceToPoint < 5;
   }
 
   /**
@@ -140,7 +136,7 @@ export default class extends baseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
     const config = this.configuration;
     const seriesModule = cornerstone.metaData.get(
-      'generalSeriesModule', 
+      'generalSeriesModule',
       image.imageId
     );
     const imagePlane = cornerstone.metaData.get(
@@ -153,8 +149,10 @@ export default class extends baseAnnotationTool {
     let colPixelSpacing = image.columnPixelSpacing;
 
     if (imagePlane) {
-      rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-      colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+      rowPixelSpacing =
+        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+      colPixelSpacing =
+        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
     }
 
     if (seriesModule) {
@@ -164,35 +162,47 @@ export default class extends baseAnnotationTool {
     // If we have tool data for this element - iterate over each set and draw it
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
-  
+
       if (data.visible === false) {
         continue;
       }
-  
+
       draw(context, (context) => {
         // Apply any shadow settings defined in the tool configuration
         setShadow(context, config);
-  
+
         // Check which color the rendered tool should be
         const color = toolColors.getColorIfActive(data);
-  
+
         // Convert Image coordinates to Canvas coordinates given the element
-        const handleStartCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-        const handleEndCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
-  
+        const handleStartCanvas = cornerstone.pixelToCanvas(
+          element,
+          data.handles.start
+        );
+        const handleEndCanvas = cornerstone.pixelToCanvas(
+          element,
+          data.handles.end
+        );
+
         // Retrieve the bounds of the rectangle (left, top, width, and height)
         // In Canvas coordinates
         const leftCanvas = Math.min(handleStartCanvas.x, handleEndCanvas.x);
         const topCanvas = Math.min(handleStartCanvas.y, handleEndCanvas.y);
         const widthCanvas = Math.abs(handleStartCanvas.x - handleEndCanvas.x);
         const heightCanvas = Math.abs(handleStartCanvas.y - handleEndCanvas.y);
-  
+
         // Draw the rectangle on the canvas
-        path(context, { color,
-          lineWidth }, (context) => {
-          context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
-        });
-  
+        path(
+          context,
+          {
+            color,
+            lineWidth
+          },
+          (context) => {
+            context.rect(leftCanvas, topCanvas, widthCanvas, heightCanvas);
+          }
+        );
+
         // If the tool configuration specifies to only draw the handles on hover / active,
         // Follow this logic
         if (config && config.drawHandlesOnHover) {
@@ -205,19 +215,17 @@ export default class extends baseAnnotationTool {
             const handleOptions = {
               drawHandlesIfActive: true
             };
-  
+
             drawHandles(context, eventData, data.handles, color, handleOptions);
           }
         } else {
           // If the tool has no configuration settings, always draw the handles
           drawHandles(context, eventData, data.handles, color);
         }
-  
+
         // Define variables for the area and mean/standard deviation
-        let area,
-          meanStdDev,
-          meanStdDevSUV;
-  
+        let area, meanStdDev, meanStdDevSUV;
+
         // Perform a check to see if the tool has been invalidated. This is to prevent
         // Unnecessary re-calculation of the area, mean, and standard deviation if the
         // Image is re-rendered but the tool has not moved (e.g. during a zoom)
@@ -228,7 +236,7 @@ export default class extends baseAnnotationTool {
           area = data.area;
         } else {
           // If the data has been invalidated, we need to calculate it again
-  
+
           // Retrieve the bounds of the rectangle in image coordinates
           const rectangle = {
             left: Math.min(data.handles.start.x, data.handles.end.x),
@@ -236,62 +244,91 @@ export default class extends baseAnnotationTool {
             width: Math.abs(data.handles.start.x - data.handles.end.x),
             height: Math.abs(data.handles.start.y - data.handles.end.y)
           };
-  
+
           // First, make sure this is not a color image, since no mean / standard
           // Deviation will be calculated for color images.
           if (!image.color) {
             // Retrieve the array of pixels that the rectangle bounds cover
-            const pixels = cornerstone.getPixels(element, rectangle.left, rectangle.top, rectangle.width, rectangle.height);
-  
+            const pixels = cornerstone.getPixels(
+              element,
+              rectangle.left,
+              rectangle.top,
+              rectangle.width,
+              rectangle.height
+            );
+
             // Calculate the mean & standard deviation from the pixels and the rectangle details
             meanStdDev = calculateMeanStdDev(pixels, rectangle);
-  
+
             if (modality === 'PT') {
               // If the image is from a PET scan, use the DICOM tags to
               // Calculate the SUV from the mean and standard deviation.
-  
+
               // Note that because we are using modality pixel values from getPixels, and
               // The calculateSUV routine also rescales to modality pixel values, we are first
               // Returning the values to storedPixel values before calcuating SUV with them.
               // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
               meanStdDevSUV = {
-                mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-                stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+                mean: calculateSUV(
+                  image,
+                  (meanStdDev.mean - image.intercept) / image.slope
+                ),
+                stdDev: calculateSUV(
+                  image,
+                  (meanStdDev.stdDev - image.intercept) / image.slope
+                )
               };
             }
-  
+
             // If the mean and standard deviation values are sane, store them for later retrieval
             if (meanStdDev && !isNaN(meanStdDev.mean)) {
               data.meanStdDev = meanStdDev;
               data.meanStdDevSUV = meanStdDevSUV;
             }
           }
-  
+
           // Calculate the image area from the rectangle dimensions and pixel spacing
-          area = (rectangle.width * (colPixelSpacing || 1)) * (rectangle.height * (rowPixelSpacing || 1));
-  
+          area =
+            rectangle.width *
+            (colPixelSpacing || 1) *
+            (rectangle.height * (rowPixelSpacing || 1));
+
           // If the area value is sane, store it for later retrieval
           if (!isNaN(area)) {
             data.area = area;
           }
-  
+
           // Set the invalidated flag to false so that this data won't automatically be recalculated
           data.invalidated = false;
         }
-  
+
         const text = textBoxText(data);
-  
+
         // If the textbox has not been moved by the user, it should be displayed on the right-most
         // Side of the tool.
         if (!data.handles.textBox.hasMoved) {
           // Find the rightmost side of the rectangle at its vertical center, and place the textbox here
           // Note that this calculates it in image coordinates
-          data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-          data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
+          data.handles.textBox.x = Math.max(
+            data.handles.start.x,
+            data.handles.end.x
+          );
+          data.handles.textBox.y =
+            (data.handles.start.y + data.handles.end.y) / 2;
         }
-  
-        drawLinkedTextBox(context, element, data.handles.textBox, text,
-          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+
+        drawLinkedTextBox(
+          context,
+          element,
+          data.handles.textBox,
+          text,
+          data.handles,
+          textBoxAnchorPoints,
+          color,
+          lineWidth,
+          0,
+          true
+        );
       });
     }
 
@@ -311,16 +348,21 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numberWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
+        let meanText = `Mean: ${numberWithCommas(
+          meanStdDev.mean.toFixed(2)
+        )}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numberWithCommas(meanStdDev.stdDev.toFixed(2))}${moSuffix}`;
+        let stdDevText = `StdDev: ${numberWithCommas(
+          meanStdDev.stdDev.toFixed(2)
+        )}${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
           const SUVtext = ' SUV: ';
 
           meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+          stdDevText +=
+            SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
         }
 
         // Add these text lines to the array to be displayed in the textbox
@@ -356,23 +398,28 @@ export default class extends baseAnnotationTool {
       const width = Math.abs(handles.start.x - handles.end.x);
       const height = Math.abs(handles.start.y - handles.end.y);
 
-      return [{
-        // Top middle point of rectangle
-        x: left + width / 2,
-        y: top
-      }, {
-        // Left middle point of rectangle
-        x: left,
-        y: top + height / 2
-      }, {
-        // Bottom middle point of rectangle
-        x: left + width / 2,
-        y: top + height
-      }, {
-        // Right middle point of rectangle
-        x: left + width,
-        y: top + height / 2
-      }];
+      return [
+        {
+          // Top middle point of rectangle
+          x: left + width / 2,
+          y: top
+        },
+        {
+          // Left middle point of rectangle
+          x: left,
+          y: top + height / 2
+        },
+        {
+          // Bottom middle point of rectangle
+          x: left + width / 2,
+          y: top + height
+        },
+        {
+          // Right middle point of rectangle
+          x: left + width,
+          y: top + height / 2
+        }
+      ];
     }
   }
 }
@@ -412,4 +459,4 @@ const calculateMeanStdDev = (sp, rectangle) => {
     variance,
     stdDev: Math.sqrt(variance)
   };
-}
+};
