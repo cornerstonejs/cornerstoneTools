@@ -26,7 +26,7 @@ describe('probeTool.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "length"', () => {
+    it('has a default name of "probe"', () => {
       const defaultName = 'probe';
       const instantiatedTool = new ProbeTool();
 
@@ -78,16 +78,6 @@ describe('probeTool.js', () => {
       expect(toolMeasurement.handles.start).toBeUndefined();
       expect(endHandle.x).toBe(goodMouseEventData.currentPoints.image.x);
       expect(endHandle.y).toBe(goodMouseEventData.currentPoints.image.y);
-    });
-
-    it('returns a measurement with a textBox handle', () => {
-      const instantiatedTool = new ProbeTool();
-
-      const toolMeasurement = instantiatedTool.createNewMeasurement(
-        goodMouseEventData
-      );
-
-      expect(typeof toolMeasurement.handles.textBox).toBe(typeof {});
     });
   });
 
