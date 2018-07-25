@@ -742,7 +742,7 @@ function getMouseLocation (eventData) {
   clipToBox(config.mouseLocation.handles.start, eventData.image);
 }
 
-/** // TODO
+/**
 * Adds commas as thousand seperators to a Number to increase readability.
 *
 * @param {Number|String} number - A Number or String literal representing a number.
@@ -1018,7 +1018,7 @@ function onImageRendered (e) {
 }
 
 // /////// END IMAGE RENDERING ///////
-/** // TODO
+/**
 * Attaches event listeners to the element such that is is visible.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
@@ -1031,7 +1031,7 @@ function enable (element) {
   external.cornerstone.updateImage(element);
 }
 
-/** // TODO
+/**
 * Disables the reference line tool for the given element.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
@@ -1042,7 +1042,7 @@ function disable (element) {
   external.cornerstone.updateImage(element);
 }
 
-/** // TODO
+/**
 * Attaches event listeners to the element such that is is visible, modifiable, and new data can be created.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
@@ -1063,7 +1063,7 @@ function activate (element, mouseButtonMask) {
   external.cornerstone.updateImage(element);
 }
 
-/** // TODO
+/**
 * Attaches event listeners to the element such that is is visible and modifiable.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
