@@ -8,23 +8,20 @@ import toolColors from './../stateManagement/toolColors.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawEllipse } from './../util/drawing.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawEllipse
+} from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import pointInEllipse from '../util/pointInEllipse.js';
 import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
 import calculateSUV from '../util/calculateSUV.js';
-
+//
+import numberWithCommas from './shared/numbersWithCommas.js';
 
 const cornerstone = external.cornerstone;
-
-const numberWithCommas = (x) => {
-  // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-  const parts = x.toString().split('.');
-
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-  return parts.join('.');
-};
 
 export default class extends baseAnnotationTool {
   constructor (name) {
@@ -158,7 +155,7 @@ export default class extends baseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
     const config = this.configuration;
     const seriesModule = cornerstone.metaData.get(
-      'generalSeriesModule', 
+      'generalSeriesModule',
       image.imageId
     );
     const imagePlane = cornerstone.metaData.get(
@@ -171,8 +168,10 @@ export default class extends baseAnnotationTool {
     let colPixelSpacing = image.columnPixelSpacing;
 
     if (imagePlane) {
-      rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-      colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+      rowPixelSpacing =
+        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+      colPixelSpacing =
+        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
     }
 
     if (seriesModule) {
@@ -195,7 +194,9 @@ export default class extends baseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
 
         // Draw the ellipse on the canvas
-        drawEllipse(context, element, data.handles.start, data.handles.end, { color });
+        drawEllipse(context, element, data.handles.start, data.handles.end, {
+          color
+        });
 
         // If the tool configuration specifies to only draw the handles on hover / active,
         // Follow this logic
@@ -218,9 +219,7 @@ export default class extends baseAnnotationTool {
         }
 
         // Define variables for the area and mean/standard deviation
-        let area,
-          meanStdDev,
-          meanStdDevSUV;
+        let area, meanStdDev, meanStdDevSUV;
 
         // Perform a check to see if the tool has been invalidated. This is to prevent
         // Unnecessary re-calculation of the area, mean, and standard deviation if the
@@ -235,17 +234,29 @@ export default class extends baseAnnotationTool {
 
           // Retrieve the bounds of the ellipse in image coordinates
           const ellipse = {
-            left: Math.round(Math.min(data.handles.start.x, data.handles.end.x)),
+            left: Math.round(
+              Math.min(data.handles.start.x, data.handles.end.x)
+            ),
             top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-            width: Math.round(Math.abs(data.handles.start.x - data.handles.end.x)),
-            height: Math.round(Math.abs(data.handles.start.y - data.handles.end.y))
+            width: Math.round(
+              Math.abs(data.handles.start.x - data.handles.end.x)
+            ),
+            height: Math.round(
+              Math.abs(data.handles.start.y - data.handles.end.y)
+            )
           };
 
           // First, make sure this is not a color image, since no mean / standard
           // Deviation will be calculated for color images.
           if (!image.color) {
             // Retrieve the array of pixels that the ellipse bounds cover
-            const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
+            const pixels = cornerstone.getPixels(
+              element,
+              ellipse.left,
+              ellipse.top,
+              ellipse.width,
+              ellipse.height
+            );
 
             // Calculate the mean & standard deviation from the pixels and the ellipse details
             meanStdDev = calculateEllipseStatistics(pixels, ellipse);
@@ -259,8 +270,14 @@ export default class extends baseAnnotationTool {
               // Returning the values to storedPixel values before calcuating SUV with them.
               // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
               meanStdDevSUV = {
-                mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-                stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+                mean: calculateSUV(
+                  image,
+                  (meanStdDev.mean - image.intercept) / image.slope
+                ),
+                stdDev: calculateSUV(
+                  image,
+                  (meanStdDev.stdDev - image.intercept) / image.slope
+                )
               };
             }
 
@@ -272,7 +289,10 @@ export default class extends baseAnnotationTool {
           }
 
           // Calculate the image area from the ellipse dimensions and pixel spacing
-          area = Math.PI * (ellipse.width * (colPixelSpacing || 1) / 2) * (ellipse.height * (rowPixelSpacing || 1) / 2);
+          area =
+            Math.PI *
+            ((ellipse.width * (colPixelSpacing || 1)) / 2) *
+            ((ellipse.height * (rowPixelSpacing || 1)) / 2);
 
           // If the area value is sane, store it for later retrieval
           if (!isNaN(area)) {
@@ -288,14 +308,28 @@ export default class extends baseAnnotationTool {
         if (!data.handles.textBox.hasMoved) {
           // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
           // Note that this calculates it in image coordinates
-          data.handles.textBox.x = Math.max(data.handles.start.x, data.handles.end.x);
-          data.handles.textBox.y = (data.handles.start.y + data.handles.end.y) / 2;
+          data.handles.textBox.x = Math.max(
+            data.handles.start.x,
+            data.handles.end.x
+          );
+          data.handles.textBox.y =
+            (data.handles.start.y + data.handles.end.y) / 2;
         }
 
         const text = textBoxText(data);
 
-        drawLinkedTextBox(context, element, data.handles.textBox, text,
-          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
+        drawLinkedTextBox(
+          context,
+          element,
+          data.handles.textBox,
+          text,
+          data.handles,
+          textBoxAnchorPoints,
+          color,
+          lineWidth,
+          0,
+          true
+        );
       });
     }
 
@@ -315,16 +349,21 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numberWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
+        let meanText = `Mean: ${numberWithCommas(
+          meanStdDev.mean.toFixed(2)
+        )}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numberWithCommas(meanStdDev.stdDev.toFixed(2))}${moSuffix}`;
+        let stdDevText = `StdDev: ${numberWithCommas(
+          meanStdDev.stdDev.toFixed(2)
+        )}${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
           const SUVtext = ' SUV: ';
 
           meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText += SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+          stdDevText +=
+            SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
         }
 
         // Add these text lines to the array to be displayed in the textbox
@@ -360,23 +399,28 @@ export default class extends baseAnnotationTool {
       const width = Math.abs(handles.start.x - handles.end.x);
       const height = Math.abs(handles.start.y - handles.end.y);
 
-      return [{
-        // Top middle point of ellipse
-        x: left + width / 2,
-        y: top
-      }, {
-        // Left middle point of ellipse
-        x: left,
-        y: top + height / 2
-      }, {
-        // Bottom middle point of ellipse
-        x: left + width / 2,
-        y: top + height
-      }, {
-        // Right middle point of ellipse
-        x: left + width,
-        y: top + height / 2
-      }];
+      return [
+        {
+          // Top middle point of ellipse
+          x: left + width / 2,
+          y: top
+        },
+        {
+          // Left middle point of ellipse
+          x: left,
+          y: top + height / 2
+        },
+        {
+          // Bottom middle point of ellipse
+          x: left + width / 2,
+          y: top + height
+        },
+        {
+          // Right middle point of ellipse
+          x: left + width,
+          y: top + height / 2
+        }
+      ];
     }
   }
 }
