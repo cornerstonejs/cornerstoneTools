@@ -3,7 +3,6 @@ import external from './../externalModules.js';
 // State
 import { getters } from './../store/index.js';
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
-import toolCoordinates from './../stateManagement/toolCoordinates.js';
 // Manipulators
 import getHandleNearImagePoint from './../manipulators/getHandleNearImagePoint.js';
 import handleActivator from './../manipulators/handleActivator.js';
@@ -54,16 +53,12 @@ function mouseMove (evt) {
   if (isAwaitingMouseUp) {
     return;
   }
-  let tools;
-  const eventData = evt.detail;
-  const element = eventData.element;
 
-  // What does this do?
-  // Do we need this?
-  toolCoordinates.setCoords(eventData);
+  let tools;
+  const { element, currentPoints } = evt.detail;
 
   // TODO: instead of filtering these for every interaction, we can change our
-  // State's structure to always know these values.
+  // TODO: State's structure to always know these values.
   // Filter out disabled and enabled
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
   tools = getToolsWithDataForElement(element, tools);
@@ -75,23 +70,23 @@ function mouseMove (evt) {
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];
-    const coords = eventData.currentPoints.canvas;
-    const toolState = getToolState(eventData.element, tool.name);
+    const coords = currentPoints.canvas;
+    const toolState = getToolState(element, tool.name);
 
     for (let d = 0; d < toolState.data.length; d++) {
       const data = toolState.data[d];
 
       // Hovering a handle?
-      if (handleActivator(eventData.element, data.handles, coords) === true) {
+      if (handleActivator(element, data.handles, coords) === true) {
         imageNeedsUpdate = true;
       }
 
       // Tool data's 'active' does not match coordinates
       // TODO: can't we just do an if/else and save on a pointNearTool check?
       const nearToolAndNotMarkedActive =
-        tool.pointNearTool(eventData.element, data, coords) && !data.active;
+        tool.pointNearTool(element, data, coords) && !data.active;
       const notNearToolAndMarkedActive =
-        !tool.pointNearTool(eventData.element, data, coords) && data.active;
+        !tool.pointNearTool(element, data, coords) && data.active;
 
       if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
         data.active = !data.active;
@@ -102,7 +97,7 @@ function mouseMove (evt) {
 
   // Tool data activation status changed, redraw the image
   if (imageNeedsUpdate === true) {
-    cornerstone.updateImage(eventData.element);
+    cornerstone.updateImage(element);
   }
 }
 
