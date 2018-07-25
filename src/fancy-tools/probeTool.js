@@ -82,9 +82,9 @@ export default class extends baseAnnotationTool {
       return false;
     }
 
-    const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
+    const probeCoords = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
-    return external.cornerstoneMath.point.distance(endCanvas, coords) < 5;
+    return external.cornerstoneMath.point.distance(probeCoords, coords) < 5;
   }
 
   /**
@@ -129,8 +129,9 @@ export default class extends baseAnnotationTool {
           str;
 
         if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
+          text = `${x}, ${y}`;
+          
           if (image.color) {
-            text = `${x}, ${y}`;
             storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
             str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
           } else {
@@ -140,13 +141,13 @@ export default class extends baseAnnotationTool {
             const suv = calculateSUV(image, sp);
 
             // Draw text
-            text = `${x}, ${y}`;
             str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
             if (suv) {
               str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
             }
           }
 
+          // Coords for text
           const coords = {
             // Translate the x/y away from the cursor
             x: data.handles.end.x + 3,
