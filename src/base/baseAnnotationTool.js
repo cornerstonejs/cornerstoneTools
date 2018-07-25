@@ -50,7 +50,7 @@ export default class extends baseTool {
    *
    * @param {*} evt
    */
-  onImageRendered (evt) {
+  renderToolData (evt) {
     console.warn(`onImageRendered not implemented for ${this.toolName}`);
   }
 }
