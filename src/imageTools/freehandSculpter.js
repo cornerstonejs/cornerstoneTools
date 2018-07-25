@@ -9,7 +9,7 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
 import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
-import { Sculpter } from '../util/freehand/Sculpter.js';
+import { Sculpter } from '../util/freehand/Sculpter.legacy.js';
 
 const sculpter = new Sculpter();
 const toolType = 'freehandSculpter';
@@ -191,7 +191,7 @@ function mouseDragCallback (e) {
   external.cornerstone.updateImage(eventData.element);
 }
 
-/**
+/** TODO
 * Event handler for MOUSE_UP event.
 *
 * @param {Object} e - The event.
@@ -300,7 +300,7 @@ function onImageRendered (e) {
   }
 }
 
-/**
+/** TODO
 * 'Enables' the tool (disables, only active used as freehandSculpter has none
 * of its own data, here so APIs calling a bulk enable don't break).
 *
@@ -311,7 +311,7 @@ function enable (element) {
   disable(element);
 }
 
-/**
+/** TODO
 * Disables the freehandSculpter.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
@@ -322,7 +322,7 @@ function disable (element) {
   removeEventListeners(element);
 }
 
-/**
+/** TODO
 * Attaches event listeners to the element such that is is visible, modifiable, and new data can be created.
 *
 * @param {Object} element - The viewport element to attach event listeners to.
@@ -346,7 +346,7 @@ function activate (element, mouseButtonMask) {
   external.cornerstone.updateImage(element);
 }
 
-/**
+/** TODO
 * 'deactivates' the tool (disables, only active used as freehandSculpter has none
 * of its own data, here so APIs calling a bulk deactivate don't break).
 *
@@ -357,7 +357,7 @@ function deactivate (element) {
   disable(element);
 }
 
-/**
+/** TODO
 * Removes event listeners from the element.
 *
 * @param {Object} element - The viewport element to remove event listeners from.
@@ -373,7 +373,7 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
 }
 
-/**
+/** TODO
 * Get the configuation object for the freehand tool.
 *
 * @return {Object} configuration - The freehand tool's configuration object.
@@ -382,7 +382,7 @@ function getConfiguration () {
   return configuration;
 }
 
-/**
+/** TODO
 * Set the configuation object for the freehand tool.
 *
 * @param {Object} config - The configuration object to set the freehand tool's configuration.

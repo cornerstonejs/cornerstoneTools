@@ -50,8 +50,8 @@ export default class extends baseTool {
    *
    * @param {*} evt
    */
-  onImageRendered (evt) {
-    throw new Error('Method onImageRendered not implemented in subclass.');
+  renderToolData (evt) {
+    throw new Error('Method renderToolData not implemented in subclass.');
   }
 
   /**
@@ -61,7 +61,7 @@ export default class extends baseTool {
   * @param {*} evt
   * @returns {Boolean} - True if the target is manipulatable by the tool.
   *
-  * isValidTarget (evt) {}
+  * isValidTarget (eventData) {}
   */
 
 }

@@ -42,6 +42,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(EVENTS.NEW_IMAGE, onNewImage);
 };
 
 /**
@@ -407,6 +408,26 @@ function onImageRendered (evt) {
       tool.renderToolData(evt);
     }
   });
+}
+
+function onNewImage (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
+  console.log('onNewImage');
+
+  let tools;
+  const element = evt.detail.element;
+
+  // Filter out disabled, enabled, and passive
+  tools = getActiveToolsForElement(element, getters.mouseTools());
+  tools = tools.filter((tool) => typeof tool.onNewImageCallback === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  tools[0].onNewImageCallback(evt);
 }
 
 function addNewMeasurement (evt, tool) {

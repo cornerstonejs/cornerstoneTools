@@ -117,7 +117,13 @@ export default class extends baseAnnotationTool {
     return false;
   }
 
-
+  /**
+  * Used to check if there is a valid target for the tool, that
+  * isn't necessarily its own toolData. (e.g. the freehandSculpter)
+  *
+  * @param {*} evt
+  * @returns {Boolean} - True if the target is manipulatable by the tool.
+  */
   isValidTarget (eventData) {
     if (eventData.event.ctrlKey) {
       const freehandLineFinder = new FreehandLineFinder(eventData);
@@ -133,7 +139,7 @@ export default class extends baseAnnotationTool {
     return false;
   }
 
-  /** // TODO //
+  /**
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -142,7 +148,22 @@ export default class extends baseAnnotationTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    throw new Error('Method distanceFromPoint not implemented in subclass.');
+    let distance = Infinity;
+
+    for (let i = 0; i < data.handles.length; i++) {
+      const distanceI = external.cornerstoneMath.point.distance(data.handles[i], coords);
+
+      if (distanceI < distance) {
+        distance = distanceI;
+      }
+    }
+
+    // If distance can't be calculated, return -1.
+    if (distance === Infinity) {
+      return -1;
+    }
+
+    return distance;
   }
 
   /**
