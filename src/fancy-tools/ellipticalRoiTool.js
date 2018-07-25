@@ -18,18 +18,10 @@ import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import pointInEllipse from '../util/pointInEllipse.js';
 import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
 import calculateSUV from '../util/calculateSUV.js';
-
+//
+import numberWithCommas from './shared/numbersWithCommas.js';
 
 const cornerstone = external.cornerstone;
-
-const numberWithCommas = (x) => {
-  // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-  const parts = x.toString().split('.');
-
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-  return parts.join('.');
-};
 
 export default class extends baseAnnotationTool {
   constructor (name) {
