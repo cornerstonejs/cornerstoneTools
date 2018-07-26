@@ -25,7 +25,10 @@ export default function (element, handles, coords, distanceThreshold) {
       }
     } else {
       const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
-      const distance = external.cornerstoneMath.point.distance(handleCanvas, coords);
+      const distance = external.cornerstoneMath.point.distance(
+        handleCanvas,
+        coords
+      );
 
       if (distance <= distanceThreshold) {
         nearbyHandle = handle;

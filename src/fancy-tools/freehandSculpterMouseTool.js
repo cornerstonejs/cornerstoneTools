@@ -6,15 +6,17 @@ import drawHandles from '../manipulators/drawHandles.js';
 import mouseToolEventDispatcher from '../eventDispatchers/mouseToolEventDispatcher.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
-import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
+import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 import getTool from '../store/getTool.js';
-import isToolActive from '../store/isToolActive.js';
+import isToolActive from './shared/isToolActive.js';
 import baseTool from './../base/baseTool.js';
+
+const referencedToolName = 'freehandMouse';
 
 export default class extends baseTool {
   constructor (name) {
     super({
-      name: name || 'freehandSculpter',
+      name: name || 'freehandSculpterMouse',
       supportedInteractionTypes: ['mouse'],
       configuration: getDefaultFreehandSculpterConfiguration()
     });
@@ -32,11 +34,12 @@ export default class extends baseTool {
   * @param {*} evt
   * @returns {Boolean} - True if the target is manipulatable by the tool.
   */
-  isValidTarget (eventData) {
+  isValidTarget (evt) {
+    const eventData = evt.detail;
     const element = eventData.element;
     const config = this.configuration;
 
-    const toolState = getToolState(element, 'freehand');
+    const toolState = getToolState(element, referencedToolName);
 
     // No valid target if no freehand data!
     if (!toolState) {
@@ -44,13 +47,11 @@ export default class extends baseTool {
     }
 
     // Can only target if active
-    if (!isToolActive(element, 'freehandSculpter')) {
+    if (!isToolActive(element, this.name)) {
       return false;
     }
 
     if (config.currentTool !== null || eventData.event.ctrlKey) {
-      console.log('freehandSculpter: valid target');
-
       return true;
     }
 
@@ -86,14 +87,19 @@ export default class extends baseTool {
   * @param {Object} e - The event.
   */
   mouseDragCallback (evt) {
+    const config = this.configuration;
+
+    if (!config.active) {
+      return;
+    }
+
     const eventData = evt.detail;
-    const toolState = getToolState(eventData.element, 'freehand');
+    const toolState = getToolState(eventData.element, referencedToolName);
 
     if (!toolState) {
       return;
     }
 
-    const config = this.configuration;
     const dataHandles = toolState.data[config.currentTool].handles;
 
     // Set the mouseLocation handle
@@ -159,7 +165,7 @@ export default class extends baseTool {
   * @param {Object} element - The element the tool is assoicated with.
   * @param {Object} options - options (unused here)
   */
-  passiveCallback (element, options) {
+  passiveCallback (element) {
     this._deselectAllTools(element);
   }
 
@@ -170,7 +176,7 @@ export default class extends baseTool {
   * @param {Object} element - The element the tool is assoicated with.
   * @param {Object} options - options (unused here)
   */
-  enabledCallback (element, options) {
+  enabledCallback (element) {
     this._deselectAllTools(element);
   }
 
@@ -181,7 +187,7 @@ export default class extends baseTool {
   * @param {Object} element - The element the tool is assoicated with.
   * @param {Object} options - options (unused here)
   */
-  disabledCallback (element, options) {
+  disabledCallback (element) {
     this._deselectAllTools(element);
   }
 
@@ -222,13 +228,11 @@ export default class extends baseTool {
   * @param {Number} toolIndex - The ID of the freehand tool.
   */
   _activateFreehandTool (element, toolIndex) {
-    const toolState = getToolState(element, 'freehand');
+    const toolState = getToolState(element, referencedToolName);
     const data = toolState.data;
     const config = this.configuration;
 
     config.currentTool = toolIndex;
-
-    console.log(`activated freehand tool: ${toolIndex}`);
 
     for (let i = 0; i < data.length; i++) {
       if (i === toolIndex) {
@@ -250,8 +254,6 @@ export default class extends baseTool {
     const config = this.configuration;
 
     config.active = true;
-
-    console.log('begin sculpt');
 
     // Interupt event dispatcher
     mouseToolEventDispatcher.setIsAwaitingMouseUp(true);
@@ -284,15 +286,12 @@ export default class extends baseTool {
       maxSpacing: config.maxSpacing
     };
 
-    console.log('pushHandles...');
     // Push existing handles radially away from tool.
     this._pushHandles(sculptData);
     // Insert new handles in sparsely populated areas.
-    console.log('insertNewHandles...');
     this._insertNewHandles(sculptData);
     // If any handles have been pushed very close together or even overlap,
     // Combine these into a single handle.
-    console.log('consolidateHandles...');
     this._consolidateHandles(sculptData);
   }
 
@@ -570,7 +569,7 @@ export default class extends baseTool {
     const config = this.configuration;
     const toolIndex = config.currentTool;
 
-    const toolState = getToolState(element, 'freehand');
+    const toolState = getToolState(element, referencedToolName);
     const dataHandles = toolState.data[toolIndex].handles;
 
     const mousePointImage = eventData.currentPoints.image;
@@ -651,7 +650,7 @@ export default class extends baseTool {
   _invalidateToolData (eventData) {
     const config = this.configuration;
     const element = eventData.element;
-    const toolData = getToolState(element, 'freehand');
+    const toolData = getToolState(element, referencedToolName);
     const data = toolData.data[config.currentTool];
 
     data.invalidated = true;
@@ -665,7 +664,7 @@ export default class extends baseTool {
   */
   _deselectAllTools (element) {
     const config = this.configuration;
-    const toolData = getToolState(element, 'freehand');
+    const toolData = getToolState(element, referencedToolName);
 
     config.currentTool = null;
 
@@ -713,8 +712,8 @@ export default class extends baseTool {
   * @return {Number} The tool index of the closest freehand tool.
   */
   static _getClosestFreehandToolOnElement (element, eventData) {
-    const freehand = getTool(element, 'freehand');
-    const toolState = getToolState(element, 'freehand');
+    const freehand = getTool(element, referencedToolName);
+    const toolState = getToolState(element, referencedToolName);
     const data = toolState.data;
     const pixelCoords = eventData.currentPoints.image;
 

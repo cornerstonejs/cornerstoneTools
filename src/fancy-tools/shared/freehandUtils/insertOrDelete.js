@@ -1,9 +1,9 @@
 import { FreehandLineFinder } from './FreehandLineFinder.js';
 import { FreehandHandleData } from './FreehandHandleData.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import external from '../../externalModules.js';
+import { getToolState } from '../../../stateManagement/toolState.js';
+import external from '../../../externalModules.js';
 
-const toolType = 'freehand';
+const toolType = 'freehandMouse';
 
 /**
 * Inserts or deletes a point from a freehand tool.
