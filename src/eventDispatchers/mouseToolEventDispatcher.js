@@ -149,7 +149,7 @@ function mouseDown (evt) {
 
     if (typeof tools[t].mouseDownCallback === 'function' &&
         typeof tools[t].isValidTarget === 'function' &&
-        tools[t].isValidTarget(eventData)) {
+        tools[t].isValidTarget(evt)) {
       tools[t].mouseDownCallback(evt);
 
       evt.stopImmediatePropagation();

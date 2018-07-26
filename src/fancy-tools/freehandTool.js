@@ -118,7 +118,9 @@ export default class extends baseAnnotationTool {
   }
 
 
-  isValidTarget (eventData) {
+  isValidTarget (evt) {
+    const eventData = evt.detail;
+    
     if (eventData.event.ctrlKey) {
       const freehandLineFinder = new FreehandLineFinder(eventData);
       const insertInfo = freehandLineFinder.findLine();
