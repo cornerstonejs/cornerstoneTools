@@ -25,7 +25,6 @@ import {
  * @param {*} element
  */
 const enable = function (element) {
-  console.log('enableTouch', element);
   element.addEventListener(EVENTS.TAP, tap);
   element.addEventListener(EVENTS.TOUCH_START, touchStart);
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDrag);
@@ -40,7 +39,6 @@ const enable = function (element) {
 };
 
 const disable = function (element) {
-  console.log('enableTouch', element);
   element.removeEventListener(EVENTS.TAP, tap);
   element.removeEventListener(EVENTS.TOUCH_START, touchStart);
   element.removeEventListener(EVENTS.TOUCH_DRAG, touchDrag);
