@@ -68,9 +68,9 @@ export default class extends baseAnnotationTool {
    * @returns
    */
   pointNearTool (element, data, coords) {
-    const hasStartAndEndHandles =
-      data && data.handles && data.handles.start && data.handles.end;
-    const validParameters = hasStartAndEndHandles;
+    const hasEndHandle =
+      data && data.handles && data.handles.end;
+    const validParameters = hasEndHandle;
 
     if (!validParameters) {
       console.warn(
@@ -130,7 +130,7 @@ export default class extends baseAnnotationTool {
 
         if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
           text = `${x}, ${y}`;
-          
+
           if (image.color) {
             storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
             str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
