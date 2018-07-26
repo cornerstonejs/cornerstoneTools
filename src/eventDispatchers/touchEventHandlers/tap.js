@@ -1,20 +1,21 @@
 import external from './../../externalModules.js';
+import touchStartActive from './touchStartActive.js';
 // State
-import { getters } from './../../store/index.js';
+import { getters, state } from './../../store/index.js';
+import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
+import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+//
 import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from './../../manipulators/touchMoveHandle.js';
 import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
-// Todo: Where should these live?
-import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
-import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
 const cornerstone = external.cornerstone;
 
 export default function (evt) {
-  if (isAwaitingTouchUp) {
+  if (state.isToolLocked) {
     return;
   }
   console.log('tap');

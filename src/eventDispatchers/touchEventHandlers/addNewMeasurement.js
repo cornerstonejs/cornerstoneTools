@@ -1,5 +1,6 @@
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
+import { mutations } from './../../store/index.js';
 import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
 import { addToolState } from './../../stateManagement/toolState.js';
 
@@ -43,7 +44,7 @@ export default function (evt, tool) {
     return;
   }
 
-  isAwaitingTouchUp = true;
+  mutations.SET_IS_TOOL_LOCKED(true);
   cornerstone.updateImage(element);
 
   moveNewHandleTouch(
@@ -60,7 +61,7 @@ export default function (evt, tool) {
       //     RemoveToolState(element, touchToolInterface.toolType, measurementData);
       //   }
 
-      isAwaitingTouchUp = false;
+      mutations.SET_IS_TOOL_LOCKED(false);
       cornerstone.updateImage(element);
     }
   );

@@ -1,7 +1,7 @@
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 // State
-import { getters } from './../../store/index.js';
+import { getters, state } from './../../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from './../../manipulators/touchMoveHandle.js';
@@ -16,7 +16,7 @@ const cornerstone = external.cornerstone;
 
 export default function (evt) {
   console.log('touchStart');
-  if (isAwaitingTouchUp) {
+  if (state.isToolLocked) {
     return;
   }
 

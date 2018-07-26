@@ -1,13 +1,13 @@
 // State
-import { getters } from './../../store/index.js';
-// Todo: Where should these live?
+import { getters, state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
+import addNewMeasurement from './addNewMeasurement.js';
 
 export default function (evt) {
   console.log('touchStartActive');
-  //   If (isAwaitingTouchUp) {
-  //     Return;
-  //   }
+  if (state.isToolLocked) {
+    return;
+  }
 
   const element = evt.detail.element;
   const tools = getActiveToolsForElement(element, getters.touchTools());

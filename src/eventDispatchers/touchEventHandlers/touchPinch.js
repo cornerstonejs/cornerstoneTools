@@ -1,9 +1,9 @@
-import { getters } from './../../store/index.js';
+import { getters, state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 
 export default function (evt) {
   console.log('touchPinch');
-  if (isAwaitingTouchUp) {
+  if (state.isToolLocked) {
     return;
   }
 
