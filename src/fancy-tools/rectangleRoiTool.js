@@ -175,25 +175,12 @@ export default class extends baseAnnotationTool {
         // Draw the rectangle on the canvas
         drawRect(context, element, data.handles.start, data.handles.end, { color });
 
-        // If the tool configuration specifies to only draw the handles on hover / active,
-        // Follow this logic
-        if (config && config.drawHandlesOnHover) {
-          // Draw the handles if the tool is active
-          if (data.active === true) {
-            drawHandles(context, eventData, data.handles, color);
-          } else {
-            // If the tool is inactive, draw the handles only if each specific handle is being
-            // Hovered over
-            const handleOptions = {
-              drawHandlesIfActive: true
-            };
+        // Draw the handles
+        const handleOptions = {
+          drawHandlesIfActive: config && config.drawHandlesOnHover
+        };
 
-            drawHandles(context, eventData, data.handles, color, handleOptions);
-          }
-        } else {
-          // If the tool has no configuration settings, always draw the handles
-          drawHandles(context, eventData, data.handles, color);
-        }
+        drawHandles(context, eventData, data.handles, color, handleOptions);
 
         // Define variables for the area and mean/standard deviation
         let area, meanStdDev, meanStdDevSUV;
