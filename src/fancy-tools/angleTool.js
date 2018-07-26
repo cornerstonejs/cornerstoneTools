@@ -346,6 +346,7 @@ export default class extends baseAnnotationTool {
       }
     );
   }
+
 }
 
 function length (vector) {

@@ -20,7 +20,7 @@ export default class extends baseTool {
   }
 
   createNewMeasurement (evt) {
-    console.warn(`createNewMeasurement not implemented for ${this.toolName}`);
+    throw new Error(`Method createNewMeasurement not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -30,7 +30,7 @@ export default class extends baseTool {
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    console.warn(`pointNearTool not implemented for ${this.toolName}`);
+    throw new Error(`Method pointNearTool not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -42,7 +42,7 @@ export default class extends baseTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    console.warn(`distanceFromPoint not implemented for ${this.toolName}`);
+    throw new Error(`Method distanceFromPoint not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -51,6 +51,17 @@ export default class extends baseTool {
    * @param {*} evt
    */
   renderToolData (evt) {
-    console.warn(`onImageRendered not implemented for ${this.toolName}`);
+    throw new Error(`renderToolData not implemented for ${this.toolName}.`);
   }
+
+  /**
+  * OPTIONAL -- Used to check if there is a valid target for the tool, that
+  * isn't necessarily its own toolData. (e.g. the freehandSculpter)
+  *
+  * @param {*} evt
+  * @returns {Boolean} - True if the target is manipulatable by the tool.
+  *
+  * isValidTarget (eventData) {}
+  */
+
 }
