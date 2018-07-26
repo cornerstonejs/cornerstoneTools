@@ -1,5 +1,3 @@
-import { freehand } from '../../imageTools/freehand.js';
-
 /**
 * Places part of the freehand tool when the mouse button is released.
 *
@@ -9,17 +7,17 @@ import { freehand } from '../../imageTools/freehand.js';
 */
 export default function (e, toolData) {
   const eventData = e.detail;
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
 
   // Check if drawing is finished
   if (config.movingTextBox === true) {
-    dropTextbox(eventData, toolData);
+    dropTextbox.call(this, eventData, toolData);
 
     return 'textBox';
   }
 
   if (config.modifying) {
-    dropHandle(eventData, toolData);
+    dropHandle.call(this, eventData, toolData);
 
     return 'handle';
   }
@@ -35,7 +33,7 @@ export default function (e, toolData) {
 * @modifies {toolData}
 */
 function dropTextbox (eventData, toolData) {
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
 
   config.movingTextBox = false;
   toolData.data[config.currentTool].invalidated = true;
@@ -52,7 +50,7 @@ function dropTextbox (eventData, toolData) {
 * @modifies {toolData}
 */
 function dropHandle (eventData, toolData) {
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
   const currentTool = config.currentTool;
 
   const dataHandles = toolData.data[currentTool].handles;

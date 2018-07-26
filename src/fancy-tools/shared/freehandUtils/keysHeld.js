@@ -1,5 +1,4 @@
 import external from '../../externalModules.js';
-import { freehand } from '../../imageTools/freehand.js';
 
 /**
 * Triggers held down buttons such that we can update the image on CTRL click
@@ -23,7 +22,7 @@ const keyCodes = {
 */
 export function keyDownCallback (e) {
   const eventData = e.detail;
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
   const keyCode = eventData.keyCode;
   let imageNeedsUpdate = false;
 
@@ -53,7 +52,7 @@ export function keyDownCallback (e) {
 */
 export function keyUpCallback (e) {
   const eventData = e.detail;
-  const config = freehand.getConfiguration();
+  const config = this.configuration;
   const keyCode = eventData.keyCode;
   let imageNeedsUpdate = false;
 

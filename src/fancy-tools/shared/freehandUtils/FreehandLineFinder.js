@@ -1,8 +1,8 @@
-import { getToolState } from '../../stateManagement/toolState.js';
-import external from '../../externalModules.js';
+import { getToolState } from '../../../stateManagement/toolState.js';
+import external from '../../../externalModules.js';
 import { ClickedLineData } from './ClickedLineData.js';
 
-const toolType = 'freehand';
+const toolType = 'freehandMouse';
 const distanceThreshold = 10;
 
 export class FreehandLineFinder {

@@ -18,7 +18,7 @@ import getToolsWithDataForElement from './../store/getToolsWithDataForElement.js
 
 const cornerstone = external.cornerstone;
 
-// Todo: better place for this
+// TODO: better place for this
 let isAwaitingMouseUp = false;
 
 /**
@@ -92,6 +92,12 @@ function mouseMove (evt) {
         data.active = !data.active;
         imageNeedsUpdate = true;
       }
+
+      // Call the tool's mouseMoveCallback if it exists.
+      if (typeof tool.mouseMoveCallback === 'function') {
+        tool.mouseMoveCallback(evt);
+      }
+
     }
   }
 
@@ -113,10 +119,11 @@ function mouseMove (evt) {
  * @returns
  */
 function mouseDown (evt) {
-  console.log('mouseDown');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDown');
+
   let tools;
   const eventData = evt.detail;
   const element = eventData.element;
@@ -131,6 +138,23 @@ function mouseDown (evt) {
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
+
+  // Check if any tool has a special reason to grab the current event
+  for (let t = 0; t < tools.length; t++) {
+
+    if (typeof tools[t].mouseDownCallback === 'function' &&
+        typeof tools[t].isValidTarget === 'function' &&
+        tools[t].isValidTarget(evt)) {
+      tools[t].mouseDownCallback(evt);
+
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
+
+      return;
+      }
+  }
+
   tools = getToolsWithDataForElement(element, tools);
 
   // Find tools with handles we can move
@@ -156,9 +180,11 @@ function mouseDown (evt) {
   // We'll just grab the first one we encounter for now
 
   if (toolsWithMoveableHandles.length > 0) {
+    const activeTool = toolsWithMoveableHandles[0];
+
     const toolState = getToolState(
       eventData.element,
-      toolsWithMoveableHandles[0].name
+      activeTool.name
     );
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -171,7 +197,15 @@ function mouseDown (evt) {
         distance
       );
 
-      if (handle) {
+      // Use custom handler if it exists
+      if (typeof activeTool.mouseDownCallback === 'function') {
+        activeTool.mouseDownCallback(evt);
+        evt.stopImmediatePropagation();
+        evt.stopPropagation();
+        evt.preventDefault();
+
+        return;
+      } else if (handle) {
         // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
         data.active = true;
         moveHandle(
@@ -245,10 +279,10 @@ function mouseDown (evt) {
 // A high frequency event. Anything we can do to reduce
 // Repeat math here would be a big help
 function mouseDrag (evt) {
-  console.log('mouseDrag');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDrag');
 
   let tools;
   const eventData = evt.detail;
@@ -273,10 +307,11 @@ function mouseDrag (evt) {
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
 function mouseDownActivate (evt) {
-  console.log('mouseDownActivate');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.log('mouseDownActivate');
+
   const eventData = evt.detail;
   const element = eventData.element;
 
@@ -303,14 +338,36 @@ function mouseDownActivate (evt) {
 }
 
 function mouseDoubleClick (evt) {
-  console.warn('mouseDoubleClick');
-}
-
-function mouseWheel (evt) {
-  console.log('mouseWheel');
   if (isAwaitingMouseUp) {
     return;
   }
+  console.warn('mouseDoubleClick');
+
+  let tools;
+  const eventData = evt.detail;
+  const element = eventData.element;
+
+  // Filter out disabled, enabled, and passive
+  tools = getActiveToolsForElement(element, getters.mouseTools());
+  tools = tools.filter((tool) =>
+    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  );
+  tools = tools.filter((tool) => typeof tool.mouseDoublClickCallback === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  const activeTool = tools[0];
+
+  activeTool.mouseDoublClickCallback(evt);
+}
+
+function mouseWheel (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
+  console.log('mouseWheel');
 
   let tools;
   const element = evt.detail.element;
@@ -403,7 +460,21 @@ function addNewMeasurement (evt, tool) {
   );
 }
 
+function setIsAwaitingMouseUp (bool) {
+  if (typeof bool === 'boolean') {
+    isAwaitingMouseUp = bool;
+  } else {
+    throw new Error('Attempting to see mouseToolEventDispatcher.isAwaitingMouseUp to a non-boolean.');
+  }
+}
+
+function getIsAwaitingMouseUp () {
+  return isAwaitingMouseUp;
+}
+
 export default {
-  enable
+  enable,
+  getIsAwaitingMouseUp,
+  setIsAwaitingMouseUp
   // Disable
 };
