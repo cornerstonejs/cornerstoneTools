@@ -1,14 +1,30 @@
-import doubleTap from './doubleTap.js';
+import applyCustomCallbackToActivateTool from './shared/applyCustomCallbackToActiveTool.js';
 import onImageRendered from './onImageRendered.js';
 import tap from './tap.js';
 import touchDrag from './touchDrag.js';
-import touchEnd from './touchEnd.js';
-import touchPinch from './touchPinch.js';
-import touchPress from './touchPress.js';
 import touchStart from './touchStart.js';
 import touchStartActive from './touchStartActive.js';
 
-// TODO: Use `.call()` to create shared code for doubleTap, touchPress, and touchPinch
+const doubleTap = applyCustomCallbackToActivateTool.bind(
+  null,
+  'doubleTapCallback'
+);
+
+const touchEnd = applyCustomCallbackToActivateTool.bind(
+  null,
+  'touchEndCallback'
+);
+
+const touchPinch = applyCustomCallbackToActivateTool.bind(
+  null,
+  'touchPinchCallback'
+);
+
+const touchPress = applyCustomCallbackToActivateTool.bind(
+  null,
+  'touchPressCallback'
+);
+
 export {
   doubleTap,
   onImageRendered,
