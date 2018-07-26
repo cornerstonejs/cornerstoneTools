@@ -51,7 +51,7 @@
 			<button data-tool="zoom">Zoom</button>
 			<button data-tool="zoomTouchPinch">ZoomTouchPinch</button>
 			<button data-tool="zoomMouseWheel">ZoomMouseWheel</button>
-			<button data-tool="freehandMouse">Freehand</button>
+			<button data-tool="freehandMouse">FreehandMouse</button>
 
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
@@ -106,6 +106,8 @@
 		// Add the tool
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
+
+		console.log(apiTool);
 
 		if (apiTool) {
 			const tool = new apiTool();
