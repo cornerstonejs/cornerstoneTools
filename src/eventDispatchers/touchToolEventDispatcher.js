@@ -39,7 +39,22 @@ const enable = function (element) {
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
+const disable = function (element) {
+  console.log('enableTouch', element);
+  element.removeEventListener(EVENTS.TAP, tap);
+  element.removeEventListener(EVENTS.TOUCH_START, touchStart);
+  element.removeEventListener(EVENTS.TOUCH_DRAG, touchDrag);
+  element.removeEventListener(EVENTS.TOUCH_END, touchEnd);
+  // Mouse equivelant is `mouse_down_activate`
+  // Should the naming pattern here match?
+  element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchStartActive);
+  element.removeEventListener(EVENTS.TOUCH_PRESS, touchPress);
+  element.removeEventListener(EVENTS.DOUBLE_TAP, doubleTap);
+  element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinch);
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+};
+
 export default {
-  enable
-  // Disable
+  enable,
+  disable
 };
