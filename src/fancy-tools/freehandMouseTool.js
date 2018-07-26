@@ -13,6 +13,7 @@ import drawHandles from './../manipulators/drawHandles.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
+import numbersWithCommas from './shared/numbersWithCommas.js';
 import dragObject from './shared/freehandUtils/dragObject.js';
 import dropObject from './shared/freehandUtils/dropObject.js';
 import insertOrDelete from './shared/freehandUtils/insertOrDelete.js';
@@ -364,16 +365,16 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${this.constructor._numberWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
+        let meanText = `Mean: ${numbersWithCommas(meanStdDev.mean.toFixed(2))}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${this.constructor._numberWithCommas(meanStdDev.stdDev.toFixed(2))}${moSuffix}`;
+        let stdDevText = `StdDev: ${numbersWithCommas(meanStdDev.stdDev.toFixed(2))}${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
           const SUVtext = ' SUV: ';
 
-          meanText += SUVtext + this.constructor._numberWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText += SUVtext + this.constructor._numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+          meanText += SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
+          stdDevText += SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
         }
 
         // Add these text lines to the array to be displayed in the textbox
@@ -393,7 +394,7 @@ export default class extends baseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `Area: ${this.constructor._numberWithCommas(area.toFixed(2))}${suffix}`;
+        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);
@@ -1056,23 +1057,6 @@ export default class extends baseAnnotationTool {
     }
 
     return imageNeedsUpdate;
-  }
-
-  /**
-  * Adds commas as thousand seperators to a Number to increase readability.
-  *
-  * @private
-  * @static
-  * @param {Number|String} number - A Number or String literal representing a number.
-  * @return {String} - A string literal representaton of the number with commas seperating the thousands.
-  */
-  static _numberWithCommas (number) {
-    // http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
-    const parts = number.toString().split('.');
-
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-    return parts.join('.');
   }
 
   /**

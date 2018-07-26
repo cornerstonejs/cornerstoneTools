@@ -20,7 +20,7 @@ export default class extends baseTool {
   }
 
   createNewMeasurement (evt) {
-    throw new Error('Method createNewMeasurement not implemented in subclass.');
+    throw new Error(`Method createNewMeasurement not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -30,7 +30,7 @@ export default class extends baseTool {
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    throw new Error('Method pointNearTool not implemented in subclass.');
+    throw new Error(`Method pointNearTool not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -42,7 +42,7 @@ export default class extends baseTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    throw new Error('Method distanceFromPoint not implemented in subclass.');
+    throw new Error(`Method distanceFromPoint not implemented for ${this.toolName}.`);
   }
 
   /**
@@ -50,8 +50,8 @@ export default class extends baseTool {
    *
    * @param {*} evt
    */
-  onImageRendered (evt) {
-    throw new Error('Method onImageRendered not implemented in subclass.');
+  renderToolData (evt) {
+    throw new Error(`renderToolData not implemented for ${this.toolName}.`);
   }
 
   /**

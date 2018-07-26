@@ -240,7 +240,7 @@ function touchStart (evt) {
 
     const firstToolWithMoveableHandles = toolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
-    const moveableHandle = toolState.data.find(
+    const dataWithMoveableHandle = toolState.data.find(
       (d) =>
         getHandleNearImagePoint(
           element,
@@ -249,6 +249,13 @@ function touchStart (evt) {
           distanceFromHandle
         ) !== undefined
     );
+    const moveableHandle = getHandleNearImagePoint(
+      element,
+      dataWithMoveableHandle.handles,
+      coords,
+      distanceFromHandle
+    );
+
 
     toolState.data.active = true;
     touchMoveHandle(
