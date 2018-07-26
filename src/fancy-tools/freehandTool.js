@@ -13,14 +13,14 @@ import drawHandles from './../manipulators/drawHandles.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
-import dragObject from '../util/freehand/dragObject.js';
-import dropObject from '../util/freehand/dropObject.js';
-import insertOrDelete from '../util/freehand/insertOrDelete.js';
-import freeHandArea from '../util/freehand/freeHandArea.js';
-import calculateFreehandStatistics from '../util/freehand/calculateFreehandStatistics.js';
-import freeHandIntersect from '../util/freehand/freeHandIntersect.js';
-import { FreehandLineFinder } from '../util/freehand/FreehandLineFinder.js';
-import { FreehandHandleData } from '../util/freehand/FreehandHandleData.js';
+import dragObject from './shared/freehandUtils/dragObject.js';
+import dropObject from './shared/freehandUtils/dropObject.js';
+import insertOrDelete from './shared/freehandUtils/insertOrDelete.js';
+import freeHandArea from './shared/freehandUtils/freeHandArea.js';
+import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
+import freeHandIntersect from './shared/freehandUtils/freeHandIntersect.js';
+import { FreehandLineFinder } from './shared/freehandUtils/FreehandLineFinder.js';
+import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
@@ -30,7 +30,7 @@ export default class extends baseAnnotationTool {
 
   constructor (name) {
     super({
-      name: name || 'freehand',
+      name: name || 'freehandMouse',
       supportedInteractionTypes: ['mouse'],
       configuration: defaultFreehandConfiguration()
     });
@@ -120,7 +120,7 @@ export default class extends baseAnnotationTool {
 
   isValidTarget (evt) {
     const eventData = evt.detail;
-    
+
     if (eventData.event.ctrlKey) {
       const freehandLineFinder = new FreehandLineFinder(eventData);
       const insertInfo = freehandLineFinder.findLine();
@@ -417,12 +417,6 @@ export default class extends baseAnnotationTool {
   * @param {Object} evt - The event.
   */
   addNewMeasurement (evt, interactionType) {
-    if (interactionType === 'touch') {
-      console.warn('No touch controls implemented for freehandTool.');
-
-      return;
-    }
-
     const eventData = evt.detail;
     const config = this.configuration;
 
