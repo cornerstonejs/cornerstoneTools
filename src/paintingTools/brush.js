@@ -5,17 +5,13 @@ import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
 
 // This module is for creating segmentation overlays
-
 const TOOL_STATE_TOOL_TYPE = 'brush';
 const toolType = 'brush';
 const configuration = {
   draw: 1,
-  radius: 5,
-  minRadius: 1,
-  maxRadius: 20,
-  hoverColor: 'rgba(230, 25, 75, 1.0)',
-  dragColor: 'rgba(230, 25, 75, 0.8)',
-  active: false
+  radius: 3,
+  hoverColor: 'green',
+  dragColor: 'yellow'
 };
 
 let lastImageCoords;
@@ -24,8 +20,7 @@ let dragging = false;
 function paint (eventData) {
   const configuration = brush.getConfiguration();
   const element = eventData.element;
-  const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
-  const { rows, columns } = layer.image;
+  const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
   const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
   const pixelData = toolData.data[0].pixelData;
@@ -41,9 +36,9 @@ function paint (eventData) {
 
   drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
 
-  layer.invalid = true;
+  toolData.data[0].invalidated = true;
 
-  external.cornerstone.updateImage(element);
+  external.cornerstone.updateImage(eventData.element);
 }
 
 function onMouseUp (e) {
@@ -100,11 +95,15 @@ function onImageRendered (e) {
 
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  if (configuration.active) {
-    const pointerArray = getCircle(radius, rows, columns, x, y);
-
-    drawBrushOnCanvas(pointerArray, context, color, element);
-  }
+  const { cornerstone } = external;
+  const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, lastImageCoords);
+  const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
+  const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
+  const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
+  context.beginPath();
+  context.strokeStyle = color;
+  context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, circleRadius, circleRadius, 0, 0, 2 * Math.PI);
+  context.stroke();
 }
 
 const brush = brushTool({
