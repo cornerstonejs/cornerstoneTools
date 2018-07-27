@@ -50,6 +50,7 @@ export default function brushTool (brushToolInterface) {
     brushToolInterface.onNewImageCallback(e);
   }
 
+  // TODO -- not needed in v3?
   function mouseUpCallback (e) {
     const eventData = e.detail;
     const element = eventData.element;
@@ -68,6 +69,8 @@ export default function brushTool (brushToolInterface) {
     return false;
   }
 
+
+  // TODO -- this isn't really needed in v3?
   function mouseDownActivateCallback (e) {
     const eventData = e.detail;
     const element = eventData.element;
@@ -87,8 +90,6 @@ export default function brushTool (brushToolInterface) {
   }
 
   let imageBitmap
-
-  let killFrames = false;
 
   function onImageRendered (e) {
     const { cornerstone } = external;
