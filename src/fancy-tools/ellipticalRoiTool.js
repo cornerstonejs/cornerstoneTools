@@ -8,12 +8,7 @@ import toolColors from './../stateManagement/toolColors.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
 // Drawing
-import {
-  getNewContext,
-  draw,
-  setShadow,
-  drawEllipse
-} from './../util/drawing.js';
+import { getNewContext, draw, setShadow, drawEllipse } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import pointInEllipse from '../util/pointInEllipse.js';
 import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
@@ -43,9 +38,7 @@ export default class extends baseAnnotationTool {
 
     if (!goodEventData) {
       console.error(
-        `required eventData not supplieed to tool ${
-          this.name
-        }'s createNewMeasurement`
+        `required eventData not supplieed to tool ${this.name}'s createNewMeasurement`
       );
 
       return;
@@ -198,25 +191,12 @@ export default class extends baseAnnotationTool {
           color
         });
 
-        // If the tool configuration specifies to only draw the handles on hover / active,
-        // Follow this logic
-        if (config && config.drawHandlesOnHover) {
-          // Draw the handles if the tool is active
-          if (data.active === true) {
-            drawHandles(context, eventData, data.handles, color);
-          } else {
-            // If the tool is inactive, draw the handles only if each specific handle is being
-            // Hovered over
-            const handleOptions = {
-              drawHandlesIfActive: true
-            };
+        // Draw the handles
+        const handleOptions = {
+          drawHandlesIfActive: config && config.drawHandlesOnHover
+        };
 
-            drawHandles(context, eventData, data.handles, color, handleOptions);
-          }
-        } else {
-          // If the tool has no configuration settings, always draw the handles
-          drawHandles(context, eventData, data.handles, color);
-        }
+        drawHandles(context, eventData, data.handles, color, handleOptions);
 
         // Define variables for the area and mean/standard deviation
         let area, meanStdDev, meanStdDevSUV;
