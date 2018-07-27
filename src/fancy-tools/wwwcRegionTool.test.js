@@ -16,10 +16,10 @@ describe('wwwcRegionTool.js', () => {
       expect(instantiatedTool.name).toEqual(customToolName);
     });
 
-    it('sets a default configuration with an orientation of 0', () => {
+    it('sets a default configuration with an minWindowWidth of 10', () => {
       const instantiatedTool = new WwwcRegionTool();
 
-      expect(instantiatedTool.configuration.orientation).toBe(0);
+      expect(instantiatedTool.configuration.minWindowWidth).toBe(10);
     });
   });
 });
