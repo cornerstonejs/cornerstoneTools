@@ -3,7 +3,7 @@ import getActiveToolsForElement from './../../../store/getActiveToolsForElement.
 
 export default function (customFunction, evt) {
   if (state.isToolLocked) {
-    return;
+    return false;
   }
 
   let tools;
@@ -13,7 +13,7 @@ export default function (customFunction, evt) {
   tools = tools.filter((tool) => typeof tool[customFunction] === 'function');
 
   if (tools.length === 0) {
-    return;
+    return false;
   }
 
   tools[0][customFunction](evt);
