@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import { getToolState } from '../stateManagement/toolState.js';
+import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
@@ -22,8 +22,17 @@ function paint (eventData) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-  const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
-  const pixelData = toolData.data[0].pixelData;
+  let toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
+
+  let pixelData;
+  if (!toolData) {
+    pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+    addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
+    toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
+  } else {
+    pixelData = toolData.data[0].pixelData;
+  }
+
   const brushPixelValue = configuration.draw;
   const radius = configuration.radius;
 
@@ -71,6 +80,25 @@ function onDrag (e) {
   lastImageCoords = eventData.currentPoints.image;
 }
 
+function onNewImageCallback (e) {
+  const config = brush.getConfiguration();
+  const eventData = e.detail;
+  const element = eventData.element;
+  let toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
+
+  if (!toolData) {
+    const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+    addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
+    toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
+  }
+
+  toolData.data[0].invalidated = true;
+
+  config.newImage = true;
+
+  external.cornerstone.updateImage(eventData.element);
+}
+
 function onImageRendered (e) {
   const eventData = e.detail;
 
@@ -110,6 +138,7 @@ const brush = brushTool({
   onMouseMove,
   onMouseDown,
   onMouseUp,
+  onNewImageCallback,
   onDrag,
   toolType,
   onImageRendered

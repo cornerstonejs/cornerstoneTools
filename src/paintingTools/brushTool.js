@@ -6,16 +6,24 @@ import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import {brush} from "./brush";
 
+// TEMP
+import { globalImageIdSpecificToolStateManager } from '../stateManagement/imageIdSpecificStateManager.js';
+// TEMP
+
+
 const TOOL_STATE_TOOL_TYPE = 'brush';
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
+
 if (!('createImageBitmap' in window)) {
     window.createImageBitmap = async function(blob) {
         return new Promise((resolve,reject) => {
             let img = document.createElement('img');
             img.addEventListener('load', function() {
+
+              console.log('load');
                 resolve(this);
             });
 
@@ -30,11 +38,16 @@ if (!('createImageBitmap' in window)) {
     }
 }
 
+
 export default function brushTool (brushToolInterface) {
   const toolType = brushToolInterface.toolType;
 
   function mouseMoveCallback (e) {
     brushToolInterface.onMouseMove(e);
+  }
+
+  function onNewImageCallback(e) {
+    brushToolInterface.onNewImageCallback(e);
   }
 
   function mouseUpCallback (e) {
@@ -75,25 +88,15 @@ export default function brushTool (brushToolInterface) {
 
   let imageBitmap
 
+  let killFrames = false;
+
   function onImageRendered (e) {
-
     const { cornerstone } = external;
-
     const eventData = e.detail;
+    const configuration = brushTool.getConfiguration();
+
     const element = eventData.element;
-    const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
-
-    // Call the hover event for the brush
-    brushToolInterface.onImageRendered(e);
-
-    if (!toolData.data[0].invalidated) {
-      if (imageBitmap) {
-        drawImageBitmap(eventData, imageBitmap);
-      }
-
-      return;
-    }
-
+    let toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
     let pixelData;
 
     if (toolData) {
@@ -101,9 +104,26 @@ export default function brushTool (brushToolInterface) {
     } else {
       pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
       addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
+
+      toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
     }
 
-    const configuration = brushTool.getConfiguration();
+    // Draw previous image, unless this is a new image, then don't!
+    if (imageBitmap && !configuration.newImage) {
+      drawImageBitmap (e, imageBitmap);
+    }
+
+    if (configuration.newImage) {
+      configuration.newImage = false;
+    }
+
+    // Call the hover event for the brush
+    brushToolInterface.onImageRendered(e);
+
+    if (!toolData.data[0].invalidated) {
+      return;
+    }
+
     const colormapId = configuration.colormapId;
     const colormap = cornerstone.colors.getColormap(colormapId);
     const colorLut = colormap.createLookupTable();
@@ -117,14 +137,20 @@ export default function brushTool (brushToolInterface) {
 
     cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
 
+    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {x: 0, y: 0});
+    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {x: eventData.image.width, y: eventData.image.height});
+    const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
+    const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
+
     window.createImageBitmap(imageData).then((newImageBitmap) => {
       imageBitmap = newImageBitmap;
       toolData.data[0].invalidated = false;
-      drawImageBitmap(eventData, imageBitmap);
+      drawImageBitmap(e, imageBitmap);
     });
   }
 
-  function drawImageBitmap (eventData, imageBitmap) {
+  function drawImageBitmap (e, imageBitmap) {
+    const eventData = e.detail;
     const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {x: 0, y: 0});
     const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {x: eventData.image.width, y: eventData.image.height});
     const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
@@ -132,9 +158,6 @@ export default function brushTool (brushToolInterface) {
 
     eventData.canvasContext.imageSmoothingEnabled = false;
     eventData.canvasContext.drawImage(imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
-
-    external.cornerstone.requestAnimationFrame(function () {drawImageBitmap(eventData, imageBitmap)});
-
   }
 
   function activate (element, mouseButtonMask) {
@@ -151,9 +174,8 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
 
-    const enabledElement = cornerstone.getEnabledElement(element);
-    const { width, height } = enabledElement.image;
-    const pixelData = new Uint8ClampedArray(width * height);
+    element.removeEventListener(EVENTS.NEW_IMAGE, onNewImageCallback);
+    element.addEventListener(EVENTS.NEW_IMAGE, onNewImageCallback);
 
     const configuration = brushTool.getConfiguration();
     let colormapId = configuration.colormapId;
@@ -170,6 +192,11 @@ export default function brushTool (brushToolInterface) {
       configuration.colormapId = colormapId;
     }
 
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const { width, height } = enabledElement.image;
+
+    const pixelData = new Uint8ClampedArray(width * height);
+
     addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
 
     brushTool.setConfiguration(configuration);
@@ -179,6 +206,9 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+
+    element.removeEventListener(EVENTS.NEW_IMAGE, onNewImageCallback);
+    element.addEventListener(EVENTS.NEW_IMAGE, onNewImageCallback);
   }
 
   const brushTool = mouseButtonTool({

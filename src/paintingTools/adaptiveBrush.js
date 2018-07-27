@@ -91,14 +91,18 @@ function paintAdaptiveBrush (imagePixelData, brushPixelData, rows, columns) {
 function paint (eventData) {
   const configuration = adaptiveBrush.getConfiguration();
   const element = eventData.element;
-  const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
-  const baseLayer = external.cornerstone.getLayers(element)[0];
-  const { rows, columns } = layer.image;
+  const { rows, columns } = eventData.image;
+  const { x, y } = eventData.currentPoints.image;
   const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
-  const brushData = toolData.data[0];
+  const pixelData = toolData.data[0].pixelData;
+  const brushPixelValue = configuration.draw;
+  const radius = configuration.radius;
 
-  currentRadius = paintAdaptiveBrush(baseLayer.image.getPixelData(), brushData.pixelData, rows, columns);
-  layer.invalid = true;
+  const image = external.cornerstone.getImage(element);
+
+  currentRadius = paintAdaptiveBrush(image.getPixelData(), pixelData, rows, columns);
+
+  toolData.data[0].invalidated = true;
 
   external.cornerstone.updateImage(element);
 }
@@ -140,23 +144,10 @@ function onMouseUp (e) {
 }
 
 function onMouseDown (e) {
+
   const eventData = e.detail;
 
-  const element = eventData.element;
-  const configuration = adaptiveBrush.getConfiguration();
-  const layer = external.cornerstone.getLayer(element, configuration.brushLayerId);
-  const baseLayer = external.cornerstone.getLayers(element)[0];
-  const { x, y } = eventData.currentPoints.image;
-  const { rows, columns } = layer.image;
-  const pointerArray = getCircle(configuration.radius, rows, columns, x, y);
-
-  if (configuration.draw === 0) {
-    erase(eventData);
-  } else {
-    getGreyValues(pointerArray, baseLayer.image.getPixelData(), columns);
-    paint(eventData);
-  }
-
+  paint(eventData);
   dragging = true;
   lastImageCoords = eventData.currentPoints.image;
 }
@@ -198,17 +189,22 @@ function onImageRendered (e) {
 
   // Draw the hover overlay on top of the pixel data
   const configuration = adaptiveBrush.getConfiguration();
+  const radius = currentRadius;
   const context = eventData.canvasContext;
   const color = dragging ? configuration.dragColor : configuration.hoverColor;
   const element = eventData.element;
 
-  currentRadius = currentRadius || configuration.radius;
-
   context.setTransform(1, 0, 0, 1, 0, 0);
 
-  const pointerArray = getCircle(currentRadius, rows, columns, x, y);
-
-  drawBrushOnCanvas(pointerArray, context, color, element);
+  const { cornerstone } = external;
+  const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, lastImageCoords);
+  const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
+  const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
+  const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
+  context.beginPath();
+  context.strokeStyle = color;
+  context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, circleRadius, circleRadius, 0, 0, 2 * Math.PI);
+  context.stroke();
 }
 
 const adaptiveBrush = brushTool({
