@@ -24,7 +24,7 @@ jest.mock('./touchEventHandlers/index.js', () => ({
   onImageRendered: jest.fn()
 }));
 
-describe('mouseToolEventDispatcher.js', () => {
+describe('touchToolEventDispatcher.js', () => {
   let element;
 
   beforeEach(() => {
