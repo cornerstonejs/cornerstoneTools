@@ -21,6 +21,7 @@ export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
 export { default as zoomTool } from './fancy-tools/zoomTool.js';
+export { default as probeTool } from './fancy-tools/probeTool.js';
 export { default as ellipticalRoiTool } from './fancy-tools/ellipticalRoiTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
 export {
@@ -228,7 +229,6 @@ export {
 
 export { pan, panTouchDrag } from './imageTools/pan.js';
 export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
-export { probe, probeTouch } from './imageTools/probe.js';
 export { rotate, rotateTouchDrag } from './imageTools/rotate.js';
 export { default as rotateTouch } from './imageTools/rotateTouch.js';
 export { default as saveAs } from './imageTools/saveAs.js';
