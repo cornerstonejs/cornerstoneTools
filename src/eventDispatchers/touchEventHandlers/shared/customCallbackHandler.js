@@ -6,6 +6,7 @@ export default function (customFunction, evt) {
     return false;
   }
 
+  // TODO: We sometimes see a null detail for TOUCH_PRESS
   let tools;
   const element = evt.detail.element;
 
