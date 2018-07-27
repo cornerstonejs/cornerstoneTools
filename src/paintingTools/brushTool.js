@@ -17,26 +17,25 @@ const TOOL_STATE_TOOL_TYPE = 'brush';
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
 
+const conversionCanvas = document.createElement('canvas');
+
 if (!('createImageBitmap' in window)) {
-    window.createImageBitmap = async function(blob) {
+    window.createImageBitmap = async function(imageData) {
         return new Promise((resolve,reject) => {
             let img = document.createElement('img');
             img.addEventListener('load', function() {
 
-              console.log('load');
-                resolve(this);
+              resolve(this);
             });
 
-            if  (blob instanceof ImageData) {
-              blob = new Blob([blob.data]);
-            }
+            const conversionCanvasContext = conversionCanvas.getContext('2d');
 
-            img.src = URL.createObjectURL(blob);
-
-            console.log(img);
+            conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
+            img.src = conversionCanvas.toDataURL();
         });
     }
 }
+
 
 
 export default function brushTool (brushToolInterface) {
@@ -200,6 +199,17 @@ export default function brushTool (brushToolInterface) {
     addToolState(element, TOOL_STATE_TOOL_TYPE, { pixelData });
 
     brushTool.setConfiguration(configuration);
+
+    //TEMP TEST
+    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {x: 0, y: 0});
+    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {x: eventData.image.width, y: eventData.image.height});
+    const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
+    const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
+
+    const conversionCanvasContext = conversionCanvas.getContext('2d');
+    conversionCanvasContext.width = canvasWidth;
+    conversionCanvasContext.Height = canvasHeight;
+    //TEMP TEST
   }
 
   function deactivate (element) {
