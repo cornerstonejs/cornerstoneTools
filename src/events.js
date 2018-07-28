@@ -37,6 +37,7 @@ const EVENTS = {
 
   // Measurement / tool events
   MEASUREMENT_ADDED: 'cornerstonetoolsmeasurementadded',
+  MEASUREMENT_ADDING_END: 'cornerstonetoolsmeasurementaddingend',
   MEASUREMENT_MODIFIED: 'cornerstonetoolsmeasurementmodified',
   MEASUREMENT_REMOVED: 'cornerstonemeasurementremoved',
   TOOL_DEACTIVATED: 'cornerstonetoolstooldeactivated',

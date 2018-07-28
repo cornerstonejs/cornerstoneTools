@@ -47,7 +47,9 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     const eventData = e.detail;
 
     if (eventData.measurementData === data) {
-      moveEndCallback();
+      const hasBeenRemoved = true;
+
+      moveEndCallback(hasBeenRemoved);
     }
   }
 
@@ -72,7 +74,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
   element.addEventListener(EVENTS.MEASUREMENT_REMOVED, measurementRemovedCallback);
   element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
-  function moveEndCallback () {
+  function moveEndCallback (hasBeenRemoved = false) {
     element.removeEventListener(EVENTS.MOUSE_MOVE, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, moveEndCallback);
@@ -86,5 +88,15 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     if (typeof doneMovingCallback === 'function') {
       doneMovingCallback();
     }
+
+    const eventType = EVENTS.MEASUREMENT_ADDING_END;
+    const modifiedEventData = {
+      toolType,
+      element,
+      hasBeenRemoved,
+      measurementData: data
+    };
+
+    triggerEvent(element, eventType, modifiedEventData);
   }
 }
