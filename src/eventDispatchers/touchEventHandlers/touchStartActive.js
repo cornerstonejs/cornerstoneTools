@@ -4,7 +4,6 @@ import getActiveToolsForElement from './../../store/getActiveToolsForElement.js'
 import addNewMeasurement from './addNewMeasurement.js';
 
 export default function (evt) {
-  console.log('touchStartActive');
   if (state.isToolLocked) {
     return;
   }
