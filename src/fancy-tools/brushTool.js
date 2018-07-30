@@ -1,15 +1,12 @@
-/* eslint no-loop-func: 0 */ // --> OFF
+/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseBrushTool from './../base/baseBrushTool.js';
 import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
-import { drawBrushPixels, drawBrushOnCanvas } from './shared/brushUtils/drawBrush.js';
+import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
-import mouseToolEventDispatcher from './../eventDispatchers/mouseToolEventDispatcher.js';
-
-const cornerstone = external.cornerstone;
 
 export default class extends baseBrushTool {
   constructor (name) {
@@ -27,7 +24,6 @@ export default class extends baseBrushTool {
   * @param {Object} evt - The event.
   */
   mouseMoveCallback (evt) {
-    console.log('brushTool.mouseMoveCallback');
     const eventData = evt.detail;
 
     this._dragging = false;
@@ -40,16 +36,14 @@ export default class extends baseBrushTool {
   * @event
   * @param {Object} evt - The event.
   */
-  onNewImageCallback(evt) {
-    console.log('brushTool.onNewImageCallback');
-
-    const config = this.configuration;
+  onNewImageCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     let toolData = getToolState(element, this._referencedToolData);
 
     if (!toolData) {
       const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+
       addToolState(element, this._referencedToolData, { pixelData });
       toolData = getToolState(element, this._referencedToolData);
     }
@@ -67,7 +61,6 @@ export default class extends baseBrushTool {
   * @param {Object} evt - The event.
   */
   mouseDragCallback (evt) {
-    console.log('brushTool.mouseDragCallback');
     const eventData = evt.detail;
 
     this._paint(eventData);
@@ -82,7 +75,6 @@ export default class extends baseBrushTool {
   * @param {Object} evt - The event.
   */
   mouseDownCallback (evt) {
-    console.log('brushTool.mouseDownCallback');
     const eventData = evt.detail;
 
     this._paint(eventData);
@@ -92,9 +84,10 @@ export default class extends baseBrushTool {
 
 
   /**
-   * renderBrush - called by the event dispatcher to render the image.
-   *
-   */
+  * Called by the event dispatcher to render the image.
+  *
+  * @param {Object} evt - The event.
+  */
   renderBrush (evt) {
     const eventData = evt.detail;
 
@@ -124,13 +117,14 @@ export default class extends baseBrushTool {
     const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
     const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
     const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
+
     context.beginPath();
     context.strokeStyle = color;
     context.ellipse(mouseCoordsCanvas.x, mouseCoordsCanvas.y, circleRadius, circleRadius, 0, 0, 2 * Math.PI);
     context.stroke();
   }
 
-  _paint(eventData) {
+  _paint (eventData) {
     const configuration = this.configuration;
     const element = eventData.element;
     const { rows, columns } = eventData.image;
@@ -138,12 +132,13 @@ export default class extends baseBrushTool {
     let toolData = getToolState(element, this._referencedToolData);
 
     let pixelData;
-    if (!toolData) {
+
+    if (toolData) {
+      pixelData = toolData.data[0].pixelData;
+    } else {
       pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
       addToolState(element, this._referencedToolData, { pixelData });
       toolData = getToolState(element, this._referencedToolData);
-    } else {
-      pixelData = toolData.data[0].pixelData;
     }
 
     const brushPixelValue = configuration.draw;
@@ -169,7 +164,10 @@ export default class extends baseBrushTool {
 function defaultBrushConfiguration () {
   return {
     draw: 1,
-    radius: 30,
+    radius: 10,
+    minRadius: 1,
+    maxRadius: 50,
+    brushAlpha: 0.4,
     hoverColor: toolColors.getToolColor(),
     dragColor: toolColors.getActiveColor()
   };

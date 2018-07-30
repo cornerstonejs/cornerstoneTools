@@ -41,6 +41,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick);
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
   element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(EVENTS.KEY_DOWN, onKeyDown);
   element.addEventListener(EVENTS.NEW_IMAGE, onNewImage);
 };
 
@@ -51,7 +52,6 @@ const enable = function (element) {
  * @param {*} evt
  */
 function mouseMove (evt) {
-  console.log('mouseToolEventDispatcher.mouseMove');
   if (isAwaitingMouseUp) {
     return;
   }
@@ -77,7 +77,7 @@ function mouseMove (evt) {
       imageNeedsUpdate = tool.handleMouseMove(evt) || imageNeedsUpdate;
     }
   }
-  
+
   // Tool data activation status changed, redraw the image
   if (imageNeedsUpdate === true) {
     cornerstone.updateImage(element);
@@ -400,6 +400,48 @@ function onNewImage (evt) {
 
   tools[0].onNewImageCallback(evt);
 }
+
+function onKeyDown (evt) {
+  if (isAwaitingMouseUp) {
+    return;
+  }
+  console.log('onKeyDown');
+
+  let tools;
+  const element = evt.detail.element;
+
+  // Filter out tools that don't have a mouse interface.
+  tools = getInteractiveToolsForElement(element, getters.mouseTools());
+  tools = tools.filter((tool) => typeof tool.onKeyDown === 'function');
+
+  if (tools.length === 0) {
+    return;
+  }
+
+  for (let i = 0; i < tools.length; i++) {
+    tools[i].onKeyDown(evt);
+  }
+
+}
+
+// TODO -- EXAMPLE Member function in some tool:
+/*
+onKeyDown (evt) {
+  const eventData = evt.detail;
+  const element = eventData.element;
+
+  const isActive = isToolActive(element, this.name)
+
+  // Where keyCodes is an imported map of codes used in cornerstoneTools
+  if (isActive && keyCode === keyCodes.A) {
+    // Do something active
+  }
+
+  if (keyCode === keyCodes.B) {
+    // Do something regardless if tool is active?
+  }
+}
+*/
 
 function addNewMeasurement (evt, tool) {
   //

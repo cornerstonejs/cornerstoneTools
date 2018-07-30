@@ -92,6 +92,9 @@
 	cornerstoneTools.touchToolEventDispatcher.enable(element);
 	//
 	cornerstoneTools.mouseWheelInput.enable(element);
+	cornerstoneTools.keyboardInput.enable(element);
+	element.tabIndex = 0;
+  element.focus();
 	// END NEW
 
 	cornerstone.loadImage(imageId).then(function (image) {
@@ -120,6 +123,7 @@
 		toolBtn.addEventListener('click', (evt) => {
 			setAllToolsPassive();
 			cornerstoneTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+			element.focus();
 		});
 	});
 
