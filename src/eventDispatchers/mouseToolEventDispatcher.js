@@ -51,6 +51,7 @@ const enable = function (element) {
  * @param {*} evt
  */
 function mouseMove (evt) {
+  console.log('mouseToolEventDispatcher.mouseMove');
   if (isAwaitingMouseUp) {
     return;
   }
@@ -71,37 +72,12 @@ function mouseMove (evt) {
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];
-    const coords = currentPoints.canvas;
-    const toolState = getToolState(element, tool.name);
 
-    for (let d = 0; d < toolState.data.length; d++) {
-      const data = toolState.data[d];
-
-      // Hovering a handle?
-      if (handleActivator(element, data.handles, coords) === true) {
-        imageNeedsUpdate = true;
-      }
-
-      // Tool data's 'active' does not match coordinates
-      // TODO: can't we just do an if/else and save on a pointNearTool check?
-      const nearToolAndNotMarkedActive =
-        tool.pointNearTool(element, data, coords) && !data.active;
-      const notNearToolAndMarkedActive =
-        !tool.pointNearTool(element, data, coords) && data.active;
-
-      if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
-        data.active = !data.active;
-        imageNeedsUpdate = true;
-      }
-
-      // Call the tool's mouseMoveCallback if it exists.
-      if (typeof tool.mouseMoveCallback === 'function') {
-        tool.mouseMoveCallback(evt);
-      }
-
+    if (tool.handleMouseMove) {
+      imageNeedsUpdate = tool.handleMouseMove(evt) || imageNeedsUpdate;
     }
   }
-
+  
   // Tool data activation status changed, redraw the image
   if (imageNeedsUpdate === true) {
     cornerstone.updateImage(element);

@@ -50,7 +50,6 @@ export default function brushTool (brushToolInterface) {
     brushToolInterface.onNewImageCallback(e);
   }
 
-  // TODO -- not needed in v3?
   function mouseUpCallback (e) {
     const eventData = e.detail;
     const element = eventData.element;

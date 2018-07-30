@@ -1,4 +1,6 @@
 import baseTool from './baseTool.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import handleActivator from '../manipulators/handleActivator.js';
 
 export default class extends baseTool {
   constructor ({
@@ -52,6 +54,48 @@ export default class extends baseTool {
    */
   renderToolData (evt) {
     throw new Error(`renderToolData not implemented for ${this.toolName}.`);
+  }
+
+  /**
+   * Used to handle mouseMove events triggered by the eventDispatcher
+   *
+   * @param {*} evt
+   * @return {boolean} whether the canvas needs to be re-rendered.
+   */
+  handleMouseMove(evt) {
+    const { element, currentPoints } = evt.detail;
+    const coords = currentPoints.canvas;
+    const toolState = getToolState(element, this.name);
+    let imageNeedsUpdate = false;
+
+    for (let d = 0; d < toolState.data.length; d++) {
+      const data = toolState.data[d];
+
+      // Hovering a handle?
+      if (handleActivator(element, data.handles, coords) === true) {
+        imageNeedsUpdate = true;
+      }
+
+      // Tool data's 'active' does not match coordinates
+      // TODO: can't we just do an if/else and save on a pointNearTool check?
+      const nearToolAndNotMarkedActive =
+        this.pointNearTool(element, data, coords) && !data.active;
+      const notNearToolAndMarkedActive =
+        !this.pointNearTool(element, data, coords) && data.active;
+
+      if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
+        data.active = !data.active;
+        imageNeedsUpdate = true;
+      }
+
+      // Call the tool's mouseMoveCallback if it exists.
+      if (typeof this.mouseMoveCallback === 'function') {
+        this.mouseMoveCallback(evt);
+      }
+
+    }
+
+    return imageNeedsUpdate;
   }
 
   /**

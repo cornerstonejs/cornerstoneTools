@@ -25,6 +25,7 @@ export { default as ellipticalRoiTool } from './fancy-tools/ellipticalRoiTool.js
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
 export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
 export { default as freehandSculpterMouseTool } from './fancy-tools/freehandSculpterMouseTool.js';
+export { default as brushTool } from './fancy-tools/brushTool.js';
 export {
   default as zoomTouchPinchTool
 } from './fancy-tools/zoomTouchPinchTool.js';

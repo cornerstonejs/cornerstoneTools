@@ -17,6 +17,7 @@ const configuration = {
 let lastImageCoords;
 let dragging = false;
 
+
 function paint (eventData) {
   const configuration = brush.getConfiguration();
   const element = eventData.element;
@@ -56,6 +57,7 @@ function onMouseUp (e) {
   lastImageCoords = eventData.currentPoints.image;
   dragging = false;
 }
+
 
 function onMouseDown (e) {
   const eventData = e.detail;
