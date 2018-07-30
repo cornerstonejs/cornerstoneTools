@@ -7,8 +7,7 @@ import {
   touchDrag,
   touchEnd,
   touchPress,
-  touchPinch,
-  onImageRendered
+  touchPinch
 } from './touchEventHandlers/index.js';
 
 /**
@@ -35,7 +34,6 @@ const enable = function (element) {
   element.addEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.addEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.addEventListener(EVENTS.TOUCH_PINCH, touchPinch);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
 const disable = function (element) {
@@ -49,7 +47,6 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.removeEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinch);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
 export default {

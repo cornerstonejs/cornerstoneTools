@@ -5,8 +5,7 @@ import {
   mouseDoubleClick,
   mouseDrag,
   mouseMove,
-  mouseWheel,
-  onImageRendered
+  mouseWheel
 } from './mouseEventHandlers/index.js';
 
 /**
@@ -27,7 +26,6 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDrag);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
 const disable = function (element) {
@@ -37,7 +35,6 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDrag);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.removeEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 };
 
 export default {
