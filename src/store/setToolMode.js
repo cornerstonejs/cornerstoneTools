@@ -1,9 +1,6 @@
 import EVENTS from './../events.js';
-import external from './../externalModules.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getTool from './../store/getTool.js';
-
-const cornerstone = external.cornerstone;
 
 /**
  * Sets a tool's state to 'active'. Active tools are rendered,
