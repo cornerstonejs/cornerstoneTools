@@ -33,8 +33,6 @@ const defaultStrategy = (evt) => {
     angleInfo.angle = -angleInfo.angle;
   }
 
-  console.log('angle: ', angleInfo.angle, ' | direction: ', angleInfo.direction);
-
   viewport.rotation = initialRotation + angleInfo.angle;
 };
 
