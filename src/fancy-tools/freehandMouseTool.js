@@ -1,5 +1,4 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
 import baseAnnotationTool from './../base/baseAnnotationTool.js';

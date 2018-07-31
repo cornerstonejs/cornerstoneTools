@@ -5,7 +5,6 @@ import { getters } from './../store/index.js';
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
 // Manipulators
 import getHandleNearImagePoint from './../manipulators/getHandleNearImagePoint.js';
-import handleActivator from './../manipulators/handleActivator.js';
 import moveAllHandles from './../manipulators/moveAllHandles.js';
 import moveHandle from './../manipulators/moveHandle.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
@@ -57,7 +56,7 @@ function mouseMove (evt) {
   }
 
   let tools;
-  const { element, currentPoints } = evt.detail;
+  const element = evt.detail.element;
 
   // TODO: instead of filtering these for every interaction, we can change our
   // TODO: State's structure to always know these values.
@@ -129,7 +128,7 @@ function mouseDown (evt) {
       evt.preventDefault();
 
       return;
-      }
+    }
   }
 
   tools = getToolsWithDataForElement(element, tools);
@@ -423,25 +422,6 @@ function onKeyDown (evt) {
   }
 
 }
-
-// TODO -- EXAMPLE Member function in some tool:
-/*
-onKeyDown (evt) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-
-  const isActive = isToolActive(element, this.name)
-
-  // Where keyCodes is an imported map of codes used in cornerstoneTools
-  if (isActive && keyCode === keyCodes.A) {
-    // Do something active
-  }
-
-  if (keyCode === keyCodes.B) {
-    // Do something regardless if tool is active?
-  }
-}
-*/
 
 function addNewMeasurement (evt, tool) {
   //

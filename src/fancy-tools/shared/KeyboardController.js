@@ -1,10 +1,10 @@
 import { getKey } from './keyCodes.js';
 
 export default class {
-  constructor(tool, keyBinds) {
-    const keyInterface = this._generateKeyInterface(tool, keyBinds);
+  constructor (tool, keyBinds) {
+    const keyInterface = this.constructor._generateKeyInterface(tool, keyBinds);
 
-    Object.keys(keyInterface).forEach(key => {
+    Object.keys(keyInterface).forEach((key) => {
       if (!(typeof keyInterface[key] === 'function')) {
         throw new Error(`Element ${key} of the keyInterface is not a function`);
       }
@@ -25,10 +25,11 @@ export default class {
 
     let imageNeedsUpdate = false;
 
-    Object.keys(keyInterface).forEach(key => {
+    Object.keys(keyInterface).forEach((key) => {
       if (keyPressed === key) {
         keyInterface[key]();
         imageNeedsUpdate = true;
+
         return;
       }
     });
@@ -36,10 +37,20 @@ export default class {
     return imageNeedsUpdate;
   }
 
-  _generateKeyInterface (tool, keyBinds) {
+
+  /**
+   * Generates the keyInterface used by the controller.
+   *
+   * @static
+   * @private
+   * @param  {Object} tool     Reference to the tool instance.
+   * @param  {Object} keyBinds Object defining the keybinds.
+   * @return {Object}          The generate keyInterface.
+   */
+  static _generateKeyInterface (tool, keyBinds) {
     const keyInterface = {};
 
-    Object.keys(keyBinds).forEach(key => {
+    Object.keys(keyBinds).forEach((key) => {
       keyInterface[keyBinds[key]] = tool[key].bind(tool);
     });
 

@@ -6,10 +6,8 @@ import toolColors from './../stateManagement/toolColors.js';
 import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 import KeyboardController from './shared/KeyboardController.js';
-import isToolActive from './shared/isToolActive.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
-import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
 
 export default class extends baseBrushTool {
   constructor (name) {
@@ -85,6 +83,7 @@ export default class extends baseBrushTool {
   */
   mouseDownCallback (evt) {
     const eventData = evt.detail;
+
     console.log('mouseDownCallback');
 
     this._paint(eventData);
@@ -125,8 +124,14 @@ export default class extends baseBrushTool {
 
     const { cornerstone } = external;
     const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, this._lastImageCoords);
-    const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
-    const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
+    const canvasTopLeft = cornerstone.pixelToCanvas(element, {
+      x: 0,
+      y: 0
+    });
+    const radiusCanvas = cornerstone.pixelToCanvas(element, {
+      x: radius,
+      y: 0
+    });
     const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
 
     context.beginPath();

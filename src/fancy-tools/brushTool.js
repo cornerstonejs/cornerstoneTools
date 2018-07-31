@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseBrushTool from './../base/baseBrushTool.js';
 import toolColors from './../stateManagement/toolColors.js';
@@ -126,7 +125,6 @@ export default class extends baseBrushTool {
    */
   renderToolData (evt) {
     const eventData = evt.detail;
-    const configuration = this.configuration;
 
     const element = eventData.element;
     let toolData = getToolState(element, this._referencedToolData);
@@ -211,8 +209,14 @@ export default class extends baseBrushTool {
 
     const { cornerstone } = external;
     const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, this._lastImageCoords);
-    const canvasTopLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
-    const radiusCanvas = cornerstone.pixelToCanvas(element, { x: radius, y: 0 });
+    const canvasTopLeft = cornerstone.pixelToCanvas(element, {
+      x: 0,
+      y: 0
+    });
+    const radiusCanvas = cornerstone.pixelToCanvas(element, {
+      x: radius,
+      y: 0
+    });
     const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
 
     context.beginPath();

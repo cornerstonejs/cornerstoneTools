@@ -1,14 +1,9 @@
-/* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseTool from './../base/baseTool.js';
-// State
-import { getToolState, addToolState } from './../stateManagement/toolState.js';
 // Utils
 import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
 import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
-import { initialiseBrushColormap } from '../stateManagement/brushToolColors.js';
 import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
 
 /**
@@ -31,7 +26,6 @@ export default class extends baseTool {
     });
 
     this.isBrushTool = true;
-    this._imageBitmap;
     this._referencedToolData = 'brush';
     this._dragging = false;
     this._newImage = false;
@@ -81,7 +75,7 @@ export default class extends baseTool {
   }
 
   /**
-  * helper function for rendering the brush
+  * Helper function for rendering the brush.
   *
   * @abstract
   * @param {Object} evt - The event.
@@ -91,21 +85,21 @@ export default class extends baseTool {
   }
 
   /**
-   * Used to redraw the tool's annotation data per render.
-   *
-   * @virtual
-   * @param {*} evt
-   */
-   renderToolData (evt) {
-     const eventData = evt.detail;
-     const element = eventData.element;
+  * Used to redraw the tool's annotation data per render.
+  *
+  * @virtual
+  * @param {*} evt
+  */
+  renderToolData (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
 
-     // Only brush needs to render.
-     if (isToolActive(element, this.name)) {
-       // Call the hover event for the brush
-       this.renderBrush(evt);
-     }
-   }
+    // Only brush needs to render.
+    if (isToolActive(element, this.name)) {
+      // Call the hover event for the brush
+      this.renderBrush(evt);
+    }
+  }
 
   /**
    * Used to handle mouseMove events triggered by the eventDispatcher
@@ -126,6 +120,7 @@ export default class extends baseTool {
 
     return imageNeedsUpdate;
   }
+
   /**
   * Used to check if there is a valid target for the tool.
   *
@@ -172,7 +167,7 @@ export default class extends baseTool {
   */
   nextSegmentation () {
     const configuration = this.configuration;
-    const numberOfColors = this._getNumberOfColors();
+    const numberOfColors = this.constructor._getNumberOfColors();
 
     let drawId = configuration.draw + 1;
 
@@ -190,7 +185,7 @@ export default class extends baseTool {
   */
   previousSegmentation () {
     const configuration = this.configuration;
-    const numberOfColors = this._getNumberOfColors();
+    const numberOfColors = this.constructor._getNumberOfColors();
 
     let drawId = configuration.draw - 1;
 
@@ -243,8 +238,9 @@ export default class extends baseTool {
     configuration.radius = newRadius;
   }
 
-  activeCallback (element) {
+  activeCallback () {
     const configuration = this.configuration;
+
     this._changeDrawColor(configuration.draw);
   }
 
@@ -253,8 +249,14 @@ export default class extends baseTool {
     const eventData = e.detail;
     const context = getNewContext(eventData.canvasContext.canvas);
 
-    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, { x: 0, y: 0 });
-    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, { x: eventData.image.width, y: eventData.image.height });
+    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
+      x: 0,
+      y: 0
+    });
+    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {
+      x: eventData.image.width,
+      y: eventData.image.height
+    });
     const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
     const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
 
@@ -275,8 +277,15 @@ export default class extends baseTool {
     configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
   }
 
-  _getNumberOfColors () {
-    const configuration = this.configuration;
+
+  /**
+   * Returns the number of colors in the colormap.
+   *
+   * @static
+   * @private
+   * @return {Number} The number of colors in the color map.
+   */
+  static _getNumberOfColors () {
     const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
 
     return colormap.getNumberOfColors();
@@ -284,8 +293,8 @@ export default class extends baseTool {
 
   set keyBinds (keyBinds) {
     const configuration = this.configuration;
-    configuration.keyBinds = keyBinds;
 
+    configuration.keyBinds = keyBinds;
     this._keyboardController = new KeyboardController(this, keyBinds);
   }
 }
