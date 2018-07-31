@@ -9,35 +9,7 @@ import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
 import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
 import { initialiseBrushColormap } from '../stateManagement/brushToolColors.js';
-
-const cornerstone = external.cornerstone;
-
-/* Safari and Edge polyfill for createImageBitmap
- * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
- */
-
-if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = async function (imageData) {
-    return new Promise((resolve) => {
-      const img = document.createElement('img');
-
-      img.addEventListener('load', function () {
-
-        resolve(this);
-      });
-
-      const conversionCanvas = document.createElement('canvas');
-
-      conversionCanvas.width = imageData.width;
-      conversionCanvas.height = imageData.height;
-
-      const conversionCanvasContext = conversionCanvas.getContext('2d');
-
-      conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
-      img.src = conversionCanvas.toDataURL();
-    });
-  };
-}
+import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
 
 /**
 * @abstract
@@ -63,6 +35,7 @@ export default class extends baseTool {
     this._referencedToolData = 'brush';
     this._dragging = false;
     this._newImage = false;
+    this._colormapId = COLOR_MAP_ID;
   }
 
   /**
@@ -108,16 +81,32 @@ export default class extends baseTool {
     throw new Error(`Method mouseMoveCallback not implemented for ${this.toolName}.`);
   }
 
-
   /**
-   * Called by the render to renderToolData to render the overlay.
-   *
-   * @abstract
-   * @param {Object} evt - The event.
-   */
+  * helper function for rendering the brush
+  *
+  * @abstract
+  * @param {Object} evt - The event.
+  */
   renderBrush (evt) {
     throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
   }
+
+  /**
+   * Used to redraw the tool's annotation data per render.
+   *
+   * @virtual
+   * @param {*} evt
+   */
+   renderToolData (evt) {
+     const eventData = evt.detail;
+     const element = eventData.element;
+
+     // Only brush needs to render.
+     if (isToolActive(element, this.name)) {
+       // Call the hover event for the brush
+       this.renderBrush(evt);
+     }
+   }
 
   /**
    * Used to handle mouseMove events triggered by the eventDispatcher
@@ -255,80 +244,9 @@ export default class extends baseTool {
     configuration.radius = newRadius;
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   * @returns
-   */
-  renderToolData (evt) {
-    const eventData = evt.detail;
-    const configuration = this.configuration;
-
-    const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
-    let pixelData;
-
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-
-      toolData = getToolState(element, this._referencedToolData);
-    }
-
-    // Draw previous image, unless this is a new image, then don't!
-    if (this._imageBitmap && !this._newImage) {
-      this._drawImageBitmap(evt);
-    }
-
-    if (this._newImage) {
-      this._newImage = false;
-    }
-
-    if (isToolActive(element, this.name)) {
-      // Call the hover event for the brush
-      this.renderBrush(evt);
-    }
-
-    if (!toolData.data[0].invalidated) {
-      return;
-    }
-
-    const colormapId = configuration.colormapId;
-    const colormap = cornerstone.colors.getColormap(colormapId);
-    const colorLut = colormap.createLookupTable();
-
-    const imageData = new ImageData(eventData.image.width, eventData.image.height);
-    const image = {
-      stats: {},
-      minPixelValue: 0,
-      getPixelData: () => pixelData
-    };
-
-    cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
-
-    window.createImageBitmap(imageData).then((newImageBitmap) => {
-      this._imageBitmap = newImageBitmap;
-      toolData.data[0].invalidated = false;
-
-      external.cornerstone.updateImage(eventData.element);
-    });
-  }
-
   activeCallback (element) {
-
     const configuration = this.configuration;
-    let colormapId = configuration.colormapId;
-
-    if (!colormapId) {
-      colormapId = 'BrushColorMap';
-
-      initialiseBrushColormap(colormapId);
-      configuration.colormapId = colormapId;
-      this._changeDrawColor(configuration.draw);
-    }
+    this._changeDrawColor(configuration.draw);
   }
 
   _drawImageBitmap (e) {
@@ -349,7 +267,7 @@ export default class extends baseTool {
 
   _changeDrawColor (drawId) {
     const configuration = this._configuration;
-    const colormap = external.cornerstone.colors.getColormap(configuration.colormapId);
+    const colormap = external.cornerstone.colors.getColormap(this._colormapId);
 
     configuration.draw = drawId;
     const colorArray = colormap.getColor(configuration.draw);
@@ -360,7 +278,7 @@ export default class extends baseTool {
 
   _getNumberOfColors () {
     const configuration = this.configuration;
-    const colormap = external.cornerstone.colors.getColormap(configuration.colormapId);
+    const colormap = external.cornerstone.colors.getColormap(this._colormapId);
 
     return colormap.getNumberOfColors();
   }

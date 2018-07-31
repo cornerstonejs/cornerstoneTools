@@ -5,44 +5,15 @@ import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
-import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import KeyboardController from './shared/KeyboardController.js';
+import isToolActive from './shared/isToolActive.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
-
-const cornerstone = external.cornerstone;
-
-/* Safari and Edge polyfill for createImageBitmap
- * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
- */
-
-if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = async function (imageData) {
-    return new Promise((resolve) => {
-      const img = document.createElement('img');
-
-      img.addEventListener('load', function () {
-
-        resolve(this);
-      });
-
-      const conversionCanvas = document.createElement('canvas');
-
-      conversionCanvas.width = imageData.width;
-      conversionCanvas.height = imageData.height;
-
-      const conversionCanvasContext = conversionCanvas.getContext('2d');
-
-      conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
-      img.src = conversionCanvas.toDataURL();
-    });
-  };
-}
 
 export default class extends baseBrushTool {
   constructor (name) {
     super({
-      name: name || 'brush',
+      name: name || 'brushEraser',
       supportedInteractionTypes: ['mouse'],
       configuration: defaultBrushConfiguration()
     });
@@ -60,6 +31,8 @@ export default class extends baseBrushTool {
   */
   mouseMoveCallback (evt) {
     const eventData = evt.detail;
+
+    console.log('mouseMoveCallback');
 
     this._dragging = false;
     this._lastImageCoords = eventData.currentPoints.image;
@@ -111,71 +84,11 @@ export default class extends baseBrushTool {
   */
   mouseDownCallback (evt) {
     const eventData = evt.detail;
+    console.log('mouseDownCallback');
 
     this._paint(eventData);
     this.configuration.dragging = true;
     this._lastImageCoords = eventData.currentPoints.image;
-  }
-
-  /**
-   *
-   *
-   * @param {*} evt
-   * @returns
-   */
-  renderToolData (evt) {
-    const eventData = evt.detail;
-    const configuration = this.configuration;
-
-    const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
-    let pixelData;
-
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
-    }
-
-    // Draw previous image, unless this is a new image, then don't!
-    if (this._imageBitmap && !this._newImage) {
-      this._drawImageBitmap(evt);
-    }
-
-    if (this._newImage) {
-      this._newImage = false;
-    }
-
-    if (isToolActive(element, this.name)) {
-      // Call the hover event for the brush
-      this.renderBrush(evt);
-    }
-
-    if (!toolData.data[0].invalidated) {
-      return;
-    }
-
-    const colormapId = this._colormapId;
-    const colormap = cornerstone.colors.getColormap(colormapId);
-    const colorLut = colormap.createLookupTable();
-
-    const imageData = new ImageData(eventData.image.width, eventData.image.height);
-    const image = {
-      stats: {},
-      minPixelValue: 0,
-      getPixelData: () => pixelData
-    };
-
-    cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
-
-    window.createImageBitmap(imageData).then((newImageBitmap) => {
-      this._imageBitmap = newImageBitmap;
-      toolData.data[0].invalidated = false;
-
-      external.cornerstone.updateImage(eventData.element);
-    });
   }
 
 
@@ -185,6 +98,7 @@ export default class extends baseBrushTool {
   * @param {Object} evt - The event.
   */
   renderBrush (evt) {
+    // Render the brush
     const eventData = evt.detail;
 
     if (!this._lastImageCoords) {
@@ -254,23 +168,20 @@ export default class extends baseBrushTool {
     external.cornerstone.updateImage(eventData.element);
   }
 
-
 }
 
 function defaultBrushConfiguration () {
   return {
-    draw: 1,
+    draw: 0,
     radius: 10,
     minRadius: 1,
     maxRadius: 50,
-    brushAlpha: 0.4,
+    brushAlpha: 0.0,
     hoverColor: toolColors.getToolColor(),
     dragColor: toolColors.getActiveColor(),
     keyBinds: {
       increaseBrushSize: '+',
-      decreaseBrushSize: '-',
-      nextSegmentation: '[',
-      previousSegmentation: ']'
+      decreaseBrushSize: '-'
     }
   };
 }
