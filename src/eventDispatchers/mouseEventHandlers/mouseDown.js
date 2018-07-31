@@ -11,13 +11,14 @@ import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
-// Note: if we find a match, we need to record that we're holding down on a tool
-// So we don't fire the mouse_move event listener
-// On pick-up, we need to "release", so we can re-enable the mouse_move listener
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
  * finds an existing tool to interact with, it can prevent the
  * event from bubbling to MouseDownActivate.
+ *
+ * TODO: Set that a tool is active to prevent multiple event fires
+ * TODO: Handles should trigger image update when released
+ * TODO: Handles should handle delting out of bound data by setting
  *
  * @param {*} evt
  * @returns
@@ -29,23 +30,106 @@ export default function (evt) {
 
   let tools;
   const eventData = evt.detail;
-  const element = eventData.element;
-  const coords = eventData.currentPoints.canvas;
-  const distance = 6;
+  const element = evt.detail.element;
+  const coords = evt.detail.currentPoints.canvas;
 
-  // TODO: instead of filtering these for every interaction, we can change our
-  // State's structure to always know these values.
-  // Filter out disabled and enabled
+  // High level filtering
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
-  // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
-  tools = getToolsWithDataForElement(element, tools);
 
-  // Find tools with handles we can move
-  const toolsWithMoveableHandles = tools.filter((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
+  // Check if any tool has a special reason to grab the current event
+  const specialTools = tools.filter(
+    (tool) =>
+      typeof tool.mouseDownCallback === 'function' &&
+      typeof tool.isValidTarget === 'function' &&
+      tool.mode === 'active' &&
+      tool.isValidTarget(evt)
+  );
+
+  if (specialTools.length > 0) {
+    // TODO: If lenth > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    const firstSpecialTool = specialTools[0];
+
+    firstSpecialTool.mouseDownCallback(evt);
+
+    return;
+  }
+
+  // Annotation tool specific
+  const annotationTools = getToolsWithDataForElement(element, tools);
+  const annotationToolsWithMoveableHandles = getToolsWithMovableHandles(
+    element,
+    annotationTools,
+    coords
+  );
+
+  // HANDLES
+  if (annotationToolsWithMoveableHandles.length > 0) {
+    const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
+    const toolState = getToolState(element, firstToolWithMoveableHandles.name);
+
+    const hasCustomMouseDownCallback =
+      firstToolWithMoveableHandles.mouseDownCallback === 'function';
+
+    const throwAway = hasCustomMouseDownCallback
+      ? firstToolWithMoveableHandles.mouseDownCallback(evt)
+      : findAndMoveHandleNearImagePoint(
+        element,
+        evt,
+        toolState,
+        firstToolWithMoveableHandles.name,
+        coords
+      );
+
+    return;
+  }
+
+  // POINT NEAR
+  const annotationToolsWithPointNearClick = tools.filter((tool) => {
+    const toolState = getToolState(element, tool.name);
+
+    if (!toolState) {
+      return false;
+    }
+
+    for (let i = 0; i < toolState.data.length; i++) {
+      const data = toolState.data[i];
+
+      if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+  if (annotationToolsWithPointNearClick.length > 0) {
+    const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];
+    const toolState = getToolState(element, firstToolWithPointNearClick.name);
+
+    const hasCustomMouseDownCallback =
+      firstToolWithPointNearClick.mouseDownCallback === 'function';
+
+    const throwAway = hasCustomMouseDownCallback
+      ? firstToolWithPointNearClick.mouseDownCallback(evt)
+      : findAndMoveAnnotationNearClick(
+        element,
+        evt,
+        toolState,
+        firstToolWithPointNearClick,
+        coords
+      );
+
+    return;
+  }
+}
+
+const getToolsWithMovableHandles = function (element, tools, coords) {
+  return tools.filter((tool) => {
+    const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
       if (
@@ -53,7 +137,7 @@ export default function (evt) {
           element,
           toolState.data[i].handles,
           coords,
-          distance
+          state.clickProximity
         ) !== undefined
       ) {
         return true;
@@ -62,89 +146,77 @@ export default function (evt) {
 
     return false;
   });
-  // TODO: More than one? Which one was moved most recently?
-  // We'll just grab the first one we encounter for now
+};
 
-  if (toolsWithMoveableHandles.length > 0) {
-    const toolState = getToolState(
-      eventData.element,
-      toolsWithMoveableHandles[0].name
+const findAndMoveHandleNearImagePoint = function (
+  element,
+  evt,
+  toolState,
+  toolName,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const handle = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      state.clickProximity
     );
 
-    for (let i = 0; i < toolState.data.length; i++) {
-      const data = toolState.data[i];
-      const distance = 6;
-      const handle = getHandleNearImagePoint(
-        element,
-        data.handles,
-        coords,
-        distance
+    if (handle) {
+      // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
+      data.active = true;
+      moveHandle(
+        evt.detail,
+        toolName,
+        data,
+        handle,
+        () => {
+          data.active = false;
+        },
+        true // PreventHandleOutsideImage
       );
 
-      if (handle) {
-        // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
-        data.active = true;
-        moveHandle(
-          eventData,
-          toolsWithMoveableHandles[0].name,
-          data,
-          handle,
-          () => {}, // HandleDoneMove,
-          true // PreventHandleOutsideImage
-        );
-        evt.stopImmediatePropagation();
-        evt.stopPropagation();
-        evt.preventDefault();
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
 
-        return;
-      }
+      return;
     }
   }
+};
 
-  // None? Next.
+const findAndMoveAnnotationNearClick = function (
+  element,
+  evt,
+  toolState,
+  tool,
+  coords
+) {
+  const opt = tool.options || {
+    deleteIfHandleOutsideImage: true,
+    preventHandleOutsideImage: false
+  };
 
-  // First tool with a point near us
-  // See if there is a tool we can move
-  tools = tools.find((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
-    const opt = tool.options || {
-      deleteIfHandleOutsideImage: true,
-      preventHandleOutsideImage: false
-    };
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const isNearPoint = tool.pointNearTool(element, data, coords);
 
-    for (let i = 0; i < toolState.data.length; i++) {
-      const data = toolState.data[i];
+    if (isNearPoint) {
+      data.active = true;
+      // TODO: Ignore MOUSE_MOVE for a bit
+      // TODO: Why do this and `moveHandle` expose this in different
+      // TODO: ways? PreventHandleOutsideImage
+      moveAllHandles(evt, toolState.data[i], toolState, tool.name, opt, () => {
+        data.active = false;
+      });
 
-      data.active = false;
-      if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
-        data.active = true;
-        // Todo: ignore MOUSE_MOVE for a bit
-        moveAllHandles(
-          evt,
-          data,
-          toolState,
-          tool.name,
-          opt,
-          () => {} /* HandleDoneMove */
-        );
+      evt.stopImmediatePropagation();
+      evt.stopPropagation();
+      evt.preventDefault();
 
-        evt.stopImmediatePropagation();
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        return;
-      }
+      return;
     }
-  });
-
-  // Function handleDoneMove () {
-  //   Data.invalidated = true;
-  //   If (anyHandlesOutsideImage(eventData, data.handles)) {
-  // 	// Delete the measurement
-  // 	RemoveToolState(element, toolType, data);
-  //   }
-
-  //   External.cornerstone.updateImage(element);
-  //   Element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-  // }
-}
+  }
+};

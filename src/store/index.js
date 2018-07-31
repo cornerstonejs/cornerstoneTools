@@ -1,6 +1,7 @@
 export const state = {
   isToolLocked: false,
-  tools: []
+  tools: [],
+  clickProximity: 6
 };
 
 export const getters = {
