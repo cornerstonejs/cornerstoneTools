@@ -2,7 +2,6 @@
 /* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseTool from './../base/baseTool.js';
-import { KEY_CODES } from '../fancy-tools/shared/keyCodes.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
 // Utils
@@ -138,7 +137,12 @@ export default class extends baseTool {
 
     return imageNeedsUpdate;
   }
-
+  /**
+  * Used to check if there is a valid target for the tool.
+  *
+  * @param {*} evt
+  * @returns {Boolean} - True if the target is manipulatable by the tool.
+  */
   isValidTarget (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
@@ -150,6 +154,12 @@ export default class extends baseTool {
     return false;
   }
 
+  /**
+  * Event handler for KEY_DOWN event.
+  *
+  * @event
+  * @param {Object} evt - The event.
+  */
   onKeyDown (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
@@ -159,54 +169,66 @@ export default class extends baseTool {
       return;
     }
 
-    let imageNeedsUpdate = false;
+    console.log(this._keyboardController);
 
-    if (KEY_CODES[keyCode] === '+') {
-      this._increaseBrushSize();
-      imageNeedsUpdate = true;
-    } else if (KEY_CODES[keyCode] === '-') {
-      this._decreaseBrushSize();
-      imageNeedsUpdate = true;
-    } else if (KEY_CODES[keyCode] === ']') {
-      this._nextSegmentation();
-      imageNeedsUpdate = true;
-    } else if (KEY_CODES[keyCode] === '[') {
-      this._previousSegmentation();
-      imageNeedsUpdate = true;
+    if (!this._keyboardController) {
+      return;
     }
 
+    const imageNeedsUpdate = this._keyboardController.keyPress(keyCode);
+
+    console.log(imageNeedsUpdate);
+
     if (imageNeedsUpdate) {
-      external.cornerstone.updateImage(eventData.element);
+      external.cornerstone.updateImage(element);
     }
   }
 
-  _nextSegmentation () {
+  /**
+  * Switches to the next segmentation color.
+  *
+  * @virtual
+  */
+  nextSegmentation () {
+    console.log('_nextSegmentation');
     const configuration = this.configuration;
     const numberOfColors = this._getNumberOfColors();
 
     let drawId = configuration.draw + 1;
 
     if (drawId === numberOfColors) {
-      drawId = 0;
+      drawId = 1;
     }
 
     this._changeDrawColor(drawId);
   }
 
-  _previousSegmentation () {
+  /**
+  * Switches to the previous segmentation color.
+  *
+  * @virtual
+  */
+  previousSegmentation () {
+    console.log('_previousSegmentation');
     const configuration = this.configuration;
     const numberOfColors = this._getNumberOfColors();
 
     let drawId = configuration.draw - 1;
 
-    if (drawId < 0) {
+    if (drawId < 1) {
       drawId = numberOfColors - 1;
     }
 
     this._changeDrawColor(drawId);
   }
 
-  _increaseBrushSize () {
+  /**
+  * Increases the brush size
+  *
+  * @virtual
+  */
+  increaseBrushSize () {
+    console.log('_increaseBrushSize');
     const configuration = this.configuration;
 
     const oldRadius = configuration.radius;
@@ -225,7 +247,13 @@ export default class extends baseTool {
     configuration.radius = newRadius;
   }
 
-  _decreaseBrushSize () {
+  /**
+  * Decreases the brush size
+  *
+  * @virtual
+  */
+  decreaseBrushSize () {
+    console.log('_decreaseBrushSize');
     const configuration = this.configuration;
 
     const oldRadius = configuration.radius;

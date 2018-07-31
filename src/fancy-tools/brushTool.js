@@ -5,6 +5,9 @@ import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
+import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
+import { KeyInterface } from '../fancy-tools/shared/KeyboardController.js';
+import { generateKeyInterface } from '../fancy-tools/shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
 
@@ -15,6 +18,12 @@ export default class extends baseBrushTool {
       supportedInteractionTypes: ['mouse'],
       configuration: defaultBrushConfiguration()
     });
+
+    const keyBinds = this.configuration.keyBinds;
+    //const keyInterface = generateKeyInterface.call(this, keyBinds);
+    const keyInterface = new KeyInterface(this, keyBinds);
+
+    this._keyboardController = new KeyboardController(keyInterface.interface);
   }
 
   /**
@@ -169,6 +178,12 @@ function defaultBrushConfiguration () {
     maxRadius: 50,
     brushAlpha: 0.4,
     hoverColor: toolColors.getToolColor(),
-    dragColor: toolColors.getActiveColor()
+    dragColor: toolColors.getActiveColor(),
+    keyBinds: {
+      increaseBrushSize: '+',
+      decreaseBrushSize: '-',
+      nextSegmentation: '[',
+      previousSegmentation: ']'
+    }
   };
 }
