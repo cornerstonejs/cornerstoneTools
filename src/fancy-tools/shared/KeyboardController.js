@@ -1,34 +1,9 @@
 import { getKey } from './keyCodes.js';
 
-
-/**
- * Should be called by the class requesting the interface.
- * E.g. generateKeyInterface.call(this, keybinds).
- *
- * @param  {type} keyBinds the map of keybinds
- * @return {Object} keyboardInterface
- */
-export function generateKeyInterface(keyBinds) {
-  const keyboardInterface = {};
-  Object.keys(keyBinds).forEach(key => {
-    keyboardInterface[keyBinds[key]] = this[key].bind(this);
-  });
-
-  return keyboardInterface;
-}
-
-export class KeyInterface {
-  constructor (tool, keyBinds) {
-    this.interface = {};
-
-    Object.keys(keyBinds).forEach(key => {
-      this.interface[keyBinds[key]] = tool[key].bind(tool);
-    });
-  }
-}
-
 export default class {
-  constructor(keyInterface) {
+  constructor(tool, keyBinds) {
+    const keyInterface = this._generateKeyInterface(tool, keyBinds);
+
     Object.keys(keyInterface).forEach(key => {
       if (!(typeof keyInterface[key] === 'function')) {
         throw new Error(`Element ${key} of the keyInterface is not a function`);
@@ -59,5 +34,15 @@ export default class {
     });
 
     return imageNeedsUpdate;
+  }
+
+  _generateKeyInterface (tool, keyBinds) {
+    const keyInterface = {};
+
+    Object.keys(keyBinds).forEach(key => {
+      keyInterface[keyBinds[key]] = tool[key].bind(tool);
+    });
+
+    return keyInterface;
   }
 }

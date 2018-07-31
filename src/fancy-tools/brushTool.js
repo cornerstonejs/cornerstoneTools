@@ -5,8 +5,7 @@ import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
-import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
-import { KeyInterface } from '../fancy-tools/shared/KeyboardController.js';
+import KeyboardController from './shared/KeyboardController.js';
 import { generateKeyInterface } from '../fancy-tools/shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
@@ -20,10 +19,8 @@ export default class extends baseBrushTool {
     });
 
     const keyBinds = this.configuration.keyBinds;
-    //const keyInterface = generateKeyInterface.call(this, keyBinds);
-    const keyInterface = new KeyInterface(this, keyBinds);
 
-    this._keyboardController = new KeyboardController(keyInterface.interface);
+    this._keyboardController = new KeyboardController(this, keyBinds);
   }
 
   /**

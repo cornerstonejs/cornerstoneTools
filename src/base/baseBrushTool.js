@@ -5,6 +5,7 @@ import baseTool from './../base/baseTool.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
 // Utils
+import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
 import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
 import { initialiseBrushColormap } from '../stateManagement/brushToolColors.js';
@@ -165,19 +166,11 @@ export default class extends baseTool {
     const element = eventData.element;
     const keyCode = eventData.keyCode;
 
-    if (!isToolActive(element, this.name)) {
-      return;
-    }
-
-    console.log(this._keyboardController);
-
-    if (!this._keyboardController) {
+    if (!isToolActive(element, this.name) || !this._keyboardController) {
       return;
     }
 
     const imageNeedsUpdate = this._keyboardController.keyPress(keyCode);
-
-    console.log(imageNeedsUpdate);
 
     if (imageNeedsUpdate) {
       external.cornerstone.updateImage(element);
@@ -190,7 +183,6 @@ export default class extends baseTool {
   * @virtual
   */
   nextSegmentation () {
-    console.log('_nextSegmentation');
     const configuration = this.configuration;
     const numberOfColors = this._getNumberOfColors();
 
@@ -209,7 +201,6 @@ export default class extends baseTool {
   * @virtual
   */
   previousSegmentation () {
-    console.log('_previousSegmentation');
     const configuration = this.configuration;
     const numberOfColors = this._getNumberOfColors();
 
@@ -228,7 +219,6 @@ export default class extends baseTool {
   * @virtual
   */
   increaseBrushSize () {
-    console.log('_increaseBrushSize');
     const configuration = this.configuration;
 
     const oldRadius = configuration.radius;
@@ -253,7 +243,6 @@ export default class extends baseTool {
   * @virtual
   */
   decreaseBrushSize () {
-    console.log('_decreaseBrushSize');
     const configuration = this.configuration;
 
     const oldRadius = configuration.radius;
@@ -374,5 +363,12 @@ export default class extends baseTool {
     const colormap = external.cornerstone.colors.getColormap(configuration.colormapId);
 
     return colormap.getNumberOfColors();
+  }
+
+  set keyBinds (keyBinds) {
+    const configuration = this.configuration;
+    configuration.keyBinds = keyBinds;
+
+    this._keyboardController = new KeyboardController(this, keyBinds);
   }
 }
