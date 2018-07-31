@@ -57,6 +57,12 @@ export default function (evt) {
         data.active = !data.active;
         imageNeedsUpdate = true;
       }
+
+      // TODO: We may want to do _only_ this, and provide a default implementation
+      // TODO: On each tool?
+      if (typeof tool.mouseMoveCallback === 'function') {
+        tool.mouseMoveCallback(evt);
+      }
     }
   }
 
