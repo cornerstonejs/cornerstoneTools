@@ -99,14 +99,8 @@ export default class extends baseTool {
     const element = eventData.element;
 
     this.handles = {
-      start: {
-        x: eventData.startPoints.image.x,
-        y: eventData.startPoints.image.y
-      },
-      end: {
-        x: eventData.currentPoints.image.x,
-        y: eventData.currentPoints.image.y
-      }
+      start: eventData.startPoints.image,
+      end: eventData.currentPoints.image
     };
 
     cornerstone.updateImage(element);
