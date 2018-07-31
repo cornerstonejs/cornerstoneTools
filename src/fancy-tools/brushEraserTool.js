@@ -9,6 +9,7 @@ import KeyboardController from './shared/KeyboardController.js';
 import isToolActive from './shared/isToolActive.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
+import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
 
 export default class extends baseBrushTool {
   constructor (name) {

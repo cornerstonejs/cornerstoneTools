@@ -9,6 +9,7 @@ import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import KeyboardController from './shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
+import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
 
 const cornerstone = external.cornerstone;
 
@@ -157,7 +158,7 @@ export default class extends baseBrushTool {
       return;
     }
 
-    const colormapId = this._colormapId;
+    const colormapId = COLOR_MAP_ID;
     const colormap = cornerstone.colors.getColormap(colormapId);
     const colorLut = colormap.createLookupTable();
 

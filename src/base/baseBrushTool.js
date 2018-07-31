@@ -35,7 +35,6 @@ export default class extends baseTool {
     this._referencedToolData = 'brush';
     this._dragging = false;
     this._newImage = false;
-    this._colormapId = COLOR_MAP_ID;
   }
 
   /**
@@ -267,7 +266,7 @@ export default class extends baseTool {
 
   _changeDrawColor (drawId) {
     const configuration = this._configuration;
-    const colormap = external.cornerstone.colors.getColormap(this._colormapId);
+    const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
 
     configuration.draw = drawId;
     const colorArray = colormap.getColor(configuration.draw);
@@ -278,7 +277,7 @@ export default class extends baseTool {
 
   _getNumberOfColors () {
     const configuration = this.configuration;
-    const colormap = external.cornerstone.colors.getColormap(this._colormapId);
+    const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
 
     return colormap.getNumberOfColors();
   }
