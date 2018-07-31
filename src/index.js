@@ -1,28 +1,17 @@
 import * as drawing from './util/drawing.js';
 
-// TEST
-export { default as store } from './store/index.js';
-export { default as addTool } from './store/addTool.js';
-export {
-  setToolActive,
-  setToolEnabled,
-  setToolDisabled,
-  setToolPassive
-} from './store/setToolMode.js';
-// DISPATCHERS
-export {
-  default as mouseToolEventDispatcher
-} from './eventDispatchers/mouseToolEventDispatcher.js';
-export {
-  default as touchToolEventDispatcher
-} from './eventDispatchers/touchToolEventDispatcher.js';
-// TOOLS
+// V3 EXPORTS
+export { default as init } from './init.js';
+
+// ~~~~~~ TOOLS ~~~~~ //
 export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
 export { default as zoomTool } from './fancy-tools/zoomTool.js';
 export { default as probeTool } from './fancy-tools/probeTool.js';
-export { default as ellipticalRoiTool } from './fancy-tools/ellipticalRoiTool.js';
+export {
+  default as ellipticalRoiTool
+} from './fancy-tools/ellipticalRoiTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
 export {
   default as zoomTouchPinchTool
@@ -30,7 +19,7 @@ export {
 export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
-// END TEST
+// END V3 EXPORTS
 
 export { drawing };
 

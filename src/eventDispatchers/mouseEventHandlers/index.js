@@ -4,7 +4,6 @@ import mouseDownActivate from './mouseDownActivate.js';
 import mouseDrag from './mouseDrag.js';
 import mouseMove from './mouseMove.js';
 import mouseWheel from './mouseWheel.js';
-import onImageRendered from './onImageRendered.js';
 
 const mouseDoubleClick = customCallbackHandler.bind(
   null,
@@ -18,6 +17,5 @@ export {
   mouseDoubleClick,
   mouseDrag,
   mouseMove,
-  mouseWheel,
-  onImageRendered
+  mouseWheel
 };

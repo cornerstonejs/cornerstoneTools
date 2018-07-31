@@ -6,8 +6,7 @@ import {
   mouseDoubleClick,
   mouseDrag,
   mouseMove,
-  mouseWheel,
-  onImageRendered
+  mouseWheel
 } from './mouseEventHandlers/index.js';
 
 jest.mock('./mouseEventHandlers/index.js', () => ({
@@ -16,8 +15,7 @@ jest.mock('./mouseEventHandlers/index.js', () => ({
   mouseDoubleClick: jest.fn(),
   mouseDrag: jest.fn(),
   mouseMove: jest.fn(),
-  mouseWheel: jest.fn(),
-  onImageRendered: jest.fn()
+  mouseWheel: jest.fn()
 }));
 
 describe('mouseToolEventDispatcher.js', () => {
@@ -29,10 +27,10 @@ describe('mouseToolEventDispatcher.js', () => {
     element.removeEventListener = jest.fn();
   });
 
-  test('enable adds 9 event listeners to an element', () => {
+  test('enable adds 6 event listeners to an element', () => {
     mouseToolEventDispatcher.enable(element);
 
-    expect(element.addEventListener).toHaveBeenCalledTimes(7);
+    expect(element.addEventListener).toHaveBeenCalledTimes(6);
   });
 
   test('enable adds event listeners for all tap/touch events', () => {
@@ -45,15 +43,14 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick],
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
-      [EVENTS.MOUSE_WHEEL, mouseWheel],
-      [EVENTS.IMAGE_RENDERED, onImageRendered]
+      [EVENTS.MOUSE_WHEEL, mouseWheel]
     ]);
   });
 
-  test('disable removes 7 event listeners to an element', () => {
+  test('disable removes 6 event listeners to an element', () => {
     mouseToolEventDispatcher.disable(element);
 
-    expect(element.removeEventListener).toHaveBeenCalledTimes(7);
+    expect(element.removeEventListener).toHaveBeenCalledTimes(6);
   });
 
   test('disable removes event listeners for all tap/touch events', () => {
@@ -66,8 +63,7 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick],
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
-      [EVENTS.MOUSE_WHEEL, mouseWheel],
-      [EVENTS.IMAGE_RENDERED, onImageRendered]
+      [EVENTS.MOUSE_WHEEL, mouseWheel]
     ]);
   });
 });

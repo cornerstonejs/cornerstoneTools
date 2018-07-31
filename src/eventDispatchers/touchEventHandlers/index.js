@@ -1,5 +1,4 @@
 import customCallbackHandler from './../shared/customCallbackHandler.js';
-import onImageRendered from './onImageRendered.js';
 import tap from './tap.js';
 import touchStart from './touchStart.js';
 import touchStartActive from './touchStartActive.js';
@@ -31,7 +30,6 @@ const touchPress = customCallbackHandler.bind(
 
 export {
   doubleTap,
-  onImageRendered,
   tap,
   touchDrag,
   touchEnd,

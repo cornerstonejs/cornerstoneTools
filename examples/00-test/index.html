@@ -79,28 +79,23 @@
 <script src="../exampleImageLoader.js"></script>
 
 <script>
+	const cTools = cornerstoneTools.init();
 	const imageId = 'example://1';
 	var element = document.getElementsByClassName('canvas')[0];
 
-	cornerstone.enable(element);
 
-	// Todo: Marry these two?
-	cornerstoneTools.mouseInput.enable(element);
-	cornerstoneTools.mouseToolEventDispatcher.enable(element);
-	//
-	cornerstoneTools.touchInput.enable(element);
-	cornerstoneTools.touchToolEventDispatcher.enable(element);
-	//
-	cornerstoneTools.mouseWheelInput.enable(element);
-	// END NEW
+	// TODO: if we emitted an event when this happened, cornerstone-tools
+	// TODO: could use it to init itself
+	cornerstone.enable(element);
+	cTools.addCanvas(element);
 
 	cornerstone.loadImage(imageId).then(function (image) {
 		cornerstone.displayImage(element, image);
 	});
 
 	function setAllToolsPassive() {
-		cornerstoneTools.store.state.tools.forEach((tool) => {
-			cornerstoneTools.setToolPassive(element, tool.name)
+		cTools.store.state.tools.forEach((tool) => {
+			cTools.setToolPassive(element, tool.name)
 		})
 	}
 
@@ -112,18 +107,18 @@
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 		if (apiTool) {
 			const tool = new apiTool();
-			cornerstoneTools.addTool(element, tool);
+			cTools.addTool(element, tool);
 		}
 
 		// Setup button listener
 		toolBtn.addEventListener('click', (evt) => {
 			setAllToolsPassive();
-			cornerstoneTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+			cTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
 		});
 	});
 
 	// Activate first tool
-	cornerstoneTools.setToolActive(element, cornerstoneTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 </script>
 
 </html>
