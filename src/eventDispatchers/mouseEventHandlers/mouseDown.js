@@ -51,6 +51,8 @@ export default function (evt) {
     const firstActiveTool = activeTools[0];
 
     if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
+      console.log(`${firstActiveTool.name} has activeMouseDownCallback method`);
+
       const shouldPreventPropagation = firstActiveTool.activeMouseDownCallback(evt);
 
       if (shouldPreventPropagation) {
