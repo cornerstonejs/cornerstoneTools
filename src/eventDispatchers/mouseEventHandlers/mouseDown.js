@@ -1,3 +1,4 @@
+import external from './../../externalModules.js';
 // State
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -10,6 +11,8 @@ import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 // Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
+
+const cornerstone = external.cornerstone;
 
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
@@ -39,23 +42,23 @@ export default function (evt) {
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
 
-  // Check if any tool has a special reason to grab the current event
-  const specialTools = tools.filter(
-    (tool) =>
-      typeof tool.mouseDownCallback === 'function' &&
-      typeof tool.isValidTarget === 'function' &&
-      tool.mode === 'active' &&
-      tool.isValidTarget(evt)
-  );
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
 
-  if (specialTools.length > 0) {
-    // TODO: If lenth > 1, you could assess fitness and select the ideal tool
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
-    const firstSpecialTool = specialTools[0];
+    const firstActiveTool = activeTools[0];
 
-    firstSpecialTool.mouseDownCallback(evt);
+    if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
+      const shouldPreventPropagation = firstActiveTool.activeMouseDownCallback(evt);
 
-    return;
+      if (shouldPreventPropagation) {
+        preventPropagation(evt);
+
+        return;
+      }
+    }
   }
 
   // Annotation tool specific
@@ -71,18 +74,28 @@ export default function (evt) {
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
 
-    const hasCustomMouseDownCallback =
-      firstToolWithMoveableHandles.mouseDownCallback === 'function';
-
-    const throwAway = hasCustomMouseDownCallback
-      ? firstToolWithMoveableHandles.mouseDownCallback(evt)
-      : findAndMoveHandleNearImagePoint(
+    if (typeof firstToolWithMoveableHandles.handleSelectedCallback === 'function') {
+      const handle = findHandleNearImagePoint(
         element,
         evt,
         toolState,
         firstToolWithMoveableHandles.name,
         coords
       );
+
+      firstToolWithMoveableHandles.handleSelectedCallback(evt, handle);
+
+      preventPropagation(evt);
+
+    } else {
+      findAndMoveHandleNearImagePoint(
+        element,
+        evt,
+        toolState,
+        firstToolWithMoveableHandles.name,
+        coords
+      );
+    }
 
     return;
   }
@@ -110,18 +123,27 @@ export default function (evt) {
     const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];
     const toolState = getToolState(element, firstToolWithPointNearClick.name);
 
-    const hasCustomMouseDownCallback =
-      firstToolWithPointNearClick.mouseDownCallback === 'function';
-
-    const throwAway = hasCustomMouseDownCallback
-      ? firstToolWithPointNearClick.mouseDownCallback(evt)
-      : findAndMoveAnnotationNearClick(
+    if (typeof firstToolWithPointNearClick.toolSelectedCallback === 'function') {
+      const toolData = findAnnotationNearClick(
         element,
         evt,
         toolState,
         firstToolWithPointNearClick,
         coords
       );
+
+      firstToolWithPointNearClick.toolSelectedCallback(evt, toolData);
+
+      preventPropagation(evt);
+    } else {
+      findAndMoveAnnotationNearClick(
+        element,
+        evt,
+        toolState,
+        firstToolWithPointNearClick,
+        coords
+      );
+    }
 
     return;
   }
@@ -178,11 +200,31 @@ const findAndMoveHandleNearImagePoint = function (
         true // PreventHandleOutsideImage
       );
 
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
+      preventPropagation(evt);
 
       return;
+    }
+  }
+};
+
+const findHandleNearImagePoint = function (
+  element,
+  evt,
+  toolState,
+  toolName,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const handle = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      state.clickProximity
+    );
+
+    if (handle) {
+      return handle;
     }
   }
 };
@@ -212,11 +254,32 @@ const findAndMoveAnnotationNearClick = function (
         data.active = false;
       });
 
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
+      preventPropagation(evt);
 
       return;
     }
   }
 };
+
+const findAnnotationNearClick = function (
+  element,
+  evt,
+  toolState,
+  tool,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const isNearPoint = tool.pointNearTool(element, data, coords);
+
+    if (isNearPoint) {
+      return data;
+    }
+  }
+};
+
+function preventPropagation(evt) {
+  evt.stopImmediatePropagation();
+  evt.stopPropagation();
+  evt.preventDefault();
+}
