@@ -27,9 +27,9 @@ import { clipToBox } from '../util/clip.js';
 
 export default class extends baseAnnotationTool {
 
-  constructor (name) {
+  constructor (name = 'freehandMouse') {
     super({
-      name: name || 'freehandMouse',
+      name,
       supportedInteractionTypes: ['mouse'],
       configuration: defaultFreehandConfiguration()
     });
@@ -54,13 +54,9 @@ export default class extends baseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
-        `required eventData not supplied to tool ${
-          this.name
-        }'s createNewMeasurement`
-      );
-
-      return;
+      throw new Error(`required eventData not supplied to tool ${
+        this.name
+      }'s createNewMeasurement`);
     }
 
     const measurementData = {
@@ -89,16 +85,16 @@ export default class extends baseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     const validParameters =
       data && data.handles;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
-      );
+      throw new Error(`invalid parameters supplied to tool ${
+        this.name
+      }'s pointNearTool`);
     }
 
     if (!validParameters || data.visible === false) {
@@ -107,11 +103,7 @@ export default class extends baseAnnotationTool {
 
     const isPointNearTool = this._pointNearHandle(element, data, coords);
 
-    if (isPointNearTool !== null) {
-      return true;
-    }
-
-    return false;
+    return isPointNearTool !== undefined;
   }
 
   /**
@@ -128,9 +120,7 @@ export default class extends baseAnnotationTool {
     for (let i = 0; i < data.handles.length; i++) {
       const distanceI = external.cornerstoneMath.point.distance(data.handles[i], coords);
 
-      if (distanceI < distance) {
-        distance = distanceI;
-      }
+      distance = Math.min(distance, distanceI)
     }
 
     // If an error caused distance not to be calculated, return -1.
@@ -153,7 +143,7 @@ export default class extends baseAnnotationTool {
     // If we have no toolState for this element, return immediately as there is nothing to do
     const toolState = getToolState(evt.currentTarget, this.name);
 
-    if (toolState === undefined) {
+    if (!toolState) {
       return;
     }
 
@@ -508,10 +498,6 @@ export default class extends baseAnnotationTool {
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
 
-    if (!toolState) {
-      return;
-    }
-
     const config = this.configuration;
     const currentTool = config.currentTool;
 
@@ -529,7 +515,7 @@ export default class extends baseAnnotationTool {
 
       // If there is a handle nearby to snap to
       // (and it's not the actual mouse handle)
-      if (handleNearby !== null && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
+      if (handleNearby !== undefined && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
         config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
         config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
       }
@@ -561,7 +547,7 @@ export default class extends baseAnnotationTool {
       const lastHandlePlaced = config.currentHandle;
 
       this._endDrawing(eventData, lastHandlePlaced);
-    } else if (handleNearby === null) {
+    } else if (handleNearby !== undefined) {
       this._addPoint(eventData);
     }
 
@@ -579,10 +565,6 @@ export default class extends baseAnnotationTool {
   _editMouseDragCallback (evt) {
     const eventData = evt.detail;
     const toolState = getToolState(eventData.element, this.name);
-
-    if (!toolState) {
-      return;
-    }
 
     const config = this.configuration;
     const data = toolState.data[config.currentTool];
@@ -619,11 +601,7 @@ export default class extends baseAnnotationTool {
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
 
-    this._deactivateModifty(element);
-
-    if (toolState === undefined) {
-      return;
-    }
+    this._deactivateModify(element);
 
     this._dropHandle(eventData, toolState);
     this._endDrawing(eventData);
@@ -706,10 +684,6 @@ export default class extends baseAnnotationTool {
   _addPoint (eventData) {
     const toolState = getToolState(eventData.element, this.name);
 
-    if (toolState === undefined) {
-      return;
-    }
-
     // Get the toolState from the last-drawn polygon
     const config = this.configuration;
     const data = toolState.data[config.currentTool];
@@ -748,13 +722,13 @@ export default class extends baseAnnotationTool {
     const config = this.configuration;
     const mousePoint = config.mouseLocation.handles.start;
 
-    for (let i = 0; i < dataHandles.length; i++) {
-      if (external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) < config.spacing) {
-        return;
-      }
+    function handleFurtherThanMinimumSpacing (handle) {
+      return external.cornerstoneMath.point.distance(handle, mousePoint) > config.spacing;
     }
 
-    this._addPoint(eventData);
+    if (dataHandles.every(handleFurtherThanMinimumSpacing)) {
+      this._addPoint(eventData);
+    }
   }
 
   /**
@@ -766,10 +740,6 @@ export default class extends baseAnnotationTool {
   */
   _endDrawing (eventData, handleNearby) {
     const toolState = getToolState(eventData.element, this.name);
-
-    if (!toolState) {
-      return;
-    }
 
     const config = this.configuration;
 
@@ -837,8 +807,6 @@ export default class extends baseAnnotationTool {
         return data.handles.textBox;
       }
     }
-
-    return null;
   }
 
   /**
@@ -861,7 +829,7 @@ export default class extends baseAnnotationTool {
 
     for (let toolIndex = 0; toolIndex < toolState.data.length; toolIndex++) {
       handleNearby = this._pointNearHandle(element, toolState.data[toolIndex], coords);
-      if (handleNearby !== null) {
+      if (handleNearby !== undefined) {
         return {
           handleNearby,
           toolIndex
@@ -1036,7 +1004,7 @@ export default class extends baseAnnotationTool {
   * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
-  _deactivateModifty (element) {
+  _deactivateModify (element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
