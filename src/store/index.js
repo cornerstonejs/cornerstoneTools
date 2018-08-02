@@ -1,6 +1,8 @@
 export const state = {
   isToolLocked: false,
-  tools: []
+  tools: [],
+  clickProximity: 6,
+  mousePositionImage: {}
 };
 
 export const getters = {
@@ -9,7 +11,18 @@ export const getters = {
       tool.supportedInteractionTypes.includes('mouse')
     ),
   touchTools: () =>
-    state.tools.filter((tool) => tool.supportedInteractionTypes.includes('touch'))
+    state.tools.filter((tool) =>
+      tool.supportedInteractionTypes.includes('touch')
+    ),
+  mousePositionImage: () => {
+    return state.mousePositionImage;
+  }
+};
+
+export const setters = {
+  mousePositionImage: (mousePositionImage) => {
+    state.mousePositionImage = mousePositionImage;
+  }
 };
 
 export const mutations = {

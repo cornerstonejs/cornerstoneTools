@@ -1,3 +1,4 @@
+import external from './../../externalModules.js';
 // State
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -11,13 +12,16 @@ import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
-// Note: if we find a match, we need to record that we're holding down on a tool
-// So we don't fire the mouse_move event listener
-// On pick-up, we need to "release", so we can re-enable the mouse_move listener
+const cornerstone = external.cornerstone;
+
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
  * finds an existing tool to interact with, it can prevent the
  * event from bubbling to MouseDownActivate.
+ *
+ * TODO: Set that a tool is active to prevent multiple event fires
+ * TODO: Handles should trigger image update when released
+ * TODO: Handles should handle delting out of bound data by setting
  *
  * @param {*} evt
  * @returns
@@ -29,23 +33,125 @@ export default function (evt) {
 
   let tools;
   const eventData = evt.detail;
-  const element = eventData.element;
-  const coords = eventData.currentPoints.canvas;
-  const distance = 6;
+  const element = evt.detail.element;
+  const coords = evt.detail.currentPoints.canvas;
 
-  // TODO: instead of filtering these for every interaction, we can change our
-  // State's structure to always know these values.
-  // Filter out disabled and enabled
+  // High level filtering
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
-  // Filter out tools that do not match mouseButtonMask
   tools = tools.filter((tool) =>
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
-  tools = getToolsWithDataForElement(element, tools);
 
-  // Find tools with handles we can move
-  const toolsWithMoveableHandles = tools.filter((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
+
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    const firstActiveTool = activeTools[0];
+
+    if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
+      const shouldPreventPropagation = firstActiveTool.activeMouseDownCallback(evt);
+
+      if (shouldPreventPropagation) {
+        preventPropagation(evt);
+
+        return;
+      }
+    }
+  }
+
+  // Annotation tool specific
+  const annotationTools = getToolsWithDataForElement(element, tools);
+  const annotationToolsWithMoveableHandles = getToolsWithMovableHandles(
+    element,
+    annotationTools,
+    coords
+  );
+
+  // HANDLES
+  if (annotationToolsWithMoveableHandles.length > 0) {
+    const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
+    const toolState = getToolState(element, firstToolWithMoveableHandles.name);
+
+    if (typeof firstToolWithMoveableHandles.handleSelectedCallback === 'function') {
+      const handle = findHandleNearImagePoint(
+        element,
+        evt,
+        toolState,
+        firstToolWithMoveableHandles.name,
+        coords
+      );
+
+      firstToolWithMoveableHandles.handleSelectedCallback(evt, handle);
+
+      preventPropagation(evt);
+
+    } else {
+      findAndMoveHandleNearImagePoint(
+        element,
+        evt,
+        toolState,
+        firstToolWithMoveableHandles.name,
+        coords
+      );
+    }
+
+    return;
+  }
+
+  // POINT NEAR
+  const annotationToolsWithPointNearClick = tools.filter((tool) => {
+    const toolState = getToolState(element, tool.name);
+
+    if (!toolState) {
+      return false;
+    }
+
+    for (let i = 0; i < toolState.data.length; i++) {
+      const data = toolState.data[i];
+
+      if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
+        return true;
+      }
+    }
+
+    return false;
+  });
+
+  if (annotationToolsWithPointNearClick.length > 0) {
+    const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];
+    const toolState = getToolState(element, firstToolWithPointNearClick.name);
+
+    if (typeof firstToolWithPointNearClick.toolSelectedCallback === 'function') {
+      const toolData = findAnnotationNearClick(
+        element,
+        evt,
+        toolState,
+        firstToolWithPointNearClick,
+        coords
+      );
+
+      firstToolWithPointNearClick.toolSelectedCallback(evt, toolData);
+
+      preventPropagation(evt);
+    } else {
+      findAndMoveAnnotationNearClick(
+        element,
+        evt,
+        toolState,
+        firstToolWithPointNearClick,
+        coords
+      );
+    }
+
+    return;
+  }
+}
+
+const getToolsWithMovableHandles = function (element, tools, coords) {
+  return tools.filter((tool) => {
+    const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
       if (
@@ -53,7 +159,7 @@ export default function (evt) {
           element,
           toolState.data[i].handles,
           coords,
-          distance
+          state.clickProximity
         ) !== undefined
       ) {
         return true;
@@ -62,89 +168,118 @@ export default function (evt) {
 
     return false;
   });
-  // TODO: More than one? Which one was moved most recently?
-  // We'll just grab the first one we encounter for now
+};
 
-  if (toolsWithMoveableHandles.length > 0) {
-    const toolState = getToolState(
-      eventData.element,
-      toolsWithMoveableHandles[0].name
+const findAndMoveHandleNearImagePoint = function (
+  element,
+  evt,
+  toolState,
+  toolName,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const handle = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      state.clickProximity
     );
 
-    for (let i = 0; i < toolState.data.length; i++) {
-      const data = toolState.data[i];
-      const distance = 6;
-      const handle = getHandleNearImagePoint(
-        element,
-        data.handles,
-        coords,
-        distance
+    if (handle) {
+      // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
+      data.active = true;
+      moveHandle(
+        evt.detail,
+        toolName,
+        data,
+        handle,
+        () => {
+          data.active = false;
+        },
+        true // PreventHandleOutsideImage
       );
 
-      if (handle) {
-        // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
-        data.active = true;
-        moveHandle(
-          eventData,
-          toolsWithMoveableHandles[0].name,
-          data,
-          handle,
-          () => {}, // HandleDoneMove,
-          true // PreventHandleOutsideImage
-        );
-        evt.stopImmediatePropagation();
-        evt.stopPropagation();
-        evt.preventDefault();
+      preventPropagation(evt);
 
-        return;
-      }
+      return;
     }
   }
+};
 
-  // None? Next.
+const findHandleNearImagePoint = function (
+  element,
+  evt,
+  toolState,
+  toolName,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const handle = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      state.clickProximity
+    );
 
-  // First tool with a point near us
-  // See if there is a tool we can move
-  tools = tools.find((tool) => {
-    const toolState = getToolState(eventData.element, tool.name);
-    const opt = tool.options || {
-      deleteIfHandleOutsideImage: true,
-      preventHandleOutsideImage: false
-    };
-
-    for (let i = 0; i < toolState.data.length; i++) {
-      const data = toolState.data[i];
-
-      data.active = false;
-      if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
-        data.active = true;
-        // Todo: ignore MOUSE_MOVE for a bit
-        moveAllHandles(
-          evt,
-          data,
-          toolState,
-          tool.name,
-          opt,
-          () => {} /* HandleDoneMove */
-        );
-
-        evt.stopImmediatePropagation();
-        evt.stopPropagation();
-        evt.preventDefault();
-
-        return;
-      }
+    if (handle) {
+      return handle;
     }
-  });
+  }
+};
 
-  // Function handleDoneMove () {
-  //   Data.invalidated = true;
-  //   If (anyHandlesOutsideImage(eventData, data.handles)) {
-  // 	// Delete the measurement
-  // 	RemoveToolState(element, toolType, data);
-  //   }
+const findAndMoveAnnotationNearClick = function (
+  element,
+  evt,
+  toolState,
+  tool,
+  coords
+) {
+  const opt = tool.options || {
+    deleteIfHandleOutsideImage: true,
+    preventHandleOutsideImage: false
+  };
 
-  //   External.cornerstone.updateImage(element);
-  //   Element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
-  // }
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const isNearPoint = tool.pointNearTool(element, data, coords);
+
+    if (isNearPoint) {
+      data.active = true;
+      // TODO: Ignore MOUSE_MOVE for a bit
+      // TODO: Why do this and `moveHandle` expose this in different
+      // TODO: ways? PreventHandleOutsideImage
+      moveAllHandles(evt, toolState.data[i], toolState, tool.name, opt, () => {
+        data.active = false;
+      });
+
+      preventPropagation(evt);
+
+      return;
+    }
+  }
+};
+
+const findAnnotationNearClick = function (
+  element,
+  evt,
+  toolState,
+  tool,
+  coords
+) {
+  for (let i = 0; i < toolState.data.length; i++) {
+    const data = toolState.data[i];
+    const isNearPoint = tool.pointNearTool(element, data, coords);
+
+    if (isNearPoint) {
+      return data;
+    }
+  }
+};
+
+function preventPropagation(evt) {
+  evt.stopImmediatePropagation();
+  evt.stopPropagation();
+  evt.preventDefault();
 }

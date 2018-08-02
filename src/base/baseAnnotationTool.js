@@ -15,25 +15,37 @@ export default class extends baseTool {
       configuration,
       supportedInteractionTypes
     });
-
-    this.isAnnotationTool = true;
   }
 
+  //===================================================================
+  // Abstract Methods - Must be implemented.
+  //===================================================================
+
+  /**
+   * @abstract Creates a new annotation.
+   *
+   * @param  {type} evt description
+   * @return {type}     description
+   */
   createNewMeasurement (evt) {
-    console.warn(`createNewMeasurement not implemented for ${this.toolName}`);
+    throw new Error(`Method createNewMeasurement not implemented for ${this.toolName}.`);
   }
 
   /**
+   * @abstract
+   *
    * @param {*} element
    * @param {*} data
    * @param {*} coords
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    console.warn(`pointNearTool not implemented for ${this.toolName}`);
+    throw new Error(`Method pointNearTool not implemented for ${this.toolName}.`);
   }
 
   /**
+   * @abstract
+   *
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -42,15 +54,48 @@ export default class extends baseTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    console.warn(`distanceFromPoint not implemented for ${this.toolName}`);
+    throw new Error(`Method distanceFromPoint not implemented for ${this.toolName}.`);
   }
 
   /**
-   * Used to redraw the tool's annotation data per render
+   * @abstract Used to redraw the tool's annotation data per render
    *
    * @param {*} evt
    */
   renderToolData (evt) {
-    console.warn(`onImageRendered not implemented for ${this.toolName}`);
+    throw new Error(`renderToolData not implemented for ${this.toolName}.`);
   }
+
+  //===================================================================
+  // Optional Methods - Used to override default behavior.
+  //===================================================================
+
+  /**
+   * Custom callback for when a handle is selected. If overridden, return true.
+   *
+   * @param  {*} evt
+   * @param  {*} handle The selected handle.
+   * @return {boolean} stopImmediatePropagation - True if function consumed the event.
+   */
+  /*
+  handleSelectedCallback (evt, handle) {
+    // Implementation
+    return stopImmediatePropagation;
+  }
+  */
+
+  /**
+   * Custom callback for when a tool is selected. If overridden, return true.
+   *
+   * @param  {*} evt
+   * @param  {*} tool The selected tool.
+   * @return {boolean} stopImmediatePropagation - True if function consumed the event.
+   */
+  /*
+  toolSelectedCallback (evt, tool) {
+    // Implementation
+    return stopImmediatePropagation;
+  }
+  */
+
 }
