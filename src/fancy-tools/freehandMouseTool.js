@@ -478,7 +478,7 @@ export default class extends baseAnnotationTool {
     config.currentHandle = handleNearby;
     config.currentTool = toolIndex;
 
-    this._activateModify(element);
+    this._activateModifty(element);
 
     // Interupt eventDispatchers
     mutations.SET_IS_TOOL_LOCKED(true);
@@ -547,7 +547,7 @@ export default class extends baseAnnotationTool {
       const lastHandlePlaced = config.currentHandle;
 
       this._endDrawing(eventData, lastHandlePlaced);
-    } else if (handleNearby !== undefined) {
+    } else if (handleNearby === undefined) {
       this._addPoint(eventData);
     }
 
@@ -786,11 +786,11 @@ export default class extends baseAnnotationTool {
     const config = this.configuration;
 
     if (data.handles === undefined) {
-      return null;
+      return;
     }
 
     if (data.visible === false) {
-      return null;
+      return;
     }
 
     for (let i = 0; i < data.handles.length; i++) {
@@ -989,7 +989,7 @@ export default class extends baseAnnotationTool {
   * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
-  _activateModify (element) {
+  _activateModifty (element) {
     element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
