@@ -21,6 +21,7 @@ export {
 } from './fancy-tools/zoomMouseWheelTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
 export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
+export { default as freehandSculpterMouseTool } from './fancy-tools/freehandSculpterMouseTool.js';
 // END V3 EXPORTS
 
 export { drawing };

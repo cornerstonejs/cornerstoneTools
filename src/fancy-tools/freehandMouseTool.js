@@ -120,7 +120,38 @@ export default class extends baseAnnotationTool {
     for (let i = 0; i < data.handles.length; i++) {
       const distanceI = external.cornerstoneMath.point.distance(data.handles[i], coords);
 
-      distance = Math.min(distance, distanceI)
+      distance = Math.min(distance, distanceI);
+    }
+
+    // If an error caused distance not to be calculated, return -1.
+    if (distance === Infinity) {
+      return -1;
+    }
+
+    return distance;
+  }
+
+  /**
+   * @param {*} element
+   * @param {*} data
+   * @param {*} coords
+   * @returns {number} the distance in canvas units from the provided coordinates to the
+   * closest rendered portion of the annotation. -1 if the distance cannot be
+   * calculated.
+   */
+  distanceFromPointCanvas (element, data, coords) {
+    let distance = Infinity;
+
+    const canvasCoords = external.cornerstone.pixelToCanvas(element, coords);
+
+    const dataHandles = data.handles;
+
+    for (let i = 0; i < dataHandles.length; i++) {
+      const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
+
+      const distanceI = external.cornerstoneMath.point.distance(handleCanvas, canvasCoords);
+
+      distance = Math.min(distance, distanceI);
     }
 
     // If an error caused distance not to be calculated, return -1.

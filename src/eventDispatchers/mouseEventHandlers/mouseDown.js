@@ -21,7 +21,7 @@ const cornerstone = external.cornerstone;
  *
  * TODO: Set that a tool is active to prevent multiple event fires
  * TODO: Handles should trigger image update when released
- * TODO: Handles should handle delting out of bound data by setting
+ * TODO: Handles should handle deleting out of bound data by setting
  *
  * @param {*} evt
  * @returns
