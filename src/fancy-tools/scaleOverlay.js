@@ -1,14 +1,9 @@
 import external from './../externalModules.js';
 import baseTool from './../base/baseTool.js';
 // Drawing
-import { getNewContext, draw, path } from '../util/drawing.js';
-
-const cornerstone = external.cornerstone;
-
-const drawLine = (context, startPoint, endPoint) => {
-  context.moveTo(startPoint.x, startPoint.y);
-  context.lineTo(endPoint.x, endPoint.y);
-};
+import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
+import toolStyle from './../stateManagement/toolStyle.js';
+import toolColors from './../stateManagement/toolColors.js';
 
 /**
  * Computes the max bound for scales on the image
@@ -39,31 +34,14 @@ const computeScaleBounds = (canvasSize, horizontalReduction, verticalReduction) 
 };
 
 /**
- * Draw both scales into canvas
  * @param  {} context
  * @param  {} imageAttributes
  */
-const drawScalebars = (context, imageAttributes) => {
-  context.shadowColor = imageAttributes.shadowColor;
-  context.shadowBlur = imageAttributes.shadowBlur;
-  const { color, lineWidth } = imageAttributes;
-
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawVerticalScalebar(context, imageAttributes);
-    drawHorizontalScalebar(context, imageAttributes);
-  });
-};
-
-/**
- * @param  {} context
- * @param  {} imageAttributes
- */
-const drawVerticalScalebarIntervals = (context, imageAttributes) => {
+const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
 
   while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
-
+    const { color, lineWidth } = imageAttributes;
     const startPoint = {
       x: imageAttributes.verticalLine.start.x,
       y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
@@ -75,24 +53,25 @@ const drawVerticalScalebarIntervals = (context, imageAttributes) => {
     };
 
     if (i % 5 === 0) {
-
       endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
     } else {
-
       endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
+    drawLine(context, element, startPoint, endPoint, {
+      color,
+      lineWidth
+    }, 'canvas');
 
     i++;
   }
 };
 
-const drawHorizontalScalebarIntervals = (context, imageAttributes) => {
+const drawHorizontalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
 
   while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
-
+    const { color, lineWidth } = imageAttributes;
     const startPoint = {
       x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
       y: imageAttributes.horizontalLine.start.y
@@ -109,54 +88,20 @@ const drawHorizontalScalebarIntervals = (context, imageAttributes) => {
       endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
     }
 
-    drawLine(context, startPoint, endPoint);
+    drawLine(context, element, startPoint, endPoint, {
+      color,
+      lineWidth
+    }, 'canvas');
 
     i++;
   }
 };
-
-function drawVerticalScalebar (context, imageAttributes) {
-  const startPoint = {
-    x: imageAttributes.verticalLine.start.x,
-    y: imageAttributes.verticalLine.start.y
-  };
-  const endPoint = {
-    x: imageAttributes.verticalLine.end.x,
-    y: imageAttributes.verticalLine.end.y
-  };
-
-  const { color, lineWidth } = imageAttributes;
-
-  path(context, { color,
-    lineWidth }, (context) => {
-    drawLine(context, startPoint, endPoint);
-    drawVerticalScalebarIntervals(context, imageAttributes);
-  });
-}
-
-function drawHorizontalScalebar (context, imageAttributes) {
-  const startPoint = {
-    x: imageAttributes.horizontalLine.start.x,
-    y: imageAttributes.horizontalLine.start.y
-  };
-  const endPoint = {
-    x: imageAttributes.horizontalLine.end.x,
-    y: imageAttributes.horizontalLine.end.y
-  };
-
-  drawLine(context, startPoint, endPoint);
-  drawHorizontalScalebarIntervals(context, imageAttributes);
-}
 
 export default class extends baseTool {
   constructor (name) {
     super({
       name: name || 'scaleOverlay',
       configuration: {
-        color: 'white',
-        lineWidth: 2,
-        shadowColor: 'black',
-        shadowBlur: 4,
         minorTickLength: 12.5,
         majorTickLength: 25
       }
@@ -164,22 +109,30 @@ export default class extends baseTool {
   }
 
   enabledCallback (element) {
-    external.cornerstone.updateImage(element);
+    this.forceImageUpdate(element);
   }
 
   disabledCallback (element) {
-    external.cornerstone.updateImage(element);
+    this.forceImageUpdate(element);
+  }
+
+  forceImageUpdate (element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    if (enabledElement.image) {
+      external.cornerstone.updateImage(element);
+    }
   }
 
   renderToolData (evt) {
     const eventData = evt.detail;
 
     const context = getNewContext(eventData.canvasContext.canvas);
-    const { image, viewport } = eventData;
+    const { image, viewport, element } = eventData;
 
     let rowPixelSpacing = image.rowPixelSpacing;
     let colPixelSpacing = image.columnPixelSpacing;
-    const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
+    const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', image.imageId);
 
     if (imagePlane) {
       rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
@@ -208,6 +161,9 @@ export default class extends baseTool {
       return;
     }
 
+    const color = toolColors.getToolColor();
+    const lineWidth = toolStyle.getToolWidth();
+
     const imageAttributes = Object.assign({}, {
       hscaleBounds,
       vscaleBounds,
@@ -232,11 +188,27 @@ export default class extends baseTool {
           x: hscaleBounds.bottomRight.x,
           y: hscaleBounds.bottomRight.y
         }
-      }
+      },
+      color,
+      lineWidth
     }, this.configuration);
 
     draw(context, (context) => {
-      drawScalebars(context, imageAttributes);
+      setShadow(context, imageAttributes);
+
+      // Draw vertical line
+      drawLine(context, element, imageAttributes.verticalLine.start, imageAttributes.verticalLine.end, {
+        color,
+        lineWidth
+      }, 'canvas');
+      drawVerticalScalebarIntervals(context, element, imageAttributes);
+
+      // Draw horizontal line
+      drawLine(context, element, imageAttributes.horizontalLine.start, imageAttributes.horizontalLine.end, {
+        color,
+        lineWidth
+      }, 'canvas');
+      drawHorizontalScalebarIntervals(context, element, imageAttributes);
     });
   }
 }

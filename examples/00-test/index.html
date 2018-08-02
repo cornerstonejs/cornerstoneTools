@@ -21,6 +21,7 @@
 			height: 512px;
 		}
 
+		.checkbox-label,
 		button {
 			text-transform: uppercase;
 			margin: 0.5em 1em;
@@ -31,10 +32,37 @@
 			cursor: pointer;
 		}
 
+		.checkbox-label:hover,
 		button.is-active,
 		button:hover {
 			border-bottom: 2px solid #4ea;
 		}
+
+		.hide {
+			display: none;
+		}
+
+		.checkbox-label {
+			font: 400 11px system-ui;
+			color: #000;
+		}
+		.label-off {
+			color: #e44;
+		}
+		.label-on {
+			color: #4ea;
+		}
+		.checkbox-label .label-on {
+			display: none;
+		}
+		.checkbox-label.turned-on .label-on {
+			display: inline-block;
+		}
+		.checkbox-label.turned-on .label-off {
+			display: none;
+		}
+
+
 	</style>
 </head>
 
@@ -56,6 +84,13 @@
 			<button data-tool="rectangleRoi">RectangleRoi</button>
 			<button data-tool="rotate">Rotate</button>
 
+			<label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
+				ScaleOverlay
+				<label class="label-on"> ON</label>
+				<label class="label-off"> OFF</label>
+			</label>
+			<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox"/>
+			
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
 	</div>
@@ -95,9 +130,14 @@
 	});
 
 	function setAllToolsPassive() {
+		const exceptionList = [
+			'scaleOverlay'
+		];
 		cTools.store.state.tools.forEach((tool) => {
-			cTools.setToolPassive(element, tool.name)
-		})
+			if (!exceptionList.includes(tool.name)) {
+				cTools.setToolPassive(element, tool.name);
+			}
+		});
 	}
 
 	// Iterate over all tool buttons
@@ -114,12 +154,48 @@
 		// Setup button listener
 		toolBtn.addEventListener('click', (evt) => {
 			setAllToolsPassive();
+			setButtonActive(toolName);
 			cTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+		});
+	});
+
+	// Iterate through swtoch ON/OFF tools
+	const stateTools = document.querySelectorAll('input[type="checkbox"]');
+	Array.from(stateTools).forEach(toolCheckBox => {
+
+		const toolName = toolCheckBox.getAttribute('data-tool');
+		const toolLabel = document.querySelector(`#${toolName}`);
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		if (apiTool) {
+			const tool = new apiTool();
+			cTools.addTool(element, tool);
+		}
+
+		cTools.setToolDisabled(element, toolName);
+
+		toolCheckBox.addEventListener('change', (evt) => {
+			if(evt.currentTarget.checked) {
+				cTools.setToolEnabled(element, toolName);
+			} else {
+				cTools.setToolDisabled(element, toolName);
+			}
+			toolLabel.classList.toggle('turned-on');
 		});
 	});
 
 	// Activate first tool
 	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+
+	const setButtonActive = (toolName) => {
+		Array.from(toolButtons).forEach( toolBtn => {
+			if(toolName === toolBtn.getAttribute('data-tool')) {
+				toolBtn.classList.remove('is-active');
+				toolBtn.classList.add('is-active');	
+			} else {
+				toolBtn.classList.remove('is-active');
+			}
+		});
+	}
 </script>
 
 </html>
