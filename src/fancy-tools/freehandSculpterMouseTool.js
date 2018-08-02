@@ -206,14 +206,27 @@ export default class extends baseTool {
     const coords = getters.mousePositionImage();
 
     const freehandMouseTool = getTool(element, referencedToolName);
-    const distanceCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
+    let radius = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
 
     config.mouseLocation.handles.start.x = coords.x;
     config.mouseLocation.handles.start.y = coords.y;
 
+    if (config.limitRadiusOutsideRegion) {
+      //const largestImageSize = Math.max(eventData.canvasContext.canvas.width, eventData.canvasContext.canvas.height);
+
+      const areaModifier = (eventData.canvasContext.canvas.width/eventData.image.width) * (eventData.canvasContext.canvas.height/eventData.image.height)
+
+
+      const area = data.area * areaModifier;
+      const maxRadius = Math.pow(area/Math.PI, 0.5);
+
+      radius = Math.min(radius, maxRadius);
+    }
+
+
     const options = {
       fill: null,
-      handleRadius: distanceCanvas
+      handleRadius: radius
     };
 
     drawHandles(context, eventData, config.mouseLocation.handles, config.hoverColor, options);
@@ -239,6 +252,7 @@ export default class extends baseTool {
   * @param {Object} eventData - Data object associated with the event.
   */
   _selectFreehandTool (eventData) {
+    const config = this.configuration;
     const element = eventData.element;
     const closestToolIndex = this.constructor._getClosestFreehandToolOnElement(element, eventData);
 
@@ -246,7 +260,9 @@ export default class extends baseTool {
       return;
     }
 
-    this._activateFreehandTool(element, closestToolIndex);
+    config.currentTool = closestToolIndex;
+
+    //this._activateFreehandTool(element, closestToolIndex);
   }
 
   /**
@@ -256,6 +272,7 @@ export default class extends baseTool {
   * @param {Object} element - The parent element of the freehand tool.
   * @param {Number} toolIndex - The ID of the freehand tool.
   */
+
   _activateFreehandTool (element, toolIndex) {
     const toolState = getToolState(element, referencedToolName);
     const data = toolState.data;
@@ -895,7 +912,8 @@ function getDefaultFreehandSculpterConfiguration () {
     currentTool: null,
     dragColor: toolColors.getActiveColor(),
     hoverColor: toolColors.getToolColor(),
-    showCursorOnHover: true
+    showCursorOnHover: true,
+    limitRadiusOutsideRegion: true
   };
 }
 
