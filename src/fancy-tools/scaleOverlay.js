@@ -141,6 +141,10 @@ export default class extends baseTool {
 
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
+      console.warn(
+        `unable to define rowPixelSpacing or colPixelSpacing from data on ${this.name}'s renderToolData`
+      );
+
       return;
     }
 
