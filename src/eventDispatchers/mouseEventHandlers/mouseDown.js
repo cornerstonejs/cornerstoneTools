@@ -168,7 +168,7 @@ const getToolsWithMovableHandles = function (element, tools, coords) {
   });
 };
 
-const findAndMoveHandleNearImagePoint = function (
+export const findAndMoveHandleNearImagePoint = function (
   element,
   evt,
   toolState,
@@ -276,7 +276,7 @@ const findAnnotationNearClick = function (
   }
 };
 
-function preventPropagation(evt) {
+function preventPropagation (evt) {
   evt.stopImmediatePropagation();
   evt.stopPropagation();
   evt.preventDefault();
