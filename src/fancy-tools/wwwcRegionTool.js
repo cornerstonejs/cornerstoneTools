@@ -1,27 +1,30 @@
+/* eslint no-loop-func: 0 */ // --> OFF
+/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseTool from './../base/baseTool.js';
+import EVENTS from './../events.js';
+// Drawing
 import { draw, drawRect, getNewContext } from '../util/drawing.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from './../stateManagement/toolColors.js';
 
-const cornerstone = external.cornerstone;
+const isEmptyObject = (obj) => Object.keys(obj).length === 0 && obj.constructor === Object;
 
 /** Calculates the minimum, maximum, and mean value in the given pixel array */
 const calculateMinMaxMean = (storedPixelLuminanceData, globalMin, globalMax) => {
   const numPixels = storedPixelLuminanceData.length;
-
-  if (numPixels < 2) {
-    return {
-      min: globalMin,
-      max: globalMax,
-      mean: (globalMin + globalMax) / 2
-    };
-  }
-
   let min = globalMax;
   let max = globalMin;
   let sum = 0;
+
+  if (numPixels < 2) {
+    return {
+      min,
+      max,
+      mean: (globalMin + globalMax) / 2
+    };
+  }
 
   for (let index = 0; index < numPixels; index++) {
     const spv = storedPixelLuminanceData[index];
@@ -73,8 +76,7 @@ const applyWWWCRegion = (evt, config) => {
   viewport.voi.windowCenter = minMaxMean.mean;
 
   external.cornerstone.setViewport(element, viewport);
-
-  cornerstone.updateImage(element);
+  external.cornerstone.updateImage(element);
 };
 
 export default class extends baseTool {
@@ -92,45 +94,116 @@ export default class extends baseTool {
       }
     });
 
+    this._mouseUpCallback = this._mouseUpCallback.bind(this);
+    this._mouseMoveCallback = this._mouseMoveCallback.bind(this);
+
+    this._resetHandles();
+  }
+
+  renderToolData (evt) {
+    const eventData = evt.detail;
+    const { element } = eventData;
+    const color = toolColors.getColorIfActive({ active: true });
+    const context = getNewContext(eventData.canvasContext.canvas);
+
+    draw(context, (context) => {
+      drawRect(context, element, this.handles.start, this.handles.end, { color });
+    });
   }
 
   mouseDragCallback (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-
-    this.handles = {
-      start: eventData.startPoints.image,
-      end: eventData.currentPoints.image
-    };
-
-    cornerstone.updateImage(element);
+    this._setHandlesAndUpdate(evt);
   }
-
-  mouseDragEndCallback (evt) {
-    evt.detail.handles = this.handles;
-    this.handles = {};
-    this.applyActiveStrategy(evt);
-  }
-
 
   touchDragCallback (evt) {
     // Prevent CornerstoneToolsTouchStartActive from killing any press events
     evt.stopImmediatePropagation();
-    evt.detail.handles = this.handles;
-    this.handles = {};
-    this.applyActiveStrategy(evt);
+    this._setHandlesAndUpdate(evt);
   }
 
-  renderToolData (evt) {
-    if(this.handles && this.handles.start && this.handles.end) {
-      const eventData = evt.detail;
-      const { element } = eventData;
-      const color = toolColors.getColorIfActive({ active: true });
-      const context = getNewContext(eventData.canvasContext.canvas);
+  activeMouseDownCallback (evt) {
+    const eventData = evt.detail;
 
-      draw(context, (context) => {
-        drawRect(context, element, this.handles.start, this.handles.end, { color });
-      });
+    if (isEmptyObject(this.handles.start)) {
+      this.handles.start = eventData.currentPoints.image;
+      this._activateModify(eventData.element);
+    } else {
+      this.handles.end = eventData.currentPoints.image;
     }
+  }
+
+  /**
+   * Event handler for MOUSE_MOVE during handles selection
+   *
+   * @param  {} evt
+   */
+  _mouseMoveCallback (evt) {
+    this._setHandlesAndUpdate(evt);
+  }
+
+  /**
+   * This function will update the handles and updateImage to force re-draw
+   *
+   * @param  {} evt
+   */
+  _setHandlesAndUpdate (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+
+    this.handles.end = eventData.currentPoints.image;
+
+    external.cornerstone.updateImage(element);
+  }
+
+  /**
+  * Event handler for MOUSE_UP during handle drag event loop.
+  *
+  * @param {Object} evt - The event.
+  */
+  _mouseUpCallback (evt) {
+    if (isEmptyObject(this.handles.start) || isEmptyObject(this.handles.end)) {
+      return;
+    }
+
+    const eventData = evt.detail;
+    const element = eventData.element;
+
+    eventData.handles = this.handles;
+    this.applyActiveStrategy(evt);
+    this._resetHandles();
+    this._deactivateModify(element);
+  }
+
+  _resetHandles () {
+    this.handles = {
+      start: {},
+      end: {}
+    };
+  }
+
+  /**
+  * Adds modify loop event listeners.
+  *
+  * @private
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _activateModify (element) {
+    element.addEventListener(EVENTS.MOUSE_UP, this._mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, this._mouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, this._mouseMoveCallback);
+  }
+
+  /**
+  * Removes modify loop event listeners.
+  *
+  * @private
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _deactivateModify (element) {
+    element.removeEventListener(EVENTS.MOUSE_UP, this._mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this._mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, this._mouseMoveCallback);
   }
 }

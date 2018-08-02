@@ -21,5 +21,12 @@ describe('wwwcRegionTool.js', () => {
 
       expect(instantiatedTool.configuration.minWindowWidth).toBe(10);
     });
+
+    it('sets a default handles with and empty object for each start and end', () => {
+      const instantiatedTool = new WwwcRegionTool();
+
+      expect(instantiatedTool.handles.start).toMatchObject({});
+      expect(instantiatedTool.handles.end).toMatchObject({});
+    });
   });
 });
