@@ -51,11 +51,9 @@ export default function (evt) {
     const firstActiveTool = activeTools[0];
 
     if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
-      const shouldPreventPropagation = firstActiveTool.activeMouseDownCallback(evt);
+      const claimEvent = firstActiveTool.activeMouseDownCallback(evt);
 
-      if (shouldPreventPropagation) {
-        preventPropagation(evt);
-
+      if (claimEvent) {
         return;
       }
     }
