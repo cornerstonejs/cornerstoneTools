@@ -10,17 +10,15 @@ import toolColors from './../stateManagement/toolColors.js';
 import { mutations } from '../store/index.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
+import { findAndMoveHandleNearImagePoint } from '../eventDispatchers/mouseEventHandlers/mouseDown.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
 import numbersWithCommas from './shared/numbersWithCommas.js';
-import dragObject from './shared/freehandUtils/dragObject.js';
-import dropObject from './shared/freehandUtils/dropObject.js';
 import insertOrDelete from './shared/freehandUtils/insertOrDelete.js';
-import freeHandArea from './shared/freehandUtils/freeHandArea.js';
+import freehandArea from './shared/freehandUtils/freehandArea.js';
 import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
-import freeHandIntersect from './shared/freehandUtils/freeHandIntersect.js';
-import { FreehandLineFinder } from './shared/freehandUtils/FreehandLineFinder.js';
+import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
@@ -36,11 +34,12 @@ export default class extends baseAnnotationTool {
       configuration: defaultFreehandConfiguration()
     });
 
-    // Create bound functions for callbacks
-    this.mouseDrawingDownCallback = this.mouseDrawingDownCallback.bind(this);
-    this.mouseMoveCallback = this.mouseMoveCallback.bind(this);
-    this.mouseUpCallback = this.mouseUpCallback.bind(this);
-    this.mouseDragCallback = this.mouseDragCallback.bind(this);
+    // Create bound callback functions for private event loops
+    this._drawingMouseDownCallback = this._drawingMouseDownCallback.bind(this);
+    this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
+
+    this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
+    this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
   }
 
   /**
@@ -108,7 +107,6 @@ export default class extends baseAnnotationTool {
 
     const isPointNearTool = this._pointNearHandle(element, data, coords);
 
-    // JPETTS - if returns index 0, set true (fails first condition as 0 is falsy).
     if (isPointNearTool !== null) {
       return true;
     }
@@ -116,25 +114,7 @@ export default class extends baseAnnotationTool {
     return false;
   }
 
-
-  isValidTarget (evt) {
-    const eventData = evt.detail;
-
-    if (eventData.event.ctrlKey) {
-      const freehandLineFinder = new FreehandLineFinder(eventData);
-      const insertInfo = freehandLineFinder.findLine();
-
-      if (insertInfo) {
-        this._insertInfo = insertInfo;
-
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  /** // TODO //
+  /**
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -143,7 +123,22 @@ export default class extends baseAnnotationTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    throw new Error('Method distanceFromPoint not implemented in subclass.');
+    let distance = Infinity;
+
+    for (let i = 0; i < data.handles.length; i++) {
+      const distanceI = external.cornerstoneMath.point.distance(data.handles[i], coords);
+
+      if (distanceI < distance) {
+        distance = distanceI;
+      }
+    }
+
+    // If an error caused distance not to be calculated, return -1.
+    if (distance === Infinity) {
+      return -1;
+    }
+
+    return distance;
   }
 
   /**
@@ -155,10 +150,10 @@ export default class extends baseAnnotationTool {
   renderToolData (evt) {
     const eventData = evt.detail;
 
-    // If we have no toolData for this element, return immediately as there is nothing to do
-    const toolData = getToolState(evt.currentTarget, this.name);
+    // If we have no toolState for this element, return immediately as there is nothing to do
+    const toolState = getToolState(evt.currentTarget, this.name);
 
-    if (toolData === undefined) {
+    if (toolState === undefined) {
       return;
     }
 
@@ -178,8 +173,8 @@ export default class extends baseAnnotationTool {
 
     const lineWidth = toolStyle.getToolWidth();
 
-    for (let i = 0; i < toolData.data.length; i++) {
-      const data = toolData.data[i];
+    for (let i = 0; i < toolState.data.length; i++) {
+      const data = toolState.data[i];
 
       if (data.visible === false) {
         continue;
@@ -249,7 +244,7 @@ export default class extends baseAnnotationTool {
         // Unnecessary re-calculation of the area, mean, and standard deviation if the
         // Image is re-rendered but the tool has not moved (e.g. during a zoom)
         if (data.invalidated === false) {
-          // If the data is not invalidated, retrieve it from the toolData
+          // If the data is not invalidated, retrieve it from the toolState
           meanStdDev = data.meanStdDev;
           meanStdDevSUV = data.meanStdDevSUV;
           area = data.area;
@@ -318,7 +313,7 @@ export default class extends baseAnnotationTool {
           const rowPixelSpacing = image.rowPixelSpacing || 1;
           const scaling = columnPixelSpacing * rowPixelSpacing;
 
-          area = freeHandArea(data.handles, scaling);
+          area = freehandArea(data.handles, scaling);
 
           // If the area value is sane, store it for later retrieval
           if (!isNaN(area)) {
@@ -426,39 +421,118 @@ export default class extends baseAnnotationTool {
     this._startDrawing(eventData);
     this._addPoint(eventData);
 
-    evt.preventDefault();
-    evt.stopPropagation();
+    preventPropagation(evt);
+  }
+
+  /**
+  * Active mouse down callback that takes priority if the user is attempting
+  * to insert or delete a handle with ctrl + click.
+  *
+  * @param {Object} evt - The event.
+  */
+  activeMouseDownCallback (evt) {
+    const eventData = evt.detail;
+    const nearby = this._pointNearHandleAllTools(eventData);
+
+    if (eventData.event.ctrlKey) {
+      if (nearby !== undefined && nearby.handleNearby.hasBoundingBox) {
+        // Ctrl + clicked textBox, do nothing but still consume event.
+      } else {
+        insertOrDelete.call(this, evt, nearby);
+      }
+
+      preventPropagation(evt);
+
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+  * Custom callback for when a handle is selected.
+  *
+  * @param  {Object} evt
+  * @param  {Object} handle The selected handle.
+  */
+  handleSelectedCallback (evt, handle) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const toolState = getToolState(eventData.element, this.name);
+
+    if (handle.hasBoundingBox) {
+      // Use default move handler.
+      findAndMoveHandleNearImagePoint(
+        element,
+        evt,
+        toolState,
+        this.name,
+        eventData.currentPoints.canvas
+      );
+
+      return;
+    }
+
+    const config = this.configuration;
+
+    const nearby = this._pointNearHandleAllTools(eventData);
+    const handleNearby = nearby.handleNearby;
+    const toolIndex = nearby.toolIndex;
+
+    config.dragOrigin = {
+      x: toolState.data[toolIndex].handles[handleNearby].x,
+      y: toolState.data[toolIndex].handles[handleNearby].y
+    };
+
+    config.modifying = true;
+    config.currentHandle = handleNearby;
+    config.currentTool = toolIndex;
+
+    this._activateModifty(element);
+
+    // Interupt eventDispatchers
+    mutations.SET_IS_TOOL_LOCKED(true);
+
+    preventPropagation(evt);
   }
 
 
   /**
-  * Event handler for MOUSE_MOVE event.
+  * Event handler for MOUSE_MOVE during drawing event loop.
   *
   * @event
   * @param {Object} evt - The event.
   */
-  mouseMoveCallback (evt) {
+  _drawingMouseMoveCallback (evt) {
     const eventData = evt.detail;
-    const toolData = getToolState(eventData.element, this.name);
+    const element = eventData.element;
+    const toolState = getToolState(eventData.element, this.name);
 
-    if (!toolData) {
+    if (!toolState) {
       return;
     }
 
     const config = this.configuration;
     const currentTool = config.currentTool;
 
-    // Tool inactive and passively watching for mouse over
-    if (currentTool < 0) {
-      // TODO -- Is this really needed anymore? Currently just activates if mouse over textBox (I think).
-      const imageNeedsUpdate = this.constructor._mouseHover(eventData, toolData);
+    const data = toolState.data[currentTool];
+    const coords = eventData.currentPoints.canvas;
 
-      if (!imageNeedsUpdate) {
-        return;
+    // Set the mouseLocation handle
+    this._getMouseLocation(eventData);
+    this._checkInvalidHandleLocation(data);
+
+    if (config.activePencilMode) {
+      this._addPointPencilMode(eventData, data.handles);
+    } else { // Polygon Mode
+      const handleNearby = this._pointNearHandle(element, data, coords);
+
+      // If there is a handle nearby to snap to
+      // (and it's not the actual mouse handle)
+      if (handleNearby !== null && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
+        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
+        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
       }
-
-    } else {
-      this._mouseMoveActive(eventData, toolData);
     }
 
     // Force onImageRendered
@@ -466,24 +540,24 @@ export default class extends baseAnnotationTool {
   }
 
   /**
-  * Event handler for MOUSE_DOWN event.
+  * Event handler for MOUSE_DOWN during drawing event loop.
   *
   * @event
   * @param {Object} evt - The event.
   */
-  mouseDrawingDownCallback (evt) {
+  _drawingMouseDownCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
 
     const config = this.configuration;
     const currentTool = config.currentTool;
-    const toolData = getToolState(eventData.element, this.name);
-    const data = toolData.data[currentTool];
+    const toolState = getToolState(eventData.element, this.name);
+    const data = toolState.data[currentTool];
 
     const handleNearby = this._pointNearHandle(element, data, coords);
 
-    if (!freeHandIntersect.end(data.handles) && data.canComplete) {
+    if (!freehandIntersect.end(data.handles) && data.canComplete) {
       const lastHandlePlaced = config.currentHandle;
 
       this._endDrawing(eventData, lastHandlePlaced);
@@ -491,36 +565,44 @@ export default class extends baseAnnotationTool {
       this._addPoint(eventData);
     }
 
-    evt.preventDefault();
-    evt.stopPropagation();
+    preventPropagation(evt);
 
     return;
   }
 
   /**
-  * Event handler for MOUSE_DRAG event.
+  * Event handler for MOUSE_DRAG during handle drag event loop.
   *
   * @event
   * @param {Object} evt - The event.
   */
-  mouseDragCallback (evt) {
+  _editMouseDragCallback (evt) {
     const eventData = evt.detail;
-    const toolData = getToolState(eventData.element, this.name);
+    const toolState = getToolState(eventData.element, this.name);
 
-    if (!toolData) {
+    if (!toolState) {
       return;
     }
 
     const config = this.configuration;
-    const data = toolData.data[config.currentTool];
+    const data = toolState.data[config.currentTool];
     const currentHandle = config.currentHandle;
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
 
-    // Check if the tool is active
-    if (config.currentTool >= 0) {
-      dragObject.call(this, currentHandle, data);
+    data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
+    data.active = true;
+    data.highlight = true;
+    data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+    data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+
+    if (currentHandle !== 0) {
+      const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+      const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+      lastLine.x = config.mouseLocation.handles.start.x;
+      lastLine.y = config.mouseLocation.handles.start.y;
     }
 
     // Update the image
@@ -528,37 +610,64 @@ export default class extends baseAnnotationTool {
   }
 
   /**
-  * Event handler for MOUSE_UP event.
+  * Event handler for MOUSE_UP during handle drag event loop.
   *
   * @param {Object} evt - The event.
   */
-  mouseUpCallback (evt) {
+  _editMouseUpCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
-    const toolData = getToolState(eventData.element, this.name);
+    const toolState = getToolState(eventData.element, this.name);
 
+    this._deactivateModifty(element);
 
-    element.removeEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
-
-    if (toolData === undefined) {
+    if (toolState === undefined) {
       return;
     }
 
-    const dropped = dropObject.call(this, evt, toolData);
-
-    if (dropped === 'handle') {
-      this._endDrawing(eventData);
-    }
+    this._dropHandle(eventData, toolState);
+    this._endDrawing(eventData);
 
     mutations.SET_IS_TOOL_LOCKED(false);
 
-    evt.preventDefault(); // TODO -- Do we still need this here?
-    evt.stopPropagation();
-
-
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  /**
+  * Places a handle of the freehand tool if the new location is valid.
+  * If the new location is invalid the handle snaps back to its previous position.
+  *
+  * @param {Object} eventData - Data object associated with the event.
+  * @param {Object} toolState - The data associated with the freehand tool.
+  * @modifies {toolState}
+  */
+  _dropHandle (eventData, toolState) {
+    const config = this.configuration;
+    const currentTool = config.currentTool;
+
+    const dataHandles = toolState.data[currentTool].handles;
+
+    // Don't allow the line being modified to intersect other lines
+    if (dataHandles.invalidHandlePlacement) {
+      const currentHandle = config.currentHandle;
+      const currentHandleData = dataHandles[currentHandle];
+      let previousHandleData;
+
+      if (currentHandle === 0) {
+        const lastHandleID = dataHandles.length - 1;
+
+        previousHandleData = dataHandles[lastHandleID];
+      } else {
+        previousHandleData = dataHandles[currentHandle - 1];
+      }
+
+      // Snap back to previous position
+      currentHandleData.x = config.dragOrigin.x;
+      currentHandleData.y = config.dragOrigin.y;
+      previousHandleData.lines[0] = currentHandleData;
+
+      dataHandles.invalidHandlePlacement = false;
+    }
   }
 
   /**
@@ -579,15 +688,13 @@ export default class extends baseAnnotationTool {
     this._referencedElement = element;
 
     this._activateDraw(element);
-
-    config.mouseLocation.handles.start.x = eventData.currentPoints.image.x;
-    config.mouseLocation.handles.start.y = eventData.currentPoints.image.y;
+    this._getMouseLocation(eventData);
 
     addToolState(eventData.element, this.name, measurementData);
 
-    const toolData = getToolState(eventData.element, this.name);
+    const toolState = getToolState(eventData.element, this.name);
 
-    config.currentTool = toolData.data.length - 1;
+    config.currentTool = toolState.data.length - 1;
   }
 
   /**
@@ -597,15 +704,15 @@ export default class extends baseAnnotationTool {
   * @param {Object} eventData - data object associated with an event.
   */
   _addPoint (eventData) {
-    const toolData = getToolState(eventData.element, this.name);
+    const toolState = getToolState(eventData.element, this.name);
 
-    if (toolData === undefined) {
+    if (toolState === undefined) {
       return;
     }
 
-    // Get the toolData from the last-drawn polygon
+    // Get the toolState from the last-drawn polygon
     const config = this.configuration;
-    const data = toolData.data[config.currentTool];
+    const data = toolState.data[config.currentTool];
 
     if (data.handles.invalidHandlePlacement) {
       return;
@@ -658,15 +765,15 @@ export default class extends baseAnnotationTool {
   * @param {Object} handleNearby - the handle nearest to the mouse cursor.
   */
   _endDrawing (eventData, handleNearby) {
-    const toolData = getToolState(eventData.element, this.name);
+    const toolState = getToolState(eventData.element, this.name);
 
-    if (!toolData) {
+    if (!toolState) {
       return;
     }
 
     const config = this.configuration;
 
-    const data = toolData.data[config.currentTool];
+    const data = toolState.data[config.currentTool];
 
     data.active = false;
     data.highlight = false;
@@ -744,16 +851,16 @@ export default class extends baseAnnotationTool {
   _pointNearHandleAllTools (eventData) {
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
-    const toolData = getToolState(element, this.name);
+    const toolState = getToolState(element, this.name);
 
-    if (!toolData) {
+    if (!toolState) {
       return;
     }
 
     let handleNearby;
 
-    for (let toolIndex = 0; toolIndex < toolData.data.length; toolIndex++) {
-      handleNearby = this._pointNearHandle(element, toolData.data[toolIndex], coords);
+    for (let toolIndex = 0; toolIndex < toolState.data.length; toolIndex++) {
+      handleNearby = this._pointNearHandle(element, toolState.data[toolIndex], coords);
       if (handleNearby !== null) {
         return {
           handleNearby,
@@ -761,160 +868,6 @@ export default class extends baseAnnotationTool {
         };
       }
     }
-  }
-
-
-  /**
-  * Active mouse down callback that takes priority if the user is attempting
-  * to insert or delete a handle with ctrl + click.
-  *
-  * @param {Object} evt - The event.
-  */
-  activeMouseDownCallback (evt) {
-    const eventData = evt.detail;
-    const nearby = this._pointNearHandleAllTools(eventData);
-
-    if (eventData.event.ctrlKey) {
-
-      if (nearby !== undefined && nearby.handleNearby.hasBoundingBox) {
-        // Ctrl + clicked textBox, do nothing.
-        return true;
-      }
-
-      insertOrDelete.call(this, evt, nearby);
-
-      return true;
-    }
-
-    return false;
-  }
-
-  /**
-  * Event handler called by mouseDownCallback when the tool is currently deactive.
-  *
-  * @private
-  * @param {Object} evt - The event.
-  */
-  /*
-  _mouseDownPassive (evt) {
-    const eventData = evt.detail;
-    const nearby = this._pointNearHandleAllTools(eventData);
-
-    if (eventData.event.ctrlKey) {
-      insertOrDelete.call(this, evt, nearby);
-    } else if (nearby !== undefined) {
-      this._modifyObject(evt, nearby);
-    }
-  }
-  */
-
-  /**
-  * Event handler called by mouseMoveCallback when the tool is currently active.
-  *
-  * @private
-  * @param {Object} eventData - data object associated with an event.
-  * @param {Object} toolData - data object associated with the freehand tool.
-  */
-  _mouseMoveActive (eventData, toolData) {
-    const config = this.configuration;
-    const currentTool = config.currentTool;
-    const element = eventData.element;
-    const data = toolData.data[currentTool];
-    const coords = eventData.currentPoints.canvas;
-
-    // Set the mouseLocation handle
-    this._getMouseLocation(eventData);
-    this._checkInvalidHandleLocation(data);
-
-    if (config.activePencilMode) {
-      this._addPointPencilMode(eventData, data.handles);
-    } else {
-      // No snapping in activePencilMode mode
-      const handleNearby = this._pointNearHandle(element, data, coords);
-
-      // If there is a handle nearby to snap to
-      // (and it's not the actual mouse handle)
-      if (handleNearby !== null && !handleNearby.hasBoundingBox && handleNearby < (data.handles.length - 1)) {
-        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
-        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
-      }
-    }
-  }
-
-  /**
-  * Event handler called by mouseDownPassive which modifies a tool's data.
-  *
-  * @private
-  * @param {Object} evt - The event.
-  * @param {Object} nearby - Object containing information about a nearby handle.
-  */
-  _modifyObject (evt, nearby) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    const toolData = getToolState(eventData.element, this.name);
-    const handleNearby = nearby.handleNearby;
-
-    // Interupt eventDispatchers
-    mutations.SET_IS_TOOL_LOCKED(true);
-
-    if (handleNearby.hasBoundingBox) {
-      this._modifyTextBox(element, nearby);
-    } else if (handleNearby !== undefined) {
-      this._modifyHandle(element, nearby, toolData);
-    }
-
-    evt.preventDefault();
-    evt.stopPropagation();
-  }
-
-  /**
-  * Event handler called by mouseDownPassive which modifies a tool's handle.
-  *
-  * @private
-  * @param {Object} element - The element associated with the event.
-  * @param {Object} nearby - Object containing information about a nearby handle.
-  * @param {Object} toolData - The data associated with the tool.
-  */
-  _modifyHandle (element, nearby, toolData) {
-    const config = this.configuration;
-    const handleNearby = nearby.handleNearby;
-    const toolIndex = nearby.toolIndex;
-
-    config.dragOrigin = {
-      x: toolData.data[toolIndex].handles[handleNearby].x,
-      y: toolData.data[toolIndex].handles[handleNearby].y
-    };
-
-    // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
-    element.addEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
-
-    config.modifying = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
-  }
-
-  /**
-  * Event handler called by mouseDownPassive which modifies a tool's textBox.
-  *
-  * @private
-  * @param {Object} element - The element associated with the event.
-  * @param {Object} nearby - Object containing information about a nearby handle.
-  */
-  _modifyTextBox (element, nearby) {
-    const config = this.configuration;
-    const handleNearby = nearby.handleNearby;
-    const toolIndex = nearby.toolIndex;
-
-    // Begin drag edit - call mouseUpCallback at end of drag or straight away if just a click.
-    element.addEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_CLICK, this.mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
-
-    config.movingTextBox = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
   }
 
   /**
@@ -973,11 +926,11 @@ export default class extends baseAnnotationTool {
 
     const mouseAtOriginHandle = (external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) < config.spacing);
 
-    if (mouseAtOriginHandle && !freeHandIntersect.end(dataHandles)) {
+    if (mouseAtOriginHandle && !freehandIntersect.end(dataHandles)) {
       data.canComplete = true;
       invalidHandlePlacement = false;
     } else {
-      invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+      invalidHandlePlacement = freehandIntersect.newHandle(mousePoint, dataHandles);
     }
 
     return invalidHandlePlacement;
@@ -994,7 +947,7 @@ export default class extends baseAnnotationTool {
     const config = this.configuration;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
-    let invalidHandlePlacement = freeHandIntersect.newHandle(mousePoint, dataHandles);
+    let invalidHandlePlacement = freehandIntersect.newHandle(mousePoint, dataHandles);
 
     if (invalidHandlePlacement === false) {
       invalidHandlePlacement = this._invalidHandlePencilMode(data, mousePoint);
@@ -1034,67 +987,62 @@ export default class extends baseAnnotationTool {
   }
 
   /**
-  * Activates a particular tool when the mouseCursor is near one if it's handles
-  * or it's textBox.
+  * Adds drawing loop event listeners.
   *
   * @private
-  * @static
-  * @param {Object} eventData - The data assoicated with the event.
-  * @param {Object} toolData - The data associated with the tool.
-  */
-  static _mouseHover (eventData, toolData) {
-    // Check if user is mousing over the textBox
-    let imageNeedsUpdate = false;
-
-    for (let i = 0; i < toolData.data.length; i++) {
-      // Get the cursor position in canvas coordinates
-      const data = toolData.data[i];
-      const coords = eventData.currentPoints.canvas;
-
-      if (data.textBox === true) {
-        if (pointInsideBoundingBox(data.handles.textBox, coords)) {
-          data.active = !data.active;
-          data.highlight = !data.highlight;
-          imageNeedsUpdate = true;
-        }
-      }
-    }
-
-    return imageNeedsUpdate;
-  }
-
-  /**
-  * Attaches event listeners to the element such that is is visible, modifiable, and new data can be created.
-  *
-  * @private
-  * @param {Object} element - The viewport element to attach event listeners to.
+  * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
   _activateDraw (element) {
-    this._deactivateDraw(element);
-
-    element.addEventListener(EVENTS.MOUSE_DOWN, this.mouseDrawingDownCallback);
-    element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
 
     external.cornerstone.updateImage(element);
   }
 
   /**
-  * Removes event listeners from the element.
+  * Removes drawing loop event listeners.
   *
   * @private
-  * @param {Object} element - The viewport element to remove event listeners from.
+  * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
   _deactivateDraw (element) {
-    element.removeEventListener(EVENTS.MOUSE_DOWN, this.mouseDrawingDownCallback);
-    element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
-    element.removeEventListener(EVENTS.MOUSE_DRAG, this.mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_UP, this.mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
 
     external.cornerstone.updateImage(element);
   }
 
+  /**
+  * Adds modify loop event listeners.
+  *
+  * @private
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _activateModifty (element) {
+    element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
+
+    external.cornerstone.updateImage(element);
+  }
+
+  /**
+  * Removes modify loop event listeners.
+  *
+  * @private
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _deactivateModifty (element) {
+    element.removeEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
+
+    external.cornerstone.updateImage(element);
+  }
 }
 
 function defaultFreehandConfiguration () {
@@ -1120,8 +1068,13 @@ function defaultFreehandConfiguration () {
     alwaysShowHandles: false,
     invalidColor: 'crimson',
     modifying: false,
-    movingTextBox: false,
     currentHandle: 0,
     currentTool: -1
   };
+}
+
+function preventPropagation (evt) {
+  evt.stopImmediatePropagation();
+  evt.stopPropagation();
+  evt.preventDefault();
 }

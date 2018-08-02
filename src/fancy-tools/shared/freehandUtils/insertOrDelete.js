@@ -29,9 +29,6 @@ export default function (evt, nearby) {
       insertPoint(eventData, insertInfo);
     }
   }
-
-  evt.preventDefault();
-  evt.stopPropagation();
 }
 
 /**

@@ -71,30 +71,26 @@ export default class extends baseTool {
   //===================================================================
 
   /**
-   * Custom callback for when a handle is selected. If overridden, return true.
+   * Custom callback for when a handle is selected.
    *
    * @param  {*} evt
    * @param  {*} handle The selected handle.
-   * @return {boolean} stopImmediatePropagation - True if function consumed the event.
    */
   /*
   handleSelectedCallback (evt, handle) {
     // Implementation
-    return stopImmediatePropagation;
   }
   */
 
   /**
-   * Custom callback for when a tool is selected. If overridden, return true.
+   * Custom callback for when a tool is selected.
    *
    * @param  {*} evt
    * @param  {*} tool The selected tool.
-   * @return {boolean} stopImmediatePropagation - True if function consumed the event.
    */
   /*
   toolSelectedCallback (evt, tool) {
     // Implementation
-    return stopImmediatePropagation;
   }
   */
 

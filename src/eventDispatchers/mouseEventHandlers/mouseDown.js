@@ -51,13 +51,9 @@ export default function (evt) {
     const firstActiveTool = activeTools[0];
 
     if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
-      console.log(`${firstActiveTool.name} has activeMouseDownCallback method`);
+      const claimEvent = firstActiveTool.activeMouseDownCallback(evt);
 
-      const shouldPreventPropagation = firstActiveTool.activeMouseDownCallback(evt);
-
-      if (shouldPreventPropagation) {
-        preventPropagation(evt);
-
+      if (claimEvent) {
         return;
       }
     }
@@ -172,7 +168,7 @@ const getToolsWithMovableHandles = function (element, tools, coords) {
   });
 };
 
-const findAndMoveHandleNearImagePoint = function (
+export const findAndMoveHandleNearImagePoint = function (
   element,
   evt,
   toolState,
@@ -280,7 +276,7 @@ const findAnnotationNearClick = function (
   }
 };
 
-function preventPropagation(evt) {
+function preventPropagation (evt) {
   evt.stopImmediatePropagation();
   evt.stopPropagation();
   evt.preventDefault();
