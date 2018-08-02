@@ -478,7 +478,7 @@ export default class extends baseAnnotationTool {
     config.currentHandle = handleNearby;
     config.currentTool = toolIndex;
 
-    this._activateModifty(element);
+    this._activateModify(element);
 
     // Interupt eventDispatchers
     mutations.SET_IS_TOOL_LOCKED(true);
@@ -989,7 +989,7 @@ export default class extends baseAnnotationTool {
   * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
-  _activateModifty (element) {
+  _activateModify (element) {
     element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
