@@ -10,7 +10,7 @@ module.exports = {
   'plugins': ['import'],
   'parserOptions': {
     'sourceType': 'module',
-    'ecmasVersion': 2017
+    'ecmaVersion': 2017
   },
   'globals': {},
   'rules': {
