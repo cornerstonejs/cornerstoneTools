@@ -10,7 +10,7 @@ import toolColors from './../stateManagement/toolColors.js';
 import { mutations } from '../store/index.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
-import { findAndMoveHandleNearImagePoint } from '../eventDispatchers/mouseEventHandlers/mouseDown.js';
+import { findAndMoveHandleNearImagePoint } from '../eventDispatchers/mouseEventHandlers/annotationToolHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
