@@ -9,7 +9,8 @@ module.exports = {
   'extends': 'eslint:recommended',
   'plugins': ['import'],
   'parserOptions': {
-    'sourceType': 'module'
+    'sourceType': 'module',
+    'ecmasVersion': 2017
   },
   'globals': {},
   'rules': {
