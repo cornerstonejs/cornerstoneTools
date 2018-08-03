@@ -23,6 +23,7 @@ export default class extends baseTool {
     });
 
     this.isBrushTool = true;
+    this.hasCursor = true;
     this._referencedToolData = 'brush';
     this._dragging = false;
     this._newImage = false;
@@ -66,17 +67,6 @@ export default class extends baseTool {
   }
 
   /**
-  * Event handler for MOUSE_MOVE event.
-  *
-  * @abstract
-  * @event
-  * @param {Object} evt - The event.
-  */
-  mouseMoveCallback (evt) {
-    throw new Error(`Method mouseMoveCallback not implemented for ${this.toolName}.`);
-  }
-
-  /**
   * Helper function for rendering the brush.
   *
   * @abstract
@@ -89,6 +79,19 @@ export default class extends baseTool {
   //===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
   //===================================================================
+
+
+  /**
+  * Event handler for MOUSE_MOVE event.
+  *
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  mouseMoveCallback (evt) {
+    const { currentPoints } = evt.detail;
+    this._lastImageCoords = currentPoints.image;
+  }
 
   /**
   * Used to redraw the tool's annotation data per render.

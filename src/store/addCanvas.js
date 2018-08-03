@@ -3,6 +3,7 @@ import mouseInput from './../inputSources/mouseInput.js';
 import mouseToolEventDispatcher from './../eventDispatchers/mouseToolEventDispatcher.js';
 import touchInput from './../inputSources/touchInput.js';
 import touchToolEventDispatcher from './../eventDispatchers/touchToolEventDispatcher.js';
+import keyboardInput from './../inputSources/keyboardInput.js';
 import mouseWheelInput from './../inputSources/mouseWheelInput.js';
 import onImageRendered from './../eventDispatchers/onImageRendered.js';
 
@@ -14,6 +15,7 @@ export default function (canvas) {
   mouseToolEventDispatcher.enable(canvas);
   touchInput.enable(canvas);
   touchToolEventDispatcher.enable(canvas);
+  keyboardInput.enable(canvas);
   mouseWheelInput.enable(canvas);
   canvas.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
 }
