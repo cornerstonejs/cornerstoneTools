@@ -132,7 +132,11 @@ export default class extends baseTool {
 
     mutations.SET_IS_TOOL_LOCKED(false);
 
+    this._getMouseLocation(eventData);
     this._invalidateToolData(eventData);
+
+    config.mouseUpRender = true;
+
     this._deactivateSculpt(element);
 
     // Update the image
@@ -202,7 +206,15 @@ export default class extends baseTool {
 
     const toolState = getToolState(element, referencedToolName);
     const data = toolState.data[config.currentTool];
-    const coords = getters.mousePositionImage();
+
+    let coords;
+
+    if (config.mouseUpRender) {
+      coords = config.mouseLocation.handles.start;
+      config.mouseUpRender = false;
+    } else {
+      coords = getters.mousePositionImage();
+    }
 
     const freehandMouseTool = getTool(element, referencedToolName);
     let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
