@@ -17,7 +17,7 @@ export default class extends baseTool {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      configuration: getDefaultFreehandSculpterConfiguration()
+      configuration: getDefaultFreehandSculpterMouseToolConfiguration()
     });
 
     this.hasCursor = true;
@@ -958,7 +958,12 @@ export default class extends baseTool {
 }
 
 
-function getDefaultFreehandSculpterConfiguration () {
+/**
+ * Returns the default freehandSculpterMouseTool configuration.
+ *
+ * @return {Object} The default configuration object.
+ */
+function getDefaultFreehandSculpterMouseToolConfiguration () {
   return {
     mouseLocation: {
       handles: {
