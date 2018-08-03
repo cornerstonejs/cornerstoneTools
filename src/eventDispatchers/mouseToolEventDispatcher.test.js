@@ -27,10 +27,10 @@ describe('mouseToolEventDispatcher.js', () => {
     element.removeEventListener = jest.fn();
   });
 
-  test('enable adds 6 event listeners to an element', () => {
+  test('enable adds 7 event listeners to an element', () => {
     mouseToolEventDispatcher.enable(element);
 
-    expect(element.addEventListener).toHaveBeenCalledTimes(6);
+    expect(element.addEventListener).toHaveBeenCalledTimes(7);
   });
 
   test('enable adds event listeners for all tap/touch events', () => {
@@ -50,7 +50,7 @@ describe('mouseToolEventDispatcher.js', () => {
   test('disable removes 6 event listeners to an element', () => {
     mouseToolEventDispatcher.disable(element);
 
-    expect(element.removeEventListener).toHaveBeenCalledTimes(6);
+    expect(element.removeEventListener).toHaveBeenCalledTimes(7);
   });
 
   test('disable removes event listeners for all tap/touch events', () => {
