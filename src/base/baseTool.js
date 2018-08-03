@@ -58,20 +58,19 @@ export default class {
   }
 
   //===================================================================
-  // Optional Methods - Used to override default behavior.
+  // Virtual Methods - Have default behavior but may be overriden.
   //===================================================================
 
   /**
    * Callback that takes priority if the tool is active, in case
-   * any special behavior is required.
+   * any special behavior is required. Does nothing by default.
    *
+   * @virtual
    * @param  {type} evt
-   * @return {boolean} stopImmediatePropagation - True if function consumed the event.
+   * @return {boolean} consumedEvent - True if function consumed the event.
    */
-  /*
   activeMouseDownCallback (evt) {
-    // Implementation
-    return stopImmediatePropagation;
+    return false;
   }
-  */
+
 }

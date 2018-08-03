@@ -6,11 +6,9 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import {
   getToolsWithMovableHandles,
-  findAndMoveHandleNearImagePoint,
-  findHandleNearImagePoint,
-  findAndMoveAnnotationNearClick,
+  findHandleDataNearImagePoint,
   findAnnotationNearClick
-} from './annotationToolHelpers.js';
+} from '../../base/baseAnnotationToolHelpers.js';
 // Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
@@ -51,14 +49,12 @@ export default function (evt) {
   if (activeTools.length > 0) {
     // TODO: If length > 1, you could assess fitness and select the ideal tool
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveTool = activeTools[0];
+    const consumedEvent = firstActiveTool.activeMouseDownCallback(evt);
 
-    if (typeof firstActiveTool.activeMouseDownCallback === 'function') {
-      const claimEvent = firstActiveTool.activeMouseDownCallback(evt);
-
-      if (claimEvent) {
-        return;
-      }
+    if (consumedEvent) {
+      return;
     }
   }
 
@@ -75,30 +71,15 @@ export default function (evt) {
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
 
-    if (typeof firstToolWithMoveableHandles.handleSelectedCallback === 'function') {
-      const handle = findHandleNearImagePoint(
-        element,
-        evt,
-        toolState,
-        firstToolWithMoveableHandles.name,
-        coords
-      );
+    const { handle, data } = findHandleDataNearImagePoint(
+      element,
+      evt,
+      toolState,
+      firstToolWithMoveableHandles.name,
+      coords
+    );
 
-      firstToolWithMoveableHandles.handleSelectedCallback(evt, handle);
-
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
-
-    } else {
-      findAndMoveHandleNearImagePoint(
-        element,
-        evt,
-        toolState,
-        firstToolWithMoveableHandles.name,
-        coords
-      );
-    }
+    firstToolWithMoveableHandles.handleSelectedCallback(evt, handle, data);
 
     return;
   }
@@ -126,29 +107,15 @@ export default function (evt) {
     const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];
     const toolState = getToolState(element, firstToolWithPointNearClick.name);
 
-    if (typeof firstToolWithPointNearClick.toolSelectedCallback === 'function') {
-      const toolData = findAnnotationNearClick(
-        element,
-        evt,
-        toolState,
-        firstToolWithPointNearClick,
-        coords
-      );
+    const toolData = findAnnotationNearClick(
+      element,
+      evt,
+      toolState,
+      firstToolWithPointNearClick,
+      coords
+    );
 
-      firstToolWithPointNearClick.toolSelectedCallback(evt, toolData);
-
-      evt.stopImmediatePropagation();
-      evt.stopPropagation();
-      evt.preventDefault();
-    } else {
-      findAndMoveAnnotationNearClick(
-        element,
-        evt,
-        toolState,
-        firstToolWithPointNearClick,
-        coords
-      );
-    }
+    firstToolWithPointNearClick.toolSelectedCallback(evt, toolData, toolState);
 
     return;
   }

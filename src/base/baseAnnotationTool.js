@@ -3,6 +3,11 @@ import baseTool from './baseTool.js';
 import { getToolState } from './../stateManagement/toolState.js';
 import handleActivator from './../manipulators/handleActivator.js';
 
+import {
+  moveHandleNearImagePoint,
+  moveAnnotationNearClick
+} from './baseAnnotationToolHelpers.js';
+
 export default class extends baseTool {
   constructor ({
     name,
@@ -113,32 +118,38 @@ export default class extends baseTool {
     return imageNeedsUpdate;
   }
 
-  //===================================================================
-  // Optional Methods - Used to override default behavior.
-  //===================================================================
-
   /**
    * Custom callback for when a handle is selected.
    *
+   * @virtual
    * @param  {*} evt
    * @param  {*} handle The selected handle.
    */
-  /*
-  handleSelectedCallback (evt, handle) {
-    // Implementation
+  handleSelectedCallback (evt, handle, data) {
+    moveHandleNearImagePoint(
+      evt,
+      handle,
+      data,
+      this.name
+    );
   }
-  */
 
   /**
    * Custom callback for when a tool is selected.
    *
+   * @virtual
    * @param  {*} evt
    * @param  {*} tool The selected tool.
    */
-  /*
-  toolSelectedCallback (evt, tool) {
-    // Implementation
+  toolSelectedCallback (evt, data, toolState) {
+    const tool = this;
+
+    moveAnnotationNearClick(
+      evt,
+      toolState,
+      tool,
+      data
+    )
   }
-  */
 
 }
