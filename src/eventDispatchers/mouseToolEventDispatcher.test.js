@@ -43,7 +43,8 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick],
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
+      [EVENTS.KEY_DOWN, keyDown]
     ]);
   });
 
@@ -63,7 +64,8 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClick],
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
+      [EVENTS.KEY_DOWN, keyDown]
     ]);
   });
 });
