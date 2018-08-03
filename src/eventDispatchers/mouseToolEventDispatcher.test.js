@@ -6,7 +6,8 @@ import {
   mouseDoubleClick,
   mouseDrag,
   mouseMove,
-  mouseWheel
+  mouseWheel,
+  keyDown
 } from './mouseEventHandlers/index.js';
 
 jest.mock('./mouseEventHandlers/index.js', () => ({
