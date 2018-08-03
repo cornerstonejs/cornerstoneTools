@@ -188,7 +188,6 @@ export default class extends baseTool {
     element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
-
   /**
    * Renders the cursor
    *
@@ -206,27 +205,18 @@ export default class extends baseTool {
     const coords = getters.mousePositionImage();
 
     const freehandMouseTool = getTool(element, referencedToolName);
-    let radius = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
+    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
 
     config.mouseLocation.handles.start.x = coords.x;
     config.mouseLocation.handles.start.y = coords.y;
 
     if (config.limitRadiusOutsideRegion) {
-      //const largestImageSize = Math.max(eventData.canvasContext.canvas.width, eventData.canvasContext.canvas.height);
-
-      const areaModifier = (eventData.canvasContext.canvas.width/eventData.image.width) * (eventData.canvasContext.canvas.height/eventData.image.height)
-
-
-      const area = data.area * areaModifier;
-      const maxRadius = Math.pow(area/Math.PI, 0.5);
-
-      radius = Math.min(radius, maxRadius);
+      radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
     }
-
 
     const options = {
       fill: null,
-      handleRadius: radius
+      handleRadius: radiusCanvas
     };
 
     drawHandles(context, eventData, config.mouseLocation.handles, config.hoverColor, options);
@@ -616,30 +606,24 @@ export default class extends baseTool {
     const element = eventData.element;
     const config = this.configuration;
     const toolIndex = config.currentTool;
+    const coords = eventData.currentPoints.image;
 
     const toolState = getToolState(element, referencedToolName);
-    const dataHandles = toolState.data[toolIndex].handles;
+    const data = toolState.data[toolIndex];
 
-    const mousePointImage = eventData.currentPoints.image;
-    const mousePointCanvas = eventData.currentPoints.canvas;
+    const freehandMouseTool = getTool(element, referencedToolName);
 
-    let closestImage = Infinity;
-    let closestCanvas = Infinity;
+    let radiusImage = freehandMouseTool.distanceFromPoint(element, data, coords);
+    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
 
-    for (let i = 0; i < dataHandles.length; i++) {
-      const handleImage = dataHandles[i];
-      const distanceImage = external.cornerstoneMath.point.distance(handleImage, mousePointImage);
-
-      if (distanceImage < closestImage) {
-        closestImage = distanceImage;
-        const handlesCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
-
-        closestCanvas = external.cornerstoneMath.point.distance(handlesCanvas, mousePointCanvas);
-      }
+    // Check if should limit maximum size.
+    if (config.limitRadiusOutsideRegion) {
+      radiusImage = this._limitCursorRadiusImage(eventData, radiusImage);
+      radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
     }
 
-    config.toolSizeImage = closestImage;
-    config.toolSizeCanvas = closestCanvas;
+    config.toolSizeImage = radiusImage;
+    config.toolSizeCanvas = radiusCanvas;
   }
 
   /**
@@ -732,9 +716,9 @@ export default class extends baseTool {
   *
   * @private
   * @static
-  * @param {Object} pair - A pairs of handle indicies.
-  * @param {Number} removedIndexModifier - The number of handles already removed.
-  * @returns {Object} - The corrected pair of handle indicies.
+  * @param {Object} pair A pairs of handle indicies.
+  * @param {Number} removedIndexModifier The number of handles already removed.
+  * @returns {Object} The corrected pair of handle indicies.
   */
   static _getCorrectedPair (pair, removedIndexModifier) {
     const correctedPair = [
@@ -748,6 +732,50 @@ export default class extends baseTool {
     }
 
     return correctedPair;
+  }
+
+  _limitCursorRadiusCanvas(eventData, radiusCanvas) {
+    return this._limitCursorRadius(eventData, radiusCanvas, true);
+  }
+
+  _limitCursorRadiusImage(eventData, radiusImage) {
+    return this._limitCursorRadius(eventData, radiusImage, false);
+  }
+
+
+  /**
+   * Limits the cursor radius so that it its maximum area is the same as the
+   * ROI being sculpted.
+   *
+   * @private
+   * @param  {Object}  eventData    Data object associated with the event.
+   * @param  {Number}  radius       The distance from the mouse to the ROI.
+   * @param  {Boolean} canvasCoords Whether the calculation should be performed
+   *                                In canvas coordinates.
+   * @return {Number}               The limited radius.
+   */
+  _limitCursorRadius(eventData, radius, canvasCoords = false) {
+    const element = eventData.element;
+    const image = eventData.image;
+    const config = this.configuration;
+    const { cornerstone } = external;
+
+    const toolState = getToolState(element, referencedToolName);
+    const data = toolState.data[config.currentTool];
+
+    let areaModifier = 1.0;
+
+    if (canvasCoords) {
+      const topLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
+      const bottomRight = cornerstone.pixelToCanvas(element, {x: image.width, y:image.height});
+      const canvasArea = (bottomRight.x - topLeft.x) * (bottomRight.y - topLeft.y);
+      areaModifier = canvasArea/(image.width * image.height);
+    }
+
+    const area = data.area * areaModifier;
+    const maxRadius = Math.pow(area/Math.PI, 0.5);
+
+    return Math.min(radius, maxRadius);
   }
 
   /**
