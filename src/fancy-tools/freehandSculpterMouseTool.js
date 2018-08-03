@@ -223,7 +223,14 @@ export default class extends baseTool {
     config.mouseLocation.handles.start.y = coords.y;
 
     if (config.limitRadiusOutsideRegion) {
+      const unlimitedRadius = radiusCanvas;
+
       radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
+      // TODO LOGIC FOR DISTANCE
+      if (unlimitedRadius > config.hoverCursorFadeDistance * radiusCanvas) {
+        context.globalAlpha = config.hoverCursorFadeAlpha;
+      }
+
     }
 
     const options = {
@@ -231,7 +238,12 @@ export default class extends baseTool {
       handleRadius: radiusCanvas
     };
 
+
+
     drawHandles(context, eventData, config.mouseLocation.handles, config.hoverColor, options);
+    if (config.limitRadiusOutsideRegion) {
+      context.globalAlpha = 1.0;
+    }
   }
 
   /**
@@ -952,8 +964,20 @@ function getDefaultFreehandSculpterConfiguration () {
     currentTool: null,
     dragColor: toolColors.getActiveColor(),
     hoverColor: toolColors.getToolColor(),
+
+    /* --- Hover options ---
+    showCursorOnHover:        Shows a preview of the sculpting radius on hover.
+    limitRadiusOutsideRegion: Limit max toolsize outside the subject ROI based
+                              on subject ROI area.
+    hoverCursorFadeAlpha:     Alpha to fade to when tool very distant from
+                              subject ROI.
+    hoverCursorFadeDistance:  Distance from ROI in which to fade the hoverCursor
+                              (in units of radii).
+    */
     showCursorOnHover: true,
-    limitRadiusOutsideRegion: true
+    limitRadiusOutsideRegion: true,
+    hoverCursorFadeAlpha: 0.5,
+    hoverCursorFadeDistance: 1.2
   };
 }
 
