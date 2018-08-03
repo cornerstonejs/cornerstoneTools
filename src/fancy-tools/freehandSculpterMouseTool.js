@@ -226,11 +226,11 @@ export default class extends baseTool {
       const unlimitedRadius = radiusCanvas;
 
       radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
-      // TODO LOGIC FOR DISTANCE
+
+      // Fade if distant
       if (unlimitedRadius > config.hoverCursorFadeDistance * radiusCanvas) {
         context.globalAlpha = config.hoverCursorFadeAlpha;
       }
-
     }
 
     const options = {
@@ -238,11 +238,10 @@ export default class extends baseTool {
       handleRadius: radiusCanvas
     };
 
-
-
     drawHandles(context, eventData, config.mouseLocation.handles, config.hoverColor, options);
+
     if (config.limitRadiusOutsideRegion) {
-      context.globalAlpha = 1.0;
+      context.globalAlpha = 1.0; // Reset drawing alpha for other draw calls.
     }
   }
 
@@ -275,8 +274,6 @@ export default class extends baseTool {
     }
 
     config.currentTool = closestToolIndex;
-
-    //this._activateFreehandTool(element, closestToolIndex);
   }
 
   /**
@@ -758,10 +755,30 @@ export default class extends baseTool {
     return correctedPair;
   }
 
+  /**
+   * Limits the cursor radius so that it its maximum area is the same as the
+   * ROI being sculpted (in canvas coordinates).
+   *
+   * @private
+   * @param  {Object}  eventData    Data object associated with the event.
+   * @param  {Number}  radius       The distance from the mouse to the ROI
+   *                                in canvas coordinates.
+   * @return {Number}               The limited radius in canvas coordinates.
+   */
   _limitCursorRadiusCanvas(eventData, radiusCanvas) {
     return this._limitCursorRadius(eventData, radiusCanvas, true);
   }
 
+  /**
+   * Limits the cursor radius so that it its maximum area is the same as the
+   * ROI being sculpted (in image coordinates).
+   *
+   * @private
+   * @param  {Object}  eventData    Data object associated with the event.
+   * @param  {Number}  radius       The distance from the mouse to the ROI
+   *                                in image coordinates.
+   * @return {Number}               The limited radius in image coordinates.
+   */
   _limitCursorRadiusImage(eventData, radiusImage) {
     return this._limitCursorRadius(eventData, radiusImage, false);
   }
