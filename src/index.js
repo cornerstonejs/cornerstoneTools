@@ -22,6 +22,7 @@ export {
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
 export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
 export { default as brushTool } from './fancy-tools/brushTool.js';
+export { default as brushEraserTool } from './fancy-tools/brushEraserTool.js';
 // END V3 EXPORTS
 
 export { drawing };

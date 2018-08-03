@@ -22,7 +22,7 @@ export default function (evt) {
   const { element, currentPoints } = evt.detail;
 
   // Set the mouse position incase any tool needs it.
-  setters.mousePositionImage = currentPoints.image;
+  setters.mousePositionImage(currentPoints.image);
 
   // TODO: instead of filtering these for every interaction, we can change our
   // TODO: State's structure to always know these values.

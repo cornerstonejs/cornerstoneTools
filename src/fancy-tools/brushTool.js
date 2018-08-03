@@ -17,28 +17,28 @@ const cornerstone = external.cornerstone;
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
 
-if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = async function (imageData) {
-    return new Promise((resolve) => {
-      const img = document.createElement('img');
+ if (!('createImageBitmap' in window)) {
+   window.createImageBitmap = async function (imageData) {
+     return new Promise((resolve) => {
+       const img = document.createElement('img');
 
-      img.addEventListener('load', function () {
+       img.addEventListener('load', function () {
 
-        resolve(this);
-      });
+         resolve(this);
+       });
 
-      const conversionCanvas = document.createElement('canvas');
+       const conversionCanvas = document.createElement('canvas');
 
-      conversionCanvas.width = imageData.width;
-      conversionCanvas.height = imageData.height;
+       conversionCanvas.width = imageData.width;
+       conversionCanvas.height = imageData.height;
 
-      const conversionCanvasContext = conversionCanvas.getContext('2d');
+       const conversionCanvasContext = conversionCanvas.getContext('2d');
 
-      conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
-      img.src = conversionCanvas.toDataURL();
-    });
-  };
-}
+       conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
+       img.src = conversionCanvas.toDataURL();
+     });
+   };
+ }
 
 export default class extends baseBrushTool {
   constructor (name = 'brush') {
