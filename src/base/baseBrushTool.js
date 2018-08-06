@@ -353,6 +353,11 @@ export default class extends baseTool {
     return colormap.getNumberOfColors();
   }
 
+  /**
+   * Sets the keybinds for the tool. // TODO: If this will be used in other
+   * tools, maybe it should be stored in a different module and imported?
+   *
+   */
   set keyBinds (keyBinds) {
     const configuration = this.configuration;
 

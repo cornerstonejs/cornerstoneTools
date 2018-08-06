@@ -169,6 +169,7 @@ export default class extends baseBrushTool {
   /**
    * Paints the data to the canvas.
    *
+   * @private
    * @param  {Object} eventData The data object associated with the event.
    */
   _paint (eventData) {
@@ -233,6 +234,7 @@ export default class extends baseBrushTool {
    * Callback for when the tool is activated.
    *
    * @override
+   * @param {Object} element - The element to add/remove event listners.
    */
   activeCallback(element) {
     const config = this.configuration;
@@ -245,6 +247,7 @@ export default class extends baseBrushTool {
   /**
    * Callback for when the tool is deactivated (made passive).
    *
+   * @param {Object} element - The element to add/remove event listners.
    */
   passiveCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
@@ -254,6 +257,7 @@ export default class extends baseBrushTool {
   /**
    * Callback for when the tool is disabled.
    *
+   * @param {Object} element - The element to add/remove event listners.
    */
   disableCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
@@ -262,6 +266,7 @@ export default class extends baseBrushTool {
   /**
    * Callback for when the tool is enabled.
    *
+   * @param {Object} element - The element to add/remove event listners.
    */
   enableCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
