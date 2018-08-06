@@ -2,7 +2,6 @@
 /* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import baseTool from './../base/baseTool.js';
-import EVENTS from './../events.js';
 // Drawing
 import { draw, drawRect, getNewContext } from '../util/drawing.js';
 import clip from '../util/clip.js';
@@ -19,10 +18,17 @@ export default class extends baseTool {
       }
     });
 
-    this._mouseUpCallback = this._mouseUpCallback.bind(this);
-    this._mouseMoveCallback = this._mouseMoveCallback.bind(this);
-
     this._resetHandles();
+    // Touch
+    this.activeTouchStartCallback = this._startOutliningRegion.bind(this);
+    this.touchDragCallback = this._setHandlesAndUpdate.bind(this);
+    this.touchEndCallback = this._applyStrategy.bind(this);
+    // Mouse
+    this.activeMouseDownCallback = this._startOutliningRegion.bind(this);
+    this.mouseClickCallback = this._startOutliningRegion.bind(this);
+    this.mouseDragCallback = this._setHandlesAndUpdate.bind(this);
+    this.mouseMoveCallback = this._setHandlesAndUpdate.bind(this);
+    this.mouseUpCallback = this._applyStrategy.bind(this);
   }
 
   renderToolData (evt) {
@@ -38,34 +44,27 @@ export default class extends baseTool {
     });
   }
 
-  mouseDragCallback (evt) {
-    this._setHandlesAndUpdate(evt);
-  }
-
-  touchDragCallback (evt) {
-    // Prevent CornerstoneToolsTouchStartActive from killing any press events
-    // Evt.stopImmediatePropagation();
-    this._setHandlesAndUpdate(evt);
-  }
-
-  activeMouseDownCallback (evt) {
-    const eventData = evt.detail;
+  /**
+   * Sets the start handle point and claims the eventDispatcher event
+   *
+   * @param {*} evt
+   * @returns {Boolean} True
+   */
+  _startOutliningRegion (evt) {
+    const consumeEvent = true;
+    const element = evt.detail.element;
+    const image = evt.detail.currentPoints.image;
 
     if (isEmptyObject(this.handles.start)) {
-      this.handles.start = eventData.currentPoints.image;
-      this._activateModify(eventData.element);
+      this.handles.start = image;
     } else {
-      this.handles.end = eventData.currentPoints.image;
+      this.handles.end = image;
+      this._applyStrategy(evt);
     }
-  }
 
-  /**
-   * Event handler for MOUSE_MOVE during handles selection
-   *
-   * @param  {} evt
-   */
-  _mouseMoveCallback (evt) {
-    this._setHandlesAndUpdate(evt);
+    external.cornerstone.updateImage(element);
+
+    return consumeEvent;
   }
 
   /**
@@ -74,11 +73,10 @@ export default class extends baseTool {
    * @param  {} evt
    */
   _setHandlesAndUpdate (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
+    const element = evt.detail.element;
+    const image = evt.detail.currentPoints.image;
 
-    this.handles.end = eventData.currentPoints.image;
-
+    this.handles.end = image;
     external.cornerstone.updateImage(element);
   }
 
@@ -87,51 +85,25 @@ export default class extends baseTool {
    *
    * @param {Object} evt - The event.
    */
-  _mouseUpCallback (evt) {
+  _applyStrategy (evt) {
     if (isEmptyObject(this.handles.start) || isEmptyObject(this.handles.end)) {
       return;
     }
 
-    const eventData = evt.detail;
-    const element = eventData.element;
-
-    eventData.handles = this.handles;
+    evt.detail.handles = this.handles;
     applyWWWCRegion(evt, this.configuration);
     this._resetHandles();
-    this._deactivateModify(element);
   }
 
+  /**
+   * Sets the start and end handle points to empty objects
+   *
+   */
   _resetHandles () {
     this.handles = {
       start: {},
       end: {}
     };
-  }
-
-  /**
-   * Adds modify loop event listeners.
-   *
-   * @private
-   * @param {Object} element - The viewport element to add event listeners to.
-   * @modifies {element}
-   */
-  _activateModify (element) {
-    element.addEventListener(EVENTS.MOUSE_UP, this._mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_CLICK, this._mouseUpCallback);
-    element.addEventListener(EVENTS.MOUSE_MOVE, this._mouseMoveCallback);
-  }
-
-  /**
-   * Removes modify loop event listeners.
-   *
-   * @private
-   * @param {Object} element - The viewport element to add event listeners to.
-   * @modifies {element}
-   */
-  _deactivateModify (element) {
-    element.removeEventListener(EVENTS.MOUSE_UP, this._mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, this._mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_MOVE, this._mouseMoveCallback);
   }
 }
 
