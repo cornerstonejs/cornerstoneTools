@@ -25,9 +25,9 @@ export default class extends baseTool {
     });
   }
 
-  //===================================================================
+  // ===================================================================
   // Abstract Methods - Must be implemented.
-  //===================================================================
+  // ===================================================================
 
   /**
    * @abstract Creates a new annotation.
@@ -36,7 +36,9 @@ export default class extends baseTool {
    * @return {type}     description
    */
   createNewMeasurement (evt) {
-    throw new Error(`Method createNewMeasurement not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method createNewMeasurement not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -48,7 +50,9 @@ export default class extends baseTool {
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    throw new Error(`Method pointNearTool not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method pointNearTool not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -62,7 +66,9 @@ export default class extends baseTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    throw new Error(`Method distanceFromPoint not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method distanceFromPoint not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -74,18 +80,17 @@ export default class extends baseTool {
     throw new Error(`renderToolData not implemented for ${this.toolName}.`);
   }
 
-  //===================================================================
+  // ===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
-  //===================================================================
-
+  // ===================================================================
 
   /**
-  * Event handler for MOUSE_MOVE event.
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Event handler for MOUSE_MOVE event.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   mouseMoveCallback (evt) {
     const { element, currentPoints } = evt.detail;
     const coords = currentPoints.canvas;
@@ -112,7 +117,6 @@ export default class extends baseTool {
         data.active = !data.active;
         imageNeedsUpdate = true;
       }
-
     }
 
     return imageNeedsUpdate;
@@ -126,12 +130,7 @@ export default class extends baseTool {
    * @param  {*} handle The selected handle.
    */
   handleSelectedCallback (evt, handle, data) {
-    moveHandleNearImagePoint(
-      evt,
-      handle,
-      data,
-      this.name
-    );
+    moveHandleNearImagePoint(evt, handle, data, this.name);
   }
 
   /**
@@ -144,12 +143,6 @@ export default class extends baseTool {
   toolSelectedCallback (evt, data, toolState) {
     const tool = this;
 
-    moveAnnotationNearClick(
-      evt,
-      toolState,
-      tool,
-      data
-    )
+    moveAnnotationNearClick(evt, toolState, tool, data);
   }
-
 }
