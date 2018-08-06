@@ -52,45 +52,15 @@ export default class extends baseBrushTool {
 
     this._keyboardController = new KeyboardController(this, keyBinds);
 
+    this._newImage = false;
     this._onNewImageCallback = this._onNewImageCallback.bind(this);
   }
 
   /**
-  * Event handler for MOUSE_DRAG event.
-  *
-  * @event
-  * @param {Object} evt - The event.
-  */
-  mouseDragCallback (evt) {
-    const eventData = evt.detail;
-
-    this._paint(eventData);
-    this._dragging = true;
-    this._lastImageCoords = eventData.currentPoints.image;
-  }
-
-  /**
-  * Event handler for MOUSE_DOWN event.
-  *
-  * @event
-  * @param {Object} evt - The event.
-  */
-  activeMouseDownCallback (evt) {
-    const eventData = evt.detail;
-
-    this._paint(eventData);
-    this.configuration.dragging = true;
-    this._lastImageCoords = eventData.currentPoints.image;
-
-    evt.preventDefault();
-    evt.stopPropagation();
-    evt.stopImmediatePropagation()
-  }
-
-  /**
+   * Used to redraw the tool's annotation data per render.
    *
-   *
-   * @param {*} evt
+   * @override
+   * @param {Object} evt - The event.
    * @returns
    */
   renderToolData (evt) {
@@ -172,7 +142,7 @@ export default class extends baseBrushTool {
     const configuration = this._configuration;
     const radius = configuration.radius;
     const context = eventData.canvasContext;
-    const color = this._dragging ? configuration.dragColor : configuration.hoverColor;
+    const color = configuration.drawing ? configuration.dragColor : configuration.hoverColor;
     const element = eventData.element;
 
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -195,6 +165,12 @@ export default class extends baseBrushTool {
     context.stroke();
   }
 
+
+  /**
+   * Paints the data to the canvas.
+   *
+   * @param  {Object} eventData The data object associated with the event.
+   */
   _paint (eventData) {
     const configuration = this.configuration;
     const element = eventData.element;
@@ -253,6 +229,11 @@ export default class extends baseBrushTool {
     external.cornerstone.updateImage(eventData.element);
   }
 
+  /**
+   * Callback for when the tool is activated.
+   *
+   * @override
+   */
   activeCallback(element) {
     const config = this.configuration;
     this._changeDrawColor(config.draw);
@@ -261,17 +242,30 @@ export default class extends baseBrushTool {
     element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
+  /**
+   * Callback for when the tool is deactivated (made passive).
+   *
+   */
   passiveCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
     element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
+  /**
+   * Callback for when the tool is disabled.
+   *
+   */
   disableCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
+  /**
+   * Callback for when the tool is enabled.
+   *
+   */
   enableCallback(element) {
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
+    element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
 }
@@ -285,6 +279,7 @@ function defaultBrushToolConfiguration () {
     brushAlpha: 0.4,
     hoverColor: toolColors.getToolColor(),
     dragColor: toolColors.getActiveColor(),
+    drawing: false,
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',

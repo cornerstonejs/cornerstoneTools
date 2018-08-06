@@ -1,4 +1,5 @@
 import external from './../externalModules.js';
+import EVENTS from './../events.js';
 import baseTool from './../base/baseTool.js';
 // Utils
 import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
@@ -25,46 +26,13 @@ export default class extends baseTool {
     this.isBrushTool = true;
     this.hasCursor = true;
     this._referencedToolData = 'brush';
-    this._dragging = false;
-    this._newImage = false;
+
+    this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
   }
 
   //===================================================================
   // Abstract Methods - Must be implemented.
   //===================================================================
-
-  /**
-  * Event handler for NEW_IMAGE event.
-  *
-  * @abstract
-  * @event
-  * @param {Object} evt - The event.
-  */
-  onNewImageCallback (evt) {
-    throw new Error(`Method onNewImageCallback not implemented for ${this.toolName}.`);
-  }
-
-  /**
-  * Event handler for MOUSE_DRAG event.
-  *
-  * @abstract
-  * @event
-  * @param {Object} evt - The event.
-  */
-  mouseDragCallback (evt) {
-    throw new Error(`Method mouseDragCallback not implemented for ${this.toolName}.`);
-  }
-
-  /**
-  * Event handler for MOUSE_DRAG event.
-  *
-  * @abstract
-  * @event
-  * @param {Object} evt - The event.
-  */
-  mouseDownCallback (evt) {
-    throw new Error(`Method mouseDownCallback not implemented for ${this.toolName}.`);
-  }
 
   /**
   * Helper function for rendering the brush.
@@ -76,10 +44,75 @@ export default class extends baseTool {
     throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
   }
 
+  /**
+   * Paints the data to the canvas.
+   *
+   * @protected
+   * @abstract
+   * @param  {Object} eventData The data object associated with the event.
+   */
+  _paint (eventData) {
+    throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
+  }
+
   //===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
   //===================================================================
 
+  /**
+   * Callback for when the tool is activated.
+   *
+   * @virtual
+   */
+  activeCallback () {
+    const configuration = this.configuration;
+
+    this._changeDrawColor(configuration.draw);
+  }
+
+  /**
+  * Event handler for MOUSE_DRAG event.
+  *
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  mouseDragCallback (evt) {
+    this._startPainting(evt);
+  }
+
+  /**
+  * Event handler for MOUSE_DOWN event.
+  *
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  activeMouseDownCallback (evt) {
+    this._startPainting(evt);
+
+    evt.preventDefault();
+    evt.stopPropagation();
+    evt.stopImmediatePropagation();
+  }
+
+  /**
+  * Initialise painting with baseBrushTool
+  *
+  * @protected
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  _startPainting (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+
+    this._paint(eventData);
+    this.configuration.drawing = true;
+    this._startListeningForMouseUp(element);
+    this._lastImageCoords = eventData.currentPoints.image;
+  }
 
   /**
   * Event handler for MOUSE_MOVE event.
@@ -97,7 +130,7 @@ export default class extends baseTool {
   * Used to redraw the tool's annotation data per render.
   *
   * @virtual
-  * @param {*} evt
+  * @param {Object} evt - The event.
   */
   renderToolData (evt) {
     const eventData = evt.detail;
@@ -214,17 +247,10 @@ export default class extends baseTool {
     }
   }
 
-  activeCallback () {
-    const configuration = this.configuration;
-
-    this._changeDrawColor(configuration.draw);
-  }
-
-
   /**
    * Draws the ImageBitmap the canvas.
    *
-   * @private
+   * @protected
    * @param  {Object} evt description
    */
   _drawImageBitmap (evt) {
@@ -249,11 +275,10 @@ export default class extends baseTool {
     context.globalAlpha = 1.0;
   }
 
-
   /**
    *  Changes the draw color (segmentation) of the tool.
    *
-   * @private
+   * @protected
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
   _changeDrawColor (drawId) {
@@ -267,12 +292,59 @@ export default class extends baseTool {
     configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
   }
 
+  /**
+  * Event handler for MOUSE_UP during the drawing event loop.
+  *
+  * @protected
+  * @event
+  * @param {Object} evt - The event.
+  */
+  _drawingMouseUpCallback(evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+
+    this.configuration.drawing = false;
+    this.configuration.mouseUpRender = true;
+
+    this._stopListeningForMouseUp(element);
+  }
+  /**
+  * Adds modify loop event listeners.
+  *
+  * @protected
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _startListeningForMouseUp (element) {
+    element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
+
+    element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
+    element.addEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
+
+    external.cornerstone.updateImage(element);
+  }
+
+  /**
+  * Adds modify loop event listeners.
+  *
+  * @protected
+  * @param {Object} element - The viewport element to add event listeners to.
+  * @modifies {element}
+  */
+  _stopListeningForMouseUp (element) {
+    element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
+
+    external.cornerstone.updateImage(element);
+  }
+
 
   /**
    * Returns the number of colors in the colormap.
    *
    * @static
-   * @private
+   * @protected
    * @return {Number} The number of colors in the color map.
    */
   static _getNumberOfColors () {
