@@ -46,23 +46,26 @@
 			font: 400 11px system-ui;
 			color: #000;
 		}
+
 		.label-off {
 			color: #e44;
 		}
+
 		.label-on {
 			color: #4ea;
 		}
+
 		.checkbox-label .label-on {
 			display: none;
 		}
+
 		.checkbox-label.turned-on .label-on {
 			display: inline-block;
 		}
+
 		.checkbox-label.turned-on .label-off {
 			display: none;
 		}
-
-
 	</style>
 </head>
 
@@ -177,7 +180,7 @@
 		cTools.setToolDisabled(element, toolName);
 
 		toolCheckBox.addEventListener('change', (evt) => {
-			if(evt.currentTarget.checked) {
+			if (evt.currentTarget.checked) {
 				cTools.setToolEnabled(element, toolName);
 			} else {
 				cTools.setToolDisabled(element, toolName);
@@ -190,10 +193,10 @@
 	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 
 	const setButtonActive = (toolName) => {
-		Array.from(toolButtons).forEach( toolBtn => {
-			if(toolName === toolBtn.getAttribute('data-tool')) {
+		Array.from(toolButtons).forEach(toolBtn => {
+			if (toolName === toolBtn.getAttribute('data-tool')) {
 				toolBtn.classList.remove('is-active');
-				toolBtn.classList.add('is-active');	
+				toolBtn.classList.add('is-active');
 			} else {
 				toolBtn.classList.remove('is-active');
 			}
