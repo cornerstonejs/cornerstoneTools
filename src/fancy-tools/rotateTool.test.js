@@ -31,11 +31,11 @@ describe('rotateTool.js', () => {
       expect(instantiatedTool.name).toEqual(customToolName);
     });
   });
-  describe('activeMouseDownCallback', () => {
+  describe('postMouseDownCallback', () => {
     it('should set initialRotation once mouse is click', () => {
       const instantiatedTool = new RotateTool();
 
-      instantiatedTool.activeMouseDownCallback(mockEvt);
+      instantiatedTool.postMouseDownCallback(mockEvt);
       expect(instantiatedTool.initialRotation).toBe(0);
     });
   });

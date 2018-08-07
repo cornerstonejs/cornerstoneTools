@@ -27,7 +27,11 @@ const defaultStrategy = (evt) => {
     y: eventData.currentPoints.client.y
   };
 
-  const angleInfo = angleBetweenPoints(centerPoints, initialPoints, currentPoints);
+  const angleInfo = angleBetweenPoints(
+    centerPoints,
+    initialPoints,
+    currentPoints
+  );
 
   if (angleInfo.direction < 0) {
     angleInfo.angle = -angleInfo.angle;
@@ -40,14 +44,14 @@ const horizontalStrategy = (evt) => {
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += (deltaPoints.page.x / viewport.scale);
+  viewport.rotation += deltaPoints.page.x / viewport.scale;
 };
 
 const verticalStrategy = (evt) => {
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += (deltaPoints.page.y / viewport.scale);
+  viewport.rotation += deltaPoints.page.y / viewport.scale;
 };
 
 export default class extends baseTool {
@@ -74,7 +78,7 @@ export default class extends baseTool {
     this.dragCallback(evt);
   }
 
-  activeMouseDownCallback (evt) {
+  postMouseDownCallback (evt) {
     this.initialRotation = evt.detail.viewport.rotation;
   }
 

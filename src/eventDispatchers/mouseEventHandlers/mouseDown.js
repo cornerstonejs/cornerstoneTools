@@ -43,6 +43,29 @@ export default function (evt) {
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
 
+  // ACTIVE TOOL W/ PRE CALLBACK?
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
+
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
+    const firstActiveToolWithCallback = activeTools.find(
+      (tool) => typeof tool.preMouseDownCallback === 'function'
+    );
+
+    if (firstActiveToolWithCallback) {
+      const consumedEvent = firstActiveToolWithCallback.preMouseDownCallback(
+        evt
+      );
+
+      if (consumedEvent) {
+        return;
+      }
+    }
+  }
+
   // Annotation tool specific
   const annotationTools = getToolsWithDataForElement(element, tools);
 
@@ -106,20 +129,18 @@ export default function (evt) {
     return;
   }
 
-  // ACTIVE TOOL W/ CALLBACK?
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
-
+  // ACTIVE TOOL W/ POST CALLBACK?
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
     // TODO: If length > 1, you could assess fitness and select the ideal tool
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.activeMouseDownCallback === 'function'
+      (tool) => typeof tool.postMouseDownCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {
-      const consumedEvent = firstActiveToolWithCallback.activeMouseDownCallback(
+      const consumedEvent = firstActiveToolWithCallback.postMouseDownCallback(
         evt
       );
 

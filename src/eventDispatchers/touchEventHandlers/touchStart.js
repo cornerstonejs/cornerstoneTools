@@ -33,11 +33,11 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.activeTouchStartCallback === 'function'
+      (tool) => typeof tool.preTouchStartCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {
-      const consumedEvent = firstActiveToolWithCallback.activeTouchStartCallback(
+      const consumedEvent = firstActiveToolWithCallback.preTouchStartCallback(
         evt
       );
 
@@ -165,5 +165,25 @@ export default function (evt) {
     evt.stopPropagation();
 
     return;
+  }
+
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
+    const firstActiveToolWithCallback = activeTools.find(
+      (tool) => typeof tool.postTouchStartCallback === 'function'
+    );
+
+    if (firstActiveToolWithCallback) {
+      const consumedEvent = firstActiveToolWithCallback.postTouchStartCallback(
+        evt
+      );
+
+      if (consumedEvent) {
+        return;
+      }
+    }
   }
 }

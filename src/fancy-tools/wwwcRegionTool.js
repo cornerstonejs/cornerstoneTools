@@ -20,11 +20,11 @@ export default class extends baseTool {
 
     this._resetHandles();
     // Touch
-    this.activeTouchStartCallback = this._startOutliningRegion.bind(this);
+    this.postTouchStartCallback = this._startOutliningRegion.bind(this);
     this.touchDragCallback = this._setHandlesAndUpdate.bind(this);
     this.touchEndCallback = this._applyStrategy.bind(this);
     // Mouse
-    this.activeMouseDownCallback = this._startOutliningRegion.bind(this);
+    this.postMouseDownCallback = this._startOutliningRegion.bind(this);
     this.mouseClickCallback = this._startOutliningRegion.bind(this);
     this.mouseDragCallback = this._setHandlesAndUpdate.bind(this);
     this.mouseMoveCallback = this._setHandlesAndUpdate.bind(this);

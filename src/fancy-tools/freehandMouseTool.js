@@ -415,12 +415,12 @@ export default class extends baseAnnotationTool {
   }
 
   /**
-  * Active mouse down callback that takes priority if the user is attempting
-  * to insert or delete a handle with ctrl + click.
-  *
-  * @param {Object} evt - The event.
-  */
-  activeMouseDownCallback (evt) {
+   * Active mouse down callback that takes priority if the user is attempting
+   * to insert or delete a handle with ctrl + click.
+   *
+   * @param {Object} evt - The event.
+   */
+  postMouseDownCallback (evt) {
     const eventData = evt.detail;
     const nearby = this._pointNearHandleAllTools(eventData);
 

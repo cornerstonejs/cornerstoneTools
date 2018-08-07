@@ -4,27 +4,28 @@ import * as drawing from './util/drawing.js';
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
-export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
-export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
-export { default as zoomTool } from './fancy-tools/zoomTool.js';
-export { default as probeTool } from './fancy-tools/probeTool.js';
 export {
   default as ellipticalRoiTool
 } from './fancy-tools/ellipticalRoiTool.js';
+export { default as eraserTool } from './fancy-tools/eraserTool.js';
+export {
+  default as freehandMouseTool
+} from './fancy-tools/freehandMouseTool.js';
+export { default as lengthTool } from './fancy-tools/lengthTool.js';
+export { default as probeTool } from './fancy-tools/probeTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
+export { default as rotateTool } from './fancy-tools/rotateTool.js';
+export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
+export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
 export { default as wwwcRegionTool } from './fancy-tools/wwwcRegionTool.js';
+export { default as zoomTool } from './fancy-tools/zoomTool.js';
 export {
   default as zoomTouchPinchTool
 } from './fancy-tools/zoomTouchPinchTool.js';
 export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
-export { default as rotateTool } from './fancy-tools/rotateTool.js';
-export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
-export {
-  default as freehandMouseTool
-} from './fancy-tools/freehandMouseTool.js';
 // END V3 EXPORTS
 
 export { drawing };
@@ -207,8 +208,6 @@ export { default as displayTool } from './imageTools/displayTool.js';
 export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
 export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
-
-export { eraser, eraserTouch } from './imageTools/eraser.js';
 
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
