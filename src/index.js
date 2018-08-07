@@ -13,6 +13,7 @@ export {
   default as ellipticalRoiTool
 } from './fancy-tools/ellipticalRoiTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
+export { default as wwwcRegionTool } from './fancy-tools/wwwcRegionTool.js';
 export {
   default as zoomTouchPinchTool
 } from './fancy-tools/zoomTouchPinchTool.js';
@@ -21,6 +22,7 @@ export {
 } from './fancy-tools/zoomMouseWheelTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
 export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
+export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
 // END V3 EXPORTS
 
 export { drawing };
