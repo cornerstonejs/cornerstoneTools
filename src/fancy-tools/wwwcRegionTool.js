@@ -9,9 +9,9 @@ import getLuminance from '../util/getLuminance.js';
 import toolColors from './../stateManagement/toolColors.js';
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'wwwcRegion') {
     super({
-      name: name || 'wwwcRegion',
+      name,
       supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
         minWindowWidth: 10
