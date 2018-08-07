@@ -207,7 +207,6 @@ export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
 export { eraser, eraserTouch } from './imageTools/eraser.js';
-export { freehandSculpter } from './imageTools/freehandSculpter.js';
 
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
