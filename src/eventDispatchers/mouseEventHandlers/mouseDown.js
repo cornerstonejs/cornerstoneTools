@@ -43,37 +43,16 @@ export default function (evt) {
     isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
   );
 
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
-
-  // If any tools are active, check if they have a special reason for dealing with the event.
-  if (activeTools.length > 0) {
-    // TODO: If length > 1, you could assess fitness and select the ideal tool
-    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
-    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
-    const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.activeMouseDownCallback === 'function'
-    );
-
-    if (firstActiveToolWithCallback) {
-      const consumedEvent = firstActiveToolWithCallback.activeMouseDownCallback(
-        evt
-      );
-
-      if (consumedEvent) {
-        return;
-      }
-    }
-  }
-
   // Annotation tool specific
   const annotationTools = getToolsWithDataForElement(element, tools);
+
+  // NEAR HANDLES?
   const annotationToolsWithMoveableHandles = getToolsWithMovableHandles(
     element,
     annotationTools,
     coords
   );
 
-  // HANDLES
   if (annotationToolsWithMoveableHandles.length > 0) {
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
@@ -91,7 +70,7 @@ export default function (evt) {
     return;
   }
 
-  // POINT NEAR
+  // NEAR TOOL?
   const annotationToolsWithPointNearClick = tools.filter((tool) => {
     const toolState = getToolState(element, tool.name);
 
@@ -125,5 +104,28 @@ export default function (evt) {
     firstToolWithPointNearClick.toolSelectedCallback(evt, toolData, toolState);
 
     return;
+  }
+
+  // ACTIVE TOOL W/ CALLBACK?
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
+
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
+    const firstActiveToolWithCallback = activeTools.find(
+      (tool) => typeof tool.activeMouseDownCallback === 'function'
+    );
+
+    if (firstActiveToolWithCallback) {
+      const consumedEvent = firstActiveToolWithCallback.activeMouseDownCallback(
+        evt
+      );
+
+      if (consumedEvent) {
+        return;
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { getters, state } from '../store/index.js';
+import { mutations, state } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import moveAllHandles from '../manipulators/moveAllHandles.js';
@@ -25,14 +25,10 @@ const getToolsWithMovableHandles = function (element, tools, coords) {
   });
 };
 
-const moveHandleNearImagePoint = function (
-  evt,
-  handle,
-  data,
-  toolName
-) {
+const moveHandleNearImagePoint = function (evt, handle, data, toolName) {
   // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
   data.active = true;
+  mutations.SET_IS_TOOL_LOCKED(true);
   moveHandle(
     evt.detail,
     toolName,
@@ -40,6 +36,7 @@ const moveHandleNearImagePoint = function (
     handle,
     () => {
       data.active = false;
+      mutations.SET_IS_TOOL_LOCKED(false);
     },
     true // PreventHandleOutsideImage
   );
@@ -76,23 +73,20 @@ const findHandleDataNearImagePoint = function (
   }
 };
 
-const moveAnnotationNearClick = function (
-  evt,
-  toolState,
-  tool,
-  data
-) {
+const moveAnnotationNearClick = function (evt, toolState, tool, data) {
   const opt = tool.options || {
     deleteIfHandleOutsideImage: true,
     preventHandleOutsideImage: false
   };
 
   data.active = true;
+  mutations.SET_IS_TOOL_LOCKED(true);
   // TODO: Ignore MOUSE_MOVE for a bit
   // TODO: Why do this and `moveHandle` expose this in different
   // TODO: ways? PreventHandleOutsideImage
   moveAllHandles(evt, data, toolState, tool.name, opt, () => {
     data.active = false;
+    mutations.SET_IS_TOOL_LOCKED(false);
   });
 
   evt.stopImmediatePropagation();
@@ -125,4 +119,4 @@ export {
   findHandleDataNearImagePoint,
   moveAnnotationNearClick,
   findAnnotationNearClick
-}
+};
