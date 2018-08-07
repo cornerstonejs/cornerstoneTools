@@ -1,8 +1,6 @@
 import external from './../../externalModules.js';
 // State
 import { getters, setters, state } from './../../store/index.js';
-import { getToolState } from './../../stateManagement/toolState.js';
-import handleActivator from './../../manipulators/handleActivator.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
@@ -53,34 +51,8 @@ export default function (evt) {
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];
-    const coords = currentPoints.canvas;
-    const toolState = getToolState(element, tool.name);
-
-    for (let d = 0; d < toolState.data.length; d++) {
-      const data = toolState.data[d];
-
-      // Hovering a handle?
-      if (handleActivator(element, data.handles, coords) === true) {
-        imageNeedsUpdate = true;
-      }
-
-      // Tool data's 'active' does not match coordinates
-      // TODO: can't we just do an if/else and save on a pointNearTool check?
-      const nearToolAndNotMarkedActive =
-        tool.pointNearTool(element, data, coords) && !data.active;
-      const notNearToolAndMarkedActive =
-        !tool.pointNearTool(element, data, coords) && data.active;
-
-      if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
-        data.active = !data.active;
-        imageNeedsUpdate = true;
-      }
-
-      // TODO: We may want to do _only_ this, and provide a default implementation
-      // TODO: On each tool?
-      if (typeof tool.mouseMoveCallback === 'function') {
-        tool.mouseMoveCallback(evt);
-      }
+    if (typeof tool.mouseMoveCallback === 'function') {
+      imageNeedsUpdate = tool.mouseMoveCallback(evt) || imageNeedsUpdate;
     }
   }
 

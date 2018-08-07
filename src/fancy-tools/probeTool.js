@@ -17,9 +17,9 @@ import calculateSUV from '../util/calculateSUV.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
+  constructor (name = 'probe') {
     super({
-      name: name || 'probe',
+      name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
   }

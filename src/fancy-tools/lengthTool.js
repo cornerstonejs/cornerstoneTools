@@ -15,9 +15,9 @@ import lineSegDistance from './../util/lineSegDistance.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
+  constructor (name = 'length') {
     super({
-      name: name || 'length',
+      name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
   }

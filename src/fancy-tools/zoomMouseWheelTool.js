@@ -3,9 +3,9 @@ import baseTool from './../base/baseTool.js';
 import { changeViewportScale } from './shared/zoom.js';
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'zoomMouseWheel') {
     super({
-      name: name || 'zoomMouseWheel',
+      name,
       // TODO: Do we need a better way to specify mouseWheel?
       supportedInteractionTypes: ['mouse'],
       configuration: {

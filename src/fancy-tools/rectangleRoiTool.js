@@ -17,9 +17,9 @@ import numberWithCommas from './shared/numbersWithCommas.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
+  constructor (name = 'rectangleRoi') {
     super({
-      name: name || 'rectangleRoi',
+      name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
   }

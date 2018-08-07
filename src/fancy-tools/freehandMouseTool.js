@@ -10,7 +10,7 @@ import toolColors from './../stateManagement/toolColors.js';
 import { mutations } from '../store/index.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
-import { findAndMoveHandleNearImagePoint } from '../eventDispatchers/mouseEventHandlers/mouseDown.js';
+import { moveHandleNearImagePoint } from '../base/baseAnnotationToolHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
@@ -476,19 +476,18 @@ export default class extends baseAnnotationTool {
   * @param  {Object} evt
   * @param  {Object} handle The selected handle.
   */
-  handleSelectedCallback (evt, handle) {
+  handleSelectedCallback (evt, handle, data) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
-      findAndMoveHandleNearImagePoint(
-        element,
+      moveHandleNearImagePoint(
         evt,
-        toolState,
-        this.name,
-        eventData.currentPoints.canvas
+        handle,
+        data,
+        this.name
       );
 
       return;

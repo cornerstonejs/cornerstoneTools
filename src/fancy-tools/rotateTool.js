@@ -74,11 +74,7 @@ export default class extends baseTool {
     this.dragCallback(evt);
   }
 
-  /**
-   * TODO: Using addNewMeasurement for now until we get a better solution for mouseDown
-   * for tools that are not annotation
-   */
-  addNewMeasurement (evt) {
+  activeMouseDownCallback (evt) {
     this.initialRotation = evt.detail.viewport.rotation;
   }
 

@@ -19,18 +19,38 @@ export default function (evt) {
   if (state.isToolLocked) {
     return;
   }
-
-  let tools;
   const distanceFromHandle = 28;
   const eventData = evt.detail;
   const element = eventData.element;
   const coords = eventData.startPoints.canvas;
 
-  tools = getInteractiveToolsForElement(element, getters.touchTools());
-  tools = getToolsWithDataForElement(element, tools);
+  const tools = getInteractiveToolsForElement(element, getters.touchTools());
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
+
+  // If any tools are active, check if they have a special reason for dealing with the event.
+  if (activeTools.length > 0) {
+    // TODO: If length > 1, you could assess fitness and select the ideal tool
+    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
+    // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
+    const firstActiveToolWithCallback = activeTools.find(
+      (tool) => typeof tool.activeTouchStartCallback === 'function'
+    );
+
+    if (firstActiveToolWithCallback) {
+      const consumedEvent = firstActiveToolWithCallback.activeTouchStartCallback(
+        evt
+      );
+
+      if (consumedEvent) {
+        return;
+      }
+    }
+  }
+
+  const annotationTools = getToolsWithDataForElement(element, tools);
 
   // Find all tools w/ handles that we are near
-  const toolsWithMoveableHandles = tools.filter((tool) => {
+  const annotationToolsWithMoveableHandles = annotationTools.filter((tool) => {
     const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -49,14 +69,14 @@ export default function (evt) {
     return false;
   });
 
-  console.log('toolsWithMoveableHandles: ', toolsWithMoveableHandles);
+  console.log('toolsWithMoveableHandles: ', annotationToolsWithMoveableHandles);
 
   // TODO: More than one? Which one was moved most recently?
   // We'll just grab the first one we encounter for now
-  if (toolsWithMoveableHandles.length > 0) {
+  if (annotationToolsWithMoveableHandles.length > 0) {
     // Todo: Ignore TAP, START, PRESS
 
-    const firstToolWithMoveableHandles = toolsWithMoveableHandles[0];
+    const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
     const dataWithMoveableHandle = toolState.data.find(
       (d) =>
@@ -95,7 +115,7 @@ export default function (evt) {
   }
 
   // Find all tools near our point
-  const toolsNearPoint = tools.filter((tool) => {
+  const annotationToolsWithPointNearTouch = annotationTools.filter((tool) => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
       tool.pointNearTool &&
@@ -106,9 +126,9 @@ export default function (evt) {
 
   // TODO: More than one? Which one was moved most recently?
   // We'll just grab the first one we encounter for now
-  if (toolsNearPoint.length > 0) {
+  if (annotationToolsWithPointNearTouch.length > 0) {
     // Todo: Ignore: TAP, START, PRESS
-    const firstToolNearPoint = toolsNearPoint[0];
+    const firstToolNearPoint = annotationToolsWithPointNearTouch[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
     const firstAnnotationNearPoint = toolState.data.find((data) =>
       firstToolNearPoint.pointNearTool(element, data, coords)
