@@ -57,9 +57,9 @@ export default class {
     return this.strategies[this.activeStrategy](evt, this.configuration);
   }
 
-  //===================================================================
+  // ===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
-  //===================================================================
+  // ===================================================================
 
   /**
    * Callback that takes priority if the tool is active, in case
@@ -69,8 +69,27 @@ export default class {
    * @param  {type} evt
    * @return {boolean} consumedEvent - True if function consumed the event.
    */
-  activeMouseDownCallback (evt) {
-    return false;
-  }
+  /**
+   * Example implementation:
+   *
+   * activeMouseDownCallback(evt) {
+   *    return false;
+   * }
+   */
 
+  /**
+   * Callback that takes priority if the tool is active, in case
+   * any special behavior is required. Does nothing by default.
+   *
+   * @virtual
+   * @param  {type} evt
+   * @return {boolean} consumedEvent - True if function consumed the event.
+   */
+  /**
+   * Example implementation:
+   *
+   * activeTouchStartCallback(evt) {
+   *    return false;
+   * }
+   */
 }

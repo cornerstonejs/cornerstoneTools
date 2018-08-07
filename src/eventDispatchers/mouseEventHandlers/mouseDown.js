@@ -50,11 +50,18 @@ export default function (evt) {
     // TODO: If length > 1, you could assess fitness and select the ideal tool
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
-    const firstActiveTool = activeTools[0];
-    const consumedEvent = firstActiveTool.activeMouseDownCallback(evt);
+    const firstActiveToolWithCallback = activeTools.find(
+      (tool) => typeof tool.activeMouseDownCallback === 'function'
+    );
 
-    if (consumedEvent) {
-      return;
+    if (firstActiveToolWithCallback) {
+      const consumedEvent = firstActiveToolWithCallback.activeMouseDownCallback(
+        evt
+      );
+
+      if (consumedEvent) {
+        return;
+      }
     }
   }
 
