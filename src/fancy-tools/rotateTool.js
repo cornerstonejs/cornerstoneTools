@@ -74,7 +74,7 @@ export default class extends baseTool {
     this.dragCallback(evt);
   }
 
-  activeMouseDownCallback (evt) {
+  postMouseDownCallback (evt) {
     this.initialRotation = evt.detail.viewport.rotation;
   }
 
