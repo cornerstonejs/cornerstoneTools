@@ -33,7 +33,7 @@ export {
 export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
-
+export { default as stackScrollTool } from './fancy-tools/stackScrollTool.js';
 // END V3 EXPORTS
 
 export { drawing };
@@ -169,8 +169,6 @@ export {
 } from './stackTools/stackScrollKeyboard.js';
 
 export {
-  stackScroll,
-  stackScrollWheel,
   stackScrollTouchDrag,
   stackScrollMultiTouch
 } from './stackTools/stackScroll.js';
