@@ -21,6 +21,7 @@ export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
+export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
 export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
 // END V3 EXPORTS
 
@@ -223,7 +224,6 @@ export { pan, panTouchDrag } from './imageTools/pan.js';
 export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
 export { default as rotateTouch } from './imageTools/rotateTouch.js';
 export { default as saveAs } from './imageTools/saveAs.js';
-export { default as scaleOverlayTool } from './imageTools/scaleOverlayTool.js';
 export {
   default as simpleMouseButtonTool
 } from './imageTools/simpleMouseButtonTool.js';
