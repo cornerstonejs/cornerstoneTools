@@ -22,7 +22,9 @@ export {
 } from './fancy-tools/zoomMouseWheelTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
 export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
-export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
+export {
+  default as freehandMouseTool
+} from './fancy-tools/freehandMouseTool.js';
 // END V3 EXPORTS
 
 export { drawing };
@@ -207,8 +209,6 @@ export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
 export { eraser, eraserTouch } from './imageTools/eraser.js';
-export { freehand } from './imageTools/freehand.js';
-export { freehandSculpter } from './imageTools/freehandSculpter.js';
 
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
@@ -232,7 +232,6 @@ export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
 export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
