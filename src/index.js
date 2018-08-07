@@ -22,7 +22,9 @@ export {
 } from './fancy-tools/zoomMouseWheelTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
 export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
-export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
+export {
+  default as freehandMouseTool
+} from './fancy-tools/freehandMouseTool.js';
 // END V3 EXPORTS
 
 export { drawing };
