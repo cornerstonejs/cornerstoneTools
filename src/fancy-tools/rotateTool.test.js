@@ -1,30 +1,21 @@
 import RotateTool from './rotateTool.js';
-import { getToolState } from './../stateManagement/toolState.js';
+import external from './../externalModules.js';
 
-jest.mock('./../manipulators/drawHandles.js');
-jest.mock('./../util/drawing.js');
-jest.mock('./../stateManagement/toolState.js', () => ({
-  getToolState: jest.fn()
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    setViewport: jest.fn()
+  }
 }));
 
-const badMouseEventData = 'hello world';
-const goodMouseEventData = {
-  currentPoints: {
-    image: {
-      x: 0,
-      y: 0
+const mockEvt = {
+  detail: {
+    viewport: {
+      rotation: 0
     }
   }
 };
 
 describe('rotateTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
-
   describe('default values', () => {
     it('has a default name of "rotate"', () => {
       const defaultName = 'rotate';
@@ -38,6 +29,26 @@ describe('rotateTool.js', () => {
       const instantiatedTool = new RotateTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName);
+    });
+  });
+  describe('activeMouseDownCallback', () => {
+    it('should set initialRotation once mouse is click', () => {
+      const instantiatedTool = new RotateTool();
+
+      instantiatedTool.activeMouseDownCallback(mockEvt);
+      expect(instantiatedTool.initialRotation).toBe(0);
+    });
+  });
+
+  describe('dragCallback', () => {
+    it('should call setViewport once drag event is done', () => {
+      const instantiatedTool = new RotateTool();
+
+      instantiatedTool.applyActiveStrategy = jest.fn();
+      external.cornerstone.setViewport = jest.fn();
+
+      instantiatedTool.dragCallback(mockEvt);
+      expect(external.cornerstone.setViewport).toHaveBeenCalled();
     });
   });
 });
