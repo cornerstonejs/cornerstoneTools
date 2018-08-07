@@ -232,7 +232,6 @@ export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
 export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
