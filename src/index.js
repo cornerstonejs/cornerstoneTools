@@ -209,8 +209,6 @@ export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
 export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
-export { eraser, eraserTouch } from './imageTools/eraser.js';
-
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
 export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
