@@ -45,6 +45,8 @@ export default class extends baseTool {
     this.postMouseDownCallback = this._addMagnifyingGlass.bind(this);
     this.mouseDragCallback = this._updateMagnifyingGlass.bind(this);
     this.mouseUpCallback = this._removeMagnifyingGlass.bind(this);
+    // On quick clicks, mouseUp does not fire, but this does
+    this.mouseClickCallback = this._removeMagnifyingGlass.bind(this);
     // Misc
     this.newImageCallback = this._drawMagnificationTool.bind(this);
   }
