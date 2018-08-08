@@ -52,9 +52,6 @@ export default class extends baseTool {
   }
 
   _addMagnifyingGlass (evt) {
-    // TODO:
-    // Element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
-
     // Ignore until next event
     this._removeZoomElement();
     this._drawZoomedElement(evt);
