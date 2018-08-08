@@ -1,4 +1,3 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 /* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
@@ -16,7 +15,7 @@ export default class extends baseTool {
       supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
         magnifySize: 300,
-        magnificationLevel: 5
+        magnificationLevel: 2
       }
     });
 
