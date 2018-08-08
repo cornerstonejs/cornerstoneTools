@@ -4,6 +4,9 @@ import * as drawing from './util/drawing.js';
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
+export {
+  default as arrowAnnotateTool
+} from './fancy-tools/arrowAnnotateTool.js';
 export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
@@ -198,10 +201,6 @@ export {
 } from './inputSources/preventGhostClick.js';
 export { default as touchInput } from './inputSources/touchInput.js';
 
-export {
-  arrowAnnotate,
-  arrowAnnotateTouch
-} from './imageTools/arrowAnnotate.js';
 export { crosshairs, crosshairsTouch } from './imageTools/crosshairs.js';
 export { default as displayTool } from './imageTools/displayTool.js';
 export { default as doubleTapTool } from './imageTools/doubleTapTool.js';

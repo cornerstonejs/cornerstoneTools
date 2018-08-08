@@ -46,23 +46,26 @@
 			font: 400 11px system-ui;
 			color: #000;
 		}
+
 		.label-off {
 			color: #e44;
 		}
+
 		.label-on {
 			color: #4ea;
 		}
+
 		.checkbox-label .label-on {
 			display: none;
 		}
+
 		.checkbox-label.turned-on .label-on {
 			display: inline-block;
 		}
+
 		.checkbox-label.turned-on .label-off {
 			display: none;
 		}
-
-
 	</style>
 </head>
 
@@ -73,6 +76,7 @@
 		</h1>
 
 		<div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
+			<button data-tool="arrowAnnotate">ArrowAnnotate</button>
 			<button data-tool="length">Length</button>
 			<button data-tool="angle">Angle</button>
 			<button data-tool="wwwc">WWWC</button>
@@ -91,8 +95,8 @@
 				<label class="label-on"> ON</label>
 				<label class="label-off"> OFF</label>
 			</label>
-			<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox"/>
-			
+			<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
+
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
 	</div>
@@ -151,6 +155,9 @@
 		if (apiTool) {
 			const tool = new apiTool();
 			cTools.addTool(element, tool);
+		} else {
+			console.warn(`unable to add tool with name ${toolName}Tool`);
+			console.log(cornerstoneTools)
 		}
 
 		// Setup button listener
@@ -176,7 +183,7 @@
 		cTools.setToolDisabled(element, toolName);
 
 		toolCheckBox.addEventListener('change', (evt) => {
-			if(evt.currentTarget.checked) {
+			if (evt.currentTarget.checked) {
 				cTools.setToolEnabled(element, toolName);
 			} else {
 				cTools.setToolDisabled(element, toolName);
@@ -189,10 +196,10 @@
 	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 
 	const setButtonActive = (toolName) => {
-		Array.from(toolButtons).forEach( toolBtn => {
-			if(toolName === toolBtn.getAttribute('data-tool')) {
+		Array.from(toolButtons).forEach(toolBtn => {
+			if (toolName === toolBtn.getAttribute('data-tool')) {
 				toolBtn.classList.remove('is-active');
-				toolBtn.classList.add('is-active');	
+				toolBtn.classList.add('is-active');
 			} else {
 				toolBtn.classList.remove('is-active');
 			}
