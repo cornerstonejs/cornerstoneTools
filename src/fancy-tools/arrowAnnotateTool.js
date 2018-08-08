@@ -303,17 +303,6 @@ export default class extends baseAnnotationTool {
       return;
     }
 
-    function doneChangingTextCallback (data, updatedText, deleteTool) {
-      if (deleteTool === true) {
-        removeToolState(element, this.name, data);
-      } else {
-        data.text = updatedText;
-      }
-
-      data.active = false;
-      cornerstone.updateImage(element);
-    }
-
     const coords = evt.detail.currentPoints.canvas;
     const toolData = getToolState(element, this.name);
 
@@ -334,7 +323,7 @@ export default class extends baseAnnotationTool {
         this.configuration.changeTextCallback(
           data,
           evt.detail,
-          doneChangingTextCallback
+          this._doneChangingTextCallback.bind(this, element)
         );
 
         evt.stopImmediatePropagation();
@@ -344,23 +333,22 @@ export default class extends baseAnnotationTool {
     }
   }
 
+  _doneChangingTextCallback (element, data, updatedText, deleteTool) {
+    if (deleteTool === true) {
+      removeToolState(element, this.name, data);
+    } else {
+      data.text = updatedText;
+    }
+
+    data.active = false;
+    cornerstone.updateImage(element);
+  }
+
   // ArrowAnnotateTouch tapCallback?
   pressCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     let data;
-
-    function doneChangingTextCallback (data, updatedText, deleteTool) {
-      console.log('pressCallback doneChangingTextCallback');
-      if (deleteTool === true) {
-        removeToolState(element, this.name, data);
-      } else {
-        data.text = updatedText;
-      }
-
-      data.active = false;
-      cornerstone.updateImage(element);
-    }
 
     const coords = eventData.currentPoints.canvas;
     const toolData = getToolState(element, this.name);
@@ -375,7 +363,7 @@ export default class extends baseAnnotationTool {
       this.configuration.changeTextCallback(
         eventData.handlePressed,
         eventData,
-        doneChangingTextCallback
+        this._doneChangingTextCallback.bind(this, element)
       );
 
       evt.stopImmediatePropagation();
@@ -396,7 +384,7 @@ export default class extends baseAnnotationTool {
         this.configuration.changeTextCallback(
           data,
           eventData,
-          doneChangingTextCallback
+          this._doneChangingTextCallback.bind(this, element)
         );
 
         evt.stopImmediatePropagation();
