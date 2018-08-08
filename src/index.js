@@ -13,6 +13,7 @@ export {
   default as freehandMouseTool
 } from './fancy-tools/freehandMouseTool.js';
 export { default as lengthTool } from './fancy-tools/lengthTool.js';
+export { default as magnifyTool } from './fancy-tools/magnifyTool.js';
 export { default as probeTool } from './fancy-tools/probeTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
 export { default as rotateTool } from './fancy-tools/rotateTool.js';
@@ -211,7 +212,6 @@ export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
-export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
 
 export { default as mouseButtonTool } from './imageTools/mouseButtonTool.js';
 export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
