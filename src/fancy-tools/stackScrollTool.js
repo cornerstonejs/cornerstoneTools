@@ -6,9 +6,9 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'stackScroll') {
     super({
-      name: name || 'stackScroll',
+      name,
       supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
         loop: false,
@@ -20,34 +20,18 @@ export default class extends baseTool {
     this.touchDragCallback = this._dragCallback.bind(this);
   }
 
-  mouseWheelCallback (evt) {
-    const eventData = evt.detail;
-    const images = -eventData.direction;
-    const { loop, allowSkipping } = this.configuration;
-
-    scroll(eventData.element, images, loop, allowSkipping);
-  }
-
   _dragCallback (evt) {
     const eventData = evt.detail;
-    const { element } = eventData;
+    const { element, deltaPoints } = eventData;
+    const { allowSkipping } = this.configuration;
+    const options = getToolOptions(this.name, element);
 
-    const toolData = getToolState(element, 'stack');
+    const pixelsPerImage = this._getPixelPerImage(element);
+    const deltaY = this._getDeltaY(element, deltaPoints.page.y);
 
-    if (!toolData || !toolData.data || !toolData.data.length) {
+    if (!pixelsPerImage) {
       return;
     }
-
-    const stackData = toolData.data[0];
-    const { allowSkipping, stackScrollSpeed } = this.configuration;
-
-    // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
-    const pixelsPerImage = stackScrollSpeed || Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8));
-
-    const options = getToolOptions(this.name, element);
-    let deltaY = options.deltaY || 0;
-
-    deltaY += eventData.deltaPoints.page.y;
 
     if (Math.abs(deltaY) >= pixelsPerImage) {
       const imageIdIndexOffset = Math.round(deltaY / pixelsPerImage);
@@ -60,5 +44,26 @@ export default class extends baseTool {
     }
 
     setToolOptions(this.name, element, options);
+  }
+
+  _getDeltaY (element, deltaPointsY) {
+    const options = getToolOptions(this.name, element);
+    const deltaY = options.deltaY || 0;
+
+    return deltaY + deltaPointsY;
+  }
+
+  _getPixelPerImage (element) {
+    const toolData = getToolState(element, 'stack');
+
+    if (!toolData || !toolData.data || !toolData.data.length) {
+      return;
+    }
+
+    const stackData = toolData.data[0];
+    const { stackScrollSpeed } = this.configuration;
+
+    // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
+    return stackScrollSpeed || Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8));
   }
 }
