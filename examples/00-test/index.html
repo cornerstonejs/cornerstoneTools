@@ -5,6 +5,21 @@
 	<!-- support for mobile touch devices -->
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 	<style>
+		/**
+		 * ~~ MagnifyTool:
+		 * You need to supply your own styling for the created magnifyTool div.
+		 * Note: The canvas wrapper needs `position: relative` for the positioning to work.
+		 */
+
+		.magnifyTool {
+			border: 4px white solid;
+			box-shadow: 2px 2px 10px #1e1e1e;
+			border-radius: 50%;
+			display: none;
+			cursor: none;
+			z-index: 100;
+		}
+
 		#app {
 			font-family: "Avenir", Helvetica, Arial, sans-serif;
 			-webkit-font-smoothing: antialiased;
@@ -19,8 +34,10 @@
 			width: 512px;
 			margin: 0 auto;
 			height: 512px;
+			position: relative;
 		}
 
+		.checkbox-label,
 		button {
 			text-transform: uppercase;
 			margin: 0.5em 1em;
@@ -31,9 +48,39 @@
 			cursor: pointer;
 		}
 
+		.checkbox-label:hover,
 		button.is-active,
 		button:hover {
 			border-bottom: 2px solid #4ea;
+		}
+
+		.hide {
+			display: none;
+		}
+
+		.checkbox-label {
+			font: 400 11px system-ui;
+			color: #000;
+		}
+
+		.label-off {
+			color: #e44;
+		}
+
+		.label-on {
+			color: #4ea;
+		}
+
+		.checkbox-label .label-on {
+			display: none;
+		}
+
+		.checkbox-label.turned-on .label-on {
+			display: inline-block;
+		}
+
+		.checkbox-label.turned-on .label-off {
+			display: none;
 		}
 	</style>
 </head>
@@ -45,18 +92,29 @@
 		</h1>
 
 		<div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
-			<button data-tool="length">Length</button>
+			<button data-tool="arrowAnnotate">ArrowAnnotate</button>
 			<button data-tool="angle">Angle</button>
+			<button data-tool="ellipticalRoi">EllipticalRoi</button>
+			<button data-tool="eraser">Eraser</button>
+			<button data-tool="freehandMouse">FreehandMouse</button>
+			<button data-tool="freehandSculpterMouse">FreehandSculpterMouse</button>
+			<button data-tool="length">Length</button>
+			<button data-tool="magnify">Magnify</button>
+			<button data-tool="probe">Probe</button>
+			<button data-tool="rectangleRoi">RectangleRoi</button>
+			<button data-tool="rotate">Rotate</button>
 			<button data-tool="wwwc">WWWC</button>
+			<button data-tool="wwwcRegion">WWWCRegion</button>
 			<button data-tool="zoom">Zoom</button>
 			<button data-tool="zoomTouchPinch">ZoomTouchPinch</button>
 			<button data-tool="zoomMouseWheel">ZoomMouseWheel</button>
-			<button data-tool="probe">Probe</button>
-			<button data-tool="ellipticalRoi">EllipticalRoi</button>
-			<button data-tool="rectangleRoi">RectangleRoi</button>
-			<button data-tool="rotate">Rotate</button>
-			<button data-tool="freehandMouse">FreehandMouse</button>
-			<button data-tool="freehandSculpterMouse">FreehandSculpterMouse</button>
+
+			<label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
+				ScaleOverlay
+				<label class="label-on"> ON</label>
+				<label class="label-off"> OFF</label>
+			</label>
+			<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
 
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
@@ -97,9 +155,14 @@
 	});
 
 	function setAllToolsPassive() {
+		const exceptionList = [
+			'scaleOverlay'
+		];
 		cTools.store.state.tools.forEach((tool) => {
-			cTools.setToolPassive(element, tool.name)
-		})
+			if (!exceptionList.includes(tool.name)) {
+				cTools.setToolPassive(element, tool.name);
+			}
+		});
 	}
 
 	// Iterate over all tool buttons
@@ -111,17 +174,56 @@
 		if (apiTool) {
 			const tool = new apiTool();
 			cTools.addTool(element, tool);
+		} else {
+			console.warn(`unable to add tool with name ${toolName}Tool`);
+			console.log(cornerstoneTools)
 		}
 
 		// Setup button listener
 		toolBtn.addEventListener('click', (evt) => {
 			setAllToolsPassive();
+			setButtonActive(toolName);
 			cTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+		});
+	});
+
+	// Iterate through swtoch ON/OFF tools
+	const stateTools = document.querySelectorAll('input[type="checkbox"]');
+	Array.from(stateTools).forEach(toolCheckBox => {
+
+		const toolName = toolCheckBox.getAttribute('data-tool');
+		const toolLabel = document.querySelector(`#${toolName}`);
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		if (apiTool) {
+			const tool = new apiTool();
+			cTools.addTool(element, tool);
+		}
+
+		cTools.setToolDisabled(element, toolName);
+
+		toolCheckBox.addEventListener('change', (evt) => {
+			if (evt.currentTarget.checked) {
+				cTools.setToolEnabled(element, toolName);
+			} else {
+				cTools.setToolDisabled(element, toolName);
+			}
+			toolLabel.classList.toggle('turned-on');
 		});
 	});
 
 	// Activate first tool
 	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+
+	const setButtonActive = (toolName) => {
+		Array.from(toolButtons).forEach(toolBtn => {
+			if (toolName === toolBtn.getAttribute('data-tool')) {
+				toolBtn.classList.remove('is-active');
+				toolBtn.classList.add('is-active');
+			} else {
+				toolBtn.classList.remove('is-active');
+			}
+		});
+	}
 </script>
 
 </html>

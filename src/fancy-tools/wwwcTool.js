@@ -34,13 +34,13 @@ function basicLevelingStrategy (evt, { orientation }) {
 }
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'wwwc') {
     const strategies = {
       basicLevelingStrategy
     };
 
     super({
-      name: name || 'wwwc',
+      name,
       strategies,
       supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
