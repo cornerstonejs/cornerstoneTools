@@ -6,6 +6,7 @@ jest.mock('./../util/drawing.js');
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
+jest.mock('./../stateManagement/brushToolColors.js');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
