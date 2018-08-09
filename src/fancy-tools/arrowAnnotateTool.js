@@ -253,17 +253,6 @@ export default class extends baseAnnotationTool {
     const element = evt.detail.element;
     const measurementData = this.createNewMeasurement(evt);
 
-    function doneChangingTextCallback (text) {
-      if (text === null) {
-        removeToolState(element, this.name, measurementData);
-      } else {
-        measurementData.text = text;
-      }
-
-      measurementData.active = false;
-      cornerstone.updateImage(element);
-    }
-
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
 
@@ -286,7 +275,16 @@ export default class extends baseAnnotationTool {
         }
 
         if (measurementData.text === undefined) {
-          this.configuration.getTextCallback(doneChangingTextCallback);
+          this.configuration.getTextCallback((text) => {
+            if (text) {
+              measurementData.text = text;
+            } else {
+              removeToolState(element, this.name, measurementData);
+            }
+
+            measurementData.active = false;
+            cornerstone.updateImage(element);
+          });
         }
 
         cornerstone.updateImage(element);
@@ -295,24 +293,29 @@ export default class extends baseAnnotationTool {
   }
 
   doubleClickCallback (evt) {
+    if (!isMouseButtonEnabled(evt.detail.which, this.options.mouseButtonMask)) {
+      return;
+    }
+
+    return this._updateTextForNearbyAnnotation(evt);
+  }
+
+  touchPressCallback (evt) {
+    return this._updateTextForNearbyAnnotation(evt);
+  }
+
+  _updateTextForNearbyAnnotation (evt) {
     const element = evt.detail.element;
-    const which = evt.detail.which;
-    let data;
-
-    if (!isMouseButtonEnabled(which, this.options.mouseButtonMask)) {
-      return;
-    }
-
     const coords = evt.detail.currentPoints.canvas;
-    const toolData = getToolState(element, this.name);
+    const toolState = getToolState(element, this.name);
 
-    // Now check to see if there is a handle we can move
-    if (!toolData) {
-      return;
+    if (!toolState) {
+      return false;
     }
 
-    for (let i = 0; i < toolData.data.length; i++) {
-      data = toolData.data[i];
+    for (let i = 0; i < toolState.data.length; i++) {
+      const data = toolState.data[i];
+
       if (
         this.pointNearTool(element, data, coords) ||
         pointInsideBoundingBox(data.handles.textBox, coords)
@@ -323,12 +326,14 @@ export default class extends baseAnnotationTool {
         this.configuration.changeTextCallback(
           data,
           evt.detail,
-          this._doneChangingTextCallback.bind(this, element)
+          this._doneChangingTextCallback.bind(this, element, data)
         );
 
         evt.stopImmediatePropagation();
+        evt.preventDefault();
+        evt.stopPropagation();
 
-        return false;
+        return true;
       }
     }
   }
@@ -342,59 +347,6 @@ export default class extends baseAnnotationTool {
 
     data.active = false;
     cornerstone.updateImage(element);
-  }
-
-  // ArrowAnnotateTouch tapCallback?
-  pressCallback (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    let data;
-
-    const coords = eventData.currentPoints.canvas;
-    const toolData = getToolState(element, this.name);
-
-    // Now check to see if there is a handle we can move
-    if (!toolData) {
-      return;
-    }
-
-    if (eventData.handlePressed) {
-      // Allow relabelling via a callback
-      this.configuration.changeTextCallback(
-        eventData.handlePressed,
-        eventData,
-        this._doneChangingTextCallback.bind(this, element)
-      );
-
-      evt.stopImmediatePropagation();
-
-      return false;
-    }
-
-    for (let i = 0; i < toolData.data.length; i++) {
-      data = toolData.data[i];
-      if (
-        this.pointNearTool(element, data, coords) ||
-        pointInsideBoundingBox(data.handles.textBox, coords)
-      ) {
-        data.active = true;
-        cornerstone.updateImage(element);
-
-        // Allow relabelling via a callback
-        this.configuration.changeTextCallback(
-          data,
-          eventData,
-          this._doneChangingTextCallback.bind(this, element)
-        );
-
-        evt.stopImmediatePropagation();
-
-        return false;
-      }
-    }
-
-    evt.preventDefault();
-    evt.stopPropagation();
   }
 }
 
