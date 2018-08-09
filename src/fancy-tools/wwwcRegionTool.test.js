@@ -1,5 +1,11 @@
 import WwwcRegionTool from './wwwcRegionTool.js';
 
+jest.mock('./../util/drawing.js', () => ({
+  draw: jest.fn(),
+  drawRect: jest.fn(),
+  getNewContext: jest.fn()
+}));
+
 describe('wwwcRegionTool.js', () => {
   describe('default values', () => {
     it('has a default name of "wwwcRegion"', () => {
