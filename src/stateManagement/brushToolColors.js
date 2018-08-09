@@ -1,7 +1,9 @@
-import external from './../externalModules.js';
+import external from '../externalModules.js';
+
+const { cornerstone } = external;
 
 export const COLOR_MAP_ID = 'BrushColorMap';
-const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
+const colormap = cornerstone.colors.getColormap(COLOR_MAP_ID);
 
 colormap.setNumberOfColors(20);
 colormap.setColor(0, [255, 255, 255, 0]);
