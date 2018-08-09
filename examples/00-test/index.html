@@ -92,6 +92,7 @@
 		</h1>
 
 		<div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
+			<button data-tool="arrowAnnotate">ArrowAnnotate</button>
 			<button data-tool="angle">Angle</button>
 			<button data-tool="ellipticalRoi">EllipticalRoi</button>
 			<button data-tool="eraser">Eraser</button>
@@ -172,6 +173,9 @@
 		if (apiTool) {
 			const tool = new apiTool();
 			cTools.addTool(element, tool);
+		} else {
+			console.warn(`unable to add tool with name ${toolName}Tool`);
+			console.log(cornerstoneTools)
 		}
 
 		// Setup button listener
