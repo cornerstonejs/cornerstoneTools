@@ -5,6 +5,21 @@
 	<!-- support for mobile touch devices -->
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 	<style>
+		/** 
+		 * ~~ MagnifyTool:
+		 * You need to supply your own styling for the created magnifyTool div.
+		 * Note: The canvas wrapper needs `position: relative` for the positioning to work.
+		 */
+
+		.magnifyTool {
+			border: 4px white solid;
+			box-shadow: 2px 2px 10px #1e1e1e;
+			border-radius: 50%;
+			display: none;
+			cursor: none;
+			z-index: 100;
+		}
+
 		#app {
 			font-family: "Avenir", Helvetica, Arial, sans-serif;
 			-webkit-font-smoothing: antialiased;
@@ -19,6 +34,7 @@
 			width: 512px;
 			margin: 0 auto;
 			height: 512px;
+			position: relative;
 		}
 
 		.checkbox-label,
@@ -77,18 +93,20 @@
 
 		<div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
 			<button data-tool="arrowAnnotate">ArrowAnnotate</button>
-			<button data-tool="length">Length</button>
 			<button data-tool="angle">Angle</button>
+			<button data-tool="ellipticalRoi">EllipticalRoi</button>
+			<button data-tool="eraser">Eraser</button>
+			<button data-tool="freehandMouse">FreehandMouse</button>
+			<button data-tool="length">Length</button>
+			<button data-tool="magnify">Magnify</button>
+			<button data-tool="probe">Probe</button>
+			<button data-tool="rectangleRoi">RectangleRoi</button>
+			<button data-tool="rotate">Rotate</button>
 			<button data-tool="wwwc">WWWC</button>
+			<button data-tool="wwwcRegion">WWWCRegion</button>
 			<button data-tool="zoom">Zoom</button>
 			<button data-tool="zoomTouchPinch">ZoomTouchPinch</button>
 			<button data-tool="zoomMouseWheel">ZoomMouseWheel</button>
-			<button data-tool="probe">Probe</button>
-			<button data-tool="ellipticalRoi">EllipticalRoi</button>
-			<button data-tool="rectangleRoi">RectangleRoi</button>
-			<button data-tool="rotate">Rotate</button>
-			<button data-tool="freehandMouse">FreehandMouse</button>
-			<button data-tool="wwwcRegion">WWWCRegion</button>
 
 			<label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
 				ScaleOverlay

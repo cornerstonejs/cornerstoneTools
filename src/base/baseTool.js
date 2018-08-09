@@ -72,7 +72,7 @@ export default class {
   /**
    * Example implementation:
    *
-   * activeMouseDownCallback(evt) {
+   * preMouseDownCallback(evt) {
    *    return false;
    * }
    */
@@ -88,7 +88,39 @@ export default class {
   /**
    * Example implementation:
    *
-   * activeTouchStartCallback(evt) {
+   * postMouseDownCallback(evt) {
+   *    return false;
+   * }
+   */
+
+  /**
+   * Callback that takes priority if the tool is active, in case
+   * any special behavior is required. Does nothing by default.
+   *
+   * @virtual
+   * @param  {type} evt
+   * @return {boolean} consumedEvent - True if function consumed the event.
+   */
+  /**
+   * Example implementation:
+   *
+   * preTouchStartCallback(evt) {
+   *    return false;
+   * }
+   */
+
+  /**
+   * Callback that takes priority if the tool is active, in case
+   * any special behavior is required. Does nothing by default.
+   *
+   * @virtual
+   * @param  {type} evt
+   * @return {boolean} consumedEvent - True if function consumed the event.
+   */
+  /**
+   * Example implementation:
+   *
+   * postTouchStartCallback(evt) {
    *    return false;
    * }
    */
