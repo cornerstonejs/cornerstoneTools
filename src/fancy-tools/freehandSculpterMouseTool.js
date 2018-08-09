@@ -63,7 +63,7 @@ export default class extends baseTool {
   *
   * @param {Object} evt - The event.
   */
-  activeMouseDownCallback (evt) {
+  preMouseDownCallback (evt) {
     const eventData = evt.detail;
     const config = this.configuration;
 
