@@ -420,7 +420,7 @@ export default class extends baseAnnotationTool {
    *
    * @param {Object} evt - The event.
    */
-  postMouseDownCallback (evt) {
+  preMouseDownCallback (evt) {
     const eventData = evt.detail;
     const nearby = this._pointNearHandleAllTools(eventData);
 
