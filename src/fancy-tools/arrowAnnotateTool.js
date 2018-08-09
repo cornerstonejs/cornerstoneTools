@@ -20,6 +20,7 @@ import {
   removeToolState,
   getToolState
 } from '../stateManagement/toolState.js';
+import { mutations } from '../store/index.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
@@ -255,14 +256,14 @@ export default class extends baseAnnotationTool {
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
+    cornerstone.updateImage(element);
 
     // Since we are dragging to another place to drop the end point, we can just activate
     // The end point and let the moveHandle move it for us.
-    // TODO: LOCK TOOL
     const handleMover =
       interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
 
-    cornerstone.updateImage(element);
+    mutations.SET_IS_TOOL_LOCKED(true);
     handleMover(
       evt.detail,
       this.name,
@@ -287,6 +288,7 @@ export default class extends baseAnnotationTool {
           });
         }
 
+        mutations.SET_IS_TOOL_LOCKED(false);
         cornerstone.updateImage(element);
       }
     );
