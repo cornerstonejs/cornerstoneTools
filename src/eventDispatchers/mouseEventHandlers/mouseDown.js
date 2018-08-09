@@ -1,4 +1,3 @@
-import external from './../../externalModules.js';
 // State
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -12,8 +11,6 @@ import {
 // Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
-
-const cornerstone = external.cornerstone;
 
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
