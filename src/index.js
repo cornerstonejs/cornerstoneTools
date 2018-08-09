@@ -15,6 +15,7 @@ export {
 export { default as lengthTool } from './tools/lengthTool.js';
 export { default as magnifyTool } from './tools/magnifyTool.js';
 export { default as probeTool } from './tools/probeTool.js';
+export { default as panTool } from './tools/panTool.js';
 export { default as rectangleRoiTool } from './tools/rectangleRoiTool.js';
 export { default as rotateTool } from './tools/rotateTool.js';
 export { default as scaleOverlayTool } from './tools/scaleOverlay.js';
