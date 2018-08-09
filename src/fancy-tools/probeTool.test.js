@@ -7,8 +7,8 @@ jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 jest.mock('./../stateManagement/brushToolColors.js', () => ({
-  setDefaultBrushColormap: jest.fn();
-  setBrushColorMap: jest.fn();
+  setDefaultBrushColormap: jest.fn(),
+  setBrushColorMap: jest.fn()
 }));
 
 const badMouseEventData = 'hello world';
