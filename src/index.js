@@ -7,7 +7,6 @@ export { default as init } from './init.js';
 export {
   default as arrowAnnotateTool
 } from './fancy-tools/arrowAnnotateTool.js';
-export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
 export {
   default as ellipticalRoiTool
