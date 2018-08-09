@@ -3,9 +3,9 @@ import baseTool from './../base/baseTool.js';
 import { correctShift } from './shared/zoom.js';
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'zoomTouchPinch') {
     super({
-      name: name || 'zoomTouchPinch',
+      name,
       // TODO: Do we need a better way to specify touchPinch?
       supportedInteractionTypes: ['touch'],
       configuration: {

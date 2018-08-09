@@ -4,23 +4,35 @@ import * as drawing from './util/drawing.js';
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
-export { default as lengthTool } from './fancy-tools/lengthTool.js';
+export {
+  default as arrowAnnotateTool
+} from './fancy-tools/arrowAnnotateTool.js';
 export { default as angleTool } from './fancy-tools/angleTool.js';
-export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
-export { default as zoomTool } from './fancy-tools/zoomTool.js';
-export { default as probeTool } from './fancy-tools/probeTool.js';
 export {
   default as ellipticalRoiTool
 } from './fancy-tools/ellipticalRoiTool.js';
+export { default as eraserTool } from './fancy-tools/eraserTool.js';
+export {
+  default as freehandMouseTool
+} from './fancy-tools/freehandMouseTool.js';
+export {
+  default as freehandSculpterMouseTool
+} from './fancy-tools/freehandSculpterMouseTool.js';
+export { default as lengthTool } from './fancy-tools/lengthTool.js';
+export { default as magnifyTool } from './fancy-tools/magnifyTool.js';
+export { default as probeTool } from './fancy-tools/probeTool.js';
 export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
+export { default as rotateTool } from './fancy-tools/rotateTool.js';
+export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
+export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
+export { default as wwwcRegionTool } from './fancy-tools/wwwcRegionTool.js';
+export { default as zoomTool } from './fancy-tools/zoomTool.js';
 export {
   default as zoomTouchPinchTool
 } from './fancy-tools/zoomTouchPinchTool.js';
 export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
-export { default as rotateTool } from './fancy-tools/rotateTool.js';
-export { default as freehandMouseTool } from './fancy-tools/freehandMouseTool.js';
 export { default as brushTool } from './fancy-tools/brushTool.js';
 export { default as brushEraserTool } from './fancy-tools/brushEraserTool.js';
 // END V3 EXPORTS
@@ -196,23 +208,14 @@ export {
 } from './inputSources/preventGhostClick.js';
 export { default as touchInput } from './inputSources/touchInput.js';
 
-export {
-  arrowAnnotate,
-  arrowAnnotateTouch
-} from './imageTools/arrowAnnotate.js';
 export { crosshairs, crosshairsTouch } from './imageTools/crosshairs.js';
 export { default as displayTool } from './imageTools/displayTool.js';
 export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
 export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
-export { eraser, eraserTouch } from './imageTools/eraser.js';
-export { freehand } from './imageTools/freehand.js';
-export { freehandSculpter } from './imageTools/freehandSculpter.js';
-
 export { default as imageStats } from './imageTools/imageStats.js';
 export { default as keyboardTool } from './imageTools/keyboardTool.js';
-export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
 
 export { default as mouseButtonTool } from './imageTools/mouseButtonTool.js';
 export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
@@ -224,7 +227,6 @@ export { pan, panTouchDrag } from './imageTools/pan.js';
 export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
 export { default as rotateTouch } from './imageTools/rotateTouch.js';
 export { default as saveAs } from './imageTools/saveAs.js';
-export { default as scaleOverlayTool } from './imageTools/scaleOverlayTool.js';
 export {
   default as simpleMouseButtonTool
 } from './imageTools/simpleMouseButtonTool.js';
@@ -233,7 +235,6 @@ export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
 export { default as touchDragTool } from './imageTools/touchDragTool.js';
 export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
 export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';

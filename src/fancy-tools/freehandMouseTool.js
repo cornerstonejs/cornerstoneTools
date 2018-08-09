@@ -10,7 +10,7 @@ import toolColors from './../stateManagement/toolColors.js';
 import { mutations } from '../store/index.js';
 // Manipulators
 import drawHandles from './../manipulators/drawHandles.js';
-import { findAndMoveHandleNearImagePoint } from '../eventDispatchers/mouseEventHandlers/mouseDown.js';
+import { moveHandleNearImagePoint } from '../base/baseAnnotationToolHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
@@ -120,7 +120,38 @@ export default class extends baseAnnotationTool {
     for (let i = 0; i < data.handles.length; i++) {
       const distanceI = external.cornerstoneMath.point.distance(data.handles[i], coords);
 
-      distance = Math.min(distance, distanceI)
+      distance = Math.min(distance, distanceI);
+    }
+
+    // If an error caused distance not to be calculated, return -1.
+    if (distance === Infinity) {
+      return -1;
+    }
+
+    return distance;
+  }
+
+  /**
+   * @param {*} element
+   * @param {*} data
+   * @param {*} coords
+   * @returns {number} the distance in canvas units from the provided coordinates to the
+   * closest rendered portion of the annotation. -1 if the distance cannot be
+   * calculated.
+   */
+  distanceFromPointCanvas (element, data, coords) {
+    let distance = Infinity;
+
+    const canvasCoords = external.cornerstone.pixelToCanvas(element, coords);
+
+    const dataHandles = data.handles;
+
+    for (let i = 0; i < dataHandles.length; i++) {
+      const handleCanvas = external.cornerstone.pixelToCanvas(element, dataHandles[i]);
+
+      const distanceI = external.cornerstoneMath.point.distance(handleCanvas, canvasCoords);
+
+      distance = Math.min(distance, distanceI);
     }
 
     // If an error caused distance not to be calculated, return -1.
@@ -415,12 +446,12 @@ export default class extends baseAnnotationTool {
   }
 
   /**
-  * Active mouse down callback that takes priority if the user is attempting
-  * to insert or delete a handle with ctrl + click.
-  *
-  * @param {Object} evt - The event.
-  */
-  activeMouseDownCallback (evt) {
+   * Active mouse down callback that takes priority if the user is attempting
+   * to insert or delete a handle with ctrl + click.
+   *
+   * @param {Object} evt - The event.
+   */
+  preMouseDownCallback (evt) {
     const eventData = evt.detail;
     const nearby = this._pointNearHandleAllTools(eventData);
 
@@ -445,19 +476,18 @@ export default class extends baseAnnotationTool {
   * @param  {Object} evt
   * @param  {Object} handle The selected handle.
   */
-  handleSelectedCallback (evt, handle) {
+  handleSelectedCallback (evt, handle, data) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
-      findAndMoveHandleNearImagePoint(
-        element,
+      moveHandleNearImagePoint(
         evt,
-        toolState,
-        this.name,
-        eventData.currentPoints.canvas
+        handle,
+        data,
+        this.name
       );
 
       return;

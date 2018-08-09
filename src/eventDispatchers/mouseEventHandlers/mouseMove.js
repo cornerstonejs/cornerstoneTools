@@ -1,7 +1,6 @@
 import external from './../../externalModules.js';
 // State
 import { getters, setters, state } from './../../store/index.js';
-import { getToolState } from './../../stateManagement/toolState.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 

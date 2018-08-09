@@ -70,12 +70,6 @@
 							<a id="rotate" class="list-group-item">Rotate</a>
 						</li>
 						<li>
-							<a id="zoom" class="list-group-item">Zoom (pinch)</a>
-						</li>
-						<li>
-							<a id="zoomDrag" class="list-group-item">Zoom (drag)</a>
-						</li>
-						<li>
 							<a id="stackScroll" class="list-group-item">Stack Scroll</a>
 						</li>
 						<li>
@@ -240,9 +234,7 @@
 		cornerstoneTools.touchInput.enable(element);
 
 		// Enable all tools we want to use with this element
-		cornerstoneTools.zoomTouchPinch.activate(element);
-		//cornerstoneTools.rotateTouch.activate(element);
-		cornerstoneTools.wwwcTouchDrag.activate(element);
+		cornerstoneTools.rotateTouch.activate(element);
 		cornerstoneTools.panMultiTouch.activate(element);
 
 
@@ -250,14 +242,11 @@
 		// before making a new tool active
 		function disableAllTools() {
 			cornerstoneTools.panTouchDrag.deactivate(element);
-			cornerstoneTools.rotateTouchDrag.deactivate(element);
 			cornerstoneTools.rotateTouch.disable(element);
 			cornerstoneTools.ellipticalRoiTouch.deactivate(element);
 			cornerstoneTools.rectangleRoiTouch.deactivate(element);
 			cornerstoneTools.lengthTouch.deactivate(element);
 			cornerstoneTools.probeTouch.deactivate(element);
-			cornerstoneTools.zoomTouchDrag.deactivate(element);
-			cornerstoneTools.wwwcTouchDrag.deactivate(element);
 			cornerstoneTools.stackScrollTouchDrag.deactivate(element);
 		}
 
@@ -265,27 +254,11 @@
 		var toolSelector = document.getElementById('toolSelector');
 		document.getElementById('enableWindowLevelTool').addEventListener('click', function (e) {
 			disableAllTools();
-			cornerstoneTools.wwwcTouchDrag.activate(element);
 			toolSelector.textContent = e.currentTarget.innerHTML
 		});
 		document.getElementById('pan').addEventListener('click', function (e) {
 			disableAllTools();
 			cornerstoneTools.panTouchDrag.activate(element);
-			toolSelector.textContent = e.currentTarget.innerHTML
-		});
-		document.getElementById('rotate').addEventListener('click', function (e) {
-			disableAllTools();
-			cornerstoneTools.rotateTouchDrag.activate(element);
-			toolSelector.textContent = e.currentTarget.innerHTML
-		});
-		document.getElementById('zoom').addEventListener('click', function (e) {
-			disableAllTools();
-			cornerstoneTools.zoomTouchPinch.activate(element);
-			toolSelector.textContent = e.currentTarget.innerHTML
-		});
-		document.getElementById('zoomDrag').addEventListener('click', function (e) {
-			disableAllTools();
-			cornerstoneTools.zoomTouchDrag.activate(element);
 			toolSelector.textContent = e.currentTarget.innerHTML
 		});
 		document.getElementById('stackScroll').addEventListener('click', function (e) {
@@ -315,8 +288,6 @@
 		});
 		document.getElementById('clearToolData').addEventListener('click', function () {
 			disableAllTools();
-			cornerstoneTools.wwwcTouchDrag.activate(element);
-			cornerstoneTools.zoomTouchPinch.activate(element);
 
 			toolSelector.innerHTML = 'Select tool <span class="caret"></span>';
 

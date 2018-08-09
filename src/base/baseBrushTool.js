@@ -88,7 +88,7 @@ export default class extends baseTool {
   * @event
   * @param {Object} evt - The event.
   */
-  activeMouseDownCallback (evt) {
+  postMouseDownCallback (evt) {
     this._startPainting(evt);
 
     evt.preventDefault();

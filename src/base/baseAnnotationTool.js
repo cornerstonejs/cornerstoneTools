@@ -4,6 +4,11 @@ import { getToolState } from './../stateManagement/toolState.js';
 // Manipulators
 import handleActivator from './../manipulators/handleActivator.js';
 
+import {
+  moveHandleNearImagePoint,
+  moveAnnotationNearClick
+} from './baseAnnotationToolHelpers.js';
+
 export default class extends baseTool {
   constructor ({
     name,
@@ -21,9 +26,9 @@ export default class extends baseTool {
     });
   }
 
-  //===================================================================
+  // ===================================================================
   // Abstract Methods - Must be implemented.
-  //===================================================================
+  // ===================================================================
 
   /**
    * @abstract Creates a new annotation.
@@ -32,7 +37,9 @@ export default class extends baseTool {
    * @return {type}     description
    */
   createNewMeasurement (evt) {
-    throw new Error(`Method createNewMeasurement not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method createNewMeasurement not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -44,7 +51,9 @@ export default class extends baseTool {
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    throw new Error(`Method pointNearTool not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method pointNearTool not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -58,7 +67,9 @@ export default class extends baseTool {
    * calculated.
    */
   distanceFromPoint (element, data, coords) {
-    throw new Error(`Method distanceFromPoint not implemented for ${this.toolName}.`);
+    throw new Error(
+      `Method distanceFromPoint not implemented for ${this.toolName}.`
+    );
   }
 
   /**
@@ -70,18 +81,17 @@ export default class extends baseTool {
     throw new Error(`renderToolData not implemented for ${this.toolName}.`);
   }
 
-  //===================================================================
+  // ===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
-  //===================================================================
-
+  // ===================================================================
 
   /**
-  * Event handler for MOUSE_MOVE event.
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Event handler for MOUSE_MOVE event.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   mouseMoveCallback (evt) {
     const { element, currentPoints } = evt.detail;
     const coords = currentPoints.canvas;
@@ -108,38 +118,32 @@ export default class extends baseTool {
         data.active = !data.active;
         imageNeedsUpdate = true;
       }
-
     }
 
     return imageNeedsUpdate;
   }
 
-  //===================================================================
-  // Optional Methods - Used to override default behavior. (TODO: maybe all that should be in here and they should be virtual?)
-  //===================================================================
-
   /**
    * Custom callback for when a handle is selected.
    *
+   * @virtual
    * @param  {*} evt
    * @param  {*} handle The selected handle.
    */
-  /*
-  handleSelectedCallback (evt, handle) {
-    // Implementation
+  handleSelectedCallback (evt, handle, data) {
+    moveHandleNearImagePoint(evt, handle, data, this.name);
   }
-  */
 
   /**
    * Custom callback for when a tool is selected.
    *
+   * @virtual
    * @param  {*} evt
    * @param  {*} tool The selected tool.
    */
-  /*
-  toolSelectedCallback (evt, tool) {
-    // Implementation
-  }
-  */
+  toolSelectedCallback (evt, data, toolState) {
+    const tool = this;
 
+    moveAnnotationNearClick(evt, toolState, tool, data);
+  }
 }

@@ -6,7 +6,7 @@ import { correctShift, changeViewportScale } from './shared/zoom.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseTool {
-  constructor (name) {
+  constructor (name = 'zoom') {
     const strategies = {
       default: defaultStrategy,
       translate: translateStrategy,
@@ -14,7 +14,7 @@ export default class extends baseTool {
     };
 
     super({
-      name: name || 'zoom',
+      name,
       strategies,
       defaultStrategy: 'default',
       supportedInteractionTypes: ['mouse', 'touch'],

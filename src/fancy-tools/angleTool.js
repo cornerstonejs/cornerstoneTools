@@ -30,9 +30,9 @@ import roundToDecimal from './../util/roundToDecimal.js';
 const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
-  constructor (name) {
+  constructor (name = 'angle') {
     super({
-      name: name || 'angle',
+      name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
 

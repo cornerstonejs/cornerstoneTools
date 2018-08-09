@@ -6,6 +6,7 @@ import touchToolEventDispatcher from './../eventDispatchers/touchToolEventDispat
 import keyboardInput from './../inputSources/keyboardInput.js';
 import mouseWheelInput from './../inputSources/mouseWheelInput.js';
 import onImageRendered from './../eventDispatchers/onImageRendered.js';
+import onNewImage from './../eventDispatchers/onNewImage.js';
 
 // TODO: Canvases are already tracked by `cornerstone`, but should we track them as well?
 // TODO: This might be easier if `cornerstone` emitted events for enable/disable of canvases
@@ -18,4 +19,5 @@ export default function (canvas) {
   keyboardInput.enable(canvas);
   mouseWheelInput.enable(canvas);
   canvas.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  canvas.addEventListener(EVENTS.NEW_IMAGE, onNewImage);
 }
