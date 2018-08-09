@@ -765,7 +765,7 @@ export default class extends baseTool {
    *                                in canvas coordinates.
    * @return {Number}               The limited radius in canvas coordinates.
    */
-  _limitCursorRadiusCanvas(eventData, radiusCanvas) {
+  _limitCursorRadiusCanvas (eventData, radiusCanvas) {
     return this._limitCursorRadius(eventData, radiusCanvas, true);
   }
 
@@ -779,7 +779,7 @@ export default class extends baseTool {
    *                                in image coordinates.
    * @return {Number}               The limited radius in image coordinates.
    */
-  _limitCursorRadiusImage(eventData, radiusImage) {
+  _limitCursorRadiusImage (eventData, radiusImage) {
     return this._limitCursorRadius(eventData, radiusImage, false);
   }
 
@@ -795,7 +795,7 @@ export default class extends baseTool {
    *                                In canvas coordinates.
    * @return {Number}               The limited radius.
    */
-  _limitCursorRadius(eventData, radius, canvasCoords = false) {
+  _limitCursorRadius (eventData, radius, canvasCoords = false) {
     const element = eventData.element;
     const image = eventData.image;
     const config = this.configuration;
@@ -807,14 +807,21 @@ export default class extends baseTool {
     let areaModifier = 1.0;
 
     if (canvasCoords) {
-      const topLeft = cornerstone.pixelToCanvas(element, { x: 0, y: 0 });
-      const bottomRight = cornerstone.pixelToCanvas(element, {x: image.width, y:image.height});
+      const topLeft = cornerstone.pixelToCanvas(element, {
+        x: 0,
+        y: 0
+      });
+      const bottomRight = cornerstone.pixelToCanvas(element, {
+        x: image.width,
+        y: image.height
+      });
       const canvasArea = (bottomRight.x - topLeft.x) * (bottomRight.y - topLeft.y);
-      areaModifier = canvasArea/(image.width * image.height);
+
+      areaModifier = canvasArea / (image.width * image.height);
     }
 
     const area = data.area * areaModifier;
-    const maxRadius = Math.pow(area/Math.PI, 0.5);
+    const maxRadius = Math.pow(area / Math.PI, 0.5);
 
     return Math.min(radius, maxRadius);
   }
