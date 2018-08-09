@@ -83,18 +83,12 @@ export {
   default as calculateEllipseStatistics
 } from './util/calculateEllipseStatistics.js';
 
-export { default as probeTool4D } from './timeSeriesTools/probeTool4D.js';
 export {
   default as incrementTimePoint
 } from './timeSeriesTools/incrementTimePoint.js';
 export {
   default as timeSeriesPlayer
 } from './timeSeriesTools/timeSeriesPlayer.js';
-export {
-  timeSeriesScroll,
-  timeSeriesScrollWheel,
-  timeSeriesScrollTouchDrag
-} from './timeSeriesTools/timeSeriesScroll.js';
 
 export {
   default as wwwcSynchronizer
@@ -160,19 +154,7 @@ export {
 
 export { default as appState } from './stateManagement/appState.js';
 
-export {
-  default as stackScrollKeyboard
-} from './stackTools/stackScrollKeyboard.js';
-
-export {
-  stackScroll,
-  stackScrollWheel,
-  stackScrollTouchDrag,
-  stackScrollMultiTouch
-} from './stackTools/stackScroll.js';
-
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
-export { default as scrollIndicator } from './stackTools/scrollIndicator.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
 
@@ -203,8 +185,6 @@ export {
 } from './inputSources/preventGhostClick.js';
 export { default as touchInput } from './inputSources/touchInput.js';
 
-export { brush } from './paintingTools/brush.js';
-export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
 
 export { setToolOptions, getToolOptions } from './toolOptions.js';
