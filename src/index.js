@@ -181,14 +181,6 @@ export {
 } from './manipulators/touchMoveAllHandles.js';
 export { default as touchMoveHandle } from './manipulators/touchMoveHandle.js';
 
-export { default as keyboardInput } from './inputSources/keyboardInput.js';
-export { default as mouseInput } from './inputSources/mouseInput.js';
-export { default as mouseWheelInput } from './inputSources/mouseWheelInput.js';
-export {
-  default as preventGhostClick
-} from './inputSources/preventGhostClick.js';
-export { default as touchInput } from './inputSources/touchInput.js';
-
 export { default as version } from './version.js';
 
 export { setToolOptions, getToolOptions } from './toolOptions.js';
