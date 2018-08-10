@@ -1,7 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
-import preventGhostClick from '../inputSources/preventGhostClick.js';
+import preventGhostClick from './preventGhostClick.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
@@ -34,17 +34,16 @@ function onTouch (e) {
     return;
   }
 
-  let eventType,
-    scaleChange,
-    delta,
-    remainingPointers,
-    rotation;
+  let eventType, scaleChange, delta, remainingPointers, rotation;
 
   // Prevent mouse events from occurring alongside touch events
   e.preventDefault();
 
   // If more than one finger is placed on the element, stop the press timeout
-  if ((e.pointers && e.pointers.length > 1) || (e.touches && e.touches.length > 1)) {
+  if (
+    (e.pointers && e.pointers.length > 1) ||
+    (e.touches && e.touches.length > 1)
+  ) {
     isPress = false;
     clearTimeout(pressTimeout);
   }
@@ -57,13 +56,20 @@ function onTouch (e) {
     // Calculate our current points in page and image coordinates
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+      image: cornerstone.pageToPixel(
+        element,
+        e.pointers[0].pageX,
+        e.pointers[0].pageY
+      ),
       client: {
         x: e.pointers[0].clientX,
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     eventType = EVENTS.TAP;
     eventData = {
@@ -86,13 +92,20 @@ function onTouch (e) {
     // Calculate our current points in page and image coordinates
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+      image: cornerstone.pageToPixel(
+        element,
+        e.pointers[0].pageX,
+        e.pointers[0].pageY
+      ),
       client: {
         x: e.pointers[0].clientX,
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     eventType = EVENTS.DOUBLE_TAP;
     eventData = {
@@ -131,7 +144,10 @@ function onTouch (e) {
       page: e.center,
       image: cornerstone.pageToPixel(element, e.center.x, e.center.y)
     };
-    startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+    startPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      startPoints.image
+    );
 
     eventType = EVENTS.TOUCH_PINCH;
     eventData = {
@@ -160,13 +176,20 @@ function onTouch (e) {
     touchStartDelay = setTimeout(function () {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
-        image: cornerstone.pageToPixel(element, e.touches[0].pageX, e.touches[0].pageY),
+        image: cornerstone.pageToPixel(
+          element,
+          e.touches[0].pageX,
+          e.touches[0].pageY
+        ),
         client: {
           x: e.touches[0].clientX,
           y: e.touches[0].clientY
         }
       };
-      startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+      startPoints.canvas = cornerstone.pixelToCanvas(
+        element,
+        startPoints.image
+      );
 
       eventType = EVENTS.TOUCH_START;
       if (e.touches.length > 1) {
@@ -214,13 +237,20 @@ function onTouch (e) {
 
       currentPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
-        image: cornerstone.pageToPixel(element, e.touches[0].pageX, e.touches[0].pageY),
+        image: cornerstone.pageToPixel(
+          element,
+          e.touches[0].pageX,
+          e.touches[0].pageY
+        ),
         client: {
           x: e.touches[0].clientX,
           y: e.touches[0].clientY
         }
       };
-      currentPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+      currentPoints.canvas = cornerstone.pixelToCanvas(
+        element,
+        startPoints.image
+      );
 
       eventType = EVENTS.TOUCH_PRESS;
       eventData = {
@@ -248,13 +278,20 @@ function onTouch (e) {
     setTimeout(function () {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.changedTouches[0]),
-        image: cornerstone.pageToPixel(element, e.changedTouches[0].pageX, e.changedTouches[0].pageY),
+        image: cornerstone.pageToPixel(
+          element,
+          e.changedTouches[0].pageX,
+          e.changedTouches[0].pageY
+        ),
         client: {
           x: e.changedTouches[0].clientX,
           y: e.changedTouches[0].clientY
         }
       };
-      startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+      startPoints.canvas = cornerstone.pixelToCanvas(
+        element,
+        startPoints.image
+      );
 
       eventType = EVENTS.TOUCH_END;
 
@@ -294,23 +331,45 @@ function onTouch (e) {
         x: lastPoints.page.x + delta.x,
         y: lastPoints.page.y + delta.y
       },
-      image: cornerstone.pageToPixel(element, lastPoints.page.x + delta.x, lastPoints.page.y + delta.y),
+      image: cornerstone.pageToPixel(
+        element,
+        lastPoints.page.x + delta.x,
+        lastPoints.page.y + delta.y
+      ),
       client: {
         x: lastPoints.client.x + delta.x,
         y: lastPoints.client.y + delta.y
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(
+        currentPoints.page,
+        lastPoints.page
+      ),
+      image: external.cornerstoneMath.point.subtract(
+        currentPoints.image,
+        lastPoints.image
+      ),
+      client: external.cornerstoneMath.point.subtract(
+        currentPoints.client,
+        lastPoints.client
+      ),
+      canvas: external.cornerstoneMath.point.subtract(
+        currentPoints.canvas,
+        lastPoints.canvas
+      )
     };
 
-    pageDistanceMoved += Math.sqrt(deltaPoints.page.x * deltaPoints.page.x + deltaPoints.page.y * deltaPoints.page.y);
+    pageDistanceMoved += Math.sqrt(
+      deltaPoints.page.x * deltaPoints.page.x +
+          deltaPoints.page.y * deltaPoints.page.y
+    );
     // Console.log("pageDistanceMoved: " + pageDistanceMoved);
     if (pageDistanceMoved > pressMaxDistance) {
       // Console.log('Press event aborted due to movement');
@@ -349,13 +408,20 @@ function onTouch (e) {
 
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+      image: cornerstone.pageToPixel(
+        element,
+        e.pointers[0].pageX,
+        e.pointers[0].pageY
+      ),
       client: {
         x: e.pointers[0].clientX,
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
     lastPoints = copyPoints(currentPoints);
     break;
 
@@ -371,20 +437,39 @@ function onTouch (e) {
 
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(element, e.pointers[0].pageX, e.pointers[0].pageY),
+      image: cornerstone.pageToPixel(
+        element,
+        e.pointers[0].pageX,
+        e.pointers[0].pageY
+      ),
       client: {
         x: e.pointers[0].clientX,
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     // Calculate delta values in page and image coordinates
     deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(
+        currentPoints.page,
+        lastPoints.page
+      ),
+      image: external.cornerstoneMath.point.subtract(
+        currentPoints.image,
+        lastPoints.image
+      ),
+      client: external.cornerstoneMath.point.subtract(
+        currentPoints.client,
+        lastPoints.client
+      ),
+      canvas: external.cornerstoneMath.point.subtract(
+        currentPoints.canvas,
+        lastPoints.canvas
+      )
     };
 
     eventType = EVENTS.TOUCH_DRAG_END;
@@ -440,7 +525,9 @@ function enable (element) {
   const Hammer = external.Hammer;
 
   const hammerOptions = {
-    inputClass: Hammer.SUPPORT_POINTER_EVENTS ? Hammer.PointerEventInput : Hammer.TouchInput
+    inputClass: Hammer.SUPPORT_POINTER_EVENTS
+      ? Hammer.PointerEventInput
+      : Hammer.TouchInput
   };
 
   const mc = new Hammer.Manager(element, hammerOptions);
@@ -475,7 +562,10 @@ function enable (element) {
 
   // Add to the Manager
   mc.add([doubleTap, pan, rotate, pinch]);
-  mc.on('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
+  mc.on(
+    'tap doubletap panstart panmove panend pinchstart pinchmove rotatemove',
+    onTouch
+  );
 
   preventGhostClick.enable(element);
 
@@ -505,7 +595,10 @@ function disable (element) {
   const mc = options.hammer;
 
   if (mc) {
-    mc.off('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
+    mc.off(
+      'tap doubletap panstart panmove panend pinchstart pinchmove rotatemove',
+      onTouch
+    );
   }
 }
 

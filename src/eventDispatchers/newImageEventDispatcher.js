@@ -1,8 +1,9 @@
+import EVENTS from './../events.js';
 // TODO: Is this just customCallbackHandler, but for TOUCH and MOUSE?
 import { state } from './../store/index.js';
 import getActiveToolsForElement from './../store/getActiveToolsForElement.js';
 
-export default function (evt) {
+const onNewImage = function (evt) {
   if (state.isToolLocked) {
     return false;
   }
@@ -18,4 +19,17 @@ export default function (evt) {
   }
 
   tools[0].newImageCallback(evt);
-}
+};
+
+const enable = function (element) {
+  element.addEventListener(EVENTS.NEW_IMAGE, onNewImage);
+};
+
+const disable = function (element) {
+  element.removeEventListener(EVENTS.NEW_IMAGE, onNewImage);
+};
+
+export default {
+  enable,
+  disable
+};

@@ -1,6 +1,7 @@
+import EVENTS from './../events.js';
 import { state } from './../store/index.js';
 
-export default function (evt) {
+const onImageRendered = function (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
@@ -17,4 +18,17 @@ export default function (evt) {
       tool.renderToolData(evt);
     }
   });
-}
+};
+
+const enable = function (element) {
+  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+};
+
+const disable = function (element) {
+  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+};
+
+export default {
+  enable,
+  disable
+};

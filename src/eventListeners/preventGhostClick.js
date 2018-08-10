@@ -8,8 +8,7 @@ const antiGhostDelay = 2000,
     touch: 1
   };
 
-let lastInteractionType,
-  lastInteractionTime;
+let lastInteractionType, lastInteractionTime;
 
 function handleTap (type, e) {
   const now = Date.now();
@@ -65,9 +64,7 @@ function enable (element) {
   attachEvents(element, touchEvents, pointerType.touch);
 }
 
-const preventGhostClick = {
+export default {
   enable,
   disable
 };
-
-export default preventGhostClick;
