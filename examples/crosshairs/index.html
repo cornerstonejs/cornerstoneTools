@@ -1,0 +1,164 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <!-- support for mobile touch devices -->
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <style>
+        .hide {
+			display: none;
+		}
+
+		.checkbox-label {
+			font: 400 11px system-ui;
+			color: #000;
+		}
+
+		.label-off {
+			color: #e44;
+		}
+
+		.label-on {
+			color: #4ea;
+		}
+
+		.checkbox-label .label-on {
+			display: none;
+		}
+
+		.checkbox-label.turned-on .label-on {
+			display: inline-block;
+		}
+
+		.checkbox-label.turned-on .label-off {
+			display: none;
+		}
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>
+            Crosshairs Example
+        </h1>
+        <p>
+            This page contains an example of the crosshairs tool.
+        </p>
+
+    </div>
+
+    <div class="row">
+        <div class="col-xs-2">
+                <label id="Crosshairs" class="checkbox-label" for="CrosshairsCheckbox">
+                    Crosshairs
+                    <label class="label-on"> ON</label>
+                    <label class="label-off"> OFF</label>
+                </label>
+                <input id="CrosshairsCheckbox" class="hide" data-tool="Crosshairs" type="checkbox" />
+        </div>
+        <div class="col-xs-10">
+            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+                 oncontextmenu="return false"
+                 class='cornerstone-enabled-image'
+                 unselectable='on'
+                 onselectstart='return false;'
+                 onmousedown='return false;'>
+                <div id="axial"
+                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                </div>
+            </div>
+            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
+                 oncontextmenu="return false"
+                 class='cornerstone-enabled-image'
+                 unselectable='on'
+                 onselectstart='return false;'
+                 onmousedown='return false;'>
+                <div id="coronal"
+                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.4/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.min.js"></script>
+<script src="../../dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../exampleImageLoader.js"></script>
+<script src="../exampleMetaDataProvider.js"></script>
+
+<script>
+    const cTools = cornerstoneTools.init();
+    const CrosshairsTool = new cornerstoneTools.crosshairsTool();
+
+    const axialElement = document.getElementById('axial');
+    const coronalElement = document.getElementById('coronal');
+
+    const axialImageIds = [
+        'example://1',
+        'example://2'
+    ];
+
+    const axialStack = {
+        currentImageIdIndex : 0,
+        imageIds: axialImageIds
+    };
+
+    const synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
+
+    // image enable the dicomImage element
+    cornerstone.enable(axialElement);
+    cornerstone.enable(coronalElement);
+
+    cTools.addCanvas(axialElement);
+    cTools.addCanvas(coronalElement);
+
+    var axialPromise = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
+        // display this image
+        cornerstone.displayImage(axialElement, image);
+
+        // set the stack as tool state
+        cornerstoneTools.addStackStateManager(axialElement, ['stack', 'crosshairs']);
+        cornerstoneTools.addToolState(axialElement, 'stack', axialStack);
+
+        // Enable all tools we want to use with this element
+        cornerstoneTools.stackScroll.activate(axialElement, 1);
+        cornerstoneTools.stackScrollWheel.activate(axialElement);
+    });
+
+    var coronalPromise = cornerstone.loadImage('example://3').then(function(image) {
+        // display this image
+        cornerstone.displayImage(coronalElement, image);
+    });
+
+    Promise.all([axialPromise, coronalPromise]).then(function() {
+        // Add the enabled elements to the synchronization context
+    });
+
+    synchronizer.add(axialElement);
+    synchronizer.add(coronalElement);
+
+    cTools.addTool(axialElement, CrosshairsTool);
+    cTools.addTool(coronalElement, CrosshairsTool);
+
+    toolCheckBox = document.querySelector('input[type="checkbox"]');
+    toolCheckBox.addEventListener('change', (evt) => {
+        if (evt.currentTarget.checked) {
+            cTools.setToolActive(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizer });
+            cTools.setToolActive(coronalElement, 'crosshairs', { mouseButtonMask: 1, synchronizer });
+        } else {
+            cTools.setToolPassive(axialElement, 'crosshairs');
+            cTools.setToolPassive(coronalElement, 'crosshairs');
+        }
+        toolLabel.classList.toggle('turned-on');
+    });
+
+</script>
+</html>
