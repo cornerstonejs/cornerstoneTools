@@ -53,7 +53,6 @@ function mouseDoubleClick (e) {
 
   const lastPoints = copyPoints(startPoints);
 
-
   /* Note: It seems we can't trust MouseEvent.buttons for dblclick events?
 
     For some reason they are always firing with e.buttons = 0
@@ -146,14 +145,29 @@ function mouseDown (e) {
       }
     };
 
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     // Calculate delta values in page and image coordinates
     const deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(
+        currentPoints.page,
+        lastPoints.page
+      ),
+      image: external.cornerstoneMath.point.subtract(
+        currentPoints.image,
+        lastPoints.image
+      ),
+      client: external.cornerstoneMath.point.subtract(
+        currentPoints.client,
+        lastPoints.client
+      ),
+      canvas: external.cornerstoneMath.point.subtract(
+        currentPoints.canvas,
+        lastPoints.canvas
+      )
     };
 
     const eventData = {
@@ -199,14 +213,29 @@ function mouseDown (e) {
       }
     };
 
-    currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+    currentPoints.canvas = cornerstone.pixelToCanvas(
+      element,
+      currentPoints.image
+    );
 
     // Calculate delta values in page and image coordinates
     const deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-      image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-      client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-      canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+      page: external.cornerstoneMath.point.subtract(
+        currentPoints.page,
+        lastPoints.page
+      ),
+      image: external.cornerstoneMath.point.subtract(
+        currentPoints.image,
+        lastPoints.image
+      ),
+      client: external.cornerstoneMath.point.subtract(
+        currentPoints.client,
+        lastPoints.client
+      ),
+      canvas: external.cornerstoneMath.point.subtract(
+        currentPoints.canvas,
+        lastPoints.canvas
+      )
     };
 
     const eventData = {
@@ -270,14 +299,29 @@ function mouseMove (e) {
     }
   };
 
-  currentPoints.canvas = cornerstone.pixelToCanvas(element, currentPoints.image);
+  currentPoints.canvas = cornerstone.pixelToCanvas(
+    element,
+    currentPoints.image
+  );
 
   // Calculate delta values in page and image coordinates
   const deltaPoints = {
-    page: external.cornerstoneMath.point.subtract(currentPoints.page, lastPoints.page),
-    image: external.cornerstoneMath.point.subtract(currentPoints.image, lastPoints.image),
-    client: external.cornerstoneMath.point.subtract(currentPoints.client, lastPoints.client),
-    canvas: external.cornerstoneMath.point.subtract(currentPoints.canvas, lastPoints.canvas)
+    page: external.cornerstoneMath.point.subtract(
+      currentPoints.page,
+      lastPoints.page
+    ),
+    image: external.cornerstoneMath.point.subtract(
+      currentPoints.image,
+      lastPoints.image
+    ),
+    client: external.cornerstoneMath.point.subtract(
+      currentPoints.client,
+      lastPoints.client
+    ),
+    canvas: external.cornerstoneMath.point.subtract(
+      currentPoints.canvas,
+      lastPoints.canvas
+    )
   };
 
   const eventData = {
@@ -312,10 +356,7 @@ function enable (element) {
   element.addEventListener('dblclick', mouseDoubleClick);
 }
 
-// Module exports
-const mouseInput = {
+export default {
   enable,
   disable
 };
-
-export default mouseInput;

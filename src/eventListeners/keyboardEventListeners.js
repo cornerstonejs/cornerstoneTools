@@ -30,7 +30,10 @@ function keyPress (e) {
     which: e.which
   };
 
-  keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(element, keyPressData.currentPoints.image);
+  keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(
+    element,
+    keyPressData.currentPoints.image
+  );
 
   const keyPressEvents = {
     keydown: EVENTS.KEY_DOWN,
@@ -66,10 +69,7 @@ function disable (element) {
   element.removeEventListener('mousemove', mouseMove);
 }
 
-// Module exports
-const keyboardInput = {
+export default {
   enable,
   disable
 };
-
-export default keyboardInput;
