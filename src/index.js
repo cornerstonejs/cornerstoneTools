@@ -15,6 +15,9 @@ export { default as eraserTool } from './fancy-tools/eraserTool.js';
 export {
   default as freehandMouseTool
 } from './fancy-tools/freehandMouseTool.js';
+export {
+  default as freehandSculpterMouseTool
+} from './fancy-tools/freehandSculpterMouseTool.js';
 export { default as lengthTool } from './fancy-tools/lengthTool.js';
 export { default as magnifyTool } from './fancy-tools/magnifyTool.js';
 export { default as probeTool } from './fancy-tools/probeTool.js';
@@ -30,6 +33,7 @@ export {
 export {
   default as zoomMouseWheelTool
 } from './fancy-tools/zoomMouseWheelTool.js';
+
 // END V3 EXPORTS
 
 export { drawing };
