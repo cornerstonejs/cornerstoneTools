@@ -4,35 +4,25 @@ import * as drawing from './util/drawing.js';
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
-export {
-  default as arrowAnnotateTool
-} from './fancy-tools/arrowAnnotateTool.js';
-export { default as angleTool } from './fancy-tools/angleTool.js';
-export {
-  default as ellipticalRoiTool
-} from './fancy-tools/ellipticalRoiTool.js';
-export { default as eraserTool } from './fancy-tools/eraserTool.js';
-export {
-  default as freehandMouseTool
-} from './fancy-tools/freehandMouseTool.js';
+export { default as arrowAnnotateTool } from './tools/arrowAnnotateTool.js';
+export { default as angleTool } from './tools/angleTool.js';
+export { default as ellipticalRoiTool } from './tools/ellipticalRoiTool.js';
+export { default as eraserTool } from './tools/eraserTool.js';
+export { default as freehandMouseTool } from './tools/freehandMouseTool.js';
 export {
   default as freehandSculpterMouseTool
-} from './fancy-tools/freehandSculpterMouseTool.js';
-export { default as lengthTool } from './fancy-tools/lengthTool.js';
-export { default as magnifyTool } from './fancy-tools/magnifyTool.js';
-export { default as probeTool } from './fancy-tools/probeTool.js';
-export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
-export { default as rotateTool } from './fancy-tools/rotateTool.js';
-export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
-export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
-export { default as wwwcRegionTool } from './fancy-tools/wwwcRegionTool.js';
-export { default as zoomTool } from './fancy-tools/zoomTool.js';
-export {
-  default as zoomTouchPinchTool
-} from './fancy-tools/zoomTouchPinchTool.js';
-export {
-  default as zoomMouseWheelTool
-} from './fancy-tools/zoomMouseWheelTool.js';
+} from './tools/freehandSculpterMouseTool.js';
+export { default as lengthTool } from './tools/lengthTool.js';
+export { default as magnifyTool } from './tools/magnifyTool.js';
+export { default as probeTool } from './tools/probeTool.js';
+export { default as rectangleRoiTool } from './tools/rectangleRoiTool.js';
+export { default as rotateTool } from './tools/rotateTool.js';
+export { default as scaleOverlayTool } from './tools/scaleOverlay.js';
+export { default as wwwcTool } from './tools/wwwcTool.js';
+export { default as wwwcRegionTool } from './tools/wwwcRegionTool.js';
+export { default as zoomTool } from './tools/zoomTool.js';
+export { default as zoomTouchPinchTool } from './tools/zoomTouchPinchTool.js';
+export { default as zoomMouseWheelTool } from './tools/zoomMouseWheelTool.js';
 
 // END V3 EXPORTS
 
