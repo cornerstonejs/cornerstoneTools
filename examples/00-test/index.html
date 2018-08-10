@@ -116,6 +116,8 @@
 				<label class="label-off"> OFF</label>
 			</label>
 			<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
+			<button data-tool="stackScroll">StackScroll</button>
+			<button data-tool="stackScrollMouseWheel">StackScrollMouseWheel</button>
 
 			<div class="canvas" oncontextmenu="return false" />
 		</div>
@@ -138,8 +140,17 @@
 
 <script>
 	const cTools = cornerstoneTools.init();
-	const imageId = 'example://1';
-	var element = document.getElementsByClassName('canvas')[0];
+    const imageIds = [
+        'example://1',
+        'example://2',
+        'example://3'
+    ];
+    const element = document.getElementsByClassName('canvas')[0];
+
+    const stack = {
+        currentImageIdIndex : 0,
+        imageIds: imageIds
+    };
 
 
 	// TODO: if we emitted an event when this happened, cornerstone-tools
@@ -147,8 +158,11 @@
 	cornerstone.enable(element);
 	cTools.addCanvas(element);
 
-	cornerstone.loadImage(imageId).then(function (image) {
-		cornerstone.displayImage(element, image);
+	cornerstone.loadImage(imageIds[0]).then(function (image) {
+        cornerstone.displayImage(element, image);
+
+        cornerstoneTools.addStackStateManager(element, ['stack']);
+        cornerstoneTools.addToolState(element, 'stack', stack);
 	});
 
 	function setAllToolsPassive() {
