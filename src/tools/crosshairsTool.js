@@ -134,7 +134,7 @@ export default class extends baseTool {
     });
   }
 
-  enabledCallback (element, { mouseButtonMask, synchronizationContext }) {
+  activeCallback (element, { mouseButtonMask, synchronizationContext }) {
     setToolOptions(this.name, element, { mouseButtonMask });
 
     // Clear any currently existing toolData
