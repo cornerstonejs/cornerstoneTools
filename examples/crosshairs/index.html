@@ -56,28 +56,8 @@
                 </label>
                 <input id="CrosshairsCheckbox" class="hide" data-tool="Crosshairs" type="checkbox" />
         </div>
-        <div class="col-xs-10">
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
-                 oncontextmenu="return false"
-                 class='cornerstone-enabled-image'
-                 unselectable='on'
-                 onselectstart='return false;'
-                 onmousedown='return false;'>
-                <div id="axial"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
-                </div>
-            </div>
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
-                 oncontextmenu="return false"
-                 class='cornerstone-enabled-image'
-                 unselectable='on'
-                 onselectstart='return false;'
-                 onmousedown='return false;'>
-                <div id="coronal"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
-                </div>
-            </div>
-        </div>
+        <div class="canvasAxial" oncontextmenu="return false"></div>
+        <div class="canvasCoronal" oncontextmenu="return false"></div>
     </div>
 </div>
 </body>
@@ -96,11 +76,11 @@
 
 <script>
     const cTools = cornerstoneTools.init();
-    const CrosshairsTool = new cornerstoneTools.crosshairsTool();
 
-    const axialElement = document.getElementById('axial');
-    const coronalElement = document.getElementById('coronal');
+    const axialElement = document.querySelector('.canvasAxial');
+    const coronalElement = document.querySelector('.canvasCoronal');
 
+    const coronalImageId = 'example://3';
     const axialImageIds = [
         'example://1',
         'example://2'
@@ -127,10 +107,6 @@
         // set the stack as tool state
         cornerstoneTools.addStackStateManager(axialElement, ['stack', 'crosshairs']);
         cornerstoneTools.addToolState(axialElement, 'stack', axialStack);
-
-        // Enable all tools we want to use with this element
-        cornerstoneTools.stackScroll.activate(axialElement, 1);
-        cornerstoneTools.stackScrollWheel.activate(axialElement);
     });
 
     var coronalPromise = cornerstone.loadImage('example://3').then(function(image) {
@@ -140,22 +116,29 @@
 
     Promise.all([axialPromise, coronalPromise]).then(function() {
         // Add the enabled elements to the synchronization context
+        synchronizer.add(axialElement);
+        synchronizer.add(coronalElement);
     });
+    
 
-    synchronizer.add(axialElement);
-    synchronizer.add(coronalElement);
+    const CrosshairsTool = new cornerstoneTools.crosshairsTool();
+    const StackScrollTool = new cornerstoneTools.stackScrollTool();
+    const StackScrollMouseWheelTool = new cornerstoneTools.stackScrollMouseWheelTool();
 
     cTools.addTool(axialElement, CrosshairsTool);
-    cTools.addTool(coronalElement, CrosshairsTool);
+
+    cTools.addTool(axialElement, StackScrollTool, {mouseButtonMask: 1});
+    cTools.addTool(axialElement, StackScrollMouseWheelTool);
+    cTools.setToolActive(axialElement, 'stackScroll');
+    cTools.setToolActive(axialElement, 'stackScrollMouseWheel');
 
     toolCheckBox = document.querySelector('input[type="checkbox"]');
+    const toolLabel = document.querySelector(`#Crosshairs`);
     toolCheckBox.addEventListener('change', (evt) => {
         if (evt.currentTarget.checked) {
-            cTools.setToolActive(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizer });
-            cTools.setToolActive(coronalElement, 'crosshairs', { mouseButtonMask: 1, synchronizer });
+            cTools.setToolEnabled(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
         } else {
             cTools.setToolPassive(axialElement, 'crosshairs');
-            cTools.setToolPassive(coronalElement, 'crosshairs');
         }
         toolLabel.classList.toggle('turned-on');
     });
