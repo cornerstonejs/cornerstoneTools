@@ -23,9 +23,10 @@ export default class extends baseTool {
       supportedInteractionTypes
     });
 
-    this.isBrushTool = true;
     this.hasCursor = true;
     this._referencedToolData = 'brush';
+
+    this._changeDrawColor(this.configuration.draw);
 
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
   }
@@ -64,11 +65,11 @@ export default class extends baseTool {
    *
    * @virtual
    */
-  activeCallback () {
-    const configuration = this.configuration;
+  //activeCallback () {
+  //  const configuration = this.configuration;
 
-    this._changeDrawColor(configuration.draw);
-  }
+
+  //}
 
   /**
   * Event handler for MOUSE_DRAG event.

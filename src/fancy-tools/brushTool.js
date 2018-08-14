@@ -237,9 +237,6 @@ export default class extends baseBrushTool {
    * @param {Object} element - The element to add/remove event listners.
    */
   activeCallback(element) {
-    const config = this.configuration;
-    this._changeDrawColor(config.draw);
-
     element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
     element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
