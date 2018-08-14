@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import {
   tap,
   doubleTap,
+  multiTouchDrag,
   touchStart,
   touchStartActive,
   touchDrag,
@@ -34,6 +35,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.addEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.addEventListener(EVENTS.TOUCH_PINCH, touchPinch);
+  element.addEventListener(EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag);
 };
 
 const disable = function (element) {
@@ -47,6 +49,7 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.removeEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinch);
+  element.removeEventListener(EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag);
 };
 
 export default {
