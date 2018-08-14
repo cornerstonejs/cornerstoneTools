@@ -19,13 +19,15 @@ export { default as panTool } from './tools/panTool.js';
 export { default as rectangleRoiTool } from './tools/rectangleRoiTool.js';
 export { default as rotateTool } from './tools/rotateTool.js';
 export { default as scaleOverlayTool } from './tools/scaleOverlay.js';
-export { default as stackScrollTool } from './fancy-tools/stackScrollTool.js';
-export { default as stackScrollMouseWheelTool } from './fancy-tools/stackScrollMouseWheelTool.js';
+export { default as stackScrollTool } from './tools/stackScrollTool.js';
+export { default as stackScrollMouseWheelTool } from './tools/stackScrollMouseWheelTool.js';
 export { default as wwwcTool } from './tools/wwwcTool.js';
 export { default as wwwcRegionTool } from './tools/wwwcRegionTool.js';
 export { default as zoomTool } from './tools/zoomTool.js';
 export { default as zoomTouchPinchTool } from './tools/zoomTouchPinchTool.js';
 export { default as zoomMouseWheelTool } from './tools/zoomMouseWheelTool.js';
+export { default as crosshairsTool } from './tools/crosshairsTool.js';
+
 // END V3 EXPORTS
 
 export { drawing };
