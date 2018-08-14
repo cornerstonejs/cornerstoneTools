@@ -48,10 +48,6 @@ export default class extends baseBrushTool {
       configuration: defaultBrushToolConfiguration()
     });
 
-    const keyBinds = this.configuration.keyBinds;
-
-    this._keyboardController = new KeyboardController(this, keyBinds);
-
     this._newImage = false;
     this._onNewImageCallback = this._onNewImageCallback.bind(this);
   }

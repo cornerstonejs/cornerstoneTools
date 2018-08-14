@@ -2,7 +2,6 @@ import external from './../externalModules.js';
 import EVENTS from './../events.js';
 import baseTool from './../base/baseTool.js';
 // Utils
-import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
 import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
 import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
@@ -227,28 +226,6 @@ export default class extends baseTool {
   //===================================================================
 
   /**
-  * Event handler for KEY_DOWN event.
-  *
-  * @event
-  * @param {Object} evt - The event.
-  */
-  onKeyDown (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    const keyCode = eventData.keyCode;
-
-    if (!isToolActive(element, this.name) || !this._keyboardController) {
-      return;
-    }
-
-    const imageNeedsUpdate = this._keyboardController.keyPress(keyCode);
-
-    if (imageNeedsUpdate) {
-      external.cornerstone.updateImage(element);
-    }
-  }
-
-  /**
    * Draws the ImageBitmap the canvas.
    *
    * @protected
@@ -352,17 +329,5 @@ export default class extends baseTool {
     const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
 
     return colormap.getNumberOfColors();
-  }
-
-  /**
-   * Sets the keybinds for the tool. // TODO: If this will be used in other
-   * tools, maybe it should be stored in a different module and imported?
-   *
-   */
-  set keyBinds (keyBinds) {
-    const configuration = this.configuration;
-
-    configuration.keyBinds = keyBinds;
-    this._keyboardController = new KeyboardController(this, keyBinds);
   }
 }

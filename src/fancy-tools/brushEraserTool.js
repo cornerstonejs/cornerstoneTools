@@ -5,7 +5,6 @@ import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
-import KeyboardController from './shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
 import { getters } from './../store/index.js';
@@ -17,10 +16,6 @@ export default class extends baseBrushTool {
       supportedInteractionTypes: ['mouse'],
       configuration: defaultBrushConfiguration()
     });
-
-    const keyBinds = this.configuration.keyBinds;
-
-    this._keyboardController = new KeyboardController(this, keyBinds);
   }
 
   /**
