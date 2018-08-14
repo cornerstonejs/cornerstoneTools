@@ -3,7 +3,7 @@ import external from '../externalModules.js';
 import baseTool from '../base/baseTool.js';
 
 export default class extends baseTool {
-  constructor (name = 'pan') {
+  constructor (name = 'panMultiTouch') {
     super({
       name,
       supportedInteractionTypes: ['touch']
