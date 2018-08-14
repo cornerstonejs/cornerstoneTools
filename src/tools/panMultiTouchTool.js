@@ -1,4 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
+/* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import baseTool from '../base/baseTool.js';
 
@@ -6,7 +7,10 @@ export default class extends baseTool {
   constructor (name = 'panMultiTouch') {
     super({
       name,
-      supportedInteractionTypes: ['touch']
+      supportedInteractionTypes: ['touch'],
+      configuration: {
+        touchPointers: 2
+      }
     });
 
     // Touch
@@ -17,10 +21,12 @@ export default class extends baseTool {
     const eventData = evt.detail;
     const { element, viewport } = eventData;
 
-    const translation = this._getTranslation(eventData);
+    if (eventData.numPointers === this.configuration.touchPointers) {
+      const translation = this._getTranslation(eventData);
 
-    this._applyTranslation(viewport, translation);
-    external.cornerstone.setViewport(element, viewport);
+      this._applyTranslation(viewport, translation);
+      external.cornerstone.setViewport(element, viewport);
+    }
   }
 
   _getTranslation (eventData) {

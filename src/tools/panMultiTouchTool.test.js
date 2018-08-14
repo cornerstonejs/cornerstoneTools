@@ -41,6 +41,7 @@ describe('PanMultiTouchTool.js', () => {
             }
           },
           image: {},
+          numPointers: 2,
           deltaPoints: {
             page: {
               x: 512,
