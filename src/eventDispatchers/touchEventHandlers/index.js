@@ -27,9 +27,15 @@ const touchPress = customCallbackHandler.bind(
   'touch',
   'touchPressCallback'
 );
+const multiTouchDrag = customCallbackHandler.bind(
+  null,
+  'touch',
+  'multiTouchDragCallback'
+);
 
 export {
   doubleTap,
+  multiTouchDrag,
   tap,
   touchDrag,
   touchEnd,
