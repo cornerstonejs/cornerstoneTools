@@ -171,6 +171,11 @@ function pointNearHandleAllTools (eventData) {
 function mouseDownActivateCallback (e) {
   const eventData = e.detail;
   const config = freehand.getConfiguration();
+  const options = getToolOptions(toolType, element);
+
+  if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
+    return;
+  }
 
   if (eventData.event.shiftKey) {
     config.activePencilMode = true;
@@ -358,9 +363,6 @@ function mouseDownCallback (e) {
   const options = getToolOptions(toolType, element);
 
   if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-    e.stopPropagation();
-    e.preventDefault();
-
     return;
   }
 
