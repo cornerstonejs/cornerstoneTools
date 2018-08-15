@@ -25,8 +25,6 @@ export default class extends baseTool {
     this.hasCursor = true;
     this._referencedToolData = 'brush';
 
-    this._changeDrawColor(this.configuration.draw);
-
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
   }
 

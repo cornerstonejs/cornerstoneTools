@@ -102,7 +102,6 @@ export default class extends baseBrushTool {
       toolData = getToolState(element, this._referencedToolData);
     }
 
-    const brushPixelValue = configuration.draw;
     const radius = configuration.radius;
 
     if (x < 0 || x > columns ||
@@ -112,7 +111,7 @@ export default class extends baseBrushTool {
 
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
+    drawBrushPixels(pointerArray, pixelData, 0, columns);
 
     toolData.data[0].invalidated = true;
 
@@ -123,13 +122,12 @@ export default class extends baseBrushTool {
 
 function defaultBrushConfiguration () {
   return {
-    draw: 0,
     radius: 10,
     minRadius: 1,
     maxRadius: 50,
     brushAlpha: 0.0,
-    hoverColor: toolColors.getToolColor(),
-    dragColor: toolColors.getActiveColor(),
+    hoverColor: 'rgba(255, 255, 255, 0.8 )',
+    dragColor: 'rgba(255, 255, 255, 1.0 )',
     drawing: false,
     keyBinds: {
       increaseBrushSize: '+',

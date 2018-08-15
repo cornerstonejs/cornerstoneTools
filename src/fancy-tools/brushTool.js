@@ -49,6 +49,7 @@ export default class extends baseBrushTool {
     });
 
     this._newImage = false;
+    this._changeDrawColor(this.configuration.draw);
     this._onNewImageCallback = this._onNewImageCallback.bind(this);
   }
 
