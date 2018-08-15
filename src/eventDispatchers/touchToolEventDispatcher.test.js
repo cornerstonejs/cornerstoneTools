@@ -3,6 +3,7 @@ import touchToolEventDispatcher from './touchToolEventDispatcher.js';
 import {
   tap,
   doubleTap,
+  multiTouchDrag,
   touchStart,
   touchStartActive,
   touchDrag,
@@ -14,6 +15,7 @@ import {
 jest.mock('./touchEventHandlers/index.js', () => ({
   tap: jest.fn(),
   doubleTap: jest.fn(),
+  multiTouchDrag: jest.fn(),
   touchStart: jest.fn(),
   touchStartActive: jest.fn(),
   touchDrag: jest.fn(),
@@ -31,10 +33,10 @@ describe('touchToolEventDispatcher.js', () => {
     element.removeEventListener = jest.fn();
   });
 
-  test('enable adds 8 event listeners to an element', () => {
+  test('enable adds 9 event listeners to an element', () => {
     touchToolEventDispatcher.enable(element);
 
-    expect(element.addEventListener).toHaveBeenCalledTimes(8);
+    expect(element.addEventListener).toHaveBeenCalledTimes(9);
   });
 
   test('enable adds event listeners for all tap/touch events', () => {
@@ -49,14 +51,15 @@ describe('touchToolEventDispatcher.js', () => {
       [EVENTS.TOUCH_START_ACTIVE, touchStartActive],
       [EVENTS.TOUCH_PRESS, touchPress],
       [EVENTS.DOUBLE_TAP, doubleTap],
-      [EVENTS.TOUCH_PINCH, touchPinch]
+      [EVENTS.TOUCH_PINCH, touchPinch],
+      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag]
     ]);
   });
 
-  test('disable removes 8 event listeners to an element', () => {
+  test('disable removes 9 event listeners to an element', () => {
     touchToolEventDispatcher.disable(element);
 
-    expect(element.removeEventListener).toHaveBeenCalledTimes(8);
+    expect(element.removeEventListener).toHaveBeenCalledTimes(9);
   });
 
   test('disable removes event listeners for all tap/touch events', () => {
@@ -71,7 +74,8 @@ describe('touchToolEventDispatcher.js', () => {
       [EVENTS.TOUCH_START_ACTIVE, touchStartActive],
       [EVENTS.TOUCH_PRESS, touchPress],
       [EVENTS.DOUBLE_TAP, doubleTap],
-      [EVENTS.TOUCH_PINCH, touchPinch]
+      [EVENTS.TOUCH_PINCH, touchPinch],
+      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag]
     ]);
   });
 });
