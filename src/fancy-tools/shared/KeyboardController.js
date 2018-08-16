@@ -5,7 +5,7 @@ export default class {
     const keyInterface = this.constructor._generateKeyInterface(tool, keyBinds);
 
     Object.keys(keyInterface).forEach((key) => {
-      if (!(typeof keyInterface[key] === 'function')) {
+      if (typeof keyInterface[key] !== 'function') {
         throw new Error(`Element ${key} of the keyInterface is not a function`);
       }
     });
@@ -25,12 +25,12 @@ export default class {
 
     let imageNeedsUpdate = false;
 
-    Object.keys(keyInterface).forEach((key) => {
+    Object.keys(keyInterface).some(key => {
       if (keyPressed === key) {
         keyInterface[key]();
         imageNeedsUpdate = true;
 
-        return;
+        return true;
       }
     });
 

@@ -30,10 +30,10 @@ export default class {
     this.hasCursor = false;
 
     // Setup keybinds if present.
-    const keyBinds = this.keyBinds;
+    const keyBinds = this.configuration.keyBinds;
 
     if (keyBinds) {
-      this.keyBinds = keyBinds;
+      this.activateKeyBinds(keyBinds);
     }
   }
 
@@ -58,17 +58,8 @@ export default class {
     this._options = {};
   }
 
-  set keyBinds (keyBinds) {
-    const configuration = this.configuration;
-
-    configuration.keyBinds = keyBinds;
+  activateKeyBinds (keyBinds) {
     this._keyboardController = new KeyboardController(this, keyBinds);
-  }
-
-  get keyBinds () {
-    const configuration = this.configuration;
-
-    return configuration.keyBinds;
   }
 
   /**

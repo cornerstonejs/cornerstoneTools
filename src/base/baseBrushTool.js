@@ -25,6 +25,8 @@ export default class extends baseTool {
     this.hasCursor = true;
     this._referencedToolData = 'brush';
 
+    this._drawing = false;
+
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
   }
 
@@ -50,7 +52,7 @@ export default class extends baseTool {
    * @param  {Object} eventData The data object associated with the event.
    */
   _paint (eventData) {
-    throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
+    throw new Error(`Method _paint not implemented for ${this.toolName}.`);
   }
 
   //===================================================================
@@ -107,7 +109,7 @@ export default class extends baseTool {
     const element = eventData.element;
 
     this._paint(eventData);
-    this.configuration.drawing = true;
+    this._drawing = true;
     this._startListeningForMouseUp(element);
     this._lastImageCoords = eventData.currentPoints.image;
   }
@@ -279,7 +281,7 @@ export default class extends baseTool {
     const eventData = evt.detail;
     const element = eventData.element;
 
-    this.configuration.drawing = false;
+    this._drawing = false;
     this.configuration.mouseUpRender = true;
 
     this._stopListeningForMouseUp(element);

@@ -138,7 +138,7 @@ export default class extends baseBrushTool {
     const configuration = this._configuration;
     const radius = configuration.radius;
     const context = eventData.canvasContext;
-    const color = configuration.drawing ? configuration.dragColor : configuration.hoverColor;
+    const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
     const element = eventData.element;
 
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -236,7 +236,6 @@ function defaultBrushToolConfiguration () {
     brushAlpha: 0.4,
     hoverColor: toolColors.getToolColor(),
     dragColor: toolColors.getActiveColor(),
-    drawing: false,
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',
