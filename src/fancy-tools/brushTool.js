@@ -50,7 +50,6 @@ export default class extends baseBrushTool {
 
     this._newImage = false;
     this._changeDrawColor(this.configuration.draw);
-    this._onNewImageCallback = this._onNewImageCallback.bind(this);
   }
 
   /**
@@ -209,7 +208,7 @@ export default class extends baseBrushTool {
   * @event
   * @param {Object} evt - The event.
   */
-  _onNewImageCallback (evt) {
+  newImageCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     let toolData = getToolState(element, this._referencedToolData);
@@ -226,47 +225,6 @@ export default class extends baseBrushTool {
 
     external.cornerstone.updateImage(eventData.element);
   }
-
-  /**
-   * Callback for when the tool is activated.
-   *
-   * @override
-   * @param {Object} element - The element to add/remove event listners.
-   */
-  activeCallback(element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-  }
-
-  /**
-   * Callback for when the tool is deactivated (made passive).
-   *
-   * @param {Object} element - The element to add/remove event listners.
-   */
-  passiveCallback(element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-  }
-
-  /**
-   * Callback for when the tool is disabled.
-   *
-   * @param {Object} element - The element to add/remove event listners.
-   */
-  disableCallback(element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-  }
-
-  /**
-   * Callback for when the tool is enabled.
-   *
-   * @param {Object} element - The element to add/remove event listners.
-   */
-  enableCallback(element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-  }
-
 }
 
 function defaultBrushToolConfiguration () {
