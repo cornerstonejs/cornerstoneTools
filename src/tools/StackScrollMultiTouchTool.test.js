@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
-import StackScrollMultiTouchTool from './stackScrollMultiTouchTool.js';
+import StackScrollMultiTouchTool from './StackScrollMultiTouchTool.js';
 import scroll from '../util/scroll.js';
 
 jest.mock('../util/scroll.js');
@@ -17,7 +17,7 @@ const mockEvent = {
   }
 };
 
-describe('stachScroll.js', () => {
+describe('stackScrollMultiTouchTool.js', () => {
   describe('default values', () => {
     it('has a default name of "stackScrollMultiTouch"', () => {
       const defaultName = 'stackScrollMultiTouch';
