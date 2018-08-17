@@ -44,8 +44,11 @@ ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
-  overflow: hidden;
+  overflow-y: hidden;
+  overflow-x: scroll;
   background-color: #333333;
+  white-space: nowrap;
+  text-align: left;
 }
 
 ul.tool-category {
@@ -53,7 +56,7 @@ ul.tool-category {
 }
 
 li {
-  float: left;
+  display: inline-block;
 }
 
 li a {
