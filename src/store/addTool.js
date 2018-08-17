@@ -8,7 +8,8 @@ import getTool from './../store/getTool.js';
  * @param {*} element
  * @param {baseTool} tool
  */
-const addTool = function (element, tool) {
+const addToolForElement = function (element, apiTool) {
+  const tool = new apiTool();
   const toolAlreadyAddedToElement = getTool(element, tool.toolName);
 
   if (toolAlreadyAddedToElement) {
@@ -29,10 +30,10 @@ const addTool = function (element, tool) {
  * @export
  * @param {baseTool} tool
  */
-const addToolGlobal = function (tool) {
-  state.canvases.forEach((canvas) => {
-    addTool(canvas, tool);
+const addTool = function (apiTool) {
+  state.canvases.forEach((element) => {
+    addToolForElement(element, apiTool);
   });
 };
 
-export { addTool, addToolGlobal };
+export { addTool, addToolForElement };

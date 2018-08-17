@@ -1,31 +1,31 @@
 import store from './store/index.js';
-import { addTool, addToolGlobal } from './store/addTool.js';
+import { addTool, addToolForElement } from './store/addTool.js';
 import addCanvas from './store/addCanvas.js';
 import {
   setToolActive,
-  setToolActiveGlobal,
+  setToolActiveForElement,
   setToolEnabled,
-  setToolEnabledGlobal,
+  setToolEnabledForElement,
   setToolDisabled,
-  setToolDisabledGlobal,
+  setToolDisabledForElement,
   setToolPassive,
-  setToolPassiveGlobal
+  setToolPassiveForElement
 } from './store/setToolMode.js';
 
 export default function () {
   return Object.freeze({
     store,
     addTool,
-    addToolGlobal,
+    addToolForElement,
     addCanvas,
     // Tool Modes
     setToolActive,
-    setToolActiveGlobal,
+    setToolActiveForElement,
     setToolEnabled,
-    setToolEnabledGlobal,
+    setToolEnabledForElement,
     setToolDisabled,
-    setToolDisabledGlobal,
+    setToolDisabledForElement,
     setToolPassive,
-    setToolPassiveGlobal
+    setToolPassiveForElement
   });
 }

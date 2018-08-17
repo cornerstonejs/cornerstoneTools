@@ -9,13 +9,6 @@
 .wrapper {
 }
 
-.canvas {
-  width: 512px;
-  margin: 0 auto;
-  height: 512px;
-  position: relative;
-}
-
 ul {
   list-style-type: none;
   margin: 0;

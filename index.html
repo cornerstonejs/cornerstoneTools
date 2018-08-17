@@ -10,7 +10,7 @@
 		/**
 		 * ~~ MagnifyTool:
 		 * You need to supply your own styling for the created magnifyTool div.
-		 * Note: The canvas wrapper needs `position: relative` for the positioning to work.
+		 * Note: The element wrapper needs `position: relative` for the positioning to work.
 		 */
 
 		.magnifyTool {
@@ -77,8 +77,11 @@
 				</li>
 			</ul>
 
-			<!-- Our beautiful canvas target -->
-			<div class="canvas" oncontextmenu="return false" />
+			<!-- Our beautiful element targets -->
+			<div class="cornerstone-element-wrapper">
+				<div class="cornerstone-element" oncontextmenu="return false" />
+				<div class="cornerstone-element" oncontextmenu="return false" />
+			</div>
 		</div>
 	</div>
 </body>
@@ -104,25 +107,26 @@
 		'example://2',
 		'example://3'
 	];
-	const element = document.getElementsByClassName('canvas')[0];
-
 	const stack = {
 		currentImageIdIndex: 0,
 		imageIds: imageIds
 	};
 
+	// Enable & Setup all of our elements
+	const elements = document.querySelectorAll('.cornerstone-element');
+	Array.from(elements).forEach(element => {
+		// TODO: if we emitted an event when this happened, cornerstone-tools
+		// TODO: could use it to init itself
+		cornerstone.enable(element);
+		cTools.addCanvas(element);
 
-	// TODO: if we emitted an event when this happened, cornerstone-tools
-	// TODO: could use it to init itself
-	cornerstone.enable(element);
-	cTools.addCanvas(element);
+		cornerstone.loadImage(imageIds[0]).then(function (image) {
+			cornerstone.displayImage(element, image);
 
-	cornerstone.loadImage(imageIds[0]).then(function (image) {
-		cornerstone.displayImage(element, image);
-
-		cornerstoneTools.addStackStateManager(element, ['stack']);
-		cornerstoneTools.addToolState(element, 'stack', stack);
-	});
+			cornerstoneTools.addStackStateManager(element, ['stack']);
+			cornerstoneTools.addToolState(element, 'stack', stack);
+		});
+	})
 
 	function setAllToolsPassive() {
 		const exceptionList = [
@@ -130,7 +134,7 @@
 		];
 		cTools.store.state.tools.forEach((tool) => {
 			if (!exceptionList.includes(tool.name)) {
-				cTools.setToolPassive(element, tool.name);
+				cTools.setToolPassive(tool.name);
 			}
 		});
 	}
@@ -157,8 +161,7 @@
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 		if (apiTool) {
-			const tool = new apiTool();
-			cTools.addTool(element, tool);
+			cTools.addTool(apiTool);
 		} else {
 			console.warn(`unable to add tool with name ${toolName}Tool`);
 			console.log(cornerstoneTools)
@@ -168,7 +171,7 @@
 		toolBtn.addEventListener('click', (evt) => {
 			setAllToolsPassive();
 			setButtonActive(toolName);
-			cTools.setToolActive(element, toolName, { mouseButtonMask: 1 });
+			cTools.setToolActive(toolName, { mouseButtonMask: 1 });
 		});
 	});
 
@@ -180,24 +183,23 @@
 		const toolLabel = document.querySelector(`#${toolName}`);
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 		if (apiTool) {
-			const tool = new apiTool();
-			cTools.addTool(element, tool);
+			cTools.addTool(apiTool);
 		}
 
-		cTools.setToolDisabled(element, toolName);
+		cTools.setToolDisabled(toolName);
 
 		toolCheckBox.addEventListener('change', (evt) => {
 			if (evt.currentTarget.checked) {
-				cTools.setToolEnabled(element, toolName);
+				cTools.setToolEnabled(toolName);
 			} else {
-				cTools.setToolDisabled(element, toolName);
+				cTools.setToolDisabled(toolName);
 			}
 			toolLabel.classList.toggle('turned-on');
 		});
 	});
 
 	// Activate first tool
-	cTools.setToolActive(element, cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {

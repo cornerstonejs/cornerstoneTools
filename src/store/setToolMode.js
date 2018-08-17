@@ -13,8 +13,12 @@ import { state } from './../store/index.js';
  * @param {*} options
  * @returns
  */
+const setToolActiveForElement = setToolModeForElement.bind(
+  null,
+  'active',
+  null
+);
 const setToolActive = setToolMode.bind(null, 'active', null);
-const setToolActiveGlobal = setToolModeGlobal.bind(null, 'active', null);
 
 /**
  * Sets a tool's state to 'disabled'. Disabled tools are not rendered,
@@ -26,8 +30,12 @@ const setToolActiveGlobal = setToolModeGlobal.bind(null, 'active', null);
  * @param {*} options
  * @returns
  */
+const setToolDisabledForElement = setToolModeForElement.bind(
+  null,
+  'disabled',
+  null
+);
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
-const setToolDisabledGlobal = setToolModeGlobal.bind(null, 'disabled', null);
 
 /**
  * Sets a tool's state to 'enabled'. Enabled tools are rendered,
@@ -39,8 +47,12 @@ const setToolDisabledGlobal = setToolModeGlobal.bind(null, 'disabled', null);
  * @param {*} options
  * @returns
  */
+const setToolEnabledForElement = setToolModeForElement.bind(
+  null,
+  'enabled',
+  null
+);
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
-const setToolEnabledGlobal = setToolModeGlobal.bind(null, 'enabled', null);
 
 /**
  * Sets a tool's state to 'passive'. Passive tools are rendered and respond to user input,
@@ -52,12 +64,12 @@ const setToolEnabledGlobal = setToolModeGlobal.bind(null, 'enabled', null);
  * @param {*} options
  * @returns
  */
-const setToolPassive = setToolMode.bind(
+const setToolPassiveForElement = setToolModeForElement.bind(
   null,
   'passive',
   EVENTS.TOOL_DEACTIVATED
 );
-const setToolPassiveGlobal = setToolModeGlobal.bind(
+const setToolPassive = setToolMode.bind(
   null,
   'passive',
   EVENTS.TOOL_DEACTIVATED
@@ -74,7 +86,7 @@ const setToolPassiveGlobal = setToolModeGlobal.bind(
  * @param {*} changeEvent
  * @returns
  */
-function setToolMode (mode, changeEvent, element, toolName, options) {
+function setToolModeForElement (mode, changeEvent, element, toolName, options) {
   const tool = getTool(element, toolName);
 
   if (!tool) {
@@ -118,19 +130,19 @@ function setToolMode (mode, changeEvent, element, toolName, options) {
  * @param {*} toolName
  * @param {*} options
  */
-function setToolModeGlobal (mode, changeEvent, toolName, options) {
+function setToolMode (mode, changeEvent, toolName, options) {
   state.canvases.forEach((canvas) => {
-    setToolMode(mode, changeEvent, canvas, toolName, options);
+    setToolModeForElement(mode, changeEvent, canvas, toolName, options);
   });
 }
 
 export {
   setToolActive,
-  setToolActiveGlobal,
+  setToolActiveForElement,
   setToolDisabled,
-  setToolDisabledGlobal,
+  setToolDisabledForElement,
   setToolEnabled,
-  setToolEnabledGlobal,
+  setToolEnabledForElement,
   setToolPassive,
-  setToolPassiveGlobal
+  setToolPassiveForElement
 };
