@@ -1,24 +1,24 @@
-import EVENTS from './../../events.js';
-import external from './../../externalModules.js';
+import EVENTS from '../../events.js';
+import external from '../../externalModules.js';
 // State
-import { getters, state } from './../../store/index.js';
+import { getters, state } from '../../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from './../../manipulators/touchMoveHandle.js';
-import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
-import { getToolState } from './../../stateManagement/toolState.js';
-import triggerEvent from './../../util/triggerEvent.js';
+import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
+import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
+import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import triggerEvent from '../../util/triggerEvent.js';
 // Todo: Where should these live?
-import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
-import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
+import getInteractiveToolsForElement from '../../store/getInteractiveToolsForElement.js';
+import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.js';
 
-const cornerstone = external.cornerstone;
 
 export default function (evt) {
   console.log('touchStart');
   if (state.isToolLocked) {
     return;
   }
+
   const distanceFromHandle = 28;
   const eventData = evt.detail;
   const element = eventData.element;
@@ -152,7 +152,7 @@ export default function (evt) {
         //     );
         //   }
 
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
         // Todo: LISTEN: TAP, START, PRESS
 
         if (lastEvent && lastEvent.type === EVENTS.TOUCH_PRESS) {

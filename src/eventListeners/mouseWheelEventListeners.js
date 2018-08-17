@@ -3,9 +3,8 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
 function mouseWheel (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -38,7 +37,7 @@ function mouseWheel (e) {
     y = e.y;
   }
 
-  const startingCoords = cornerstone.pageToPixel(element, x, y);
+  const startingCoords = external.cornerstone.pageToPixel(element, x, y);
 
   e = window.event && window.event.wheelDelta ? window.event : e; // Old IE support
 
@@ -58,7 +57,7 @@ function mouseWheel (e) {
 
   const mouseWheelData = {
     element,
-    viewport: cornerstone.getViewport(element),
+    viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     direction,
     pageX: x,

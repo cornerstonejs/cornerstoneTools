@@ -1,20 +1,18 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseAnnotationTool from './../base/baseAnnotationTool.js';
+import external from '../externalModules.js';
+import baseAnnotationTool from '../base/baseAnnotationTool.js';
 // State
-import { getToolState } from './../stateManagement/toolState.js';
+import { getToolState } from '../stateManagement/toolState.js';
 import textStyle from '../stateManagement/textStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
+import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw } from './../util/drawing.js';
+import { getNewContext, draw } from '../util/drawing.js';
 import drawTextBox from '../util/drawTextBox.js';
 // Utilities
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
-
-const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
   constructor (name = 'probe') {
@@ -135,7 +133,7 @@ export default class extends baseAnnotationTool {
             storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
             str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
           } else {
-            storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            storedPixels = external.cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
             const sp = storedPixels[0];
             const mo = sp * image.slope + image.intercept;
             const suv = calculateSUV(image, sp);
@@ -153,7 +151,7 @@ export default class extends baseAnnotationTool {
             x: data.handles.end.x + 3,
             y: data.handles.end.y - 3
           };
-          const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
+          const textCoords = external.cornerstone.pixelToCanvas(eventData.element, coords);
 
           context.font = font;
           context.fillStyle = color;

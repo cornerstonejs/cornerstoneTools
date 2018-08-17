@@ -1,10 +1,9 @@
-import EVENTS from './../../events.js';
-import external from './../../externalModules.js';
-import { mutations } from './../../store/index.js';
-import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
-import { addToolState } from './../../stateManagement/toolState.js';
+import EVENTS from '../../events.js';
+import external from '../../externalModules.js';
+import { mutations } from '../../store/index.js';
+import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
+import { addToolState } from '../../stateManagement/toolState.js';
 
-const cornerstone = external.cornerstone;
 
 export default function (evt, tool) {
   console.log('touch: addNewMeasurement');
@@ -39,13 +38,13 @@ export default function (evt, tool) {
     //   RemoveToolState(element, tool.name, measurementData);
     // }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     return;
   }
 
   mutations.SET_IS_TOOL_LOCKED(true);
-  cornerstone.updateImage(element);
+  external.cornerstone.updateImage(element);
 
   moveNewHandleTouch(
     touchEventData,
@@ -62,7 +61,7 @@ export default function (evt, tool) {
       //   }
 
       mutations.SET_IS_TOOL_LOCKED(false);
-      cornerstone.updateImage(element);
+      external.cornerstone.updateImage(element);
     }
   );
 }

@@ -1,20 +1,18 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseAnnotationTool from './../base/baseAnnotationTool.js';
+import external from '../externalModules.js';
+import baseAnnotationTool from '../base/baseAnnotationTool.js';
 // State
-import { getToolState } from './../stateManagement/toolState.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
+import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawRect } from './../util/drawing.js';
-import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow, drawRect } from '../util/drawing.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import calculateSUV from '../util/calculateSUV.js';
 //
 import numberWithCommas from './shared/numbersWithCommas.js';
-
-const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
   constructor (name = 'rectangleRoi') {
@@ -95,8 +93,8 @@ export default class extends baseAnnotationTool {
       return false;
     }
 
-    const startCanvas = cornerstone.pixelToCanvas(element, data.handles.start);
-    const endCanvas = cornerstone.pixelToCanvas(element, data.handles.end);
+    const startCanvas = external.cornerstone.pixelToCanvas(element, data.handles.start);
+    const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
 
     const rect = {
       left: Math.min(startCanvas.x, endCanvas.x),
@@ -133,11 +131,11 @@ export default class extends baseAnnotationTool {
 
     const lineWidth = toolStyle.getToolWidth();
     const config = this.configuration;
-    const seriesModule = cornerstone.metaData.get(
+    const seriesModule = external.cornerstone.metaData.get(
       'generalSeriesModule',
       image.imageId
     );
-    const imagePlane = cornerstone.metaData.get(
+    const imagePlane = external.cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
     );
@@ -208,7 +206,7 @@ export default class extends baseAnnotationTool {
           // Deviation will be calculated for color images.
           if (!image.color) {
             // Retrieve the array of pixels that the rectangle bounds cover
-            const pixels = cornerstone.getPixels(
+            const pixels = external.cornerstone.getPixels(
               element,
               rectangle.left,
               rectangle.top,

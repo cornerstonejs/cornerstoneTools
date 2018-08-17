@@ -30,9 +30,8 @@ function preventClickHandler () {
 }
 
 function mouseDoubleClick (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -42,14 +41,14 @@ function mouseDoubleClick (e) {
 
   const startPoints = {
     page: external.cornerstoneMath.point.pageToPoint(e),
-    image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+    image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
       y: e.clientY
     }
   };
 
-  startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
 
   const lastPoints = copyPoints(startPoints);
 
@@ -63,7 +62,7 @@ function mouseDoubleClick (e) {
   const eventData = {
     event: e,
     which: e.which,
-    viewport: cornerstone.getViewport(element),
+    viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     element,
     startPoints,
@@ -80,9 +79,8 @@ function mouseDoubleClick (e) {
 }
 
 function mouseDown (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -97,20 +95,20 @@ function mouseDown (e) {
 
   const startPoints = {
     page: external.cornerstoneMath.point.pageToPoint(e),
-    image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+    image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
       y: e.clientY
     }
   };
 
-  startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
 
   let lastPoints = copyPoints(startPoints);
   const eventData = {
     event: e,
     which: getEventWhich(e),
-    viewport: cornerstone.getViewport(element),
+    viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     element,
     startPoints,
@@ -138,14 +136,14 @@ function mouseDown (e) {
     const eventType = EVENTS.MOUSE_DRAG;
     const currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e),
-      image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+      image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
       client: {
         x: e.clientX,
         y: e.clientY
       }
     };
 
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -172,7 +170,7 @@ function mouseDown (e) {
 
     const eventData = {
       which: whichMouseButton,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       startPoints,
@@ -206,14 +204,14 @@ function mouseDown (e) {
     // Calculate our current points in page and image coordinates
     const currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e),
-      image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+      image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
       client: {
         x: e.clientX,
         y: e.clientY
       }
     };
 
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -241,7 +239,7 @@ function mouseDown (e) {
     const eventData = {
       event: e,
       which: whichMouseButton,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       startPoints,
@@ -266,9 +264,8 @@ function mouseDown (e) {
 }
 
 function mouseMove (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -278,28 +275,28 @@ function mouseMove (e) {
 
   const startPoints = {
     page: external.cornerstoneMath.point.pageToPoint(e),
-    image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+    image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
       y: e.clientY
     }
   };
 
-  startPoints.canvas = cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
 
   let lastPoints = copyPoints(startPoints);
 
   // Calculate our current points in page and image coordinates
   const currentPoints = {
     page: external.cornerstoneMath.point.pageToPoint(e),
-    image: cornerstone.pageToPixel(element, e.pageX, e.pageY),
+    image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
       y: e.clientY
     }
   };
 
-  currentPoints.canvas = cornerstone.pixelToCanvas(
+  currentPoints.canvas = external.cornerstone.pixelToCanvas(
     element,
     currentPoints.image
   );
@@ -325,7 +322,7 @@ function mouseMove (e) {
   };
 
   const eventData = {
-    viewport: cornerstone.getViewport(element),
+    viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     element,
     startPoints,

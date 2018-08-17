@@ -1,9 +1,7 @@
-import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
-import { clipToBox } from './../util/clip.js';
+import external from '../externalModules.js';
+import baseTool from '../base/baseTool.js';
+import { clipToBox } from '../util/clip.js';
 import { correctShift, changeViewportScale } from './shared/zoom.js';
-
-const cornerstone = external.cornerstone;
 
 export default class extends baseTool {
   constructor (name = 'zoom') {
@@ -71,11 +69,11 @@ function defaultStrategy (evt, { invert, maxScale, minScale }) {
     minScale
   });
 
-  cornerstone.setViewport(element, updatedViewport);
+  external.cornerstone.setViewport(element, updatedViewport);
 
   // Now that the scale has been updated, determine the offset we need to apply to the center so we can
   // Keep the original start location in the same position
-  const newCoords = cornerstone.pageToPixel(element, startX, startY);
+  const newCoords = external.cornerstone.pageToPixel(element, startX, startY);
 
   // The shift we will use is the difference between the original image coordinates of the point we've selected
   // And the image coordinates of the same point on the page after the viewport scaling above has been performed

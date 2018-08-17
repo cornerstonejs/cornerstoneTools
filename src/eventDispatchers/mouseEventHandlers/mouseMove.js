@@ -4,8 +4,6 @@ import { getters, setters, state } from './../../store/index.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
-const cornerstone = external.cornerstone;
-
 /**
  * This is mostly used to update the [un]hover state
  * of a tool.
@@ -36,9 +34,9 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     const firstActiveTool = activeTools[0];
 
-    // force image update if the active tool has a cusror that should update on mouseMove.
+    // Force image update if the active tool has a cusror that should update on mouseMove.
     if (firstActiveTool.hasCursor) {
-      cornerstone.updateImage(element);
+      external.cornerstone.updateImage(element);
     }
   }
 
@@ -51,6 +49,7 @@ export default function (evt) {
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];
+
     if (typeof tool.mouseMoveCallback === 'function') {
       imageNeedsUpdate = tool.mouseMoveCallback(evt) || imageNeedsUpdate;
     }
@@ -58,6 +57,6 @@ export default function (evt) {
 
   // Tool data activation status changed, redraw the image
   if (imageNeedsUpdate === true) {
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 }
