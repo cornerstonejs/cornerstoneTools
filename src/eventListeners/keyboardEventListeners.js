@@ -6,9 +6,8 @@ let mouseX;
 let mouseY;
 
 function keyPress (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -17,20 +16,20 @@ function keyPress (e) {
   const keyPressData = {
     event: window.event || e, // Old IE support
     element,
-    viewport: cornerstone.getViewport(element),
+    viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     currentPoints: {
       page: {
         x: mouseX,
         y: mouseY
       },
-      image: cornerstone.pageToPixel(element, mouseX, mouseY)
+      image: external.cornerstone.pageToPixel(element, mouseX, mouseY)
     },
     keyCode: e.keyCode,
     which: e.which
   };
 
-  keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(
+  keyPressData.currentPoints.canvas = external.cornerstone.pixelToCanvas(
     element,
     keyPressData.currentPoints.image
   );

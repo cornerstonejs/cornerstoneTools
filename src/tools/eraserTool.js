@@ -1,14 +1,12 @@
 /* eslint class-methods-use-this: 0 */
 /* eslint no-underscore-dangle: 0 */
-import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import external from '../externalModules.js';
+import baseTool from '../base/baseTool.js';
 import {
   getToolState,
   removeToolState
-} from './../stateManagement/toolState.js';
-import { state } from './../store/index.js';
-
-const cornerstone = external.cornerstone;
+} from '../stateManagement/toolState.js';
+import { state } from '../store/index.js';
 
 export default class extends baseTool {
   constructor (name = 'eraser') {
@@ -36,7 +34,7 @@ export default class extends baseTool {
             tool.pointNearTool(element, data, coords)
           ) {
             removeToolState(element, tool.name, data);
-            cornerstone.updateImage(element);
+            external.cornerstone.updateImage(element);
           }
         });
       }

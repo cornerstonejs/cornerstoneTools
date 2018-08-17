@@ -8,7 +8,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 import getTool from '../store/getTool.js';
-import baseTool from './../base/baseTool.js';
+import baseTool from '../base/baseTool.js';
 
 const referencedToolName = 'freehandMouse';
 
@@ -799,7 +799,6 @@ export default class extends baseTool {
     const element = eventData.element;
     const image = eventData.image;
     const config = this.configuration;
-    const { cornerstone } = external;
 
     const toolState = getToolState(element, referencedToolName);
     const data = toolState.data[config.currentTool];
@@ -807,11 +806,11 @@ export default class extends baseTool {
     let areaModifier = 1.0;
 
     if (canvasCoords) {
-      const topLeft = cornerstone.pixelToCanvas(element, {
+      const topLeft = external.cornerstone.pixelToCanvas(element, {
         x: 0,
         y: 0
       });
-      const bottomRight = cornerstone.pixelToCanvas(element, {
+      const bottomRight = external.cornerstone.pixelToCanvas(element, {
         x: image.width,
         y: image.height
       });

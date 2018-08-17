@@ -24,7 +24,6 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
     return;
   }
 
-  const cornerstone = external.cornerstone;
   // Update
   const time = (new Date()).getTime();
   // Var timeDiff = time - lastTime;
@@ -47,10 +46,10 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
   }
 
   // Update the image
-  cornerstone.updateImage(enabledElement.element);
+  external.cornerstone.updateImage(enabledElement.element);
 
   // Request a new frame
-  cornerstone.requestAnimationFrame(function () {
+  external.cornerstone.requestAnimationFrame(function () {
     animate(time, handle, runAnimation, enabledElement, targetLocation);
   });
 }
@@ -60,9 +59,8 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
   runAnimation.value = true;
 
   const touchEventData = event.detail;
-  const cornerstone = external.cornerstone;
   const element = touchEventData.element;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   const time = (new Date()).getTime();
 
@@ -75,7 +73,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     y: touchEventData.currentPoints.page.y + fingerDistance
   };
 
-  let targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+  let targetLocation = external.cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
 
   function touchDragCallback (e) {
     const eventData = e.detail;
@@ -95,11 +93,11 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
       y: currentPoints.page.y + fingerDistance
     };
 
-    targetLocation = cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+    targetLocation = external.cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
     handle.x = targetLocation.x;
     handle.y = targetLocation.y;
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
@@ -125,7 +123,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
       element.removeEventListener(eventType, touchEndCallback);
     });
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     if (e.type === EVENTS.TOUCH_PRESS) {
       eventData.handlePressed = data;

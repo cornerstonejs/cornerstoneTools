@@ -1,8 +1,8 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
 /* eslint no-alert: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseAnnotationTool from './../base/baseAnnotationTool.js';
+import external from '../externalModules.js';
+import baseAnnotationTool from '../base/baseAnnotationTool.js';
 
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -23,8 +23,6 @@ import {
 import { mutations } from '../store/index.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
-
-const cornerstone = external.cornerstone;
 
 export default class extends baseAnnotationTool {
   constructor (name = 'arrowAnnotate') {
@@ -135,11 +133,11 @@ export default class extends baseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
 
         // Draw the arrow
-        const handleStartCanvas = cornerstone.pixelToCanvas(
+        const handleStartCanvas = external.cornerstone.pixelToCanvas(
           element,
           data.handles.start
         );
-        const handleEndCanvas = cornerstone.pixelToCanvas(
+        const handleEndCanvas = external.cornerstone.pixelToCanvas(
           element,
           data.handles.end
         );
@@ -204,7 +202,7 @@ export default class extends baseAnnotationTool {
               };
             }
 
-            const transform = cornerstone.internal.getTransform(enabledElement);
+            const transform = external.cornerstone.internal.getTransform(enabledElement);
 
             transform.invert();
 
@@ -256,7 +254,7 @@ export default class extends baseAnnotationTool {
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     // Since we are dragging to another place to drop the end point, we can just activate
     // The end point and let the moveHandle move it for us.
@@ -284,12 +282,12 @@ export default class extends baseAnnotationTool {
             }
 
             measurementData.active = false;
-            cornerstone.updateImage(element);
+            external.cornerstone.updateImage(element);
           });
         }
 
         mutations.SET_IS_TOOL_LOCKED(false);
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
       }
     );
   }
@@ -323,7 +321,7 @@ export default class extends baseAnnotationTool {
         pointInsideBoundingBox(data.handles.textBox, coords)
       ) {
         data.active = true;
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
         // Allow relabelling via a callback
         this.configuration.changeTextCallback(
           data,
@@ -348,7 +346,7 @@ export default class extends baseAnnotationTool {
     }
 
     data.active = false;
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 }
 
