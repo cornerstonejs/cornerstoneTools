@@ -11,8 +11,11 @@ import {
   setToolPassive,
   setToolPassiveForElement
 } from './store/setToolMode.js';
+import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 export default function () {
+  windowResizeHandler.enable();
+
   return Object.freeze({
     store,
     addTool,
