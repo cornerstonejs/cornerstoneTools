@@ -85,21 +85,23 @@ li a.active:hover {
   display: block;
 }
 
+/* Toggleable Menu Items */
 .checkbox-label,
 button {
-  text-transform: uppercase;
-  margin: 0.5em 1em;
+  display: inline-block;
+  text-align: center;
+  padding: 16px;
+  text-decoration: none;
   border: 0;
-  border-bottom: 2px solid #ccc;
   background: transparent;
   outline: 0;
   cursor: pointer;
 }
 
 .checkbox-label:hover,
-button.is-active,
+button.active,
 button:hover {
-  border-bottom: 2px solid #4ea;
+  background-color: #111111;
 }
 
 .hide {
@@ -107,8 +109,8 @@ button:hover {
 }
 
 .checkbox-label {
-  font: 400 11px system-ui;
-  color: #000;
+  font-weight: 400;
+  color: #ffffff;
 }
 
 .label-off {
