@@ -168,10 +168,32 @@
 		}
 
 		// Setup button listener
-		toolBtn.addEventListener('click', (evt) => {
+		// Prevent right click context menu for our menu buttons
+		toolBtn.addEventListener('contextmenu', event => event.preventDefault(), true);
+		// Prevent middle click opening a new tab on Chrome & FF
+		toolBtn.addEventListener('auxclick', event => {
+			if (event.button && event.button === 1) {
+				event.preventDefault();
+			}
+		}, false);
+		toolBtn.addEventListener('mousedown', (evt) => {
+			// 	A number representing one or more buttons. For more than one button pressed simultaneously, the values are combined (e.g. 3 is primary + secondary).
+			// 0  : No button or un-initialized
+			// 1  : Primary button (usually left)
+			// 2  : Secondary button (usually right)
+			// 4  : Auxilary button (usually middle or mouse wheel button)
+			// 8  : 4th button (typically the "Browser Back" button)
+			// 16 : 5th button (typically the "Browser Forward" button)
+			console.log(`MouseEvent.buttons: ${evt.buttons}`);
+			console.log(`MouseEvent.which: ${evt.which}`);
 			setAllToolsPassive();
 			setButtonActive(toolName);
 			cTools.setToolActive(toolName, { mouseButtonMask: 1 });
+
+			evt.preventDefault();
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
+			return false;
 		});
 	});
 
