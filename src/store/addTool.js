@@ -8,7 +8,7 @@ import getTool from './../store/getTool.js';
  * @param {*} element
  * @param {baseTool} tool
  */
-export default function (element, tool) {
+const addTool = function (element, tool) {
   const toolAlreadyAddedToElement = getTool(element, tool.toolName);
 
   if (toolAlreadyAddedToElement) {
@@ -21,4 +21,18 @@ export default function (element, tool) {
 
   tool.element = element;
   state.tools.push(tool);
-}
+};
+
+/**
+ *
+ *
+ * @export
+ * @param {baseTool} tool
+ */
+const addToolGlobal = function (tool) {
+  state.canvases.forEach((canvas) => {
+    addTool(canvas, tool);
+  });
+};
+
+export { addTool, addToolGlobal };

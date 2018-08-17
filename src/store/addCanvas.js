@@ -10,6 +10,7 @@ import {
   newImageEventDispatcher,
   touchToolEventDispatcher
 } from './../eventDispatchers/index.js';
+import { mutations } from './index.js';
 
 // TODO: Canvases are already tracked by `cornerstone`, but should we track them as well?
 // TODO: This might be easier if `cornerstone` emitted events for enable/disable of canvases
@@ -26,4 +27,7 @@ export default function (canvas) {
   mouseToolEventDispatcher.enable(canvas);
   newImageEventDispatcher.enable(canvas);
   touchToolEventDispatcher.enable(canvas);
+
+  // State
+  mutations.ADD_CANVAS(canvas);
 }

@@ -2,7 +2,8 @@ export const state = {
   isToolLocked: false,
   tools: [],
   clickProximity: 6,
-  mousePositionImage: {}
+  mousePositionImage: {},
+  canvases: []
 };
 
 export const getters = {
@@ -14,9 +15,7 @@ export const getters = {
     state.tools.filter((tool) =>
       tool.supportedInteractionTypes.includes('touch')
     ),
-  mousePositionImage: () => {
-    return state.mousePositionImage;
-  }
+  mousePositionImage: () => state.mousePositionImage
 };
 
 export const setters = {
@@ -28,6 +27,9 @@ export const setters = {
 export const mutations = {
   SET_IS_TOOL_LOCKED: (isLocked) => {
     state.isToolLocked = isLocked;
+  },
+  ADD_CANVAS: (canvas) => {
+    state.canvases.push(canvas);
   }
 };
 

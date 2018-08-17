@@ -1,6 +1,7 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getTool from './../store/getTool.js';
+import { state } from './../store/index.js';
 
 /**
  * Sets a tool's state to 'active'. Active tools are rendered,
@@ -13,6 +14,7 @@ import getTool from './../store/getTool.js';
  * @returns
  */
 const setToolActive = setToolMode.bind(null, 'active', null);
+const setToolActiveGlobal = setToolModeGlobal.bind(null, 'active', null);
 
 /**
  * Sets a tool's state to 'disabled'. Disabled tools are not rendered,
@@ -25,6 +27,7 @@ const setToolActive = setToolMode.bind(null, 'active', null);
  * @returns
  */
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
+const setToolDisabledGlobal = setToolModeGlobal.bind(null, 'disabled', null);
 
 /**
  * Sets a tool's state to 'enabled'. Enabled tools are rendered,
@@ -37,6 +40,7 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
  * @returns
  */
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
+const setToolEnabledGlobal = setToolModeGlobal.bind(null, 'enabled', null);
 
 /**
  * Sets a tool's state to 'passive'. Passive tools are rendered and respond to user input,
@@ -49,6 +53,11 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
  * @returns
  */
 const setToolPassive = setToolMode.bind(
+  null,
+  'passive',
+  EVENTS.TOOL_DEACTIVATED
+);
+const setToolPassiveGlobal = setToolModeGlobal.bind(
   null,
   'passive',
   EVENTS.TOOL_DEACTIVATED
@@ -101,4 +110,27 @@ function setToolMode (mode, changeEvent, element, toolName, options) {
   // Cornerstone.updateImage(element);
 }
 
-export { setToolActive, setToolDisabled, setToolEnabled, setToolPassive };
+/**
+ * A helper/quick way to set a tool's mode for all canvases
+ *
+ * @param {*} mode
+ * @param {*} changeEvent
+ * @param {*} toolName
+ * @param {*} options
+ */
+function setToolModeGlobal (mode, changeEvent, toolName, options) {
+  state.canvases.forEach((canvas) => {
+    setToolMode(mode, changeEvent, canvas, toolName, options);
+  });
+}
+
+export {
+  setToolActive,
+  setToolActiveGlobal,
+  setToolDisabled,
+  setToolDisabledGlobal,
+  setToolEnabled,
+  setToolEnabledGlobal,
+  setToolPassive,
+  setToolPassiveGlobal
+};
