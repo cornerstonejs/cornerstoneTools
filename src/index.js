@@ -62,9 +62,6 @@ export {
 } from './util/pointInsideBoundingBox.js';
 export { default as pointInEllipse } from './util/pointInEllipse.js';
 export { default as makeUnselectable } from './util/makeUnselectable.js';
-export {
-  default as isMouseButtonEnabled
-} from './util/isMouseButtonEnabled.js';
 export { default as getRGBPixels } from './util/getRGBPixels.js';
 export {
   getDefaultSimultaneousRequests,

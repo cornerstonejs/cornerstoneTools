@@ -11,7 +11,6 @@ import drawHandles from '../manipulators/drawHandles.js';
 import drawArrow from '../util/drawArrow.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
@@ -202,7 +201,9 @@ export default class extends baseAnnotationTool {
               };
             }
 
-            const transform = external.cornerstone.internal.getTransform(enabledElement);
+            const transform = external.cornerstone.internal.getTransform(
+              enabledElement
+            );
 
             transform.invert();
 
@@ -293,7 +294,7 @@ export default class extends baseAnnotationTool {
   }
 
   doubleClickCallback (evt) {
-    if (!isMouseButtonEnabled(evt.detail.which, this.options.mouseButtonMask)) {
+    if (evt.detail.buttons !== this.options.mouseButtonMask) {
       return;
     }
 
