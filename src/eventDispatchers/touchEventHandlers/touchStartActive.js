@@ -14,7 +14,7 @@ export default function (evt) {
   const activeTool = tools[0];
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
-  if (activeTool.addNewMeasurement) {
+  if (activeTool && activeTool.addNewMeasurement) {
     activeTool.addNewMeasurement(evt, 'touch');
   } else if (activeTool instanceof baseAnnotationTool) {
     addNewMeasurement(evt, activeTool);
