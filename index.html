@@ -6,6 +6,7 @@
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="examples/reset.css">
 	<link rel="stylesheet" href="examples/app.css">
+	<link rel="stylesheet" href="examples/icon-classes.css">
 	<style>
 		/**
 		 * ~~ MagnifyTool:
@@ -177,13 +178,12 @@
 			}
 		}, false);
 		toolBtn.addEventListener('mousedown', (evt) => {
-			console.log('mousedown')
 			const mouseButtonMask = evt.buttons
 				? evt.buttons
 				: convertMouseEventWhichToButtons(evt.which)
 			// TODO: Let's make this happen automagically for mask/touch conflicts?
 			setAllToolsPassive();
-			setButtonActive(toolName);
+			setButtonActive(toolName, mouseButtonMask);
 			cTools.setToolActive(toolName, { mouseButtonMask });
 
 			evt.preventDefault();
@@ -239,13 +239,27 @@
 		});
 	}
 
-	const setButtonActive = (toolName) => {
+	const setButtonActive = (toolName, mouseButtonMask) => {
 		Array.from(toolButtons).forEach(toolBtn => {
+			const toolType = toolBtn.getAttribute('data-tool-type')
+			const mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
+			const touchIcon = `touch-1`
+
 			if (toolName === toolBtn.getAttribute('data-tool')) {
-				toolBtn.classList.remove('active');
+				toolBtn.className = "";
 				toolBtn.classList.add('active');
+				toolBtn.classList.add(mouseButtonIcon)
+				toolBtn.classList.add(touchIcon)
 			} else {
-				toolBtn.classList.remove('active');
+				if (toolBtn.classList.contains(mouseButtonIcon)) {
+					toolBtn.classList.remove(mouseButtonIcon);
+				}
+				if (toolBtn.classList.contains(touchIcon)) {
+					toolBtn.classList.remove(touchIcon);
+				}
+				if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
+					toolBtn.classList.remove('active');
+				}
 			}
 		});
 	}
