@@ -9,7 +9,9 @@ import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import KeyboardController from './shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
-import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
+import store from '../store/index.js';
+
+const brushState = store.modules.brush;
 
 const cornerstone = external.cornerstone;
 
@@ -49,7 +51,7 @@ export default class extends baseBrushTool {
     });
 
     this._newImage = false;
-    this._changeDrawColor(this.configuration.draw);
+    this._changeDrawColor(brushState.getters.draw());
   }
 
   /**
@@ -92,7 +94,7 @@ export default class extends baseBrushTool {
       return;
     }
 
-    const colormapId = COLOR_MAP_ID;
+    const colormapId = brushState.getters.colorMapId();
     const colormap = cornerstone.colors.getColormap(colormapId);
     const colorLut = colormap.createLookupTable();
 
@@ -136,7 +138,7 @@ export default class extends baseBrushTool {
 
     // Draw the hover overlay on top of the pixel data
     const configuration = this._configuration;
-    const radius = configuration.radius;
+    const radius = brushState.getters.radius();
     const context = eventData.canvasContext;
     const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
     const element = eventData.element;
@@ -185,8 +187,8 @@ export default class extends baseBrushTool {
       toolData = getToolState(element, this._referencedToolData);
     }
 
-    const brushPixelValue = configuration.draw;
-    const radius = configuration.radius;
+    const brushPixelValue = brushState.getters.draw();
+    const radius = brushState.getters.radius();
 
     if (x < 0 || x > columns ||
       y < 0 || y > rows) {
@@ -229,11 +231,6 @@ export default class extends baseBrushTool {
 
 function defaultBrushToolConfiguration () {
   return {
-    draw: 1,
-    radius: 10,
-    minRadius: 1,
-    maxRadius: 50,
-    brushAlpha: 0.4,
     hoverColor: toolColors.getToolColor(),
     dragColor: toolColors.getActiveColor(),
     keyBinds: {

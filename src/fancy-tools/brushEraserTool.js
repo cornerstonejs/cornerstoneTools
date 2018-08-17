@@ -7,7 +7,10 @@ import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
+import store from '../store/index.js';
 import { getters } from './../store/index.js';
+
+const brushState = store.modules.brush;
 
 export default class extends baseBrushTool {
   constructor (name = 'brushEraser') {
@@ -53,7 +56,7 @@ export default class extends baseBrushTool {
 
     // Draw the hover overlay on top of the pixel data
 
-    const radius = configuration.radius;
+    const radius = brushState.getters.radius();
     const context = eventData.canvasContext;
 
     const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
@@ -102,7 +105,7 @@ export default class extends baseBrushTool {
       toolData = getToolState(element, this._referencedToolData);
     }
 
-    const radius = configuration.radius;
+    const radius = brushState.getters.radius();
 
     if (x < 0 || x > columns ||
       y < 0 || y > rows) {
@@ -122,10 +125,6 @@ export default class extends baseBrushTool {
 
 function defaultBrushConfiguration () {
   return {
-    radius: 10,
-    minRadius: 1,
-    maxRadius: 50,
-    brushAlpha: 0.0,
     hoverColor: 'rgba(255, 255, 255, 0.8 )',
     dragColor: 'rgba(255, 255, 255, 1.0 )',
     keyBinds: {

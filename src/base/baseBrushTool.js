@@ -4,7 +4,9 @@ import baseTool from './../base/baseTool.js';
 // Utils
 import isToolActive from '../fancy-tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
-import { COLOR_MAP_ID } from '../stateManagement/brushToolColors.js';
+import store from '../store/index.js';
+
+const brushState = store.modules.brush;
 
 export default class extends baseTool {
   constructor ({
@@ -149,10 +151,9 @@ export default class extends baseTool {
   * @virtual
   */
   nextSegmentation () {
-    const configuration = this.configuration;
     const numberOfColors = this.constructor._getNumberOfColors();
 
-    let drawId = configuration.draw + 1;
+    let drawId = brushState.getters.draw() + 1;
 
     if (drawId === numberOfColors) {
       drawId = 1;
@@ -170,7 +171,7 @@ export default class extends baseTool {
     const configuration = this.configuration;
     const numberOfColors = this.constructor._getNumberOfColors();
 
-    let drawId = configuration.draw - 1;
+    let drawId = brushState.getters.draw() - 1;
 
     if (drawId < 1) {
       drawId = numberOfColors - 1;
@@ -185,9 +186,7 @@ export default class extends baseTool {
   * @virtual
   */
   increaseBrushSize () {
-    const configuration = this.configuration;
-
-    const oldRadius = configuration.radius;
+    const oldRadius = brushState.getters.radius();
     let newRadius = Math.floor(oldRadius * 1.2);
 
     // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
@@ -196,11 +195,7 @@ export default class extends baseTool {
       newRadius += 1;
     }
 
-    if (newRadius > configuration.maxRadius) {
-      newRadius = configuration.maxRadius;
-    }
-
-    configuration.radius = newRadius;
+    brushState.mutations.SET_RADIUS(newRadius);
   }
 
   /**
@@ -209,16 +204,10 @@ export default class extends baseTool {
   * @virtual
   */
   decreaseBrushSize () {
-    const configuration = this.configuration;
-
-    const oldRadius = configuration.radius;
+    const oldRadius = brushState.getters.radius();
     let newRadius = Math.floor(oldRadius * 0.8);
 
-    if (newRadius < configuration.minRadius) {
-      newRadius = configuration.minRadius;
-    }
-
-    configuration.radius = newRadius;
+    brushState.mutations.SET_RADIUS(newRadius);
   }
 
   //===================================================================
@@ -248,7 +237,7 @@ export default class extends baseTool {
     const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
 
     context.imageSmoothingEnabled = false;
-    context.globalAlpha = configuration.brushAlpha;
+    context.globalAlpha = brushState.getters.alpha();
     context.drawImage(this._imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
     context.globalAlpha = 1.0;
   }
@@ -260,11 +249,11 @@ export default class extends baseTool {
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
   _changeDrawColor (drawId) {
-    const configuration = this._configuration;
-    const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
+    const configuration = this.configuration;
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
 
-    configuration.draw = drawId;
-    const colorArray = colormap.getColor(configuration.draw);
+    brushState.mutations.SET_DRAW_COLOR(drawId);
+    const colorArray = colormap.getColor(drawId);
 
     configuration.hoverColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
     configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
@@ -326,7 +315,7 @@ export default class extends baseTool {
    * @return {Number} The number of colors in the color map.
    */
   static _getNumberOfColors () {
-    const colormap = external.cornerstone.colors.getColormap(COLOR_MAP_ID);
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
 
     return colormap.getNumberOfColors();
   }
