@@ -131,8 +131,8 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
  * @param {*} options
  */
 function setToolMode (mode, changeEvent, toolName, options) {
-  state.canvases.forEach((canvas) => {
-    setToolModeForElement(mode, changeEvent, canvas, toolName, options);
+  state.enabledElements.forEach((element) => {
+    setToolModeForElement(mode, changeEvent, element, toolName, options);
   });
 }
 

@@ -34,7 +34,7 @@ const addToolForElement = function (element, apiTool) {
  * @param {baseTool} tool
  */
 const addTool = function (apiTool) {
-  state.canvases.forEach((element) => {
+  state.enabledElements.forEach((element) => {
     addToolForElement(element, apiTool);
   });
 };

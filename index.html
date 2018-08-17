@@ -118,7 +118,7 @@
 		// TODO: if we emitted an event when this happened, cornerstone-tools
 		// TODO: could use it to init itself
 		cornerstone.enable(element);
-		cTools.addCanvas(element);
+		cTools.addEnabledElement(element);
 
 		cornerstone.loadImage(imageIds[0]).then(function (image) {
 			cornerstone.displayImage(element, image);

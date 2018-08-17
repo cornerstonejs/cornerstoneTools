@@ -3,7 +3,7 @@ export const state = {
   tools: [],
   clickProximity: 6,
   mousePositionImage: {},
-  canvases: []
+  enabledElements: []
 };
 
 export const getters = {
@@ -28,8 +28,8 @@ export const mutations = {
   SET_IS_TOOL_LOCKED: (isLocked) => {
     state.isToolLocked = isLocked;
   },
-  ADD_CANVAS: (canvas) => {
-    state.canvases.push(canvas);
+  ADD_ENABLED_ELEMENT: (enabledElement) => {
+    state.enabledElements.push(enabledElement);
   }
 };
 

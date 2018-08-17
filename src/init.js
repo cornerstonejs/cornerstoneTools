@@ -1,6 +1,6 @@
 import store from './store/index.js';
 import { addTool, addToolForElement } from './store/addTool.js';
-import addCanvas from './store/addCanvas.js';
+import addEnabledElement from './store/addEnabledElement.js';
 import {
   setToolActive,
   setToolActiveForElement,
@@ -17,7 +17,7 @@ export default function () {
     store,
     addTool,
     addToolForElement,
-    addCanvas,
+    addEnabledElement,
     // Tool Modes
     setToolActive,
     setToolActiveForElement,
