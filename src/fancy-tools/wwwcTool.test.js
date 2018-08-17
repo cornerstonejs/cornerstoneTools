@@ -6,6 +6,7 @@ jest.mock('./../externalModules.js', () => ({
     setViewport: jest.fn()
   }
 }));
+jest.mock('./../store/index.js');
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('wwwcTool.js', () => {

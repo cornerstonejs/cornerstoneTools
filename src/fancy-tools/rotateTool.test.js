@@ -6,6 +6,7 @@ jest.mock('./../externalModules.js', () => ({
     setViewport: jest.fn()
   }
 }));
+jest.mock('./../store/index.js');
 
 const mockEvt = {
   detail: {

@@ -5,6 +5,7 @@ jest.mock('./../util/drawing.js', () => ({
   drawRect: jest.fn(),
   getNewContext: jest.fn()
 }));
+jest.mock('./../store/index.js');
 
 describe('wwwcRegionTool.js', () => {
   describe('default values', () => {

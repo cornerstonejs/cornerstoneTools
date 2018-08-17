@@ -3,6 +3,7 @@ import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
 jest.mock('./../util/drawing.js');
+jest.mock('./../store/index.js');
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
