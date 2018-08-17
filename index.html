@@ -60,12 +60,12 @@
 				<li><a href="#" data-tool="zoom">Zoom</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="multitouch-pinch">
-				<li><a href="#" data-tool="panMultiTouch">PanMultiTouch</a></li>
-				<li><a href="#" data-tool="zoomTouchPinch">ZoomTouchPinch</a></li>
+				<li><a href="#" data-tool="panMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
+				<li><a href="#" data-tool="zoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="stackScrollMouseWheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="zoomMouseWheel">ZoomMouseWheel</a></li>
+				<li><a href="#" data-tool="stackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="zoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="overlay">
 				<li>
@@ -74,7 +74,7 @@
 						<label class="label-on"> ON</label>
 						<label class="label-off"> OFF</label>
 					</label>
-					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
+					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" data-tool-type="none" type="checkbox" />
 				</li>
 			</ul>
 
@@ -183,7 +183,8 @@
 				: convertMouseEventWhichToButtons(evt.which)
 			// TODO: Let's make this happen automagically for mask/touch conflicts?
 			setAllToolsPassive();
-			setButtonActive(toolName, mouseButtonMask);
+			const toolType = evt.target.getAttribute('data-tool-type')
+			setButtonActive(toolName, mouseButtonMask, toolType);
 			cTools.setToolActive(toolName, { mouseButtonMask });
 
 			evt.preventDefault();
@@ -239,22 +240,42 @@
 		});
 	}
 
-	const setButtonActive = (toolName, mouseButtonMask) => {
+	const setButtonActive = (toolName, mouseButtonMask, toolType) => {
 		Array.from(toolButtons).forEach(toolBtn => {
-			const toolType = toolBtn.getAttribute('data-tool-type')
-			const mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
-			const touchIcon = `touch-1`
+			// Classes we need to set & remove
+			let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
+			let touchIcon = `touch-1`
 
+			// Update classes depending on the toolType we clicked
+			if (toolType === 'none') {
+				return;
+			} else if (toolType === 'multitouch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-2';
+			} else if (toolType === 'pinch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-pinch';
+			} else if (toolType === 'wheel') {
+				mouseButtonIcon = 'mousebutton-wheel';
+				touchIcon = null;
+			}
+
+			// Update our target button
 			if (toolName === toolBtn.getAttribute('data-tool')) {
 				toolBtn.className = "";
 				toolBtn.classList.add('active');
-				toolBtn.classList.add(mouseButtonIcon)
-				toolBtn.classList.add(touchIcon)
+				if (mouseButtonIcon) {
+					toolBtn.classList.add(mouseButtonIcon)
+				}
+				if (touchIcon) {
+					toolBtn.classList.add(touchIcon)
+				}
+				// Remove relevant classes from other buttons
 			} else {
-				if (toolBtn.classList.contains(mouseButtonIcon)) {
+				if (mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
 					toolBtn.classList.remove(mouseButtonIcon);
 				}
-				if (toolBtn.classList.contains(touchIcon)) {
+				if (touchIcon && toolBtn.classList.contains(touchIcon)) {
 					toolBtn.classList.remove(touchIcon);
 				}
 				if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
