@@ -5,9 +5,8 @@ import { clipToBox } from '../util/clip.js';
 
 export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
   // Console.log('moveNewHandleTouch');
-  const cornerstone = external.cornerstone;
   const element = eventData.element;
-  const imageCoords = cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
+  const imageCoords = external.cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
   const distanceFromTouch = {
     x: handle.x - imageCoords.x,
     y: handle.y - imageCoords.y
@@ -26,7 +25,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
       clipToBox(handle, eventData.image);
     }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
@@ -50,7 +49,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
 
     if (e.type === EVENTS.TOUCH_PINCH || e.type === EVENTS.TOUCH_PRESS) {
       handle.active = false;
-      cornerstone.updateImage(element);
+      external.cornerstone.updateImage(element);
       doneMovingCallback();
 
       return;
@@ -65,7 +64,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
       clipToBox(handle, eventData.image);
     }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
       doneMovingCallback();
@@ -104,7 +103,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
       clipToBox(handle, eventData.image);
     }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
   }
 
   element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);

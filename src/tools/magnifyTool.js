@@ -4,9 +4,7 @@ import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import { clipToBox } from '../util/clip.js';
 import { getNewContext, fillBox } from '../util/drawing.js';
-import baseTool from './../base/baseTool.js';
-
-const cornerstone = external.cornerstone;
+import baseTool from '../base/baseTool.js';
 
 export default class extends baseTool {
   constructor (name = 'magnify') {
@@ -100,7 +98,7 @@ export default class extends baseTool {
     const getSize = magnifySize;
 
     // Calculate the on-canvas location of the mouse pointer / touch
-    const canvasLocation = cornerstone.pixelToCanvas(
+    const canvasLocation = external.cornerstone.pixelToCanvas(
       evt.detail.element,
       evt.detail.currentPoints.image
     );
@@ -173,7 +171,7 @@ export default class extends baseTool {
     let enabledElement = evt.detail.enabledElement;
 
     if (enabledElement === undefined) {
-      enabledElement = cornerstone.getEnabledElement(element);
+      enabledElement = external.cornerstone.getEnabledElement(element);
     }
 
     const magnificationLevel = this.configuration.magnificationLevel;
@@ -184,10 +182,10 @@ export default class extends baseTool {
     this.zoomElement = document.createElement('div');
     this.zoomElement.width = origCanvas.width * magnificationLevel;
     this.zoomElement.height = origCanvas.height * magnificationLevel;
-    cornerstone.enable(this.zoomElement);
+    external.cornerstone.enable(this.zoomElement);
 
-    const zoomEnabledElement = cornerstone.getEnabledElement(this.zoomElement);
-    const viewport = cornerstone.getViewport(enabledElement.element);
+    const zoomEnabledElement = external.cornerstone.getEnabledElement(this.zoomElement);
+    const viewport = external.cornerstone.getViewport(enabledElement.element);
 
     this.zoomCanvas = zoomEnabledElement.canvas;
     this.zoomCanvas.width = origCanvas.width * magnificationLevel;
@@ -197,8 +195,8 @@ export default class extends baseTool {
 
     // Update it's viewport to render at desired magnification level
     viewport.scale *= magnificationLevel;
-    cornerstone.displayImage(this.zoomElement, image);
-    cornerstone.setViewport(this.zoomElement, viewport);
+    external.cornerstone.displayImage(this.zoomElement, image);
+    external.cornerstone.setViewport(this.zoomElement, viewport);
   }
 
   /**
@@ -208,7 +206,7 @@ export default class extends baseTool {
    */
   _removeZoomElement () {
     if (this.zoomElement !== undefined) {
-      cornerstone.disable(this.zoomElement);
+      external.cornerstone.disable(this.zoomElement);
       this.zoomElement = undefined;
       this.zoomCanvas = undefined;
     }

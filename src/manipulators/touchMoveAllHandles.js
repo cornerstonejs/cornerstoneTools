@@ -7,7 +7,6 @@ import triggerEvent from '../util/triggerEvent.js';
 export default function (event, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
   const touchEventData = event.detail;
   const element = touchEventData.element;
-  const cornerstone = external.cornerstone;
 
   function touchDragCallback (e) {
     const eventData = e.detail;
@@ -24,7 +23,7 @@ export default function (event, data, toolData, toolType, deleteIfHandleOutsideI
       handle.x += eventData.deltaPoints.image.x;
       handle.y += eventData.deltaPoints.image.y;
     });
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
@@ -63,7 +62,7 @@ export default function (event, data, toolData, toolType, deleteIfHandleOutsideI
       removeToolState(element, toolType, data);
     }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
       doneMovingCallback(e);

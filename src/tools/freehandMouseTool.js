@@ -178,11 +178,10 @@ export default class extends baseAnnotationTool {
       return;
     }
 
-    const cornerstone = external.cornerstone;
     const image = eventData.image;
     const element = eventData.element;
     const config = this.configuration;
-    const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+    const seriesModule = external.cornerstone.metaData.get('generalSeriesModule', image.imageId);
     let modality;
 
     if (seriesModule) {
@@ -302,7 +301,7 @@ export default class extends baseAnnotationTool {
           // Deviation will be calculated for color images.
           if (!image.color) {
             // Retrieve the array of pixels that the ROI bounds cover
-            const pixels = cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
+            const pixels = external.cornerstone.getPixels(element, polyBoundingBox.left, polyBoundingBox.top, polyBoundingBox.width, polyBoundingBox.height);
 
             // Calculate the mean & standard deviation from the pixels and the object shape
             meanStdDev = calculateFreehandStatistics.call(this, pixels, polyBoundingBox, data.handles);

@@ -26,9 +26,8 @@ const pressDelay = 700,
 const toolType = 'touchInput';
 
 function onTouch (e) {
-  const cornerstone = external.cornerstone;
   const element = e.currentTarget || e.srcEvent.currentTarget;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
     return;
@@ -56,7 +55,7 @@ function onTouch (e) {
     // Calculate our current points in page and image coordinates
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(
+      image: external.cornerstone.pageToPixel(
         element,
         e.pointers[0].pageX,
         e.pointers[0].pageY
@@ -66,7 +65,7 @@ function onTouch (e) {
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -74,7 +73,7 @@ function onTouch (e) {
     eventType = EVENTS.TAP;
     eventData = {
       event: e,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       currentPoints,
@@ -92,7 +91,7 @@ function onTouch (e) {
     // Calculate our current points in page and image coordinates
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(
+      image: external.cornerstone.pageToPixel(
         element,
         e.pointers[0].pageX,
         e.pointers[0].pageY
@@ -102,7 +101,7 @@ function onTouch (e) {
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -110,7 +109,7 @@ function onTouch (e) {
     eventType = EVENTS.DOUBLE_TAP;
     eventData = {
       event: e,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       currentPoints,
@@ -142,9 +141,9 @@ function onTouch (e) {
 
     startPoints = {
       page: e.center,
-      image: cornerstone.pageToPixel(element, e.center.x, e.center.y)
+      image: external.cornerstone.pageToPixel(element, e.center.x, e.center.y)
     };
-    startPoints.canvas = cornerstone.pixelToCanvas(
+    startPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       startPoints.image
     );
@@ -153,7 +152,7 @@ function onTouch (e) {
     eventData = {
       event: e,
       startPoints,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       direction: e.scale < 1 ? 1 : -1,
@@ -176,7 +175,7 @@ function onTouch (e) {
     touchStartDelay = setTimeout(function () {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
-        image: cornerstone.pageToPixel(
+        image: external.cornerstone.pageToPixel(
           element,
           e.touches[0].pageX,
           e.touches[0].pageY
@@ -186,7 +185,7 @@ function onTouch (e) {
           y: e.touches[0].clientY
         }
       };
-      startPoints.canvas = cornerstone.pixelToCanvas(
+      startPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
         startPoints.image
       );
@@ -198,7 +197,7 @@ function onTouch (e) {
 
       eventData = {
         event: e,
-        viewport: cornerstone.getViewport(element),
+        viewport: external.cornerstone.getViewport(element),
         image: enabledElement.image,
         element,
         startPoints,
@@ -237,7 +236,7 @@ function onTouch (e) {
 
       currentPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
-        image: cornerstone.pageToPixel(
+        image: external.cornerstone.pageToPixel(
           element,
           e.touches[0].pageX,
           e.touches[0].pageY
@@ -247,7 +246,7 @@ function onTouch (e) {
           y: e.touches[0].clientY
         }
       };
-      currentPoints.canvas = cornerstone.pixelToCanvas(
+      currentPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
         startPoints.image
       );
@@ -255,7 +254,7 @@ function onTouch (e) {
       eventType = EVENTS.TOUCH_PRESS;
       eventData = {
         event: e,
-        viewport: cornerstone.getViewport(element),
+        viewport: external.cornerstone.getViewport(element),
         image: enabledElement.image,
         element,
         currentPoints,
@@ -278,7 +277,7 @@ function onTouch (e) {
     setTimeout(function () {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.changedTouches[0]),
-        image: cornerstone.pageToPixel(
+        image: external.cornerstone.pageToPixel(
           element,
           e.changedTouches[0].pageX,
           e.changedTouches[0].pageY
@@ -288,7 +287,7 @@ function onTouch (e) {
           y: e.changedTouches[0].clientY
         }
       };
-      startPoints.canvas = cornerstone.pixelToCanvas(
+      startPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
         startPoints.image
       );
@@ -297,7 +296,7 @@ function onTouch (e) {
 
       eventData = {
         event: e,
-        viewport: cornerstone.getViewport(element),
+        viewport: external.cornerstone.getViewport(element),
         image: enabledElement.image,
         element,
         startPoints,
@@ -331,7 +330,7 @@ function onTouch (e) {
         x: lastPoints.page.x + delta.x,
         y: lastPoints.page.y + delta.y
       },
-      image: cornerstone.pageToPixel(
+      image: external.cornerstone.pageToPixel(
         element,
         lastPoints.page.x + delta.x,
         lastPoints.page.y + delta.y
@@ -341,7 +340,7 @@ function onTouch (e) {
         y: lastPoints.client.y + delta.y
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -383,7 +382,7 @@ function onTouch (e) {
     }
 
     eventData = {
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       startPoints,
@@ -408,7 +407,7 @@ function onTouch (e) {
 
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(
+      image: external.cornerstone.pageToPixel(
         element,
         e.pointers[0].pageX,
         e.pointers[0].pageY
@@ -418,7 +417,7 @@ function onTouch (e) {
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -437,7 +436,7 @@ function onTouch (e) {
 
     currentPoints = {
       page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: cornerstone.pageToPixel(
+      image: external.cornerstone.pageToPixel(
         element,
         e.pointers[0].pageX,
         e.pointers[0].pageY
@@ -447,7 +446,7 @@ function onTouch (e) {
         y: e.pointers[0].clientY
       }
     };
-    currentPoints.canvas = cornerstone.pixelToCanvas(
+    currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
       currentPoints.image
     );
@@ -476,7 +475,7 @@ function onTouch (e) {
 
     eventData = {
       event: e.srcEvent,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       startPoints,
@@ -507,7 +506,7 @@ function onTouch (e) {
     eventType = EVENTS.TOUCH_ROTATE;
     eventData = {
       event: e.srcEvent,
-      viewport: cornerstone.getViewport(element),
+      viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
       rotation,

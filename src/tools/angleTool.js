@@ -1,33 +1,31 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
-import external from './../externalModules.js';
-import baseAnnotationTool from './../base/baseAnnotationTool.js';
+import external from '../externalModules.js';
+import baseAnnotationTool from '../base/baseAnnotationTool.js';
 // State
-import textStyle from './../stateManagement/textStyle.js';
+import textStyle from '../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
   removeToolState
-} from './../stateManagement/toolState.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+} from '../stateManagement/toolState.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
-import moveNewHandle from './../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from './../manipulators/anyHandlesOutsideImage.js';
+import drawHandles from '../manipulators/drawHandles.js';
+import moveNewHandle from '../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawJoinedLines
-} from './../util/drawing.js';
-import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
-import lineSegDistance from './../util/lineSegDistance.js';
-import roundToDecimal from './../util/roundToDecimal.js';
-
-const cornerstone = external.cornerstone;
+} from '../util/drawing.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import lineSegDistance from '../util/lineSegDistance.js';
+import roundToDecimal from '../util/roundToDecimal.js';
 
 export default class extends baseAnnotationTool {
   constructor (name = 'angle') {
@@ -143,11 +141,11 @@ export default class extends baseAnnotationTool {
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
 
-        const handleStartCanvas = cornerstone.pixelToCanvas(
+        const handleStartCanvas = external.cornerstone.pixelToCanvas(
           eventData.element,
           data.handles.start
         );
-        const handleMiddleCanvas = cornerstone.pixelToCanvas(
+        const handleMiddleCanvas = external.cornerstone.pixelToCanvas(
           eventData.element,
           data.handles.middle
         );
@@ -245,7 +243,7 @@ export default class extends baseAnnotationTool {
               textCoords.x += distance;
             }
 
-            const transform = cornerstone.internal.getTransform(enabledElement);
+            const transform = external.cornerstone.internal.getTransform(enabledElement);
 
             transform.invert();
 
@@ -305,7 +303,7 @@ export default class extends baseAnnotationTool {
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     // Step 1, create start and second middle
     handleMover(
@@ -326,7 +324,7 @@ export default class extends baseAnnotationTool {
           this.preventNewMeasurement = false;
         }
 
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
         // Step 2, place middle handle and drag end handle
         handleMover(
           eventData,
@@ -340,7 +338,7 @@ export default class extends baseAnnotationTool {
               removeToolState(element, this.name, measurementData);
             }
             this.preventNewMeasurement = false;
-            cornerstone.updateImage(element);
+            external.cornerstone.updateImage(element);
           }
         );
       }
