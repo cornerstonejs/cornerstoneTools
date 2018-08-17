@@ -4,9 +4,11 @@ import external from './../externalModules.js';
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
     setViewport: jest.fn()
+  },
+  colors: {
+    getColormap: jest.fn()
   }
 }));
-jest.mock('./../store/index.js');
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('wwwcTool.js', () => {

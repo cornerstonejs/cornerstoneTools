@@ -5,7 +5,13 @@ jest.mock('./../util/drawing.js', () => ({
   drawRect: jest.fn(),
   getNewContext: jest.fn()
 }));
-jest.mock('./../store/index.js');
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    colors: {
+      getColormap: jest.fn()
+    }
+  }
+}));
 
 describe('wwwcRegionTool.js', () => {
   describe('default values', () => {

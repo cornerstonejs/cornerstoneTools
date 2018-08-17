@@ -3,10 +3,12 @@ import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
-    setViewport: jest.fn()
+    setViewport: jest.fn(),
+    colors: {
+      getColormap: jest.fn()
+    }
   }
 }));
-jest.mock('./../store/index.js');
 
 const mockEvt = {
   detail: {
