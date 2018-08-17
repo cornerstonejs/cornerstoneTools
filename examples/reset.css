@@ -127,3 +127,13 @@ table {
   border-collapse: collapse;
   border-spacing: 0;
 }
+
+/* Border-box FTW! */
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}

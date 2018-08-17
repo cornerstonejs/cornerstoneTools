@@ -6,6 +6,7 @@ body,
   min-width: 320px;
   height: 100%;
   overflow: hidden;
+  background-color: #000000;
 }
 
 #app {
@@ -19,7 +20,7 @@ body,
 .cornerstone-element-wrapper {
   width: 100%;
   /* calc(full page - toolbarHeight * 2) */
-  height: calc(100% - 96px);
+  height: calc(100% - 130px);
   position: relative;
   display: flex;
   flex-direction: column;
