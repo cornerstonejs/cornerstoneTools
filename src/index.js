@@ -146,8 +146,6 @@ export {
   globalFrameOfReferenceSpecificToolStateManager
 } from './stateManagement/frameOfReferenceStateManager.js';
 
-export { default as appState } from './stateManagement/appState.js';
-
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
