@@ -9,6 +9,9 @@ import getTool from './../store/getTool.js';
  * @param {baseTool} tool
  */
 const addToolForElement = function (element, apiTool) {
+  // Instantiating the tool here makes it harder to accidentally add
+  // The same tool (by reference) for multiple elements (which would reassign the tool
+  // To a new element).
   const tool = new apiTool();
   const toolAlreadyAddedToElement = getTool(element, tool.toolName);
 
