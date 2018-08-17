@@ -7,18 +7,23 @@ let isClickEvent = true;
 let preventClickTimeout;
 const clickDelay = 200;
 
-function getEventWhich (event) {
-  if (typeof event.buttons !== 'number') {
-    return event.which;
+function getEventButtons (event) {
+  if (typeof event.buttons === 'number') {
+    return event.buttons;
   }
 
-  if (event.buttons === 0) {
+  switch (event.which) {
+  // No button
+  case 0:
     return 0;
-  } else if (event.buttons % 2 === 1) {
+    // Left
+  case 1:
     return 1;
-  } else if (event.buttons % 4 === 2) {
-    return 3;
-  } else if (event.buttons % 8 === 4) {
+    // Middle
+  case 2:
+    return 4;
+    // Right
+  case 3:
     return 2;
   }
 
@@ -48,20 +53,17 @@ function mouseDoubleClick (e) {
     }
   };
 
-  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(
+    element,
+    startPoints.image
+  );
 
   const lastPoints = copyPoints(startPoints);
 
-  /* Note: It seems we can't trust MouseEvent.buttons for dblclick events?
-
-    For some reason they are always firing with e.buttons = 0
-    so we have to use e.which for now instead.
-
-    Might be related to using preventDefault on the original mousedown or click events?
-  */
+  console.log(`double-click: ${getEventButtons(e)}`);
   const eventData = {
     event: e,
-    which: e.which,
+    buttons: getEventButtons(e),
     viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     element,
@@ -102,12 +104,17 @@ function mouseDown (e) {
     }
   };
 
-  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(
+    element,
+    startPoints.image
+  );
 
   let lastPoints = copyPoints(startPoints);
+
+  console.log(`mousedown: ${getEventButtons(e)}`);
   const eventData = {
     event: e,
-    which: getEventWhich(e),
+    buttons: getEventButtons(e),
     viewport: external.cornerstone.getViewport(element),
     image: enabledElement.image,
     element,
@@ -128,8 +135,6 @@ function mouseDown (e) {
     eventData.type = EVENTS.MOUSE_DOWN_ACTIVATE;
     triggerEvent(eventData.element, EVENTS.MOUSE_DOWN_ACTIVATE, eventData);
   }
-
-  const whichMouseButton = getEventWhich(e);
 
   function onMouseMove (e) {
     // Calculate our current points in page and image coordinates
@@ -168,8 +173,9 @@ function mouseDown (e) {
       )
     };
 
+    console.log(`mousemove ${getEventButtons(e)}`);
     const eventData = {
-      which: whichMouseButton,
+      buttons: getEventButtons(e),
       viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
@@ -236,9 +242,10 @@ function mouseDown (e) {
       )
     };
 
+    console.log(`mouseup: ${getEventButtons(e)}`);
     const eventData = {
       event: e,
-      which: whichMouseButton,
+      buttons: getEventButtons(e),
       viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
@@ -282,7 +289,10 @@ function mouseMove (e) {
     }
   };
 
-  startPoints.canvas = external.cornerstone.pixelToCanvas(element, startPoints.image);
+  startPoints.canvas = external.cornerstone.pixelToCanvas(
+    element,
+    startPoints.image
+  );
 
   let lastPoints = copyPoints(startPoints);
 
