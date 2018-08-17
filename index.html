@@ -1,0 +1,236 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<!-- support for mobile touch devices -->
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="examples/reset.css">
+	<link rel="stylesheet" href="examples/app.css">
+	<style>
+		/**
+		 * ~~ MagnifyTool:
+		 * You need to supply your own styling for the created magnifyTool div.
+		 * Note: The element wrapper needs `position: relative` for the positioning to work.
+		 */
+
+		.magnifyTool {
+			border: 4px white solid;
+			box-shadow: 2px 2px 10px #1e1e1e;
+			border-radius: 50%;
+			display: none;
+			cursor: none;
+			z-index: 100;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="app">
+		<div class="wrapper">
+			<!-- Select Tool Category -->
+			<ul class="tool-category-list">
+				<li><a class="active" data-category="annotation" href="#">Annotation</a></li>
+				<li><a data-category="drag" href="#">Drag</a></li>
+				<li><a data-category="multitouch-pinch" href="#">Multi-Touch / Pinch (touch only)</a></li>
+				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+				<li><a data-category="overlay" href="#">Overlay</a></li>
+			</ul>
+
+			<!-- Select Active Tool -->
+			<ul class="tool-category active" data-tool-category="annotation">
+				<li><a href="#" data-tool="arrowAnnotate">ArrowAnnotate</a></li>
+				<li><a href="#" data-tool="angle">Angle</a></li>
+				<li><a href="#" data-tool="ellipticalRoi">EllipticalRoi</a></li>
+				<li><a href="#" data-tool="eraser">Eraser</a></li>
+				<li><a href="#" data-tool="freehandMouse">FreehandMouse</a></li>
+				<li><a href="#" data-tool="freehandSculpterMouse">FreehandSculpterMouse</a></li>
+				<li><a href="#" data-tool="length">Length</a></li>
+				<li><a href="#" data-tool="probe">Probe</a></li>
+				<li><a href="#" data-tool="rectangleRoi">RectangleRoi</a></li>
+			</ul>
+			<ul class="tool-category" data-tool-category="drag">
+				<li><a href="#" data-tool="crosshair">Crosshair</a></li>
+				<li><a href="#" data-tool="magnify">Magnify</a></li>
+				<li><a href="#" data-tool="pan">Pan</a></li>
+				<li><a href="#" data-tool="rotate">Rotate</a></li>
+				<li><a href="#" data-tool="stackScroll">StackScroll</a></li>
+				<li><a href="#" data-tool="wwwc">WWWC</a></li>
+				<li><a href="#" data-tool="wwwcRegion">WWWCRegion</a></li>
+				<li><a href="#" data-tool="zoom">Zoom</a></li>
+			</ul>
+			<ul class="tool-category" data-tool-category="multitouch-pinch">
+				<li><a href="#" data-tool="panMultiTouch">PanMultiTouch</a></li>
+				<li><a href="#" data-tool="zoomTouchPinch">ZoomTouchPinch</a></li>
+			</ul>
+			<ul class="tool-category" data-tool-category="mousewheel">
+				<li><a href="#" data-tool="stackScrollMouseWheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="zoomMouseWheel">ZoomMouseWheel</a></li>
+			</ul>
+			<ul class="tool-category" data-tool-category="overlay">
+				<li>
+					<label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
+						ScaleOverlay
+						<label class="label-on"> ON</label>
+						<label class="label-off"> OFF</label>
+					</label>
+					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
+				</li>
+			</ul>
+
+			<!-- Our beautiful element targets -->
+			<div class="cornerstone-element-wrapper">
+				<div class="cornerstone-element" oncontextmenu="return false"></div>
+				<div class="cornerstone-element" oncontextmenu="return false"></div>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.4/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.min.js"></script>
+<script src="dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="examples/imageLoader.js"></script>
+
+<script>
+	const cTools = cornerstoneTools.init();
+	const imageIds = [
+		'example://1',
+		'example://2',
+		'example://3'
+	];
+	const stack = {
+		currentImageIdIndex: 0,
+		imageIds: imageIds
+	};
+
+	// Enable & Setup all of our elements
+	const elements = document.querySelectorAll('.cornerstone-element');
+	Array.from(elements).forEach(element => {
+		// TODO: if we emitted an event when this happened, cornerstone-tools
+		// TODO: could use it to init itself
+		cornerstone.enable(element);
+		cTools.addEnabledElement(element);
+
+		cornerstone.loadImage(imageIds[0]).then(function (image) {
+			cornerstone.displayImage(element, image);
+
+			cornerstoneTools.addStackStateManager(element, ['stack']);
+			cornerstoneTools.addToolState(element, 'stack', stack);
+		});
+	})
+
+	function setAllToolsPassive() {
+		const exceptionList = [
+			'scaleOverlay'
+		];
+		cTools.store.state.tools.forEach((tool) => {
+			if (!exceptionList.includes(tool.name)) {
+				cTools.setToolPassive(tool.name);
+			}
+		});
+	}
+
+	// Iterate over all tool-category links
+	const toolCategoryLinks = document.querySelectorAll('ul.tool-category-list a');
+	const toolCategorySections = document.querySelectorAll('ul.tool-category');
+	Array.from(toolCategoryLinks).forEach(link => {
+		// 
+		const categoryName = link.getAttribute('data-category');
+		const categoryElement = document.querySelector(`section[data-tool-category="${categoryName}"]`)
+
+		// Setup listener
+		link.addEventListener('click', (evt) => {
+			evt.preventDefault();
+			setToolCategoryActive(categoryName);
+		});
+	})
+
+	// Iterate over all tool buttons
+	const toolButtons = document.querySelectorAll('a[data-tool]');
+	Array.from(toolButtons).forEach(toolBtn => {
+		// Add the tool
+		const toolName = toolBtn.getAttribute('data-tool');
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		if (apiTool) {
+			cTools.addTool(apiTool);
+		} else {
+			console.warn(`unable to add tool with name ${toolName}Tool`);
+			console.log(cornerstoneTools)
+		}
+
+		// Setup button listener
+		toolBtn.addEventListener('click', (evt) => {
+			setAllToolsPassive();
+			setButtonActive(toolName);
+			cTools.setToolActive(toolName, { mouseButtonMask: 1 });
+		});
+	});
+
+	// Iterate through swtich ON/OFF tools
+	const stateTools = document.querySelectorAll('input[type="checkbox"]');
+	Array.from(stateTools).forEach(toolCheckBox => {
+
+		const toolName = toolCheckBox.getAttribute('data-tool');
+		const toolLabel = document.querySelector(`#${toolName}`);
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		if (apiTool) {
+			cTools.addTool(apiTool);
+		}
+
+		cTools.setToolDisabled(toolName);
+
+		toolCheckBox.addEventListener('change', (evt) => {
+			if (evt.currentTarget.checked) {
+				cTools.setToolEnabled(toolName);
+			} else {
+				cTools.setToolDisabled(toolName);
+			}
+			toolLabel.classList.toggle('turned-on');
+		});
+	});
+
+	// Activate first tool
+	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+
+	const setToolCategoryActive = (categoryName) => {
+		Array.from(toolCategoryLinks).forEach(toolLink => {
+			if (categoryName === toolLink.getAttribute('data-category')) {
+				toolLink.classList.remove('active');
+				toolLink.classList.add('active');
+			} else {
+				toolLink.classList.remove('active');
+			}
+		});
+
+		Array.from(toolCategorySections).forEach(toolCategorySection => {
+			if (categoryName === toolCategorySection.getAttribute('data-tool-category')) {
+				toolCategorySection.classList.remove('active');
+				toolCategorySection.classList.add('active');
+			} else {
+				toolCategorySection.classList.remove('active');
+			}
+		});
+	}
+
+	const setButtonActive = (toolName) => {
+		Array.from(toolButtons).forEach(toolBtn => {
+			if (toolName === toolBtn.getAttribute('data-tool')) {
+				toolBtn.classList.remove('active');
+				toolBtn.classList.add('active');
+			} else {
+				toolBtn.classList.remove('active');
+			}
+		});
+	}
+</script>
+
+</html>
