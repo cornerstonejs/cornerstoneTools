@@ -2,7 +2,6 @@
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 // Util
-import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import {
   getToolsWithMovableHandles,
   findHandleDataNearImagePoint,
@@ -36,8 +35,8 @@ export default function (evt) {
 
   // High level filtering
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
-  tools = tools.filter((tool) =>
-    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  tools = tools.filter(
+    (tool) => eventData.buttons === tool.options.mouseButtonMask
   );
 
   // ACTIVE TOOL W/ PRE CALLBACK?

@@ -6,6 +6,7 @@
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 	<link rel="stylesheet" href="examples/reset.css">
 	<link rel="stylesheet" href="examples/app.css">
+	<link rel="stylesheet" href="examples/icon-classes.css">
 	<style>
 		/**
 		 * ~~ MagnifyTool:
@@ -49,7 +50,7 @@
 				<li><a href="#" data-tool="rectangleRoi">RectangleRoi</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="drag">
-				<li><a href="#" data-tool="crosshair">Crosshair</a></li>
+				<li><a href="#" data-tool="crosshairs">Crosshairs</a></li>
 				<li><a href="#" data-tool="magnify">Magnify</a></li>
 				<li><a href="#" data-tool="pan">Pan</a></li>
 				<li><a href="#" data-tool="rotate">Rotate</a></li>
@@ -59,12 +60,12 @@
 				<li><a href="#" data-tool="zoom">Zoom</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="multitouch-pinch">
-				<li><a href="#" data-tool="panMultiTouch">PanMultiTouch</a></li>
-				<li><a href="#" data-tool="zoomTouchPinch">ZoomTouchPinch</a></li>
+				<li><a href="#" data-tool="panMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
+				<li><a href="#" data-tool="zoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="stackScrollMouseWheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="zoomMouseWheel">ZoomMouseWheel</a></li>
+				<li><a href="#" data-tool="stackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="zoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="overlay">
 				<li>
@@ -73,7 +74,7 @@
 						<label class="label-on"> ON</label>
 						<label class="label-off"> OFF</label>
 					</label>
-					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" type="checkbox" />
+					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" data-tool-type="none" type="checkbox" />
 				</li>
 			</ul>
 
@@ -168,10 +169,28 @@
 		}
 
 		// Setup button listener
-		toolBtn.addEventListener('click', (evt) => {
+		// Prevent right click context menu for our menu buttons
+		toolBtn.addEventListener('contextmenu', event => event.preventDefault(), true);
+		// Prevent middle click opening a new tab on Chrome & FF
+		toolBtn.addEventListener('auxclick', event => {
+			if (event.button && event.button === 1) {
+				event.preventDefault();
+			}
+		}, false);
+		toolBtn.addEventListener('mousedown', (evt) => {
+			const mouseButtonMask = evt.buttons
+				? evt.buttons
+				: convertMouseEventWhichToButtons(evt.which)
+			// TODO: Let's make this happen automagically for mask/touch conflicts?
 			setAllToolsPassive();
-			setButtonActive(toolName);
-			cTools.setToolActive(toolName, { mouseButtonMask: 1 });
+			const toolType = evt.target.getAttribute('data-tool-type')
+			setButtonActive(toolName, mouseButtonMask, toolType);
+			cTools.setToolActive(toolName, { mouseButtonMask });
+
+			evt.preventDefault();
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
+			return false;
 		});
 	});
 
@@ -221,15 +240,67 @@
 		});
 	}
 
-	const setButtonActive = (toolName) => {
+	const setButtonActive = (toolName, mouseButtonMask, toolType) => {
 		Array.from(toolButtons).forEach(toolBtn => {
+			// Classes we need to set & remove
+			let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
+			let touchIcon = `touch-1`
+
+			// Update classes depending on the toolType we clicked
+			if (toolType === 'none') {
+				return;
+			} else if (toolType === 'multitouch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-2';
+			} else if (toolType === 'pinch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-pinch';
+			} else if (toolType === 'wheel') {
+				mouseButtonIcon = 'mousebutton-wheel';
+				touchIcon = null;
+			}
+
+			// Update our target button
 			if (toolName === toolBtn.getAttribute('data-tool')) {
-				toolBtn.classList.remove('active');
+				toolBtn.className = "";
 				toolBtn.classList.add('active');
+				if (mouseButtonIcon) {
+					toolBtn.classList.add(mouseButtonIcon)
+				}
+				if (touchIcon) {
+					toolBtn.classList.add(touchIcon)
+				}
+				// Remove relevant classes from other buttons
 			} else {
-				toolBtn.classList.remove('active');
+				if (mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
+					toolBtn.classList.remove(mouseButtonIcon);
+				}
+				if (touchIcon && toolBtn.classList.contains(touchIcon)) {
+					toolBtn.classList.remove(touchIcon);
+				}
+				if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
+					toolBtn.classList.remove('active');
+				}
 			}
 		});
+	}
+
+	const convertMouseEventWhichToButtons = (which) => {
+		switch (which) {
+			// no button
+			case 0:
+				return 0;
+			// left
+			case 1:
+				return 1;
+			// middle
+			case 2:
+				return 4;
+			// right
+			case 3:
+				return 2;
+		}
+		return 0;
 	}
 </script>
 
