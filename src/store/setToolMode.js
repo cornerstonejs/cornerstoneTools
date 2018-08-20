@@ -1,6 +1,6 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
-import getTool from './../store/getTool.js';
+import getToolForElement from './getToolForElement.js';
 import { state } from './../store/index.js';
 
 /**
@@ -87,7 +87,7 @@ const setToolPassive = setToolMode.bind(
  * @returns
  */
 function setToolModeForElement (mode, changeEvent, element, toolName, options) {
-  const tool = getTool(element, toolName);
+  const tool = getToolForElement(element, toolName);
 
   if (!tool) {
     console.error(`Unable to find tool '${toolName}' for enabledElement`);
