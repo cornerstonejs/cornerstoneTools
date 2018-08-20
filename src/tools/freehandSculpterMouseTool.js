@@ -7,7 +7,7 @@ import { getters, mutations } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
-import getTool from '../store/getTool.js';
+import getToolForElement from '../store/getToolForElement.js';
 import baseTool from '../base/baseTool.js';
 
 const referencedToolName = 'freehandMouse';
@@ -216,8 +216,8 @@ export default class extends baseTool {
       coords = getters.mousePositionImage();
     }
 
-    const freehandMouseTool = getTool(element, referencedToolName);
     let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
+    const freehandMouseTool = getToolForElement(element, referencedToolName);
 
     config.mouseLocation.handles.start.x = coords.x;
     config.mouseLocation.handles.start.y = coords.y;
@@ -632,7 +632,7 @@ export default class extends baseTool {
     const toolState = getToolState(element, referencedToolName);
     const data = toolState.data[toolIndex];
 
-    const freehandMouseTool = getTool(element, referencedToolName);
+    const freehandMouseTool = getToolForElement(element, referencedToolName);
 
     let radiusImage = freehandMouseTool.distanceFromPoint(element, data, coords);
     let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
@@ -836,7 +836,7 @@ export default class extends baseTool {
   * @return {Number} The tool index of the closest freehand tool.
   */
   static _getClosestFreehandToolOnElement (element, eventData) {
-    const freehand = getTool(element, referencedToolName);
+    const freehand = getToolForElement(element, referencedToolName);
     const toolState = getToolState(element, referencedToolName);
     const data = toolState.data;
     const pixelCoords = eventData.currentPoints.image;

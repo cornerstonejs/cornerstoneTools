@@ -1,5 +1,5 @@
 import { state } from './index.js';
-import getTool from './../store/getTool.js';
+import getToolForElement from './getToolForElement.js';
 
 /**
  *
@@ -13,7 +13,7 @@ const addToolForElement = function (element, apiTool) {
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
   const tool = new apiTool();
-  const toolAlreadyAddedToElement = getTool(element, tool.toolName);
+  const toolAlreadyAddedToElement = getToolForElement(element, tool.toolName);
 
   if (toolAlreadyAddedToElement) {
     console.warn(

@@ -1,5 +1,10 @@
 import store from './store/index.js';
 import { addTool, addToolForElement } from './store/addTool.js';
+import getToolForElement from './store/getToolForElement.js';
+import {
+  setToolOptions,
+  setToolOptionsForElement
+} from './store/setToolOptions.js';
 import addEnabledElement from './store/addEnabledElement.js';
 import {
   setToolActive,
@@ -20,6 +25,9 @@ export default function () {
     store,
     addTool,
     addToolForElement,
+    getToolForElement,
+    setToolOptions,
+    setToolOptionsForElement,
     addEnabledElement,
     // Tool Modes
     setToolActive,
