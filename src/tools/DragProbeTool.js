@@ -51,14 +51,20 @@ export default class extends baseTool {
   }
 
   renderToolData (evt) {
-    if (evt && evt.detail && this.dragEventData.currentPoints) {
+    if (evt && evt.detail && Boolean(Object.keys(this.dragEventData.currentPoints).length)) {
       evt.detail.currentPoints = this.dragEventData.currentPoints;
       this.applyActiveStrategy(evt);
     }
   }
 }
 
-function defaultStrategy (evt, config) {
+/**
+ * Default strategy will pick the exactly point of mouse/touch interact and display the probe data.
+ *
+ * @param  {} evt Image rendered event
+ * @param  {} config Tool configuration
+ */
+const defaultStrategy = (evt, config) => {
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
   const { element, image, currentPoints, canvasContext } = eventData;
@@ -78,13 +84,12 @@ function defaultStrategy (evt, config) {
   draw(context, (context) => {
     setShadow(context, config);
 
+    const text = `${x}, ${y}`;
     let storedPixels;
-    let text,
-      str;
+    let str;
 
     if (image.color) {
       storedPixels = getRGBPixels(element, x, y, 1, 1);
-      text = `${x}, ${y}`;
       str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]} A: ${storedPixels[3]}`;
     } else {
       storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
@@ -93,16 +98,14 @@ function defaultStrategy (evt, config) {
       const suv = calculateSUV(image, sp);
 
       // Draw text
-      text = `${x}, ${y}`;
       str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
       if (suv) {
         str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
       }
     }
 
-    // Draw text
+    // Draw text 5px away from cursor
     const textCoords = {
-      // Translate the x/y away from the cursor
       x: currentPoints.canvas.x + 5,
       y: currentPoints.canvas.y - 5
     };
@@ -110,9 +113,15 @@ function defaultStrategy (evt, config) {
     drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
   });
-}
+};
 
-function minimalStrategy (evt, config) {
+/**
+ * Minimal strategy will position a circle and use the center of the circle to calculate and display probe data.
+ *
+ * @param  {} evt Image rendered event
+ * @param  {} config Tool configuration
+ */
+const minimalStrategy = (evt, config) => {
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
   const { element, image, currentPoints, canvasContext, isTouchEvent } = eventData;
@@ -188,4 +197,4 @@ function minimalStrategy (evt, config) {
     drawCircle(context, element, textCoords, handleRadius, { color }, 'canvas');
     drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
   });
-}
+};
