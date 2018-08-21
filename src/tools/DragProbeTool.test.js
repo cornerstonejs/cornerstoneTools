@@ -1,10 +1,10 @@
-import DragProbeTool from './dragProbeTool.js';
+import DragProbeTool from './DragProbeTool.js';
 
-describe('dragProbeTool.js', () => {
+describe('DragProbeTool.js', () => {
 
   describe('default values', () => {
-    it('has a default name of "dragProbe"', () => {
-      const defaultName = 'dragProbe';
+    it('has a default name of "DragProbe"', () => {
+      const defaultName = 'DragProbe';
       const instantiatedTool = new DragProbeTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

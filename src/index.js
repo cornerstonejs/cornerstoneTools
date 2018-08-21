@@ -7,6 +7,7 @@ export { default as init } from './init.js';
 export { default as ArrowAnnotateTool } from './tools/ArrowAnnotateTool.js';
 export { default as AngleTool } from './tools/AngleTool.js';
 export { default as DoubleTapFitToWindowTool } from './tools/DoubleTapFitToWindowTool.js';
+export { default as DragProbeTool } from './tools/DragProbeTool.js';
 export { default as EllipticalRoiTool } from './tools/EllipticalRoiTool.js';
 export { default as EraserTool } from './tools/EraserTool.js';
 export { default as FreehandMouseTool } from './tools/FreehandMouseTool.js';

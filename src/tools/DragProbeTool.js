@@ -1,18 +1,17 @@
+/* eslint no-underscore-dangle: 0 */
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import baseTool from '../base/BaseTool.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
+import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
-import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import { getToolOptions } from '../toolOptions.js';
 import { getNewContext, draw, setShadow, drawCircle } from '../util/drawing.js';
 
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'dragProbe') {
+export default class extends baseTool {
+  constructor (name = 'DragProbe') {
     const strategies = {
       default: defaultStrategy,
       minimal: minimalStrategy
@@ -26,29 +25,45 @@ export default class extends baseAnnotationTool {
       configuration: {}
     });
 
-    this.touchDragCallback = this.dragCallback.bind(this);
-    this.mouseDragCallback = this.dragCallback.bind(this);
+    this.touchDragCallback = this._movingEventCallback.bind(this);
+    this.touchEndCallback = this._endMovingEventCallback.bind(this);
 
-    this.dragEventData = null;
+    this.mouseDragCallback = this._movingEventCallback.bind(this);
+    this.mouseUpCallback = this._endMovingEventCallback.bind(this);
+
+    this.dragEventData = {};
   }
 
-  _dragCallback (evt) {
+  _movingEventCallback (evt) {
     const eventData = evt.detail;
     const { element } = eventData;
 
     this.dragEventData = eventData;
-    this.applyActiveStrategy(evt);
     external.cornerstone.updateImage(element);
+  }
+
+  _endMovingEventCallback (evt) {
+    const eventData = evt.detail;
+    const { element } = eventData;
+
+    this.dragEventData = {};
+    external.cornerstone.updateImage(element);
+  }
+
+  renderToolData (evt) {
+    if (evt && evt.detail && this.dragEventData.currentPoints) {
+      evt.detail.currentPoints = this.dragEventData.currentPoints;
+      this.applyActiveStrategy(evt);
+    }
   }
 }
 
 function defaultStrategy (evt, config) {
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
-  const { element, image, currentPoints } = eventData;
-  const enabledElement = cornerstone.getEnabledElement(element);
+  const { element, image, currentPoints, canvasContext } = eventData;
 
-  const context = getNewContext(enabledElement.canvas);
+  const context = getNewContext(canvasContext.canvas);
 
   const color = toolColors.getActiveColor();
   const fontHeight = textStyle.getFontSize();
@@ -86,12 +101,11 @@ function defaultStrategy (evt, config) {
     }
 
     // Draw text
-    const coords = {
+    const textCoords = {
       // Translate the x/y away from the cursor
-      x: currentPoints.image.x + 3,
-      y: currentPoints.image.y - 3
+      x: currentPoints.canvas.x + 5,
+      y: currentPoints.canvas.y - 5
     };
-    const textCoords = cornerstone.pixelToCanvas(element, coords);
 
     drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
@@ -101,12 +115,10 @@ function defaultStrategy (evt, config) {
 function minimalStrategy (evt, config) {
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
-  const { element, currentPoints, isTouchEvent } = eventData;
-  const enabledElement = cornerstone.getEnabledElement(element);
-  const { image, canvas } = enabledElement;
-  const color = toolColors.getActiveColor();
+  const { element, image, currentPoints, canvasContext, isTouchEvent } = eventData;
 
-  const context = getNewContext(canvas);
+  const context = getNewContext(canvasContext.canvas);
+  const color = toolColors.getActiveColor();
 
   let pageCoordY = currentPoints.page.y - textStyle.getFontSize() / 2;
 
@@ -157,20 +169,19 @@ function minimalStrategy (evt, config) {
     const textCoords = cornerstone.pixelToCanvas(element, toolCoords);
 
     // Translate the x/y away from the cursor
-    let translation;
+    let translation = {
+      x: 12,
+      y: -(textStyle.getFontSize() + 10) / 2
+    };
+
     const handleRadius = 6;
     const padding = 5;
-    const width = textBoxWidth(context, text, padding);
+    const width = context.measureText(text).width + 2 * padding;
 
-    if (isTouchEvent === true) {
+    if (isTouchEvent) {
       translation = {
         x: -width / 2,
         y: -textStyle.getFontSize() - 10 - 2 * handleRadius
-      };
-    } else {
-      translation = {
-        x: 12,
-        y: -(textStyle.getFontSize() + 10) / 2
       };
     }
 
