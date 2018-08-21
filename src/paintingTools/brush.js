@@ -118,6 +118,7 @@ function fill (eventData) {
   const toolData = getToolState(element, TOOL_STATE_TOOL_TYPE);
   const pixelData = toolData.data[0].pixelData;
   const brushPixelValue = configuration.draw;
+
   const dx = [0, 1, 0, -1];
   const dy = [-1, 0, 1, 0];
 
@@ -127,7 +128,7 @@ function fill (eventData) {
   }
 
   const getPixelIndex = (x, y) => (y * columns) + x;
-  const isSameColor = (x, y) => pixelData[getPixelIndex(x, y)] === brushPixelValue;
+  const isSameColor = (x, y, color = brushPixelValue) => pixelData[getPixelIndex(x, y)] === color;
   const draw = (x, y, brushPixelValue) => drawBrushPixels([[x, y]], pixelData, brushPixelValue, columns);
   const drawRange = (range, color) => {
     range.forEach((point) => {
@@ -159,28 +160,30 @@ function fill (eventData) {
     find(y, rows, (x, y) => !isSameColor(x, y + 1), x, true),
     find(x, 0, (x, y) => !isSameColor(x - 1, y), y, false)
   ];
-  let [minDistance, idx, _base, _low, _high] = [2147483647, -1];
+  let [minDistance, idx, base, low, high] = [2147483647, -1];
 
   for (let i = 0; i < thisCircle.length; i += 1) {
-    let _b, _l, _h; 
-    if (i & 1) {
-      _b = y;
-      _l = find(thisCircle[i] + dx[i], i === 1 ? columns : 0, isSameColor, _b, false);
-      if (_l === null) {
+    let b, l, h;
+
+    if (i % 2) {
+      b = y;
+      l = find(thisCircle[i] + dx[i], i === 1 ? columns : 0, isSameColor, b, false);
+      if (l === null) {
         continue;
       }
-      _h = find(_l + dx[i], i === 1 ? columns : 0, (x, y) => !isSameColor(x + dx[i], y + dy[i]), _b, false);
+      h = find(l + dx[i], i === 1 ? columns : 0, (x, y) => !isSameColor(x + dx[i], y + dy[i]), b, false);
     } else {
-      _b = x;
-      _l = find(thisCircle[i] + dy[i], i === 0 ? 0 : rows, isSameColor, _b, true);
-      if (_l === null) {
+      b = x;
+      l = find(thisCircle[i] + dy[i], i === 0 ? 0 : rows, isSameColor, b, true);
+      if (l === null) {
         continue;
       }
-      _h = find(_l + dy[i], i === 0 ? 0 : rows, (x, y) => !isSameColor(x + dx[i], y + dy[i]), _b, true);
+      h = find(l + dy[i], i === 0 ? 0 : rows, (x, y) => !isSameColor(x + dx[i], y + dy[i]), b, true);
     }
-    const distance = Math.abs(_l - (i & 1 ? x : y));
+    const distance = Math.abs(l - (i % 2 ? x : y));
+
     if (minDistance > distance) {
-      [minDistance, idx, _base, _low, _high] = [distance, i, _b, _l, _h];
+      [minDistance, idx, base, low, high] = [distance, i, b, l, h];
     }
   }
 
@@ -194,7 +197,7 @@ function fill (eventData) {
     return ret;
   };
 
-  drawRange(getPointList(_low, _high, _base, !(idx & 1)), 0);
+  drawRange(getPointList(low, high, base, !(idx % 2)), 0);
 
   class Queue {
     constructor () {
@@ -261,23 +264,84 @@ function fill (eventData) {
       }
     }
 
-    return [rx, ry, maxDepth];
+    return {
+      x: rx,
+      y: ry
+    };
   };
 
-  let [lx, ly, hx, hy] = [-1, -1, -1, -1];
-  if (idx & 1) {
-    [lx, ly] = bfs(_low, _base - 1, columns, rows);
-    [hx, hy] = bfs(_low, _base + 1, columns, rows);
-    draw(lx, ly, 4);
-    draw(hx, hy, 4);
-  } else {
-    [lx, ly] = bfs(_base - 1, _low, columns, rows);
-    [hx, hy] = bfs(_base + 1, _low, columns, rows);
-    draw(lx, ly, 4);
-    draw(hx, hy, 4);
-  }
+  const points = [];
 
-  drawRange(getPointList(_low, _high, _base, !(idx & 1)), brushPixelValue);
+  if (idx % 2) {
+    const p1 = bfs(low, base - 1, columns, rows);
+    const p2 = bfs(low, base + 1, columns, rows);
+
+    points.push(p1);
+    points.push(p2);
+  } else {
+    const p1 = bfs(base - 1, low, columns, rows);
+    const p2 = bfs(base + 1, low, columns, rows);
+
+    points.push(p1);
+    points.push(p2);
+  }
+  drawRange(getPointList(low, high, base, !(idx % 2)), brushPixelValue);
+  points.sort((x, y) => x.x - y.x);
+  let ttx, tty;
+
+  if (points[0].x === points[1].x) {
+    // Gradient is infinity
+    drawRange(getPointList(points[0].y, points[1].y, points[0].x, true), brushPixelValue);
+  } else {
+    const gradient = (points[1].y - points[0].y) / (points[1].x - points[0].x);
+    const bias = points[0].y - gradient * points[0].x;
+    if ( Math.abs(gradient) >= 1 ) {
+      points.sort((x, y) => x.y - y.y);
+      for (let ty = points[0].y; ty <= points[1].y; ty += 1) {
+        for (let r = -2; r <= 2; r += 1) {
+          draw(Math.round((ty - bias) / gradient) + r, ty, brushPixelValue);
+        }
+      }
+    } else {
+      for (let tx = points[0].x; tx <= points[1].x; tx += 1) {
+        for (let r = -2; r <= 2; r += 1) {
+          draw(tx, Math.round(gradient * tx + bias) + r, brushPixelValue);
+        }
+      }
+    }
+  }
+  // If not point in polygon, return false
+
+  const bfsForFill = (x, y, columns, rows) => {
+    const q = new Queue();
+    let processing = 0;
+
+    q.enqueue({
+      x,
+      y
+    });
+    draw(x, y, brushPixelValue);
+    while (q.size() !== 0 && processing <= rows * columns) {
+      processing += 1;
+      const now = q.dequeue();
+
+      for (let i = 0; i < 4; i += 1) {
+        const ny = now.y + dy[i];
+        const nx = now.x + dx[i];
+
+        if (ny < 0 || ny >= rows || nx < 0 || nx >= columns || isSameColor(nx, ny, brushPixelValue)) {
+          continue;
+        }
+        q.enqueue({
+          x: nx,
+          y: ny
+        });
+        draw(nx, ny, brushPixelValue);
+      }
+    }
+  };
+  bfsForFill(x, thisCircle[0] - 1, columns, rows);
+
 
   layer.invalid = true;
 
