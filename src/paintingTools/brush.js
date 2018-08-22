@@ -336,9 +336,6 @@ function fill (eventData) {
         if (ny < 0 || ny >= rows || nx < 0 || nx >= columns || isSameColor(nx, ny, brushPixelValue)) {
           continue;
         }
-        if (!isSameColor(nx, ny, 0)) {
-          continue;
-        }
         q.enqueue({
           x: nx,
           y: ny
