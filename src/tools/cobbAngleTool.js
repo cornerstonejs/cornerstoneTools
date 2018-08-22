@@ -33,8 +33,6 @@ export default class extends baseAnnotationTool {
       name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
-
-    this.preventNewMeasurement = false;
   }
 
   /**
@@ -50,6 +48,7 @@ export default class extends baseAnnotationTool {
       active: true,
       color: undefined,
       complete: false,
+      value: undefined,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -64,15 +63,15 @@ export default class extends baseAnnotationTool {
           active: true
         },
         start2: {
-          x: eventData.currentPoints.image.x - 20,
-          y: eventData.currentPoints.image.y + 20,
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
           drawnIndependently: true,
         },
         end2: {
-          x: eventData.currentPoints.image.x,
-          y: eventData.currentPoints.image.y + 20,
+          x: eventData.currentPoints.image.x + 1,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
           drawnIndependently: true,
@@ -98,7 +97,14 @@ export default class extends baseAnnotationTool {
    * @returns
    */
   pointNearTool(element, data, coords) {
-    if (data.visible === false || this.preventNewMeasurement) {
+    if (data.visible === false) {
+      return false;
+    }
+
+    const maybePending = this.getIncomplete(element);
+
+    if (maybePending) {
+      // measurement in progress
       return false;
     }
 
@@ -122,7 +128,6 @@ export default class extends baseAnnotationTool {
    */
   renderToolData(evt) {
     const eventData = evt.detail;
-    const enabledElement = eventData.enabledElement;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -171,71 +176,68 @@ export default class extends baseAnnotationTool {
         // Draw the text
         context.fillStyle = color;
 
-        // Default to isotropic pixel size, update suffix to reflect this
-        const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-        const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+        data.value = calculateValue(data, eventData.image);
+        const text = data.value;
 
-        const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
-        const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
-        const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
-        const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+        if (!data.handles.textBox.hasMoved) {
+          let textCoords;
+          textCoords = {
+            x: (data.handles.start.x + data.handles.end.x) / 2,
+            y: (data.handles.start.y + data.handles.end.y) / 2 - 10
+          };
 
-        let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-
-        angle *= (180 / Math.PI);
-
-        data.rAngle = roundToDecimal(angle, 2);
-        console.log(data.rAngle);
-
-        if (!Number.isNaN(data.rAngle)) {
-          const text = textBoxText(
-            data,
-            eventData.image.rowPixelSpacing,
-            eventData.image.columnPixelSpacing
-          );
-
-          if (!data.handles.textBox.hasMoved) {
-            let textCoords;
-            textCoords = {
-              x: (data.handles.start.x + data.handles.end.x) / 2,
-              y: (data.handles.start.y + data.handles.end.y) / 2 - 10
-            };
-
-            context.font = font;
-            //const textWidth = context.measureText(text).width;
-
-            const transform = external.cornerstone.internal.getTransform(enabledElement);
-
-            transform.invert();
-
-            const coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-            data.handles.textBox.x = textCoords.x;
-            data.handles.textBox.y = textCoords.y;
-          }
-
-          drawLinkedTextBox(
-            context,
-            eventData.element,
-            data.handles.textBox,
-            text,
-            data.handles,
-            textBoxAnchorPoints,
-            color,
-            lineWidth,
-            0,
-            true
-          );
+          context.font = font;
+          data.handles.textBox.x = textCoords.x;
+          data.handles.textBox.y = textCoords.y;
         }
+
+        drawLinkedTextBox(
+          context,
+          eventData.element,
+          data.handles.textBox,
+          text,
+          data.handles,
+          textBoxAnchorPoints,
+          color,
+          lineWidth,
+          0,
+          true
+        );
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, columnPixelSpacing) {
+    function calculateValue(data, image) {
+      // Default to isotropic pixel size, update suffix to reflect this
+      const columnPixelSpacing = image.columnPixelSpacing || 1;
+      const rowPixelSpacing = image.rowPixelSpacing || 1;
+
+      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
+      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
+      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
+      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+
+      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+
+      angle *= (180 / Math.PI);
+
+      const rAngle = roundToDecimal(angle, 2);
+
+      if (!Number.isNaN(data.rAngle)) {
+        return textBoxText(
+          rAngle,
+          image.rowPixelSpacing,
+          image.columnPixelSpacing
+        );
+      }
+      return '';
+    }
+
+    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
       const suffix =
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
       return (
-        data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
     }
 
@@ -273,7 +275,6 @@ export default class extends baseAnnotationTool {
     const maybePending = this.getIncomplete(element);
 
     if (maybePending) {
-      this.preventNewMeasurement = false;
       measurementData = maybePending;
       measurementData.complete = true;
       measurementData.handles.start2 = {
@@ -295,7 +296,6 @@ export default class extends baseAnnotationTool {
       measurementData = this.createNewMeasurement(eventData);
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
-      this.preventNewMeasurement = true;
     }
 
     // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
