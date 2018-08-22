@@ -26,6 +26,7 @@ import {
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
+import EVENTS from './../events.js';
 
 export default class extends baseAnnotationTool {
   constructor(name = 'cobbAngle') {
@@ -48,7 +49,7 @@ export default class extends baseAnnotationTool {
       active: true,
       color: undefined,
       complete: false,
-      value: undefined,
+      value: '',
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -176,7 +177,6 @@ export default class extends baseAnnotationTool {
         // Draw the text
         context.fillStyle = color;
 
-        data.value = calculateValue(data, eventData.image);
         const text = data.value;
 
         if (!data.handles.textBox.hasMoved) {
@@ -206,40 +206,6 @@ export default class extends baseAnnotationTool {
       });
     }
 
-    function calculateValue(data, image) {
-      // Default to isotropic pixel size, update suffix to reflect this
-      const columnPixelSpacing = image.columnPixelSpacing || 1;
-      const rowPixelSpacing = image.rowPixelSpacing || 1;
-
-      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
-      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
-      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
-      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
-
-      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-
-      angle *= (180 / Math.PI);
-
-      const rAngle = roundToDecimal(angle, 2);
-
-      if (!Number.isNaN(data.rAngle)) {
-        return textBoxText(
-          rAngle,
-          image.rowPixelSpacing,
-          image.columnPixelSpacing
-        );
-      }
-      return '';
-    }
-
-    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
-      const suffix =
-        !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
-      const str = '00B0'; // Degrees symbol
-      return (
-        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
-      );
-    }
 
     function textBoxAnchorPoints(handles) {
       return [handles.start, handles.start2, handles.end, handles.end2];
@@ -325,6 +291,66 @@ export default class extends baseAnnotationTool {
         external.cornerstone.updateImage(element);
       }
     );
+  }
+
+  onMeasureModified(ev) {
+    const image = external.cornerstone.getEnabledElement(ev.detail.element).image;
+    const data = ev.detail.measurementData;
+    data.value = calculateValue(data, image);
+
+    function calculateValue(data, image) {
+      // Default to isotropic pixel size, update suffix to reflect this
+      const columnPixelSpacing = image.columnPixelSpacing || 1;
+      const rowPixelSpacing = image.rowPixelSpacing || 1;
+
+      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
+      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
+      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
+      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+
+      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+
+      angle *= (180 / Math.PI);
+
+      const rAngle = roundToDecimal(angle, 2);
+
+      if (!Number.isNaN(data.rAngle)) {
+        return textBoxText(
+          rAngle,
+          image.rowPixelSpacing,
+          image.columnPixelSpacing
+        );
+      }
+      return '';
+    }
+
+    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
+      const suffix =
+        !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
+      const str = '00B0'; // Degrees symbol
+      return (
+        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
+      );
+    }
+
+
+  }
+
+  activeCallback(element) {
+    element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+  }
+
+  passiveCallback(element) {
+    element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+  }
+
+  enabledCallback(element) {
+    element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+
+  }
+
+  disabledCallback(element) {
+    element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 }
 
