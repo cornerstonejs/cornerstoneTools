@@ -3,10 +3,8 @@ import { Queue } from './queue.js';
 
 function find (low, high, condition, base, isY = false) {
   for (let t = low; low < high ? (t <= high) : (t >= high); t += (low < high ? 1 : -1)) {
-    if (isY) {
-      if (condition(base, t)) {
-        return t;
-      }
+    if (isY && condition(base, t)) {
+      return t;
     } else if (condition(t, base)) {
       return t;
     }
