@@ -3,6 +3,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
+import { getEndOfCircle, connectEndsOfBrush, fillColor } from './fill.js';
 
 // This module is for creating segmentation overlays
 
@@ -108,7 +109,6 @@ function onImageRendered (e) {
 }
 
 // This method is for fill region of segmentation overlays
-
 function fill (eventData) {
   const configuration = brush.getConfiguration();
   const radius = configuration.radius;
@@ -120,232 +120,25 @@ function fill (eventData) {
   const pixelData = toolData.data[0].pixelData;
   const brushPixelValue = configuration.draw;
 
-  const dx = [0, 1, 0, -1];
-  const dy = [-1, 0, 1, 0];
-
   if (x < 0 || x > columns ||
     y < 0 || y > rows) {
     return;
   }
 
-  const getPixelIndex = (x, y) => (y * columns) + x;
-  const isSameColor = (x, y, color = brushPixelValue) => pixelData[getPixelIndex(x, y)] === color;
-  const draw = (x, y, brushPixelValue) => drawBrushPixels([[x, y]], pixelData, brushPixelValue, columns);
-  const drawRange = (range, color) => drawBrushPixels(range, pixelData, color, columns);
-
   x = Math.round(x);
   y = Math.round(y);
 
-  const find = (low, high, condition, base, isY = false) => {
-    for (let t = low; low < high ? (t <= high) : (t >= high); t += (low < high ? 1 : -1)) {
-      if (isY) {
-        if (condition(base, t)) {
-          return t;
-        }
-      } else if (condition(t, base)) {
-        return t;
-      }
-    }
-
-    return null;
-  };
   // This thisCircle = [(x, y - radius), (x + radius, y), (x, y + radius), (x - radius, y)]
-  const thisCircle = [
-    find(y, 0, (x, y) => !isSameColor(x, y - 1), x, true),
-    find(x, columns, (x, y) => !isSameColor(x + 1, y), y, false),
-    find(y, rows, (x, y) => !isSameColor(x, y + 1), x, true),
-    find(x, 0, (x, y) => !isSameColor(x - 1, y), y, false)
-  ];
+  const thisCircle = getEndOfCircle(x, y, columns, rows, pixelData, brushPixelValue);
 
   if (Math.abs(thisCircle[0] - thisCircle[2]) > radius * 2 && Math.abs(thisCircle[1] - thisCircle[3]) > radius * 2) {
     // If the position you clicked is aleady in same color, this method is not necessary.
     return;
   }
 
-  // Find a direction the closest point where same color from (x, y)
-  let [minDistance, idx, base, low, high] = [2147483647, -1];
-
-  for (let i = 0; i < thisCircle.length; i += 1) {
-    let b, l, h;
-
-    if (i % 2) {
-      b = y;
-      l = find(thisCircle[i] + dx[i], i === 1 ? columns : 0, isSameColor, b, false);
-      if (l === null) {
-        continue;
-      }
-      h = find(l + dx[i], i === 1 ? columns : 0, (x, y) => !isSameColor(x + dx[i], y + dy[i]), b, false);
-    } else {
-      b = x;
-      l = find(thisCircle[i] + dy[i], i === 0 ? 0 : rows, isSameColor, b, true);
-      if (l === null) {
-        continue;
-      }
-      h = find(l + dy[i], i === 0 ? 0 : rows, (x, y) => !isSameColor(x + dx[i], y + dy[i]), b, true);
-    }
-    const distance = Math.abs(l - (i % 2 ? x : y));
-
-    if (minDistance > distance) {
-      [minDistance, idx, base, low, high] = [distance, i, b, l, h];
-    }
-  }
-
-  const getPointList = (low, high, base, isY = false) => {
-    const ret = [];
-
-    for (let t = low; low < high ? (t <= high) : (t >= high); t += (low < high ? 1 : -1)) {
-      ret.push(isY ? [base, t] : [t, base]);
-    }
-
-    return ret;
-  };
-
-
-  class Queue {
-    constructor () {
-      this.store = {};
-      this.front = 0;
-      this.end = 0;
-    }
-    enqueue (data) {
-      this.store[this.end] = data;
-      this.end++;
-    }
-    dequeue () {
-      if (this.front === this.end) {
-        return null;
-      }
-      const data = this.store[this.front];
-
-      delete this.store[this.front];
-      this.front++;
-
-      return data;
-    }
-    size () {
-      return this.end - this.front;
-    }
-  }
-
-  const getTheFarthestPoint = (x, y, columns, rows) => {
-    let [rx, ry, maxDepth] = [x, y, 0];
-    const q = new Queue();
-    const d = [];
-    let processing = 0;
-
-    q.enqueue({
-      x,
-      y
-    });
-    for (let i = 0; i < rows * columns; i += 1) {
-      d.push(0);
-    }
-    d[getPixelIndex(x, y)] = 1;
-    while (q.size() !== 0 && processing <= rows * columns) {
-      processing += 1;
-      const now = q.dequeue();
-      const idx = getPixelIndex(now.x, now.y);
-
-
-      if (maxDepth < d[idx]) {
-        [rx, ry, maxDepth] = [now.x, now.y, d[idx]];
-      }
-      for (let i = 0; i < 4; i += 1) {
-        const ny = now.y + dy[i];
-        const nx = now.x + dx[i];
-        const nidx = getPixelIndex(nx, ny);
-
-        if (ny < 0 || ny >= rows || nx < 0 || nx >= columns || !isSameColor(nx, ny) || d[nidx] !== 0) {
-          continue;
-        }
-        d[nidx] = d[idx] + 1;
-        q.enqueue({
-          x: nx,
-          y: ny
-        });
-      }
-    }
-
-    return {
-      x: rx,
-      y: ry
-    };
-  };
-
-  const points = [];
-
-  drawRange(getPointList(low, high, base, !(idx % 2)), 0);
-  if (idx % 2) {
-    const p1 = getTheFarthestPoint(low, base - 1, columns, rows);
-    const p2 = getTheFarthestPoint(low, base + 1, columns, rows);
-
-    points.push(p1);
-    points.push(p2);
-  } else {
-    const p1 = getTheFarthestPoint(base - 1, low, columns, rows);
-    const p2 = getTheFarthestPoint(base + 1, low, columns, rows);
-
-    points.push(p1);
-    points.push(p2);
-  }
-  drawRange(getPointList(low, high, base, !(idx % 2)), brushPixelValue);
-
-  points.sort((x, y) => x.x - y.x);
-  if (points[0].x === points[1].x) {
-    // Gradient is infinity
-    drawRange(getPointList(points[0].y, points[1].y, points[0].x, true), brushPixelValue);
-  } else {
-    const gradient = (points[1].y - points[0].y) / (points[1].x - points[0].x);
-    const bias = points[0].y - gradient * points[0].x;
-    const lineWidth = 1;
-
-    if (Math.abs(gradient) >= 1) {
-      points.sort((x, y) => x.y - y.y);
-      for (let ty = points[0].y; ty <= points[1].y; ty += 1) {
-        for (let r = -(lineWidth - 1); r <= (lineWidth + 1); r += 1) {
-          draw(Math.round((ty - bias) / gradient) + r, ty, brushPixelValue);
-        }
-      }
-    } else {
-      for (let tx = points[0].x; tx <= points[1].x; tx += 1) {
-        for (let r = -(lineWidth - 1); r <= (lineWidth + 1); r += 1) {
-          draw(tx, Math.round(gradient * tx + bias) + r, brushPixelValue);
-        }
-      }
-    }
-  }
-  // If not point in polygon, return false
-
-  const fillColor = (x, y, columns, rows) => {
-    const q = new Queue();
-    let processing = 0;
-
-    q.enqueue({
-      x,
-      y
-    });
-    draw(x, y, brushPixelValue);
-    while (q.size() !== 0 && processing <= rows * columns) {
-      processing += 1;
-      const now = q.dequeue();
-
-      for (let i = 0; i < 4; i += 1) {
-        const ny = now.y + dy[i];
-        const nx = now.x + dx[i];
-
-        if (ny < 0 || ny >= rows || nx < 0 || nx >= columns || isSameColor(nx, ny, brushPixelValue)) {
-          continue;
-        }
-        q.enqueue({
-          x: nx,
-          y: ny
-        });
-        draw(nx, ny, brushPixelValue);
-      }
-    }
-  };
-
-  fillColor(x, thisCircle[0] - 1, columns, rows);
+  // Todo: If not point in polygon, return false
+  connectEndsOfBrush(x, y, columns, rows, thisCircle, pixelData, brushPixelValue);
+  fillColor(x, thisCircle[0] - 1, columns, rows, pixelData, brushPixelValue);
 
   layer.invalid = true;
 
