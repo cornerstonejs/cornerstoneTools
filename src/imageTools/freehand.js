@@ -170,6 +170,7 @@ function pointNearHandleAllTools (eventData) {
 */
 function mouseDownActivateCallback (e) {
   const eventData = e.detail;
+  const element = eventData.element;
   const config = freehand.getConfiguration();
   const options = getToolOptions(toolType, element);
 
