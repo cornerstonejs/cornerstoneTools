@@ -5,7 +5,7 @@ function find (low, high, condition, base, isY = false) {
   for (let t = low; low < high ? (t <= high) : (t >= high); t += (low < high ? 1 : -1)) {
     if (isY && condition(base, t)) {
       return t;
-    } else if (condition(t, base)) {
+    } else if (!isY && condition(t, base)) {
       return t;
     }
   }
