@@ -63,6 +63,9 @@ function findTheClosestDirection (x, y, columns, rows, thisCircle, pixelData, br
       [minDistance, idx, base, low, high] = [distance, i, b, l, h];
     }
   }
+  if (minDistance === Number.MAX_SAFE_INTEGER) {
+    return [null, null, null, null];
+  }
 
   return [idx, base, low, high];
 }
@@ -134,6 +137,9 @@ function connectEndsOfBrush (x, y, columns, rows, thisCircle, pixelData, brushPi
   const [direction, base, low, high] = findTheClosestDirection(x, y, columns, rows, thisCircle, pixelData, brushPixelValue);
   const points = [];
 
+  if (direction === null) {
+    return false;
+  }
   drawRange(getPointListInRange(low, high, base, !(direction % 2)), 0);
   if (direction % 2) {
     const p1 = getTheFarthestPointInSameColor(low, base - 1, columns, rows, pixelData, brushPixelValue);
@@ -174,6 +180,16 @@ function connectEndsOfBrush (x, y, columns, rows, thisCircle, pixelData, brushPi
       }
     }
   }
+
+  return true;
+}
+
+function isCircleInPolygon (x, y, columns, rows, thisCircle, pixelData, brushPixelValue) {
+  const getPixelIndex = (x, y) => (y * columns) + x;
+  const left = find(thisCircle[3] - 1, 0, (x, y) => isSameColor(getPixelIndex(x, y), pixelData, brushPixelValue), y, false);
+  const right = find(thisCircle[1] + 1, columns, (x, y) => isSameColor(getPixelIndex(x, y), pixelData, brushPixelValue), y, false);
+
+  return left && right;
 }
 
 function fillColor (x, y, columns, rows, pixelData, brushPixelValue) {
@@ -209,4 +225,4 @@ function fillColor (x, y, columns, rows, pixelData, brushPixelValue) {
   }
 }
 
-export { getEndOfCircle, connectEndsOfBrush, fillColor };
+export { getEndOfCircle, connectEndsOfBrush, isCircleInPolygon, fillColor };

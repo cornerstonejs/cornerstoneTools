@@ -3,7 +3,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import brushTool from './brushTool.js';
 import getCircle from './getCircle.js';
 import { drawBrushPixels, drawBrushOnCanvas } from './drawBrush.js';
-import { getEndOfCircle, connectEndsOfBrush, fillColor } from './fill.js';
+import { getEndOfCircle, connectEndsOfBrush, isCircleInPolygon, fillColor } from './fill.js';
 
 // This module is for creating segmentation overlays
 
@@ -136,9 +136,11 @@ function fill (eventData) {
     return;
   }
 
-  // Todo: If not point in polygon, return false
-  connectEndsOfBrush(x, y, columns, rows, thisCircle, pixelData, brushPixelValue);
-  fillColor(x, thisCircle[0] - 1, columns, rows, pixelData, brushPixelValue);
+  if (connectEndsOfBrush(x, y, columns, rows, thisCircle, pixelData, brushPixelValue)) {
+    if (isCircleInPolygon(x, y, columns, rows, thisCircle, pixelData, brushPixelValue)) {
+      fillColor(x, thisCircle[0] - 1, columns, rows, pixelData, brushPixelValue);
+    }
+  }
 
   layer.invalid = true;
 
