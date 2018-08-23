@@ -37,8 +37,8 @@ function findTheClosestDirection (x, y, columns, rows, thisCircle, pixelData, br
   let base, low, high;
   const getPixelIndex = (x, y) => (y * columns) + x;
 
-  for (let i = 0; i < thisCircle.length; i += 1) {
-    let b, l, h;
+  for (let i = 0; i < thisCircle.length; i++) {
+    let b, l, h; // Base, low, high;
 
     if (i % 2) {
       b = y;
