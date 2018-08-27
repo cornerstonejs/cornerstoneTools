@@ -133,12 +133,17 @@
         var confirm = annotationDialog.querySelector('.annotationDialogConfirm');
 
         annotationDialog.showModal();
-
-        confirm.removeEventListener('click', closeHandler);
+        // Add dialog listeners
         confirm.addEventListener('click', closeHandler);
-
-        annotationDialog.removeEventListener("keydown", keyPressHandler);
         annotationDialog.addEventListener('keydown', keyPressHandler);
+
+        function closeDialog() {
+            // Remove dialog listeners
+            annotationDialog.removeEventListener("keydown", keyPressHandler);
+            confirm.removeEventListener('click', closeHandler);
+
+            annotationDialog.close();
+        }
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
@@ -148,7 +153,7 @@
         }
 
         function closeHandler() {
-            annotationDialog.close();
+            closeDialog();
             doneChangingTextCallback(getTextInput.value);
             // Reset the text value
             getTextInput.value = "";
@@ -165,39 +170,40 @@
 
         getTextInput.value = data.text;
         relabelDialog.showModal();
+        // Add dialog listeners
+        confirm.addEventListener('click', confirmHandler);
+        remove.addEventListener('click', removeHandler);
+        relabelDialog.addEventListener('keydown', keyPressHandler);
 
-        function confirmHandler() {
-           relabelDialog.close();
-           doneChangingTextCallback(data, getTextInput.value);
+
+        function closeDialog () {
+            // Remove dialog listeners
+            confirm.removeEventListener('click', confirmHandler);
+            remove.removeEventListener('click', removeHandler);
+            relabelDialog.removeEventListener("keydown", keyPressHandler);
+
+            relabelDialog.close();
         }
 
-        confirm.removeEventListener('click', confirmHandler);
-        confirm.addEventListener('click', confirmHandler);
+        function confirmHandler() {
+            closeDialog();
+            doneChangingTextCallback(data, getTextInput.value);
+        }
 
         // If the remove button is clicked, delete this marker
         function removeHandler() {
-          relabelDialog.close();
-          doneChangingTextCallback(data, undefined, true);
+            closeDialog();
+            doneChangingTextCallback(data, undefined, true);
         }
-
-        remove.removeEventListener('click', removeHandler);
-        remove.addEventListener('click', removeHandler);
 
         function keyPressHandler(e) {
             // If Enter is pressed, close the dialog
             if (e.which === 13) {
-                closeHandler();
+                closeDialog();
+                doneChangingTextCallback(data, getTextInput.value);
+                // Reset the text value
+                getTextInput.value = "";
             }
-        }
-
-        relabelDialog.removeEventListener("keydown", keyPressHandler);
-        relabelDialog.addEventListener('keydown', keyPressHandler);
-
-        function closeHandler() {
-            relabelDialog.close();
-            doneChangingTextCallback(data, getTextInput.value);
-            // Reset the text value
-            getTextInput.value = "";
         }
     }
 
@@ -230,7 +236,9 @@
         activate("activate");
 
         function activate(id) {
-            document.querySelectorAll('a').forEach(function(elem) {              elem.classList.remove('active');            });
+            document.querySelectorAll('a').forEach(function(elem) {
+                elem.classList.remove('active');            
+            });
             document.getElementById(id).classList.add('active');
         }
 
