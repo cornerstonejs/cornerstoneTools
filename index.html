@@ -80,8 +80,10 @@
 
 			<!-- Our beautiful element targets -->
 			<div class="cornerstone-element-wrapper">
-				<div class="cornerstone-element" oncontextmenu="return false"></div>
-				<div class="cornerstone-element" oncontextmenu="return false"></div>
+				<a href="#" class="save-btn" data-index="0">Save</a>
+				<div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
+				<a href="#" class="save-btn" data-index="1">Save</a>
+				<div class="cornerstone-element" data-index="1" oncontextmenu="return false"></div>
 			</div>
 		</div>
 	</div>
@@ -126,6 +128,13 @@
 
 			cornerstoneTools.addStackStateManager(element, ['stack']);
 			cornerstoneTools.addToolState(element, 'stack', stack);
+		});
+
+		//Save As Tool
+		const index = element.getAttribute('data-index');
+		const saveBtn = element.parentElement.querySelector(`a[data-index='${index}']`);
+		saveBtn.addEventListener('click', (evt) => {
+			cornerstoneTools.saveAsTool(element, 'viewportImage.png')
 		});
 	})
 

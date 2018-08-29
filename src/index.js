@@ -19,6 +19,7 @@ export { default as panTool } from './tools/panTool.js';
 export { default as panMultiTouchTool } from './tools/panMultiTouchTool.js';
 export { default as rectangleRoiTool } from './tools/rectangleRoiTool.js';
 export { default as rotateTool } from './tools/rotateTool.js';
+export { default as saveAsTool } from './tools/saveAsTool.js';
 export { default as scaleOverlayTool } from './tools/scaleOverlay.js';
 export { default as stackScrollTool } from './tools/stackScrollTool.js';
 export {
