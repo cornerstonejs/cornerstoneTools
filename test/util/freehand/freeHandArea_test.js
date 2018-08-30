@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import freeHandArea from '../../../src/util/freehand/freeHandArea.js';
-import { FreehandHandleData } from '../../../src/util/freehand/FreehandHandleData.js'
+import freeHandArea from '../../../src/tools/shared/freehandUtils/freeHandArea.js';
+import { FreehandHandleData } from '../../../src/tools/shared/freehandUtils/FreehandHandleData.js'
 
 
 describe('#freeHandArea', function() {

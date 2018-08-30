@@ -1,6 +1,7 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
-import getTool from './../store/getTool.js';
+import getToolForElement from './getToolForElement.js';
+import { state } from './../store/index.js';
 
 /**
  * Sets a tool's state to 'active'. Active tools are rendered,
@@ -12,6 +13,11 @@ import getTool from './../store/getTool.js';
  * @param {*} options
  * @returns
  */
+const setToolActiveForElement = setToolModeForElement.bind(
+  null,
+  'active',
+  null
+);
 const setToolActive = setToolMode.bind(null, 'active', null);
 
 /**
@@ -24,6 +30,11 @@ const setToolActive = setToolMode.bind(null, 'active', null);
  * @param {*} options
  * @returns
  */
+const setToolDisabledForElement = setToolModeForElement.bind(
+  null,
+  'disabled',
+  null
+);
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
 
 /**
@@ -36,6 +47,11 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
  * @param {*} options
  * @returns
  */
+const setToolEnabledForElement = setToolModeForElement.bind(
+  null,
+  'enabled',
+  null
+);
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
 
 /**
@@ -48,6 +64,11 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
  * @param {*} options
  * @returns
  */
+const setToolPassiveForElement = setToolModeForElement.bind(
+  null,
+  'passive',
+  EVENTS.TOOL_DEACTIVATED
+);
 const setToolPassive = setToolMode.bind(
   null,
   'passive',
@@ -65,8 +86,8 @@ const setToolPassive = setToolMode.bind(
  * @param {*} changeEvent
  * @returns
  */
-function setToolMode (mode, changeEvent, element, toolName, options) {
-  const tool = getTool(element, toolName);
+function setToolModeForElement (mode, changeEvent, element, toolName, options) {
+  const tool = getToolForElement(element, toolName);
 
   if (!tool) {
     console.error(`Unable to find tool '${toolName}' for enabledElement`);
@@ -101,4 +122,27 @@ function setToolMode (mode, changeEvent, element, toolName, options) {
   // Cornerstone.updateImage(element);
 }
 
-export { setToolActive, setToolDisabled, setToolEnabled, setToolPassive };
+/**
+ * A helper/quick way to set a tool's mode for all canvases
+ *
+ * @param {*} mode
+ * @param {*} changeEvent
+ * @param {*} toolName
+ * @param {*} options
+ */
+function setToolMode (mode, changeEvent, toolName, options) {
+  state.enabledElements.forEach((element) => {
+    setToolModeForElement(mode, changeEvent, element, toolName, options);
+  });
+}
+
+export {
+  setToolActive,
+  setToolActiveForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolPassive,
+  setToolPassiveForElement
+};

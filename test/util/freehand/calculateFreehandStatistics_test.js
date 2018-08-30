@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import calculateFreehandStatistics from '../../../src/util/freehand/calculateFreehandStatistics.js';
-import { FreehandHandleData } from '../../../src/util/freehand/FreehandHandleData.js'
+import calculateFreehandStatistics from '../../../src/tools/shared/freehandUtils/calculateFreehandStatistics.js';
+import { FreehandHandleData } from '../../../src/tools/shared/freehandUtils/FreehandHandleData.js'
 
 describe('#calculateFreehandStatistics', function() {
   let dataHandles;

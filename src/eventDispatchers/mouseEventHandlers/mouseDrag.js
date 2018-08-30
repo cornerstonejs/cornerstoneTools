@@ -1,5 +1,4 @@
 import { getters, state } from './../../store/index.js';
-import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 
 // Tools like wwwc. Non-annotation tools w/ specific
@@ -18,8 +17,8 @@ export default function (evt) {
 
   // Filter out disabled, enabled, and passive
   tools = getActiveToolsForElement(element, getters.mouseTools());
-  tools = tools.filter((tool) =>
-    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  tools = tools.filter(
+    (tool) => eventData.buttons === tool.options.mouseButtonMask
   );
   tools = tools.filter((tool) => typeof tool.mouseDragCallback === 'function');
 

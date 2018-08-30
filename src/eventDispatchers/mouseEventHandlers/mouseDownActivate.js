@@ -1,6 +1,5 @@
 import addNewMeasurement from './addNewMeasurement.js';
 import { getters, state } from './../../store/index.js';
-import isMouseButtonEnabled from './../../util/isMouseButtonEnabled.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 import baseAnnotationTool from '../../base/baseAnnotationTool.js';
 
@@ -18,8 +17,8 @@ export default function (evt) {
   let tools = getActiveToolsForElement(element, getters.mouseTools());
 
   // Filter out tools that do not match mouseButtonMask
-  tools = tools.filter((tool) =>
-    isMouseButtonEnabled(eventData.which, tool.options.mouseButtonMask)
+  tools = tools.filter(
+    (tool) => eventData.buttons === tool.options.mouseButtonMask
   );
 
   if (tools.length === 0) {

@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
-import KeyboardController from '../fancy-tools/shared/KeyboardController.js';
-import isToolActive from '../fancy-tools/shared/isToolActive.js';
+import KeyboardController from '../tools/shared/KeyboardController.js';
+import isToolActive from '../tools/shared/isToolActive.js';
 
 export default class {
   constructor ({

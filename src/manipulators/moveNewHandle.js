@@ -4,7 +4,6 @@ import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-  const cornerstone = external.cornerstone;
   const element = mouseEventData.element;
 
   function moveCallback (e) {
@@ -18,7 +17,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       clipToBox(handle, eventData.image);
     }
 
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
@@ -63,7 +62,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
       handle.active = false;
-      cornerstone.updateImage(element);
+      external.cornerstone.updateImage(element);
     }
   }
 
@@ -81,7 +80,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
     handle.active = false;
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
       doneMovingCallback();

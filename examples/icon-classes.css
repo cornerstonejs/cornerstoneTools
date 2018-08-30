@@ -1,0 +1,50 @@
+.mousebutton-1::after {
+  content: url("icons/mouse-left.svg");
+}
+.mousebutton-2::after {
+  content: url("icons/mouse-right.svg");
+}
+.mousebutton-3::after {
+  content: " - M3";
+}
+.mousebutton-4::after {
+  content: url("icons/mouse-middle.svg");
+}
+.mousebutton-5::after {
+  content: " - M5";
+}
+.mousebutton-6::after {
+  content: " - M6";
+}
+.mousebutton-7::after {
+  content: " - M7";
+}
+.mousebutton-8::after {
+  content: " - M8";
+}
+.mousebutton-9::after {
+  content: " - M9";
+}
+.mousebutton-10::after {
+  content: " - M10";
+}
+.mousebutton-11::after {
+  content: " - M11";
+}
+.mousebutton-12::after {
+  content: " - M12";
+}
+.mousebutton-wheel::after {
+  content: url("icons/mouse-middle.svg");
+}
+
+/* TOUCH */
+.touch-1::before {
+  content: url("https://unpkg.com/@mdi/svg@2.6.95/svg/gesture-tap.svg");
+}
+.touch-2::before {
+  content: url("https://unpkg.com/@mdi/svg@2.6.95/svg/gesture-two-tap.svg");
+}
+.touch-pinch::before {
+  content: url("https://unpkg.com/@mdi/svg@2.6.95/svg/gesture.svg");
+}

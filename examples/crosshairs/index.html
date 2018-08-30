@@ -4,66 +4,91 @@
     <!-- support for mobile touch devices -->
     <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <style>
+        #app {
+			font-family: "Avenir", Helvetica, Arial, sans-serif;
+			-webkit-font-smoothing: antialiased;
+			-moz-osx-font-smoothing: grayscale;
+			text-align: center;
+			color: #333;
+			margin-top: 60px;
+		}
 
-    <!-- twitter bootstrap CSS stylesheet - not required by cornerstoneTools -->
-    <link href="../bootstrap.min.css" rel="stylesheet">
+        .canvasAxial, .canvasCoronal {
+            display: inline-block;
+            width: 256px;
+        }
 
-    <link href="../cornerstone.min.css" rel="stylesheet">
+        .hide {
+			display: none;
+		}
 
+        .checkbox-label {
+			text-transform: uppercase;
+			margin: 0.5em 1em;
+			border: 0;
+			border-bottom: 2px solid #ccc;
+			background: transparent;
+			outline: 0;
+			cursor: pointer;
+		}
+
+		.checkbox-label:hover {
+			border-bottom: 2px solid #4ea;
+		}
+
+		.checkbox-label {
+			font: 400 11px system-ui;
+			color: #000;
+		}
+
+		.label-off {
+			color: #e44;
+		}
+
+		.label-on {
+			color: #4ea;
+		}
+
+		.checkbox-label .label-on {
+			display: none;
+		}
+
+		.checkbox-label.turned-on .label-on {
+			display: inline-block;
+		}
+
+		.checkbox-label.turned-on .label-off {
+			display: none;
+		}
+    </style>
 </head>
 <body>
-<div class="container">
-    <div class="page-header">
+    <div id="app">
         <h1>
-            Crosshairs Example
+            Multi viewports tools
         </h1>
-        <p>
-            This page contains an example of the crosshairs tool.
-        </p>
 
-    </div>
-
-    <div class="row">
-        <div class="col-xs-2">
-            <ul class="list-group">
-                <a id="enable" class="list-group-item active">Enable</a>
-                <a id="disable" class="list-group-item">Disable</a>
-            </ul>
+        <div class="wrapper" oncontextmenu="return false" unselectable="on" onselectstart="return false" onmousedown="return false">
+                <label id="Crosshairs" class="checkbox-label" for="CrosshairsCheckbox">
+                    Crosshairs
+                    <label class="label-on"> ON</label>
+                    <label class="label-off"> OFF</label>
+                </label>
+                <input id="CrosshairsCheckbox" class="hide" data-tool="Crosshairs" type="checkbox" />
         </div>
-        <div class="col-xs-10">
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
-                 oncontextmenu="return false"
-                 class='cornerstone-enabled-image'
-                 unselectable='on'
-                 onselectstart='return false;'
-                 onmousedown='return false;'>
-                <div id="axial"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
-                </div>
-            </div>
-            <div style="width:256px;height:256px;position:relative;display:inline-block;color:white;"
-                 oncontextmenu="return false"
-                 class='cornerstone-enabled-image'
-                 unselectable='on'
-                 onselectstart='return false;'
-                 onmousedown='return false;'>
-                <div id="coronal"
-                     style="width:256px;height:256px;top:0px;left:0px; position:absolute;">
-                </div>
-            </div>
+        <div>
+            <div class="canvasAxial" oncontextmenu="return false"></div>
+            <div class="canvasCoronal" oncontextmenu="return false"></div>
         </div>
     </div>
-</div>
 </body>
 
-<!-- include the hammer.js library for touch gestures-->
-<script src="../hammer.min.js"></script>
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
 
 <!-- include the cornerstone library -->
-<script src="../cornerstone.min.js"></script>
-<script src="../cornerstoneMath.min.js"></script>
-
-<!-- include the cornerstone tools library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.4/dist/cornerstone.min.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.min.js"></script>
 <script src="../../dist/cornerstoneTools.js"></script>
 <script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
@@ -72,32 +97,29 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    var axialElement = document.getElementById('axial');
-    var coronalElement = document.getElementById('coronal');
+    const cTools = cornerstoneTools.init();
 
-    var axialImageIds = [
+    const axialElement = document.querySelector('.canvasAxial');
+    const coronalElement = document.querySelector('.canvasCoronal');
+    const elements = [axialElement, coronalElement];
+
+    const coronalImageId = 'example://3';
+    const axialImageIds = [
         'example://1',
         'example://2'
     ];
-
-    var axialStack = {
+    const axialStack = {
         currentImageIdIndex : 0,
         imageIds: axialImageIds
     };
 
-    var synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
+    const synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
 
-    // image enable the dicomImage element
-    cornerstone.enable(axialElement);
-    cornerstone.enable(coronalElement);
-
-    // Enable mouse inputs
-    cornerstoneTools.mouseInput.enable(axialElement);
-    cornerstoneTools.touchInput.enable(axialElement);
-    cornerstoneTools.mouseWheelInput.enable(axialElement);
-
-    cornerstoneTools.mouseInput.enable(coronalElement);
-    cornerstoneTools.touchInput.enable(coronalElement);
+    // image enable the dicomImage element and add canvas to it 
+    elements.forEach(element => {
+        cornerstone.enable(element);
+        cTools.addCanvas(element);
+    });
 
     var axialPromise = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
         // display this image
@@ -106,10 +128,6 @@
         // set the stack as tool state
         cornerstoneTools.addStackStateManager(axialElement, ['stack', 'crosshairs']);
         cornerstoneTools.addToolState(axialElement, 'stack', axialStack);
-
-        // Enable all tools we want to use with this element
-        cornerstoneTools.stackScroll.activate(axialElement, 1);
-        cornerstoneTools.stackScrollWheel.activate(axialElement);
     });
 
     var coronalPromise = cornerstone.loadImage('example://3').then(function(image) {
@@ -119,39 +137,37 @@
 
     Promise.all([axialPromise, coronalPromise]).then(function() {
         // Add the enabled elements to the synchronization context
-        synchronizer.add(axialElement);
-        synchronizer.add(coronalElement);
+        elements.forEach(element => {
+            synchronizer.add(element);
+        });
+        synchronizer.enabled = true;
 
-        cornerstoneTools.crosshairs.enable(axialElement, 1, synchronizer);
-        cornerstoneTools.crosshairs.enable(coronalElement, 1, synchronizer);
+        elements.forEach(element => {
+            const CrosshairsTool = new cornerstoneTools.crosshairsTool();
+            cTools.addTool(element, CrosshairsTool);
+            //cTools.setToolActive(element, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
+        });
+    });
 
-        cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
-        cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
+    const StackScrollTool = new cornerstoneTools.stackScrollTool();
+    const StackScrollMouseWheelTool = new cornerstoneTools.stackScrollMouseWheelTool();
 
-        function activate(id) {
-            document.querySelectorAll('a').forEach(function(elem) {
-              elem.classList.remove('active');
-            });
+    cTools.addTool(axialElement, StackScrollTool, {mouseButtonMask: 1});
+    cTools.addTool(axialElement, StackScrollMouseWheelTool);
+    cTools.setToolActive(axialElement, 'stackScroll', {mouseButtonMask: 1});
+    cTools.setToolActive(axialElement, 'stackScrollMouseWheel', {mouseButtonMask: 4});
 
-            document.getElementById(id).classList.add('active');
+    toolCheckBox = document.querySelector('input[type="checkbox"]');
+    const toolLabel = document.querySelector(`#Crosshairs`);
+    toolCheckBox.addEventListener('change', (evt) => {
+        if (evt.currentTarget.checked) {
+            cTools.setToolActive(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
+            cTools.setToolActive(coronalElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer});
+        } else {
+            cTools.setToolPassive(axialElement, 'crosshairs');
+            cTools.setToolPassive(coronalElement, 'crosshairs');
         }
-
-        document.getElementById('enable').addEventListener('click', function() {
-            activate("enable");
-            cornerstoneTools.crosshairs.enable(coronalElement, 1, synchronizer);
-            cornerstoneTools.crosshairs.enable(axialElement, 1, synchronizer);
-            cornerstoneTools.crosshairsTouch.enable(axialElement, synchronizer);
-            cornerstoneTools.crosshairsTouch.enable(coronalElement, synchronizer);
-            return false;
-        });
-        document.getElementById('disable').addEventListener('click', function() {
-            activate("disable");
-            cornerstoneTools.crosshairs.disable(coronalElement);
-            cornerstoneTools.crosshairs.disable(axialElement);
-            cornerstoneTools.crosshairsTouch.disable(coronalElement);
-            cornerstoneTools.crosshairsTouch.disable(axialElement);
-            return false;
-        });
+        toolLabel.classList.toggle('turned-on');
     });
 
 </script>

@@ -1,18 +1,17 @@
-import external from './../../externalModules.js';
+import external from '../../externalModules.js';
 import touchStartActive from './touchStartActive.js';
 // State
-import { getters, state } from './../../store/index.js';
-import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
-import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import { getters, state } from '../../store/index.js';
+import getActiveToolsForElement from '../../store/getActiveToolsForElement.js';
+import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.js';
+import { getToolState } from '../../stateManagement/toolState.js';
 //
-import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from './../../manipulators/touchMoveHandle.js';
-import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
+import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
+import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
+import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
-const cornerstone = external.cornerstone;
 
 export default function (evt) {
   if (state.isToolLocked) {
@@ -70,7 +69,7 @@ export default function (evt) {
 
     toolState.data.active = true;
     moveableHandle.active = true; // Why here, but not touchStart?
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     touchMoveHandle(
       evt,
@@ -84,7 +83,7 @@ export default function (evt) {
         //   RemoveToolState(element, touchToolInterface.toolType, data);
         // }
 
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
         // TODO: LISTEN: TAP + TOUCH_START
       }
     );
@@ -117,7 +116,7 @@ export default function (evt) {
 
     // Todo: ignore: touch_start, tap
     firstAnnotationNearPoint.active = true;
-    cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element);
 
     touchMoveAllHandles(
       evt,
@@ -132,7 +131,7 @@ export default function (evt) {
         //   RemoveToolState(element, touchToolInterface.toolType, data);
         // }
 
-        cornerstone.updateImage(element);
+        external.cornerstone.updateImage(element);
         // TODO: LISTEN: TAP + TOUCH_START
       }
     );

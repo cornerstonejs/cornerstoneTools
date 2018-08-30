@@ -2,7 +2,7 @@ import external from './../externalModules.js';
 import EVENTS from './../events.js';
 import baseTool from './../base/baseTool.js';
 // Utils
-import isToolActive from '../fancy-tools/shared/isToolActive.js';
+import isToolActive from '../tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
 import store from '../store/index.js';
 

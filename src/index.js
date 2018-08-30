@@ -4,37 +4,35 @@ import * as drawing from './util/drawing.js';
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
-export {
-  default as arrowAnnotateTool
-} from './fancy-tools/arrowAnnotateTool.js';
-export { default as angleTool } from './fancy-tools/angleTool.js';
-export {
-  default as ellipticalRoiTool
-} from './fancy-tools/ellipticalRoiTool.js';
-export { default as eraserTool } from './fancy-tools/eraserTool.js';
-export {
-  default as freehandMouseTool
-} from './fancy-tools/freehandMouseTool.js';
+export { default as arrowAnnotateTool } from './tools/arrowAnnotateTool.js';
+export { default as angleTool } from './tools/angleTool.js';
+export { default as ellipticalRoiTool } from './tools/ellipticalRoiTool.js';
+export { default as eraserTool } from './tools/eraserTool.js';
+export { default as freehandMouseTool } from './tools/freehandMouseTool.js';
 export {
   default as freehandSculpterMouseTool
-} from './fancy-tools/freehandSculpterMouseTool.js';
-export { default as lengthTool } from './fancy-tools/lengthTool.js';
-export { default as magnifyTool } from './fancy-tools/magnifyTool.js';
-export { default as probeTool } from './fancy-tools/probeTool.js';
-export { default as rectangleRoiTool } from './fancy-tools/rectangleRoiTool.js';
-export { default as rotateTool } from './fancy-tools/rotateTool.js';
-export { default as scaleOverlayTool } from './fancy-tools/scaleOverlay.js';
-export { default as wwwcTool } from './fancy-tools/wwwcTool.js';
-export { default as wwwcRegionTool } from './fancy-tools/wwwcRegionTool.js';
-export { default as zoomTool } from './fancy-tools/zoomTool.js';
+} from './tools/freehandSculpterMouseTool.js';
+export { default as lengthTool } from './tools/lengthTool.js';
+export { default as magnifyTool } from './tools/magnifyTool.js';
+export { default as probeTool } from './tools/probeTool.js';
+export { default as panTool } from './tools/panTool.js';
+export { default as panMultiTouchTool } from './tools/panMultiTouchTool.js';
+export { default as rectangleRoiTool } from './tools/rectangleRoiTool.js';
+export { default as rotateTool } from './tools/rotateTool.js';
+export { default as scaleOverlayTool } from './tools/scaleOverlay.js';
+export { default as stackScrollTool } from './tools/stackScrollTool.js';
 export {
-  default as zoomTouchPinchTool
-} from './fancy-tools/zoomTouchPinchTool.js';
-export {
-  default as zoomMouseWheelTool
-} from './fancy-tools/zoomMouseWheelTool.js';
-export { default as brushTool } from './fancy-tools/brushTool.js';
-export { default as brushEraserTool } from './fancy-tools/brushEraserTool.js';
+  default as stackScrollMouseWheelTool
+} from './tools/stackScrollMouseWheelTool.js';
+export { default as wwwcTool } from './tools/wwwcTool.js';
+export { default as wwwcRegionTool } from './tools/wwwcRegionTool.js';
+export { default as zoomTool } from './tools/zoomTool.js';
+export { default as zoomTouchPinchTool } from './tools/zoomTouchPinchTool.js';
+export { default as zoomMouseWheelTool } from './tools/zoomMouseWheelTool.js';
+export { default as crosshairsTool } from './tools/crosshairsTool.js';
+export { default as brushTool } from './tools/brushTool.js';
+export { default as brushEraserTool } from './tools/brushEraserTool.js';
+
 // END V3 EXPORTS
 
 export { drawing };
@@ -66,9 +64,6 @@ export {
 } from './util/pointInsideBoundingBox.js';
 export { default as pointInEllipse } from './util/pointInEllipse.js';
 export { default as makeUnselectable } from './util/makeUnselectable.js';
-export {
-  default as isMouseButtonEnabled
-} from './util/isMouseButtonEnabled.js';
 export { default as getRGBPixels } from './util/getRGBPixels.js';
 export {
   getDefaultSimultaneousRequests,
@@ -87,19 +82,6 @@ export { default as calculateSUV } from './util/calculateSUV.js';
 export {
   default as calculateEllipseStatistics
 } from './util/calculateEllipseStatistics.js';
-
-export { default as probeTool4D } from './timeSeriesTools/probeTool4D.js';
-export {
-  default as incrementTimePoint
-} from './timeSeriesTools/incrementTimePoint.js';
-export {
-  default as timeSeriesPlayer
-} from './timeSeriesTools/timeSeriesPlayer.js';
-export {
-  timeSeriesScroll,
-  timeSeriesScrollWheel,
-  timeSeriesScrollTouchDrag
-} from './timeSeriesTools/timeSeriesScroll.js';
 
 export {
   default as wwwcSynchronizer
@@ -163,21 +145,7 @@ export {
   globalFrameOfReferenceSpecificToolStateManager
 } from './stateManagement/frameOfReferenceStateManager.js';
 
-export { default as appState } from './stateManagement/appState.js';
-
-export {
-  default as stackScrollKeyboard
-} from './stackTools/stackScrollKeyboard.js';
-
-export {
-  stackScroll,
-  stackScrollWheel,
-  stackScrollTouchDrag,
-  stackScrollMultiTouch
-} from './stackTools/stackScroll.js';
-
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
-export { default as scrollIndicator } from './stackTools/scrollIndicator.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
 
@@ -200,43 +168,6 @@ export {
 } from './manipulators/touchMoveAllHandles.js';
 export { default as touchMoveHandle } from './manipulators/touchMoveHandle.js';
 
-export { default as keyboardInput } from './inputSources/keyboardInput.js';
-export { default as mouseInput } from './inputSources/mouseInput.js';
-export { default as mouseWheelInput } from './inputSources/mouseWheelInput.js';
-export {
-  default as preventGhostClick
-} from './inputSources/preventGhostClick.js';
-export { default as touchInput } from './inputSources/touchInput.js';
-
-export { crosshairs, crosshairsTouch } from './imageTools/crosshairs.js';
-export { default as displayTool } from './imageTools/displayTool.js';
-export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
-export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
-export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
-
-export { default as imageStats } from './imageTools/imageStats.js';
-export { default as keyboardTool } from './imageTools/keyboardTool.js';
-
-export { default as mouseButtonTool } from './imageTools/mouseButtonTool.js';
-export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
-export {
-  default as multiTouchDragTool
-} from './imageTools/multiTouchDragTool.js';
-
-export { pan, panTouchDrag } from './imageTools/pan.js';
-export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
-export { default as rotateTouch } from './imageTools/rotateTouch.js';
-export { default as saveAs } from './imageTools/saveAs.js';
-export {
-  default as simpleMouseButtonTool
-} from './imageTools/simpleMouseButtonTool.js';
-export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
-
-export { default as touchDragTool } from './imageTools/touchDragTool.js';
-export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
-export { default as touchTool } from './imageTools/touchTool.js';
-export { brush } from './paintingTools/brush.js';
-export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
 
 export { setToolOptions, getToolOptions } from './toolOptions.js';
