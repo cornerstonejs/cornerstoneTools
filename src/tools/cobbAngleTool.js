@@ -295,6 +295,9 @@ export default class extends baseAnnotationTool {
 
   onMeasureModified(ev) {
     const image = external.cornerstone.getEnabledElement(ev.detail.element).image;
+    if (ev.detail.toolType !== this.name) {
+      return;
+    }
     const data = ev.detail.measurementData;
     data.value = calculateValue(data, image);
 
@@ -337,10 +340,12 @@ export default class extends baseAnnotationTool {
   }
 
   activeCallback(element) {
+    this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 
   passiveCallback(element) {
+    this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 
