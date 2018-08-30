@@ -1,8 +1,6 @@
 import { state } from './../store/index.js';
 import external from './../externalModules.js';
 
-const cornerstone = external.cornerstone;
-
 const enable = function () {
   window.addEventListener('resize', resizeThrottler, false);
 };
@@ -27,7 +25,7 @@ function resizeThrottler () {
 
 function actualResizeHandler () {
   state.enabledElements.forEach((element) => {
-    cornerstone.resize(element);
+    external.cornerstone.resize(element);
   });
 }
 

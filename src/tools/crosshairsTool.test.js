@@ -1,5 +1,17 @@
 import CrosshairsTool from './crosshairsTool.js';
 
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    colors: {
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
+    }
+  }
+}));
 
 describe('crosshairsTool.js', () => {
   describe('default values', () => {
@@ -18,4 +30,3 @@ describe('crosshairsTool.js', () => {
     });
   });
 });
-

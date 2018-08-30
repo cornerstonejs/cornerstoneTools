@@ -49,6 +49,7 @@
     "babel-core": "^6.26.3",
     "babel-jest": "^23.4.0",
     "babel-loader": "^7.1.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "chai": "^4.1.2",
     "cornerstone-core": "^2.2.4",
@@ -85,6 +86,7 @@
     "webpack-dev-server": "^3.1.4"
   },
   "dependencies": {
+    "babel-runtime": "^6.26.0",
     "cornerstone-math": "^0.1.6"
   },
   "files": [

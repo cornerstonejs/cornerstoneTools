@@ -8,7 +8,8 @@ import {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel
+  mouseWheel,
+  keyDown
 } from './mouseEventHandlers/index.js';
 
 jest.mock('./mouseEventHandlers/index.js', () => ({
@@ -31,10 +32,10 @@ describe('mouseToolEventDispatcher.js', () => {
     element.removeEventListener = jest.fn();
   });
 
-  test('enable adds 6 event listeners to an element', () => {
+  test('enable adds 7 event listeners to an element', () => {
     mouseToolEventDispatcher.enable(element);
 
-    expect(element.addEventListener).toHaveBeenCalledTimes(8);
+    expect(element.addEventListener).toHaveBeenCalledTimes(9);
   });
 
   test('enable adds event listeners for all tap/touch events', () => {
@@ -49,14 +50,15 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
       [EVENTS.MOUSE_UP, mouseUp],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
+      [EVENTS.KEY_DOWN, keyDown]
     ]);
   });
 
   test('disable removes 6 event listeners to an element', () => {
     mouseToolEventDispatcher.disable(element);
 
-    expect(element.removeEventListener).toHaveBeenCalledTimes(8);
+    expect(element.removeEventListener).toHaveBeenCalledTimes(9);
   });
 
   test('disable removes event listeners for all tap/touch events', () => {
@@ -71,7 +73,8 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
       [EVENTS.MOUSE_UP, mouseUp],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
+      [EVENTS.KEY_DOWN, keyDown]
     ]);
   });
 });
