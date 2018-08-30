@@ -8,12 +8,21 @@ jest.mock('./../externalModules.js', () => ({
     updateImage: jest.fn(),
     metaData: {
       get: jest.fn()
+    },
+    colors: {
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
     }
   }
 }));
 jest.mock('../util/drawing.js', () => ({
   getNewContext: jest.fn()
 }));
+
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('scaleOverlay.js', () => {

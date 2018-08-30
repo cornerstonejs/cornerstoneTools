@@ -1,6 +1,7 @@
 import baseTool from './baseTool.js';
-
+// State
 import { getToolState } from './../stateManagement/toolState.js';
+// Manipulators
 import handleActivator from './../manipulators/handleActivator.js';
 
 import {

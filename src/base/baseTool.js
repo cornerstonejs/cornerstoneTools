@@ -1,3 +1,7 @@
+import external from './../externalModules.js';
+import KeyboardController from '../tools/shared/KeyboardController.js';
+import isToolActive from '../tools/shared/isToolActive.js';
+
 export default class {
   constructor ({
     name,
@@ -24,6 +28,13 @@ export default class {
 
     // True if tool has a custom cursor, causes the frame to render on every mouse move when the tool is active.
     this.hasCursor = false;
+
+    // Setup keybinds if present.
+    const keyBinds = this.configuration.keyBinds;
+
+    if (keyBinds) {
+      this.activateKeyBinds(keyBinds);
+    }
   }
 
   get configuration () {
@@ -47,6 +58,10 @@ export default class {
     this._options = {};
   }
 
+  activateKeyBinds (keyBinds) {
+    this._keyboardController = new KeyboardController(this, keyBinds);
+  }
+
   /**
    *
    *
@@ -55,6 +70,28 @@ export default class {
    */
   applyActiveStrategy (evt) {
     return this.strategies[this.activeStrategy](evt, this.configuration);
+  }
+
+  /**
+  * Event handler for KEY_DOWN event.
+  *
+  * @event
+  * @param {Object} evt - The event.
+  */
+  onKeyDown (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+
+    if (!isToolActive(element, this.name) || !this._keyboardController) {
+      return;
+    }
+
+    const keyCode = eventData.keyCode;
+    const imageNeedsUpdate = this._keyboardController.keyPress(keyCode);
+
+    if (imageNeedsUpdate) {
+      external.cornerstone.updateImage(element);
+    }
   }
 
   // ===================================================================
