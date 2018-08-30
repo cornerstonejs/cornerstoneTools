@@ -3,6 +3,7 @@ import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
+    setViewport: jest.fn(),
     colors: {
       getColormap: jest.fn().mockImplementation(() => {
         return {
@@ -11,12 +12,6 @@ jest.mock('./../externalModules.js', () => ({
         }
       })
     }
-  }
-}));
-
-jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    setViewport: jest.fn()
   }
 }));
 
