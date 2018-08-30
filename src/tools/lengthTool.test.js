@@ -3,6 +3,18 @@ import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
 jest.mock('./../util/drawing.js');
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    colors: {
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
+    }
+  }
+}));
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));

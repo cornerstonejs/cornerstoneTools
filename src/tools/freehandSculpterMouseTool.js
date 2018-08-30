@@ -216,8 +216,8 @@ export default class extends baseTool {
       coords = getters.mousePositionImage();
     }
 
-    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
     const freehandMouseTool = getToolForElement(element, referencedToolName);
+    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
 
     config.mouseLocation.handles.start.x = coords.x;
     config.mouseLocation.handles.start.y = coords.y;

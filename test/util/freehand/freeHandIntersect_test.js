@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import freeHandIntersect from '../../../src/util/freehand/freeHandIntersect.js';
-import { FreehandHandleData } from '../../../src/util/freehand/FreehandHandleData.js'
+import freeHandIntersect from '../../../src/tools/shared/freehandUtils/freeHandIntersect.js';
+import { FreehandHandleData } from '../../../src/tools/shared/freehandUtils/FreehandHandleData.js'
 
 
 describe('#freeHandIntersect', function() {
