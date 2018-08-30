@@ -6,7 +6,12 @@ jest.mock('./../util/drawing.js');
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
     colors: {
-      getColormap: jest.fn()
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
     }
   }
 }));

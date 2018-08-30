@@ -1,5 +1,18 @@
 import BaseTool from './baseTool.js';
 
+jest.mock('./../externalModules.js', () => ({
+  cornerstone: {
+    colors: {
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
+    }
+  }
+}));
+
 describe('baseTool.js', () => {
   describe('default values', () => {
     it('has a default mode of "disabled"', () => {

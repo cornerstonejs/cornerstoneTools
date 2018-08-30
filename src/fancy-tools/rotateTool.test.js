@@ -3,9 +3,13 @@ import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
-    setViewport: jest.fn(),
     colors: {
-      getColormap: jest.fn()
+      getColormap: jest.fn().mockImplementation(() => {
+        return {
+          setNumberOfColors: jest.fn(),
+          setColor: jest.fn()
+        }
+      })
     }
   }
 }));

@@ -6,7 +6,12 @@ jest.mock('./../externalModules.js', () => ({
     setViewport: jest.fn()
   },
   colors: {
-    getColormap: jest.fn()
+    getColormap: jest.fn().mockImplementation(() => {
+      return {
+        setNumberOfColors: jest.fn(),
+        setColor: jest.fn()
+      }
+    })
   }
 }));
 
