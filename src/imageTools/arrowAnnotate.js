@@ -19,6 +19,7 @@ import { getToolOptions } from '../toolOptions.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 import { textBoxWidth } from '../util/drawTextBox.js';
+import triggerEvent from '../util/triggerEvent.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -57,6 +58,15 @@ function addNewMeasurement (mouseEventData) {
 
     measurementData.active = false;
     cornerstone.updateImage(element);
+
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData
+    };
+
+    triggerEvent(element, eventType, modifiedEventData);
 
     element.addEventListener(EVENTS.MOUSE_MOVE, arrowAnnotate.mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN, arrowAnnotate.mouseDownCallback);
@@ -262,6 +272,15 @@ function addNewMeasurementTouch (touchEventData) {
 
     measurementData.active = false;
     cornerstone.updateImage(element);
+
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData
+    };
+
+    triggerEvent(element, eventType, modifiedEventData);
 
     element.addEventListener(EVENTS.TOUCH_PRESS, arrowAnnotateTouch.pressCallback);
     element.addEventListener(EVENTS.TOUCH_START_ACTIVE, arrowAnnotateTouch.touchDownActivateCallback);
