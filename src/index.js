@@ -12,6 +12,7 @@ export { default as freehandMouseTool } from './tools/freehandMouseTool.js';
 export {
   default as freehandSculpterMouseTool
 } from './tools/freehandSculpterMouseTool.js';
+export { default as textMarkerTool } from './tools/textMarkerTool.js';
 export { default as lengthTool } from './tools/lengthTool.js';
 export { default as magnifyTool } from './tools/magnifyTool.js';
 export { default as probeTool } from './tools/probeTool.js';
