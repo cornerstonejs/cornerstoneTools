@@ -291,6 +291,16 @@
 		});
 	}
 
+	// Find all and configure each textMarkers
+	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
+		if (element.name === 'textMarker') {
+			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
+			element.configuration.current= 'F5';
+			element.configuration.ascending= true;
+			element.configuration.loop= true;
+		}
+	});
+
 	const convertMouseEventWhichToButtons = (which) => {
 		switch (which) {
 			// no button

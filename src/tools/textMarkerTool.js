@@ -14,8 +14,8 @@ export default class extends baseAnnotationTool {
       name,
       supportedInteractionTypes: ['mouse', 'touch'],
       configuration: {
-        markers: ['L5', 'L4', 'L3', 'L2', 'L1'],
-        current: 'L5',
+        markers: [],
+        current: '',
         ascending: true,
         loop: false,
         changeTextCallback
