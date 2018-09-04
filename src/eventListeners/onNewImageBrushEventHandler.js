@@ -24,7 +24,8 @@ export default function (evt) {
 
   // Invalidate the data and clear the cache
   toolData.data[0].invalidated = true;
-  brushState.mutations.SET_IMAGE_BITMAP_CACHE(null);
+  toolData.imageBitmapCache = null;
+  //brushState.mutations.SET_IMAGE_BITMAP_CACHE(null);
 
   external.cornerstone.updateImage(eventData.element);
 }
