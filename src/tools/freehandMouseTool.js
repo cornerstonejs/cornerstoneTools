@@ -54,9 +54,13 @@ export default class extends baseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      throw new Error(`required eventData not supplied to tool ${
-        this.name
-      }'s createNewMeasurement`);
+      console.error(
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
     }
 
     const measurementData = {

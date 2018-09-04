@@ -23,6 +23,66 @@ jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
+const badMouseEventData = 'hello world';
+const goodMouseEventData = {
+  currentPoints: {
+    image: {
+      x: 0,
+      y: 0
+    }
+  }
+};
+
+
+describe('freehandMouseTool.js', function () {
+  beforeEach(() => {
+    console.error = jest.fn();
+    console.error.mockClear();
+    console.warn = jest.fn();
+    console.warn.mockClear();
+  });
+
+  describe('default values', () => {
+    it('has a default name of "freehandMouse"', () => {
+      const defaultName = 'freehandMouse';
+      const instantiatedTool = new FreehandMouseTool();
+
+      expect(instantiatedTool.name).toEqual(defaultName);
+    });
+
+    it('can be created with a custom tool name', () => {
+      const customToolName = 'customToolName';
+      const instantiatedTool = new FreehandMouseTool(customToolName);
+
+      expect(instantiatedTool.name).toEqual(customToolName);
+    });
+  });
+
+  describe('createNewMeasurement', () => {
+    it('emits console error if required eventData is not provided', () => {
+      const instantiatedTool = new FreehandMouseTool();
+
+      instantiatedTool.createNewMeasurement(badMouseEventData);
+
+      expect(console.error).toHaveBeenCalled();
+      expect(console.error.mock.calls[0][0]).toContain(
+        'required eventData not supplied to tool'
+      );
+    });
+
+    // Todo: create a more formal definition of a tool measurement object
+    it('returns a tool measurement object', () => {
+      const instantiatedTool = new FreehandMouseTool();
+
+      const toolMeasurement = instantiatedTool.createNewMeasurement(
+        goodMouseEventData
+      );
+
+      expect(typeof toolMeasurement).toBe(typeof {});
+    });
+  });
+});
+
 describe('freehandIntersect.js', function() {
   let dataHandles;
 

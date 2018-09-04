@@ -61,7 +61,7 @@ describe('ellipticalRoiTool.js', () => {
 
       expect(console.error).toHaveBeenCalled();
       expect(console.error.mock.calls[0][0]).toContain(
-        'required eventData not supplieed to tool'
+        'required eventData not supplied to tool'
       );
     });
 
