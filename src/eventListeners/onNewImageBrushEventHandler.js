@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
+import getToolForElement from '../store/getToolForElement.js';
 
 const brushState = store.modules.brush;
 
@@ -14,6 +15,7 @@ export default function (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   let toolData = getToolState(element, 'brush');
+  const brushTool = getToolForElement(element, '')
 
   if (!toolData) {
     const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
@@ -22,10 +24,11 @@ export default function (evt) {
     toolData = getToolState(element, 'brush');
   }
 
-  // Invalidate the data and clear the cache
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+  // Invalidate the data and clear the element's cache
   toolData.data[0].invalidated = true;
-  toolData.imageBitmapCache = null;
-  //brushState.mutations.SET_IMAGE_BITMAP_CACHE(null);
+  brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, null);
 
   external.cornerstone.updateImage(eventData.element);
 }

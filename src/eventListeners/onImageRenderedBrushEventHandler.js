@@ -24,16 +24,17 @@ export default function (evt) {
     toolData = getToolState(element, 'brush');
   }
 
-  //const imageBitmapCache = brushState.getters.imageBitmapCache();
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+  const imageBitmapCache = brushState.getters.imageBitmapCacheForElement(enabledElement.toolDataUID);
 
   // Draw previous image, unless this is a new image, then don't!
-  if (toolData.imageBitmapCache) {
-    _drawImageBitmap(evt, toolData.imageBitmapCache);
+  if (imageBitmapCache) {
+    _drawImageBitmap(evt, imageBitmapCache);
   }
 
-  if (!toolData.data[0].invalidated) {
-    return;
-  }
+  //if (!toolData.data[0].invalidated) {
+  //  return;
+  //}
 
   const colormapId = brushState.getters.colorMapId();
   const colormap = external.cornerstone.colors.getColormap(colormapId);
@@ -49,8 +50,7 @@ export default function (evt) {
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
 
   window.createImageBitmap(imageData).then((newImageBitmap) => {
-    toolData.imageBitmapCache = newImageBitmap;
-    //brushState.mutations.SET_IMAGE_BITMAP_CACHE(newImageBitmap);
+    brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, newImageBitmap);
     toolData.data[0].invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);

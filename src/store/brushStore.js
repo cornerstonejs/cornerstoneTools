@@ -7,7 +7,7 @@ const state = {
   maxRadius: 50,
   alpha: 0.4,
   colorMapId: 'BrushColorMap',
-  imageBitmapCache: null
+  imageBitmapCache: {}
 };
 
 const mutations = {
@@ -44,8 +44,8 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
-  SET_IMAGE_BITMAP_CACHE: (imageBitmap) => {
-    state.imageBitmapCache = imageBitmap
+  SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, imageBitmap) => {
+    state.imageBitmapCache[enabledElementUID] = imageBitmap;
   }
 };
 
@@ -56,7 +56,7 @@ const getters = {
   maxRadius: () => state.maxRadius,
   alpha: () => state.alpha,
   colorMapId: () => state.colorMapId,
-  imageBitmapCache: () => state.imageBitmapCache
+  imageBitmapCacheForElement: (enabledElementUID) => state.imageBitmapCache[enabledElementUID]
 };
 
 export default {
