@@ -1,7 +1,7 @@
 import FreehandMouseTool from './freehandMouseTool.js';
 import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
-import freeHandArea from './shared/freehandUtils/freeHandArea.js';
-import freeHandIntersect from './shared/freehandUtils/freeHandIntersect.js';
+import freehandArea from './shared/freehandUtils/freehandArea.js';
+import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
 import pointInFreehand from './shared/freehandUtils/pointInFreehand.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js'
 
@@ -23,7 +23,7 @@ jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
-describe('freeHandIntersect.js', function() {
+describe('freehandIntersect.js', function() {
   let dataHandles;
 
   beforeEach(() => {
@@ -49,7 +49,7 @@ describe('freeHandIntersect.js', function() {
       x: -0.5,
       y: 0.5
     });
-    const doesIntersect = freeHandIntersect.newHandle(candidateHandle, dataHandles);
+    const doesIntersect = freehandIntersect.newHandle(candidateHandle, dataHandles);
 
     expect(doesIntersect).toBeTruthy();
   });
@@ -59,7 +59,7 @@ describe('freeHandIntersect.js', function() {
       x: 0.5,
       y: 0.5
     });
-    const doesIntersect = freeHandIntersect.newHandle(candidateHandle, dataHandles);
+    const doesIntersect = freehandIntersect.newHandle(candidateHandle, dataHandles);
 
     expect(doesIntersect).toBeDefined();
     expect(doesIntersect).toBeFalsy();
@@ -74,13 +74,13 @@ describe('freeHandIntersect.js', function() {
 
     dataHandles.push(handle3);
 
-    const doesIntersect = freeHandIntersect.end(dataHandles);
+    const doesIntersect = freehandIntersect.end(dataHandles);
 
     expect(doesIntersect).toBeTruthy();
   });
 
   it('should return false if the line created by finishing the polygon doesn\'t cross any previous line', function() {
-    const doesIntersect = freeHandIntersect.end(dataHandles);
+    const doesIntersect = freehandIntersect.end(dataHandles);
 
     expect(doesIntersect).toBeDefined();
     expect(doesIntersect).toBeFalsy();
@@ -100,7 +100,7 @@ describe('freeHandIntersect.js', function() {
     dataHandles[modifiedHandleId].x = -0.5;
     dataHandles[modifiedHandleId].y = 0.5;
 
-    const doesIntersect = freeHandIntersect.modify(dataHandles, modifiedHandleId);
+    const doesIntersect = freehandIntersect.modify(dataHandles, modifiedHandleId);
 
     expect(doesIntersect).toBeTruthy();
   });
@@ -119,7 +119,7 @@ describe('freeHandIntersect.js', function() {
     dataHandles[modifiedHandleId].x = 2.0;
     dataHandles[modifiedHandleId].y = 2.0;
 
-    const doesIntersect = freeHandIntersect.modify(dataHandles, modifiedHandleId);
+    const doesIntersect = freehandIntersect.modify(dataHandles, modifiedHandleId);
 
     expect(doesIntersect).toBeDefined();
     expect(doesIntersect).toBeFalsy();
@@ -210,7 +210,7 @@ describe('pointInFreehand.js', function() {
 });
 
 
-describe('freeHandArea.js', function() {
+describe('freehandArea.js', function() {
   // A unit square
   const dataHandles = [
     new FreehandHandleData({
@@ -232,13 +232,13 @@ describe('freeHandArea.js', function() {
   ];
 
   it('should return the area enclosed in dataHandles', function () {
-    const area = freeHandArea(dataHandles, false);
+    const area = freehandArea(dataHandles, false);
 
     expect(area).toBeCloseTo(1.0, 5);
   });
 
   it('should scale if a scale parameter is given.', function () {
-    const area = freeHandArea(dataHandles, 10.0);
+    const area = freehandArea(dataHandles, 10.0);
 
     expect(area).toBeCloseTo(10.0, 5);
   });
