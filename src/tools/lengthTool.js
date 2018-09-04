@@ -32,7 +32,7 @@ export default class extends baseAnnotationTool {
 
     if (!goodEventData) {
       console.error(
-        `required eventData not supplieed to tool ${
+        `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
       );
