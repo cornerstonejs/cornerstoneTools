@@ -12,7 +12,6 @@ import { getToolState, addToolState } from './../stateManagement/toolState.js';
 import store from '../store/index.js';
 
 const brushState = store.modules.brush;
-
 const cornerstone = external.cornerstone;
 
 /* Safari and Edge polyfill for createImageBitmap
@@ -50,71 +49,8 @@ export default class extends baseBrushTool {
       configuration: defaultBrushToolConfiguration()
     });
 
-    this._newImage = false;
     this._changeDrawColor(brushState.getters.draw());
   }
-
-  /**
-   * Used to redraw the tool's annotation data per render.
-   *
-   * @override
-   * @param {Object} evt - The event.
-   * @returns
-   */
-  renderToolData (evt) {
-    const eventData = evt.detail;
-
-    const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
-    let pixelData;
-
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
-    }
-
-    // Draw previous image, unless this is a new image, then don't!
-    if (this._imageBitmap && !this._newImage) {
-      this._drawImageBitmap(evt);
-    }
-
-    if (this._newImage) {
-      this._newImage = false;
-    }
-
-    if (isToolActive(element, this.name)) {
-      // Call the hover event for the brush
-      this.renderBrush(evt);
-    }
-
-    if (!toolData.data[0].invalidated) {
-      return;
-    }
-
-    const colormapId = brushState.getters.colorMapId();
-    const colormap = cornerstone.colors.getColormap(colormapId);
-    const colorLut = colormap.createLookupTable();
-
-    const imageData = new ImageData(eventData.image.width, eventData.image.height);
-    const image = {
-      stats: {},
-      minPixelValue: 0,
-      getPixelData: () => pixelData
-    };
-
-    cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
-
-    window.createImageBitmap(imageData).then((newImageBitmap) => {
-      this._imageBitmap = newImageBitmap;
-      toolData.data[0].invalidated = false;
-
-      external.cornerstone.updateImage(eventData.element);
-    });
-  }
-
 
   /**
   * Called by the event dispatcher to render the image.

@@ -3,7 +3,6 @@ import EVENTS from './../events.js';
 import baseTool from './../base/baseTool.js';
 // Utils
 import isToolActive from '../tools/shared/isToolActive.js';
-import { getNewContext } from '../util/drawing.js';
 import store from '../store/index.js';
 
 const brushState = store.modules.brush;
@@ -60,17 +59,6 @@ export default class extends baseTool {
   //===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
   //===================================================================
-
-  /**
-   * Callback for when the tool is activated.
-   *
-   * @virtual
-   */
-  //activeCallback () {
-  //  const configuration = this.configuration;
-
-
-  //}
 
   /**
   * Event handler for MOUSE_DRAG event.
@@ -213,34 +201,6 @@ export default class extends baseTool {
   //===================================================================
   // Implementation interface
   //===================================================================
-
-  /**
-   * Draws the ImageBitmap the canvas.
-   *
-   * @protected
-   * @param  {Object} evt description
-   */
-  _drawImageBitmap (evt) {
-    const configuration = this.configuration;
-    const eventData = evt.detail;
-    const context = getNewContext(eventData.canvasContext.canvas);
-
-    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
-      x: 0,
-      y: 0
-    });
-    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {
-      x: eventData.image.width,
-      y: eventData.image.height
-    });
-    const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
-    const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
-
-    context.imageSmoothingEnabled = false;
-    context.globalAlpha = brushState.getters.alpha();
-    context.drawImage(this._imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
-    context.globalAlpha = 1.0;
-  }
 
   /**
    *  Changes the draw color (segmentation) of the tool.
