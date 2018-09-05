@@ -48,8 +48,6 @@ export default class extends baseBrushTool {
       supportedInteractionTypes: ['mouse'],
       configuration: defaultBrushToolConfiguration()
     });
-
-    this._changeDrawColor(brushState.getters.draw());
   }
 
   /**
@@ -76,8 +74,10 @@ export default class extends baseBrushTool {
     const configuration = this._configuration;
     const radius = brushState.getters.radius();
     const context = eventData.canvasContext;
-    const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
     const element = eventData.element;
+    const drawId = brushState.getters.draw();
+    const color = this._getBrushColor(drawId);
+
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -167,8 +167,6 @@ export default class extends baseBrushTool {
 
 function defaultBrushToolConfiguration () {
   return {
-    hoverColor: toolColors.getToolColor(),
-    dragColor: toolColors.getActiveColor(),
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',

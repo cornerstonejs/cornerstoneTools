@@ -29,15 +29,14 @@ export default class extends baseBrushTool {
   renderBrush (evt) {
     // Render the brush
     const eventData = evt.detail;
-    const configuration = this._configuration;
 
     let mousePosition;
 
     if (this._drawing) {
       mousePosition = this._lastImageCoords;
-    } else if (configuration.mouseUpRender) {
+    } else if (this._mouseUpRender) {
       mousePosition = this._lastImageCoords;
-      configuration.mouseUpRender = false;
+      this._mouseUpRender = false;
     } else {
       mousePosition = getters.mousePositionImage();
     }
@@ -58,8 +57,7 @@ export default class extends baseBrushTool {
 
     const radius = brushState.getters.radius();
     const context = eventData.canvasContext;
-
-    const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
+    const color = this._getBrushColor(0);
     const element = eventData.element;
 
     context.setTransform(1, 0, 0, 1, 0, 0);
@@ -125,8 +123,6 @@ export default class extends baseBrushTool {
 
 function defaultBrushConfiguration () {
   return {
-    hoverColor: 'rgba(255, 255, 255, 0.8 )',
-    dragColor: 'rgba(255, 255, 255, 1.0 )',
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-'

@@ -147,7 +147,9 @@ export default class extends baseTool {
       drawId = 1;
     }
 
-    this._changeDrawColor(drawId);
+    brushState.mutations.SET_DRAW_COLOR(drawId);
+
+    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -165,7 +167,9 @@ export default class extends baseTool {
       drawId = numberOfColors - 1;
     }
 
-    this._changeDrawColor(drawId);
+    brushState.mutations.SET_DRAW_COLOR(drawId);
+
+    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -203,20 +207,20 @@ export default class extends baseTool {
   //===================================================================
 
   /**
-   *  Changes the draw color (segmentation) of the tool.
+   * Get the draw color (segmentation) of the tool.
    *
    * @protected
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
-  _changeDrawColor (drawId) {
-    const configuration = this.configuration;
+  _getBrushColor (drawId) {
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
-
-    brushState.mutations.SET_DRAW_COLOR(drawId);
     const colorArray = colormap.getColor(drawId);
 
-    configuration.hoverColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
-    configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+    if (this._drawing) {
+      return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+    }
+
+    return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
   }
 
   /**
@@ -231,7 +235,7 @@ export default class extends baseTool {
     const element = eventData.element;
 
     this._drawing = false;
-    this.configuration.mouseUpRender = true;
+    this._mouseUpRender = true;
 
     this._stopListeningForMouseUp(element);
   }

@@ -32,10 +32,6 @@ export default function (evt) {
     _drawImageBitmap(evt, imageBitmapCache);
   }
 
-  //if (!toolData.data[0].invalidated) {
-  //  return;
-  //}
-
   const colormapId = brushState.getters.colorMapId();
   const colormap = external.cornerstone.colors.getColormap(colormapId);
   const colorLut = colormap.createLookupTable();

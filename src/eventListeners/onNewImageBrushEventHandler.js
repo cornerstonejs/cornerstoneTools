@@ -26,8 +26,7 @@ export default function (evt) {
 
     const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  // Invalidate the data and clear the element's cache
-  toolData.data[0].invalidated = true;
+  // Clear the element's cache
   brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, null);
 
   external.cornerstone.updateImage(eventData.element);
