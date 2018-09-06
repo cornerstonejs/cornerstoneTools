@@ -7,7 +7,7 @@ function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) 
   pointerArray.forEach((point) => {
     const spIndex = getPixelIndex(point[0], point[1]);
 
-    storedPixels[spIndex] = brushPixelValue;
+    storedPixels[spIndex] = 1;
   });
 }
 

@@ -1,6 +1,7 @@
 import store from '../store/index.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
+import baseBrushTool from '../base/baseBrushTool.js';
 import { getNewContext } from '../util/drawing.js';
 
 const brushState = store.modules.brush;
@@ -13,28 +14,66 @@ const brushState = store.modules.brush;
 export default function (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
-  let toolData = getToolState(element, 'brush');
-  let pixelData;
+  const maxSegmentations = baseBrushTool.getNumberOfColors();
+  let toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
 
-  if (toolData) {
-    pixelData = toolData.data[0].pixelData;
-  } else {
-    pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-    addToolState(element, 'brush', { pixelData });
-    toolData = getToolState(element, 'brush');
+  if (!toolData) { // Make toolData array as big as max number of segmentations.
+    for (let i = 0; i < maxSegmentations; i++) {
+      addToolState(element, baseBrushTool.getReferencedToolDataName(), {});
+    }
+
+    toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
+
+    // TEMP: HACK: Create first pixel data such that the tool has some data and the brush
+    // cursor can be rendered. Can be replaced once we have a mechanism for SVG cursors.
+    const newPixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+    toolData.data[0].pixelData = newPixelData;
+
+    toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
   }
 
-  const enabledElement = external.cornerstone.getEnabledElement(element);
-  const imageBitmapCache = brushState.getters.imageBitmapCacheForElement(enabledElement.toolDataUID);
+  for (let i = 0; i < maxSegmentations; i++) {
+    if (toolData.data[i].pixelData) {
+      renderSegmentation(evt, toolData, i);
+    }
+  }
 
-  // Draw previous image, unless this is a new image, then don't!
+}
+
+
+
+function renderSegmentation (evt, toolData, segmentationIndex) {
+  const eventData = evt.detail;
+  const element = eventData.element;
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+
+  const imageBitmapCache = brushState.getters.imageBitmapCacheForElement(enabledElement.toolDataUID, segmentationIndex);
+
+  // Draw previous image if cached.
   if (imageBitmapCache) {
     _drawImageBitmap(evt, imageBitmapCache);
   }
 
+  if (toolData.data[segmentationIndex].invalidated) {
+    createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segmentationIndex);
+  }
+
+}
+
+
+function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segmentationIndex) {
+  const eventData = evt.detail;
+  const element = eventData.element;
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+
+  const pixelData = toolData.data[segmentationIndex].pixelData;
+
   const colormapId = brushState.getters.colorMapId();
   const colormap = external.cornerstone.colors.getColormap(colormapId);
-  const colorLut = colormap.createLookupTable();
+  const colorLutTable = [
+    [0, 0, 0, 0],
+    colormap.getColor(segmentationIndex)
+  ];
 
   const imageData = new ImageData(eventData.image.width, eventData.image.height);
   const image = {
@@ -43,10 +82,10 @@ export default function (evt) {
     getPixelData: () => pixelData
   };
 
-  external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
+  external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLutTable, imageData.data);
 
   window.createImageBitmap(imageData).then((newImageBitmap) => {
-    brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, newImageBitmap);
+    brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, segmentationIndex, newImageBitmap);
     toolData.data[0].invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);

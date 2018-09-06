@@ -24,7 +24,7 @@ export default class extends baseTool {
     });
 
     this.hasCursor = true;
-    this._referencedToolData = 'brush';
+    this.referencedToolData = 'brush';
 
     this._drawing = false;
 
@@ -139,17 +139,15 @@ export default class extends baseTool {
   * @virtual
   */
   nextSegmentation () {
-    const numberOfColors = this.constructor._getNumberOfColors();
+    const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = brushState.getters.draw() + 1;
 
     if (drawId === numberOfColors) {
-      drawId = 1;
+      drawId = 0;
     }
 
     brushState.mutations.SET_DRAW_COLOR(drawId);
-
-    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -159,11 +157,11 @@ export default class extends baseTool {
   */
   previousSegmentation () {
     const configuration = this.configuration;
-    const numberOfColors = this.constructor._getNumberOfColors();
+    const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = brushState.getters.draw() - 1;
 
-    if (drawId < 1) {
+    if (drawId < 0) {
       drawId = numberOfColors - 1;
     }
 
@@ -275,12 +273,23 @@ export default class extends baseTool {
    * Returns the number of colors in the colormap.
    *
    * @static
-   * @protected
+   * @public
    * @return {Number} The number of colors in the color map.
    */
-  static _getNumberOfColors () {
+  static getNumberOfColors () {
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
 
     return colormap.getNumberOfColors();
+  }
+
+  /**
+   * Returns the toolData type assoicated with this type of tool.
+   *
+   * @static
+   * @public
+   * @return {String} The number of colors in the color map.
+   */
+  static getReferencedToolDataName() {
+    return 'brush';
   }
 }

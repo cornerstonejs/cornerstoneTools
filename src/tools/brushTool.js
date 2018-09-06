@@ -111,19 +111,20 @@ export default class extends baseBrushTool {
     const element = eventData.element;
     const { rows, columns } = eventData.image;
     const { x, y } = eventData.currentPoints.image;
-    let toolData = getToolState(element, this._referencedToolData);
+    const toolData = getToolState(element, this.constructor.getReferencedToolDataName());
 
-    let pixelData;
+    // TODO - Draw to the toolData that relates to the index.
 
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+    const segmentationIndex = brushState.getters.draw();
+
+    if (!toolData.data[segmentationIndex].pixelData) {
+      console.log(`creating new pixelData for segmentation ${segmentationIndex}`);
+      const newPixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+      toolData.data[segmentationIndex].pixelData = newPixelData;
     }
 
-    const brushPixelValue = brushState.getters.draw();
+    const pixelData = toolData.data[segmentationIndex].pixelData;
+
     const radius = brushState.getters.radius();
 
     if (x < 0 || x > columns ||
@@ -133,9 +134,9 @@ export default class extends baseBrushTool {
 
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
+    drawBrushPixels(pointerArray, pixelData, segmentationIndex, columns);
 
-    toolData.data[0].invalidated = true;
+    toolData.data[segmentationIndex].invalidated = true;
 
     external.cornerstone.updateImage(eventData.element);
   }
@@ -146,16 +147,14 @@ export default class extends baseBrushTool {
   * @event
   * @param {Object} evt - The event.
   */
+  /*
   newImageCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
+    let toolData = getToolState(element, this.constructor.getReferencedToolDataName());
 
     if (!toolData) {
-      const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+      return;
     }
 
     toolData.data[0].invalidated = true;
@@ -163,6 +162,7 @@ export default class extends baseBrushTool {
 
     external.cornerstone.updateImage(eventData.element);
   }
+  */
 }
 
 function defaultBrushToolConfiguration () {
@@ -170,8 +170,8 @@ function defaultBrushToolConfiguration () {
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',
-      nextSegmentation: '[',
-      previousSegmentation: ']'
+      nextSegmentation: ']',
+      previousSegmentation: '['
     }
   };
 }
