@@ -18,6 +18,8 @@ export default class extends baseTool {
 
     this.mouseDownCallback = this._chooseLocation.bind(this);
     this.mouseDragCallback = this._chooseLocation.bind(this);
+
+    this.touchDragCallback = this._chooseLocation.bind(this);
   }
 
   _chooseLocation (evt) {
