@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added a configuration setting on the stackPrefetch tool, called "preserveExistingPool", that prevents resetting the prefetch pool each time a new stack viewer is activated.
 
 ## [2.3.9] - 2018-07-24
 ### Changed
