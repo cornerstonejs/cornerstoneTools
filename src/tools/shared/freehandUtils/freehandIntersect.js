@@ -189,10 +189,8 @@ function onSegment (p, q, r) {
   return false;
 }
 
-const freeHandIntersect = {
+export default {
   newHandle,
   end,
   modify
 };
-
-export default freeHandIntersect;
