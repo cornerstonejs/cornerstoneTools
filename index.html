@@ -47,6 +47,7 @@
 				<li><a href="#" data-tool="freehandSculpterMouse">FreehandSculpterMouse</a></li>
 				<li><a href="#" data-tool="brush">Brush</a></li>
 				<li><a href="#" data-tool="brushEraser">brushEraser</a></li>
+				<li><a href="#" data-tool="textMarker">TextMarker</a></li>
 				<li><a href="#" data-tool="length">Length</a></li>
 				<li><a href="#" data-tool="probe">Probe</a></li>
 				<li><a href="#" data-tool="rectangleRoi">RectangleRoi</a></li>
@@ -289,6 +290,16 @@
 			}
 		});
 	}
+
+	// Find all and configure each textMarkers
+	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
+		if (element.name === 'textMarker') {
+			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
+			element.configuration.current= 'F5';
+			element.configuration.ascending= true;
+			element.configuration.loop= true;
+		}
+	});
 
 	const convertMouseEventWhichToButtons = (which) => {
 		switch (which) {
