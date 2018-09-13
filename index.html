@@ -45,6 +45,9 @@
 				<li><a href="#" data-tool="eraser">Eraser</a></li>
 				<li><a href="#" data-tool="freehandMouse">FreehandMouse</a></li>
 				<li><a href="#" data-tool="freehandSculpterMouse">FreehandSculpterMouse</a></li>
+				<li><a href="#" data-tool="brush">Brush</a></li>
+				<li><a href="#" data-tool="brushEraser">brushEraser</a></li>
+				<li><a href="#" data-tool="textMarker">TextMarker</a></li>
 				<li><a href="#" data-tool="length">Length</a></li>
 				<li><a href="#" data-tool="probe">Probe</a></li>
 				<li><a href="#" data-tool="rectangleRoi">RectangleRoi</a></li>
@@ -123,6 +126,9 @@
 		cornerstone.enable(element);
 		cTools.addEnabledElement(element);
 
+		element.tabIndex = 0;
+		element.focus();
+
 		cornerstone.loadImage(imageIds[0]).then(function (image) {
 			cornerstone.displayImage(element, image);
 
@@ -153,7 +159,7 @@
 	const toolCategoryLinks = document.querySelectorAll('ul.tool-category-list a');
 	const toolCategorySections = document.querySelectorAll('ul.tool-category');
 	Array.from(toolCategoryLinks).forEach(link => {
-		// 
+		//
 		const categoryName = link.getAttribute('data-category');
 		const categoryElement = document.querySelector(`section[data-tool-category="${categoryName}"]`)
 
@@ -293,6 +299,16 @@
 			}
 		});
 	}
+
+	// Find all and configure each textMarkers
+	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
+		if (element.name === 'textMarker') {
+			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
+			element.configuration.current= 'F5';
+			element.configuration.ascending= true;
+			element.configuration.loop= true;
+		}
+	});
 
 	const convertMouseEventWhichToButtons = (which) => {
 		switch (which) {
