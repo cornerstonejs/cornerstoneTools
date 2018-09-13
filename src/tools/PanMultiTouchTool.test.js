@@ -3,17 +3,7 @@ import PanMultiTouchTool from './PanMultiTouchTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    setViewport: jest.fn(),
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
+  cornerstone: {}
 }));
 describe('PanMultiTouchTool.js', () => {
   describe('default values', () => {

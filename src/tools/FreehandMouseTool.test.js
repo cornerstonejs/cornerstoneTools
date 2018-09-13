@@ -3,22 +3,8 @@ import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehan
 import freehandArea from './shared/freehandUtils/freehandArea.js';
 import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
 import pointInFreehand from './shared/freehandUtils/pointInFreehand.js';
-import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js'
+import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 
-jest.mock('./../manipulators/drawHandles.js');
-jest.mock('./../util/drawing.js');
-jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
-}));
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
@@ -83,28 +69,28 @@ describe('FreehandMouseTool.js', function () {
   });
 });
 
-describe('freehandIntersect.js', function() {
+describe('freehandIntersect.js', function () {
   let dataHandles;
 
   beforeEach(() => {
     // First 3 corners of a square.
     dataHandles = [
       new FreehandHandleData({
-          x: 0.0,
-          y: 0.0
+        x: 0.0,
+        y: 0.0
       }),
       new FreehandHandleData({
-          x: 0.0,
-          y: 1.0
+        x: 0.0,
+        y: 1.0
       }),
       new FreehandHandleData({
-          x: 1.0,
-          y: 1.0
+        x: 1.0,
+        y: 1.0
       })
     ];
   });
 
-  it('should return true if a new handle crosses any previous line', function() {
+  it('should return true if a new handle crosses any previous line', function () {
     const candidateHandle = new FreehandHandleData({
       x: -0.5,
       y: 0.5
@@ -114,7 +100,7 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if a new handle doesn\'t cross any previous line', function() {
+  it('should return false if a new handle doesn\'t cross any previous line', function () {
     const candidateHandle = new FreehandHandleData({
       x: 0.5,
       y: 0.5
@@ -125,8 +111,8 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeFalsy();
   });
 
-  it('should return true if the line created by finishing the polygon crosses any previous line', function() {
-    //Add an additional handle above the triangle such the line (handle3,handle0) crosses (handle1,handle2).
+  it('should return true if the line created by finishing the polygon crosses any previous line', function () {
+    // Add an additional handle above the triangle such the line (handle3,handle0) crosses (handle1,handle2).
     const handle3 = new FreehandHandleData({
       x: 0.5,
       y: 1.5
@@ -139,22 +125,23 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if the line created by finishing the polygon doesn\'t cross any previous line', function() {
+  it('should return false if the line created by finishing the polygon doesn\'t cross any previous line', function () {
     const doesIntersect = freehandIntersect.end(dataHandles);
 
     expect(doesIntersect).toBeDefined();
     expect(doesIntersect).toBeFalsy();
   });
 
-  it('should return true if one moves a polygon\'s vertex such that it causes an lines to cross', function() {
-    //add the 4th corner of the square first.
+  it('should return true if one moves a polygon\'s vertex such that it causes an lines to cross', function () {
+    // Add the 4th corner of the square first.
     const handle3 = new FreehandHandleData({
       x: 1.0,
       y: 0.0
     });
+
     dataHandles.push(handle3);
 
-    //Move handle2 so that it crosses line (handle0,handle1)
+    // Move handle2 so that it crosses line (handle0,handle1)
     const modifiedHandleId = 2;
 
     dataHandles[modifiedHandleId].x = -0.5;
@@ -165,15 +152,16 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if one moves a polygon\'s vertex a bit such that no lines cross', function() {
-    //add the 4th corner of the square first.
+  it('should return false if one moves a polygon\'s vertex a bit such that no lines cross', function () {
+    // Add the 4th corner of the square first.
     const handle3 = new FreehandHandleData({
       x: 1.0,
       y: 0.0
     });
+
     dataHandles.push(handle3);
 
-    //Move handle2 in a non disruptive way.
+    // Move handle2 in a non disruptive way.
     const modifiedHandleId = 2;
 
     dataHandles[modifiedHandleId].x = 2.0;
@@ -186,28 +174,28 @@ describe('freehandIntersect.js', function() {
   });
 });
 
-describe('pointInFreehand.js', function() {
+describe('pointInFreehand.js', function () {
   // Simple square
   const dataHandles = [
     new FreehandHandleData({
-        x: 0.0,
-        y: 0.0
+      x: 0.0,
+      y: 0.0
     }),
     new FreehandHandleData({
-        x: 0.0,
-        y: 1.0
+      x: 0.0,
+      y: 1.0
     }),
     new FreehandHandleData({
-        x: 1.0,
-        y: 1.0
+      x: 1.0,
+      y: 1.0
     }),
     new FreehandHandleData({
-        x: 1.0,
-        y: 0.0
+      x: 1.0,
+      y: 0.0
     })
   ];
 
-  it('should return true if the point is inside the polygon', function() {
+  it('should return true if the point is inside the polygon', function () {
     const point = {
       x: 0.5,
       y: 0.5
@@ -217,7 +205,7 @@ describe('pointInFreehand.js', function() {
     expect(isInside).toBeTruthy();
   });
 
-  it('should return false if the point is outside the object, to the right', function() {
+  it('should return false if the point is outside the object, to the right', function () {
     const point = {
       x: 2.0,
       y: 0.5
@@ -228,7 +216,7 @@ describe('pointInFreehand.js', function() {
     expect(isInside).toBeFalsy();
   });
 
-  it('should return false if the point is outside the object, to the left', function() {
+  it('should return false if the point is outside the object, to the left', function () {
     const point = {
       x: -1.0,
       y: 0.5
@@ -239,7 +227,7 @@ describe('pointInFreehand.js', function() {
     expect(isInside).toBeFalsy();
   });
 
-  it('should return false if on the line exactly', function() {
+  it('should return false if on the line exactly', function () {
     const point = {
       x: 1.0,
       y: 0.5
@@ -250,7 +238,7 @@ describe('pointInFreehand.js', function() {
     expect(isInside).toBeFalsy();
   });
 
-  it('should return false if the point is outside the object, above or bellow', function() {
+  it('should return false if the point is outside the object, above or bellow', function () {
     const point1 = {
       x: 0.5,
       y: 2.0
@@ -270,24 +258,24 @@ describe('pointInFreehand.js', function() {
 });
 
 
-describe('freehandArea.js', function() {
+describe('freehandArea.js', function () {
   // A unit square
   const dataHandles = [
     new FreehandHandleData({
-        x: 0.0,
-        y: 0.0
+      x: 0.0,
+      y: 0.0
     }),
     new FreehandHandleData({
-        x: 0.0,
-        y: 1.0
+      x: 0.0,
+      y: 1.0
     }),
     new FreehandHandleData({
-        x: 1.0,
-        y: 1.0
+      x: 1.0,
+      y: 1.0
     }),
     new FreehandHandleData({
-        x: 1.0,
-        y: 0.0
+      x: 1.0,
+      y: 0.0
     })
   ];
 
@@ -305,32 +293,32 @@ describe('freehandArea.js', function() {
 
 });
 
-describe('calculateFreehandStatistics.js', function() {
+describe('calculateFreehandStatistics.js', function () {
   // 'L' shape: 10x10 square with top right quadrant missing
   const dataHandles = [
     new FreehandHandleData({
-        x: 0.0,
-        y: 0.0
+      x: 0.0,
+      y: 0.0
     }),
     new FreehandHandleData({
-        x: 0.0,
-        y: 10.0
+      x: 0.0,
+      y: 10.0
     }),
     new FreehandHandleData({
-        x: 5.0,
-        y: 10.0
+      x: 5.0,
+      y: 10.0
     }),
     new FreehandHandleData({
-        x: 5.0,
-        y: 5.0
+      x: 5.0,
+      y: 5.0
     }),
     new FreehandHandleData({
-        x: 10.0,
-        y: 5.0
+      x: 10.0,
+      y: 5.0
     }),
     new FreehandHandleData({
-        x: 10.0,
-        y: 0.0
+      x: 10.0,
+      y: 0.0
     })
   ];
 
@@ -341,9 +329,10 @@ describe('calculateFreehandStatistics.js', function() {
     width: 10.0
   };
 
-  it('should not include pixels outside the polygon', function() {
-    // create 100 dimensional pixel array
+  it('should not include pixels outside the polygon', function () {
+    // Create 100 dimensional pixel array
     const pixels = [];
+
     pixels.length = 100;
     pixels.fill(0.0);
 
@@ -358,9 +347,10 @@ describe('calculateFreehandStatistics.js', function() {
 
   });
 
-  it('should calculate that statistics of pixels within the polygon', function() {
-    // create 100 dimensional pixel array
+  it('should calculate that statistics of pixels within the polygon', function () {
+    // Create 100 dimensional pixel array
     const pixels = [];
+
     pixels.length = 100;
 
     // Set pixels within (0,0),(0,5),(10,5),(10,0) to 1

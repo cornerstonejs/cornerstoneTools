@@ -1,18 +1,5 @@
 import CrosshairsTool from './CrosshairsTool.js';
 
-jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
-}));
-
 describe('CrosshairsTool.js', () => {
   describe('default values', () => {
     it('has a default name of "Crosshairs"', () => {
