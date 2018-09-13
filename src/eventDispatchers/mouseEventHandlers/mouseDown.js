@@ -2,11 +2,11 @@
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 // Util
+import getToolsWithMovableHandles from '../../store/getToolsWithMoveableHandles';
 import {
-  getToolsWithMovableHandles,
   findHandleDataNearImagePoint,
   findAnnotationNearClick
-} from '../../base/baseAnnotationToolHelpers.js';
+} from '../../util/findAndMoveHelpers.js';
 // Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';

@@ -1,7 +1,7 @@
 import EVENTS from './../events.js';
-// TODO: Is this just customCallbackHandler, but for TOUCH and MOUSE?
 import { state } from './../store/index.js';
-import getActiveToolsForElement from './../store/getActiveToolsForElement.js';
+import BaseBrushTool from '../base/BaseBrushTool.js';
+import onNewImageBrushEventHandler from '../eventListeners/onNewImageBrushEventHandler.js';
 
 const onNewImage = function (evt) {
   if (state.isToolLocked) {
@@ -27,6 +27,15 @@ const onNewImage = function (evt) {
       tool.newImageCallback(evt);
     }
   });
+
+  // Check if any brush tools are present.
+  const brushTools = tools.filter(
+    (tool) => tool instanceof BaseBrushTool
+  );
+
+  if (brushTools.length > 0) {
+    onNewImageBrushEventHandler(evt);
+  }
 };
 
 const enable = function (element) {
