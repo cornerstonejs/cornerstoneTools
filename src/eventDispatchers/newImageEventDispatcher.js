@@ -1,7 +1,6 @@
 import EVENTS from './../events.js';
-// TODO: Is this just customCallbackHandler, but for TOUCH and MOUSE?
 import { state } from './../store/index.js';
-import BaseBrushTool from '../base/baseBrushTool.js';
+import BaseBrushTool from '../base/BaseBrushTool.js';
 import onNewImageBrushEventHandler from '../eventListeners/onNewImageBrushEventHandler.js';
 
 const onNewImage = function (evt) {

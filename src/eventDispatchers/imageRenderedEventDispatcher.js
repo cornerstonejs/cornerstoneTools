@@ -1,6 +1,6 @@
 import EVENTS from './../events.js';
 import { state } from './../store/index.js';
-import BaseBrushTool from '../base/baseBrushTool.js';
+import BaseBrushTool from '../base/BaseBrushTool.js';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
 
 const onImageRendered = function (evt) {

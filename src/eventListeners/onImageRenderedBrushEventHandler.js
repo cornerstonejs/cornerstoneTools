@@ -1,7 +1,7 @@
 import store from '../store/index.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
-import baseBrushTool from '../base/baseBrushTool.js';
+import BaseBrushTool from '../base/BaseBrushTool.js';
 import { getNewContext } from '../util/drawing.js';
 
 const brushState = store.modules.brush;
@@ -14,22 +14,22 @@ const brushState = store.modules.brush;
 export default function (evt) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const maxSegmentations = baseBrushTool.getNumberOfColors();
-  let toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
+  const maxSegmentations = BaseBrushTool.getNumberOfColors();
+  let toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
 
   if (!toolData) { // Make toolData array as big as max number of segmentations.
     for (let i = 0; i < maxSegmentations; i++) {
-      addToolState(element, baseBrushTool.getReferencedToolDataName(), {});
+      addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
     }
 
-    toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
+    toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
 
     // TEMP: HACK: Create first pixel data such that the tool has some data and the brush
     // cursor can be rendered. Can be replaced once we have a mechanism for SVG cursors.
     const newPixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
     toolData.data[0].pixelData = newPixelData;
 
-    toolData = getToolState(element, baseBrushTool.getReferencedToolDataName());
+    toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
   }
 
   for (let i = 0; i < maxSegmentations; i++) {
@@ -37,10 +37,7 @@ export default function (evt) {
       renderSegmentation(evt, toolData, i);
     }
   }
-
 }
-
-
 
 function renderSegmentation (evt, toolData, segmentationIndex) {
   const eventData = evt.detail;

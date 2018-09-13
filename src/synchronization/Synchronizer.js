@@ -12,6 +12,7 @@ function unique (array) {
 // This object is responsible for synchronizing target elements when an event fires on a source
 // Element
 // @param event can contain more than one event, separated by a space
+// TODO - > ES6 class syntax?
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;

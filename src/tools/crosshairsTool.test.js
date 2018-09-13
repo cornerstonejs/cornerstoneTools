@@ -1,4 +1,4 @@
-import CrosshairsTool from './crosshairsTool.js';
+import CrosshairsTool from './CrosshairsTool.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
@@ -13,10 +13,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-describe('crosshairsTool.js', () => {
+describe('CrosshairsTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "crosshairs"', () => {
-      const defaultName = 'crosshairs';
+    it('has a default name of "Crosshairs"', () => {
+      const defaultName = 'Crosshairs';
       const instantiatedTool = new CrosshairsTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
