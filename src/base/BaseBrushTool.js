@@ -3,7 +3,6 @@ import EVENTS from './../events.js';
 import BaseTool from './../base/BaseTool.js';
 // Utils
 import isToolActive from '../tools/shared/isToolActive.js';
-import { getNewContext } from '../util/drawing.js';
 import store from '../store/index.js';
 
 const brushState = store.modules.brush;
@@ -60,17 +59,6 @@ export default class BaseBrushTool extends BaseTool {
   //===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
   //===================================================================
-
-  /**
-   * Callback for when the tool is activated.
-   *
-   * @virtual
-   */
-  //activeCallback () {
-  //  const configuration = this.configuration;
-
-
-  //}
 
   /**
   * Event handler for MOUSE_DRAG event.
@@ -159,7 +147,9 @@ export default class BaseBrushTool extends BaseTool {
       drawId = 1;
     }
 
-    this._changeDrawColor(drawId);
+    brushState.mutations.SET_DRAW_COLOR(drawId);
+
+    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -177,7 +167,9 @@ export default class BaseBrushTool extends BaseTool {
       drawId = numberOfColors - 1;
     }
 
-    this._changeDrawColor(drawId);
+    brushState.mutations.SET_DRAW_COLOR(drawId);
+
+    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -215,48 +207,20 @@ export default class BaseBrushTool extends BaseTool {
   //===================================================================
 
   /**
-   * Draws the ImageBitmap the canvas.
-   *
-   * @protected
-   * @param  {Object} evt description
-   */
-  _drawImageBitmap (evt) {
-    const configuration = this.configuration;
-    const eventData = evt.detail;
-    const context = getNewContext(eventData.canvasContext.canvas);
-
-    const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
-      x: 0,
-      y: 0
-    });
-    const canvasBottomRight = external.cornerstone.pixelToCanvas(eventData.element, {
-      x: eventData.image.width,
-      y: eventData.image.height
-    });
-    const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
-    const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
-
-    context.imageSmoothingEnabled = false;
-    context.globalAlpha = brushState.getters.alpha();
-    context.drawImage(this._imageBitmap, canvasTopLeft.x, canvasTopLeft.y, canvasWidth, canvasHeight);
-    context.globalAlpha = 1.0;
-  }
-
-  /**
-   *  Changes the draw color (segmentation) of the tool.
+   * Get the draw color (segmentation) of the tool.
    *
    * @protected
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
-  _changeDrawColor (drawId) {
-    const configuration = this.configuration;
+  _getBrushColor (drawId) {
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
-
-    brushState.mutations.SET_DRAW_COLOR(drawId);
     const colorArray = colormap.getColor(drawId);
 
-    configuration.hoverColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
-    configuration.dragColor = `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+    if (this._drawing) {
+      return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+    }
+
+    return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
   }
 
   /**
@@ -271,7 +235,7 @@ export default class BaseBrushTool extends BaseTool {
     const element = eventData.element;
 
     this._drawing = false;
-    this.configuration.mouseUpRender = true;
+    this._mouseUpRender = true;
 
     this._stopListeningForMouseUp(element);
   }

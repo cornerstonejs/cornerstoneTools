@@ -9,6 +9,7 @@ import isToolActive from '../tools/shared/isToolActive.js';
 import KeyboardController from './shared/KeyboardController.js';
 // State
 import { getToolState, addToolState } from './../stateManagement/toolState.js';
+import { getters } from './../store/index.js';
 import store from '../store/index.js';
 
 const brushState = store.modules.brush;
@@ -21,72 +22,7 @@ export default class BrushTool extends BaseBrushTool {
       supportedInteractionTypes: ['mouse'],
       configuration: defaultBrushToolConfiguration()
     });
-
-    this._newImage = false;
-    this._changeDrawColor(brushState.getters.draw());
   }
-
-  /**
-   * Used to redraw the tool's annotation data per render.
-   *
-   * @override
-   * @param {Object} evt - The event.
-   * @returns
-   */
-  renderToolData (evt) {
-    const eventData = evt.detail;
-
-    const element = eventData.element;
-    let toolData = getToolState(element, this.referencedToolData);
-    let pixelData;
-
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this.referencedToolData, { pixelData });
-      toolData = getToolState(element, this.referencedToolData);
-    }
-
-    // Draw previous image, unless this is a new image, then don't!
-    if (this._imageBitmap && !this._newImage) {
-      this._drawImageBitmap(evt);
-    }
-
-    if (this._newImage) {
-      this._newImage = false;
-    }
-
-    if (isToolActive(element, this.name)) {
-      // Call the hover event for the brush
-      this.renderBrush(evt);
-    }
-
-    if (!toolData.data[0].invalidated) {
-      return;
-    }
-
-    const colormapId = brushState.getters.colorMapId();
-    const colormap = cornerstone.colors.getColormap(colormapId);
-    const colorLut = colormap.createLookupTable();
-
-    const imageData = new ImageData(eventData.image.width, eventData.image.height);
-    const image = {
-      stats: {},
-      minPixelValue: 0,
-      getPixelData: () => pixelData
-    };
-
-    cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLut.Table, imageData.data);
-
-    window.createImageBitmap(imageData).then((newImageBitmap) => {
-      this._imageBitmap = newImageBitmap;
-      toolData.data[0].invalidated = false;
-
-      external.cornerstone.updateImage(eventData.element);
-    });
-  }
-
 
   /**
   * Called by the event dispatcher to render the image.
@@ -96,12 +32,23 @@ export default class BrushTool extends BaseBrushTool {
   renderBrush (evt) {
     const eventData = evt.detail;
 
-    if (!this._lastImageCoords) {
+    let mousePosition;
+
+    if (this._drawing) {
+      mousePosition = this._lastImageCoords;
+    } else if (this._mouseUpRender) {
+      mousePosition = this._lastImageCoords;
+      this._mouseUpRender = false;
+    } else {
+      mousePosition = getters.mousePositionImage();
+    }
+
+    if (!mousePosition) {
       return;
     }
 
     const { rows, columns } = eventData.image;
-    const { x, y } = this._lastImageCoords;
+    const { x, y } = mousePosition;
 
     if (x < 0 || x > columns ||
       y < 0 || y > rows) {
@@ -112,13 +59,14 @@ export default class BrushTool extends BaseBrushTool {
     const configuration = this._configuration;
     const radius = brushState.getters.radius();
     const context = eventData.canvasContext;
-    const color = this._drawing ? configuration.dragColor : configuration.hoverColor;
     const element = eventData.element;
+    const drawId = brushState.getters.draw();
+    const color = this._getBrushColor(drawId);
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     const { cornerstone } = external;
-    const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, this._lastImageCoords);
+    const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, mousePosition);
     const canvasTopLeft = cornerstone.pixelToCanvas(element, {
       x: 0,
       y: 0
@@ -203,8 +151,6 @@ export default class BrushTool extends BaseBrushTool {
 
 function defaultBrushToolConfiguration () {
   return {
-    hoverColor: toolColors.getToolColor(),
-    dragColor: toolColors.getActiveColor(),
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',
