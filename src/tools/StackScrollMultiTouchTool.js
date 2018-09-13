@@ -6,7 +6,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
 export default class extends baseTool {
-  constructor (name = 'stackScrollMultiTouch') {
+  constructor (name = 'StackScrollMultiTouch') {
     super({
       name,
       supportedInteractionTypes: ['touch'],

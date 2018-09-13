@@ -19,8 +19,8 @@ const mockEvent = {
 
 describe('stackScrollMultiTouchTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "stackScrollMultiTouch"', () => {
-      const defaultName = 'stackScrollMultiTouch';
+    it('has a default name of "StackScrollMultiTouch"', () => {
+      const defaultName = 'StackScrollMultiTouch';
       const instantiatedTool = new StackScrollMultiTouchTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
