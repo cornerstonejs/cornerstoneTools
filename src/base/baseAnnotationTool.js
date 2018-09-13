@@ -7,7 +7,7 @@ import handleActivator from './../manipulators/handleActivator.js';
 import {
   moveHandleNearImagePoint,
   moveAnnotationNearClick
-} from './baseAnnotationToolHelpers.js';
+} from '../util/findAndMoveHelpers.js';
 
 export default class BaseAnnotationTool extends BaseTool {
   constructor ({
