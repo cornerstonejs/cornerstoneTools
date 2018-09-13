@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint no-underscore-dangle: 0 */
-import baseTool from '../base/baseTool.js';
+import baseTool from '../base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
