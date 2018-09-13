@@ -134,6 +134,10 @@ export default function brushTool (brushToolInterface) {
     return false;
   }
 
+  function mouseDoubleClickCallback (e) {
+    brushToolInterface.onMouseDoubleClick(e);
+  }
+
   function mouseDownActivateCallback (e) {
     const eventData = e.detail;
     const element = eventData.element;
@@ -143,6 +147,7 @@ export default function brushTool (brushToolInterface) {
       element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
       element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
       element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+      element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClickCallback);
       brushToolInterface.onMouseDown(e);
 
       return false;
@@ -290,6 +295,7 @@ export default function brushTool (brushToolInterface) {
     element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClickCallback);
     element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
 
     element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
