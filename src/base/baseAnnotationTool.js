@@ -1,4 +1,4 @@
-import baseTool from './baseTool.js';
+import BaseTool from './BaseTool.js';
 // State
 import { getToolState } from './../stateManagement/toolState.js';
 // Manipulators
@@ -9,7 +9,7 @@ import {
   moveAnnotationNearClick
 } from './baseAnnotationToolHelpers.js';
 
-export default class extends baseTool {
+export default class BaseAnnotationTool extends BaseTool {
   constructor ({
     name,
     strategies,

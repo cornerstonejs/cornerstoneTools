@@ -1,15 +1,15 @@
 /* eslint class-methods-use-this: 0 */
 /* eslint no-underscore-dangle: 0 */
 import external from '../externalModules.js';
-import baseTool from '../base/baseTool.js';
+import BaseTool from '../base/BaseTool.js';
 import {
   getToolState,
   removeToolState
 } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
-export default class extends baseTool {
-  constructor (name = 'eraser') {
+export default class EraserTool extends BaseTool {
+  constructor (name = 'Eraser') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

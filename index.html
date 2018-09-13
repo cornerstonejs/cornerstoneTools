@@ -39,36 +39,36 @@
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="annotation">
-				<li><a href="#" data-tool="arrowAnnotate">ArrowAnnotate</a></li>
-				<li><a href="#" data-tool="angle">Angle</a></li>
-				<li><a href="#" data-tool="ellipticalRoi">EllipticalRoi</a></li>
-				<li><a href="#" data-tool="eraser">Eraser</a></li>
-				<li><a href="#" data-tool="freehandMouse">FreehandMouse</a></li>
-				<li><a href="#" data-tool="freehandSculpterMouse">FreehandSculpterMouse</a></li>
-				<li><a href="#" data-tool="brush">Brush</a></li>
-				<li><a href="#" data-tool="brushEraser">brushEraser</a></li>
-				<li><a href="#" data-tool="textMarker">TextMarker</a></li>
-				<li><a href="#" data-tool="length">Length</a></li>
-				<li><a href="#" data-tool="probe">Probe</a></li>
-				<li><a href="#" data-tool="rectangleRoi">RectangleRoi</a></li>
+				<li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
+				<li><a href="#" data-tool="Angle">Angle</a></li>
+				<li><a href="#" data-tool="EllipticalRoi">EllipticalRoi</a></li>
+				<li><a href="#" data-tool="Eraser">Eraser</a></li>
+				<li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
+				<li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
+				<li><a href="#" data-tool="Brush">Brush</a></li>
+				<li><a href="#" data-tool="BrushEraser">brushEraser</a></li>
+				<li><a href="#" data-tool="TextMarker">TextMarker</a></li>
+				<li><a href="#" data-tool="Length">Length</a></li>
+				<li><a href="#" data-tool="Probe">Probe</a></li>
+				<li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="drag">
-				<li><a href="#" data-tool="crosshairs">Crosshairs</a></li>
-				<li><a href="#" data-tool="magnify">Magnify</a></li>
-				<li><a href="#" data-tool="pan">Pan</a></li>
-				<li><a href="#" data-tool="rotate">Rotate</a></li>
-				<li><a href="#" data-tool="stackScroll">StackScroll</a></li>
-				<li><a href="#" data-tool="wwwc">WWWC</a></li>
-				<li><a href="#" data-tool="wwwcRegion">WWWCRegion</a></li>
-				<li><a href="#" data-tool="zoom">Zoom</a></li>
+				<li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
+				<li><a href="#" data-tool="Magnify">Magnify</a></li>
+				<li><a href="#" data-tool="Pan">Pan</a></li>
+				<li><a href="#" data-tool="Rotate">Rotate</a></li>
+				<li><a href="#" data-tool="StackScroll">StackScroll</a></li>
+				<li><a href="#" data-tool="Wwwc">WWWC</a></li>
+				<li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
+				<li><a href="#" data-tool="Zoom">Zoom</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="multitouch-pinch">
-				<li><a href="#" data-tool="panMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
-				<li><a href="#" data-tool="zoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
+				<li><a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
+				<li><a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="stackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="zoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
+				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="overlay">
 				<li>
@@ -77,7 +77,7 @@
 						<label class="label-on"> ON</label>
 						<label class="label-off"> OFF</label>
 					</label>
-					<input id="scaleOverlayCheckbox" class="hide" data-tool="scaleOverlay" data-tool-type="none" type="checkbox" />
+					<input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-type="none" type="checkbox" />
 				</li>
 			</ul>
 
@@ -137,7 +137,7 @@
 
 	function setAllToolsPassive() {
 		const exceptionList = [
-			'scaleOverlay'
+			'ScaleOverlay'
 		];
 		cTools.store.state.tools.forEach((tool) => {
 			if (!exceptionList.includes(tool.name)) {
@@ -167,6 +167,10 @@
 		// Add the tool
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
+
+		console.log(toolName);
+		console.log(apiTool);
+
 		if (apiTool) {
 			cTools.addTool(apiTool);
 		} else {
@@ -207,6 +211,9 @@
 		const toolName = toolCheckBox.getAttribute('data-tool');
 		const toolLabel = document.querySelector(`#${toolName}`);
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
+		console.log(toolName);
+		console.log(apiTool);
+
 		if (apiTool) {
 			cTools.addTool(apiTool);
 		}
@@ -219,6 +226,7 @@
 			} else {
 				cTools.setToolDisabled(toolName);
 			}
+			const toolLabel = document.querySelector('#scaleOverlay');
 			toolLabel.classList.toggle('turned-on');
 		});
 	});
@@ -293,7 +301,7 @@
 
 	// Find all and configure each textMarkers
 	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
-		if (element.name === 'textMarker') {
+		if (element.name === 'TextMarker') {
 			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
 			element.configuration.current= 'F5';
 			element.configuration.ascending= true;

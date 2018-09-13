@@ -1,4 +1,4 @@
-import WwwcRegionTool from './wwwcRegionTool.js';
+import WwwcRegionTool from './WwwcRegionTool.js';
 
 jest.mock('./../util/drawing.js', () => ({
   draw: jest.fn(),
@@ -18,10 +18,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-describe('wwwcRegionTool.js', () => {
+describe('WwwcRegionTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "wwwcRegion"', () => {
-      const defaultName = 'wwwcRegion';
+    it('has a default name of "WwwcRegion"', () => {
+      const defaultName = 'WwwcRegion';
       const instantiatedTool = new WwwcRegionTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

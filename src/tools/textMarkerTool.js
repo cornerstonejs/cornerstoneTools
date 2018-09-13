@@ -1,6 +1,6 @@
 /* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import external from '../externalModules.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -8,8 +8,8 @@ import drawTextBox from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'textMarker') {
+export default class TextMarkerTool extends BaseAnnotationTool {
+  constructor (name = 'TextMarker') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch'],

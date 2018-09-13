@@ -1,7 +1,7 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import textStyle from '../stateManagement/textStyle.js';
 import {
@@ -27,8 +27,8 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'angle') {
+export default class AngleTool extends BaseAnnotationTool {
+  constructor (name = 'Angle') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

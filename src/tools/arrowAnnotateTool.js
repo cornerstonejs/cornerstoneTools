@@ -2,7 +2,7 @@
 /* eslint class-methods-use-this: 0 */ // --> OFF
 /* eslint no-alert: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -23,8 +23,8 @@ import { mutations } from '../store/index.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'arrowAnnotate') {
+export default class ArrowAnnotateTool extends BaseAnnotationTool {
+  constructor (name = 'ArrowAnnotate') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch'],

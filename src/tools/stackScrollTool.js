@@ -1,12 +1,12 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint no-underscore-dangle: 0 */
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
-export default class extends baseTool {
-  constructor (name = 'stackScroll') {
+export default class StackScrollTool extends BaseTool {
+  constructor (name = 'StackScroll') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch'],

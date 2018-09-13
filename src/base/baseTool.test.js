@@ -1,4 +1,4 @@
-import BaseTool from './baseTool.js';
+import BaseTool from './BaseTool.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
@@ -13,7 +13,7 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-describe('baseTool.js', () => {
+describe('BaseTool.js', () => {
   describe('default values', () => {
     it('has a default mode of "disabled"', () => {
       const instantiatedTool = new BaseTool();

@@ -1,6 +1,6 @@
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
-import baseBrushTool from './../base/baseBrushTool.js';
+import BaseBrushTool from './../base/BaseBrushTool.js';
 import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
@@ -12,38 +12,10 @@ import { getToolState, addToolState } from './../stateManagement/toolState.js';
 import store from '../store/index.js';
 
 const brushState = store.modules.brush;
-
 const cornerstone = external.cornerstone;
 
-/* Safari and Edge polyfill for createImageBitmap
- * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
- */
-
- if (!('createImageBitmap' in window)) {
-   window.createImageBitmap = async function (imageData) {
-     return new Promise((resolve) => {
-       const img = document.createElement('img');
-
-       img.addEventListener('load', function () {
-
-         resolve(this);
-       });
-
-       const conversionCanvas = document.createElement('canvas');
-
-       conversionCanvas.width = imageData.width;
-       conversionCanvas.height = imageData.height;
-
-       const conversionCanvasContext = conversionCanvas.getContext('2d');
-
-       conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
-       img.src = conversionCanvas.toDataURL();
-     });
-   };
- }
-
-export default class extends baseBrushTool {
-  constructor (name = 'brush') {
+export default class BrushTool extends BaseBrushTool {
+  constructor (name = 'Brush') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
@@ -65,15 +37,15 @@ export default class extends baseBrushTool {
     const eventData = evt.detail;
 
     const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
+    let toolData = getToolState(element, this.referencedToolData);
     let pixelData;
 
     if (toolData) {
       pixelData = toolData.data[0].pixelData;
     } else {
       pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+      addToolState(element, this.referencedToolData, { pixelData });
+      toolData = getToolState(element, this.referencedToolData);
     }
 
     // Draw previous image, unless this is a new image, then don't!
@@ -175,7 +147,7 @@ export default class extends baseBrushTool {
     const element = eventData.element;
     const { rows, columns } = eventData.image;
     const { x, y } = eventData.currentPoints.image;
-    let toolData = getToolState(element, this._referencedToolData);
+    let toolData = getToolState(element, this.referencedToolData);
 
     let pixelData;
 
@@ -183,8 +155,8 @@ export default class extends baseBrushTool {
       pixelData = toolData.data[0].pixelData;
     } else {
       pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+      addToolState(element, this.referencedToolData, { pixelData });
+      toolData = getToolState(element, this.referencedToolData);
     }
 
     const brushPixelValue = brushState.getters.draw();
@@ -213,13 +185,13 @@ export default class extends baseBrushTool {
   newImageCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
-    let toolData = getToolState(element, this._referencedToolData);
+    let toolData = getToolState(element, this.referencedToolData);
 
     if (!toolData) {
       const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
 
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+      addToolState(element, this.referencedToolData, { pixelData });
+      toolData = getToolState(element, this.referencedToolData);
     }
 
     toolData.data[0].invalidated = true;
@@ -240,4 +212,32 @@ function defaultBrushToolConfiguration () {
       previousSegmentation: ']'
     }
   };
+}
+
+
+/* Safari and Edge polyfill for createImageBitmap
+ * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
+ */
+
+if (!('createImageBitmap' in window)) {
+ window.createImageBitmap = async function (imageData) {
+   return new Promise((resolve) => {
+     const img = document.createElement('img');
+
+     img.addEventListener('load', function () {
+
+       resolve(this);
+     });
+
+     const conversionCanvas = document.createElement('canvas');
+
+     conversionCanvas.width = imageData.width;
+     conversionCanvas.height = imageData.height;
+
+     const conversionCanvasContext = conversionCanvas.getContext('2d');
+
+     conversionCanvasContext.putImageData(imageData, 0, 0, 0, 0, conversionCanvas.width, conversionCanvas.height);
+     img.src = conversionCanvas.toDataURL();
+   });
+ };
 }

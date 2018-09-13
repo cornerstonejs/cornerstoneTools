@@ -1,4 +1,4 @@
-import RectangleRoiTool from './rectangleRoiTool.js';
+import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
@@ -29,7 +29,7 @@ const goodMouseEventData = {
   }
 };
 
-describe('rectangleRoiTool.js', () => {
+describe('RectangleRoiTool.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -38,8 +38,8 @@ describe('rectangleRoiTool.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "rectangleRoi"', () => {
-      const defaultName = 'rectangleRoi';
+    it('has a default name of "RectangleRoi"', () => {
+      const defaultName = 'RectangleRoi';
       const instantiatedTool = new RectangleRoiTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

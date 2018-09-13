@@ -8,12 +8,10 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 import getToolForElement from '../store/getToolForElement.js';
-import baseTool from '../base/baseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
-const referencedToolName = 'freehandMouse';
-
-export default class extends baseTool {
-  constructor (name = 'freehandSculpterMouse') {
+export default class FreehandSculpterMouseTool extends BaseTool {
+  constructor (name = 'FreehandSculpterMouse', referencedToolName = 'FreehandMouse') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
@@ -21,6 +19,7 @@ export default class extends baseTool {
     });
 
     this.hasCursor = true;
+    this.referencedToolName = referencedToolName;
 
     // Bind _onNewImageCallback so that the tool can
     // Be reset when changing whilst active.
@@ -102,7 +101,7 @@ export default class extends baseTool {
     }
 
     const eventData = evt.detail;
-    const toolState = getToolState(eventData.element, referencedToolName);
+    const toolState = getToolState(eventData.element, this.referencedToolName);
 
     if (!toolState) {
       return;
@@ -204,7 +203,7 @@ export default class extends baseTool {
     const config = this.configuration;
     const context = eventData.canvasContext.canvas.getContext('2d');
 
-    const toolState = getToolState(element, referencedToolName);
+    const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[config.currentTool];
 
     let coords;
@@ -216,7 +215,7 @@ export default class extends baseTool {
       coords = getters.mousePositionImage();
     }
 
-    const freehandMouseTool = getToolForElement(element, referencedToolName);
+    const freehandMouseTool = getToolForElement(element, this.referencedToolName);
     let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
 
     config.mouseLocation.handles.start.x = coords.x;
@@ -267,7 +266,7 @@ export default class extends baseTool {
   _selectFreehandTool (eventData) {
     const config = this.configuration;
     const element = eventData.element;
-    const closestToolIndex = this.constructor._getClosestFreehandToolOnElement(element, eventData);
+    const closestToolIndex = this._getClosestFreehandToolOnElement(element, eventData);
 
     if (closestToolIndex === undefined) {
       return;
@@ -285,7 +284,7 @@ export default class extends baseTool {
   */
 
   _activateFreehandTool (element, toolIndex) {
-    const toolState = getToolState(element, referencedToolName);
+    const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data;
     const config = this.configuration;
 
@@ -629,10 +628,10 @@ export default class extends baseTool {
     const toolIndex = config.currentTool;
     const coords = eventData.currentPoints.image;
 
-    const toolState = getToolState(element, referencedToolName);
+    const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[toolIndex];
 
-    const freehandMouseTool = getToolForElement(element, referencedToolName);
+    const freehandMouseTool = getToolForElement(element, this.referencedToolName);
 
     let radiusImage = freehandMouseTool.distanceFromPoint(element, data, coords);
     let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
@@ -704,7 +703,7 @@ export default class extends baseTool {
   _invalidateToolData (eventData) {
     const config = this.configuration;
     const element = eventData.element;
-    const toolData = getToolState(element, referencedToolName);
+    const toolData = getToolState(element, this.referencedToolName);
     const data = toolData.data[config.currentTool];
 
     data.invalidated = true;
@@ -718,7 +717,7 @@ export default class extends baseTool {
   */
   _deselectAllTools (element) {
     const config = this.configuration;
-    const toolData = getToolState(element, referencedToolName);
+    const toolData = getToolState(element, this.referencedToolName);
 
     config.currentTool = null;
 
@@ -800,7 +799,7 @@ export default class extends baseTool {
     const image = eventData.image;
     const config = this.configuration;
 
-    const toolState = getToolState(element, referencedToolName);
+    const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[config.currentTool];
 
     let areaModifier = 1.0;
@@ -830,14 +829,18 @@ export default class extends baseTool {
   * data on the element.
   *
   * @private
-  * @static
   * @param {Object} element - The element.
   * @param {Object} eventData - Data object associated with the event.
   * @return {Number} The tool index of the closest freehand tool.
   */
-  static _getClosestFreehandToolOnElement (element, eventData) {
-    const freehand = getToolForElement(element, referencedToolName);
-    const toolState = getToolState(element, referencedToolName);
+  _getClosestFreehandToolOnElement (element, eventData) {
+    const freehand = getToolForElement(element, this.referencedToolName);
+    const toolState = getToolState(element, this.referencedToolName);
+
+    if (!toolState) {
+      return;
+    }
+
     const data = toolState.data;
     const pixelCoords = eventData.currentPoints.image;
 

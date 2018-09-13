@@ -1,4 +1,4 @@
-import LengthTool from './lengthTool.js';
+import LengthTool from './LengthTool.js';
 import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
@@ -29,7 +29,7 @@ const goodMouseEventData = {
   }
 };
 
-describe('lengthTool.js', () => {
+describe('LengthTool.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -38,8 +38,8 @@ describe('lengthTool.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "length"', () => {
-      const defaultName = 'length';
+    it('has a default name of "Length"', () => {
+      const defaultName = 'Length';
       const instantiatedTool = new LengthTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

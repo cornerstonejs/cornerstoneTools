@@ -1,7 +1,42 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 import angleBetweenPoints from './shared/angleBetweenPoints.js';
+
+export default class RotateTool extends BaseTool {
+  constructor (name = 'Rotate') {
+    const strategies = {
+      default: defaultStrategy,
+      horizontal: horizontalStrategy,
+      vertical: verticalStrategy
+    };
+
+    super({
+      name,
+      strategies,
+      defaultStrategy: 'default',
+      supportedInteractionTypes: ['mouse', 'touch']
+    });
+  }
+
+  touchDragCallback (evt) {
+    this.dragCallback(evt);
+  }
+
+  mouseDragCallback (evt) {
+    this.dragCallback(evt);
+  }
+
+  postMouseDownCallback (evt) {
+    this.initialRotation = evt.detail.viewport.rotation;
+  }
+
+  dragCallback (evt) {
+    evt.detail.viewport.initialRotation = this.initialRotation;
+    this.applyActiveStrategy(evt, this.configuration);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+}
 
 const defaultStrategy = (evt) => {
   const eventData = evt.detail;
@@ -53,38 +88,3 @@ const verticalStrategy = (evt) => {
 
   viewport.rotation += deltaPoints.page.y / viewport.scale;
 };
-
-export default class extends baseTool {
-  constructor (name) {
-    const strategies = {
-      default: defaultStrategy,
-      horizontal: horizontalStrategy,
-      vertical: verticalStrategy
-    };
-
-    super({
-      name: name || 'rotate',
-      strategies,
-      defaultStrategy: 'default',
-      supportedInteractionTypes: ['mouse', 'touch']
-    });
-  }
-
-  touchDragCallback (evt) {
-    this.dragCallback(evt);
-  }
-
-  mouseDragCallback (evt) {
-    this.dragCallback(evt);
-  }
-
-  postMouseDownCallback (evt) {
-    this.initialRotation = evt.detail.viewport.rotation;
-  }
-
-  dragCallback (evt) {
-    evt.detail.viewport.initialRotation = this.initialRotation;
-    this.applyActiveStrategy(evt, this.configuration);
-    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
-  }
-}

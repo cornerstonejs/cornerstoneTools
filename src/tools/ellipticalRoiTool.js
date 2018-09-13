@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
@@ -16,8 +16,8 @@ import calculateSUV from '../util/calculateSUV.js';
 //
 import numberWithCommas from './shared/numbersWithCommas.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'ellipticalRoi') {
+export default class EllipticalRoiTool extends BaseAnnotationTool {
+  constructor (name = 'EllipticalRoi') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

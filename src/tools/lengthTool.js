@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
@@ -12,8 +12,8 @@ import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'length') {
+export default class LengthTool extends BaseAnnotationTool {
+  constructor (name = 'Length') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

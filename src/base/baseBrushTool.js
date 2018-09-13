@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import EVENTS from './../events.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 // Utils
 import isToolActive from '../tools/shared/isToolActive.js';
 import { getNewContext } from '../util/drawing.js';
@@ -8,7 +8,7 @@ import store from '../store/index.js';
 
 const brushState = store.modules.brush;
 
-export default class extends baseTool {
+export default class BaseBrushTool extends BaseTool {
   constructor ({
     name,
     strategies,
@@ -25,7 +25,7 @@ export default class extends baseTool {
     });
 
     this.hasCursor = true;
-    this._referencedToolData = 'brush';
+    this.referencedToolData = 'brush';
 
     this._drawing = false;
 

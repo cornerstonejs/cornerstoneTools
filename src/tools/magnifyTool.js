@@ -4,10 +4,10 @@ import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import { clipToBox } from '../util/clip.js';
 import { getNewContext, fillBox } from '../util/drawing.js';
-import baseTool from '../base/baseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
-export default class extends baseTool {
-  constructor (name = 'magnify') {
+export default class MagnifyTool extends BaseTool {
+  constructor (name = 'Magnify') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch'],

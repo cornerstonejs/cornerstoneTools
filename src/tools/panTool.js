@@ -1,9 +1,9 @@
 /* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 
-export default class extends baseTool {
-  constructor (name = 'pan') {
+export default class PanTool extends BaseTool {
+  constructor (name = 'Pan') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

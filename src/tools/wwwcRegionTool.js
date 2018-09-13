@@ -1,15 +1,15 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 // Drawing
 import { draw, drawRect, getNewContext } from '../util/drawing.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from './../stateManagement/toolColors.js';
 
-export default class extends baseTool {
-  constructor (name = 'wwwcRegion') {
+export default class wwwcRegionTool extends BaseTool {
+  constructor (name = 'WwwcRegion') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch'],

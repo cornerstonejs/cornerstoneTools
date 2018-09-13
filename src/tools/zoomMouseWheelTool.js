@@ -1,9 +1,9 @@
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 import { changeViewportScale } from './shared/zoom.js';
 
-export default class extends baseTool {
-  constructor (name = 'zoomMouseWheel') {
+export default class ZoomMouseWheelTool extends BaseTool {
+  constructor (name = 'ZoomMouseWheel') {
     super({
       name,
       // TODO: Do we need a better way to specify mouseWheel?

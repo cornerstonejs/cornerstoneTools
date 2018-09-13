@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
-import StackScrollTool from './stackScrollTool.js';
+import StackScrollTool from './StackScrollTool.js';
 import scroll from '../util/scroll.js';
 
 jest.mock('../util/scroll.js');
@@ -28,10 +28,10 @@ const mockEvent = {
   }
 };
 
-describe('stachScroll.js', () => {
+describe('StachScroll.js', () => {
   describe('default values', () => {
-    it('has a default name of "stackScroll"', () => {
-      const defaultName = 'stackScroll';
+    it('has a default name of "StackScroll"', () => {
+      const defaultName = 'StackScroll';
       const instantiatedTool = new StackScrollTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

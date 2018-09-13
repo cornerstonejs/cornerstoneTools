@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint no-underscore-dangle: 0 */
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 import external from './../externalModules.js';
 
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -9,8 +9,8 @@ import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
 
-export default class extends baseTool {
-  constructor (name = 'crosshairs') {
+export default class CrosshairsTool extends BaseTool {
+  constructor (name = 'Crosshairs') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']

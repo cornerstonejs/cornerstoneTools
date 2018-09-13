@@ -1,4 +1,4 @@
-import RotateTool from './rotateTool.js';
+import RotateTool from './RotateTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
@@ -22,10 +22,10 @@ const mockEvt = {
   }
 };
 
-describe('rotateTool.js', () => {
+describe('RotateTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "rotate"', () => {
-      const defaultName = 'rotate';
+    it('has a default name of "Rotate"', () => {
+      const defaultName = 'Rotate';
       const instantiatedTool = new RotateTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

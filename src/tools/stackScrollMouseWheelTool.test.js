@@ -1,4 +1,4 @@
-import StackScrollMouseWheelTool from './stackScrollMouseWheelTool.js';
+import StackScrollMouseWheelTool from './StackScrollMouseWheelTool.js';
 import scroll from '../util/scroll.js';
 
 jest.mock('../util/scroll.js');
@@ -22,10 +22,10 @@ const mockEvent = {
   }
 };
 
-describe('stachScroll.js', () => {
+describe('StachScrollMouseWheelTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "stackScrollMouseWheel"', () => {
-      const defaultName = 'stackScrollMouseWheel';
+    it('has a default name of "StackScrollMouseWheel"', () => {
+      const defaultName = 'StackScrollMouseWheel';
       const instantiatedTool = new StackScrollMouseWheelTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

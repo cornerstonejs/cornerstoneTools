@@ -1,4 +1,4 @@
-import EllipticalRoiTool from './ellipticalRoiTool.js';
+import EllipticalRoiTool from './EllipticalRoiTool.js';
 import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
@@ -29,7 +29,7 @@ const goodMouseEventData = {
   }
 };
 
-describe('ellipticalRoiTool.js', () => {
+describe('EllipticalRoiTool.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -38,8 +38,8 @@ describe('ellipticalRoiTool.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "ellipticalRoi"', () => {
-      const defaultName = 'ellipticalRoi';
+    it('has a default name of "EllipticalRoi"', () => {
+      const defaultName = 'EllipticalRoi';
       const instantiatedTool = new EllipticalRoiTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

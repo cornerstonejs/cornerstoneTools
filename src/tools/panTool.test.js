@@ -1,4 +1,4 @@
-import PanTool from './panTool.js';
+import PanTool from './PanTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
@@ -15,10 +15,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-describe('panTool.js', () => {
+describe('PanTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "pan"', () => {
-      const defaultName = 'pan';
+    it('has a default name of "Pan"', () => {
+      const defaultName = 'Pan';
       const instantiatedTool = new PanTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

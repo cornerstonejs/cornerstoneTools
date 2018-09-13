@@ -1,4 +1,4 @@
-import ScaleOverlayTool from './scaleOverlay.js';
+import ScaleOverlayTool from './ScaleOverlayTool.js';
 import external from './../externalModules.js';
 import { getNewContext } from '../util/drawing.js';
 
@@ -25,15 +25,15 @@ jest.mock('../util/drawing.js', () => ({
 
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
-describe('scaleOverlay.js', () => {
+describe('ScaleOverlayTool.js', () => {
   beforeEach(() => {
     console.warn = jest.fn();
     console.warn.mockClear();
   });
 
   describe('default values', () => {
-    it('has a default name of "scaleOverlay"', () => {
-      const defaultName = 'scaleOverlay';
+    it('has a default name of "ScaleOverlay"', () => {
+      const defaultName = 'ScaleOverlay';
       const instantiatedTool = new ScaleOverlayTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

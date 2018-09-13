@@ -1,4 +1,4 @@
-import ProbeTool from './probeTool.js';
+import ProbeTool from './ProbeTool.js';
 import { getToolState } from './../stateManagement/toolState.js';
 
 jest.mock('./../manipulators/drawHandles.js');
@@ -29,7 +29,7 @@ const goodMouseEventData = {
   }
 };
 
-describe('probeTool.js', () => {
+describe('ProbeTool.js', () => {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -38,8 +38,8 @@ describe('probeTool.js', () => {
   });
 
   describe('default values', () => {
-    it('has a default name of "probe"', () => {
-      const defaultName = 'probe';
+    it('has a default name of "Probe"', () => {
+      const defaultName = 'Probe';
       const instantiatedTool = new ProbeTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

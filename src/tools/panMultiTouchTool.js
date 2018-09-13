@@ -1,10 +1,10 @@
 /* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
-import baseTool from '../base/baseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
-export default class extends baseTool {
-  constructor (name = 'panMultiTouch') {
+export default class PanMultiTouchTool extends BaseTool {
+  constructor (name = 'PanMultiTouch') {
     super({
       name,
       supportedInteractionTypes: ['touch'],

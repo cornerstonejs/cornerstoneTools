@@ -1,6 +1,6 @@
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
-import baseBrushTool from './../base/baseBrushTool.js';
+import BaseBrushTool from './../base/BaseBrushTool.js';
 import toolColors from './../stateManagement/toolColors.js';
 // Utils
 import getCircle from './shared/brushUtils/getCircle.js';
@@ -12,8 +12,8 @@ import { getters } from './../store/index.js';
 
 const brushState = store.modules.brush;
 
-export default class extends baseBrushTool {
-  constructor (name = 'brushEraser') {
+export default class BrushEraserTool extends BaseBrushTool {
+  constructor (name = 'BrushEraser') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
@@ -93,7 +93,7 @@ export default class extends baseBrushTool {
     const element = eventData.element;
     const { rows, columns } = eventData.image;
     const { x, y } = eventData.currentPoints.image;
-    let toolData = getToolState(element, this._referencedToolData);
+    let toolData = getToolState(element, this.referencedToolData);
 
     let pixelData;
 
@@ -101,8 +101,8 @@ export default class extends baseBrushTool {
       pixelData = toolData.data[0].pixelData;
     } else {
       pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this._referencedToolData, { pixelData });
-      toolData = getToolState(element, this._referencedToolData);
+      addToolState(element, this.referencedToolData, { pixelData });
+      toolData = getToolState(element, this.referencedToolData);
     }
 
     const radius = brushState.getters.radius();

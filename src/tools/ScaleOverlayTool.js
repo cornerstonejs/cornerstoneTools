@@ -1,106 +1,14 @@
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
-/**
- * Computes the max bound for scales on the image
- * @param  {} canvasSize
- * @param  {} horizontalReduction
- * @param  {} verticalReduction
- */
-const computeScaleBounds = (canvasSize, horizontalReduction, verticalReduction) => {
-  const hReduction = horizontalReduction * Math.min(1000, canvasSize.width);
-  const vReduction = verticalReduction * Math.min(1000, canvasSize.height);
-  const canvasBounds = {
-    left: hReduction,
-    top: vReduction,
-    width: canvasSize.width - 2 * hReduction,
-    height: canvasSize.height - 2 * vReduction
-  };
-
-  return {
-    topLeft: {
-      x: canvasBounds.left,
-      y: canvasBounds.top
-    },
-    bottomRight: {
-      x: canvasBounds.left + canvasBounds.width,
-      y: canvasBounds.top + canvasBounds.height
-    }
-  };
-};
-
-/**
- * @param  {} context
- * @param  {} imageAttributes
- */
-const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
-  let i = 0;
-
-  while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
-    const { color, lineWidth } = imageAttributes;
-    const startPoint = {
-      x: imageAttributes.verticalLine.start.x,
-      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
-    };
-
-    const endPoint = {
-      x: 0,
-      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
-    };
-
-    if (i % 5 === 0) {
-      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
-    } else {
-      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
-    }
-
-    drawLine(context, element, startPoint, endPoint, {
-      color,
-      lineWidth
-    }, 'canvas');
-
-    i++;
-  }
-};
-
-const drawHorizontalScalebarIntervals = (context, element, imageAttributes) => {
-  let i = 0;
-
-  while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
-    const { color, lineWidth } = imageAttributes;
-    const startPoint = {
-      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
-      y: imageAttributes.horizontalLine.start.y
-    };
-
-    const endPoint = {
-      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
-      y: 0
-    };
-
-    if (i % 5 === 0) {
-      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.majorTickLength;
-    } else {
-      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
-    }
-
-    drawLine(context, element, startPoint, endPoint, {
-      color,
-      lineWidth
-    }, 'canvas');
-
-    i++;
-  }
-};
-
-export default class extends baseTool {
-  constructor (name) {
+export default class ScaleOverlayTool extends BaseTool {
+  constructor (name = 'ScaleOverlay') {
     super({
-      name: name || 'scaleOverlay',
+      name,
       configuration: {
         minorTickLength: 12.5,
         majorTickLength: 25
@@ -216,3 +124,95 @@ export default class extends baseTool {
     });
   }
 }
+
+/**
+ * Computes the max bound for scales on the image
+ * @param  {} canvasSize
+ * @param  {} horizontalReduction
+ * @param  {} verticalReduction
+ */
+const computeScaleBounds = (canvasSize, horizontalReduction, verticalReduction) => {
+  const hReduction = horizontalReduction * Math.min(1000, canvasSize.width);
+  const vReduction = verticalReduction * Math.min(1000, canvasSize.height);
+  const canvasBounds = {
+    left: hReduction,
+    top: vReduction,
+    width: canvasSize.width - 2 * hReduction,
+    height: canvasSize.height - 2 * vReduction
+  };
+
+  return {
+    topLeft: {
+      x: canvasBounds.left,
+      y: canvasBounds.top
+    },
+    bottomRight: {
+      x: canvasBounds.left + canvasBounds.width,
+      y: canvasBounds.top + canvasBounds.height
+    }
+  };
+};
+
+/**
+ * @param  {} context
+ * @param  {} imageAttributes
+ */
+const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
+  let i = 0;
+
+  while (imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick <= imageAttributes.vscaleBounds.bottomRight.y) {
+    const { color, lineWidth } = imageAttributes;
+    const startPoint = {
+      x: imageAttributes.verticalLine.start.x,
+      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
+    };
+
+    const endPoint = {
+      x: 0,
+      y: imageAttributes.verticalLine.start.y + i * imageAttributes.verticalMinorTick
+    };
+
+    if (i % 5 === 0) {
+      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.majorTickLength;
+    } else {
+      endPoint.x = imageAttributes.verticalLine.start.x - imageAttributes.minorTickLength;
+    }
+
+    drawLine(context, element, startPoint, endPoint, {
+      color,
+      lineWidth
+    }, 'canvas');
+
+    i++;
+  }
+};
+
+const drawHorizontalScalebarIntervals = (context, element, imageAttributes) => {
+  let i = 0;
+
+  while (imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick <= imageAttributes.hscaleBounds.bottomRight.x) {
+    const { color, lineWidth } = imageAttributes;
+    const startPoint = {
+      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
+      y: imageAttributes.horizontalLine.start.y
+    };
+
+    const endPoint = {
+      x: imageAttributes.horizontalLine.start.x + i * imageAttributes.horizontalMinorTick,
+      y: 0
+    };
+
+    if (i % 5 === 0) {
+      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.majorTickLength;
+    } else {
+      endPoint.y = imageAttributes.horizontalLine.start.y - imageAttributes.minorTickLength;
+    }
+
+    drawLine(context, element, startPoint, endPoint, {
+      color,
+      lineWidth
+    }, 'canvas');
+
+    i++;
+  }
+};

@@ -2,7 +2,7 @@ import external from './../externalModules.js';
 import KeyboardController from '../tools/shared/KeyboardController.js';
 import isToolActive from '../tools/shared/isToolActive.js';
 
-export default class {
+export default class BaseTool {
   constructor ({
     name,
     strategies,

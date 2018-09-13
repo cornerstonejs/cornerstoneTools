@@ -1,9 +1,9 @@
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
 import { correctShift } from './shared/zoom.js';
 
-export default class extends baseTool {
-  constructor (name = 'zoomTouchPinch') {
+export default class ZoomTouchPinchTool extends BaseTool {
+  constructor (name = 'ZoomTouchPinch') {
     super({
       name,
       // TODO: Do we need a better way to specify touchPinch?

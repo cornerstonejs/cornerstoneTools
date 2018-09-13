@@ -1,10 +1,10 @@
 import external from '../externalModules.js';
-import baseTool from '../base/baseTool.js';
+import BaseTool from '../base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import { correctShift, changeViewportScale } from './shared/zoom.js';
 
-export default class extends baseTool {
-  constructor (name = 'zoom') {
+export default class ZoomTool extends BaseTool {
+  constructor (name = 'Zoom') {
     const strategies = {
       default: defaultStrategy,
       translate: translateStrategy,

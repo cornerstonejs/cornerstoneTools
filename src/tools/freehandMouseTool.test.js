@@ -1,4 +1,4 @@
-import FreehandMouseTool from './freehandMouseTool.js';
+import FreehandMouseTool from './FreehandMouseTool.js';
 import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
 import freehandArea from './shared/freehandUtils/freehandArea.js';
 import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
@@ -34,7 +34,7 @@ const goodMouseEventData = {
 };
 
 
-describe('freehandMouseTool.js', function () {
+describe('FreehandMouseTool.js', function () {
   beforeEach(() => {
     console.error = jest.fn();
     console.error.mockClear();
@@ -43,8 +43,8 @@ describe('freehandMouseTool.js', function () {
   });
 
   describe('default values', () => {
-    it('has a default name of "freehandMouse"', () => {
-      const defaultName = 'freehandMouse';
+    it('has a default name of "FreehandMouse"', () => {
+      const defaultName = 'FreehandMouse';
       const instantiatedTool = new FreehandMouseTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

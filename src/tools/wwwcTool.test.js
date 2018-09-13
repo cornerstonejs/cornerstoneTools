@@ -1,4 +1,4 @@
-import WwwcTool from './wwwcTool.js';
+import WwwcTool from './WwwcTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
@@ -16,10 +16,10 @@ jest.mock('./../externalModules.js', () => ({
 }));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
-describe('wwwcTool.js', () => {
+describe('WwwcTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "wwwcTool"', () => {
-      const defaultName = 'wwwc';
+    it('has a default name of "Wwwc"', () => {
+      const defaultName = 'Wwwc';
       const instantiatedTool = new WwwcTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

@@ -1,5 +1,5 @@
 /* eslint no-underscore-dangle: 0 */
-import PanMultiTouchTool from './panMultiTouchTool.js';
+import PanMultiTouchTool from './PanMultiTouchTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
@@ -17,8 +17,8 @@ jest.mock('./../externalModules.js', () => ({
 }));
 describe('PanMultiTouchTool.js', () => {
   describe('default values', () => {
-    it('has a default name of "panMultiTouch"', () => {
-      const defaultName = 'panMultiTouch';
+    it('has a default name of "PanMultiTouch"', () => {
+      const defaultName = 'PanMultiTouch';
       const instantiatedTool = new PanMultiTouchTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);

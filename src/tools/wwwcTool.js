@@ -1,5 +1,34 @@
 import external from './../externalModules.js';
-import baseTool from './../base/baseTool.js';
+import BaseTool from './../base/BaseTool.js';
+
+export default class WwwcTool extends BaseTool {
+  constructor (name = 'Wwwc') {
+    const strategies = {
+      basicLevelingStrategy
+    };
+
+    super({
+      name,
+      strategies,
+      supportedInteractionTypes: ['mouse', 'touch'],
+      configuration: {
+        orientation: 0
+      }
+    });
+  }
+
+  mouseDragCallback (evt) {
+    this.applyActiveStrategy(evt);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+
+  touchDragCallback (evt) {
+    // Prevent CornerstoneToolsTouchStartActive from killing any press events
+    evt.stopImmediatePropagation();
+    this.applyActiveStrategy(evt);
+    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+}
 
 /**
  * Here we normalize the ww/wc adjustments so the same number of on screen pixels
@@ -30,34 +59,5 @@ function basicLevelingStrategy (evt, { orientation }) {
   } else {
     eventData.viewport.voi.windowWidth += deltaY;
     eventData.viewport.voi.windowCenter += deltaX;
-  }
-}
-
-export default class extends baseTool {
-  constructor (name = 'wwwc') {
-    const strategies = {
-      basicLevelingStrategy
-    };
-
-    super({
-      name,
-      strategies,
-      supportedInteractionTypes: ['mouse', 'touch'],
-      configuration: {
-        orientation: 0
-      }
-    });
-  }
-
-  mouseDragCallback (evt) {
-    this.applyActiveStrategy(evt);
-    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
-  }
-
-  touchDragCallback (evt) {
-    // Prevent CornerstoneToolsTouchStartActive from killing any press events
-    evt.stopImmediatePropagation();
-    this.applyActiveStrategy(evt);
-    external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }

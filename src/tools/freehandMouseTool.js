@@ -2,7 +2,7 @@
 /* eslint no-underscore-dangle: 0 */
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
-import baseAnnotationTool from './../base/baseAnnotationTool.js';
+import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
 // State
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import toolStyle from './../stateManagement/toolStyle.js';
@@ -25,9 +25,9 @@ import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
 
-export default class extends baseAnnotationTool {
+export default class FreehandMouseTool extends BaseAnnotationTool {
 
-  constructor (name = 'freehandMouse') {
+  constructor (name = 'FreehandMouse') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],

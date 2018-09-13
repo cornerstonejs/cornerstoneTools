@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from '../stateManagement/toolState.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -14,8 +14,8 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 
-export default class extends baseAnnotationTool {
-  constructor (name = 'probe') {
+export default class ProbeTool extends BaseAnnotationTool {
+  constructor (name = 'Probe') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']
