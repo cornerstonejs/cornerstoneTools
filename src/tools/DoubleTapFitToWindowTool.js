@@ -1,9 +1,9 @@
 /* eslint class-methods-use-this: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseTool from '../base/baseTool.js';
+import baseTool from '../base/BaseTool.js';
 
 export default class extends baseTool {
-  constructor (name = 'doubleTapZoom') {
+  constructor (name = 'DoubleTapFitToWindow') {
     super({
       name,
       supportedInteractionTypes: ['touch']
