@@ -26,7 +26,6 @@ import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
 
 export default class FreehandMouseTool extends BaseAnnotationTool {
-
   constructor (name = 'FreehandMouse') {
     super({
       name,
