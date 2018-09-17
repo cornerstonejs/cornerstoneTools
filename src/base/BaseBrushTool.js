@@ -266,6 +266,9 @@ export default class BaseBrushTool extends BaseTool {
     external.cornerstone.updateImage(element);
   }
 
+  //===================================================================
+  // Segmentation API. This is effectively a wrapper around the store.
+  //===================================================================
 
   /**
    * Returns the number of colors in the colormap.
@@ -278,6 +281,72 @@ export default class BaseBrushTool extends BaseTool {
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
 
     return colormap.getNumberOfColors();
+  }
+
+  /**
+   * Displays a segmentation on the element.
+   *
+   * @public @static
+   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @param  {Number} segIndex        The index of the segmentation.
+   */
+  static showSegmentationOnElement (enabledElement, segIndex) {
+    const enabledElementUID = enabledElement.toolDataUID;
+
+    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Hides a segmentation on an element.
+   *
+   * @public @static
+   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @param  {Number} segIndex        The index of the segmentation.
+   */
+  static hideSegmentationOnElement (enabledElement, segIndex) {
+    const enabledElementUID = enabledElement.toolDataUID;
+
+    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Displays all segmentations on an element.
+   *
+   * @public @static
+   * @param  {String} enabledElement  The enabledElement on which to display.
+   */
+  static showAllSegmentationsOnElement (enabledElement) {
+    const enabledElementUID = enabledElement.toolDataUID;
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const numberOfColors = colormap.getNumberOfColors();
+
+    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
+      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+    }
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Hides all segmentations on an element.
+   *
+   * @public @static
+   * @param  {String} enabledElement  The enabledElement on which to display.
+   */
+  static hideAllSegmentationsOnElement (enabledElement) {
+    const enabledElementUID = enabledElement.toolDataUID;
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const numberOfColors = colormap.getNumberOfColors();
+
+    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
+      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+    }
+
+    external.cornerstone.updateImage(enabledElement.element);
   }
 
   /**

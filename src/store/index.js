@@ -17,7 +17,11 @@ export const getters = {
     state.tools.filter((tool) =>
       tool.supportedInteractionTypes.includes('touch')
     ),
-  mousePositionImage: () => state.mousePositionImage
+  mousePositionImage: () => state.mousePositionImage,
+  enabledElementByUID: (enabledElementUID) =>
+    state.enabledElements.filter((enabledElement) =>
+      enabledElement.toolDataUID === enabledElementUID
+    )
 };
 
 export const setters = {
@@ -32,6 +36,10 @@ export const mutations = {
   },
   ADD_ENABLED_ELEMENT: (enabledElement) => {
     state.enabledElements.push(enabledElement);
+
+    if (brush) {
+      brush.mutations.SET_ELEMENT_VISIBLE(enabledElement);
+    }
   }
 };
 

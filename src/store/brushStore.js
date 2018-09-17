@@ -6,8 +6,10 @@ const state = {
   minRadius: 1,
   maxRadius: 50,
   alpha: 0.4,
+  renderBrushIfHiddenButActive: true,
+  hiddenButActiveAlpha: 0.2,
   colorMapId: 'BrushColorMap',
-
+  visibleSegmentations: {},
   imageBitmapCache: {}
 };
 
@@ -45,17 +47,35 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
-  /*
-  SET_ELEMENT_BRUSH_VISIBILITY: (enabledElementUID, segmentationIndex, visible = true) => {
-    const
+  SET_ELEMENT_VISIBLE: (enabledElement) => {
+    if (!external.cornerstone) {
+      return;
+    }
+
+    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
+    const enabledElementUID = cornerstoneEnabledElement.toolDataUID;
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+    const numberOfColors = colormap.getNumberOfColors();
+
+    state.visibleSegmentations[enabledElementUID] = [];
+
+    for (let i = 0; i < numberOfColors; i++) {
+      state.visibleSegmentations[enabledElementUID].push(true);
+    }
   },
-  */
-  SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, segmentationIndex, imageBitmap) => {
+  SET_ELEMENT_BRUSH_VISIBILITY: (enabledElementUID, segIndex, visible = true) => {
+    if (!state.visibleSegmentations[enabledElementUID]) {
+      state.imageBitmapCache[enabledElementUID] = [];
+    }
+
+    state.visibleSegmentations[enabledElementUID][segIndex] = visible;
+  },
+  SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, segIndex, imageBitmap) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
 
-    state.imageBitmapCache[enabledElementUID][segmentationIndex] = imageBitmap;
+    state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
   },
   CLEAR_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID) => {
     state.imageBitmapCache[enabledElementUID] = [];
@@ -69,13 +89,21 @@ const getters = {
   minRadius: () => state.minRadius,
   maxRadius: () => state.maxRadius,
   alpha: () => state.alpha,
+  hiddenButActiveAlpha: () => state.hiddenButActiveAlpha,
   colorMapId: () => state.colorMapId,
-  imageBitmapCacheForElement: (enabledElementUID, segmentationIndex) => {
+  imageBitmapCacheForElement: (enabledElementUID) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       return null;
     }
 
-    return state.imageBitmapCache[enabledElementUID][segmentationIndex];
+    return state.imageBitmapCache[enabledElementUID];
+  },
+  visibleSegmentationsForElement: (enabledElementUID) => {
+    if (!state.visibleSegmentations[enabledElementUID]) {
+      return null;
+    }
+
+    return state.visibleSegmentations[enabledElementUID];
   }
 };
 
@@ -109,7 +137,7 @@ const DISTINCT_COLORS = [
 
 // DEFAULT BRUSH COLOR MAP
 if (external.cornerstone && external.cornerstone.colors) {
-  const defaultSegmentationCount = 100;
+  const defaultSegmentationCount = 19;
   const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
   colormap.setNumberOfColors(defaultSegmentationCount);

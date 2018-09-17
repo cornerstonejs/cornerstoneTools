@@ -19,9 +19,8 @@ import external from '../externalModules';
 // TODO: Then we could just respond to those events and not worry about tracking/lifecycle
 export default function (enabledElement) {
 
-  // TODO -> I know we are horribly piggy-backing off Cornerstone here, UUID
+  // TODO -> We are piggy-backing off Cornerstone here, UUID
   // Generation should go core later, this is more of a POC.
-  // Plus Erik is on holiday so we're safe for now.
   // NOTE: the 'enabledElement' argument here is actually the DOM element...
   const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
 
