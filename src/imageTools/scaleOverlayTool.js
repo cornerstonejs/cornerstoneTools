@@ -1,5 +1,4 @@
 import displayTool from './displayTool.js';
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { getNewContext, draw, drawLines, drawLine } from '../util/drawing.js';
 
@@ -207,7 +206,7 @@ function onImageRendered (e) {
 
 function disable (element) {
   // TODO: displayTool does not have cornerstone.updateImage(element) method to hide tool
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
