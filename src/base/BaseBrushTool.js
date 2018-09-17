@@ -78,12 +78,10 @@ export default class BaseBrushTool extends BaseTool {
   * @event
   * @param {Object} evt - The event.
   */
-  postMouseDownCallback (evt) {
+  preMouseDownCallback (evt) {
     this._startPainting(evt);
 
-    evt.preventDefault();
-    evt.stopPropagation();
-    evt.stopImmediatePropagation();
+    return true;
   }
 
   /**
