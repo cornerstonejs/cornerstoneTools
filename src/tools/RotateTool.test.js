@@ -2,16 +2,7 @@ import RotateTool from './RotateTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
+  cornerstone: {}
 }));
 
 const mockEvt = {
