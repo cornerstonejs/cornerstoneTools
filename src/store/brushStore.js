@@ -7,6 +7,7 @@ const state = {
   maxRadius: 50,
   alpha: 0.4,
   colorMapId: 'BrushColorMap',
+
   imageBitmapCache: {}
 };
 
@@ -44,6 +45,11 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
+  /*
+  SET_ELEMENT_BRUSH_VISIBILITY: (enabledElementUID, segmentationIndex, visible = true) => {
+    const
+  },
+  */
   SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, segmentationIndex, imageBitmap) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
@@ -79,28 +85,71 @@ export default {
   mutations
 };
 
+const DISTINCT_COLORS = [
+  [230, 25, 75, 255],
+  [60, 180, 175, 255],
+  [255, 225, 25, 255],
+  [0, 130, 200, 255],
+  [245, 130, 48, 255],
+  [145, 30, 180, 255],
+  [70, 240, 240, 255],
+  [240, 50, 230, 255],
+  [210, 245, 60, 255],
+  [250, 190, 190, 255],
+  [0, 128, 128, 255],
+  [230, 190, 255, 255],
+  [170, 110, 40, 255],
+  [255, 250, 200, 255],
+  [128, 0, 0, 255],
+  [170, 255, 195, 255],
+  [128, 128, 0, 255],
+  [255, 215, 180, 255],
+  [0, 0, 128, 255]
+];
+
 // DEFAULT BRUSH COLOR MAP
 if (external.cornerstone && external.cornerstone.colors) {
+  const defaultSegmentationCount = 100;
   const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
-  colormap.setNumberOfColors(19);
-  colormap.setColor(0, [230, 25, 75, 255]);
-  colormap.setColor(1, [60, 180, 175, 255]);
-  colormap.setColor(2, [255, 225, 25, 255]);
-  colormap.setColor(3, [0, 130, 200, 255]);
-  colormap.setColor(4, [245, 130, 48, 255]);
-  colormap.setColor(5, [145, 30, 180, 255]);
-  colormap.setColor(6, [70, 240, 240, 255]);
-  colormap.setColor(7, [240, 50, 230, 255]);
-  colormap.setColor(8, [210, 245, 60, 255]);
-  colormap.setColor(9, [250, 190, 190, 255]);
-  colormap.setColor(10, [0, 128, 128, 255]);
-  colormap.setColor(11, [230, 190, 255, 255]);
-  colormap.setColor(12, [170, 110, 40, 255]);
-  colormap.setColor(13, [255, 250, 200, 255]);
-  colormap.setColor(14, [128, 0, 0, 255]);
-  colormap.setColor(15, [170, 255, 195, 255]);
-  colormap.setColor(16, [128, 128, 0, 255]);
-  colormap.setColor(17, [255, 215, 180, 255]);
-  colormap.setColor(18, [0, 0, 128, 255]);
+  colormap.setNumberOfColors(defaultSegmentationCount);
+
+  /*
+    19 Colors selected to be as distinct from each other as possible,
+    and ordered such that between each index you make large jumps around the
+    color wheel. If defaultSegmentationCount is greater than 19, generate a
+    random linearly interperlated color between 2 colors.
+  */
+  for (let i = 0; i < defaultSegmentationCount; i++) {
+    if (i < DISTINCT_COLORS.length) {
+      colormap.setColor(i, DISTINCT_COLORS[i]);
+    } else {
+      colormap.setColor(i, generateInterpolatedColor());
+    }
+  }
+}
+
+function generateInterpolatedColor () {
+  const randIndicies = [
+    getRandomInt(DISTINCT_COLORS.length),
+    getRandomInt(DISTINCT_COLORS.length)
+  ];
+
+  const fraction = Math.random();
+  const interpolatedColor = [];
+
+  for (let j = 0; j < 4; j++) {
+    interpolatedColor.push(
+      Math.floor(
+        fraction * DISTINCT_COLORS[randIndicies[0]][j]
+        + (1.0 - fraction) * DISTINCT_COLORS[randIndicies[1]][j]
+      )
+    );
+  }
+
+  return interpolatedColor;
+}
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
 }

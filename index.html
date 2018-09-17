@@ -176,9 +176,6 @@
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 
-		console.log(toolName);
-		console.log(apiTool);
-
 		if (apiTool) {
 			cTools.addTool(apiTool);
 		} else {
@@ -219,8 +216,6 @@
 		const toolName = toolCheckBox.getAttribute('data-tool');
 		const toolLabel = document.querySelector(`#${toolName}`);
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
-		console.log(toolName);
-		console.log(apiTool);
 
 		if (apiTool) {
 			cTools.addTool(apiTool);
