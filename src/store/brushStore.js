@@ -79,9 +79,9 @@ export default {
   mutations
 };
 
-
 // DEFAULT BRUSH COLOR MAP
-const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+if (external.cornerstone && external.cornerstone.colors) {
+  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
 colormap.setNumberOfColors(19);
 colormap.setColor(0, [230, 25, 75, 255]);

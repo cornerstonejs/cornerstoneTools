@@ -8,14 +8,6 @@ jest.mock('./../externalModules.js', () => ({
     updateImage: jest.fn(),
     metaData: {
       get: jest.fn()
-    },
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
     }
   }
 }));
