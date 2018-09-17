@@ -1,23 +1,5 @@
 import WwwcRegionTool from './WwwcRegionTool.js';
 
-jest.mock('./../util/drawing.js', () => ({
-  draw: jest.fn(),
-  drawRect: jest.fn(),
-  getNewContext: jest.fn()
-}));
-jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
-}));
-
 describe('WwwcRegionTool.js', () => {
   describe('default values', () => {
     it('has a default name of "WwwcRegion"', () => {

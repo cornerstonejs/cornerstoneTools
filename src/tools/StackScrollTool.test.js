@@ -3,18 +3,6 @@ import StackScrollTool from './StackScrollTool.js';
 import scroll from '../util/scroll.js';
 
 jest.mock('../util/scroll.js');
-jest.mock('./../externalModules.js', () => ({
-  cornerstone: {
-    colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
-}));
 
 const mockEvent = {
   detail: {
