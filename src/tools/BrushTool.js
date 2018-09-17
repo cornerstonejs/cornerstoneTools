@@ -97,7 +97,13 @@ export default class BrushTool extends BaseBrushTool {
     const { x, y } = eventData.currentPoints.image;
     let toolData = getToolState(element, this.referencedToolData);
 
-    // TODO - Draw to the toolData that relates to the index.
+    let shouldErase = false;
+
+    // Check for key, could be a mouseDown or mouseDrag event.
+    if (this._isCtrlDown(eventData)) {
+      console.log('ctrlDown');
+      shouldErase = true;
+    }
 
     const segmentationIndex = brushState.getters.draw();
 
@@ -118,11 +124,15 @@ export default class BrushTool extends BaseBrushTool {
 
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    drawBrushPixels(pointerArray, pixelData, segmentationIndex, columns);
+    drawBrushPixels(pointerArray, pixelData, segmentationIndex, columns, shouldErase);
 
     toolData.data[segmentationIndex].invalidated = true;
 
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  _isCtrlDown (eventData) {
+    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
   }
 
 }
