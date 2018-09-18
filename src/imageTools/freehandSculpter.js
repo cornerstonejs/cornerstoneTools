@@ -336,11 +336,11 @@ function activate (element, mouseButtonMask) {
   freehand.enable(element);
 
   removeEventListeners(element);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.addEventListener(EVENTS.KEY_UP, keyUpCallback);
-  element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   element.focus();
   external.cornerstone.updateImage(element);
@@ -364,13 +364,13 @@ function deactivate (element) {
 * @modifies {element}
 */
 function removeEventListeners (element) {
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 }
 
 /**

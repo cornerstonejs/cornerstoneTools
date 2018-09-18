@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import clip from './clip.js';
@@ -20,7 +19,7 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
 
       if (index === pendingEvent.index) {
         stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+        element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageHandler);
 
         if (stackData.pending.length > 0) {
           scrollWithoutSkipping(stackData, stackData.pending[0], element);
@@ -28,7 +27,7 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       }
     };
 
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+    element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageHandler);
 
     scrollToIndex(element, pendingEvent.index);
   }

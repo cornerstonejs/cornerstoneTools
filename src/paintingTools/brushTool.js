@@ -210,8 +210,8 @@ export default function brushTool (brushToolInterface) {
   function activate (element, mouseButtonMask) {
     setToolOptions(toolType, element, { mouseButtonMask });
 
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-    element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
@@ -292,13 +292,13 @@ export default function brushTool (brushToolInterface) {
   }
 
   function deactivate (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, mouseDoubleClickCallback);
     element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
     const configuration = brushTool.getConfiguration();
 

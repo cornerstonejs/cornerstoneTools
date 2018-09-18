@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import renderActiveReferenceLine from './renderActiveReferenceLine.js';
@@ -49,14 +48,14 @@ function enable (element, synchronizationContext, renderer) {
     renderer
   });
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
 // Disables the reference line tool for the given element
 function disable (element) {
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 

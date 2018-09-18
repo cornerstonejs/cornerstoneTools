@@ -51,7 +51,7 @@ function mouseDownCallback (e) {
     element.addEventListener(EVENTS.TOUCH_END, mouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+    element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
     // Ignore until next event
     drawZoomedElement(eventData);
@@ -76,7 +76,7 @@ function dragEndCallback (e) {
 
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
   element.removeEventListener(EVENTS.TOUCH_END, dragEndCallback);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
   hideTool(eventData);
 }
 

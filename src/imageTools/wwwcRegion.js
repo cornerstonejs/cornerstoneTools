@@ -253,8 +253,8 @@ function disable (element) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
@@ -278,15 +278,15 @@ function activate (element, mouseButtonMask) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
-  element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
@@ -296,7 +296,7 @@ function disableTouchDrag (element) {
   element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function activateTouchDrag (element) {
@@ -311,12 +311,12 @@ function activateTouchDrag (element) {
   element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
   element.addEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.addEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.addEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function getConfiguration () {

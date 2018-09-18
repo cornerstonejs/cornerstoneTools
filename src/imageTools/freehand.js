@@ -1032,7 +1032,7 @@ function onImageRendered (e) {
 function enable (element) {
   removeEventListeners(element);
 
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
 
@@ -1058,7 +1058,7 @@ function activate (element, mouseButtonMask) {
 
   removeEventListeners(element);
 
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
@@ -1088,7 +1088,7 @@ function deactivate (element, mouseButtonMask) {
 
   removeEventListeners(element);
 
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
   element.addEventListener(EVENTS.KEY_DOWN, keyDownCallback);
@@ -1109,7 +1109,7 @@ function removeEventListeners (element) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
 }

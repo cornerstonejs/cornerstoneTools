@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -293,22 +292,22 @@ function enable (element) {
 
   prefetch(element);
 
-  element.removeEventListener(EVENTS.NEW_IMAGE, onImageUpdated);
-  element.addEventListener(EVENTS.NEW_IMAGE, onImageUpdated);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
+  element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
 
   const promiseRemovedHandler = getPromiseRemovedHandler(element);
 
-  external.cornerstone.events.removeEventListener(EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
-  external.cornerstone.events.addEventListener(EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
+  external.cornerstone.events.removeEventListener(external.cornerstone.EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
+  external.cornerstone.events.addEventListener(external.cornerstone.EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
 }
 
 function disable (element) {
   clearTimeout(resetPrefetchTimeout);
-  element.removeEventListener(EVENTS.NEW_IMAGE, onImageUpdated);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
 
   const promiseRemovedHandler = getPromiseRemovedHandler(element);
 
-  external.cornerstone.events.removeEventListener(EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
+  external.cornerstone.events.removeEventListener(external.cornerstone.EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
 
   const stackPrefetchData = getToolState(element, toolType);
   // If there is actually something to disable, disable it

@@ -163,7 +163,7 @@ function mouseUpCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedCallback);
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
@@ -176,7 +176,7 @@ function mouseDownCallback (e) {
   const options = getToolOptions(toolType, element);
 
   if (isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-    element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, dragCallback);
     element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
@@ -212,14 +212,14 @@ function touchStartCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
 
-  element.addEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedCallback);
 }
 
 function touchEndCallback (e) {
   const eventData = e.detail;
   const element = eventData.element;
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, imageRenderedCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedCallback);
 
   external.cornerstone.updateImage(element);
 }
