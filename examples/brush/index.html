@@ -46,13 +46,94 @@
 			<ul class "brush-api">
 				<li><a href="#" brush-api-call="hide-all">Hide All Segmentations</a></li>
 				<li><a href="#" brush-api-call="show-all">Show All Segmentations</a></li>
-				<li><a href="#" brush-api-call="show-five">Show Segmentation 5</a></li>
-				<li><a href="#" brush-api-call="hide-five">Hide Segmentation 5</a></li>
+				<li><a href="#" brush-api-call="hide-third">Hide 3rd Segmentation</a></li>
+				<li><a href="#" brush-api-call="show-third">Show 3rd Segmentation</a></li>
 			</ul>
 
 			<!-- Our beautiful element targets -->
 			<div class="cornerstone-element-wrapper-brush">
-				<div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
+				<div class="cornerstone-element-brush" data-index="0" oncontextmenu="return false"></div>
+				<div class="brush-help">
+					<h1>Brush Tool</h1>
+					<table>
+						<tr>
+							<th>Mouse Input</th>
+							<td>
+								<table>
+									<tr>
+										<td>Click and drag to use the paint with the selected segmentation.</td>
+									</tr>
+									<tr>
+										<td>Release the mouse to stop painting.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th>Keyboard Input</th>
+							<td>
+								<table>
+									<tr>
+										<td>Next Segmentation:</td>
+										<td>]</td>
+									</tr>
+									<tr>
+										<td>Previous Segmentation:</td>
+										<td>[</td>
+									</tr>
+									<tr>
+										<td>Increase Brush Size:</td>
+										<td>+</td>
+									</tr>
+									<tr>
+										<td>Decrease Brush Size :</td>
+										<td>-</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					<h1>Brush Tool API</h1>
+					<table>
+						<tr>
+							<th>Hide All Segmentations</th>
+							<td>
+								Hides all segmentations unless that segmentation is actively being drawn.
+							</td>
+						</tr>
+						<tr>
+							<th>Show All Segmentations</th>
+							<td>
+								Shows all segmentations on the canvas, all the time.
+							</td>
+						</tr>
+						<tr>
+							<th>Hide 3rd Segmentation</th>
+							<td>
+								An example of hiding a single segmentation. Hide's the 3rd (yellow) segmentation. When hidden it can only be seen whilst actively being drawn.
+							</td>
+						</tr>
+						<tr>
+							<th>Show 3rd Segmentation</th>
+							<td><p>
+								An example of un-hiding a single segmentation. Unhide's the 3rd (yellow) segmentation.
+							</p></td>
+						</tr>
+
+						<tr>
+							<th>Alpha</th>
+							<td>
+								<input type="range" id="alpha" min="0" max="255">
+							<td>
+						</tr>
+						<tr>
+							<th>Alpha When Hidden But Active</th>
+							<td>
+								<input type="range" id="alphaWhenHiddenButActive" min="0">
+							<td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -85,23 +166,20 @@
 	};
 
 	// Enable & Setup all of our elements
-	const elements = document.querySelectorAll('.cornerstone-element');
-	Array.from(elements).forEach(element => {
-		// TODO: if we emitted an event when this happened, cornerstone-tools
-		// TODO: could use it to init itself
-		cornerstone.enable(element);
-		cTools.addEnabledElement(element);
+	const element = document.querySelector('.cornerstone-element-brush');
 
-		element.tabIndex = 0;
-		element.focus();
+	cornerstone.enable(element);
+	cTools.addEnabledElement(element);
 
-		cornerstone.loadImage(imageIds[0]).then(function (image) {
-			cornerstone.displayImage(element, image);
+	element.tabIndex = 0;
+	element.focus();
 
-			cornerstoneTools.addStackStateManager(element, ['stack']);
-			cornerstoneTools.addToolState(element, 'stack', stack);
-		});
-	})
+	cornerstone.loadImage(imageIds[0]).then(function (image) {
+		cornerstone.displayImage(element, image);
+
+		cornerstoneTools.addStackStateManager(element, ['stack']);
+		cornerstoneTools.addToolState(element, 'stack', stack);
+	});
 
 	function setAllToolsPassive() {
 		cTools.store.state.tools.forEach((tool) => {
@@ -128,12 +206,10 @@
 	const brushApiButtons = document.querySelectorAll('a[brush-api-call]');
 	Array.from(brushApiButtons).forEach(apiBtn => {
 		const apiCall = apiBtn.getAttribute('brush-api-call');
-		console.log(apiCall);
 
 		apiBtn.addEventListener('mousedown', (evt) => {
 			brushApiCall(apiCall);
 		});
-
 	});
 
 	// Iterate over all tool buttons
@@ -262,24 +338,54 @@
 		return 0;
 	}
 
+	// BRUSH TOOL API //
+
+	const brushTool = cTools.getToolForElement(element, 'Brush');
+
 	function brushApiCall (opperation) {
 		switch (opperation) {
 			case 'hide-all':
 				console.log('hide-all');
+				brushTool.hideAllSegmentationsOnElement();
 				break;
 			case 'show-all':
 				console.log('show-all');
+				brushTool.showAllSegmentationsOnElement();
 				break;
-			case 'hide-five':
-				console.log('hide-five');
+			case 'hide-third':
+				console.log('hide-third');
+				brushTool.hideSegmentationOnElement(2); //Zero-indexed
 				break;
-			case 'show-five':
-				console.log('show-five');
+			case 'show-third':
+				console.log('show-third');
+				brushTool.showSegmentationOnElement(2); //Zero-indexed
 				break;
 			default:
 				return;
 		}
 	}
+
+	// API Sliders
+
+	const alphaSlider = document.getElementById("alpha");
+	const alphaWhenHiddenButActiveSlider = document.getElementById("alphaWhenHiddenButActive");
+
+	alphaSlider.defaultValue = Math.floor(0.4*255);
+	alphaWhenHiddenButActiveSlider.defaultValue = Math.floor(0.2*255);
+
+	alphaSlider.addEventListener('input', event => {
+		const normalisedAlpha = event.target.value/255.0;
+
+		console.log(normalisedAlpha);
+		brushTool.setAlpha(normalisedAlpha);
+	});
+
+	alphaWhenHiddenButActiveSlider.addEventListener('input', event => {
+		const normalisedAlpha = event.target.value/255.0;
+
+		console.log(normalisedAlpha);
+		brushTool.setHiddenButActiveAlpha(normalisedAlpha);
+	});
 
 
 </script>

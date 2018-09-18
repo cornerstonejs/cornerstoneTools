@@ -286,11 +286,12 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Displays a segmentation on the element.
    *
-   * @public @static
+   * @public @api
    * @param  {String} enabledElement  The enabledElement on which to display.
    * @param  {Number} segIndex        The index of the segmentation.
    */
-  static showSegmentationOnElement (enabledElement, segIndex) {
+  showSegmentationOnElement (segIndex) {
+    const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.toolDataUID;
 
     brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
@@ -301,25 +302,24 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Hides a segmentation on an element.
    *
-   * @public @static
-   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @public @api
    * @param  {Number} segIndex        The index of the segmentation.
    */
-  static hideSegmentationOnElement (enabledElement, segIndex) {
+  hideSegmentationOnElement (segIndex) {
+    const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.toolDataUID;
 
     brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
-
     external.cornerstone.updateImage(enabledElement.element);
   }
 
   /**
    * Displays all segmentations on an element.
    *
-   * @public @static
-   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @public @api
    */
-  static showAllSegmentationsOnElement (enabledElement) {
+  showAllSegmentationsOnElement () {
+    const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.toolDataUID;
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
@@ -334,10 +334,10 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Hides all segmentations on an element.
    *
-   * @public @static
-   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @public @api
    */
-  static hideAllSegmentationsOnElement (enabledElement) {
+  hideAllSegmentationsOnElement () {
+    const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.toolDataUID;
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
@@ -347,6 +347,25 @@ export default class BaseBrushTool extends BaseTool {
     }
 
     external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  setAlpha (value) {
+    const enabledElement = this._getEnabledElement();
+
+    brushState.mutations.SET_ALPHA(value);
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  setHiddenButActiveAlpha (value) {
+    const enabledElement = this._getEnabledElement();
+
+    brushState.mutations.SET_HIDDEN_BUT_ACTIVE_ALPHA(value);
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+
+  _getEnabledElement () {
+    return external.cornerstone.getEnabledElement(this.element);
   }
 
   /**

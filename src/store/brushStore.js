@@ -32,6 +32,9 @@ const mutations = {
   SET_ALPHA: (alpha) => {
     state.alpha = alpha;
   },
+  SET_HIDDEN_BUT_ACTIVE_ALPHA: (alpha) => {
+    state.hiddenButActiveAlpha = alpha;
+  },
 
   /**
    * Sets the brush color map to something other than the default
