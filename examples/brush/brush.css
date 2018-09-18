@@ -1,0 +1,10 @@
+.cornerstone-element-wrapper-brush {
+  width: 50%;
+  /* calc(full page - toolbarHeight * 2) */
+  height: calc(100% - 190px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}

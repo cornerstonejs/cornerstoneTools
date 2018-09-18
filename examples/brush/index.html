@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="../reset.css">
 	<link rel="stylesheet" href="../app.css">
 	<link rel="stylesheet" href="../icon-classes.css">
+	<link rel="stylesheet" href="brush.css">
 	<style>
 		/**
 		 * ~~ MagnifyTool:
@@ -30,22 +31,27 @@
 		<div class="wrapper">
 			<!-- Select Tool Category -->
 			<ul class="tool-category-list">
-				<li><a class="tools" data-category="tools" href="#">Annotation</a></li>
+				<li><a class="tools" data-category="tools" href="#">Brush</a></li>
 				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
-				<li><a data-category="api" href="#">api</a></li>
 			</ul>
 
 			<!-- Select Active Tool -->
-			<ul class="tool-category active" data-tool-category="annotation">
+			<ul class="tool-category active" data-tool-category="tools">
 				<li><a href="#" data-tool="Brush">Brush</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
 				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
 			</ul>
+			<ul class "brush-api">
+				<li><a href="#" brush-api-call="hide-all">Hide All Segmentations</a></li>
+				<li><a href="#" brush-api-call="show-all">Show All Segmentations</a></li>
+				<li><a href="#" brush-api-call="show-five">Show Segmentation 5</a></li>
+				<li><a href="#" brush-api-call="hide-five">Hide Segmentation 5</a></li>
+			</ul>
 
 			<!-- Our beautiful element targets -->
-			<div class="cornerstone-element-wrapper">
+			<div class="cornerstone-element-wrapper-brush">
 				<div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
 			</div>
 		</div>
@@ -117,6 +123,18 @@
 			setToolCategoryActive(categoryName);
 		});
 	})
+
+	// API calls
+	const brushApiButtons = document.querySelectorAll('a[brush-api-call]');
+	Array.from(brushApiButtons).forEach(apiBtn => {
+		const apiCall = apiBtn.getAttribute('brush-api-call');
+		console.log(apiCall);
+
+		apiBtn.addEventListener('mousedown', (evt) => {
+			brushApiCall(apiCall);
+		});
+
+	});
 
 	// Iterate over all tool buttons
 	const toolButtons = document.querySelectorAll('a[data-tool]');
@@ -226,8 +244,6 @@
 		});
 	}
 
-	console.log(cTools);
-
 	const convertMouseEventWhichToButtons = (which) => {
 		switch (which) {
 			// no button
@@ -245,6 +261,27 @@
 		}
 		return 0;
 	}
+
+	function brushApiCall (opperation) {
+		switch (opperation) {
+			case 'hide-all':
+				console.log('hide-all');
+				break;
+			case 'show-all':
+				console.log('show-all');
+				break;
+			case 'hide-five':
+				console.log('hide-five');
+				break;
+			case 'show-five':
+				console.log('show-five');
+				break;
+			default:
+				return;
+		}
+	}
+
+
 </script>
 
 </html>
