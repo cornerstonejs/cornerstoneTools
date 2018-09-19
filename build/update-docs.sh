@@ -13,11 +13,11 @@ cd ..
 # Grab our current gh-pages files
 # Remove it's version 3, and move it to our _book
 git clone -b gh-pages --single-branch git@github.com:cornerstonejs/cornerstoneTools.git _live-book/
-rm -rf _live_book/v3.0.0/
+rm -rf _live-book/v3.0.0/
 mv -v _live-book/* _book/
 
 # Cleanup
-rm -rf _live_book
+rm -rf _live-book
 rm -rf _book
 
 # Commit & Push
