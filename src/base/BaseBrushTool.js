@@ -115,6 +115,17 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
+  * Event handler for switching mode to passive;
+  *
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  passiveCallback(evt) {
+    external.cornerstone.updateImage(this.element);
+  }
+
+  /**
   * Used to redraw the tool's annotation data per render.
   *
   * @virtual

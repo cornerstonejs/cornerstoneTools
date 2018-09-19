@@ -1,4 +1,5 @@
 import store from '../store/index.js';
+import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
@@ -34,18 +35,56 @@ export default function (evt) {
 
   const enabledElement = external.cornerstone.getEnabledElement(element);
   const enabledElementUID = enabledElement.uuid;
-  const visibleSegmentations = brushState.getters.visibleSegmentationsForElement(enabledElementUID);
-  const imageBitmapCache = brushState.getters.imageBitmapCacheForElement(enabledElementUID);
-  const currentColor = brushState.getters.draw();
 
-  for (let i = 0; i < maxSegmentations; i++) {
-    if (toolData.data[i].pixelData && (visibleSegmentations[i] || currentColor === i)) {
-      renderSegmentation(evt, toolData, i, imageBitmapCache, visibleSegmentations);
+  const segData = {
+    visibleSegmentations: brushState.getters.visibleSegmentationsForElement(enabledElementUID),
+    imageBitmapCache: brushState.getters.imageBitmapCacheForElement(enabledElementUID),
+    toolData
+  };
+
+  for (let segIndex = 0; segIndex < maxSegmentations; segIndex++) {
+    if (shouldRenderSegmentation(evt, segIndex, segData)) {
+      renderSegmentation(evt, segIndex, segData);
     }
   }
 }
 
-function renderSegmentation (evt, toolData, segIndex, imageBitmapCache, visibleSegmentations) {
+function shouldRenderSegmentation (evt, segIndex, segData) {
+  const element = evt.detail.element;
+  const toolData = segData.toolData;
+  const visibleSegmentations = segData.visibleSegmentations;
+
+  if (!toolData.data[segIndex].pixelData) { // No data, no render.
+    return false;
+  }
+
+  if (visibleSegmentations[segIndex]) { // Has data and marked as visible, render!
+    return true;
+  }
+
+  const currentColor = brushState.getters.draw();
+
+  if (currentColor !== segIndex) { // Hidden and not current color, don't render.
+    return false;
+  }
+
+  // Check that a brush tool is active.
+  const activeTools = getActiveToolsForElement(element, store.state.tools);
+  const brushTools = activeTools.filter(
+    (tool) => tool instanceof BaseBrushTool
+  );
+
+  if (brushTools.length > 0) { // Active brush tool with same color, render!
+    return true;
+  }
+
+  return false;
+}
+
+function renderSegmentation (evt, segIndex, segData) {
+  const toolData = segData.toolData;
+  const imageBitmapCache = segData.imageBitmapCache;
+  const visibleSegmentations = segData.visibleSegmentations;
 
   // Draw previous image if cached.
   if (imageBitmapCache && imageBitmapCache[segIndex]) {
