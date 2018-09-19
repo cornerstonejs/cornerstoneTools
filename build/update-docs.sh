@@ -1,14 +1,26 @@
+# Generate this version's "book"
 cd docs
 rm -rf _book
 gitbook install
 gitbook build
-git clone -b gh-pages --single-branch git@github.com:cornerstonejs/cornerstoneTools.git _live-book/
+
+# Move our book to it's own version folder
 cd _book/
-mkdir v3
-mv -v * v3/
+mkdir v3.0.0
+mv -v * v3.0.0/
 cd ..
-cp assets/CNAME _book/CNAME
-cd _book
+
+# Grab our current gh-pages files
+# Remove it's version 3, and move it to our _book
+git clone -b gh-pages --single-branch git@github.com:cornerstonejs/cornerstoneTools.git _live-book/
+rm -rf _live_book/v3.0.0/
+mv -v _live-book/* _book/
+
+# Cleanup
+rm -rf _live_book
+rm -rf _book
+
+# Commit & Push
 git add -A
 git commit -m 'update book'
 git push -f git@github.com:cornerstonejs/cornerstoneTools.git master:gh-pages
