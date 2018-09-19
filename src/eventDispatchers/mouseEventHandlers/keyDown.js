@@ -2,7 +2,7 @@ import external from './../../externalModules.js';
 // State
 import { getters, state } from './../../store/index.js';
 // Todo: Where should these live?
-import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
+import getActiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 
 const cornerstone = external.cornerstone;
 
@@ -21,7 +21,7 @@ export default function (evt) {
   const element = evt.detail.element;
 
   // Filter out tools that don't have a mouse interface.
-  tools = getInteractiveToolsForElement(element, getters.mouseTools());
+  tools = getActiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter((tool) => typeof tool.onKeyDown === 'function');
 
   if (tools.length === 0) {
