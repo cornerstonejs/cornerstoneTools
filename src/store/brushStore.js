@@ -56,7 +56,7 @@ const mutations = {
     }
 
     const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
-    const enabledElementUID = cornerstoneEnabledElement.toolDataUID;
+    const enabledElementUID = cornerstoneEnabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 

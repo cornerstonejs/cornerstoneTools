@@ -37,7 +37,7 @@ export default function (evt) {
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
   // Clear the element's cache
-  brushState.mutations.CLEAR_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID);
+  brushState.mutations.CLEAR_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.uuid);
 
   // invalidate the segmentation bitmap such that it gets redrawn.
   for (let i = 0; i < maxSegmentations; i++) {

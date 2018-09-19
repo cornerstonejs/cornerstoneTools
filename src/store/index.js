@@ -20,7 +20,7 @@ export const getters = {
   mousePositionImage: () => state.mousePositionImage,
   enabledElementByUID: (enabledElementUID) =>
     state.enabledElements.filter((enabledElement) =>
-      enabledElement.toolDataUID === enabledElementUID
+      enabledElement.uuid === enabledElementUID
     )
 };
 

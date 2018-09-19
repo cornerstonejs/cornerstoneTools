@@ -292,7 +292,7 @@ export default class BaseBrushTool extends BaseTool {
    */
   showSegmentationOnElement (segIndex) {
     const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.toolDataUID;
+    const enabledElementUID = enabledElement.uuid;
 
     brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
 
@@ -307,7 +307,7 @@ export default class BaseBrushTool extends BaseTool {
    */
   hideSegmentationOnElement (segIndex) {
     const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.toolDataUID;
+    const enabledElementUID = enabledElement.uuid;
 
     brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
     external.cornerstone.updateImage(enabledElement.element);
@@ -320,7 +320,7 @@ export default class BaseBrushTool extends BaseTool {
    */
   showAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.toolDataUID;
+    const enabledElementUID = enabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
 
@@ -338,7 +338,7 @@ export default class BaseBrushTool extends BaseTool {
    */
   hideAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.toolDataUID;
+    const enabledElementUID = enabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
 
@@ -349,14 +349,22 @@ export default class BaseBrushTool extends BaseTool {
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  setAlpha (value) {
+  get alpha () {
+    brushState.getters.alpha();
+  }
+
+  set alpha (value) {
     const enabledElement = this._getEnabledElement();
 
     brushState.mutations.SET_ALPHA(value);
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  setHiddenButActiveAlpha (value) {
+  get hiddenButActiveAlpha () {
+    brushState.getters.hiddenButActiveAlpha();
+  }
+
+  set hiddenButActiveAlpha (value) {
     const enabledElement = this._getEnabledElement();
 
     brushState.mutations.SET_HIDDEN_BUT_ACTIVE_ALPHA(value);

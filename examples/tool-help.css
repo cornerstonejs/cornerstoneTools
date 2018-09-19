@@ -1,4 +1,4 @@
-.cornerstone-element-wrapper-brush {
+.cornerstone-element-wrapper-help {
   width: 100%;
   /* calc(full page - toolbarHeight * 2) */
   height: calc(100% - 190px);
@@ -9,7 +9,7 @@
   justify-content: space-between;
 }
 
-.cornerstone-element-brush {
+.cornerstone-element-help {
   position: relative;
   width: 100%;
   height: 100%;
@@ -17,7 +17,7 @@
   min-height: 200px;
 }
 
-.brush-help {
+.tool-help {
   position: relative;
   width: 100%;
   height: 100%;
@@ -27,22 +27,46 @@
   vertical-align: middle;
   padding: 16px;
   color: white;
+  overflow: auto;
 }
 
-.brush-help h1 {
+.tool-help h1 {
   font-size: x-large;
   padding: 16px;
 }
 
-.brush-help th {
+.tool-help h2 {
+  font-size: large;
   padding: 16px;
 }
 
-.brush-help tr td {
+.tool-help th {
+  padding: 16px;
+}
+
+.tool-help tr td {
   padding: 4px;
 }
 
-.brush-help input[type=range] {
+.tool-help input[type=range] {
   background-color: white;
   border-radius: 6px;
+}
+
+.tool-help button {
+  background-color: white;
+  border-radius: 6px;
+  color: black;
+}
+
+.tool-help button:hover {
+  background-color: #555555;
+  border-radius: 6px;
+  color: white;
+}
+
+.tool-help button:active {
+  background-color: #333333;
+  border-radius: 6px;
+  color: white;
 }

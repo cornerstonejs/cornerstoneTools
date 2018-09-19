@@ -19,12 +19,18 @@ import external from '../externalModules';
 // TODO: Then we could just respond to those events and not worry about tracking/lifecycle
 export default function (enabledElement) {
 
-  // TODO -> We are piggy-backing off Cornerstone here, UUID
+  // TEMP -> We are piggy-backing off Cornerstone here, UUID
   // Generation should go core later, this is more of a POC.
   // NOTE: the 'enabledElement' argument here is actually the DOM element...
   const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
 
-  cornerstoneEnabledElement.toolDataUID = generateGUID();
+  // TEMP
+  if (cornerstoneEnabledElement.uuid) {
+    console.error('uuid has gone core! remove this block and the generateGUID function.');
+  } else {
+    cornerstoneEnabledElement.uuid = generateGUID();
+  }
+  // TEMP
 
   // Listeners
   keyboardEventListeners.enable(enabledElement);

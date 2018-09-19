@@ -15,13 +15,14 @@
 		<div class="wrapper">
 			<!-- Select Tool Category -->
 			<ul class="tool-category-list">
-				<li><a class="tools" data-category="tools" href="#">Brush</a></li>
+				<li><a class="tools" data-category="tools" href="#">Freehand</a></li>
 				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
 			</ul>
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="tools">
-				<li><a href="#" data-tool="Brush">Brush</a></li>
+				<li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
+				<li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
@@ -32,103 +33,164 @@
 			<div class="cornerstone-element-wrapper-help">
 				<div class="cornerstone-element-help" data-index="0" oncontextmenu="return false"></div>
 				<div class="tool-help">
-					<h1>Brush Tool</h1>
+					<h1>Freehand Mouse Tool</h1>
+					<table>
+						<tr>
+							<th>Mouse Input</th>
+						</tr>
+						<tr>
+							<th>Polygon Mode</th>
+							<td>
+								<table>
+									<tr>
+										<td>Click on the canvas sequentially to drop handles and construct lines.</td>
+									</tr>
+									<tr>
+										<td>Click on the origin node to complete the region.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th>Pencil Mode</th>
+							<td>
+								<table>
+									<tr>
+										<td>Shift + Click on the canvas to start drawing.</td>
+									</tr>
+									<tr>
+										<td>Move the mouse around to draw free-form.</td>
+									</tr>
+									<tr>
+										<td>Click on the origin node to complete the region.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+					</table>
+					<h1>Freehand Mouse Tool API</h1>
+					<table>
+						<tr>
+							<th>
+								<button type="button" api-call="always-show-handles">
+									Toggle Always Show Handles
+								</button>
+							</th>
+							<td>
+								Toggles whether the user can always see the handles.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="set-invalid-color">
+									Change Invalid Handle Color
+								</button>
+							</th>
+							<td>
+								Switches the invalid handle color to 'darkred'.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="spacing" min="3" max="10">
+							</td>
+							<td>
+								spacing - The distance between handles in pencil mode.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="activeHandleRadius" min="2" max="4">
+							</td>
+							<td>
+								activeHandleRadius - The radius of the active handle when drawing.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="completeHandleRadius" min="5" max="8">
+							</td>
+							<td>
+								completeHandleRadius - The radius of the active handle when region can be completed.
+							</td>
+						</tr>
+					</table>
+
+					<h1>Freehand Sculpter Mouse Tool</h1>
 					<table>
 						<tr>
 							<th>Mouse Input</th>
 							<td>
 								<table>
 									<tr>
-										<td>Click and drag to use the paint with the selected segmentation.</td>
+										<td>Ctrl-click near a region of interest to select it for editing.</td>
 									</tr>
 									<tr>
-										<td>Release the mouse to stop painting.</td>
+										<td>Hold down click near the selected tool to begin editing.</td>
+									</tr>
+									<tr>
+										<td>
+											With the mouse held down, drag the tool to push the region.
+											This can be done from the inside or outside.
+										</td>
+									</tr>
+									<tr>
+										<td>Release the mouse to complete the edit.</td>
+									</tr>
+									<tr>
+										<td>The closer to the contour the mouse is, the smaller the tool will be.</td>
 									</tr>
 								</table>
 							</td>
 						</tr>
-						<tr>
-							<th>Keyboard Input</th>
-							<td>
-								<table>
-									<tr>
-										<td>Next Segmentation:</td>
-										<td>]</td>
-									</tr>
-									<tr>
-										<td>Previous Segmentation:</td>
-										<td>[</td>
-									</tr>
-									<tr>
-										<td>Increase Brush Size:</td>
-										<td>+</td>
-									</tr>
-									<tr>
-										<td>Decrease Brush Size :</td>
-										<td>-</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
+
 					</table>
-					<h2>Brush Tool API</h2>
+					<h1>Freehand Sculpter Mouse Tool API</h1>
 					<table>
 						<tr>
 							<th>
-								<button type="button" api-call="hide-all">
-									Hide All Segmentations
+								<button type="button" api-call="show-cursor-on-hover">
+									Show Cursor On Hover
 								</button>
 							</th>
 							<td>
-									Hides all segmentations unless that segmentation is actively being drawn.
+								Toggles whether the freehand sculpter cursor can be seen whilst hovering near the selected region.
 							</td>
 						</tr>
 						<tr>
 							<th>
-								<button type="button" api-call="show-all">
-									Show All Segmentations
+								<button type="button" api-call="limit-radius-outside-region">
+									Limit Radius Outside Region
 								</button>
 							</th>
 							<td>
-								Shows all segmentations on the canvas, all the time.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="hide-third">
-									Hide 3rd Segmentation
-								</button>
-							</th>
-							<td>
-								An example of hiding a single segmentation. Hide's the 3rd (yellow) segmentation. When hidden it can only be seen whilst actively being drawn.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="show-third">
-									Show 3rd Segmentation
-								</button>
-							</th>
-							<td><p>
-								An example of un-hiding a single segmentation. Unhide's the 3rd (yellow) segmentation.
-							</p></td>
-						</tr>
-
-						<tr>
-							<td>
-								<input type="range" id="alpha" min="0" max="255">
-							</td>
-							<td>
-								alpha - The transparency of segmentations.
+								Toggles whether the freehand sculpter should have a maximum size when far from the selected region.
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<input type="range" id="alphaWhenHiddenButActive" min="0">
+								<input type="range" id="minSpacing" min="4" max="10">
 							</td>
+							<td>minSpacing - The minimum spacing allowed between region handles.</td>
+						</tr>
+						<tr>
 							<td>
-								alphaWhenHiddenButActive - The transparency of segmentations when set to hidden but actively drawing.
+								<input type="range" id="maxSpacing" min="15" max="25">
 							</td>
+							<td>maxSpacing - The maximum spacing allowed between region handles.</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="hoverCursorFadeAlpha" min="0" max="255">
+							</td>
+							<td>hoverCursorFadeAlpha - The alpha of the cursor when distant from the region, if showCursorOnHover and limitRadiusOutsideRegion are enabled.</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="hoverCursorFadeDistance" min="100" max="200">
+							</td>
+							<td>hoverCursorFadeDistance - The distance in tool radii with which to fade the cursor.</td>
 						</tr>
 					</table>
 				</div>
@@ -206,7 +268,7 @@
 		const apiCall = apiBtn.getAttribute('api-call');
 
 		apiBtn.addEventListener('mousedown', (evt) => {
-			brushApiCall(apiCall);
+			freehandApiCall(apiCall);
 		});
 	});
 
@@ -336,23 +398,27 @@
 		return 0;
 	}
 
-	// BRUSH TOOL API //
+	// FREEHAND API //
 
-	const brushTool = cTools.getToolForElement(element, 'Brush');
+	const freehandTool = cTools.getToolForElement(element, 'FreehandMouse');
+	const freehandSculpterTool = cTools.getToolForElement(element, 'FreehandSculpterMouse');
 
-	function brushApiCall (opperation) {
+	function freehandApiCall (opperation) {
 		switch (opperation) {
-			case 'hide-all':
-				brushTool.hideAllSegmentationsOnElement();
+			case 'always-show-handles':
+				const alwaysShowHandles = freehandTool.alwaysShowHandles;
+				freehandTool.alwaysShowHandles = !alwaysShowHandles;
 				break;
-			case 'show-all':
-				brushTool.showAllSegmentationsOnElement();
+			case 'set-invalid-color':
+				freehandTool.invalidColor = 'darkred';
 				break;
-			case 'hide-third':
-				brushTool.hideSegmentationOnElement(2); //Zero-indexed
+			case 'show-cursor-on-hover':
+				const showCursorOnHover = freehandSculpterTool.showCursorOnHover;
+				freehandSculpterTool.showCursorOnHover = !showCursorOnHover;
 				break;
-			case 'show-third':
-				brushTool.showSegmentationOnElement(2); //Zero-indexed
+			case 'limit-radius-outside-region':
+				const limitRadiusOutsideRegion = freehandSculpterTool.limitRadiusOutsideRegion;
+				freehandSculpterTool.limitRadiusOutsideRegion = !limitRadiusOutsideRegion;
 				break;
 			default:
 				return;
@@ -361,23 +427,58 @@
 
 	// API Sliders
 
-	const alphaSlider = document.getElementById("alpha");
-	const alphaWhenHiddenButActiveSlider = document.getElementById("alphaWhenHiddenButActive");
+	const spacingSlider = document.getElementById("spacing");
+	const activeHandleRadiusSlider = document.getElementById("activeHandleRadius");
+	const completeHandleRadiusSlider = document.getElementById("completeHandleRadius");
 
-	alphaSlider.defaultValue = Math.floor(0.4*255);
-	alphaWhenHiddenButActiveSlider.defaultValue = Math.floor(0.2*255);
+	const minSpacingSlider = document.getElementById("minSpacing");
+	const maxSpacingSlider = document.getElementById("maxSpacing");
+	const hoverCursorFadeAlphaSlider = document.getElementById("hoverCursorFadeAlpha");
+	const hoverCursorFadeDistanceSlider = document.getElementById("hoverCursorFadeDistance");
 
-	alphaSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
 
-		brushTool.alpha = normalisedAlpha;
+	spacingSlider.defaultValue = 5;
+	activeHandleRadiusSlider.defaultValue = 3;
+	completeHandleRadiusSlider.defaultValue = 6;
+
+	minSpacingSlider.defaultValue = 5;
+	maxSpacingSlider.defaultValue = 20;
+	hoverCursorFadeAlphaSlider.defaultValue = 122;
+	hoverCursorFadeDistanceSlider.defaultValue = 120;
+
+	spacingSlider.addEventListener('input', event => {
+		freehandTool.spacing = Number(event.target.value);
 	});
 
-	alphaWhenHiddenButActiveSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
-
-		brushTool.hiddenButActiveAlpha = normalisedAlpha;
+	activeHandleRadiusSlider.addEventListener('input', event => {
+		freehandTool.activeHandleRadius = Number(event.target.value);
 	});
+
+	completeHandleRadiusSlider.addEventListener('input', event => {
+		freehandTool.completeHandleRadius = Number(event.target.value);
+	});
+
+	minSpacingSlider.addEventListener('input', event => {
+		freehandSculpterTool.minSpacing = Number(event.target.value);
+	});
+
+	maxSpacingSlider.addEventListener('input', event => {
+		freehandSculpterTool.maxSpacing = Number(event.target.value);
+	});
+
+	hoverCursorFadeAlphaSlider.addEventListener('input', event => {
+		const normalisedAlpha = Number(event.target.value)/255.0;
+
+		freehandSculpterTool.hoverCursorFadeAlpha = normalisedAlpha;
+	});
+
+	hoverCursorFadeDistanceSlider.addEventListener('input', event => {
+		// Slider transformed from (100 <-> 200) to (1.0 <-> 2.0).
+		const realValue = Math.floor(Number(event.target.value)/100.0);
+
+		freehandSculpterTool.hoverCursorFadeDistance = realValue;
+	});
+
 
 
 </script>

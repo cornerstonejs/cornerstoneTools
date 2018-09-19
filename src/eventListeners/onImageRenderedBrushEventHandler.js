@@ -33,7 +33,7 @@ export default function (evt) {
   }
 
   const enabledElement = external.cornerstone.getEnabledElement(element);
-  const enabledElementUID = enabledElement.toolDataUID;
+  const enabledElementUID = enabledElement.uuid;
   const visibleSegmentations = brushState.getters.visibleSegmentationsForElement(enabledElementUID);
   const imageBitmapCache = brushState.getters.imageBitmapCacheForElement(enabledElementUID);
   const currentColor = brushState.getters.draw();
@@ -87,7 +87,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(image, colorLutTable, imageData.data);
 
   window.createImageBitmap(imageData).then((newImageBitmap) => {
-    brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.toolDataUID, segIndex, newImageBitmap);
+    brushState.mutations.SET_ELEMENT_IMAGE_BITMAP_CACHE(enabledElement.uuid, segIndex, newImageBitmap);
     toolData.data[segIndex].invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);
