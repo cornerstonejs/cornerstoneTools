@@ -1,4 +1,4 @@
-# Installation v3
+# Installation
 
 ### Direct Download / CDN
 

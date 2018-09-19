@@ -22,18 +22,19 @@
       "token": "UA-110573590-1"
     },
     "sitemap": {
-      "hostname": "https://tools.cornerstonejs.org"
+      "hostname": "https://tools.cornerstonejs.org/history/v2"
     },
     "versions": {
+      "gitbookConfigURL": "https://raw.githubusercontent.com/cornerstonejs/cornerstoneTools/master/docs/book.json",
       "options": [
         {
-          "value": "http://localhost:4000/history/v2.0.0/",
-          "text": "Version 2.0.0"
+          "value": "https://tools.cornerstonejs.org/history/v2/",
+          "text": "Version 2.0.0",
+          "selected": true
         },
         {
-          "value": "http://localhost:4000/history/v3.0.0/",
-          "text": "Version 3.0.0",
-          "selected": true
+          "value": "https://tools.cornerstonejs.org/",
+          "text": "Version 3.0.0"
         }
       ]
     }
