@@ -12,7 +12,7 @@
   ],
   "pluginsConfig": {
     "edit-link": {
-      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs",
+      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/v2",
       "label": "Edit This Page"
     },
     "github": {
