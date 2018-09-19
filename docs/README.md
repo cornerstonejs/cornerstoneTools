@@ -1,1 +1,1 @@
-{% include "./SUMMARY.md" %}
+# How To: Documentation Step-by-Step
