@@ -7,7 +7,8 @@
     "-fontsettings",
     "github",
     "ga",
-    "sitemap"
+    "sitemap",
+    "versions"
   ],
   "pluginsConfig": {
     "edit-link": {
@@ -22,6 +23,19 @@
     },
     "sitemap": {
       "hostname": "https://tools.cornerstonejs.org"
+    },
+    "versions": {
+      "options": [
+        {
+          "value": "http://localhost:4000/history/v2.0.0/",
+          "text": "Version 2.0.0"
+        },
+        {
+          "value": "http://localhost:4000/history/v3.0.0/",
+          "text": "Version 3.0.0",
+          "selected": true
+        }
+      ]
     }
   },
   "links": {

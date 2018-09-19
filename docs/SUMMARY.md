@@ -1,4 +1,4 @@
-# Cornerstone Tools
+# Cornerstone Tools v3
 
 > Cornerstone Tools is a library built on top of cornerstone that provides a set of common tools needed in medical imaging to work with images and stacks of images.
 
