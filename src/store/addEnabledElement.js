@@ -8,7 +8,8 @@ import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
-  touchToolEventDispatcher
+  touchToolEventDispatcher,
+  keyboardEventDispatcher
 } from '../eventDispatchers/index.js';
 import { mutations } from './index.js';
 import generateGUID from './generateGUID.js';
@@ -43,6 +44,7 @@ export default function (enabledElement) {
   mouseToolEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
   touchToolEventDispatcher.enable(enabledElement);
+  keyboardEventDispatcher.enable(enabledElement);
 
   // State
   mutations.ADD_ENABLED_ELEMENT(enabledElement);
