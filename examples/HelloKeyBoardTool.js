@@ -1,11 +1,11 @@
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from '../src/base/BaseTool.js';
 
 export default class HelloKeyboardTool extends BaseTool {
   constructor (name = 'HelloKeyboard') {
     super({
       name,
-      supportedInteractionTypes: [] //blank? 'keyboard'/
-      configuration = this._defaultConfig();
+      supportedInteractionTypes: [], //blank? 'keyboard'/
+      configuration: _defaultConfig()
     });
   }
 
@@ -17,7 +17,10 @@ export default class HelloKeyboardTool extends BaseTool {
     console.log('Why hello there Mr. Keyboard, please take a seat.');
   }
 
-  _defaultConfig() {
+
+}
+
+function _defaultConfig () {
     return {
       keyBinds: {
         'helloWorld':     'h',
@@ -25,4 +28,3 @@ export default class HelloKeyboardTool extends BaseTool {
       }
     };
   }
-}
