@@ -1,4 +1,4 @@
-import BaseTool from '../src/base/BaseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
 export default class HelloKeyboardTool extends BaseTool {
   constructor (name = 'HelloKeyboard') {
