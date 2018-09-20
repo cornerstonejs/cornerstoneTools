@@ -1,11 +1,11 @@
 import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import BinaryTool from './../base/BinaryTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
-export default class ScaleOverlayTool extends BaseTool {
+export default class ScaleOverlayTool extends BinaryTool {
   constructor (name = 'ScaleOverlay') {
     super({
       name,
