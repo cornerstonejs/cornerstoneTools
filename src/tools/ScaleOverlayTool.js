@@ -1,11 +1,12 @@
 import external from './../externalModules.js';
-import BinaryTool from './../base/BinaryTool.js';
+import BaseTool from './../base/BaseTool.js';
+import binaryToolMixin from './shared/binaryToolMixin.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
-export default class ScaleOverlayTool extends BinaryTool {
+export default class ScaleOverlayTool extends BaseTool {
   constructor (name = 'ScaleOverlay') {
     super({
       name,
@@ -14,6 +15,10 @@ export default class ScaleOverlayTool extends BinaryTool {
         majorTickLength: 25
       }
     });
+
+    Object.assign(this, binaryToolMixin);
+
+    console.log(this);
   }
 
   enabledCallback (element) {
