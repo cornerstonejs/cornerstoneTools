@@ -17,8 +17,6 @@ export default class ScaleOverlayTool extends BaseTool {
     });
 
     Object.assign(this, binaryToolMixin);
-
-    console.log(this);
   }
 
   enabledCallback (element) {
