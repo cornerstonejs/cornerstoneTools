@@ -29,6 +29,8 @@ export { default as ZoomTouchPinchTool } from './tools/ZoomTouchPinchTool.js';
 export { default as ZoomMouseWheelTool } from './tools/ZoomMouseWheelTool.js';
 export { default as CrosshairsTool } from './tools/CrosshairsTool.js';
 export { default as BrushTool } from './tools/BrushTool.js';
+export { default as HelloKeyboardTool } from './tools/HelloKeyboardTool.js';
+
 
 // END V3 EXPORTS
 

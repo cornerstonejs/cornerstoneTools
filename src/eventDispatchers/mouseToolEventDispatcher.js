@@ -7,9 +7,9 @@ import {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel,
-  keyDown
+  mouseWheel
 } from './mouseEventHandlers/index.js';
+//import keyDown from './keyDownEventDispatcher.js';
 
 /**
  * These listeners are emitted in order, and can be cancelled/prevented from bubbling
@@ -31,7 +31,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.addEventListener(EVENTS.MOUSE_UP, mouseUp);
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.addEventListener(EVENTS.KEY_DOWN, keyDown);
+  //element.addEventListener(EVENTS.KEY_DOWN, keyDown);
 };
 
 const disable = function (element) {
@@ -43,7 +43,7 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUp);
   element.removeEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.removeEventListener(EVENTS.KEY_DOWN, keyDown);
+  //element.removeEventListener(EVENTS.KEY_DOWN, keyDown);
 };
 
 export default {
