@@ -46,7 +46,6 @@
 				<li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
 				<li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
 				<li><a href="#" data-tool="Brush">Brush</a></li>
-				<li><a href="#" data-tool="BrushEraser">brushEraser</a></li>
 				<li><a href="#" data-tool="TextMarker">TextMarker</a></li>
 				<li><a href="#" data-tool="Length">Length</a></li>
 				<li><a href="#" data-tool="Probe">Probe</a></li>
@@ -141,7 +140,7 @@
 		const index = element.getAttribute('data-index');
 		const saveBtn = element.parentElement.querySelector(`a[data-index='${index}']`);
 		saveBtn.addEventListener('click', (evt) => {
-			cornerstoneTools.saveAsTool(element, 'viewportImage.png')
+			cornerstoneTools.SaveAsTool(element, 'viewportImage.png')
 		});
 	})
 
@@ -177,9 +176,6 @@
 		// Add the tool
 		const toolName = toolBtn.getAttribute('data-tool');
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
-
-		console.log(toolName);
-		console.log(apiTool);
 
 		if (apiTool) {
 			cTools.addTool(apiTool);
@@ -221,8 +217,6 @@
 		const toolName = toolCheckBox.getAttribute('data-tool');
 		const toolLabel = document.querySelector(`#${toolName}`);
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
-		console.log(toolName);
-		console.log(apiTool);
 
 		if (apiTool) {
 			cTools.addTool(apiTool);

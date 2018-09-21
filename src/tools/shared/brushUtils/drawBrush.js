@@ -1,13 +1,13 @@
 import external from '../../../externalModules.js';
 import { draw, fillBox } from '../../../util/drawing.js';
 
-function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns) {
+function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns, shouldErase = false) {
   const getPixelIndex = (x, y) => (y * columns) + x;
 
   pointerArray.forEach((point) => {
     const spIndex = getPixelIndex(point[0], point[1]);
 
-    storedPixels[spIndex] = brushPixelValue;
+    storedPixels[spIndex] = shouldErase ? 0 : 1;
   });
 }
 

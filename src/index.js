@@ -18,6 +18,7 @@ export { default as PanTool } from './tools/PanTool.js';
 export { default as PanMultiTouchTool } from './tools/PanMultiTouchTool.js';
 export { default as RectangleRoiTool } from './tools/RectangleRoiTool.js';
 export { default as RotateTool } from './tools/RotateTool.js';
+export { default as SaveAsTool } from './tools/SaveAsTool.js';
 export { default as ScaleOverlayTool } from './tools/ScaleOverlayTool.js';
 export { default as StackScrollTool } from './tools/StackScrollTool.js';
 export { default as StackScrollMultiTouchTool } from './tools/StackScrollMultiTouchTool.js';
@@ -29,7 +30,6 @@ export { default as ZoomTouchPinchTool } from './tools/ZoomTouchPinchTool.js';
 export { default as ZoomMouseWheelTool } from './tools/ZoomMouseWheelTool.js';
 export { default as CrosshairsTool } from './tools/CrosshairsTool.js';
 export { default as BrushTool } from './tools/BrushTool.js';
-export { default as BrushEraserTool } from './tools/BrushEraserTool.js';
 
 // END V3 EXPORTS
 
