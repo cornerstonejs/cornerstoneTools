@@ -33,6 +33,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       configuration: defaultFreehandConfiguration()
     });
 
+    this._drawing = false;
+    this._activePencilMode = false;
+    this._modifying = false;
+
     // Create bound callback functions for private event loops
     this._drawingMouseDownCallback = this._drawingMouseDownCallback.bind(this);
     this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
@@ -435,10 +439,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const config = this.configuration;
 
-    config.drawing = true;
+    this._drawing = true;
 
     if (eventData.event.shiftKey) {
-      config.activePencilMode = true;
+      this._activePencilMode = true;
     }
 
     this._startDrawing(eventData);
@@ -506,7 +510,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       y: toolState.data[toolIndex].handles[handleNearby].y
     };
 
-    config.modifying = true;
+    this._modifying = true;
     config.currentHandle = handleNearby;
     config.currentTool = toolIndex;
 
@@ -540,7 +544,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._getMouseLocation(eventData);
     this._checkInvalidHandleLocation(data);
 
-    if (config.activePencilMode) {
+    if (this._activePencilMode) {
       this._addPointPencilMode(eventData, data.handles);
     } else { // Polygon Mode
       const handleNearby = this._pointNearHandle(element, data, coords);
@@ -786,19 +790,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       data.handles[config.currentHandle - 1].lines.push(data.handles[0]);
     }
 
-    if (config.modifying) {
-      config.modifying = false;
+    if (this._modifying) {
+      this._modifying = false;
       data.invalidated = true;
     }
 
     // Reset the current handle
     config.currentHandle = 0;
     config.currentTool = -1;
-    config.activePencilMode = false;
+    this._activePencilMode = false;
     data.canComplete = false;
 
-    if (config.drawing) {
-      config.drawing = false;
+    if (this._drawing) {
+      this._drawing = false;
       mutations.SET_IS_TOOL_LOCKED(false);
       this._deactivateDraw(eventData.element);
     }
@@ -901,7 +905,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     let invalidHandlePlacement;
 
-    if (config.activePencilMode) { // Pencil mode
+    if (this._activePencilMode) { // Pencil mode
       invalidHandlePlacement = this._checkHandlesPencilMode(data);
     } else { // Polygon mode
       invalidHandlePlacement = this._checkHandlesPolygonMode(data);
@@ -1043,6 +1047,86 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     external.cornerstone.updateImage(element);
   }
+
+  //===================================================================
+  // Public Configuration API. .
+  //===================================================================
+
+  get spacing () {
+    return this.configuration.spacing;
+  }
+
+  set spacing (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehand spacing to a value other than a number.'
+      );
+    }
+
+    this.configuration.spacing = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get activeHandleRadius () {
+    return this.configuration.activeHandleRadius;
+  }
+
+  set activeHandleRadius (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehand activeHandleRadius to a value other than a number.'
+      );
+    }
+
+    this.configuration.activeHandleRadius = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get completeHandleRadius () {
+    return this.configuration.completeHandleRadius;
+  }
+
+  set completeHandleRadius (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehand completeHandleRadius to a value other than a number.'
+      );
+    }
+
+    this.configuration.completeHandleRadius = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get alwaysShowHandles () {
+    return this.configuration.alwaysShowHandles;
+  }
+
+  set alwaysShowHandles (value) {
+    if (typeof value !== 'boolean') {
+      throw new Error(
+        'Attempting to set freehand alwaysShowHandles to a value other than a boolean.'
+      );
+    }
+
+    this.configuration.alwaysShowHandles = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get invalidColor () {
+    return this.configuration.invalidColor;
+  }
+
+  set invalidColor (value) {
+    /*
+      It'd be easy to check if the color was e.g. a valid rgba color. However
+      it'd be difficult to check if the color was a named CSS color without
+      bloating the library, so we don't. If the canvas can't intepret the color
+      it'll show up grey.
+    */
+
+    this.configuration.invalidColor = value;
+    external.cornerstone.updateImage(this.element);
+  }
 }
 
 function defaultFreehandConfiguration () {
@@ -1060,14 +1144,11 @@ function defaultFreehandConfiguration () {
       ctrl: false,
       alt: false
     },
-    drawing: false,
-    activePencilMode: false,
     spacing: 5,
     activeHandleRadius: 3,
     completeHandleRadius: 6,
     alwaysShowHandles: false,
     invalidColor: 'crimson',
-    modifying: false,
     currentHandle: 0,
     currentTool: -1
   };

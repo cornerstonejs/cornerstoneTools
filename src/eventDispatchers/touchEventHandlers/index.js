@@ -32,6 +32,11 @@ const multiTouchDrag = customCallbackHandler.bind(
   'touch',
   'multiTouchDragCallback'
 );
+const touchRotate = customCallbackHandler.bind(
+  null,
+  'touch',
+  'touchRotateCallback'
+);
 
 export {
   doubleTap,
@@ -41,6 +46,7 @@ export {
   touchEnd,
   touchPinch,
   touchPress,
+  touchRotate,
   touchStart,
   touchStartActive
 };

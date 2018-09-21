@@ -23,7 +23,7 @@ export default class StackScrollTool extends BaseTool {
   _dragCallback (evt) {
     const eventData = evt.detail;
     const { element, deltaPoints } = eventData;
-    const { allowSkipping } = this.configuration;
+    const { loop, allowSkipping } = this.configuration;
     const options = getToolOptions(this.name, element);
 
     const pixelsPerImage = this._getPixelPerImage(element);
@@ -36,7 +36,7 @@ export default class StackScrollTool extends BaseTool {
     if (Math.abs(deltaY) >= pixelsPerImage) {
       const imageIdIndexOffset = Math.round(deltaY / pixelsPerImage);
 
-      scroll(element, imageIdIndexOffset, false, allowSkipping);
+      scroll(element, imageIdIndexOffset, loop, allowSkipping);
 
       options.deltaY = deltaY % pixelsPerImage;
     } else {
