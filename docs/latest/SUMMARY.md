@@ -6,6 +6,7 @@
 
 **[Release Notes](https://github.com/cornerstonejs/cornerstoneTools/releases)**
 
+- [Installation](installation.md)
 - [Introduction](index.md)
   - [What is CornerstoneTools.js?](index.md#what-is-cornerstone-tools-js)
-  - [Installation](installation.md)
+  - [Getting Started](index.md#getting-started)
