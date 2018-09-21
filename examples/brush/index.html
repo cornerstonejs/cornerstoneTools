@@ -4,25 +4,10 @@
 <head>
 	<!-- support for mobile touch devices -->
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-	<link rel="stylesheet" href="examples/reset.css">
-	<link rel="stylesheet" href="examples/app.css">
-	<link rel="stylesheet" href="examples/icon-classes.css">
-	<style>
-		/**
-		 * ~~ MagnifyTool:
-		 * You need to supply your own styling for the created magnifyTool div.
-		 * Note: The element wrapper needs `position: relative` for the positioning to work.
-		 */
-
-		.magnifyTool {
-			border: 4px white solid;
-			box-shadow: 2px 2px 10px #1e1e1e;
-			border-radius: 50%;
-			display: none;
-			cursor: none;
-			z-index: 100;
-		}
-	</style>
+	<link rel="stylesheet" href="../reset.css">
+	<link rel="stylesheet" href="../app.css">
+	<link rel="stylesheet" href="../icon-classes.css">
+	<link rel="stylesheet" href="../tool-help.css">
 </head>
 
 <body>
@@ -30,62 +15,123 @@
 		<div class="wrapper">
 			<!-- Select Tool Category -->
 			<ul class="tool-category-list">
-				<li><a class="active" data-category="annotation" href="#">Annotation</a></li>
-				<li><a data-category="drag" href="#">Drag</a></li>
-				<li><a data-category="multitouch-pinch" href="#">Multi-Touch / Pinch (touch only)</a></li>
+				<li><a class="tools" data-category="tools" href="#">Brush</a></li>
 				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
-				<li><a data-category="overlay" href="#">Overlay</a></li>
 			</ul>
 
 			<!-- Select Active Tool -->
-			<ul class="tool-category active" data-tool-category="annotation">
-				<li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
-				<li><a href="#" data-tool="Angle">Angle</a></li>
-				<li><a href="#" data-tool="EllipticalRoi">EllipticalRoi</a></li>
-				<li><a href="#" data-tool="Eraser">Eraser</a></li>
-				<li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
-				<li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
+			<ul class="tool-category active" data-tool-category="tools">
 				<li><a href="#" data-tool="Brush">Brush</a></li>
-				<li><a href="#" data-tool="TextMarker">TextMarker</a></li>
-				<li><a href="#" data-tool="Length">Length</a></li>
-				<li><a href="#" data-tool="Probe">Probe</a></li>
-				<li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
-			</ul>
-			<ul class="tool-category" data-tool-category="drag">
-				<li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
-				<li><a href="#" data-tool="Magnify">Magnify</a></li>
-				<li><a href="#" data-tool="Pan">Pan</a></li>
-				<li><a href="#" data-tool="Rotate">Rotate</a></li>
-				<li><a href="#" data-tool="StackScroll">StackScroll</a></li>
-				<li><a href="#" data-tool="Wwwc">WWWC</a></li>
-				<li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
-				<li><a href="#" data-tool="Zoom">Zoom</a></li>
-			</ul>
-			<ul class="tool-category" data-tool-category="multitouch-pinch">
-				<li><a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
-				<li><a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
 				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
 			</ul>
-			<ul class="tool-category" data-tool-category="overlay">
-				<li>
-					<label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
-						ScaleOverlay
-						<label class="label-on"> ON</label>
-						<label class="label-off"> OFF</label>
-					</label>
-					<input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-type="none" type="checkbox" />
-				</li>
-			</ul>
 
 			<!-- Our beautiful element targets -->
-			<div class="cornerstone-element-wrapper">
-				<a href="#" class="save-btn" data-index="0">Save</a>
-				<div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
-				<a href="#" class="save-btn" data-index="1">Save</a>
-				<div class="cornerstone-element" data-index="1" oncontextmenu="return false"></div>
+			<div class="cornerstone-element-wrapper-help">
+				<div class="cornerstone-element-help" data-index="0" oncontextmenu="return false"></div>
+				<div class="tool-help">
+					<h1>Brush Tool</h1>
+					<table>
+						<tr>
+							<th>Mouse Input</th>
+							<td>
+								<table>
+									<tr>
+										<td>Click and drag to use the paint with the selected segmentation.</td>
+									</tr>
+									<tr>
+										<td>Release the mouse to stop painting.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th>Keyboard Input</th>
+							<td>
+								<table>
+									<tr>
+										<td>Next Segmentation:</td>
+										<td>]</td>
+									</tr>
+									<tr>
+										<td>Previous Segmentation:</td>
+										<td>[</td>
+									</tr>
+									<tr>
+										<td>Increase Brush Size:</td>
+										<td>+</td>
+									</tr>
+									<tr>
+										<td>Decrease Brush Size :</td>
+										<td>-</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+					<h2>Brush Tool API</h2>
+					<table>
+						<tr>
+							<th>
+								<button type="button" api-call="hide-all">
+									Hide All Segmentations
+								</button>
+							</th>
+							<td>
+									Hides all segmentations unless that segmentation is actively being drawn.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="show-all">
+									Show All Segmentations
+								</button>
+							</th>
+							<td>
+								Shows all segmentations on the canvas, all the time.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="hide-third">
+									Hide 3rd Segmentation
+								</button>
+							</th>
+							<td>
+								An example of hiding a single segmentation. Hide's the 3rd (yellow) segmentation. When hidden it can only be seen whilst actively being drawn.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="show-third">
+									Show 3rd Segmentation
+								</button>
+							</th>
+							<td><p>
+								An example of un-hiding a single segmentation. Unhide's the 3rd (yellow) segmentation.
+							</p></td>
+						</tr>
+
+						<tr>
+							<td>
+								<input type="range" id="alpha" min="0" max="255">
+							</td>
+							<td>
+								alpha - The transparency of segmentations.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="alphaWhenHiddenButActive" min="0">
+							</td>
+							<td>
+								alphaWhenHiddenButActive - The transparency of segmentations when set to hidden but actively drawing.
+							</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -99,11 +145,11 @@
 <!-- include the cornerstone library -->
 <script src="https://unpkg.com/cornerstone-core@2.2.4/dist/cornerstone.min.js"></script>
 <script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.min.js"></script>
-<script src="dist/cornerstoneTools.js"></script>
+<script src="../../dist/cornerstoneTools.js"></script>
 <script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
-<script src="examples/imageLoader.js"></script>
+<script src="../imageLoader.js"></script>
 
 <script>
 	const cTools = cornerstoneTools.init();
@@ -118,39 +164,24 @@
 	};
 
 	// Enable & Setup all of our elements
-	const elements = document.querySelectorAll('.cornerstone-element');
-	Array.from(elements).forEach(element => {
-		// TODO: if we emitted an event when this happened, cornerstone-tools
-		// TODO: could use it to init itself
-		cornerstone.enable(element);
-		cTools.addEnabledElement(element);
+	const element = document.querySelector('.cornerstone-element-help');
 
-		element.tabIndex = 0;
-		element.focus();
+	cornerstone.enable(element);
+	cTools.addEnabledElement(element);
 
-		cornerstone.loadImage(imageIds[0]).then(function (image) {
-			cornerstone.displayImage(element, image);
+	element.tabIndex = 0;
+	element.focus();
 
-			cornerstoneTools.addStackStateManager(element, ['stack']);
-			cornerstoneTools.addToolState(element, 'stack', stack);
-		});
+	cornerstone.loadImage(imageIds[0]).then(function (image) {
+		cornerstone.displayImage(element, image);
 
-		//Save As Tool
-		const index = element.getAttribute('data-index');
-		const saveBtn = element.parentElement.querySelector(`a[data-index='${index}']`);
-		saveBtn.addEventListener('click', (evt) => {
-			cornerstoneTools.SaveAsTool(element, 'viewportImage.png')
-		});
-	})
+		cornerstoneTools.addStackStateManager(element, ['stack']);
+		cornerstoneTools.addToolState(element, 'stack', stack);
+	});
 
 	function setAllToolsPassive() {
-		const exceptionList = [
-			'ScaleOverlay'
-		];
 		cTools.store.state.tools.forEach((tool) => {
-			if (!exceptionList.includes(tool.name)) {
-				cTools.setToolPassive(tool.name);
-			}
+			cTools.setToolPassive(tool.name);
 		});
 	}
 
@@ -168,6 +199,16 @@
 			setToolCategoryActive(categoryName);
 		});
 	})
+
+	// API calls
+	const apiButtons = document.querySelectorAll('button[api-call]');
+	Array.from(apiButtons).forEach(apiBtn => {
+		const apiCall = apiBtn.getAttribute('api-call');
+
+		apiBtn.addEventListener('mousedown', (evt) => {
+			brushApiCall(apiCall);
+		});
+	});
 
 	// Iterate over all tool buttons
 	const toolButtons = document.querySelectorAll('a[data-tool]');
@@ -206,31 +247,6 @@
 			evt.stopPropagation();
 			evt.stopImmediatePropagation();
 			return false;
-		});
-	});
-
-	// Iterate through swtich ON/OFF tools
-	const stateTools = document.querySelectorAll('input[type="checkbox"]');
-	Array.from(stateTools).forEach(toolCheckBox => {
-
-		const toolName = toolCheckBox.getAttribute('data-tool');
-		const toolLabel = document.querySelector(`#${toolName}`);
-		const apiTool = cornerstoneTools[`${toolName}Tool`];
-
-		if (apiTool) {
-			cTools.addTool(apiTool);
-		}
-
-		cTools.setToolDisabled(toolName);
-
-		toolCheckBox.addEventListener('change', (evt) => {
-			if (evt.currentTarget.checked) {
-				cTools.setToolEnabled(toolName);
-			} else {
-				cTools.setToolDisabled(toolName);
-			}
-			const toolLabel = document.querySelector('#scaleOverlay');
-			toolLabel.classList.toggle('turned-on');
 		});
 	});
 
@@ -302,16 +318,6 @@
 		});
 	}
 
-	// Find all and configure each textMarkers
-	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
-		if (element.name === 'TextMarker') {
-			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
-			element.configuration.current= 'F5';
-			element.configuration.ascending= true;
-			element.configuration.loop= true;
-		}
-	});
-
 	const convertMouseEventWhichToButtons = (which) => {
 		switch (which) {
 			// no button
@@ -329,6 +335,51 @@
 		}
 		return 0;
 	}
+
+	// BRUSH TOOL API //
+
+	const brushTool = cTools.getToolForElement(element, 'Brush');
+
+	function brushApiCall (opperation) {
+		switch (opperation) {
+			case 'hide-all':
+				brushTool.hideAllSegmentationsOnElement();
+				break;
+			case 'show-all':
+				brushTool.showAllSegmentationsOnElement();
+				break;
+			case 'hide-third':
+				brushTool.hideSegmentationOnElement(2); //Zero-indexed
+				break;
+			case 'show-third':
+				brushTool.showSegmentationOnElement(2); //Zero-indexed
+				break;
+			default:
+				return;
+		}
+	}
+
+	// API Sliders
+
+	const alphaSlider = document.getElementById("alpha");
+	const alphaWhenHiddenButActiveSlider = document.getElementById("alphaWhenHiddenButActive");
+
+	alphaSlider.defaultValue = Math.floor(0.4*255);
+	alphaWhenHiddenButActiveSlider.defaultValue = Math.floor(0.2*255);
+
+	alphaSlider.addEventListener('input', event => {
+		const normalisedAlpha = event.target.value/255.0;
+
+		brushTool.alpha = normalisedAlpha;
+	});
+
+	alphaWhenHiddenButActiveSlider.addEventListener('input', event => {
+		const normalisedAlpha = event.target.value/255.0;
+
+		brushTool.hiddenButActiveAlpha = normalisedAlpha;
+	});
+
+
 </script>
 
 </html>

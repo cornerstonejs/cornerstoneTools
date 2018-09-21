@@ -1,5 +1,5 @@
 /**
-* Generates a UUID for the polygon.
+* Generates a UUID for the enabledElement.
 *
 * @return {String} the UUID.
 */
