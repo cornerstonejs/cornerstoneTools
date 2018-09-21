@@ -1,6 +1,6 @@
 ## Directories
 node_modules
-docs/_book/
+_book/
 
 ## Files
 .npmrc
