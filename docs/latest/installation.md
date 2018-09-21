@@ -29,7 +29,7 @@ We recommend linking to a specific version number that you can update manually:
 
 You can browse the source of the NPM package at [cdn.jsdelivr.net/npm/cornerstone-tools](https://cdn.jsdelivr.net/npm/cornerstone-tools@next).
 
-Vue is also available on [unpkg](https://unpkg.com/cornerstone-tools).
+CornerstoneTools.js is also available on [unpkg](https://unpkg.com/cornerstone-tools).
 
 ## NPM
 
