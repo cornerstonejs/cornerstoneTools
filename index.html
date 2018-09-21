@@ -34,6 +34,7 @@
 				<li><a data-category="drag" href="#">Drag</a></li>
 				<li><a data-category="multitouch-pinch" href="#">Multi-Touch / Pinch (touch only)</a></li>
 				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+				<li><a data-category="double-tap" href="#">DoubleTap</a></li>
 				<li><a data-category="overlay" href="#">Overlay</a></li>
 			</ul>
 
@@ -61,9 +62,14 @@
 				<li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
 				<li><a href="#" data-tool="Zoom">Zoom</a></li>
 			</ul>
+			<ul class="tool-category" data-tool-category="double-tap">
+				<li><a href="#" data-tool="DoubleTapFitToWindow">DoubleTapFitToWindow</a></li>
+			</ul>
 			<ul class="tool-category" data-tool-category="multitouch-pinch">
 				<li><a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a></li>
 				<li><a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a></li>
+				<li><a href="#" data-tool="RotateTouch" data-tool-type="pinch">RotateTouch</a></li>
+				<li><a href="#" data-tool="StackScrollMultiTouch" data-tool-type="multitouch">StackScrollMultiTouch</a></li>
 			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
@@ -99,7 +105,7 @@
 <!-- include the cornerstone library -->
 <script src="https://unpkg.com/cornerstone-core@2.2.4/dist/cornerstone.min.js"></script>
 <script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.min.js"></script>
-<script src="dist/cornerstoneTools.js"></script>
+<script src="./dist/cornerstoneTools.js"></script>
 <script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
