@@ -1,3 +1,8 @@
+/* Allows tip/success icons to show outside of the section */
+.markdown-section {
+  overflow: visible !important;
+}
+
 p.tip {
   border-left-color: #f66;
 }
