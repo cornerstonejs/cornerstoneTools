@@ -1,9 +1,11 @@
 # Cornerstone Tools v3
 
-> Cornerstone Tools is a library built on top of cornerstone that provides a set of common tools needed in medical imaging to work with images and stacks of images.
+{% include "./partials/beta-warning.md" %}
 
-While this documentation grows, the [old GitHub wiki](https://github.com/cornerstonejs/cornerstoneTools/wiki) may be a better source.
+> Cornerstone Tools is a library built on top of [Cornerstone](https://cornerstonejs.org/). It provides a set of common medical imaging toolset to aid working with images and stacks of images.
 
 **[Release Notes](https://github.com/cornerstonejs/cornerstoneTools/releases)**
 
-- [Test](test.md)
+- [Introduction](index.md)
+  - [What is CornerstoneTools.js?](index.md#what-is-cornerstone-tools-js)
+  - [Installation](installation.md)
