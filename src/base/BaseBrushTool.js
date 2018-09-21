@@ -78,12 +78,10 @@ export default class BaseBrushTool extends BaseTool {
   * @event
   * @param {Object} evt - The event.
   */
-  postMouseDownCallback (evt) {
+  preMouseDownCallback (evt) {
     this._startPainting(evt);
 
-    evt.preventDefault();
-    evt.stopPropagation();
-    evt.stopImmediatePropagation();
+    return true;
   }
 
   /**
@@ -117,6 +115,17 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
+  * Event handler for switching mode to passive;
+  *
+  * @virtual
+  * @event
+  * @param {Object} evt - The event.
+  */
+  passiveCallback(evt) {
+    external.cornerstone.updateImage(this.element);
+  }
+
+  /**
   * Used to redraw the tool's annotation data per render.
   *
   * @virtual
@@ -139,17 +148,15 @@ export default class BaseBrushTool extends BaseTool {
   * @virtual
   */
   nextSegmentation () {
-    const numberOfColors = this.constructor._getNumberOfColors();
+    const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = brushState.getters.draw() + 1;
 
     if (drawId === numberOfColors) {
-      drawId = 1;
+      drawId = 0;
     }
 
     brushState.mutations.SET_DRAW_COLOR(drawId);
-
-    //this._changeDrawColor(drawId);
   }
 
   /**
@@ -159,11 +166,11 @@ export default class BaseBrushTool extends BaseTool {
   */
   previousSegmentation () {
     const configuration = this.configuration;
-    const numberOfColors = this.constructor._getNumberOfColors();
+    const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = brushState.getters.draw() - 1;
 
-    if (drawId < 1) {
+    if (drawId < 0) {
       drawId = numberOfColors - 1;
     }
 
@@ -270,17 +277,124 @@ export default class BaseBrushTool extends BaseTool {
     external.cornerstone.updateImage(element);
   }
 
+  //===================================================================
+  // Segmentation API. This is effectively a wrapper around the store.
+  //===================================================================
 
   /**
    * Returns the number of colors in the colormap.
    *
    * @static
-   * @protected
+   * @public
    * @return {Number} The number of colors in the color map.
    */
-  static _getNumberOfColors () {
+  static getNumberOfColors () {
     const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
 
     return colormap.getNumberOfColors();
+  }
+
+  /**
+   * Displays a segmentation on the element.
+   *
+   * @public @api
+   * @param  {String} enabledElement  The enabledElement on which to display.
+   * @param  {Number} segIndex        The index of the segmentation.
+   */
+  showSegmentationOnElement (segIndex) {
+    const enabledElement = this._getEnabledElement();
+    const enabledElementUID = enabledElement.uuid;
+
+    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Hides a segmentation on an element.
+   *
+   * @public @api
+   * @param  {Number} segIndex        The index of the segmentation.
+   */
+  hideSegmentationOnElement (segIndex) {
+    const enabledElement = this._getEnabledElement();
+    const enabledElementUID = enabledElement.uuid;
+
+    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Displays all segmentations on an element.
+   *
+   * @public @api
+   */
+  showAllSegmentationsOnElement () {
+    const enabledElement = this._getEnabledElement();
+    const enabledElementUID = enabledElement.uuid;
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const numberOfColors = colormap.getNumberOfColors();
+
+    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
+      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+    }
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Hides all segmentations on an element.
+   *
+   * @public @api
+   */
+  hideAllSegmentationsOnElement () {
+    const enabledElement = this._getEnabledElement();
+    const enabledElementUID = enabledElement.uuid;
+    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const numberOfColors = colormap.getNumberOfColors();
+
+    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
+      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+    }
+
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  get alpha () {
+    brushState.getters.alpha();
+  }
+
+  set alpha (value) {
+    const enabledElement = this._getEnabledElement();
+
+    brushState.mutations.SET_ALPHA(value);
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  get hiddenButActiveAlpha () {
+    brushState.getters.hiddenButActiveAlpha();
+  }
+
+  set hiddenButActiveAlpha (value) {
+    const enabledElement = this._getEnabledElement();
+
+    brushState.mutations.SET_HIDDEN_BUT_ACTIVE_ALPHA(value);
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+
+  _getEnabledElement () {
+    return external.cornerstone.getEnabledElement(this.element);
+  }
+
+  /**
+   * Returns the toolData type assoicated with this type of tool.
+   *
+   * @static
+   * @public
+   * @return {String} The number of colors in the color map.
+   */
+  static getReferencedToolDataName() {
+    return 'brush';
   }
 }

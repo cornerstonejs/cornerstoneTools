@@ -97,17 +97,24 @@ export default class BrushTool extends BaseBrushTool {
     const { x, y } = eventData.currentPoints.image;
     let toolData = getToolState(element, this.referencedToolData);
 
-    let pixelData;
+    let shouldErase = false;
 
-    if (toolData) {
-      pixelData = toolData.data[0].pixelData;
-    } else {
-      pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-      addToolState(element, this.referencedToolData, { pixelData });
-      toolData = getToolState(element, this.referencedToolData);
+    // Check for key, could be a mouseDown or mouseDrag event.
+    if (this._isCtrlDown(eventData)) {
+      console.log('ctrlDown');
+      shouldErase = true;
     }
 
-    const brushPixelValue = brushState.getters.draw();
+    const segmentationIndex = brushState.getters.draw();
+
+    if (!toolData.data[segmentationIndex].pixelData) {
+      console.log(`creating new pixelData for segmentation ${segmentationIndex}`);
+      const newPixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
+      toolData.data[segmentationIndex].pixelData = newPixelData;
+    }
+
+    const pixelData = toolData.data[segmentationIndex].pixelData;
+
     const radius = brushState.getters.radius();
 
     if (x < 0 || x > columns ||
@@ -117,36 +124,17 @@ export default class BrushTool extends BaseBrushTool {
 
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    drawBrushPixels(pointerArray, pixelData, brushPixelValue, columns);
+    drawBrushPixels(pointerArray, pixelData, segmentationIndex, columns, shouldErase);
 
-    toolData.data[0].invalidated = true;
-
-    external.cornerstone.updateImage(eventData.element);
-  }
-
-  /**
-  * Event handler for NEW_IMAGE event.
-  *
-  * @event
-  * @param {Object} evt - The event.
-  */
-  newImageCallback (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    let toolData = getToolState(element, this.referencedToolData);
-
-    if (!toolData) {
-      const pixelData = new Uint8ClampedArray(eventData.image.width * eventData.image.height);
-
-      addToolState(element, this.referencedToolData, { pixelData });
-      toolData = getToolState(element, this.referencedToolData);
-    }
-
-    toolData.data[0].invalidated = true;
-    this._newImage = true;
+    toolData.data[segmentationIndex].invalidated = true;
 
     external.cornerstone.updateImage(eventData.element);
   }
+
+  _isCtrlDown (eventData) {
+    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
+  }
+
 }
 
 function defaultBrushToolConfiguration () {
@@ -154,8 +142,8 @@ function defaultBrushToolConfiguration () {
     keyBinds: {
       increaseBrushSize: '+',
       decreaseBrushSize: '-',
-      nextSegmentation: '[',
-      previousSegmentation: ']'
+      nextSegmentation: ']',
+      previousSegmentation: '['
     }
   };
 }
