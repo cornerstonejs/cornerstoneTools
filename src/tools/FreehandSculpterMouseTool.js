@@ -21,9 +21,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     this.hasCursor = true;
     this.referencedToolName = referencedToolName;
 
-    // Bind _onNewImageCallback so that the tool can
-    // Be reset when changing whilst active.
-    this._onNewImageCallback = this._onNewImageCallback.bind(this);
+    this._active = false;
 
     // Create bound functions for private event loop.
     this.activeMouseUpCallback = this.activeMouseUpCallback.bind(this);
@@ -44,11 +42,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       return false;
     }
 
-    if (config.active) {
+    if (this._active) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
         fill: null,
-        handleRadius: config.toolSizeCanvas
+        handleRadius: this._toolSizeCanvas
       };
 
       drawHandles(context, eventData, config.mouseLocation.handles, config.dragColor, options);
@@ -96,7 +94,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   activeMouseDragCallback (evt) {
     const config = this.configuration;
 
-    if (!config.active) {
+    if (!this._active) {
       return;
     }
 
@@ -127,7 +125,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const element = eventData.element;
     const config = this.configuration;
 
-    config.active = false;
+    this._active = false;
 
     mutations.SET_IS_TOOL_LOCKED(false);
 
@@ -142,53 +140,6 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     external.cornerstone.updateImage(eventData.element);
 
     preventPropagation(evt);
-  }
-
-  /**
-  * Event handler for passive mode change.
-  *
-  *
-  * @param {Object} element - The element the tool is assoicated with.
-  * @param {Object} options - options (unused here)
-  */
-  passiveCallback (element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    this._deselectAllTools(element);
-  }
-
-  /**
-  * Event handler for enabled mode change.
-  *
-  *
-  * @param {Object} element - The element the tool is assoicated with.
-  * @param {Object} options - options (unused here)
-  */
-  enabledCallback (element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    this._deselectAllTools(element);
-  }
-
-  /**
-  * Event handler for disabled mode change.
-  *
-  *
-  * @param {Object} element - The element the tool is assoicated with.
-  * @param {Object} options - options (unused here)
-  */
-  disabledCallback (element) {
-    element.removeEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
-    this._deselectAllTools(element);
-  }
-
-  /**
-  * Event handler for active mode change.
-  *
-  *
-  * @param {Object} element - The element the tool is assoicated with.
-  * @param {Object} options - options (unused here)
-  */
-  activeCallback (element) {
-    element.addEventListener(EVENTS.NEW_IMAGE, this._onNewImageCallback);
   }
 
   /**
@@ -247,14 +198,41 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   /**
   * Event handler for NEW_IMAGE event.
   *
-  * @private
+  * @public
   * @param {Object} evt - The event.
   */
-  _onNewImageCallback (evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
+  newImageCallback (evt) {
+    this._deselectAllTools(evt);
+  }
 
-    this._deselectAllTools(element);
+  /**
+  * Event handler for switching mode to enabled.
+  *
+  * @public
+  * @param {Object} evt - The event.
+  */
+  enabledCallback (evt) {
+    this._deselectAllTools(evt);
+  }
+
+  /**
+  * Event handler for switching mode to passive.
+  *
+  * @public
+  * @param {Object} evt - The event.
+  */
+  passiveCallback (evt) {
+    this._deselectAllTools(evt);
+  }
+
+  /**
+  * Event handler for switching mode to disabled.
+  *
+  * @public
+  * @param {Object} evt - The event.
+  */
+  disabledCallback (evt) {
+    this._deselectAllTools(evt);
   }
 
   /**
@@ -310,7 +288,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const element = eventData.element;
     const config = this.configuration;
 
-    config.active = true;
+    this._active = true;
 
     // Interupt event dispatcher
     mutations.SET_IS_TOOL_LOCKED(true);
@@ -338,7 +316,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       image: eventData.image,
       mousePoint: eventData.currentPoints.image,
       dataHandles,
-      toolSize: config.toolSizeImage,
+      toolSize: this._toolSizeImage,
       minSpacing: config.minSpacing,
       maxSpacing: config.maxSpacing
     };
@@ -617,7 +595,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
   /**
   * Calculates the distance to the closest handle in the tool, and stores the
-  * result in config.toolSizeImage and config.toolSizeCanvas.
+  * result in this._toolSizeImage and this._toolSizeCanvas.
   *
   * @private
   * @param {Object} eventData - Data object associated with the event.
@@ -642,8 +620,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
     }
 
-    config.toolSizeImage = radiusImage;
-    config.toolSizeCanvas = radiusCanvas;
+    this._toolSizeImage = radiusImage;
+    this._toolSizeCanvas = radiusCanvas;
   }
 
   /**
@@ -713,11 +691,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   * Deactivates all freehand ROIs and change currentTool to null
   *
   * @private
-  * @param {Object} element - The element on which to deselectAllTools
+  * @param {Object} evt - The event.
   */
-  _deselectAllTools (element) {
+  _deselectAllTools (evt) {
     const config = this.configuration;
-    const toolData = getToolState(element, this.referencedToolName);
+    const toolData = getToolState(this.element, this.referencedToolName);
 
     config.currentTool = null;
 
@@ -727,7 +705,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       }
     }
 
-    external.cornerstone.updateImage(element);
+    external.cornerstone.updateImage(this.element);
   }
 
   /**
@@ -964,6 +942,108 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     return insertPosition;
   }
+
+  //===================================================================
+  // Public Configuration API. .
+  //===================================================================
+
+  get minSpacing () {
+    return this.configuration.minSpacing;
+  }
+
+  set minSpacing (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehandSculpter minSpacing to a value other than a number.'
+      );
+    }
+
+    this.configuration.minSpacing = value;
+  }
+
+  get maxSpacing () {
+    return this.configuration.maxSpacing;
+  }
+
+  set maxSpacing (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehandSculpter maxSpacing to a value other than a number.'
+      );
+    }
+
+    this.configuration.maxSpacing = value;
+  }
+
+  get showCursorOnHover () {
+    return this.configuration.showCursorOnHover;
+  }
+
+  set showCursorOnHover (value) {
+    if (typeof value !== 'boolean') {
+      throw new Error(
+        'Attempting to set freehandSculpter showCursorOnHover to a value other than a boolean.'
+      );
+    }
+
+    this.configuration.showCursorOnHover = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get limitRadiusOutsideRegion () {
+    return this.configuration.limitRadiusOutsideRegion;
+  }
+
+  set limitRadiusOutsideRegion (value) {
+    if (typeof value !== 'boolean') {
+      throw new Error(
+        'Attempting to set freehandSculpter limitRadiusOutsideRegion to a value other than a boolean.'
+      );
+    }
+
+    this.configuration.limitRadiusOutsideRegion = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get hoverCursorFadeAlpha () {
+    return this.configuration.hoverCursorFadeAlpha;
+  }
+
+  set hoverCursorFadeAlpha (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehandSculpter hoverCursorFadeAlpha to a value other than a number.'
+      );
+    }
+
+    // Clamp the value from 0 to 1.
+    value = Math.max(
+      Math.min(value, 1.0),
+      0.0
+    );
+
+    this.configuration.hoverCursorFadeAlpha = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
+  get hoverCursorFadeDistance () {
+    return this.configuration.hoverCursorFadeDistance;
+  }
+
+  set hoverCursorFadeDistance (value) {
+    if (typeof value !== 'number') {
+      throw new Error(
+        'Attempting to set freehandSculpter hoverCursorFadeDistance to a value other than a number.'
+      );
+    }
+
+    // Don't allow to fade a distances smaller than the tool's radius.
+    value = Math.max(value, 1.0);
+
+    this.configuration.hoverCursorFadeDistance = value;
+    external.cornerstone.updateImage(this.element);
+  }
+
 }
 
 
@@ -987,11 +1067,8 @@ function getDefaultFreehandSculpterMouseToolConfiguration () {
       ctrl: false,
       alt: false
     },
-    active: false,
     minSpacing: 5,
     maxSpacing: 20,
-    toolSizeImage: null,
-    toolSizeCanvas: null,
     currentTool: null,
     dragColor: toolColors.getActiveColor(),
     hoverColor: toolColors.getToolColor(),
