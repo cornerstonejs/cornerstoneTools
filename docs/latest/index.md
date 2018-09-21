@@ -4,6 +4,8 @@
 
 ## What is CornerstoneTools.js {#what-is-cornerstone-tools-js}
 
+## Getting Started {#getting-started}
+
 ### Direct Download / CDN
 
 [https://unpkg.com/cornerstone-tools](https://unpkg.com/cornerstone-tools)
