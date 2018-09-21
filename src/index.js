@@ -21,6 +21,7 @@ export { default as RotateTool } from './tools/RotateTool.js';
 export { default as SaveAsTool } from './tools/SaveAsTool.js';
 export { default as ScaleOverlayTool } from './tools/ScaleOverlayTool.js';
 export { default as StackScrollTool } from './tools/StackScrollTool.js';
+export { default as StackScrollMultiTouchTool } from './tools/StackScrollMultiTouchTool.js';
 export { default as StackScrollMouseWheelTool } from './tools/StackScrollMouseWheelTool.js';
 export { default as WwwcTool } from './tools/WwwcTool.js';
 export { default as WwwcRegionTool } from './tools/WwwcRegionTool.js';
