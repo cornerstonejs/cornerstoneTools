@@ -39,7 +39,7 @@ body,
 }
 
 /*=============================
- *        Menu Items 
+ *        Menu Items
  * ============================ */
 ul {
   list-style-type: none;
@@ -131,4 +131,17 @@ button:hover {
 
 .checkbox-label.turned-on .label-off {
   display: none;
+}
+
+.save-btn {
+  position: relative;
+  top: 20px;
+  left: 50%;
+  margin-right: 70px;
+  padding: 5px;
+  text-decoration: none;
+  color: #999;
+  border-radius: 4px;
+  border: 1px solid #999;
+  z-index: 100;
 }

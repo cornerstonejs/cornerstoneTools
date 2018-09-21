@@ -24,7 +24,10 @@ export default function (evt) {
   const element = eventData.element;
   const coords = eventData.startPoints.canvas;
 
-  const tools = getInteractiveToolsForElement(element, getters.touchTools());
+  let tools = getInteractiveToolsForElement(element, getters.touchTools());
+  tools = tools.filter(
+    (tool) => tool.options.touchEnable || tool.options.touchEnable === undefined
+  );
   const activeTools = tools.filter((tool) => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
