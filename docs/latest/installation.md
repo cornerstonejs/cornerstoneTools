@@ -1,5 +1,7 @@
 # Installation
 
+{% include "./partials/beta-warning.md" %}
+
 ### Compatibility Note
 
 CornerstoneTools.js does not support IE8 and below, because it uses ECMAScript 5 features that are un-shimmable in IE8. However it supports all [ECMAScript 5 compliant browsers](https://caniuse.com/#feat=es5).
