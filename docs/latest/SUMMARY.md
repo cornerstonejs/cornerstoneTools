@@ -40,5 +40,6 @@
 
 ## Misc
 
+- [API](api.md)
 - 3rd Party Tool Directory _coming soon_
 - Custom Tool Example Repositories _coming soon_
