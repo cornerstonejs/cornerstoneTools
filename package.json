@@ -18,12 +18,11 @@
   },
   "scripts": {
     "build": "npm run test && npm run version && npm run webpack",
-    "clean": "npm run clean:dist && npm run clean:coverage",
     "clean:dist": "shx rm -rf ./dist",
     "clean:apidocs": "shx rm -rf ./docs/latest/api.md",
     "clean:coverage": "shx rm -rf ./coverage",
     "docs": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
-    "docs:api": "npm run clean:apidocs && documentation build src/index.js -f md -o docs/latest/api.md",
+    "docs:api": "npm run clean:apidocs && documentation build src/index.js --config documentation.yml -f md -o docs/latest/api.md",
     "docs:deploy": "bash ./build/update-docs.sh",
     "eslint": "eslint -c .eslintrc.js src",
     "eslint-quiet": "eslint -c .eslintrc.js --quiet src",
