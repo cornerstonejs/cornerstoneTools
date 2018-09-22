@@ -52,9 +52,9 @@ In the `dist/` [directory of the NPM package](https://cdn.jsdelivr.net/npm/corne
 | Type             | Bundle                        | Available       |
 | ---------------- | ----------------------------- | --------------- |
 | UMD              | `cornerstone-tools.js`        | Yes             |
-| UMD (production) | `cornerstone-tools.min.js`    | _(coming soon)_ |
+| UMD (production) | `cornerstone-tools.min.js`    | Yes             |
 | CommonJS         | `cornerstone-tools.common.js` | _(coming soon)_ |
-| ES Module        | `cornerstone-tools.esm.js`    | Yes             |
+| ES Module        | `cornerstone-tools.esm.js`    | _(coming soon)_ |
 
 ### Terms
 
