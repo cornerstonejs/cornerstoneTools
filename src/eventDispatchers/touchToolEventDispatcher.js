@@ -5,6 +5,7 @@ import {
   multiTouchDrag,
   touchStart,
   touchStartActive,
+  touchRotate,
   touchDrag,
   touchEnd,
   touchPress,
@@ -19,6 +20,7 @@ import {
  * - touchDrag:
  * - touchStartActive: createNewMeasurement (usually)
  * - touchPress:
+ * - touchRotate:
  * - doubleTap: usually a one-time apply specialty action
  * - touchPinch:
  * - onImageRendered: redraw visible tool data
@@ -35,6 +37,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.addEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.addEventListener(EVENTS.TOUCH_PINCH, touchPinch);
+  element.addEventListener(EVENTS.TOUCH_ROTATE, touchRotate);
   element.addEventListener(EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag);
 };
 
@@ -49,6 +52,7 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.TOUCH_PRESS, touchPress);
   element.removeEventListener(EVENTS.DOUBLE_TAP, doubleTap);
   element.removeEventListener(EVENTS.TOUCH_PINCH, touchPinch);
+  element.removeEventListener(EVENTS.TOUCH_ROTATE, touchRotate);
   element.removeEventListener(EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag);
 };
 
