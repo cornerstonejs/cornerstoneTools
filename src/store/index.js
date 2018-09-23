@@ -1,4 +1,7 @@
+import bindModules from './internals/bindModules.js';
+//
 import brush from './brushStore.js';
+import globalConfiguration from './modules/globalConfigurationModule.js';
 
 export const state = {
   isToolLocked: false,
@@ -19,8 +22,8 @@ export const getters = {
     ),
   mousePositionImage: () => state.mousePositionImage,
   enabledElementByUID: (enabledElementUID) =>
-    state.enabledElements.filter((enabledElement) =>
-      enabledElement.uuid === enabledElementUID
+    state.enabledElements.filter(
+      (enabledElement) => enabledElement.uuid === enabledElementUID
     )
 };
 
@@ -43,10 +46,11 @@ export const mutations = {
   }
 };
 
+export const modules = [globalConfiguration]; // Brush
+
 export default {
-  modules: {
-    brush
-  },
+  bindModules: bindModules.bind(null, state, getters, mutations, modules),
+  modules,
   state,
   getters,
   mutations

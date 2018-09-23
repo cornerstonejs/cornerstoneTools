@@ -18,8 +18,12 @@ import {
 } from './store/setToolMode.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
-export default function () {
+export default function (configuration) {
   windowResizeHandler.enable();
+  store.bindModules();
+
+  // Apply global configuration
+  store.mutations.GLOBAL_CONFIGURATION_SET_CONFIGURATION(configuration);
 
   return Object.freeze({
     store,
