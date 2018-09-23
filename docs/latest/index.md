@@ -53,7 +53,18 @@ If you find this overly complicated and have alternative solutions to managing a
 
 ## Configuration {#configuration}
 
-_This section needs content_
+Previous versions of Cornerstone Tools required a strong knowledge of its internals to enable/disable different features and functionality. Now, sensible defaults are applied when you initialize a new instance of Cornerstone Tools. You also have the ability to override those defaults, for example:
+
+_To disable touch event listeners:_
+
+```js
+const config = {
+  touchEnabled: false
+};
+const csTools = cornerstoneTools.init(config);
+```
+
+A full list of the settings and their default can be found here:
 
 ## Adding and Using Tools {#adding-and-using-tools}
 
