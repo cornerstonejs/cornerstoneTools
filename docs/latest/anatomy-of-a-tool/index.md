@@ -6,3 +6,4 @@
 {% include "./interaction-types.md" %}
 {% include "./strategies.md" %}
 {% include "./configuration.md" %}
+{% include "./measurement-data.md %}
