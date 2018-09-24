@@ -4,6 +4,7 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
 import { getNewContext } from '../util/drawing.js';
+import { getColormap } from '../colors/colormap.js';
 
 const brushState = store.modules.brush;
 
@@ -110,7 +111,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const pixelData = toolData.data[segIndex].pixelData;
 
   const colormapId = brushState.getters.colorMapId();
-  const colormap = external.cornerstone.colors.getColormap(colormapId);
+  const colormap = getColormap(colormapId);
   const colorLutTable = [
     [0, 0, 0, 0],
     colormap.getColor(segIndex)

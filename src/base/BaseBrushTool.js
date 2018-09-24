@@ -4,6 +4,7 @@ import BaseTool from './../base/BaseTool.js';
 // Utils
 import isToolActive from '../tools/shared/isToolActive.js';
 import store from '../store/index.js';
+import { getColormap } from '../colors/colormap.js';
 
 const brushState = store.modules.brush;
 
@@ -220,7 +221,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
   _getBrushColor (drawId) {
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = getColormap(brushState.getters.colorMapId());
     const colorArray = colormap.getColor(drawId);
 
     if (this._drawing) {
@@ -289,7 +290,7 @@ export default class BaseBrushTool extends BaseTool {
    * @return {Number} The number of colors in the color map.
    */
   static getNumberOfColors () {
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = getColormap(brushState.getters.colorMapId());
 
     return colormap.getNumberOfColors();
   }
@@ -332,7 +333,7 @@ export default class BaseBrushTool extends BaseTool {
   showAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
@@ -350,7 +351,7 @@ export default class BaseBrushTool extends BaseTool {
   hideAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = getColormap(brushState.getters.colorMapId());
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
