@@ -11,7 +11,11 @@ import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from '../base/BaseTool.js';
 
 export default class FreehandSculpterMouseTool extends BaseTool {
-  constructor (name = 'FreehandSculpterMouse', referencedToolName = 'FreehandMouse') {
+  constructor (
+    name = 'FreehandSculpterMouse',
+    referencedToolName = 'FreehandMouse',
+    mixins = ['activeOrDisabledBinaryTool']
+  ) {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
