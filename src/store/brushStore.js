@@ -1,4 +1,5 @@
 import external from '../externalModules.js';
+import { getColormap } from '../colors/colormap.js';
 
 const state = {
   draw: 0,
@@ -42,7 +43,7 @@ const mutations = {
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
   SET_BRUSH_COLOR_MAP: (colors) => {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+    const colormap = getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
 
@@ -57,7 +58,7 @@ const mutations = {
 
     const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
     const enabledElementUID = cornerstoneEnabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+    const colormap = getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
     state.visibleSegmentations[enabledElementUID] = [];
@@ -139,24 +140,22 @@ const DISTINCT_COLORS = [
 ];
 
 // DEFAULT BRUSH COLOR MAP
-if (external.cornerstone && external.cornerstone.colors) {
-  const defaultSegmentationCount = 19;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+const defaultSegmentationCount = 19;
+const colormap = getColormap(state.colorMapId);
 
-  colormap.setNumberOfColors(defaultSegmentationCount);
+colormap.setNumberOfColors(defaultSegmentationCount);
 
-  /*
-    19 Colors selected to be as distinct from each other as possible,
-    and ordered such that between each index you make large jumps around the
-    color wheel. If defaultSegmentationCount is greater than 19, generate a
-    random linearly interperlated color between 2 colors.
-  */
-  for (let i = 0; i < defaultSegmentationCount; i++) {
-    if (i < DISTINCT_COLORS.length) {
-      colormap.setColor(i, DISTINCT_COLORS[i]);
-    } else {
-      colormap.setColor(i, generateInterpolatedColor());
-    }
+/*
+  19 Colors selected to be as distinct from each other as possible,
+  and ordered such that between each index you make large jumps around the
+  color wheel. If defaultSegmentationCount is greater than 19, generate a
+  random linearly interperlated color between 2 colors.
+*/
+for (let i = 0; i < defaultSegmentationCount; i++) {
+  if (i < DISTINCT_COLORS.length) {
+    colormap.setColor(i, DISTINCT_COLORS[i]);
+  } else {
+    colormap.setColor(i, generateInterpolatedColor());
   }
 }
 
