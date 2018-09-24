@@ -8,7 +8,7 @@ export default class BaseTool {
     strategies,
     defaultStrategy,
     configuration,
-    supportedInteractionTypes
+    supportedInteractionTypes, mixins
   } = {}) {
     this.name = name;
     this.mode = 'disabled';

@@ -1,0 +1,21 @@
+toc:
+  - name: Core
+    description: |
+      This section needs a description
+    children:
+      - addTool
+      - addToolForElement
+      - setToolOptions
+      - setToolOptionsForElement
+  - name: Tool Modes
+    description: |
+      This section needs a description
+    children:
+      #- setToolActive
+      - setToolActiveForElement
+      #- setToolPassive
+      - setToolPassiveForElement
+      #- setToolEnabled
+      - setToolEnabledForElement
+      #- setToolDisabled
+      - setToolDisabledForElement
