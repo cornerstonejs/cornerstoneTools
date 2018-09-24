@@ -1,6 +1,5 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
-import enabledOrDisabledBinaryTool from './mixins/enabledOrDisabledBinaryTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
