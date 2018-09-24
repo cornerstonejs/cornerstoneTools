@@ -1,3 +1,4 @@
+import external from './externalModules.js';
 import store from './store/index.js';
 import { addTool, addToolForElement } from './store/addTool.js';
 import getToolForElement from './store/getToolForElement.js';
@@ -19,6 +20,7 @@ import {
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 export default function (configuration) {
+  _addCornerstoneEventListeners();
   windowResizeHandler.enable();
 
   // Apply global configuration
@@ -35,7 +37,6 @@ export default function (configuration) {
     getToolForElement,
     setToolOptions,
     setToolOptionsForElement,
-    addEnabledElement,
     // Tool Modes
     setToolActive,
     setToolActiveForElement,
@@ -46,4 +47,11 @@ export default function (configuration) {
     setToolPassive,
     setToolPassiveForElement
   });
+}
+
+function _addCornerstoneEventListeners () {
+  const cornerstone = external.cornerstone;
+  const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
+
+  cornerstone.events.addEventListener(elementEnabledEvent, addEnabledElement);
 }
