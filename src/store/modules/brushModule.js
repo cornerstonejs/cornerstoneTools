@@ -1,4 +1,7 @@
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
+
+const namespace = 'brush';
+const moduleName = 'BRUSH';
 
 const state = {
   draw: 0,
@@ -14,26 +17,26 @@ const state = {
 };
 
 const mutations = {
-  SET_DRAW_COLOR: (drawColorId) => {
-    state.draw = drawColorId;
+  SET_DRAW_COLOR: ({ state }, drawColorId) => {
+    state[namespace].draw = drawColorId;
   },
-  SET_RADIUS: (radius) => {
-    state.radius = Math.min(
-      Math.max(radius, state.minRadius),
-      state.maxRadius
+  SET_RADIUS: ({ state }, radius) => {
+    state[namespace].radius = Math.min(
+      Math.max(radius, state[namespace].minRadius),
+      state[namespace].maxRadius
     );
   },
-  SET_MIN_RADIUS: (minRadius) => {
-    state.minRadius = minRadius;
+  SET_MIN_RADIUS: ({ state }, minRadius) => {
+    state[namespace].minRadius = minRadius;
   },
-  SET_MAX_RADIUS: (maxRadius) => {
-    state.maxRadius = maxRadius;
+  SET_MAX_RADIUS: ({ state }, maxRadius) => {
+    state[namespace].maxRadius = maxRadius;
   },
-  SET_ALPHA: (alpha) => {
-    state.alpha = alpha;
+  SET_ALPHA: ({ state }, alpha) => {
+    state[namespace].alpha = alpha;
   },
-  SET_HIDDEN_BUT_ACTIVE_ALPHA: (alpha) => {
-    state.hiddenButActiveAlpha = alpha;
+  SET_HIDDEN_BUT_ACTIVE_ALPHA: ({ state }, alpha) => {
+    state[namespace].hiddenButActiveAlpha = alpha;
   },
 
   /**
@@ -41,8 +44,10 @@ const mutations = {
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  SET_BRUSH_COLOR_MAP: (colors) => {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  SET_BRUSH_COLOR_MAP: ({ state }, colors) => {
+    const colormap = external.cornerstone.colors.getColormap(
+      state[namespace].colorMapId
+    );
 
     colormap.setNumberOfColors(colors.length);
 
@@ -50,40 +55,55 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
-  SET_ELEMENT_VISIBLE: (enabledElement) => {
+  SET_ELEMENT_VISIBLE: ({ state }, enabledElement) => {
     if (!external.cornerstone) {
       return;
     }
 
-    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
+    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
+      enabledElement
+    );
     const enabledElementUID = cornerstoneEnabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+    const colormap = external.cornerstone.colors.getColormap(
+      state[namespace].colorMapId
+    );
     const numberOfColors = colormap.getNumberOfColors();
 
-    state.visibleSegmentations[enabledElementUID] = [];
+    state[namespace].visibleSegmentations[enabledElementUID] = [];
 
     for (let i = 0; i < numberOfColors; i++) {
-      state.visibleSegmentations[enabledElementUID].push(true);
+      state[namespace].visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  SET_ELEMENT_BRUSH_VISIBILITY: (enabledElementUID, segIndex, visible = true) => {
-    if (!state.visibleSegmentations[enabledElementUID]) {
-      state.imageBitmapCache[enabledElementUID] = [];
+  SET_ELEMENT_BRUSH_VISIBILITY: (
+    { state },
+    enabledElementUID,
+    segIndex,
+    visible = true
+  ) => {
+    if (!state[namespace].visibleSegmentations[enabledElementUID]) {
+      state[namespace].imageBitmapCache[enabledElementUID] = [];
     }
 
-    state.visibleSegmentations[enabledElementUID][segIndex] = visible;
+    state[namespace].visibleSegmentations[enabledElementUID][
+      segIndex
+    ] = visible;
   },
-  SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, segIndex, imageBitmap) => {
-    if (!state.imageBitmapCache[enabledElementUID]) {
-      state.imageBitmapCache[enabledElementUID] = [];
+  SET_ELEMENT_IMAGE_BITMAP_CACHE: (
+    { state },
+    enabledElementUID,
+    segIndex,
+    imageBitmap
+  ) => {
+    if (!state[namespace].imageBitmapCache[enabledElementUID]) {
+      state[namespace].imageBitmapCache[enabledElementUID] = [];
     }
 
     state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
   },
-  CLEAR_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID) => {
-    state.imageBitmapCache[enabledElementUID] = [];
+  CLEAR_ELEMENT_IMAGE_BITMAP_CACHE: ({ state }, enabledElementUID) => {
+    state[namespace].imageBitmapCache[enabledElementUID] = [];
   }
-
 };
 
 const getters = {
@@ -111,6 +131,7 @@ const getters = {
 };
 
 export default {
+  name,
   state,
   getters,
   mutations
@@ -172,8 +193,8 @@ function generateInterpolatedColor () {
   for (let j = 0; j < 4; j++) {
     interpolatedColor.push(
       Math.floor(
-        fraction * DISTINCT_COLORS[randIndicies[0]][j]
-        + (1.0 - fraction) * DISTINCT_COLORS[randIndicies[1]][j]
+        fraction * DISTINCT_COLORS[randIndicies[0]][j] +
+          (1.0 - fraction) * DISTINCT_COLORS[randIndicies[1]][j]
       )
     );
   }
@@ -181,6 +202,6 @@ function generateInterpolatedColor () {
   return interpolatedColor;
 }
 
-function getRandomInt(max) {
+function getRandomInt (max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
