@@ -108,9 +108,6 @@ export default class BrushTool extends BaseBrushTool {
     const segmentationIndex = state.drawColorId;
 
     if (!toolData.data[segmentationIndex].pixelData) {
-      console.log(
-        `creating new pixelData for segmentation ${segmentationIndex}`
-      );
       const newPixelData = new Uint8ClampedArray(
         eventData.image.width * eventData.image.height
       );
