@@ -1,7 +1,5 @@
-/* eslint no-loop-func: 0 */ // --> OFF
-/* eslint class-methods-use-this: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/baseAnnotationTool.js';
+import baseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import textStyle from '../stateManagement/textStyle.js';
 import {
@@ -29,11 +27,14 @@ import roundToDecimal from '../util/roundToDecimal.js';
 import EVENTS from './../events.js';
 
 export default class extends baseAnnotationTool {
-  constructor(name = 'cobbAngle') {
+
+
+  constructor (name = 'CobbAngle') {
     super({
       name,
       supportedInteractionTypes: ['mouse', 'touch']
     });
+    this.hasIncomplete = false;
   }
 
   /**
@@ -42,8 +43,10 @@ export default class extends baseAnnotationTool {
    * @param {*} eventData
    * @returns
    */
-  createNewMeasurement(eventData) {
+  createNewMeasurement (eventData) {
     // Create the measurement data for this tool with the end handle activated
+    this.hasIncomplete = true;
+
     return {
       visible: true,
       active: true,
@@ -68,14 +71,14 @@ export default class extends baseAnnotationTool {
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true,
+          drawnIndependently: true
         },
         end2: {
           x: eventData.currentPoints.image.x + 1,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true,
+          drawnIndependently: true
         },
         textBox: {
           active: false,
@@ -97,15 +100,12 @@ export default class extends baseAnnotationTool {
    * @param {*} coords
    * @returns
    */
-  pointNearTool(element, data, coords) {
+  pointNearTool (element, data, coords) {
     if (data.visible === false) {
       return false;
     }
 
-    const maybePending = this.getIncomplete(element);
-
-    if (maybePending) {
-      // measurement in progress
+    if (this.hasIncomplete) {
       return false;
     }
 
@@ -127,7 +127,7 @@ export default class extends baseAnnotationTool {
    * @param {*} evt
    * @returns
    */
-  renderToolData(evt) {
+  renderToolData (evt) {
     const eventData = evt.detail;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
@@ -180,8 +180,7 @@ export default class extends baseAnnotationTool {
         const text = data.value;
 
         if (!data.handles.textBox.hasMoved) {
-          let textCoords;
-          textCoords = {
+          const textCoords = {
             x: (data.handles.start.x + data.handles.end.x) / 2,
             y: (data.handles.start.y + data.handles.end.y) / 2 - 10
           };
@@ -207,12 +206,12 @@ export default class extends baseAnnotationTool {
     }
 
 
-    function textBoxAnchorPoints(handles) {
+    function textBoxAnchorPoints (handles) {
       return [handles.start, handles.start2, handles.end, handles.end2];
     }
   }
 
-  getIncomplete(target) {
+  getIncomplete (target) {
     const toolData = getToolState(target, this.name);
 
     if (toolData === undefined) {
@@ -226,7 +225,7 @@ export default class extends baseAnnotationTool {
     }
   }
 
-  addNewMeasurement(evt, interactionType) {
+  addNewMeasurement (evt, interactionType) {
 
     evt.preventDefault();
     evt.stopPropagation();
@@ -258,6 +257,7 @@ export default class extends baseAnnotationTool {
         active: true
       };
       toMoveHandle = measurementData.handles.end2;
+      this.hasIncomplete = false;
     } else {
       measurementData = this.createNewMeasurement(eventData);
       addToolState(element, this.name, measurementData);
@@ -293,15 +293,17 @@ export default class extends baseAnnotationTool {
     );
   }
 
-  onMeasureModified(ev) {
+  onMeasureModified (ev) {
     const image = external.cornerstone.getEnabledElement(ev.detail.element).image;
+
     if (ev.detail.toolType !== this.name) {
       return;
     }
     const data = ev.detail.measurementData;
+
     data.value = calculateValue(data, image);
 
-    function calculateValue(data, image) {
+    function calculateValue (data, image) {
       // Default to isotropic pixel size, update suffix to reflect this
       const columnPixelSpacing = image.columnPixelSpacing || 1;
       const rowPixelSpacing = image.rowPixelSpacing || 1;
@@ -324,13 +326,16 @@ export default class extends baseAnnotationTool {
           image.columnPixelSpacing
         );
       }
+
       return '';
     }
 
-    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
+    function textBoxText (rAngle, rowPixelSpacing, columnPixelSpacing) {
       const suffix =
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
+
+
       return (
         rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
@@ -339,22 +344,22 @@ export default class extends baseAnnotationTool {
 
   }
 
-  activeCallback(element) {
+  activeCallback (element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 
-  passiveCallback(element) {
+  passiveCallback (element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 
-  enabledCallback(element) {
+  enabledCallback (element) {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
 
   }
 
-  disabledCallback(element) {
+  disabledCallback (element) {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 }
