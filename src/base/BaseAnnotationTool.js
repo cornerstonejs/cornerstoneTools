@@ -15,14 +15,16 @@ export default class BaseAnnotationTool extends BaseTool {
     strategies,
     defaultStrategy,
     configuration,
-    supportedInteractionTypes
+    supportedInteractionTypes,
+    mixins
   }) {
     super({
       name,
       strategies,
       defaultStrategy,
       configuration,
-      supportedInteractionTypes
+      supportedInteractionTypes,
+      mixins
     });
   }
 

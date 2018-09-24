@@ -14,14 +14,16 @@ export default class BaseBrushTool extends BaseTool {
     strategies,
     defaultStrategy,
     configuration,
-    supportedInteractionTypes
+    supportedInteractionTypes,
+    mixins
   }) {
     super({
       name,
       strategies,
       defaultStrategy,
       configuration,
-      supportedInteractionTypes
+      supportedInteractionTypes,
+      mixins
     });
 
     this.hasCursor = true;
