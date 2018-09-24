@@ -64,7 +64,7 @@ const config = {
 const csTools = cornerstoneTools.init(config);
 ```
 
-A full list of the settings and their default can be found here:
+A full list of the settings and their default can be found here: [globalConfigurationModule.js](https://github.com/cornerstonejs/cornerstoneTools/blob/vNext/src/store/modules/globalConfigurationModule.js#L1-L3)
 
 ## Adding and Using Tools {#adding-and-using-tools}
 
