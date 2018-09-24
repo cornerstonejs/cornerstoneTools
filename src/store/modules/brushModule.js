@@ -103,7 +103,7 @@ export default {
   setters
 };
 
-const DISTINCT_COLORS = [
+const distinctColors = [
   [230, 25, 75, 255],
   [60, 180, 175, 255],
   [255, 225, 25, 255],
@@ -139,8 +139,8 @@ if (external.cornerstone && external.cornerstone.colors) {
     random linearly interperlated color between 2 colors.
   */
   for (let i = 0; i < defaultSegmentationCount; i++) {
-    if (i < DISTINCT_COLORS.length) {
-      colormap.setColor(i, DISTINCT_COLORS[i]);
+    if (i < distinctColors.length) {
+      colormap.setColor(i, distinctColors[i]);
     } else {
       colormap.setColor(i, generateInterpolatedColor());
     }
@@ -149,8 +149,8 @@ if (external.cornerstone && external.cornerstone.colors) {
 
 function generateInterpolatedColor () {
   const randIndicies = [
-    getRandomInt(DISTINCT_COLORS.length),
-    getRandomInt(DISTINCT_COLORS.length)
+    getRandomInt(distinctColors.length),
+    getRandomInt(distinctColors.length)
   ];
 
   const fraction = Math.random();
@@ -159,8 +159,8 @@ function generateInterpolatedColor () {
   for (let j = 0; j < 4; j++) {
     interpolatedColor.push(
       Math.floor(
-        fraction * DISTINCT_COLORS[randIndicies[0]][j] +
-          (1.0 - fraction) * DISTINCT_COLORS[randIndicies[1]][j]
+        fraction * distinctColors[randIndicies[0]][j] +
+          (1.0 - fraction) * distinctColors[randIndicies[1]][j]
       )
     );
   }
