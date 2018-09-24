@@ -7,18 +7,20 @@ import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
 export default class ScaleOverlayTool extends BaseTool {
-  constructor (name = 'ScaleOverlay') {
+  constructor (
+    name = 'ScaleOverlay',
+    mixins = [
+      'enabledOrDisabledBinaryTool'
+    ]
+  ) {
     super({
       name,
       configuration: {
         minorTickLength: 12.5,
         majorTickLength: 25
-      }
+      },
+      mixins
     });
-
-    Object.assign(this, enabledOrDisabledBinaryTool);
-
-    console.log(this);
   }
 
   enabledCallback (element) {

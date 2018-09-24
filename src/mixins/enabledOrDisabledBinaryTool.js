@@ -1,4 +1,4 @@
-import { setToolDisabledForElement, setToolEnabledForElement } from '../../store/setToolMode.js';
+import { setToolDisabledForElement, setToolEnabledForElement } from '../store/setToolMode.js';
 
 function passiveCallback (element) {
   console.warn(
