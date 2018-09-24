@@ -1,4 +1,4 @@
-const name = 'globalConfiguration';
+const namespace = 'globalConfiguration';
 const moduleName = 'GLOBAL_CONFIGURATION';
 
 export const state = {
@@ -17,7 +17,7 @@ mutations[`${moduleName}_SET_CONFIGURATION`] = function (
   { state },
   configuration
 ) {
-  state[name] = Object.assign({}, state[name], configuration);
+  state[namespace] = Object.assign({}, state[namespace], configuration);
 };
 
 export default {

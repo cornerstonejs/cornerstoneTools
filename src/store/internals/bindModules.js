@@ -13,7 +13,7 @@ export default function (state, getters, mutations, modules) {
     const moduleState = {};
 
     // Merge module state into root's state
-    moduleState[module.name] = module.state;
+    moduleState[module.namespace] = module.state;
     state = Object.assign(state, moduleState);
     getters = Object.assign(getters, module.getters);
 
