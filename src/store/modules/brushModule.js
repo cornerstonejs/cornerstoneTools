@@ -1,7 +1,7 @@
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 
 const state = {
-  draw: 0,
+  drawColorId: 0,
   radius: 10,
   minRadius: 1,
   maxRadius: 50,
@@ -13,35 +13,24 @@ const state = {
   imageBitmapCache: {}
 };
 
-const mutations = {
-  SET_DRAW_COLOR: (drawColorId) => {
-    state.draw = drawColorId;
-  },
-  SET_RADIUS: (radius) => {
-    state.radius = Math.min(
-      Math.max(radius, state.minRadius),
-      state.maxRadius
-    );
-  },
-  SET_MIN_RADIUS: (minRadius) => {
-    state.minRadius = minRadius;
-  },
-  SET_MAX_RADIUS: (maxRadius) => {
-    state.maxRadius = maxRadius;
-  },
-  SET_ALPHA: (alpha) => {
-    state.alpha = alpha;
-  },
-  SET_HIDDEN_BUT_ACTIVE_ALPHA: (alpha) => {
-    state.hiddenButActiveAlpha = alpha;
+const setters = {
+
+  /**
+   * Sets the brush radius, account for global min/max radius
+   *
+   * @param {*} radius
+   */
+  setRadius: (radius) => {
+    state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
   },
 
   /**
+   * TODO: Should this be a init config property?
    * Sets the brush color map to something other than the default
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  SET_BRUSH_COLOR_MAP: (colors) => {
+  setBrushColorMap: (colors) => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
@@ -50,12 +39,14 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
-  SET_ELEMENT_VISIBLE: (enabledElement) => {
+  setElementVisible: (enabledElement) => {
     if (!external.cornerstone) {
       return;
     }
 
-    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(enabledElement);
+    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
+      enabledElement
+    );
     const enabledElementUID = cornerstoneEnabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
@@ -66,34 +57,30 @@ const mutations = {
       state.visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  SET_ELEMENT_BRUSH_VISIBILITY: (enabledElementUID, segIndex, visible = true) => {
+  setBrushVisibilityForElement: (
+    enabledElementUID,
+    segIndex,
+    visible = true
+  ) => {
     if (!state.visibleSegmentations[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
 
     state.visibleSegmentations[enabledElementUID][segIndex] = visible;
   },
-  SET_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID, segIndex, imageBitmap) => {
+  setImageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
 
     state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
   },
-  CLEAR_ELEMENT_IMAGE_BITMAP_CACHE: (enabledElementUID) => {
+  clearImageBitmapCacheForElement: (enabledElementUID) => {
     state.imageBitmapCache[enabledElementUID] = [];
   }
-
 };
 
 const getters = {
-  draw: () => state.draw,
-  radius: () => state.radius,
-  minRadius: () => state.minRadius,
-  maxRadius: () => state.maxRadius,
-  alpha: () => state.alpha,
-  hiddenButActiveAlpha: () => state.hiddenButActiveAlpha,
-  colorMapId: () => state.colorMapId,
   imageBitmapCacheForElement: (enabledElementUID) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       return null;
@@ -113,10 +100,10 @@ const getters = {
 export default {
   state,
   getters,
-  mutations
+  setters
 };
 
-const DISTINCT_COLORS = [
+const distinctColors = [
   [230, 25, 75, 255],
   [60, 180, 175, 255],
   [255, 225, 25, 255],
@@ -152,8 +139,8 @@ if (external.cornerstone && external.cornerstone.colors) {
     random linearly interperlated color between 2 colors.
   */
   for (let i = 0; i < defaultSegmentationCount; i++) {
-    if (i < DISTINCT_COLORS.length) {
-      colormap.setColor(i, DISTINCT_COLORS[i]);
+    if (i < distinctColors.length) {
+      colormap.setColor(i, distinctColors[i]);
     } else {
       colormap.setColor(i, generateInterpolatedColor());
     }
@@ -162,8 +149,8 @@ if (external.cornerstone && external.cornerstone.colors) {
 
 function generateInterpolatedColor () {
   const randIndicies = [
-    getRandomInt(DISTINCT_COLORS.length),
-    getRandomInt(DISTINCT_COLORS.length)
+    getRandomInt(distinctColors.length),
+    getRandomInt(distinctColors.length)
   ];
 
   const fraction = Math.random();
@@ -172,8 +159,8 @@ function generateInterpolatedColor () {
   for (let j = 0; j < 4; j++) {
     interpolatedColor.push(
       Math.floor(
-        fraction * DISTINCT_COLORS[randIndicies[0]][j]
-        + (1.0 - fraction) * DISTINCT_COLORS[randIndicies[1]][j]
+        fraction * distinctColors[randIndicies[0]][j] +
+          (1.0 - fraction) * distinctColors[randIndicies[1]][j]
       )
     );
   }
@@ -181,6 +168,6 @@ function generateInterpolatedColor () {
   return interpolatedColor;
 }
 
-function getRandomInt(max) {
+function getRandomInt (max) {
   return Math.floor(Math.random() * Math.floor(max));
 }

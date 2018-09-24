@@ -20,6 +20,7 @@
   - [Interaction Types](anatomy-of-a-tool/index.md#interaction-types)
   - [Strategies](anatomy-of-a-tool/index.md#strategies)
   - [Configuration](anatomy-of-a-tool/index.md#configuration)
+  - [Measurement Data](anatomy-of-a-tool/index.md#measurement-data)
 - [Tool Types](tool-types/index.md)
   - [Base Tool](tool-types/index.md#base-tool)
   - [Annotation Tool](tool-types/index.md#annotation-tool)
