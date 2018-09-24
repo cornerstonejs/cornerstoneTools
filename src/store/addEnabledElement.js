@@ -28,7 +28,7 @@ export default function (enabledElement) {
 
   // TEMP
   if (cornerstoneEnabledElement.uuid) {
-    console.error(
+    console.warn(
       'uuid has gone core! remove this block and the generateGUID function.'
     );
   } else {
