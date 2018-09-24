@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
-import binaryToolMixin from './shared/binaryToolMixin.js';
+import enabledOrDisabledBinaryTool from './mixins/enabledOrDisabledBinaryTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
@@ -16,7 +16,9 @@ export default class ScaleOverlayTool extends BaseTool {
       }
     });
 
-    Object.assign(this, binaryToolMixin);
+    Object.assign(this, enabledOrDisabledBinaryTool);
+
+    console.log(this);
   }
 
   enabledCallback (element) {
