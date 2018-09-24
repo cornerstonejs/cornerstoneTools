@@ -1,9 +1,8 @@
+const name = 'globalConfiguration';
 const moduleName = 'GLOBAL_CONFIGURATION';
 
 export const state = {
-  globalConfiguration: {
-    touchEnabled: true
-  }
+  touchEnabled: true
 };
 
 export const mutations = {};
@@ -18,14 +17,11 @@ mutations[`${moduleName}_SET_CONFIGURATION`] = function (
   { state },
   configuration
 ) {
-  state.globalConfiguration = Object.assign(
-    {},
-    state.globalConfiguration,
-    configuration
-  );
+  state[name] = Object.assign({}, state[name], configuration);
 };
 
 export default {
+  name,
   state,
   mutations
 };

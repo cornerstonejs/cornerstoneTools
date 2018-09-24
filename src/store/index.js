@@ -49,6 +49,7 @@ export const mutations = {
 export const modules = [globalConfiguration]; // Brush
 
 export default {
+  // Constructor ?
   bindModules: bindModules.bind(null, state, getters, mutations, modules),
   modules,
   state,
