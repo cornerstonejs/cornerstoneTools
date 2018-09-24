@@ -42,6 +42,15 @@ export const mutations = {
     if (brush) {
       brush.setters.setElementVisible(enabledElement);
     }
+  },
+  REMOVE_ENABLED_ELEMENT: (enabledElement) => {
+    const foundElementIndex = state.enabledElements.findIndex(
+      (element) => element === enabledElement
+    );
+
+    if (foundElementIndex) {
+      state.enabledElements.splice(foundElementIndex, 1);
+    }
   }
 };
 

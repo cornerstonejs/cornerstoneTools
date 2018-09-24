@@ -3,17 +3,16 @@ import {
   mouseEventListeners,
   mouseWheelEventListeners,
   touchEventListeners
-} from '../eventListeners/index.js';
+} from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher
-} from '../eventDispatchers/index.js';
-import { mutations } from './index.js';
-import generateGUID from './generateGUID.js';
-import external from './../externalModules.js';
-import store from './../store/index.js';
+} from '../../eventDispatchers/index.js';
+import generateGUID from '../generateGUID.js';
+import external from '../../externalModules.js';
+import store from '../index.js';
 
 export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
@@ -48,5 +47,5 @@ export default function (elementEnabledEvt) {
   }
 
   // State
-  mutations.ADD_ENABLED_ELEMENT(enabledElement);
+  store.mutations.ADD_ENABLED_ELEMENT(enabledElement);
 }

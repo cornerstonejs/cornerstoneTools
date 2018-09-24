@@ -6,7 +6,8 @@ import {
   setToolOptions,
   setToolOptionsForElement
 } from './store/setToolOptions.js';
-import addEnabledElement from './store/addEnabledElement.js';
+import addEnabledElement from './store/internals/addEnabledElement.js';
+import removeEnabledElement from './store/internals/removeEnabledElement.js';
 import {
   setToolActive,
   setToolActiveForElement,
@@ -52,6 +53,11 @@ export default function (configuration) {
 function _addCornerstoneEventListeners () {
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
+  const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
 
   cornerstone.events.addEventListener(elementEnabledEvent, addEnabledElement);
+  cornerstone.events.addEventListener(
+    elementDisabledEvent,
+    removeEnabledElement
+  );
 }
