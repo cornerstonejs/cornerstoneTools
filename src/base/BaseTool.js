@@ -1,6 +1,7 @@
 import external from './../externalModules.js';
 import KeyboardController from '../tools/shared/KeyboardController.js';
 import isToolActive from '../tools/shared/isToolActive.js';
+import { default as mixinCollection } from '../mixins/index.js';
 
 export default class BaseTool {
   constructor ({
@@ -8,7 +9,8 @@ export default class BaseTool {
     strategies,
     defaultStrategy,
     configuration,
-    supportedInteractionTypes
+    supportedInteractionTypes,
+    mixins
   } = {}) {
     this.name = name;
     this.mode = 'disabled';
@@ -31,6 +33,11 @@ export default class BaseTool {
 
     // Setup keybinds if present.
     const keyBinds = this.configuration.keyBinds;
+
+    // Apply mixins if mixinsArray is not empty.
+    if (mixins && mixins.length) {
+      this._applyMixins(mixins);
+    }
 
     if (keyBinds) {
       this.activateKeyBinds(keyBinds);
@@ -91,6 +98,26 @@ export default class BaseTool {
 
     if (imageNeedsUpdate) {
       external.cornerstone.updateImage(element);
+    }
+  }
+
+
+  /**
+   * Applys the requested mixins to the class.
+   *
+   * @param  {Array} mixinArray An array of mixin names (strings).
+   */
+  _applyMixins (mixins) {
+    for (let i = 0; i < mixins.length; i++) {
+      const mixinName = mixins[i];
+
+      if (typeof mixinCollection[mixinName] === 'object') {
+        Object.assign(this, mixinCollection[mixinName]);
+      } else {
+        console.warn(
+          `${this.name}: mixin ${mixins} does not exist.`
+        );
+      }
     }
   }
 

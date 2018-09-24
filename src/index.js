@@ -6,6 +6,7 @@ export { default as init } from './init.js';
 // ~~~~~~ TOOLS ~~~~~ //
 export { default as ArrowAnnotateTool } from './tools/ArrowAnnotateTool.js';
 export { default as AngleTool } from './tools/AngleTool.js';
+export { default as CobbAngleTool } from './tools/CobbAngleTool.js';
 export { default as DoubleTapFitToWindowTool } from './tools/DoubleTapFitToWindowTool.js';
 export { default as DragProbeTool } from './tools/DragProbeTool.js';
 export { default as EllipticalRoiTool } from './tools/EllipticalRoiTool.js';
