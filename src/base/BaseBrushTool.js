@@ -5,7 +5,7 @@ import BaseTool from './../base/BaseTool.js';
 import isToolActive from '../tools/shared/isToolActive.js';
 import store from '../store/index.js';
 
-const brushState = store.modules.brush;
+const { state, setters } = store.modules.brush;
 
 export default class BaseBrushTool extends BaseTool {
   constructor ({
@@ -27,20 +27,19 @@ export default class BaseBrushTool extends BaseTool {
     this.referencedToolData = 'brush';
 
     this._drawing = false;
-
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
   }
 
-  //===================================================================
+  // ===================================================================
   // Abstract Methods - Must be implemented.
-  //===================================================================
+  // ===================================================================
 
   /**
-  * Helper function for rendering the brush.
-  *
-  * @abstract
-  * @param {Object} evt - The event.
-  */
+   * Helper function for rendering the brush.
+   *
+   * @abstract
+   * @param {Object} evt - The event.
+   */
   renderBrush (evt) {
     throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
   }
@@ -56,28 +55,28 @@ export default class BaseBrushTool extends BaseTool {
     throw new Error(`Method _paint not implemented for ${this.toolName}.`);
   }
 
-  //===================================================================
+  // ===================================================================
   // Virtual Methods - Have default behavior but may be overriden.
-  //===================================================================
+  // ===================================================================
 
   /**
-  * Event handler for MOUSE_DRAG event.
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Event handler for MOUSE_DRAG event.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   mouseDragCallback (evt) {
     this._startPainting(evt);
   }
 
   /**
-  * Event handler for MOUSE_DOWN event.
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Event handler for MOUSE_DOWN event.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   preMouseDownCallback (evt) {
     this._startPainting(evt);
 
@@ -85,13 +84,13 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
-  * Initialise painting with baseBrushTool
-  *
-  * @protected
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Initialise painting with baseBrushTool
+   *
+   * @protected
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   _startPainting (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
@@ -103,34 +102,35 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
-  * Event handler for MOUSE_MOVE event.
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
+   * Event handler for MOUSE_MOVE event.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
   mouseMoveCallback (evt) {
     const { currentPoints } = evt.detail;
+
     this._lastImageCoords = currentPoints.image;
   }
 
   /**
-  * Event handler for switching mode to passive;
-  *
-  * @virtual
-  * @event
-  * @param {Object} evt - The event.
-  */
-  passiveCallback(evt) {
+   * Event handler for switching mode to passive;
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   */
+  passiveCallback (evt) {
     external.cornerstone.updateImage(this.element);
   }
 
   /**
-  * Used to redraw the tool's annotation data per render.
-  *
-  * @virtual
-  * @param {Object} evt - The event.
-  */
+   * Used to redraw the tool's annotation data per render.
+   *
+   * @virtual
+   * @param {Object} evt - The event.
+   */
   renderToolData (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
@@ -143,49 +143,46 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
-  * Switches to the next segmentation color.
-  *
-  * @virtual
-  */
+   * Switches to the next segmentation color.
+   *
+   * @virtual
+   */
   nextSegmentation () {
     const numberOfColors = this.constructor.getNumberOfColors();
 
-    let drawId = brushState.getters.draw() + 1;
+    let drawId = state.drawColorId + 1;
 
     if (drawId === numberOfColors) {
       drawId = 0;
     }
 
-    brushState.mutations.SET_DRAW_COLOR(drawId);
+    state.drawColorId = drawId;
   }
 
   /**
-  * Switches to the previous segmentation color.
-  *
-  * @virtual
-  */
+   * Switches to the previous segmentation color.
+   *
+   * @virtual
+   */
   previousSegmentation () {
-    const configuration = this.configuration;
     const numberOfColors = this.constructor.getNumberOfColors();
 
-    let drawId = brushState.getters.draw() - 1;
+    let drawId = state.drawColorId - 1;
 
     if (drawId < 0) {
       drawId = numberOfColors - 1;
     }
 
-    brushState.mutations.SET_DRAW_COLOR(drawId);
-
-    //this._changeDrawColor(drawId);
+    state.drawColorId = drawId;
   }
 
   /**
-  * Increases the brush size
-  *
-  * @virtual
-  */
+   * Increases the brush size
+   *
+   * @virtual
+   */
   increaseBrushSize () {
-    const oldRadius = brushState.getters.radius();
+    const oldRadius = state.radius;
     let newRadius = Math.floor(oldRadius * 1.2);
 
     // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
@@ -194,24 +191,24 @@ export default class BaseBrushTool extends BaseTool {
       newRadius += 1;
     }
 
-    brushState.mutations.SET_RADIUS(newRadius);
+    setters.setRadius(newRadius);
   }
 
   /**
-  * Decreases the brush size
-  *
-  * @virtual
-  */
+   * Decreases the brush size
+   *
+   * @virtual
+   */
   decreaseBrushSize () {
-    const oldRadius = brushState.getters.radius();
-    let newRadius = Math.floor(oldRadius * 0.8);
+    const oldRadius = state.radius;
+    const newRadius = Math.floor(oldRadius * 0.8);
 
-    brushState.mutations.SET_RADIUS(newRadius);
+    setters.setRadius(newRadius);
   }
 
-  //===================================================================
+  // ===================================================================
   // Implementation interface
-  //===================================================================
+  // ===================================================================
 
   /**
    * Get the draw color (segmentation) of the tool.
@@ -220,24 +217,28 @@ export default class BaseBrushTool extends BaseTool {
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
   _getBrushColor (drawId) {
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const colorArray = colormap.getColor(drawId);
 
     if (this._drawing) {
-      return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 1.0 )`;
+      return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${
+        colorArray[[2]]
+      }, 1.0 )`;
     }
 
-    return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${colorArray[[2]]}, 0.8 )`;
+    return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${
+      colorArray[[2]]
+    }, 0.8 )`;
   }
 
   /**
-  * Event handler for MOUSE_UP during the drawing event loop.
-  *
-  * @protected
-  * @event
-  * @param {Object} evt - The event.
-  */
-  _drawingMouseUpCallback(evt) {
+   * Event handler for MOUSE_UP during the drawing event loop.
+   *
+   * @protected
+   * @event
+   * @param {Object} evt - The event.
+   */
+  _drawingMouseUpCallback (evt) {
     const eventData = evt.detail;
     const element = eventData.element;
 
@@ -246,16 +247,20 @@ export default class BaseBrushTool extends BaseTool {
 
     this._stopListeningForMouseUp(element);
   }
+
   /**
-  * Adds modify loop event listeners.
-  *
-  * @protected
-  * @param {Object} element - The viewport element to add event listeners to.
-  * @modifies {element}
-  */
+   * Adds modify loop event listeners.
+   *
+   * @protected
+   * @param {Object} element - The viewport element to add event listeners to.
+   * @modifies {element}
+   */
   _startListeningForMouseUp (element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
+    element.removeEventListener(
+      EVENTS.MOUSE_CLICK,
+      this._drawingMouseUpCallback
+    );
 
     element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
@@ -264,22 +269,25 @@ export default class BaseBrushTool extends BaseTool {
   }
 
   /**
-  * Adds modify loop event listeners.
-  *
-  * @protected
-  * @param {Object} element - The viewport element to add event listeners to.
-  * @modifies {element}
-  */
+   * Adds modify loop event listeners.
+   *
+   * @protected
+   * @param {Object} element - The viewport element to add event listeners to.
+   * @modifies {element}
+   */
   _stopListeningForMouseUp (element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, this._drawingMouseUpCallback);
+    element.removeEventListener(
+      EVENTS.MOUSE_CLICK,
+      this._drawingMouseUpCallback
+    );
 
     external.cornerstone.updateImage(element);
   }
 
-  //===================================================================
+  // ===================================================================
   // Segmentation API. This is effectively a wrapper around the store.
-  //===================================================================
+  // ===================================================================
 
   /**
    * Returns the number of colors in the colormap.
@@ -289,7 +297,7 @@ export default class BaseBrushTool extends BaseTool {
    * @return {Number} The number of colors in the color map.
    */
   static getNumberOfColors () {
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     return colormap.getNumberOfColors();
   }
@@ -305,7 +313,7 @@ export default class BaseBrushTool extends BaseTool {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
-    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+    setters.setBrushVisibilityForElement(enabledElementUID, segIndex, true);
 
     external.cornerstone.updateImage(enabledElement.element);
   }
@@ -320,7 +328,7 @@ export default class BaseBrushTool extends BaseTool {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
-    brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+    setters.setBrushVisibilityForElement(enabledElementUID, segIndex, false);
     external.cornerstone.updateImage(enabledElement.element);
   }
 
@@ -332,11 +340,11 @@ export default class BaseBrushTool extends BaseTool {
   showAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, true);
+      setters.setBrushVisibilityForElement(enabledElementUID, segIndex, true);
     }
 
     external.cornerstone.updateImage(enabledElement.element);
@@ -350,38 +358,37 @@ export default class BaseBrushTool extends BaseTool {
   hideAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(brushState.getters.colorMapId());
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      brushState.mutations.SET_ELEMENT_BRUSH_VISIBILITY(enabledElementUID, segIndex, false);
+      setters.setBrushVisibilityForElement(enabledElementUID, segIndex, false);
     }
 
     external.cornerstone.updateImage(enabledElement.element);
   }
 
   get alpha () {
-    brushState.getters.alpha();
+    state.alpha;
   }
 
   set alpha (value) {
     const enabledElement = this._getEnabledElement();
 
-    brushState.mutations.SET_ALPHA(value);
+    state.alpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
   get hiddenButActiveAlpha () {
-    brushState.getters.hiddenButActiveAlpha();
+    state.hiddenButActiveAlpha;
   }
 
   set hiddenButActiveAlpha (value) {
     const enabledElement = this._getEnabledElement();
 
-    brushState.mutations.SET_HIDDEN_BUT_ACTIVE_ALPHA(value);
+    state.hiddenButActiveAlpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
-
 
   _getEnabledElement () {
     return external.cornerstone.getEnabledElement(this.element);
@@ -394,7 +401,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @return {String} The number of colors in the color map.
    */
-  static getReferencedToolDataName() {
+  static getReferencedToolDataName () {
     return 'brush';
   }
 }

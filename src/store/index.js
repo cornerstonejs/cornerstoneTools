@@ -1,6 +1,5 @@
-import bindModules from './internals/bindModules.js';
-//
-import brush from './brushStore.js';
+// Modules
+import brush from './modules/brushModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 
 export const state = {
@@ -41,16 +40,17 @@ export const mutations = {
     state.enabledElements.push(enabledElement);
 
     if (brush) {
-      brush.mutations.SET_ELEMENT_VISIBLE(enabledElement);
+      brush.setters.setElementVisible(enabledElement);
     }
   }
 };
 
-export const modules = [globalConfiguration]; // Brush
+export const modules = {
+  brush,
+  globalConfiguration
+};
 
 export default {
-  // Constructor ?
-  bindModules: bindModules.bind(null, state, getters, mutations, modules),
   modules,
   state,
   getters,

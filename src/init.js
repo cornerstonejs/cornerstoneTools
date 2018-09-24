@@ -20,10 +20,13 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 export default function (configuration) {
   windowResizeHandler.enable();
-  store.bindModules();
 
   // Apply global configuration
-  store.mutations.GLOBAL_CONFIGURATION_SET_CONFIGURATION(configuration);
+  store.modules.globalConfiguration.state = Object.assign(
+    {},
+    store.modules.globalConfiguration.state,
+    configuration
+  );
 
   return Object.freeze({
     store,

@@ -1,10 +1,7 @@
 import external from './../../externalModules.js';
 
-const namespace = 'brush';
-const moduleName = 'BRUSH';
-
 const state = {
-  draw: 0,
+  drawColorId: 0,
   radius: 10,
   minRadius: 1,
   maxRadius: 50,
@@ -16,38 +13,25 @@ const state = {
   imageBitmapCache: {}
 };
 
-const mutations = {
-  SET_DRAW_COLOR: ({ state }, drawColorId) => {
-    state[namespace].draw = drawColorId;
-  },
-  SET_RADIUS: ({ state }, radius) => {
-    state[namespace].radius = Math.min(
-      Math.max(radius, state[namespace].minRadius),
-      state[namespace].maxRadius
-    );
-  },
-  SET_MIN_RADIUS: ({ state }, minRadius) => {
-    state[namespace].minRadius = minRadius;
-  },
-  SET_MAX_RADIUS: ({ state }, maxRadius) => {
-    state[namespace].maxRadius = maxRadius;
-  },
-  SET_ALPHA: ({ state }, alpha) => {
-    state[namespace].alpha = alpha;
-  },
-  SET_HIDDEN_BUT_ACTIVE_ALPHA: ({ state }, alpha) => {
-    state[namespace].hiddenButActiveAlpha = alpha;
+const setters = {
+
+  /**
+   * Sets the brush radius, account for global min/max radius
+   *
+   * @param {*} radius
+   */
+  setRadius: (radius) => {
+    state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
   },
 
   /**
+   * TODO: Should this be a init config property?
    * Sets the brush color map to something other than the default
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  SET_BRUSH_COLOR_MAP: ({ state }, colors) => {
-    const colormap = external.cornerstone.colors.getColormap(
-      state[namespace].colorMapId
-    );
+  setBrushColorMap: (colors) => {
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
 
@@ -55,7 +39,7 @@ const mutations = {
       colormap.setColor(i, colors[i]);
     }
   },
-  SET_ELEMENT_VISIBLE: ({ state }, enabledElement) => {
+  setElementVisible: (enabledElement) => {
     if (!external.cornerstone) {
       return;
     }
@@ -64,56 +48,39 @@ const mutations = {
       enabledElement
     );
     const enabledElementUID = cornerstoneEnabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(
-      state[namespace].colorMapId
-    );
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
-    state[namespace].visibleSegmentations[enabledElementUID] = [];
+    state.visibleSegmentations[enabledElementUID] = [];
 
     for (let i = 0; i < numberOfColors; i++) {
-      state[namespace].visibleSegmentations[enabledElementUID].push(true);
+      state.visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  SET_ELEMENT_BRUSH_VISIBILITY: (
-    { state },
+  setBrushVisibilityForElement: (
     enabledElementUID,
     segIndex,
     visible = true
   ) => {
-    if (!state[namespace].visibleSegmentations[enabledElementUID]) {
-      state[namespace].imageBitmapCache[enabledElementUID] = [];
+    if (!state.visibleSegmentations[enabledElementUID]) {
+      state.imageBitmapCache[enabledElementUID] = [];
     }
 
-    state[namespace].visibleSegmentations[enabledElementUID][
-      segIndex
-    ] = visible;
+    state.visibleSegmentations[enabledElementUID][segIndex] = visible;
   },
-  SET_ELEMENT_IMAGE_BITMAP_CACHE: (
-    { state },
-    enabledElementUID,
-    segIndex,
-    imageBitmap
-  ) => {
-    if (!state[namespace].imageBitmapCache[enabledElementUID]) {
-      state[namespace].imageBitmapCache[enabledElementUID] = [];
+  setImageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
+    if (!state.imageBitmapCache[enabledElementUID]) {
+      state.imageBitmapCache[enabledElementUID] = [];
     }
 
     state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
   },
-  CLEAR_ELEMENT_IMAGE_BITMAP_CACHE: ({ state }, enabledElementUID) => {
-    state[namespace].imageBitmapCache[enabledElementUID] = [];
+  clearImageBitmapCacheForElement: (enabledElementUID) => {
+    state.imageBitmapCache[enabledElementUID] = [];
   }
 };
 
 const getters = {
-  draw: () => state.draw,
-  radius: () => state.radius,
-  minRadius: () => state.minRadius,
-  maxRadius: () => state.maxRadius,
-  alpha: () => state.alpha,
-  hiddenButActiveAlpha: () => state.hiddenButActiveAlpha,
-  colorMapId: () => state.colorMapId,
   imageBitmapCacheForElement: (enabledElementUID) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       return null;
@@ -131,10 +98,9 @@ const getters = {
 };
 
 export default {
-  name,
   state,
   getters,
-  mutations
+  setters
 };
 
 const DISTINCT_COLORS = [

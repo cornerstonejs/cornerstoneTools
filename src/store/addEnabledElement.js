@@ -12,7 +12,7 @@ import {
 } from '../eventDispatchers/index.js';
 import { mutations } from './index.js';
 import generateGUID from './generateGUID.js';
-import external from '../externalModules';
+import external from './../externalModules.js';
 import store from './../store/index.js';
 
 // TODO: Canvases are already tracked by `cornerstone`, but should we track them as well?
@@ -46,7 +46,7 @@ export default function (enabledElement) {
   mouseToolEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
 
-  if (store.state.globalConfiguration.touchEnabled) {
+  if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
   }
