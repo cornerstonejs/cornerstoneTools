@@ -18,7 +18,7 @@ const touchEndEvents = [
   EVENTS.TAP
 ];
 
-function animate (lastTime, handle, runAnimation, enabledElement, targetLocation, event) {
+function animate (lastTime, handle, runAnimation, enabledElement, targetLocation) {
   // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
   if (!runAnimation.value) {
     return;
@@ -50,7 +50,7 @@ function animate (lastTime, handle, runAnimation, enabledElement, targetLocation
 
   // Request a new frame
   external.cornerstone.requestAnimationFrame(function () {
-    animate(time, handle, runAnimation, enabledElement, targetLocation, event);
+    animate(time, handle, runAnimation, enabledElement, targetLocation);
   });
 }
 
@@ -141,5 +141,5 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     element.addEventListener(eventType, touchEndCallback);
   });
 
-  animate(time, handle, runAnimation, enabledElement, targetLocation, event);
+  animate(time, handle, runAnimation, enabledElement, targetLocation);
 }

@@ -45,7 +45,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
     external.cornerstone.updateImage(element);
-    
+
     if (typeof doneMovingCallback === 'function') {
       doneMovingCallback();
     }
