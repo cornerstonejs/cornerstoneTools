@@ -10,7 +10,6 @@ import {
   newImageEventDispatcher,
   touchToolEventDispatcher
 } from '../../eventDispatchers/index.js';
-import generateGUID from '../generateGUID.js';
 import external from '../../externalModules.js';
 import store from '../index.js';
 
@@ -28,20 +27,6 @@ import store from '../index.js';
  */
 export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
-  // NOTE: the 'enabledElement' argument here is actually the DOM element...
-  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-    enabledElement
-  );
-
-  // TEMP
-  if (cornerstoneEnabledElement.uuid) {
-    console.warn(
-      'uuid has gone core! remove this block and the generateGUID function.'
-    );
-  } else {
-    cornerstoneEnabledElement.uuid = generateGUID();
-  }
-  // TEMP
 
   // Listeners
   keyboardEventListeners.enable(enabledElement);
