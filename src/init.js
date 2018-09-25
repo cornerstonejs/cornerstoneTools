@@ -1,6 +1,7 @@
 import external from './externalModules.js';
 import store from './store/index.js';
 import { addTool, addToolForElement } from './store/addTool.js';
+import { removeTool, removeToolForElement } from './store/removeTool.js';
 import getToolForElement from './store/getToolForElement.js';
 import {
   setToolOptions,
@@ -36,6 +37,8 @@ export default function (configuration) {
     addTool,
     addToolForElement,
     getToolForElement,
+    removeTool,
+    removeToolForElement,
     setToolOptions,
     setToolOptionsForElement,
     // Tool Modes
