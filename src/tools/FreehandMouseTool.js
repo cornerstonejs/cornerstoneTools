@@ -1048,13 +1048,26 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(element);
   }
 
-  _closeToolIfDrawing (element) {
-    const config = this.configuration;
-    if (config.currentTool >= 0) {
-      // Actively drawing but changed mode.
-      //const lastHandlePlaced = config.currentHandle;
+  passiveCallback (element) {
+    this._closeToolIfDrawing(element);
+  }
 
-      this._endDrawing(element);
+  enabledCallback (element) {
+    this._closeToolIfDrawing(element);
+  }
+
+  disabledCallback (element) {
+    this._closeToolIfDrawing(element);
+  }
+
+  _closeToolIfDrawing (element) {
+    if (this._drawing) {
+      // Actively drawing but changed mode.
+      const config = this.configuration;
+      const lastHandlePlaced = config.currentHandle;
+
+      this._endDrawing(element, lastHandlePlaced);
+      external.cornerstone.updateImage(element);
     }
   }
 
