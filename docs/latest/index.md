@@ -79,7 +79,7 @@ const csTools = cornerstoneTools.init();
 const LengthTool = cornerstoneTools.LengthTool;
 
 // Make sure we have at least one element enabled
-const element = document.querySelector('#element-1");
+const element = document.querySelector("#element-1");
 cornerstone.enable(element);
 
 // Adds tool to ALL currently enabledElements
