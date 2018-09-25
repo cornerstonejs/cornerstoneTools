@@ -10,7 +10,7 @@ This library is not stand-alone. It builds on top of [Cornerstone](https://corne
 
 ## Getting Started {#getting-started}
 
-The easiest way to try out Cornerstone Tools is using the [JSFiddle Hello World example](https://jsfiddle.net/dannyrb/eujoLcn6/). Feel free to open it in another tab and follow along as we go through some basic examples. Or, you can [create an `index.html` file](https://gist.githubusercontent.com/dannyrb/63e5f4e76711f8539aea934357344e21/raw/1902fa0ecf7b764ca0011c7d03072f19156b4f93/Cornerstone%2520Tools%2520v3%2520-%2520Hello%2520World) and include Cornerstone Tools with:
+The easiest way to try out Cornerstone Tools is using the [JSFiddle Hello World example](https://jsfiddle.net/dannyrb/csnj2tbq/). Feel free to open it in another tab and follow along as we go through some basic examples. Or, you can [create an `index.html` file](https://gist.githubusercontent.com/dannyrb/63e5f4e76711f8539aea934357344e21/raw/1902fa0ecf7b764ca0011c7d03072f19156b4f93/Cornerstone%2520Tools%2520v3%2520-%2520Hello%2520World) and include Cornerstone Tools with:
 
 ```html
 <!-- Dependencies -->
@@ -102,7 +102,7 @@ csTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
 csTools.setToolActiveForElement(enabledElement, LengthTool.name, { mouseButtonMask: 1});
 ```
 
-Now that our tool is `active`, we should be able to use our `LengthTool` to draw length annotations on the enabled element. Having trouble or just want to see a quick demo? [Check out this jsfiddle!]()
+Now that our tool is `active`, we should be able to use our `LengthTool` to draw length annotations on the enabled element. Having trouble or just want to see a quick demo? [Check out this jsfiddle!](https://jsfiddle.net/dannyrb/jhxdgu94/)
 
 ## Next Steps {#next-steps}
 
