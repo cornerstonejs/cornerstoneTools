@@ -582,7 +582,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     if (!freehandIntersect.end(data.handles) && data.canComplete) {
       const lastHandlePlaced = config.currentHandle;
 
-      this._endDrawing(eventData, lastHandlePlaced);
+      this._endDrawing(element, lastHandlePlaced);
     } else if (handleNearby === undefined) {
       this._addPoint(eventData);
     }
@@ -640,7 +640,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._deactivateModify(element);
 
     this._dropHandle(eventData, toolState);
-    this._endDrawing(eventData);
+    this._endDrawing(element);
 
     mutations.SET_IS_TOOL_LOCKED(false);
 
@@ -771,11 +771,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   * Ends the active drawing loop and completes the polygon.
   *
   * @private
-  * @param {Object} eventData - data object associated with an event.
+  * @param {Object} element - The element on which the roi is being drawn.
   * @param {Object} handleNearby - the handle nearest to the mouse cursor.
   */
-  _endDrawing (eventData, handleNearby) {
-    const toolState = getToolState(eventData.element, this.name);
+  _endDrawing (element, handleNearby) {
+    const toolState = getToolState(element, this.name);
 
     const config = this.configuration;
 
@@ -804,10 +804,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     if (this._drawing) {
       this._drawing = false;
       mutations.SET_IS_TOOL_LOCKED(false);
-      this._deactivateDraw(eventData.element);
+      this._deactivateDraw(element);
     }
 
-    external.cornerstone.updateImage(eventData.element);
+    external.cornerstone.updateImage(element);
   }
 
   /**
@@ -1046,6 +1046,16 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
     external.cornerstone.updateImage(element);
+  }
+
+  _closeToolIfDrawing (element) {
+    const config = this.configuration;
+    if (config.currentTool >= 0) {
+      // Actively drawing but changed mode.
+      //const lastHandlePlaced = config.currentHandle;
+
+      this._endDrawing(element);
+    }
   }
 
   //===================================================================
