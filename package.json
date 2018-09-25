@@ -75,9 +75,9 @@
     "puppeteer": "^1.4.0",
     "shx": "^0.2.2",
     "uglifyjs-webpack-plugin": "^1.2.5",
-    "webpack": "^4.9.1",
-    "webpack-cli": "^2.1.4",
-    "webpack-dev-server": "^3.1.4"
+    "webpack": "4.9.1",
+    "webpack-cli": "2.1.4",
+    "webpack-dev-server": "3.1.4"
   },
   "dependencies": {
     "cornerstone-math": "^0.1.6"
