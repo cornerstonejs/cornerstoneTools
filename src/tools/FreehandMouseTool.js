@@ -29,7 +29,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   constructor (name = 'FreehandMouse') {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['mouse', 'touch'],
       configuration: defaultFreehandConfiguration()
     });
 
@@ -495,26 +495,32 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         data,
         this.name
       );
-
+      
       return;
     }
 
     const config = this.configuration;
 
-    const nearby = this._pointNearHandleAllTools(eventData);
-    const handleNearby = nearby.handleNearby;
-    const toolIndex = nearby.toolIndex;
+    //const nearby = this._pointNearHandleAllTools(eventData);
+    //const handleNearby = nearby.handleNearby;
+    //const toolIndex = nearby.toolIndex;
+    for(let toolIndex=0; toolIndex < toolState.data.length; toolIndex++){
+      for(let handleNearby=0; handleNearby < toolState.data[toolIndex].handles.length; handleNearby++){
+        if(toolState.data[toolIndex].handles[handleNearby] == handle){
 
+          config.currentHandle = handleNearby;
+          config.currentTool = toolIndex;
+        }
+      }
+    }
+    
     config.dragOrigin = {
-      x: toolState.data[toolIndex].handles[handleNearby].x,
-      y: toolState.data[toolIndex].handles[handleNearby].y
+      x: eventData.currentPoints.image.x,
+      y: eventData.currentPoints.image.y
     };
 
     this._modifying = true;
-    config.currentHandle = handleNearby;
-    config.currentTool = toolIndex;
-
-    this._activateModifty(element);
+    this._activateModify(element);
 
     // Interupt eventDispatchers
     mutations.SET_IS_TOOL_LOCKED(true);
@@ -608,21 +614,44 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
-
+    
     data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
     data.active = true;
     data.highlight = true;
-    data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
-    data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+    
+    if(eventData.type == EVENTS.TOUCH_DRAG){
+      const fingerDistance = -57;
+    
+      const aboveFinger = {
+        x: event.detail.currentPoints.page.x,
+        y: event.detail.currentPoints.page.y + fingerDistance
+      };
+    
+      let targetLocation = external.cornerstone.pageToPixel(eventData.element, aboveFinger.x, aboveFinger.y);
+      
+      data.handles[currentHandle].x = targetLocation.x;
+      data.handles[currentHandle].y = targetLocation.y;
 
-    if (currentHandle !== 0) {
-      const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-      const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+      if (currentHandle !== 0) {
+        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
 
-      lastLine.x = config.mouseLocation.handles.start.x;
-      lastLine.y = config.mouseLocation.handles.start.y;
+        lastLine.x = targetLocation.x;
+        lastLine.y = targetLocation.y;
+      }
+
+    } else {
+      data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+      data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+  
+      if (currentHandle !== 0) {
+        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+  
+        lastLine.x = config.mouseLocation.handles.start.x;
+        lastLine.y = config.mouseLocation.handles.start.y;
+      }  
     }
-
     // Update the image
     external.cornerstone.updateImage(eventData.element);
   }
@@ -638,7 +667,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const toolState = getToolState(eventData.element, this.name);
 
     this._deactivateModify(element);
-
+    
     this._dropHandle(eventData, toolState);
     this._endDrawing(element);
 
@@ -828,7 +857,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     if (data.visible === false) {
       return;
     }
-
+    
     for (let i = 0; i < data.handles.length; i++) {
       const handleCanvas = external.cornerstone.pixelToCanvas(element, data.handles[i]);
 
@@ -1001,6 +1030,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
 
+    element.addEventListener(EVENTS.TOUCH_START, this._drawingMouseMoveCallback);
+    element.addEventListener(EVENTS.TOUCH_START, this._drawingMouseDownCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, this._drawingMouseMoveCallback);
+    element.addEventListener(EVENTS.TOUCH_END, this._drawingMouseDownCallback);
+
     external.cornerstone.updateImage(element);
   }
 
@@ -1015,6 +1049,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.removeEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
 
+    element.removeEventListener(EVENTS.TOUCH_START, this._drawingMouseMoveCallback);
+    element.removeEventListener(EVENTS.TOUCH_START, this._drawingMouseDownCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, this._drawingMouseMoveCallback);
+    element.removeEventListener(EVENTS.TOUCH_END, this._drawingMouseDownCallback);
+
     external.cornerstone.updateImage(element);
   }
 
@@ -1025,11 +1064,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   * @param {Object} element - The viewport element to add event listeners to.
   * @modifies {element}
   */
-  _activateModifty (element) {
+  _activateModify (element) {
     element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
+    element.addEventListener(EVENTS.TOUCH_END, this._editMouseUpCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, this._editMouseDragCallback);
     external.cornerstone.updateImage(element);
   }
 
@@ -1045,6 +1086,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
+    element.removeEventListener(EVENTS.TOUCH_END, this._editMouseUpCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, this._editMouseDragCallback);
+  
     external.cornerstone.updateImage(element);
   }
 

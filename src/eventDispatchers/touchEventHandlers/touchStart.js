@@ -1,7 +1,7 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
 // State
-import { getters, state } from '../../store/index.js';
+import { mutations, getters, state } from '../../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
@@ -96,10 +96,14 @@ export default function (evt) {
       coords,
       distanceFromHandle
     );
+    
+    firstToolWithMoveableHandles.handleSelectedCallback(evt, moveableHandle, dataWithMoveableHandle);
 
     console.log('moveableHandle: ', moveableHandle);
 
     dataWithMoveableHandle.active = true;
+
+    mutations.SET_IS_TOOL_LOCKED(true);
     touchMoveHandle(
       evt,
       firstToolWithMoveableHandles.name,
@@ -107,6 +111,8 @@ export default function (evt) {
       moveableHandle,
       () => {
         console.log('touchMoveHandle: DONE');
+        dataWithMoveableHandle.active = false;
+        mutations.SET_IS_TOOL_LOCKED(false);
       } // HandleDoneMove
     );
 
