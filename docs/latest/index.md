@@ -68,7 +68,41 @@ A full list of the settings and their default can be found here: [globalConfigur
 
 ## Adding and Using Tools {#adding-and-using-tools}
 
-_This section needs content_
+In previous versions of Cornerstone Tools, users would need to implement their own tool manager. This version includes the concept of "adding" tools to enabled elements to make tracking and managing tool state across your application easier.
+
+### _Adding a tool to one or more enabled elements:_
+
+In this example, we're adding a built in tool to an enabledElement.
+
+```js
+const csTools = cornerstoneTools.init();
+const LengthTool = cornerstoneTools.LengthTool;
+
+// Make sure we have at least one element enabled
+const element = document.querySelector('#element-1");
+cornerstone.enable(element);
+
+// Adds tool to ALL currently enabledElements
+csTools.addTool(LengthTool);
+
+// OR add the tool to a specific enabledElement
+csTools.addToolForElement(element, LengthTool);
+```
+
+### _Activating an added tool:_
+
+We call this setting the tool's [mode](anatomy-of-a-tool/index.md#modes). When a tool's mode is "active", it can be used; if it has measurement data, that data can be created or interacted with. You can read more about changing a tool's mode in the [anatomy of a tool](anatomy-of-a-tool/index.md#modes) section of our docs.
+
+```js
+...
+// Activate the tool for ALL currently enabledElements
+csTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
+
+// OR activate the tool for a specific enabledElement
+csTools.setToolActiveForElement(enabledElement, LengthTool.name, { mouseButtonMask: 1});
+```
+
+Now that our tool is `active`, we should be able to use our `LengthTool` to draw length annotations on the enabled element. Having trouble or just want to see a quick demo? [Check out this jsfiddle!]()
 
 ## Next Steps {#next-steps}
 
