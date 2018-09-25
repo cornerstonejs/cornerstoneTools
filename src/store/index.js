@@ -35,22 +35,6 @@ export const setters = {
 export const mutations = {
   SET_IS_TOOL_LOCKED: (isLocked) => {
     state.isToolLocked = isLocked;
-  },
-  ADD_ENABLED_ELEMENT: (enabledElement) => {
-    state.enabledElements.push(enabledElement);
-
-    if (brush) {
-      brush.setters.setElementVisible(enabledElement);
-    }
-  },
-  REMOVE_ENABLED_ELEMENT: (enabledElement) => {
-    const foundElementIndex = state.enabledElements.findIndex(
-      (element) => element === enabledElement
-    );
-
-    if (foundElementIndex) {
-      state.enabledElements.splice(foundElementIndex, 1);
-    }
   }
 };
 
