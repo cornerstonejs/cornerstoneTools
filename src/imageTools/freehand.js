@@ -1030,8 +1030,8 @@ function onImageRendered (e) {
 * @modifies {element}
 */
 function enable (element) {
+  closeToolIfDrawing(element);
   removeEventListeners(element);
-
   element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   external.cornerstone.updateImage(element);
 }
@@ -1043,6 +1043,7 @@ function enable (element) {
 * @modifies {element}
 */
 function disable (element) {
+  closeToolIfDrawing(element);
   removeEventListeners(element);
   external.cornerstone.updateImage(element);
 }
@@ -1086,6 +1087,7 @@ function deactivate (element, mouseButtonMask) {
 
   triggerEvent(element, eventType, statusChangeEventData);
 
+  closeToolIfDrawing(element);
   removeEventListeners(element);
 
   element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
@@ -1112,6 +1114,23 @@ function removeEventListeners (element) {
   element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
   element.removeEventListener(EVENTS.KEY_DOWN, keyDownCallback);
   element.removeEventListener(EVENTS.KEY_UP, keyUpCallback);
+}
+
+
+/**
+ * closeToolIfDrawing - Closes the ROI if the tool is not yet
+ * complete when changing tool mode.
+ *
+ * @param  {Object} element The element the ROI is associated with.
+ */
+function closeToolIfDrawing(element) {
+  const config = freehand.getConfiguration();
+  if (config.currentTool >= 0) {
+    // Actively drawing but changed mode.
+    const lastHandlePlaced = config.currentHandle;
+
+    endDrawing(element, lastHandlePlaced);
+  }
 }
 
 /**
