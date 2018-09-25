@@ -94,12 +94,13 @@ csTools.addToolForElement(element, LengthTool);
 When a tool is added, it's default [mode](anatomy-of-a-tool/index.md#modes) is "disabled". When a tool's mode is "active", it can be used; if it has measurement data, that data can be created or interacted with. You can read more about changing a tool's mode in the [anatomy of a tool](anatomy-of-a-tool/index.md#modes) section of our docs. In this example, we change an added tool's mode to "active":
 
 ```js
-...
 // Activate the tool for ALL currently enabledElements
 csTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
 
 // OR activate the tool for a specific enabledElement
-csTools.setToolActiveForElement(enabledElement, LengthTool.name, { mouseButtonMask: 1});
+csTools.setToolActiveForElement(enabledElement, LengthTool.name, {
+  mouseButtonMask: 1
+});
 ```
 
 Now that our tool is `active`, we should be able to use our `LengthTool` to draw length annotations on the enabled element. Having trouble or just want to see a quick demo? [Check out this jsfiddle!](https://jsfiddle.net/dannyrb/jhxdgu94/)
