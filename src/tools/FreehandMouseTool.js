@@ -495,7 +495,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         data,
         this.name
       );
-      
+
       return;
     }
 
@@ -614,7 +614,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
-    
+
     data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
     data.active = true;
     data.highlight = true;
