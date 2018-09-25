@@ -91,7 +91,7 @@ csTools.addToolForElement(element, LengthTool);
 
 ### _Activating an added tool:_
 
-We call this setting the tool's [mode](anatomy-of-a-tool/index.md#modes). When a tool's mode is "active", it can be used; if it has measurement data, that data can be created or interacted with. You can read more about changing a tool's mode in the [anatomy of a tool](anatomy-of-a-tool/index.md#modes) section of our docs.
+When a tool is added, it's default [mode](anatomy-of-a-tool/index.md#modes) is "disabled". When a tool's mode is "active", it can be used; if it has measurement data, that data can be created or interacted with. You can read more about changing a tool's mode in the [anatomy of a tool](anatomy-of-a-tool/index.md#modes) section of our docs. In this example, we change an added tool's mode to "active":
 
 ```js
 ...
