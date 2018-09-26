@@ -1,6 +1,7 @@
 // Modules
 import brush from './modules/brushModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
+import registerModule from './registerModule.js';
 
 export const state = {
   isToolLocked: false,
@@ -47,5 +48,6 @@ export default {
   modules,
   state,
   getters,
-  mutations
+  mutations,
+  registerModule
 };

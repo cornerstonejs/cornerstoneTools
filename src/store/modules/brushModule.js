@@ -100,12 +100,12 @@ const getters = {
 
 
 /**
- * newEnabledElementCallback - Initialise the module when a new element is added.
+ * initSpecificElementCallback - Element specific initilisation.
  * @public
  * @param  {Object} enabledElement  The element on which the module is
  *                                  being initialised.
  */
-function newEnabledElementCallback (enabledElement) {
+function initSpecificElementCallback (enabledElement) {
   setters.setElementVisible(enabledElement);
 }
 
@@ -120,7 +120,7 @@ function initCallback () {
 export default {
   state,
   initCallback,
-  newEnabledElementCallback,
+  initSpecificElementCallback,
   getters,
   setters,
 };

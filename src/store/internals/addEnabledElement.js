@@ -50,12 +50,12 @@ export default function (elementEnabledEvt) {
 const _addEnabledElmenet = function (enabledElement) {
   store.state.enabledElements.push(enabledElement);
   if (store.modules) {
-    _newEnabledElementCallback(enabledElement);
+    _initModulesOnElement(enabledElement);
   }
 };
 
 /**
- * _newEnabledElementCallback - If a module has a newEnabledElementCallback
+ * _initModulesOnElement - If a module has a initSpecificElementCallback
  * method, call it.
  *
  * TODO: Makes sure 3rd party modules get
@@ -65,12 +65,12 @@ const _addEnabledElmenet = function (enabledElement) {
  * @param  {Object} enabledElement  The element on which to
  *                                  Initialise the modules.
  */
-function _newEnabledElementCallback (enabledElement) {
+function _initModulesOnElement (enabledElement) {
   const modules = store.modules;
 
   Object.keys(modules).forEach(function(key) {
-    if (typeof modules[key].newEnabledElementCallback === 'function') {
-      modules[key].newEnabledElementCallback(enabledElement);
+    if (typeof modules[key].initSpecificElementCallback === 'function') {
+      modules[key].initSpecificElementCallback(enabledElement);
     }
   });
 }
