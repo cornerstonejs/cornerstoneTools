@@ -1,4 +1,4 @@
-# Tool Behaviors
+# Tool Mixins
 
 {% include "./../partials/beta-warning.md" %}
 
