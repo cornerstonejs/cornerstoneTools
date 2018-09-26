@@ -27,7 +27,7 @@ import store from '../index.js';
  */
 export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
-
+  
   // Listeners
   keyboardEventListeners.enable(enabledElement);
   mouseEventListeners.enable(enabledElement);

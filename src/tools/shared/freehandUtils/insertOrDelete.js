@@ -3,7 +3,7 @@ import { FreehandHandleData } from './FreehandHandleData.js';
 import { getToolState } from '../../../stateManagement/toolState.js';
 import external from '../../../externalModules.js';
 
-const toolType = 'freehandMouse';
+const toolType = 'freehand';
 
 /**
 * Inserts or deletes a point from a freehand tool.

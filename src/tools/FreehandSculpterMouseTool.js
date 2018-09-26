@@ -13,7 +13,7 @@ import BaseTool from '../base/BaseTool.js';
 export default class FreehandSculpterMouseTool extends BaseTool {
   constructor (
     name = 'FreehandSculpterMouse',
-    referencedToolName = 'FreehandMouse',
+    referencedToolName = 'Freehand',
     mixins = ['activeOrDisabledBinaryTool']
   ) {
     super({
@@ -170,8 +170,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       coords = getters.mousePositionImage();
     }
 
-    const freehandMouseTool = getToolForElement(element, this.referencedToolName);
-    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
+    const freehandTool = getToolForElement(element, this.referencedToolName);
+    let radiusCanvas = freehandTool.distanceFromPointCanvas(element, data, coords);
 
     config.mouseLocation.handles.start.x = coords.x;
     config.mouseLocation.handles.start.y = coords.y;
@@ -613,10 +613,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[toolIndex];
 
-    const freehandMouseTool = getToolForElement(element, this.referencedToolName);
+    const freehandTool = getToolForElement(element, this.referencedToolName);
 
-    let radiusImage = freehandMouseTool.distanceFromPoint(element, data, coords);
-    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(element, data, coords);
+    let radiusImage = freehandTool.distanceFromPoint(element, data, coords);
+    let radiusCanvas = freehandTool.distanceFromPointCanvas(element, data, coords);
 
     // Check if should limit maximum size.
     if (config.limitRadiusOutsideRegion) {

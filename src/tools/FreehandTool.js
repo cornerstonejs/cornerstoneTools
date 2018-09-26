@@ -501,9 +501,7 @@ export default class FreehandTool extends BaseAnnotationTool {
 
     const config = this.configuration;
 
-    //const nearby = this._pointNearHandleAllTools(eventData);
-    //const handleNearby = nearby.handleNearby;
-    //const toolIndex = nearby.toolIndex;
+    //iterating over handles of all toolData instances to find the indices of the selected handle
     for(let toolIndex=0; toolIndex < toolState.data.length; toolIndex++){
       for(let handleNearby=0; handleNearby < toolState.data[toolIndex].handles.length; handleNearby++){
         if(toolState.data[toolIndex].handles[handleNearby] == handle){

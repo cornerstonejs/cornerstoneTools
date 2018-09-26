@@ -11,7 +11,7 @@ export { default as DoubleTapFitToWindowTool } from './tools/DoubleTapFitToWindo
 export { default as DragProbeTool } from './tools/DragProbeTool.js';
 export { default as EllipticalRoiTool } from './tools/EllipticalRoiTool.js';
 export { default as EraserTool } from './tools/EraserTool.js';
-export { default as FreehandMouseTool } from './tools/FreehandMouseTool.js';
+export { default as FreehandTool } from './tools/FreehandTool.js';
 export { default as FreehandSculpterMouseTool } from './tools/FreehandSculpterMouseTool.js';
 export { default as TextMarkerTool } from './tools/TextMarkerTool.js';
 export { default as LengthTool } from './tools/LengthTool.js';

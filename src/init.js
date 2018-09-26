@@ -57,7 +57,7 @@ function _addCornerstoneEventListeners () {
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
   const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
-
+  
   cornerstone.events.addEventListener(elementEnabledEvent, addEnabledElement);
   cornerstone.events.addEventListener(
     elementDisabledEvent,
