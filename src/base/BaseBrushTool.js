@@ -64,7 +64,7 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Event handler for MOUSE_DRAG event.
    *
-   * @virtual
+   * @override
    * @event
    * @param {Object} evt - The event.
    */
@@ -75,7 +75,7 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Event handler for MOUSE_DOWN event.
    *
-   * @virtual
+   * @override
    * @event
    * @param {Object} evt - The event.
    */
@@ -89,7 +89,6 @@ export default class BaseBrushTool extends BaseTool {
    * Initialise painting with baseBrushTool
    *
    * @protected
-   * @virtual
    * @event
    * @param {Object} evt - The event.
    */
@@ -106,7 +105,7 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Event handler for MOUSE_MOVE event.
    *
-   * @virtual
+   * @override
    * @event
    * @param {Object} evt - The event.
    */
@@ -119,7 +118,7 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Event handler for switching mode to passive;
    *
-   * @virtual
+   * @override
    * @event
    * @param {Object} evt - The event.
    */
@@ -130,7 +129,7 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Used to redraw the tool's annotation data per render.
    *
-   * @virtual
+   * @override
    * @param {Object} evt - The event.
    */
   renderToolData (evt) {
@@ -142,70 +141,6 @@ export default class BaseBrushTool extends BaseTool {
       // Call the hover event for the brush
       this.renderBrush(evt);
     }
-  }
-
-  /**
-   * Switches to the next segmentation color.
-   *
-   * @virtual
-   */
-  nextSegmentation () {
-    const numberOfColors = this.constructor.getNumberOfColors();
-
-    let drawId = state.drawColorId + 1;
-
-    if (drawId === numberOfColors) {
-      drawId = 0;
-    }
-
-    state.drawColorId = drawId;
-  }
-
-  /**
-   * Switches to the previous segmentation color.
-   *
-   * @virtual
-   */
-  previousSegmentation () {
-    const numberOfColors = this.constructor.getNumberOfColors();
-
-    let drawId = state.drawColorId - 1;
-
-    if (drawId < 0) {
-      drawId = numberOfColors - 1;
-    }
-
-    state.drawColorId = drawId;
-  }
-
-  /**
-   * Increases the brush size
-   *
-   * @virtual
-   */
-  increaseBrushSize () {
-    const oldRadius = state.radius;
-    let newRadius = Math.floor(oldRadius * 1.2);
-
-    // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
-    // Hence, have minimum increment of 1 pixel.
-    if (newRadius === oldRadius) {
-      newRadius += 1;
-    }
-
-    setters.setRadius(newRadius);
-  }
-
-  /**
-   * Decreases the brush size
-   *
-   * @virtual
-   */
-  decreaseBrushSize () {
-    const oldRadius = state.radius;
-    const newRadius = Math.floor(oldRadius * 0.8);
-
-    setters.setRadius(newRadius);
   }
 
   // ===================================================================
@@ -292,16 +227,67 @@ export default class BaseBrushTool extends BaseTool {
   // ===================================================================
 
   /**
-   * Returns the number of colors in the colormap.
+   * Switches to the next segmentation color.
    *
-   * @static
-   * @public
-   * @return {Number} The number of colors in the color map.
+   * @public @api
    */
-  static getNumberOfColors () {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  nextSegmentation () {
+    const numberOfColors = this.constructor.getNumberOfColors();
 
-    return colormap.getNumberOfColors();
+    let drawId = state.drawColorId + 1;
+
+    if (drawId === numberOfColors) {
+      drawId = 0;
+    }
+
+    state.drawColorId = drawId;
+  }
+
+  /**
+   * Switches to the previous segmentation color.
+   *
+   * @public @api
+   */
+  previousSegmentation () {
+    const numberOfColors = this.constructor.getNumberOfColors();
+
+    let drawId = state.drawColorId - 1;
+
+    if (drawId < 0) {
+      drawId = numberOfColors - 1;
+    }
+
+    state.drawColorId = drawId;
+  }
+
+  /**
+   * Increases the brush size
+   *
+   * @public @api
+   */
+  increaseBrushSize () {
+    const oldRadius = state.radius;
+    let newRadius = Math.floor(oldRadius * 1.2);
+
+    // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
+    // Hence, have minimum increment of 1 pixel.
+    if (newRadius === oldRadius) {
+      newRadius += 1;
+    }
+
+    setters.setRadius(newRadius);
+  }
+
+  /**
+   * Decreases the brush size
+   *
+   * @public @api
+   */
+  decreaseBrushSize () {
+    const oldRadius = state.radius;
+    const newRadius = Math.floor(oldRadius * 0.8);
+
+    setters.setRadius(newRadius);
   }
 
   /**
@@ -368,6 +354,19 @@ export default class BaseBrushTool extends BaseTool {
     }
 
     external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  /**
+   * Returns the number of colors in the colormap.
+   *
+   * @static
+   * @public @api
+   * @return {Number} The number of colors in the color map.
+   */
+  static getNumberOfColors () {
+    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+
+    return colormap.getNumberOfColors();
   }
 
   get alpha () {

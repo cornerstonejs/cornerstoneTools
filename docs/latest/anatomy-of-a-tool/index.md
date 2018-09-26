@@ -6,4 +6,5 @@
 {% include "./interaction-types.md" %}
 {% include "./strategies.md" %}
 {% include "./configuration.md" %}
+{% include "./mixins.md" %}
 {% include "./measurement-data.md" %}
