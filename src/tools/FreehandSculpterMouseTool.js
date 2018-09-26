@@ -3,7 +3,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import { getters, mutations } from '../store/index.js';
+import { state, mutations } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
@@ -167,7 +167,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       coords = config.mouseLocation.handles.start;
       config.mouseUpRender = false;
     } else {
-      coords = getters.mousePositionImage();
+      coords = state.mousePositionImage;
     }
 
     const freehandMouseTool = getToolForElement(element, this.referencedToolName);

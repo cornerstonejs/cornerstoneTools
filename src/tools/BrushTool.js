@@ -5,8 +5,7 @@ import getCircle from './shared/brushUtils/getCircle.js';
 import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 // State
 import { getToolState } from './../stateManagement/toolState.js';
-import { getters } from './../store/index.js';
-import store from '../store/index.js';
+import store from './../store/index.js';
 
 const { state } = store.modules.brush;
 
@@ -35,7 +34,7 @@ export default class BrushTool extends BaseBrushTool {
       mousePosition = this._lastImageCoords;
       this._mouseUpRender = false;
     } else {
-      mousePosition = getters.mousePositionImage();
+      mousePosition = store.state.mousePositionImage;
     }
 
     if (!mousePosition) {

@@ -19,18 +19,13 @@ export const getters = {
     state.tools.filter((tool) =>
       tool.supportedInteractionTypes.includes('touch')
     ),
-  mousePositionImage: () => state.mousePositionImage,
   enabledElementByUID: (enabledElementUID) =>
     state.enabledElements.filter(
       (enabledElement) => enabledElement.uuid === enabledElementUID
     )
 };
 
-export const setters = {
-  mousePositionImage: (mousePositionImage) => {
-    state.mousePositionImage = mousePositionImage;
-  }
-};
+export const setters = {};
 
 export const mutations = {
   SET_IS_TOOL_LOCKED: (isLocked) => {
