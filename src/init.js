@@ -23,6 +23,7 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 export default function (configuration) {
   _addCornerstoneEventListeners();
+  _initModules();
   windowResizeHandler.enable();
 
   // Apply global configuration
@@ -63,4 +64,23 @@ function _addCornerstoneEventListeners () {
     elementDisabledEvent,
     removeEnabledElement
   );
+}
+
+/**
+ * _initModules - Initialise all modules that have an init function.
+ * TODO: Makes sure 3rd party modules get
+ * Registered before we try to init them.
+ *
+ * @private
+ * @param  {Object} enabledElement  The element on which to
+ *                                  Initialise the modules.
+ */
+function _initModules () {
+  const modules = store.modules;
+
+  Object.keys(modules).forEach(function(key) {
+    if (typeof modules[key].initCallback === 'function') {
+      modules[key].initCallback();
+    }
+  });
 }

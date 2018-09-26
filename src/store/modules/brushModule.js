@@ -100,19 +100,27 @@ const getters = {
 
 
 /**
- * init - Initialise the module when a new element is added.
+ * newEnabledElementCallback - Initialise the module when a new element is added.
  * @public
  * @param  {Object} enabledElement  The element on which the module is
  *                                  being initialised.
  */
-function init (enabledElement) {
-  _initDefaultColorMapIfNotInitialised();
+function newEnabledElementCallback (enabledElement) {
   setters.setElementVisible(enabledElement);
+}
+
+/**
+ * initCallback - Initialise the module when a new element is added.
+ * @public
+ */
+function initCallback () {
+  _initDefaultColorMap();
 }
 
 export default {
   state,
-  init,
+  initCallback,
+  newEnabledElementCallback,
   getters,
   setters,
 };
@@ -139,15 +147,9 @@ const distinctColors = [
   [0, 0, 128, 255]
 ];
 
-let defaultColormapInitiliased = false;
 let colorPairIndex = 0;
 
-function _initDefaultColorMapIfNotInitialised() {
-  if (defaultColormapInitiliased) {
-    // Map is global, and has already been initialised by an element.
-    return;
-  }
-
+function _initDefaultColorMap() {
   const defaultSegmentationCount = 19;
   const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
@@ -166,8 +168,6 @@ function _initDefaultColorMapIfNotInitialised() {
       colormap.setColor(i, _generateInterpolatedColor());
     }
   }
-
-  defaultColormapInitiliased = true;
 }
 
 /**
