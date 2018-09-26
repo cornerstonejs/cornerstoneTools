@@ -126,8 +126,8 @@ export default class BaseTool {
   // ===================================================================
 
   /**
-   * Callback that takes priority if the tool is active, in case
-   * any special behavior is required. Does nothing by default.
+   * Callback that takes priority if the tool is active, before `MOUSE_DOWN`
+   * events are processed. Does nothing by default.
    *
    * @virtual
    * @param  {type} evt
@@ -142,8 +142,8 @@ export default class BaseTool {
    */
 
   /**
-   * Callback that takes priority if the tool is active, in case
-   * any special behavior is required. Does nothing by default.
+   * Callback that is called if the tool is active, after `MOUSE_DOWN`
+   * events are processed. Does nothing by default.
    *
    * @virtual
    * @param  {type} evt
@@ -158,8 +158,8 @@ export default class BaseTool {
    */
 
   /**
-   * Callback that takes priority if the tool is active, in case
-   * any special behavior is required. Does nothing by default.
+   * Callback that takes priority if the tool is active, before `TOUCH_START`
+   * events are processed. Does nothing by default.
    *
    * @virtual
    * @param  {type} evt
@@ -174,8 +174,8 @@ export default class BaseTool {
    */
 
   /**
-   * Callback that takes priority if the tool is active, in case
-   * any special behavior is required. Does nothing by default.
+   * Callback that is called if the tool is active, after `TOUCH_START`
+   * events are processed. Does nothing by default.
    *
    * @virtual
    * @param  {type} evt
