@@ -77,7 +77,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
 
   function touchDragCallback (e) {
     const eventData = e.detail;
-    
+
     // Console.log('touchMoveHandle touchDragCallback: ' + e.type);
     runAnimation.value = false;
 

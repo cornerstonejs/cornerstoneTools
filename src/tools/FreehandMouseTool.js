@@ -507,7 +507,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     for(let toolIndex=0; toolIndex < toolState.data.length; toolIndex++){
       for(let handleNearby=0; handleNearby < toolState.data[toolIndex].handles.length; handleNearby++){
         if(toolState.data[toolIndex].handles[handleNearby] == handle){
-
           config.currentHandle = handleNearby;
           config.currentTool = toolIndex;
         }
@@ -515,8 +514,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     }
     
     config.dragOrigin = {
-      x: eventData.currentPoints.image.x,
-      y: eventData.currentPoints.image.y
+      x: toolState.data[config.currentTool].handles[config.currentHandle].x,
+      y: toolState.data[config.currentTool].handles[config.currentHandle].y
     };
 
     this._modifying = true;
@@ -667,7 +666,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const toolState = getToolState(eventData.element, this.name);
 
     this._deactivateModify(element);
-    
+
     this._dropHandle(eventData, toolState);
     this._endDrawing(element);
 
@@ -857,7 +856,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     if (data.visible === false) {
       return;
     }
-    
+
     for (let i = 0; i < data.handles.length; i++) {
       const handleCanvas = external.cornerstone.pixelToCanvas(element, data.handles[i]);
 
