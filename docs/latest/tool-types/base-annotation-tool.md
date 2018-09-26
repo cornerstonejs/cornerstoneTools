@@ -1,3 +1,13 @@
-## Annotation Tool {#base-annotation-tool}
+## Base Annotation Tool {#base-annotation-tool}
 
-_This section needs content_
+The `BaseAnnotationTool` is an extension of `BaseTool` for tools that create and manipulate annotation data.
+
+- Abstract Methods
+  - createNewMeasurement
+  - pointNearTool
+  - distanceFromPoint
+  - renderToolData
+- Virtual Methods
+  - mouseMoveCallback
+  - handleSelectedCallback
+  - toolSelectedCallback

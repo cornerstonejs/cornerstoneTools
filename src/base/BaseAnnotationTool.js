@@ -45,7 +45,7 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract
+   * @abstract Returns true if the given coords are need the tool.
    *
    * @param {*} element
    * @param {*} data
@@ -59,7 +59,8 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract
+   * @abstract  Returns the distance in px from the given coords to the
+   *            closest handle of the annotation.
    *
    * @param {*} element
    * @param {*} data
