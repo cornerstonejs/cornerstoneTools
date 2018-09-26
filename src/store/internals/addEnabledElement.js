@@ -49,8 +49,28 @@ export default function (elementEnabledEvt) {
 
 const _addEnabledElmenet = function (enabledElement) {
   store.state.enabledElements.push(enabledElement);
-
-  if (store.modules.brush) {
-    store.modules.brush.setters.setElementVisible(enabledElement);
+  if (store.modules) {
+    _initModules(enabledElement);
   }
 };
+
+
+/**
+ * _initModules - Initialise all modules that have an init function.
+ * TODO: Makes sure 3rd party modules get
+ * Registered before we try to init them.
+ *
+ * @private
+ *
+ * @param  {Object} enabledElement  The element on which to
+ *                                  Initialise the modules.
+ */
+function _initModules (enabledElement) {
+  const modules = store.modules;
+
+  Object.keys(modules).forEach(function(key) {
+    if (typeof modules[key].init === 'function') {
+      modules[key].init(enabledElement);
+    }
+  });
+}

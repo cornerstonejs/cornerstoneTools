@@ -47,6 +47,7 @@ const setters = {
     const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
       enabledElement
     );
+
     const enabledElementUID = cornerstoneEnabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
@@ -97,10 +98,23 @@ const getters = {
   }
 };
 
+
+/**
+ * init - Initialise the module when a new element is added.
+ * @public
+ * @param  {Object} enabledElement  The element on which the module is
+ *                                  being initialised.
+ */
+function init (enabledElement) {
+  _initDefaultColorMapIfNotInitialised();
+  setters.setElementVisible(enabledElement);
+}
+
 export default {
   state,
+  init,
   getters,
-  setters
+  setters,
 };
 
 const distinctColors = [
@@ -125,8 +139,15 @@ const distinctColors = [
   [0, 0, 128, 255]
 ];
 
-// DEFAULT BRUSH COLOR MAP
-if (external.cornerstone && external.cornerstone.colors) {
+let defaultColormapInitiliased = false;
+let colorPairIndex = 0;
+
+function _initDefaultColorMapIfNotInitialised() {
+  if (defaultColormapInitiliased) {
+    // Map is global, and has already been initialised by an element.
+    return;
+  }
+
   const defaultSegmentationCount = 19;
   const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
@@ -142,25 +163,31 @@ if (external.cornerstone && external.cornerstone.colors) {
     if (i < distinctColors.length) {
       colormap.setColor(i, distinctColors[i]);
     } else {
-      colormap.setColor(i, generateInterpolatedColor());
+      colormap.setColor(i, _generateInterpolatedColor());
     }
   }
+
+  defaultColormapInitiliased = true;
 }
 
-function generateInterpolatedColor () {
-  const randIndicies = [
-    getRandomInt(distinctColors.length),
-    getRandomInt(distinctColors.length)
-  ];
-
+/**
+ * _generateInterpolatedColor -  generates a color interpolated between two
+ *                              colors. Humans can only distinguish between
+ *                              ~15-20 colors, so this is the best we can do.
+ * @private
+ *
+ * @return {type}  description
+ */
+function _generateInterpolatedColor () {
+  const randIndicies = _getNextColorPair();
   const fraction = Math.random();
   const interpolatedColor = [];
 
-  for (let j = 0; j < 4; j++) {
+  for (let i = 0; i < 4; i++) {
     interpolatedColor.push(
       Math.floor(
-        fraction * distinctColors[randIndicies[0]][j] +
-          (1.0 - fraction) * distinctColors[randIndicies[1]][j]
+        fraction * distinctColors[randIndicies[0]][i] +
+          (1.0 - fraction) * distinctColors[randIndicies[1]][i]
       )
     );
   }
@@ -168,6 +195,27 @@ function generateInterpolatedColor () {
   return interpolatedColor;
 }
 
-function getRandomInt (max) {
-  return Math.floor(Math.random() * Math.floor(max));
+
+
+/**
+ * _getNextColorPair - returns the next pair of indicies to interpolate between.
+ *
+ * @private
+ *
+ * @return {Array} An array containing the two indicies.
+ */
+function _getNextColorPair() {
+  const indexPair = [
+    colorPairIndex,
+  ];
+
+  if (colorPairIndex < distinctColors.length - 1) {
+    colorPairIndex++;
+    indexPair.push(colorPairIndex);
+  } else {
+    colorPairIndex = 0;
+    indexPair.push(colorPairIndex)
+  }
+
+  return indexPair;
 }
