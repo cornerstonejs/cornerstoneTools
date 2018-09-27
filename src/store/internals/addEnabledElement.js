@@ -49,8 +49,28 @@ export default function (elementEnabledEvt) {
 
 const _addEnabledElmenet = function (enabledElement) {
   store.state.enabledElements.push(enabledElement);
-
-  if (store.modules.brush) {
-    store.modules.brush.setters.setElementVisible(enabledElement);
+  if (store.modules) {
+    _initModulesOnElement(enabledElement);
   }
 };
+
+/**
+ * _initModulesOnElement - If a module has a enabledElementCallback
+ * method, call it.
+ *
+ * TODO: Makes sure 3rd party modules get
+ * Registered before we try to init them.
+ *
+ * @private
+ * @param  {Object} enabledElement  The element on which to
+ *                                  Initialise the modules.
+ */
+function _initModulesOnElement (enabledElement) {
+  const modules = store.modules;
+
+  Object.keys(modules).forEach(function(key) {
+    if (typeof modules[key].enabledElementCallback === 'function') {
+      modules[key].enabledElementCallback(enabledElement);
+    }
+  });
+}
