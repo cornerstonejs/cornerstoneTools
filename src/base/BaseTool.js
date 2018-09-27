@@ -1,5 +1,4 @@
 import external from './../externalModules.js';
-import KeyboardController from '../tools/shared/KeyboardController.js';
 import isToolActive from '../tools/shared/isToolActive.js';
 import { default as mixinCollection } from '../mixins/index.js';
 
