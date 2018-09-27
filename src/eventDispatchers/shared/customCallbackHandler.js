@@ -15,10 +15,11 @@ export default function (handlerType, customFunction, evt) {
 
   if (handlerType === 'touch') {
     tools = tools.filter(
-      (tool) => tool.options.touchEnable || tool.options.touchEnable === undefined
-    );  
+      (tool) =>
+        tool.options.isTouchActive || tool.options.isTouchActive === undefined
+    );
   }
-  
+
   tools = tools.filter((tool) => typeof tool[customFunction] === 'function');
 
   if (tools.length === 0) {

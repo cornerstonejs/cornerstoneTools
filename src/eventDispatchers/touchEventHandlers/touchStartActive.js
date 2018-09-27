@@ -11,15 +11,16 @@ export default function (evt) {
 
   const element = evt.detail.element;
   let tools = getActiveToolsForElement(element, getters.touchTools());
-  
+
   tools = tools.filter(
-    (tool) => tool.options.touchEnable || tool.options.touchEnable === undefined
+    (tool) =>
+      tool.options.isTouchActive || tool.options.isTouchActive === undefined
   );
 
   if (tools.length === 0) {
     return;
   }
-  
+
   const activeTool = tools[0];
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
