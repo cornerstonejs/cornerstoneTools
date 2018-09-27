@@ -34,6 +34,8 @@
   - [Mixin Behaviors](custom-tools/index.md#mixin-behaviors)
   - [Mode Change Callbacks](custom-tools/index.md#mode-change-callbacks)
   - [Event Dispatcher Callbacks](custom-tools/index.md#event-dispatcher-callbacks)
+- [Plugins](plugins/index.md)
+  - [Modules](plugins/index.md#modules)
 
 ## Migrating
 

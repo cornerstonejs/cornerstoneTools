@@ -122,7 +122,7 @@ export default {
   onRegisterCallback,
   enabledElementCallback,
   getters,
-  setters,
+  setters
 };
 
 const distinctColors = [
