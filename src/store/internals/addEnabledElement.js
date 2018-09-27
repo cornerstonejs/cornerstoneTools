@@ -55,7 +55,7 @@ const _addEnabledElmenet = function (enabledElement) {
 };
 
 /**
- * _initModulesOnElement - If a module has a initSpecificElementCallback
+ * _initModulesOnElement - If a module has a enabledElementCallback
  * method, call it.
  *
  * TODO: Makes sure 3rd party modules get
@@ -69,8 +69,8 @@ function _initModulesOnElement (enabledElement) {
   const modules = store.modules;
 
   Object.keys(modules).forEach(function(key) {
-    if (typeof modules[key].initSpecificElementCallback === 'function') {
-      modules[key].initSpecificElementCallback(enabledElement);
+    if (typeof modules[key].enabledElementCallback === 'function') {
+      modules[key].enabledElementCallback(enabledElement);
     }
   });
 }

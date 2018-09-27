@@ -100,12 +100,12 @@ const getters = {
 
 
 /**
- * initSpecificElementCallback - Element specific initilisation.
+ * enabledElementCallback - Element specific initilisation.
  * @public
  * @param  {Object} enabledElement  The element on which the module is
  *                                  being initialised.
  */
-function initSpecificElementCallback (enabledElement) {
+function enabledElementCallback (enabledElement) {
   setters.setElementVisible(enabledElement);
 }
 
@@ -120,7 +120,7 @@ function initCallback () {
 export default {
   state,
   initCallback,
-  initSpecificElementCallback,
+  enabledElementCallback,
   getters,
   setters,
 };
