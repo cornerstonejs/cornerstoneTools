@@ -110,16 +110,16 @@ function enabledElementCallback (enabledElement) {
 }
 
 /**
- * initCallback - Initialise the module when a new element is added.
+ * onRegisterCallback - Initialise the module when a new element is added.
  * @public
  */
-function initCallback () {
+function onRegisterCallback () {
   _initDefaultColorMap();
 }
 
 export default {
   state,
-  initCallback,
+  onRegisterCallback,
   enabledElementCallback,
   getters,
   setters,

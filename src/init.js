@@ -59,8 +59,6 @@ export default function (configuration) {
   // Initialising cornerstoneTools.
   cornerstoneToolsInstance.store.registerModule = registerModule;
 
-  console.log(cornerstoneToolsInstance);
-
   return cornerstoneToolsInstance;
 }
 
@@ -77,7 +75,7 @@ function _addCornerstoneEventListeners () {
 }
 
 /**
- * _initModules - Initialise all modules that have an init function.
+ * _initModules - Initialise all modules that have an onRegisterCallback.
  * TODO: Makes sure 3rd party modules get
  * Registered before we try to init them.
  *
@@ -89,8 +87,8 @@ function _initModules () {
   const modules = store.modules;
 
   Object.keys(modules).forEach(function(key) {
-    if (typeof modules[key].initCallback === 'function') {
-      modules[key].initCallback();
+    if (typeof modules[key].onRegisterCallback === 'function') {
+      modules[key].onRegisterCallback();
     }
   });
 }

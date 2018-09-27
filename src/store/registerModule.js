@@ -16,8 +16,8 @@ export default function (newModule, name) {
   Object.assign(modules, newModule);
 
   // Initialise module
-  if (typeof newModule.initCallback === 'function') {
-    newModule.initCallback(name);
+  if (typeof newModule.onRegisterCallback === 'function') {
+    newModule.onRegisterCallback(name);
   }
 
   // Element specific initilisation
