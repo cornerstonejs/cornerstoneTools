@@ -21,6 +21,8 @@ csTools.setToolModeActive("ToolName", { mouseButtonMask: 2 });
 
 ### Common Configuration Options
 
+TODO: Create a property on base tool that is a string list of all configuration options used internally by the tool? Then maintain a list here that denotes what each property is used for?
+
 | Option                      | Mouse | Touch | Annotation | Brush |
 | --------------------------- | :---: | :---: | :--------: | :---: |
 | `mouseButtonMask`           |   x   |       |            |       |
