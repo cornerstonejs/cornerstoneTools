@@ -27,12 +27,6 @@ export const getters = {
 
 export const setters = {};
 
-export const mutations = {
-  SET_IS_TOOL_LOCKED: (isLocked) => {
-    state.isToolLocked = isLocked;
-  }
-};
-
 export const modules = {
   brush,
   globalConfiguration
@@ -41,6 +35,5 @@ export const modules = {
 export default {
   modules,
   state,
-  getters,
-  mutations
+  getters
 };

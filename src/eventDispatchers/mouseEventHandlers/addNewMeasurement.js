@@ -1,9 +1,8 @@
 import external from '../../externalModules.js';
-import { mutations } from '../../store/index.js';
+import { state } from '../../store/index.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import moveHandle from '../../manipulators/moveHandle.js';
 import moveNewHandle from '../../manipulators/moveNewHandle.js';
-
 
 export default function (evt, tool) {
   //
@@ -20,7 +19,7 @@ export default function (evt, tool) {
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, tool.name, measurementData);
 
-  mutations.SET_IS_TOOL_LOCKED(true);
+  state.isToolLocked = true;
   external.cornerstone.updateImage(element);
 
   let handleMover;
@@ -54,7 +53,7 @@ export default function (evt, tool) {
       //     RemoveToolState(element, toolType, measurementData);
       //   }
 
-      mutations.SET_IS_TOOL_LOCKED(false);
+      state.isToolLocked = false;
       external.cornerstone.updateImage(element);
     },
     preventHandleOutsideImage
