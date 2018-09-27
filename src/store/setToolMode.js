@@ -110,7 +110,7 @@ function setToolModeForElement (
   } else if (typeof options === 'number') {
     options = {
       mouseButtonMaske: options,
-      isTouchActive: isTouchActive === undefined ? false : isTouchActive
+      isTouchActive: isTouchActive === true
     };
   }
 
