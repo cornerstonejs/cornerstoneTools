@@ -18,3 +18,11 @@ csTools.setToolModeActive("ToolName", { isTouchActive: false });
 //  The previous `mouseButtonMask` configuration property's value is updated to `2`
 csTools.setToolModeActive("ToolName", { mouseButtonMask: 2 });
 ```
+
+### Common Configuration Options
+
+| Option                      | Mouse | Touch | Annotation | Brush |
+| --------------------------- | :---: | :---: | :--------: | :---: |
+| `mouseButtonMask`           |   x   |       |            |       |
+| `preventHandleOutsideImage` |       |       |     x      |       |
+| `isTouchActive`             |       |   x   |            |       |
