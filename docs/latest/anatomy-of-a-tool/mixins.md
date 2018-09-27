@@ -11,11 +11,9 @@ For example, if a tool only makes sense to be enabled/disabled, you can give it 
 ```js
 export default class ExampleOverlayTool extends BaseTool {
   // Pass an array of mixins to the constructor.
-  constructor (
-    name = 'ExampleOverlay',
-    mixins = [
-      'enabledOrDisabledBinaryTool'
-    ]
+  constructor(
+    name = "ExampleOverlay",
+    mixins = ["enabledOrDisabledBinaryTool"]
   ) {
     // Pass mixins to 'super' so that BaseTool's
     // Constructor can attach it to the class.
@@ -33,12 +31,11 @@ Thanks to this mixin, the tool's mode will now switch to `enabled` when set `act
 
 To create a new mixin, create a new file in the `mixins` directory that contains some functions and a `export`s a `default` object containing these functions, e.g.:
 
-
 ```js
 // mixins/helloTool.js
 
-function helloTool () {
-  console.log('Hello Tool!');
+function helloTool() {
+  console.log("Hello Tool!");
 }
 
 export default {
@@ -52,10 +49,10 @@ Then register the mixin in `mixins/index.js`, which will allow it to be attached
 // mixins/index.js
 
 // Other imports
-import helloTool from './helloTool.js';
+import helloTool from "./helloTool.js";
 
 export default {
   // Other registered functions...
   helloTool
-}
+};
 ```
