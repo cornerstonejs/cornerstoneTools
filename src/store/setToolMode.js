@@ -8,9 +8,10 @@ import { state } from './../store/index.js';
  * respond to user input, and can create new data
  *
  * @export
- * @param {*} element
- * @param {*} toolName
- * @param {*} options
+ * @param {object} element
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  * @returns
  */
 const setToolActiveForElement = setToolModeForElement.bind(
@@ -25,9 +26,10 @@ const setToolActive = setToolMode.bind(null, 'active', null);
  * and do not respond to user input
  *
  * @export
- * @param {*} element
- * @param {*} toolName
- * @param {*} options
+ * @param {object} element
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  * @returns
  */
 const setToolDisabledForElement = setToolModeForElement.bind(
@@ -42,9 +44,10 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
  * but do not respond to user input
  *
  * @export
- * @param {*} element
- * @param {*} toolName
- * @param {*} options
+ * @param {object} element
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  * @returns
  */
 const setToolEnabledForElement = setToolModeForElement.bind(
@@ -59,9 +62,10 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
  * but do not create new measurements or annotations.
  *
  * @export
- * @param {*} element
- * @param {*} toolName
- * @param {*} options
+ * @param {object} element
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  * @returns
  */
 const setToolPassiveForElement = setToolModeForElement.bind(
@@ -79,12 +83,12 @@ const setToolPassive = setToolMode.bind(
  * An internal method that helps make sure we change tool state in a consistent
  * way
  *
- * @param {*} mode
- * @param {*} changeEvent
- * @param {*} element
- * @param {*} toolName
- * @param {*} options
- * @param {*} isTouchActive
+ * @param {string} mode
+ * @param {string} changeEvent
+ * @param {object} element
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  * @returns
  */
 function setToolModeForElement (
@@ -138,10 +142,11 @@ function setToolModeForElement (
 /**
  * A helper/quick way to set a tool's mode for all canvases
  *
- * @param {*} mode
- * @param {*} changeEvent
- * @param {*} toolName
- * @param {*} options
+ * @param {string} mode
+ * @param {string} changeEvent
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
  */
 function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
   state.enabledElements.forEach((element) => {
