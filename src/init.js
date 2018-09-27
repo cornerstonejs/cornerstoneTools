@@ -1,5 +1,6 @@
 import external from './externalModules.js';
 import store from './store/index.js';
+import registerModule from './store/registerModule.js';
 import { addTool, addToolForElement } from './store/addTool.js';
 import { removeTool, removeToolForElement } from './store/removeTool.js';
 import getToolForElement from './store/getToolForElement.js';
@@ -23,6 +24,7 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 export default function (configuration) {
   _addCornerstoneEventListeners();
+  _initModules();
   windowResizeHandler.enable();
 
   // Apply global configuration
@@ -32,7 +34,7 @@ export default function (configuration) {
     configuration
   );
 
-  return Object.freeze({
+  const cornerstoneToolsInstance = Object.freeze({
     store,
     addTool,
     addToolForElement,
@@ -51,6 +53,13 @@ export default function (configuration) {
     setToolPassive,
     setToolPassiveForElement
   });
+
+  // By assigning this here it is only accessible by initialised instances,
+  // This prevents users of the library from trying to register modules before
+  // Initialising cornerstoneTools.
+  cornerstoneToolsInstance.store.registerModule = registerModule;
+
+  return cornerstoneToolsInstance;
 }
 
 function _addCornerstoneEventListeners () {
@@ -63,4 +72,23 @@ function _addCornerstoneEventListeners () {
     elementDisabledEvent,
     removeEnabledElement
   );
+}
+
+/**
+ * _initModules - Initialise all modules that have an onRegisterCallback.
+ * TODO: Makes sure 3rd party modules get
+ * Registered before we try to init them.
+ *
+ * @private
+ * @param  {Object} enabledElement  The element on which to
+ *                                  Initialise the modules.
+ */
+function _initModules () {
+  const modules = store.modules;
+
+  Object.keys(modules).forEach(function(key) {
+    if (typeof modules[key].onRegisterCallback === 'function') {
+      modules[key].onRegisterCallback();
+    }
+  });
 }

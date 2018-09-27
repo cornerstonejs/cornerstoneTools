@@ -15,7 +15,7 @@ export default class BrushTool extends BaseBrushTool {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      configuration: defaultBrushToolConfiguration()
+      configuration: {}
     });
   }
 
@@ -143,6 +143,7 @@ export default class BrushTool extends BaseBrushTool {
   }
 }
 
+/*
 function defaultBrushToolConfiguration () {
   return {
     keyBinds: {
@@ -153,6 +154,7 @@ function defaultBrushToolConfiguration () {
     }
   };
 }
+*/
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap

@@ -3,7 +3,6 @@ import mouseDown from './mouseDown.js';
 import mouseDownActivate from './mouseDownActivate.js';
 import mouseDrag from './mouseDrag.js';
 import mouseMove from './mouseMove.js';
-import keyDown from './keyDown.js';
 import mouseWheel from './mouseWheel.js';
 
 const mouseClick = customCallbackHandler.bind(
@@ -28,6 +27,5 @@ export {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel,
-  keyDown
+  mouseWheel
 };
