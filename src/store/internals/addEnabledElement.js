@@ -1,5 +1,4 @@
 import {
-  keyboardEventListeners,
   mouseEventListeners,
   mouseWheelEventListeners,
   touchEventListeners
@@ -29,7 +28,6 @@ export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Listeners
-  keyboardEventListeners.enable(enabledElement);
   mouseEventListeners.enable(enabledElement);
   mouseWheelEventListeners.enable(enabledElement);
 

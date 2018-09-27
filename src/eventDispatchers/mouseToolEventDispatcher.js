@@ -7,8 +7,7 @@ import {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel,
-  keyDown
+  mouseWheel
 } from './mouseEventHandlers/index.js';
 
 /**
@@ -31,7 +30,6 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.addEventListener(EVENTS.MOUSE_UP, mouseUp);
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.addEventListener(EVENTS.KEY_DOWN, keyDown);
 };
 
 const disable = function (element) {
@@ -43,7 +41,6 @@ const disable = function (element) {
   element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMove);
   element.removeEventListener(EVENTS.MOUSE_UP, mouseUp);
   element.removeEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
-  element.removeEventListener(EVENTS.KEY_DOWN, keyDown);
 };
 
 export default {
