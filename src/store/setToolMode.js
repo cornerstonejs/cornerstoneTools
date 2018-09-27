@@ -79,26 +79,39 @@ const setToolPassive = setToolMode.bind(
  * An internal method that helps make sure we change tool state in a consistent
  * way
  *
+ * @param {*} mode
+ * @param {*} changeEvent
  * @param {*} element
  * @param {*} toolName
  * @param {*} options
- * @param {*} mode
- * @param {*} changeEvent
+ * @param {*} isTouchActive
  * @returns
  */
-function setToolModeForElement (mode, changeEvent, element, toolName, options) {
+function setToolModeForElement (
+  mode,
+  changeEvent,
+  element,
+  toolName,
+  options,
+  isTouchActive
+) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    console.error(`Unable to find tool '${toolName}' for enabledElement`);
+    console.warn(`Unable to find tool '${toolName}' for enabledElement`);
 
     return;
   }
 
   // Set mode & options
   tool.mode = mode;
-  if (options) {
+  if (typeof options === 'object') {
     tool.options = Object.assign({}, tool.options, options);
+  } else if (typeof options === 'number') {
+    options = {
+      mouseButtonMaske: options,
+      isTouchActive: isTouchActive === undefined ? false : isTouchActive
+    };
   }
 
   // Call tool's hook for this event, if one exists
@@ -130,9 +143,16 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
  * @param {*} toolName
  * @param {*} options
  */
-function setToolMode (mode, changeEvent, toolName, options) {
+function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
   state.enabledElements.forEach((element) => {
-    setToolModeForElement(mode, changeEvent, element, toolName, options);
+    setToolModeForElement(
+      mode,
+      changeEvent,
+      element,
+      toolName,
+      options,
+      isTouchActive
+    );
   });
 }
 
