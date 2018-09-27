@@ -19,7 +19,7 @@ import {
   removeToolState,
   getToolState
 } from '../stateManagement/toolState.js';
-import { mutations } from '../store/index.js';
+import { state } from '../store/index.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
@@ -262,7 +262,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const handleMover =
       interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
 
-    mutations.SET_IS_TOOL_LOCKED(true);
+    state.isToolLocked = true;
     handleMover(
       evt.detail,
       this.name,
@@ -287,7 +287,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           });
         }
 
-        mutations.SET_IS_TOOL_LOCKED(false);
+        state.isToolLocked = false;
         external.cornerstone.updateImage(element);
       }
     );
