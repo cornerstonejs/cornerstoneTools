@@ -14,11 +14,28 @@ import { state } from './../store/index.js';
  * @param {boolean} isTouchActive
  * @returns
  */
-const setToolActiveForElement = setToolModeForElement.bind(
-  null,
-  'active',
-  null
-);
+const setToolActiveForElement = function (
+  element,
+  toolName,
+  options,
+  isTouchActive
+) {
+  // Find active tool w/ matching mouseButtonMask
+  // Find active tool w/ active touch
+  // Find active tool w/ active two finger?
+  // Find active tool w/ ...?
+
+  // Resume normal behavior
+  setToolModeForElement(
+    'active',
+    null,
+    element,
+    toolName,
+    options,
+    isTouchActive
+  );
+};
+
 /**
  *
  * @export
