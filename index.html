@@ -193,7 +193,7 @@
 
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
-			cTools.setToolActive(toolName, { mouseButtonMask });
+			cTools.setToolActive(toolName, { mouseButtonMask, isTouchActive: true });
 
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -228,7 +228,7 @@
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cTools.setToolActive(cTools.store.state.tools[0].name, 1, true);
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {
