@@ -19,7 +19,19 @@ const setToolActiveForElement = setToolModeForElement.bind(
   'active',
   null
 );
-const setToolActive = setToolMode.bind(null, 'active', null);
+/**
+ *
+ * @export
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
+ * @returns
+ */
+const setToolActive = function (toolName, options, isTouchActive) {
+  state.enabledElements.forEach((element) => {
+    setToolActiveForElement(element, toolName, options, isTouchActive);
+  });
+};
 
 /**
  * Sets a tool's state to 'disabled'. Disabled tools are not rendered,
@@ -37,6 +49,15 @@ const setToolDisabledForElement = setToolModeForElement.bind(
   'disabled',
   null
 );
+
+/**
+ *
+ * @export
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
+ * @returns
+ */
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
 
 /**
@@ -55,6 +76,15 @@ const setToolEnabledForElement = setToolModeForElement.bind(
   'enabled',
   null
 );
+
+/**
+ *
+ * @export
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
+ * @returns
+ */
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
 
 /**
@@ -73,6 +103,15 @@ const setToolPassiveForElement = setToolModeForElement.bind(
   'passive',
   EVENTS.TOOL_DEACTIVATED
 );
+
+/**
+ *
+ * @export
+ * @param {string} toolName
+ * @param {(object|number)} options
+ * @param {boolean} isTouchActive
+ * @returns
+ */
 const setToolPassive = setToolMode.bind(
   null,
   'passive',
