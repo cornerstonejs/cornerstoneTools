@@ -22,7 +22,7 @@ const samplePlugin = {
   modules: [
     {
       module, // Module Object
-      name
+      name  // Name of the module
     },
     ...
   ],
@@ -31,6 +31,7 @@ const samplePlugin = {
   tools: [
     {
       tool:  // The tool Class / Constructor.
+      name: // Name of the Tool.
     }
   ]
 
