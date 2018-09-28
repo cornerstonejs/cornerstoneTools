@@ -4,4 +4,6 @@
 
 {% include "./../partials/beta-warning.md" %}
 
-{% include "./modules.md" %}
+{% include "./store-modules.md" %}
+
+{% inclue "./tools.md" %}

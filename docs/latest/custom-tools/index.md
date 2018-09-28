@@ -2,7 +2,7 @@
 
 {% include "./../partials/beta-warning.md" %}
 
-This guide will give you an overview of creating a new tool. This is applicable for tools being built within the library as well as tools for 3rd party plugins. For the specifics on of setting up a tool for a plugin, check the plugins guide [NOTE: TODO].
+This guide will give you an overview of creating a new tool. This is applicable for tools being built within the library as well as tools for 3rd party plugins. For the specifics on of setting up a tool for a plugin, check the [Plugins](plugins/index.md) guide.
 
 {% include "./choosing-a-base-class.md" %}
 {% include "./creating-your-tool.md" %}

@@ -1,4 +1,4 @@
-## Store Modules {#modules}
+## Store Modules {#store-modules}
 
 A store module is a namespaced storage object in the `store` that contains the following properties:
 

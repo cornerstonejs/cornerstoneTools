@@ -35,6 +35,11 @@ export { default as ZoomMouseWheelTool } from './tools/ZoomMouseWheelTool.js';
 export { default as CrosshairsTool } from './tools/CrosshairsTool.js';
 export { default as BrushTool } from './tools/BrushTool.js';
 
+// Base Tools for 3rd party plugins
+export { default as BaseTool } from './base/BaseTool.js';
+export { default as BaseAnnotationTool } from './base/BaseAnnotationTool.js';
+export { default as BaseBrushTool } from './base/BaseBrushTool.js';
+
 // END V3 EXPORTS
 
 export { drawing };
