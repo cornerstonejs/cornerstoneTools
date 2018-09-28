@@ -163,16 +163,24 @@ function setToolModeForElement (
     return;
   }
 
+  // MouseButtonMask (and isTouchActive) provided as values
+  if (typeof options === 'number') {
+    options = {
+      mouseButtonMask: options
+    };
+
+    if (isTouchActive === true || isTouchActive === false) {
+      options.isTouchActive = isTouchActive === true;
+    }
+  }
+  // Options is an object, or null/undefined
+  else {
+    options = options || {};
+  }
+
   // Set mode & options
   tool.mode = mode;
-  if (typeof options === 'object') {
-    tool.options = Object.assign({}, tool.options, options);
-  } else if (typeof options === 'number') {
-    options = {
-      mouseButtonMaske: options,
-      isTouchActive: isTouchActive === true
-    };
-  }
+  tool.options = Object.assign({}, tool.options, options);
 
   // Call tool's hook for this event, if one exists
   if (tool[`${mode}Callback`]) {
