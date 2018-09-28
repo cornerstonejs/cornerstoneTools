@@ -24,7 +24,7 @@ const setToolActiveForElement = function (
 
   if (tool) {
     _setActiveToolWithMatchingMouseButtonMaskToPassive(tool, element, options);
-    _setActiveToolWithIsTouchActiveToPassive(
+    _setActiveToolWithIsTouchActiveToFalse(
       tool,
       element,
       options,
@@ -279,7 +279,7 @@ function _setActiveToolWithMatchingMouseButtonMaskToPassive (
  * @param {*} isTouchActive
  * @private
  */
-function _setActiveToolWithIsTouchActiveToPassive (
+function _setActiveToolWithIsTouchActiveToFalse (
   tool,
   element,
   options,
@@ -310,7 +310,7 @@ function _setActiveToolWithIsTouchActiveToPassive (
   }
 
   if (activeToolWithIsTouchActive) {
-    setToolPassiveForElement(element, activeToolWithIsTouchActive.name);
+    activeToolWithIsTouchActive.options.isTouchActive = false;
   }
 }
 
