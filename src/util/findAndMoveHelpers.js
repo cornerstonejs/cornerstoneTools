@@ -4,11 +4,9 @@ import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
 
 const moveHandleNearImagePoint = function (evt, handle, data, toolName) {
-  const eventData = evt.detail;
-  const elememt = eventData.element;
-
   data.active = true;
   state.isToolLocked = true;
+  
   moveHandle(
     evt.detail,
     toolName,
