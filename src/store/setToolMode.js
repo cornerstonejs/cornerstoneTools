@@ -20,14 +20,19 @@ const setToolActiveForElement = function (
   options,
   isTouchActive
 ) {
-  // Find active tool w/ matching mouseButtonMask
-  // Find active tool w/ active touch
-  // Find active tool w/ active two finger?
-  // Find active tool w/ ...?
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
     _setActiveToolWithMatchingMouseButtonMaskToPassive(tool, element, options);
+    _setActiveToolWithIsTouchActiveToPassive(
+      tool,
+      element,
+      options,
+      isTouchActive
+    );
+
+    // TODO: Find active tool w/ active two finger?
+    // TODO: Find active tool w/ ...?
   }
 
   // Resume normal behavior
@@ -265,6 +270,50 @@ function _setActiveToolWithMatchingMouseButtonMaskToPassive (
     );
   }
 }
+
+/**
+ *
+ *
+ * @param {*} element
+ * @param {*} options
+ * @param {*} isTouchActive
+ * @private
+ */
+function _setActiveToolWithIsTouchActiveToPassive (
+  tool,
+  element,
+  options,
+  isTouchActive
+) {
+  let value;
+
+  if (typeof options === 'number' && typeof isTouchActive === 'boolean') {
+    value = isTouchActive === true;
+  } else if (
+    typeof options === 'object' &&
+    typeof options.isTouchActive === 'boolean'
+  ) {
+    value = options.isTouchActive === true;
+  } else {
+    value = tool.options.isTouchActive;
+  }
+
+  let activeToolWithIsTouchActive;
+
+  if (typeof value === 'boolean' && value === true) {
+    activeToolWithIsTouchActive = state.tools.find(
+      (tool) =>
+        tool.element === element &&
+        tool.mode === 'active' &&
+        tool.options.isTouchActive === true
+    );
+  }
+
+  if (activeToolWithIsTouchActive) {
+    setToolPassiveForElement(element, activeToolWithIsTouchActive.name);
+  }
+}
+
 export {
   setToolActive,
   setToolActiveForElement,
