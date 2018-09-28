@@ -10,8 +10,12 @@ import pluginList from './index.js';
  * @
  * @param  {Object} newMixin The registerPlugin to register.
  */
-export default function (plugin, name) {
-  if (isPluginNameRegistered(name)) {
+export default function (plugin) {
+  if (!plugin.name) {
+    throw new Error (`plugin must have a unique name!`);
+  }
+
+  if (isPluginNameRegistered(plugin.name)) {
     console.warning(`A plugin with the name ${name} is already registered`);
 
     return;
@@ -43,7 +47,7 @@ export default function (plugin, name) {
 
     for (let i = tools; i < tools.length; i++) {
       // Would just pass modules, but want to leave those endpoints more open for now.
-      registerTool(tools[i].constuctor, tools[i].name);
+      registerTool(tools[i].tool, tools[i].name);
     }
   }
 
