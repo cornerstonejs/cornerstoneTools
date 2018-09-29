@@ -4,9 +4,9 @@ import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
 
 const moveHandleNearImagePoint = function (evt, handle, data, toolName) {
-  // Todo: We've grabbed a handle, stop listening/ignore for MOUSE_MOVE
   data.active = true;
   state.isToolLocked = true;
+  
   moveHandle(
     evt.detail,
     toolName,
