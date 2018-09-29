@@ -92,9 +92,7 @@ export default class BaseTool {
       if (typeof mixinCollection[mixinName] === 'object') {
         Object.assign(this, mixinCollection[mixinName]);
       } else {
-        console.warn(
-          `${this.name}: mixin ${mixins} does not exist.`
-        );
+        console.warn(`${this.name}: mixin ${mixins} does not exist.`);
       }
     }
   }
