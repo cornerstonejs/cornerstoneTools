@@ -62,12 +62,45 @@ export default class BaseTool {
   }
 
   /**
-   * Clears the tools options.
+   * Clears the tools options; preserves internal options, but
+   * with `undefined` values.
    *
    * @memberof BaseTool
    */
   clearOptions () {
     this._options = {};
+    this.internalOptions().forEach((option) => {
+      this._options[option] = undefined;
+    });
+  }
+
+  /**
+   * Internal options that "MUST" be in the tool's options if
+   * certain conditions are met. Method is also good for inspecting
+   * options that can be used to change tool behavior.
+   *
+   * @readonly
+   * @memberof BaseTool
+   */
+  get internalOptions () {
+    const internalOptions = [];
+
+    // Should be on _every_ mouse tool
+    if (this.supportedInteractionTypes.contains('mouse')) {
+      internalOptions.push('mouseButtonMask');
+    }
+
+    // Should be on _every_ tool that is touch AND mouse?
+    // Because doubleTap, pinch, etc. won't ever be set to "ACTIVE"
+    // Unless the intent is to set `isTouchActive` true?
+    if (
+      this.supportedInteractionTypes.contains('mouse') &&
+      this.supportedInteractionTypes.contains('touch')
+    ) {
+      internalOptions.push('isTouchActive');
+    }
+
+    return internalOptions;
   }
 
   /**
