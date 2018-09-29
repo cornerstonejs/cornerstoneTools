@@ -23,14 +23,7 @@ const setToolActiveForElement = function (
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
-    _setActiveToolWithMatchingMouseButtonMaskToPassive(tool, element, options);
-    _setActiveToolWithIsTouchActiveToFalse(
-      tool,
-      element,
-      options,
-      isTouchActive
-    );
-
+    _resolveInputConflicts(element, tool, options, isTouchActive);
     // TODO: Find active tool w/ active two finger?
     // TODO: Find active tool w/ ...?
   }
@@ -236,18 +229,31 @@ function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
 }
 
 /**
+ * Find tool's that conflict with the incoming tool's mouse/touch bindings and
+ * resolve those conflicts.
  *
+ * @param {*} element
+ * @param {*} tool
+ * @param {*} options
+ * @param {*} isTouchActive
+ * @private
+ */
+function _resolveInputConflicts (element, tool, options, isTouchActive) {
+  _resolveMouseInputConflicts(tool, element, options);
+  _resolveTouchInputConflicts(tool, element, options, isTouchActive);
+}
+
+/**
+ * Try to find an active tool that use the same mouse button mask as
+ * the input tool. If found, set that tool to `passive` to prevent
+ * conflicts.
  *
  * @param {*} element
  * @param {*} options
  * @param {*} isTouchActive
  * @private
  */
-function _setActiveToolWithMatchingMouseButtonMaskToPassive (
-  tool,
-  element,
-  options
-) {
+function _resolveMouseInputConflicts (tool, element, options) {
   const mouseButtonMask =
     (typeof options === 'number' ? options : options.mouseButtonMask) ||
     tool.options.mouseButtonMask;
@@ -272,21 +278,21 @@ function _setActiveToolWithMatchingMouseButtonMaskToPassive (
 }
 
 /**
+ * If the incoming tool isTouchActive, find any conflicting tools
+ * and set their isTouchActive to false to avoid conflicts.
  *
- *
+ * @param {*} tool
  * @param {*} element
  * @param {*} options
  * @param {*} isTouchActive
  * @private
  */
-function _setActiveToolWithIsTouchActiveToFalse (
-  tool,
-  element,
-  options,
-  isTouchActive
-) {
+function _resolveTouchInputConflicts (tool, element, options, isTouchActive) {
   let value;
 
+  // There are multiple ways to set `isTouchActive`. This section of logic
+  // Sets `value` to the incoming tool's resulting `isTouchActive` after the
+  // Mode is set
   if (typeof options === 'number' && typeof isTouchActive === 'boolean') {
     value = isTouchActive === true;
   } else if (
