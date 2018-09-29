@@ -58,6 +58,11 @@ export default class BaseTool {
     this._options = Object.assign({}, this._options, options);
   }
 
+  /**
+   * Clears the tools options.
+   *
+   * @memberof BaseTool
+   */
   clearOptions () {
     this._options = {};
   }
