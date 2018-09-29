@@ -239,8 +239,18 @@ function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
  * @private
  */
 function _resolveInputConflicts (element, tool, options, isTouchActive) {
-  _resolveMouseInputConflicts(tool, element, options);
-  _resolveTouchInputConflicts(tool, element, options, isTouchActive);
+  // There are two API overloads for changing a tool's mode. This helps us
+  // Determine where to find our mask values.
+  const isValueApiOverload = typeof options === 'number';
+  const mouseButtonMaskValue = isValueApiOverload
+    ? options
+    : options.mouseButtonMask;
+  const isTouchActiveValue = isValueApiOverload
+    ? isTouchActive
+    : options.isTouchActive;
+
+  _resolveMouseInputConflicts(tool, element, mouseButtonMaskValue);
+  _resolveTouchInputConflicts(tool, element, isTouchActiveValue);
 }
 
 /**
@@ -253,10 +263,7 @@ function _resolveInputConflicts (element, tool, options, isTouchActive) {
  * @param {*} isTouchActive
  * @private
  */
-function _resolveMouseInputConflicts (tool, element, options) {
-  const mouseButtonMask =
-    (typeof options === 'number' ? options : options.mouseButtonMask) ||
-    tool.options.mouseButtonMask;
+function _resolveMouseInputConflicts (tool, element, mouseButtonMask) {
   const hasMouseButtonMask =
     mouseButtonMask !== undefined && mouseButtonMask > 0;
   const activeToolWithMatchingMouseButtonMask = state.tools.find(
@@ -287,36 +294,18 @@ function _resolveMouseInputConflicts (tool, element, options) {
  * @param {*} isTouchActive
  * @private
  */
-function _resolveTouchInputConflicts (tool, element, options, isTouchActive) {
-  let value;
-
-  // There are multiple ways to set `isTouchActive`. This section of logic
-  // Sets `value` to the incoming tool's resulting `isTouchActive` after the
-  // Mode is set
-  if (typeof options === 'number' && typeof isTouchActive === 'boolean') {
-    value = isTouchActive === true;
-  } else if (
-    typeof options === 'object' &&
-    typeof options.isTouchActive === 'boolean'
-  ) {
-    value = options.isTouchActive === true;
-  } else {
-    value = tool.options.isTouchActive;
-  }
-
-  let activeToolWithIsTouchActive;
-
-  if (typeof value === 'boolean' && value === true) {
-    activeToolWithIsTouchActive = state.tools.find(
+function _resolveTouchInputConflicts (tool, element, isTouchActive) {
+  if (isTouchActive === true) {
+    const activeToolWithIsTouchActive = state.tools.find(
       (tool) =>
         tool.element === element &&
         tool.mode === 'active' &&
         tool.options.isTouchActive === true
     );
-  }
 
-  if (activeToolWithIsTouchActive) {
-    activeToolWithIsTouchActive.options.isTouchActive = false;
+    if (activeToolWithIsTouchActive) {
+      activeToolWithIsTouchActive.options.isTouchActive = false;
+    }
   }
 }
 
