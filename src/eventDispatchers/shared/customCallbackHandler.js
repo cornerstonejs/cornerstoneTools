@@ -14,10 +14,7 @@ export default function (handlerType, customFunction, evt) {
   tools = getActiveToolsForElement(element, tools);
 
   if (handlerType === 'touch') {
-    tools = tools.filter(
-      (tool) =>
-        tool.options.isTouchActive || tool.options.isTouchActive === undefined
-    );
+    tools = tools.filter((tool) => tool.options.isTouchActive);
   }
 
   tools = tools.filter((tool) => typeof tool[customFunction] === 'function');

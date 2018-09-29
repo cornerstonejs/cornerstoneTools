@@ -25,10 +25,7 @@ export default function (evt) {
 
   let tools = getInteractiveToolsForElement(element, getters.touchTools());
 
-  tools = tools.filter(
-    (tool) =>
-      tool.options.isTouchActive || tool.options.isTouchActive === undefined
-  );
+  tools = tools.filter((tool) => tool.options.isTouchActive);
   const activeTools = tools.filter((tool) => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
