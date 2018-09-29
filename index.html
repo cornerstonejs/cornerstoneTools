@@ -228,7 +228,10 @@
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, 1, true);
+	cTools.setToolActive(cTools.store.state.tools[0].name, {
+		mouseButtonMask: 1,
+		isTouchActive: true
+	});
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {
