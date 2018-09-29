@@ -49,8 +49,13 @@ export default class BaseTool {
     return this._options;
   }
 
+  /**
+   * Merges provided options with existing options
+   *
+   * @memberof BaseTool
+   */
   set options (options) {
-    this._options = options;
+    this._options = Object.assign({}, this._options, options);
   }
 
   clearOptions () {
