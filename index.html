@@ -148,17 +148,6 @@
 		});
 	})
 
-	function setAllToolsPassive() {
-		const exceptionList = [
-			'ScaleOverlay'
-		];
-		cTools.store.state.tools.forEach((tool) => {
-			if (!exceptionList.includes(tool.name)) {
-				cTools.setToolPassive(tool.name);
-			}
-		});
-	}
-
 	// Iterate over all tool-category links
 	const toolCategoryLinks = document.querySelectorAll('ul.tool-category-list a');
 	const toolCategorySections = document.querySelectorAll('ul.tool-category');
@@ -201,11 +190,10 @@
 			const mouseButtonMask = evt.buttons
 				? evt.buttons
 				: convertMouseEventWhichToButtons(evt.which)
-			// TODO: Let's make this happen automagically for mask/touch conflicts?
-			setAllToolsPassive();
+
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
-			cTools.setToolActive(toolName, { mouseButtonMask });
+			cTools.setToolActive(toolName, { mouseButtonMask, isTouchActive: true });
 
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -240,7 +228,10 @@
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cTools.setToolActive(cTools.store.state.tools[0].name, {
+		mouseButtonMask: 1,
+		isTouchActive: true
+	});
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {
