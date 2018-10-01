@@ -7,7 +7,7 @@ export default class PanMultiTouchTool extends BaseTool {
   constructor (name = 'PanMultiTouch') {
     super({
       name,
-      supportedInteractionTypes: ["Touch"],
+      supportedInteractionTypes: ['MultiTouch'],
       configuration: {
         touchPointers: 2
       }
