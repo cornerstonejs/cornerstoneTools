@@ -311,6 +311,7 @@ const _inputResolvers = {
   MouseWheel: _resolveGenericInputConflicts.bind(this, 'MouseWheel'),
   Touch: _resolveGenericInputConflicts.bind(this, 'Touch'), // Also conflicts with MultiTouch interaction points === 1
   TouchPinch: _resolveGenericInputConflicts.bind(this, 'TouchPinch'),
+  TouchRotate: _resolveGenericInputConflicts.bind(this, 'TouchRotate'),
   DoubleTap: _resolveGenericInputConflicts.bind(this, 'DoubleTap'),
   MultiTouch: () => {}
 };
