@@ -306,20 +306,13 @@ function _resolveGenericInputConflicts (
   }
 }
 
-const _resolveTouchInputConflicts = _resolveGenericInputConflicts.bind(
-  this,
-  'Touch'
-);
-
 const _inputResolvers = {
   Mouse: _resolveMouseInputConflicts,
-  Touch: _resolveTouchInputConflicts
-  // MouseWheel?
-  // MultiTouch (may eventuall merge with touch)
-  // TouchDrag
-  // TouchPinch
-  // DoubleTap
-  // Display (can have multiple active...)
+  MouseWheel: _resolveGenericInputConflicts.bind(this, 'MouseWheel'),
+  Touch: _resolveGenericInputConflicts.bind(this, 'Touch'), // Also conflicts with MultiTouch interaction points === 1
+  TouchPinch: _resolveGenericInputConflicts.bind(this, 'TouchPinch'),
+  DoubleTap: _resolveGenericInputConflicts.bind(this, 'DoubleTap'),
+  MultiTouch: () => {}
 };
 
 export {

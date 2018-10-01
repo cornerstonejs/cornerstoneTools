@@ -29,7 +29,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   constructor (name = 'FreehandMouse') {
     super({
       name,
-      supportedInteractionTypes: ["Mouse"],
+      supportedInteractionTypes: ['Mouse'],
       configuration: defaultFreehandConfiguration()
     });
 
