@@ -57,7 +57,7 @@ export default class BaseTool {
    *
    * @memberof BaseTool
    */
-  set options (options) {
+  addOptions (options) {
     this._options = Object.assign({}, this._options, options);
   }
 
