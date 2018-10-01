@@ -1,5 +1,3 @@
-import external from './../externalModules.js';
-import isToolActive from '../tools/shared/isToolActive.js';
 import { default as mixinCollection } from '../mixins/index.js';
 
 export default class BaseTool {
