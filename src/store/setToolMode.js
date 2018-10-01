@@ -261,12 +261,15 @@ const _inputResolvers = {
  *
  * @param {*} tool
  * @param {*} element
- * @param {*} mouseButtonMask
+ * @param {(Object|number)} options
  * @private
  */
-function _resolveMouseInputConflicts (tool, element, mouseButtonMask) {
+function _resolveMouseInputConflicts (tool, element, options) {
+  const mouseButtonMask =
+    typeof options === 'number' ? options : options.mouseButtonMask;
   const hasMouseButtonMask =
     mouseButtonMask !== undefined && mouseButtonMask > 0;
+
   const activeToolWithMatchingMouseButtonMask = state.tools.find(
     (tool) =>
       tool.element === element &&
@@ -289,26 +292,36 @@ function _resolveMouseInputConflicts (tool, element, mouseButtonMask) {
  * If the incoming tool isTouchActive, find any conflicting tools
  * and set their isTouchActive to false to avoid conflicts.
  *
+ * @param {string} interactionType
  * @param {*} tool
  * @param {*} element
- * @param {*} options
- * @param {*} isTouchActive
+ * @param {(Object|number)} options
  * @private
  */
-function _resolveTouchInputConflicts (tool, element, isTouchActive) {
-  if (isTouchActive === true) {
-    const activeToolWithIsTouchActive = state.tools.find(
-      (tool) =>
-        tool.element === element &&
-        tool.mode === 'active' &&
-        tool.options.isTouchActive === true
-    );
+function _resolveGenericInputConflicts (
+  interactionType,
+  tool,
+  element,
+  options
+) {
+  const activeToolWithActiveInteractionType = state.tools.find(
+    (tool) =>
+      tool.element === element &&
+      tool.mode === 'active' &&
+      tool.options[`is${interactionType}Active`] === true
+  );
 
-    if (activeToolWithIsTouchActive) {
-      activeToolWithIsTouchActive.options.isTouchActive = false;
-    }
+  if (activeToolWithActiveInteractionType) {
+    activeToolWithActiveInteractionType.options[
+      `is${interactionType}Active`
+    ] = false;
   }
 }
+
+const _resolveTouchInputConflicts = _resolveGenericInputConflicts.bind(
+  this,
+  'Touch'
+);
 
 export {
   setToolActive,
