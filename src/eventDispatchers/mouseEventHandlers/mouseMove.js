@@ -1,6 +1,6 @@
 import external from './../../externalModules.js';
 // State
-import { getters, setters, state } from './../../store/index.js';
+import { getters, state } from './../../store/index.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
@@ -19,7 +19,7 @@ export default function (evt) {
   const { element, currentPoints } = evt.detail;
 
   // Set the mouse position incase any tool needs it.
-  setters.mousePositionImage(currentPoints.image);
+  state.mousePositionImage = currentPoints.image;
 
   // TODO: instead of filtering these for every interaction, we can change our
   // TODO: State's structure to always know these values.
