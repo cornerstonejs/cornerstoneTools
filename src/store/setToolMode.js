@@ -10,22 +10,20 @@ import { state } from './../store/index.js';
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolActiveForElement = function (
   element,
   toolName,
   options,
-  isTouchActive
+  interactionTypes
 ) {
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
-    _resolveInputConflicts(element, tool, options, isTouchActive);
-    // TODO: Find active tool w/ active two finger?
-    // TODO: Find active tool w/ ...?
+    _resolveInputConflicts(element, tool, options, interactionTypes);
   }
 
   // Resume normal behavior
@@ -35,7 +33,7 @@ const setToolActiveForElement = function (
     element,
     toolName,
     options,
-    isTouchActive
+    interactionTypes
   );
 };
 
@@ -43,13 +41,13 @@ const setToolActiveForElement = function (
  *
  * @export
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
-const setToolActive = function (toolName, options, isTouchActive) {
+const setToolActive = function (toolName, options, interactionTypes) {
   state.enabledElements.forEach((element) => {
-    setToolActiveForElement(element, toolName, options, isTouchActive);
+    setToolActiveForElement(element, toolName, options, interactionTypes);
   });
 };
 
@@ -60,8 +58,8 @@ const setToolActive = function (toolName, options, isTouchActive) {
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolDisabledForElement = setToolModeForElement.bind(
@@ -74,8 +72,8 @@ const setToolDisabledForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
@@ -87,8 +85,8 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolEnabledForElement = setToolModeForElement.bind(
@@ -101,8 +99,8 @@ const setToolEnabledForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
@@ -114,8 +112,8 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolPassiveForElement = setToolModeForElement.bind(
@@ -128,8 +126,8 @@ const setToolPassiveForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 const setToolPassive = setToolMode.bind(
@@ -146,8 +144,8 @@ const setToolPassive = setToolMode.bind(
  * @param {string} changeEvent
  * @param {object} element
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @returns
  */
 function setToolModeForElement (
@@ -156,7 +154,7 @@ function setToolModeForElement (
   element,
   toolName,
   options,
-  isTouchActive
+  interactionTypes
 ) {
   const tool = getToolForElement(element, toolName);
 
@@ -212,10 +210,10 @@ function setToolModeForElement (
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
- * @param {(object|number)} options
- * @param {boolean} isTouchActive
+ * @param {(object|Array|number)} options
+ * @param {(Array)} interactionTypes
  */
-function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
+function setToolMode (mode, changeEvent, toolName, options, interactionTypes) {
   state.enabledElements.forEach((element) => {
     setToolModeForElement(
       mode,
@@ -223,7 +221,7 @@ function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
       element,
       toolName,
       options,
-      isTouchActive
+      interactionTypes
     );
   });
 }
@@ -234,33 +232,58 @@ function setToolMode (mode, changeEvent, toolName, options, isTouchActive) {
  *
  * @param {*} element
  * @param {*} tool
- * @param {*} options
- * @param {*} isTouchActive
+ * @param {(Object|Array|number)} options
+ * @param {(Array)} interactionTypes
  * @private
  */
-function _resolveInputConflicts (element, tool, options, isTouchActive) {
-  // There are two API overloads for changing a tool's mode. This helps us
-  // Determine where to find our mask values.
-  const isValueApiOverload = typeof options === 'number';
-  const mouseButtonMaskValue = isValueApiOverload
-    ? options
-    : options.mouseButtonMask;
-  const isTouchActiveValue = isValueApiOverload
-    ? isTouchActive
-    : options.isTouchActive;
+function _resolveInputConflicts (element, tool, options, interactionTypes) {
+  // If interactionTypes was passed in via options
+  if (interactionTypes === undefined && Array.isArray(options)) {
+    interactionTypes = options;
+    options = null;
+  }
 
-  _resolveMouseInputConflicts(tool, element, mouseButtonMaskValue);
-  _resolveTouchInputConflicts(tool, element, isTouchActiveValue);
+  // Iterate over the interaction types our tool supports.
+  // For each one we intend to activate, check for potential conflicts
+  // And resolve them
+  tool.supportedInteractionTypes.forEach((interactionType) => {
+    if (
+      interactionTypes === undefined ||
+      interactionTypes.includes(interactionType)
+    ) {
+      const inputResolver =
+        _inputResolvers[`_resolve${interactionType}InputConflicts`];
+
+      if (inputResolver) {
+        inputResolver(tool, element, options);
+      } else {
+        console.warn(
+          `Unable to resolve input conflicts for type ${interactionType}`
+        );
+      }
+    }
+  });
 }
+
+const _inputResolvers = {
+  _resolveMouseInputConflicts, // Mouse
+  _resolveTouchInputConflicts // Touch
+  // MouseWheel?
+  // MultiTouch (may eventuall merge with touch)
+  // TouchDrag
+  // TouchPinch
+  // DoubleTap
+  // Display (can have multiple active...)
+};
 
 /**
  * Try to find an active tool that use the same mouse button mask as
  * the input tool. If found, set that tool to `passive` to prevent
  * conflicts.
  *
+ * @param {*} tool
  * @param {*} element
- * @param {*} options
- * @param {*} isTouchActive
+ * @param {*} mouseButtonMask
  * @private
  */
 function _resolveMouseInputConflicts (tool, element, mouseButtonMask) {
