@@ -20,21 +20,31 @@ const setToolActiveForElement = function (
   options,
   interactionTypes
 ) {
+  // If interactionTypes was passed in via options
+  if (interactionTypes === undefined && Array.isArray(options)) {
+    interactionTypes = options;
+    options = null;
+  }
+
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
     _resolveInputConflicts(element, tool, options, interactionTypes);
   }
 
+  // Iterate over specific interaction types and set active
+  // But this only applies for active...
+  tool.interactionTypes.forEach((interactionType) => {
+    if (
+      interactionTypes === undefined ||
+      interactionTypes.includes(interactionType)
+    ) {
+      options[`is${interactionType}Active`] = true;
+    }
+  });
+
   // Resume normal behavior
-  setToolModeForElement(
-    'active',
-    null,
-    element,
-    toolName,
-    options,
-    interactionTypes
-  );
+  setToolModeForElement('active', null, element, toolName, options);
 };
 
 /**
@@ -58,8 +68,7 @@ const setToolActive = function (toolName, options, interactionTypes) {
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolDisabledForElement = setToolModeForElement.bind(
@@ -72,8 +81,7 @@ const setToolDisabledForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
@@ -85,8 +93,7 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolEnabledForElement = setToolModeForElement.bind(
@@ -99,8 +106,7 @@ const setToolEnabledForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
@@ -112,8 +118,7 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
  * @export
  * @param {object} element
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolPassiveForElement = setToolModeForElement.bind(
@@ -126,8 +131,7 @@ const setToolPassiveForElement = setToolModeForElement.bind(
  *
  * @export
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
 const setToolPassive = setToolMode.bind(
@@ -144,18 +148,10 @@ const setToolPassive = setToolMode.bind(
  * @param {string} changeEvent
  * @param {object} element
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(Object|number)} options
  * @returns
  */
-function setToolModeForElement (
-  mode,
-  changeEvent,
-  element,
-  toolName,
-  options,
-  interactionTypes
-) {
+function setToolModeForElement (mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
@@ -164,18 +160,12 @@ function setToolModeForElement (
     return;
   }
 
-  // MouseButtonMask (and isTouchActive) provided as values
+  // MouseButtonMask
   if (typeof options === 'number') {
     options = {
       mouseButtonMask: options
     };
-
-    if (isTouchActive === true || isTouchActive === false) {
-      options.isTouchActive = isTouchActive === true;
-    }
-  }
-  // Options is an object, or null/undefined
-  else {
+  } else {
     options = options || {};
   }
 
@@ -210,19 +200,11 @@ function setToolModeForElement (
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
- * @param {(object|Array|number)} options
- * @param {(Array)} interactionTypes
+ * @param {(object|number)} options
  */
-function setToolMode (mode, changeEvent, toolName, options, interactionTypes) {
+function setToolMode (mode, changeEvent, toolName, options) {
   state.enabledElements.forEach((element) => {
-    setToolModeForElement(
-      mode,
-      changeEvent,
-      element,
-      toolName,
-      options,
-      interactionTypes
-    );
+    setToolModeForElement(mode, changeEvent, element, toolName, options);
   });
 }
 
@@ -232,17 +214,11 @@ function setToolMode (mode, changeEvent, toolName, options, interactionTypes) {
  *
  * @param {*} element
  * @param {*} tool
- * @param {(Object|Array|number)} options
+ * @param {(Object|number)} options
  * @param {(Array)} interactionTypes
  * @private
  */
 function _resolveInputConflicts (element, tool, options, interactionTypes) {
-  // If interactionTypes was passed in via options
-  if (interactionTypes === undefined && Array.isArray(options)) {
-    interactionTypes = options;
-    options = null;
-  }
-
   // Iterate over the interaction types our tool supports.
   // For each one we intend to activate, check for potential conflicts
   // And resolve them
