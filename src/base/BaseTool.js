@@ -87,6 +87,9 @@ export default class BaseTool {
     if (this.supportedInteractionTypes.contains('Mouse')) {
       internalOptions.push('mouseButtonMask');
     }
+    if (this.supportedInteractionTypes.contains('MultiTouch')) {
+      internalOptions.push('touchPointers');
+    }
 
     return internalOptions;
   }
