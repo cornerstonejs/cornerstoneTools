@@ -34,7 +34,7 @@ const setToolActiveForElement = function (
 
   // Iterate over specific interaction types and set active
   // This is used as a secondary check on active tools to find the active "parts" of the tool
-  tool.interactionTypes.forEach((interactionType) => {
+  tool.supportedInteractionTypes.forEach((interactionType) => {
     if (
       interactionTypes === undefined ||
       interactionTypes.includes(interactionType)
