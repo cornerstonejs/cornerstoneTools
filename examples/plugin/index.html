@@ -117,8 +117,12 @@
 			// Say response
 	    console.log(this._helloWorldModule.getters.response());
 
+
 			// Mood switch
 			this._helloWorldModule.setters.moodSwitch();
+
+			// Call mixin function
+			this.evenMoreHelloWorldMixin();
 	  }
 
 	  activeCallback (element) {
