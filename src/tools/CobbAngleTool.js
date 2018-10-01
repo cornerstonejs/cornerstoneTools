@@ -32,7 +32,7 @@ export default class extends baseAnnotationTool {
   constructor (name = 'CobbAngle') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
     this.hasIncomplete = false;
   }

@@ -27,7 +27,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   constructor (name = 'ArrowAnnotate') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         getTextCallback,
         changeTextCallback,

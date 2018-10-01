@@ -6,7 +6,7 @@ export default class extends baseTool {
   constructor (name = 'RotateTouch') {
     super({
       name,
-      supportedInteractionTypes: ['touch']
+      supportedInteractionTypes: ["Touch"]
     });
   }
 

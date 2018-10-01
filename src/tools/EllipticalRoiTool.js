@@ -20,7 +20,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   constructor (name = 'EllipticalRoi') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
   }
 

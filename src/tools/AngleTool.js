@@ -31,7 +31,7 @@ export default class AngleTool extends BaseAnnotationTool {
   constructor (name = 'Angle') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
 
     this.preventNewMeasurement = false;
