@@ -69,9 +69,9 @@ export default class BaseTool {
    */
   clearOptions () {
     this._options = {};
-    this.internalOptions().forEach((option) => {
-      this._options[option] = undefined;
-    });
+    this.internalOptions().forEach(
+      (option) => (this._options[option] = undefined)
+    );
   }
 
   /**
