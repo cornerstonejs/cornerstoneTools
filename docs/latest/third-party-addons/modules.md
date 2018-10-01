@@ -16,7 +16,7 @@ Most modules will have getters and setters, unless they only contain primitives 
 // helloWorldModule.js
 
 const state = {
-  isPolite: true
+  isPolite: true,
   responses: {
     polite: 'Hello World!',
     rude: 'Go away, World.'
@@ -29,6 +29,9 @@ const setters = {
   },
   rudeResponse: (response) => {
     state.responses.rude = response;
+  },
+  moodSwitch: () => {
+    state.isPolite = !state.isPolite;
   }
 };
 
@@ -37,7 +40,7 @@ const getters = {
     if (state.isPolite) {
       return state.responses.polite;
     } else {
-      return state.response.rude;
+      return state.responses.rude;
     }
   }
 }
@@ -47,7 +50,7 @@ function onRegisterCallback () {
 }
 
 function enabledElementCallback (enabledElement) {
-  console.log(`hello element ${enabledElement.uuid}.`)
+  console.log(`hello element ${enabledElement.uuid}.`);
 }
 
 export default {

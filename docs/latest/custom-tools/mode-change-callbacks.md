@@ -20,7 +20,7 @@ export default class HelloWorldMouseTool extends BaseTool {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      mixins = [
+      mixins: [
         'activeOrDisabledBinaryTool'
       ]
     });

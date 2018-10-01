@@ -6,7 +6,6 @@ TODO - An actual useful description.
 For our tool we want to log to the console on mouse click. `BaseTool` has two appropriate methods, `preMouseDownCallback` and `postMouseDownCallback`. These fire before or after other annotation data on the canvas has a chance to claim the mouse click. for our tool we shall choose `preMouseDownCallback`, as its always nice to say hello before doing anything else. The method can simply be defined and it shall be called when appropriate via the `mouseToolEventDispatcher`:
 
 ```js
-import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 
 export default class HelloWorldMouseTool extends BaseTool {
@@ -14,7 +13,7 @@ export default class HelloWorldMouseTool extends BaseTool {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      mixins = [
+      mixins: [
         'activeOrDisabledBinaryTool'
       ]
     });

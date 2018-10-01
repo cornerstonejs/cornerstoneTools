@@ -51,3 +51,5 @@ const cTools = cornerstoneTools.init();
 
 cTools.thirdParty.registerPlugin(helloWorldPlugin);
 ```
+
+An example of how to register a plugin is available in `examples/plugin`.
