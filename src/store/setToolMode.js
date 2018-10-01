@@ -229,8 +229,7 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
       interactionTypes === undefined ||
       interactionTypes.includes(interactionType)
     ) {
-      const inputResolver =
-        _inputResolvers[`_resolve${interactionType}InputConflicts`];
+      const inputResolver = _inputResolvers[interactionType];
 
       if (inputResolver) {
         inputResolver(tool, element, options);
@@ -242,17 +241,6 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
     }
   });
 }
-
-const _inputResolvers = {
-  _resolveMouseInputConflicts, // Mouse
-  _resolveTouchInputConflicts // Touch
-  // MouseWheel?
-  // MultiTouch (may eventuall merge with touch)
-  // TouchDrag
-  // TouchPinch
-  // DoubleTap
-  // Display (can have multiple active...)
-};
 
 /**
  * Try to find an active tool that use the same mouse button mask as
@@ -322,6 +310,17 @@ const _resolveTouchInputConflicts = _resolveGenericInputConflicts.bind(
   this,
   'Touch'
 );
+
+const _inputResolvers = {
+  Mouse: _resolveMouseInputConflicts,
+  Touch: _resolveTouchInputConflicts
+  // MouseWheel?
+  // MultiTouch (may eventuall merge with touch)
+  // TouchDrag
+  // TouchPinch
+  // DoubleTap
+  // Display (can have multiple active...)
+};
 
 export {
   setToolActive,
