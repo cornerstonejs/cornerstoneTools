@@ -8,12 +8,12 @@ export default function (handlerType, customFunction, evt) {
 
   // TODO: We sometimes see a null detail for TOUCH_PRESS
   let tools =
-    handlerType === 'touch' ? getters.touchTools() : getters.mouseTools();
+    handlerType === 'Touch' ? getters.touchTools() : getters.mouseTools();
   const element = evt.detail.element;
 
   tools = getActiveToolsForElement(element, tools);
 
-  if (handlerType === 'touch') {
+  if (handlerType === 'Touch') {
     tools = tools.filter((tool) => tool.options.isTouchActive);
   }
 

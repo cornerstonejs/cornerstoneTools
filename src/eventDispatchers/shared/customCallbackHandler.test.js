@@ -57,8 +57,8 @@ describe('customCallbackHandler.js', () => {
     ).toHaveBeenCalledTimes(0);
   });
 
-  it('gets mouse tools when handlerType is "mouse"', () => {
-    const handlerType = 'mouse';
+  it('gets mouse tools when handlerType is "Mouse"', () => {
+    const handlerType = 'Mouse';
 
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);
@@ -66,8 +66,8 @@ describe('customCallbackHandler.js', () => {
     expect(getters.mouseTools).toHaveBeenCalled();
   });
 
-  it('gets touch tools when handlerType is "touch"', () => {
-    const handlerType = 'touch';
+  it('gets touch tools when handlerType is "Touch"', () => {
+    const handlerType = 'Touch';
 
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);

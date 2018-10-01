@@ -15,20 +15,13 @@ import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 // Drawing
-import {
-  getNewContext,
-  draw,
-  setShadow,
-  drawLine
-} from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 import EVENTS from './../events.js';
 
 export default class extends baseAnnotationTool {
-
-
   constructor (name = 'CobbAngle') {
     super({
       name,
@@ -110,14 +103,10 @@ export default class extends baseAnnotationTool {
     }
 
     return (
-      lineSegDistance(
-        element,
-        data.handles.start,
-        data.handles.end,
-        coords
-      ) < 25 ||
+      lineSegDistance(element, data.handles.start, data.handles.end, coords) <
+        25 ||
       lineSegDistance(element, data.handles.start2, data.handles.end2, coords) <
-      25
+        25
     );
   }
 
@@ -267,7 +256,7 @@ export default class extends baseAnnotationTool {
     // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
     // All take the same parameters, but register events differentlIy.
     const handleMover =
-      interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
+      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
 
     // Associate this data with this imageId so we can render it and manipulate it
     external.cornerstone.updateImage(element);

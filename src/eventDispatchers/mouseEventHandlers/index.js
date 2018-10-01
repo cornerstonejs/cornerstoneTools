@@ -7,17 +7,17 @@ import mouseWheel from './mouseWheel.js';
 
 const mouseClick = customCallbackHandler.bind(
   null,
-  'mouse',
+  'Mouse',
   'mouseClickCallback'
 );
 
 const mouseDoubleClick = customCallbackHandler.bind(
   null,
-  'mouse',
+  'Mouse',
   'doubleClickCallback'
 );
 
-const mouseUp = customCallbackHandler.bind(null, 'mouse', 'mouseUpCallback');
+const mouseUp = customCallbackHandler.bind(null, 'Mouse', 'mouseUpCallback');
 
 export {
   mouseClick,

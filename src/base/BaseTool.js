@@ -84,18 +84,8 @@ export default class BaseTool {
     const internalOptions = [];
 
     // Should be on _every_ mouse tool
-    if (this.supportedInteractionTypes.contains('mouse')) {
+    if (this.supportedInteractionTypes.contains('Mouse')) {
       internalOptions.push('mouseButtonMask');
-    }
-
-    // Should be on _every_ tool that is touch AND mouse?
-    // Because doubleTap, pinch, etc. won't ever be set to "ACTIVE"
-    // Unless the intent is to set `isTouchActive` true?
-    if (
-      this.supportedInteractionTypes.contains('mouse') &&
-      this.supportedInteractionTypes.contains('touch')
-    ) {
-      internalOptions.push('isTouchActive');
     }
 
     return internalOptions;

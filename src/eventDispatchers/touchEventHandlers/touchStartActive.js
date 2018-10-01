@@ -22,7 +22,7 @@ export default function (evt) {
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool && activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(evt, 'touch');
+    activeTool.addNewMeasurement(evt, 'Touch');
   } else if (activeTool instanceof BaseAnnotationTool) {
     addNewMeasurement(evt, activeTool);
   }
