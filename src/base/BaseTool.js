@@ -55,7 +55,7 @@ export default class BaseTool {
    *
    * @memberof BaseTool
    */
-  addOptions (options) {
+  mergeOptions (options) {
     this._options = Object.assign({}, this._options, options);
   }
 
