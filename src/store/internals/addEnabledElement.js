@@ -9,7 +9,6 @@ import {
   newImageEventDispatcher,
   touchToolEventDispatcher
 } from '../../eventDispatchers/index.js';
-import external from '../../externalModules.js';
 import store from '../index.js';
 
 // TODO: It would be nice if this automatically added "all tools"
@@ -27,15 +26,18 @@ import store from '../index.js';
 export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
 
-  // Listeners
-  mouseEventListeners.enable(enabledElement);
-  mouseWheelEventListeners.enable(enabledElement);
-
   // Dispatchers
   imageRenderedEventDispatcher.enable(enabledElement);
-  mouseToolEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
 
+  // Mouse
+  if (store.modules.globalConfiguration.state.mouseEnabled) {
+    mouseEventListeners.enable(enabledElement);
+    mouseWheelEventListeners.enable(enabledElement);
+    mouseToolEventDispatcher.enable(enabledElement);
+  }
+
+  // Touch
   if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
@@ -66,7 +68,7 @@ const _addEnabledElmenet = function (enabledElement) {
 function _initModulesOnElement (enabledElement) {
   const modules = store.modules;
 
-  Object.keys(modules).forEach(function(key) {
+  Object.keys(modules).forEach(function (key) {
     if (typeof modules[key].enabledElementCallback === 'function') {
       modules[key].enabledElementCallback(enabledElement);
     }

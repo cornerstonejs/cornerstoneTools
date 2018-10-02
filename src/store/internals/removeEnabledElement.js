@@ -23,14 +23,18 @@ export default function (elementDisabledEvt) {
 
   // Listeners
   keyboardEventListeners.disable(enabledElement);
-  mouseEventListeners.disable(enabledElement);
-  mouseWheelEventListeners.disable(enabledElement);
-
   // Dispatchers
   imageRenderedEventDispatcher.disable(enabledElement);
-  mouseToolEventDispatcher.disable(enabledElement);
   newImageEventDispatcher.disable(enabledElement);
 
+  // Mouse
+  if (store.modules.globalConfiguration.state.mouseEnabled) {
+    mouseEventListeners.disable(enabledElement);
+    mouseWheelEventListeners.disable(enabledElement);
+    mouseToolEventDispatcher.disable(enabledElement);
+  }
+
+  // Touch
   if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.disable(enabledElement);
     touchToolEventDispatcher.disable(enabledElement);
