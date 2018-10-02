@@ -19,3 +19,10 @@ toc:
       - setToolEnabledForElement
       - setToolDisabled
       - setToolDisabledForElement
+  - name: Event Listeners
+    description: |
+      Native and Cornerstone event listeners that are attached to our enabled elements
+    children:
+      - mouseEventListeners
+      - mouseWheelEventListeners
+      - touchEventListeners

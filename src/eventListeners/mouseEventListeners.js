@@ -1,3 +1,7 @@
+/**
+ * @export
+ * @module mouseEventListeners
+ */
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
@@ -270,6 +274,12 @@ function mouseDown (e) {
   document.addEventListener('mouseup', onMouseUp);
 }
 
+/**
+ *
+ * @private @method
+ * @param {*} e
+ * @returns {undefined}
+ */
 function mouseMove (e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
@@ -348,19 +358,31 @@ function mouseMove (e) {
   lastPoints = copyPoints(currentPoints);
 }
 
-function disable (element) {
-  element.removeEventListener('mousedown', mouseDown);
-  element.removeEventListener('mousemove', mouseMove);
-  element.removeEventListener('dblclick', mouseDoubleClick);
+/**
+ * Disables the mouse event listeners for the provided enabled element.
+ * @export
+ * @param {HTMLElement} enabledElement
+ * @memberof mouseEventListeners
+ */
+function disable (enabledElement) {
+  enabledElement.removeEventListener('mousedown', mouseDown);
+  enabledElement.removeEventListener('mousemove', mouseMove);
+  enabledElement.removeEventListener('dblclick', mouseDoubleClick);
 }
 
-function enable (element) {
+/**
+ * Enables the mouse event listeners for the provided enabled element.
+ * @export
+ * @param {HTMLElement} enabledElement
+ * @memberof mouseEventListeners
+ */
+function enable (enabledElement) {
   // Prevent handlers from being attached multiple times
-  disable(element);
+  disable(enabledElement);
 
-  element.addEventListener('mousedown', mouseDown);
-  element.addEventListener('mousemove', mouseMove);
-  element.addEventListener('dblclick', mouseDoubleClick);
+  enabledElement.addEventListener('mousedown', mouseDown);
+  enabledElement.addEventListener('mousemove', mouseMove);
+  enabledElement.addEventListener('dblclick', mouseDoubleClick);
 }
 
 export default {

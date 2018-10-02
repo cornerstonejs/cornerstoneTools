@@ -1,3 +1,7 @@
+/**
+ * @export
+ * @module touchEventListeners
+ */
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
