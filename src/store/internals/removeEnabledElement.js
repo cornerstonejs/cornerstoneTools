@@ -12,10 +12,21 @@ import {
 import store from '../index.js';
 
 /**
- * Removes an enabledElement from our store, and all associated tools that were added to it.
+ * Element Disabled event.
  *
- * @export
- * @param {*} elementDisabledEvt
+ * @event Cornerstone#ElementDisabled
+ * @type {Object}
+ * @property {string} type
+ * @property {Object} detail
+ * @property {HTMLElement} detail.element - The element being disabled.
+ */
+
+/**
+ * Removes an enabledElement from our store, and all associated tools that were added to it.
+ * @export @private @method
+ * @name removeEnabledElement
+ * @param {Cornerstone#ElementDisabled} elementDisabledEvt
+ * @listens Cornerstone#ElementDisabled
  */
 export default function (elementDisabledEvt) {
   const enabledElement = elementDisabledEvt.detail.element;
@@ -44,9 +55,8 @@ export default function (elementDisabledEvt) {
 
 /**
  * Remove all tools associated with enabled element.
- *
+ * @private @method
  * @param {HTMLElement} enabledElement
- * @protected
  */
 const _removeAllToolsForElement = function (enabledElement) {
   // Note: We may want to `setToolDisabled` before removing from store
@@ -58,9 +68,8 @@ const _removeAllToolsForElement = function (enabledElement) {
 
 /**
  * Remove the enabled element from the store if it exists.
- *
+ * @private @method
  * @param {HTMLElement} enabledElement
- * @protected
  */
 const _removeEnabledElement = function (enabledElement) {
   const foundElementIndex = store.state.enabledElements.findIndex(
