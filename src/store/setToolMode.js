@@ -279,17 +279,17 @@ function _resolveMouseInputConflicts (tool, element, options) {
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
+      t.options.isMouseActive === true &&
       t.options.mouseButtonMask === mouseButtonMask
   );
 
   if (hasMouseButtonMask && activeToolWithMatchingMouseButtonMask) {
     console.info(
-      `Setting tool ${activeToolWithMatchingMouseButtonMask.name} to passive`
+      `Setting tool ${
+        activeToolWithMatchingMouseButtonMask.name
+      }'s isMouseActive to false`
     );
-    setToolPassiveForElement(
-      element,
-      activeToolWithMatchingMouseButtonMask.name
-    );
+    activeToolWithMatchingMouseButtonMask.options.isMouseActive = false;
   }
 }
 
