@@ -259,12 +259,9 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
 }
 
 /**
- * Try to find an active tool that use the same mouse button mask as
- * the input tool. If found, set that tool to `passive` to prevent
- * conflicts.
- *
+ * Resolves conflicting active tools when activating a tool for mouse interaction
  * @private @method
- * @param {*} tool
+ * @param {Object} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -318,9 +315,17 @@ function _resolveTouchInputConflicts (tool, element, options) {
   );
 
   if (activeTouchTool) {
+    console.info(
+      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    );
     activeTouchTool.options.isTouchActive = false;
   }
   if (activeMultiTouchToolWithOneTouchPointer) {
+    console.info(
+      `Setting tool ${
+        activeMultiTouchToolWithOneTouchPointer.name
+      }'s isTouchActive to false`
+    );
     activeMultiTouchToolWithOneTouchPointer.options.isMultiTouchActive = false;
   }
 }
@@ -354,10 +359,16 @@ function _resolveMultiTouchInputConflicts (tool, element, options) {
   }
 
   if (activeMultiTouchTool) {
+    console.info(
+      `Setting tool ${activeMultiTouchTool.name}'s isMultiTouchActive to false`
+    );
     activeMultiTouchTool.options.isMultiTouchActive = false;
   }
 
   if (activeTouchTool) {
+    console.info(
+      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    );
     activeTouchTool.options.isTouchActive = false;
   }
 }
@@ -387,6 +398,11 @@ function _resolveGenericInputConflicts (
   );
 
   if (activeToolWithActiveInteractionType) {
+    console.info(
+      `Setting tool ${
+        activeToolWithActiveInteractionType.name
+      }'s is${interactionType}Active to false`
+    );
     activeToolWithActiveInteractionType.options[
       `is${interactionType}Active`
     ] = false;
