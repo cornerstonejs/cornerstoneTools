@@ -21,12 +21,13 @@ import store from '../index.js';
  * @property {HTMLElement} detail.element - The element being enabled.
  */
 
-// TODO: It would be nice if this automatically added "all tools"
-// TODO: To the enabledElement that already exist on all other tools.
-// TODO: A half-measure might be a new method to "duplicate" the tool
-// TODO: Configuration for an existing enabled element
-// TODO: We may need to also save/store the original class/constructor per tool
-// TODO: To accomplish this
+/* TODO: It would be nice if this automatically added "all tools"
+ * To the enabledElement that already exist on all other tools.
+ * A half-measure might be a new method to "duplicate" the tool
+ * Configuration for an existing enabled element
+ * We may need to also save/store the original class/constructor per tool
+ * To accomplish this
+ */
 /**
  * Adds an enabledElement to our store.
  * @export @private @method
