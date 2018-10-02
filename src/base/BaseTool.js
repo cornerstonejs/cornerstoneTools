@@ -57,6 +57,10 @@ export default class BaseTool {
     this._options = {};
   }
 
+  setDefaultStrategy() {
+    this.activeStrategy = this.defaultStrategy;
+  }
+
   /**
    *
    *
