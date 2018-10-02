@@ -15,7 +15,7 @@ export default class ZoomTool extends BaseTool {
       name,
       strategies,
       defaultStrategy: 'default',
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         invert: false,
         preventZoomOutsideImage: false,

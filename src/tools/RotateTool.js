@@ -15,7 +15,7 @@ export default class RotateTool extends BaseTool {
       name,
       strategies,
       defaultStrategy: 'default',
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
   }
 

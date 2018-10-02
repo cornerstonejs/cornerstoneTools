@@ -2,7 +2,7 @@
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 // Util
-import getToolsWithMovableHandles from '../../store/getToolsWithMoveableHandles';
+import getToolsWithMovableHandles from '../../store/getToolsWithMoveableHandles.js';
 import {
   findHandleDataNearImagePoint,
   findAnnotationNearClick

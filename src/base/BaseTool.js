@@ -1,5 +1,3 @@
-import external from './../externalModules.js';
-import isToolActive from '../tools/shared/isToolActive.js';
 import { default as mixinCollection } from '../mixins/index.js';
 
 export default class BaseTool {
@@ -57,7 +55,7 @@ export default class BaseTool {
    *
    * @memberof BaseTool
    */
-  addOptions (options) {
+  mergeOptions (options) {
     this._options = Object.assign({}, this._options, options);
   }
 
@@ -86,18 +84,11 @@ export default class BaseTool {
     const internalOptions = [];
 
     // Should be on _every_ mouse tool
-    if (this.supportedInteractionTypes.contains('mouse')) {
+    if (this.supportedInteractionTypes.contains('Mouse')) {
       internalOptions.push('mouseButtonMask');
     }
-
-    // Should be on _every_ tool that is touch AND mouse?
-    // Because doubleTap, pinch, etc. won't ever be set to "ACTIVE"
-    // Unless the intent is to set `isTouchActive` true?
-    if (
-      this.supportedInteractionTypes.contains('mouse') &&
-      this.supportedInteractionTypes.contains('touch')
-    ) {
-      internalOptions.push('isTouchActive');
+    if (this.supportedInteractionTypes.contains('MultiTouch')) {
+      internalOptions.push('touchPointers');
     }
 
     return internalOptions;

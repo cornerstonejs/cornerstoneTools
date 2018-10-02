@@ -6,7 +6,7 @@ export default class extends baseTool {
   constructor (name = 'RotateTouch') {
     super({
       name,
-      supportedInteractionTypes: ['touch']
+      supportedInteractionTypes: ['TouchRotate']
     });
   }
 
@@ -18,4 +18,3 @@ export default class extends baseTool {
     external.cornerstone.setViewport(element, viewport);
   }
 }
-

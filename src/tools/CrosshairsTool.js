@@ -13,7 +13,7 @@ export default class CrosshairsTool extends BaseTool {
   constructor (name = 'Crosshairs') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
 
     this.mouseDownCallback = this._chooseLocation.bind(this);

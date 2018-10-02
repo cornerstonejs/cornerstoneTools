@@ -6,7 +6,7 @@ export default class extends baseTool {
   constructor (name = 'DoubleTapFitToWindow') {
     super({
       name,
-      supportedInteractionTypes: ['touch']
+      supportedInteractionTypes: ['DoubleTap']
     });
   }
 
