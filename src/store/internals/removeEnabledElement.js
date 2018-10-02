@@ -1,5 +1,4 @@
 import {
-  keyboardEventListeners,
   mouseEventListeners,
   mouseWheelEventListeners,
   touchEventListeners
@@ -21,8 +20,6 @@ import store from '../index.js';
 export default function (elementDisabledEvt) {
   const enabledElement = elementDisabledEvt.detail.element;
 
-  // Listeners
-  keyboardEventListeners.disable(enabledElement);
   // Dispatchers
   imageRenderedEventDispatcher.disable(enabledElement);
   newImageEventDispatcher.disable(enabledElement);
