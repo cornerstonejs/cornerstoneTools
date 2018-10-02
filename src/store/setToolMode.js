@@ -229,11 +229,12 @@ function setToolMode (mode, changeEvent, toolName, options) {
  * Find tool's that conflict with the incoming tool's mouse/touch bindings and
  * resolve those conflicts.
  *
+ * @private @method
  * @param {HTMLElement} element
- * @param {*} tool
+ * @param {Object} tool
  * @param {(Object|number)} options
  * @param {(Array)} interactionTypes
- * @private
+ * @returns {undefined}
  */
 function _resolveInputConflicts (element, tool, options, interactionTypes) {
   // Iterate over the interaction types our tool supports.
@@ -262,10 +263,11 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
  * the input tool. If found, set that tool to `passive` to prevent
  * conflicts.
  *
+ * @private @method
  * @param {*} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
- * @private
+ * @returns {undefined}
  */
 function _resolveMouseInputConflicts (tool, element, options) {
   const mouseButtonMask =
@@ -274,10 +276,10 @@ function _resolveMouseInputConflicts (tool, element, options) {
     mouseButtonMask !== undefined && mouseButtonMask > 0;
 
   const activeToolWithMatchingMouseButtonMask = state.tools.find(
-    (tool) =>
-      tool.element === element &&
-      tool.mode === 'active' &&
-      tool.options.mouseButtonMask === mouseButtonMask
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.options.mouseButtonMask === mouseButtonMask
   );
 
   if (hasMouseButtonMask && activeToolWithMatchingMouseButtonMask) {
@@ -292,14 +294,84 @@ function _resolveMouseInputConflicts (tool, element, options) {
 }
 
 /**
+ * Resolves conflicting active tools when activating a tool for touch interaction
+ * @private @method
+ * @param {Object} tool
+ * @param {HTMLElement} element
+ * @param {Object} options
+ * @returns {undefined}
+ */
+function _resolveTouchInputConflicts (tool, element, options) {
+  const activeTouchTool = state.tools.find(
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.options.isTouchActive === true
+  );
+
+  const activeMultiTouchToolWithOneTouchPointer = state.tools.find(
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.options.isMultiTouchActive === true &&
+      t.configuration.touchPointers === 1
+  );
+
+  if (activeTouchTool) {
+    activeTouchTool.options.isTouchActive = false;
+  }
+  if (activeMultiTouchToolWithOneTouchPointer) {
+    activeMultiTouchToolWithOneTouchPointer.options.isMultiTouchActive = false;
+  }
+}
+
+/**
+ * Resolves conflicting active tools when activating a tool for MultiTouch interaction
+ * @private @method
+ * @param {Object} tool
+ * @param {HTMLElement} element
+ * @param {Object} options
+ * @returns {undefined}
+ */
+function _resolveMultiTouchInputConflicts (tool, element, options) {
+  const activeMultiTouchTool = state.tools.find(
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.options.isMultiTouchActive === true &&
+      t.configuration.touchPointers === tool.configuration.touchPointers
+  );
+
+  let activeTouchTool;
+
+  if (tool.configuration.touchPointers === 1) {
+    activeTouchTool = state.tools.find(
+      (t) =>
+        t.element === element &&
+        t.mode === 'active' &&
+        t.options.isTouchActive === true
+    );
+  }
+
+  if (activeMultiTouchTool) {
+    activeMultiTouchTool.options.isMultiTouchActive = false;
+  }
+
+  if (activeTouchTool) {
+    activeTouchTool.options.isTouchActive = false;
+  }
+}
+
+/**
  * If the incoming tool isTouchActive, find any conflicting tools
  * and set their isTouchActive to false to avoid conflicts.
  *
+ * @private @method
  * @param {string} interactionType
- * @param {*} tool
+ * @param {Object} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
- * @private
+ * @returns {undefined}
  */
 function _resolveGenericInputConflicts (
   interactionType,
@@ -308,10 +380,10 @@ function _resolveGenericInputConflicts (
   options
 ) {
   const activeToolWithActiveInteractionType = state.tools.find(
-    (tool) =>
-      tool.element === element &&
-      tool.mode === 'active' &&
-      tool.options[`is${interactionType}Active`] === true
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.options[`is${interactionType}Active`] === true
   );
 
   if (activeToolWithActiveInteractionType) {
@@ -324,11 +396,11 @@ function _resolveGenericInputConflicts (
 const _inputResolvers = {
   Mouse: _resolveMouseInputConflicts,
   MouseWheel: _resolveGenericInputConflicts.bind(this, 'MouseWheel'),
-  Touch: _resolveGenericInputConflicts.bind(this, 'Touch'), // Also conflicts with MultiTouch interaction points === 1
+  Touch: _resolveTouchInputConflicts,
   TouchPinch: _resolveGenericInputConflicts.bind(this, 'TouchPinch'),
   TouchRotate: _resolveGenericInputConflicts.bind(this, 'TouchRotate'),
   DoubleTap: _resolveGenericInputConflicts.bind(this, 'DoubleTap'),
-  MultiTouch: () => {}
+  MultiTouch: _resolveMultiTouchInputConflicts
 };
 
 export {
