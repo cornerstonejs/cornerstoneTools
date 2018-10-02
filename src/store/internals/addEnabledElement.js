@@ -11,6 +11,16 @@ import {
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
 
+/**
+ * Element Enabled event.
+ *
+ * @event Cornerstone#ElementEnabled
+ * @type {Object}
+ * @property {string} type
+ * @property {Object} detail
+ * @property {HTMLElement} detail.element - The element being enabled.
+ */
+
 // TODO: It would be nice if this automatically added "all tools"
 // TODO: To the enabledElement that already exist on all other tools.
 // TODO: A half-measure might be a new method to "duplicate" the tool
@@ -19,9 +29,10 @@ import store from '../index.js';
 // TODO: To accomplish this
 /**
  * Adds an enabledElement to our store.
- *
- * @export
- * @param {*} elementEnabledEvt
+ * @export @private @method
+ * @name addEnabledElement
+ * @param {Cornerstone#ElementEnabled} elementEnabledEvt
+ * @listens Cornerstone#ElementEnabled
  */
 export default function (elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
@@ -47,6 +58,11 @@ export default function (elementEnabledEvt) {
   _addEnabledElmenet(enabledElement);
 }
 
+/**
+ * Adds the enabled element to the store.
+ * @private @method
+ * @param {HTMLElement} enabledElement
+ */
 const _addEnabledElmenet = function (enabledElement) {
   store.state.enabledElements.push(enabledElement);
   if (store.modules) {
@@ -55,15 +71,10 @@ const _addEnabledElmenet = function (enabledElement) {
 };
 
 /**
- * _initModulesOnElement - If a module has a enabledElementCallback
- * method, call it.
- *
- * TODO: Makes sure 3rd party modules get
- * Registered before we try to init them.
- *
- * @private
- * @param  {Object} enabledElement  The element on which to
- *                                  Initialise the modules.
+ * Iterate over our store's modules. If the module has an `enabledElementCallback`
+ * call it and pass it a reference to our enabled element.
+ * @private @method
+ * @param  {Object} enabledElement
  */
 function _initModulesOnElement (enabledElement) {
   const modules = store.modules;
