@@ -268,14 +268,14 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
     let toolHasAnyActiveInteractionType = false;
 
     t.supportedInteractionTypes.forEach((interactionType) => {
-      if (tool.options[`is${interactionType}Active`]) {
+      if (t.options[`is${interactionType}Active`]) {
         toolHasAnyActiveInteractionType = true;
       }
     });
 
     if (!toolHasAnyActiveInteractionType) {
-      console.info(`Setting tool ${tool.name}'s to PASSIVE`);
-      setToolPassiveForElement(element, tool.name);
+      console.info(`Setting tool ${t.name}'s to PASSIVE`);
+      setToolPassiveForElement(element, t.name);
     }
   });
 }
