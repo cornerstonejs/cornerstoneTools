@@ -22,6 +22,14 @@ import {
 } from './store/setToolMode.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
+/**
+ * Merges the provided configuration with default values and returns a
+ * configured CornerstoneTools instance.
+ * @public @export @function
+ * @name init
+ * @param {Object} configuration
+ * @returns {Object} A configured CornerstoneTools instance with top level API members
+ */
 export default function (configuration) {
   _addCornerstoneEventListeners();
   _initModules();
@@ -62,6 +70,11 @@ export default function (configuration) {
   return cornerstoneToolsInstance;
 }
 
+/**
+ * Wires up event listeners for the Cornerstone#ElementDisabled and
+ * Cornerstone#ElementEnabled events.
+ * @private @method
+ */
 function _addCornerstoneEventListeners () {
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
@@ -74,19 +87,23 @@ function _addCornerstoneEventListeners () {
   );
 }
 
+/*
+ * TODO: This could cause issues if the module was already initialized for
+ * the store. As there's nothing stopping implementers from calling `init`
+ * multiple times. Modules should self-check if they have already been
+ * registered to prevent issues.
+ */
+
 /**
- * _initModules - Initialise all modules that have an onRegisterCallback.
- * TODO: Makes sure 3rd party modules get
- * Registered before we try to init them.
- *
- * @private
- * @param  {Object} enabledElement  The element on which to
- *                                  Initialise the modules.
+ * Iterate over our store's modules. If the module has an `onRegisterCallback`
+ * call it. This hook can be used to setup any global store requirements per
+ * module.
+ * @private @method
  */
 function _initModules () {
   const modules = store.modules;
 
-  Object.keys(modules).forEach(function(key) {
+  Object.keys(modules).forEach(function (key) {
     if (typeof modules[key].onRegisterCallback === 'function') {
       modules[key].onRegisterCallback();
     }
