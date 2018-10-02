@@ -42,12 +42,26 @@ export default function (elementDisabledEvt) {
   _removeEnabledElement(enabledElement);
 }
 
+/**
+ * Remove all tools associated with enabled element.
+ *
+ * @param {HTMLElement} enabledElement
+ * @protected
+ */
 const _removeAllToolsForElement = function (enabledElement) {
+  // Note: We may want to `setToolDisabled` before removing from store
+  // Or take other action to remove any lingering eventListeners/state
   store.state.tools = store.state.tools.filter(
     (tool) => tool.element === enabledElement
   );
 };
 
+/**
+ * Remove the enabled element from the store if it exists.
+ *
+ * @param {HTMLElement} enabledElement
+ * @protected
+ */
 const _removeEnabledElement = function (enabledElement) {
   const foundElementIndex = store.state.enabledElements.findIndex(
     (element) => element === enabledElement
