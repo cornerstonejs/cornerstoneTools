@@ -183,7 +183,7 @@ function setToolModeForElement (
 
   // Set mode & options
   tool.mode = mode;
-  tool.options = Object.assign({}, tool.options, options);
+  tool.addOptions(options);
 
   // Call tool's hook for this event, if one exists
   if (tool[`${mode}Callback`]) {
