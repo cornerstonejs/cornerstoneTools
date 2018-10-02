@@ -256,6 +256,28 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
       }
     }
   });
+
+  const activeToolsForElement = state.tools.filter(
+    (t) =>
+      t.element === element &&
+      t.mode === 'active' &&
+      t.supportedInteractionTypes.length > 0
+  );
+
+  activeToolsForElement.forEach((t) => {
+    let toolHasAnyActiveInteractionType = false;
+
+    t.supportedInteractionTypes.forEach((interactionType) => {
+      if (tool.options[`is${interactionType}Active`]) {
+        toolHasAnyActiveInteractionType = true;
+      }
+    });
+
+    if (!toolHasAnyActiveInteractionType) {
+      console.info(`Setting tool ${tool.name}'s to PASSIVE`);
+      setToolPassiveForElement(element, tool.name);
+    }
+  });
 }
 
 /**
