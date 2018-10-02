@@ -7,13 +7,16 @@ jest.mock('./../../store/index.js', () => ({
     isToolLocked: false,
     tools: [
       {
-        aDifferentCustomFunctionName: jest.fn()
+        aDifferentCustomFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Mouse']
       },
       {
-        customFunctionName: jest.fn()
+        customFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Mouse', 'Touch']
       },
       {
-        customFunctionName: jest.fn()
+        customFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Touch']
       }
     ]
   },
