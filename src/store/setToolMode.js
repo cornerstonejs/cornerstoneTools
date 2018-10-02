@@ -4,15 +4,26 @@ import getToolForElement from './getToolForElement.js';
 import { state } from './../store/index.js';
 
 /**
- * Sets a tool's state to 'active'. Active tools are rendered,
- * respond to user input, and can create new data
+ * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
+ * respond to user input, and can create new data.
  *
- * @export
- * @param {object} element
+ * @export @public @method
+ * @name setToolActiveForElement
+ * @example <caption>Setting a tool 'active' for a specific interaction type.</caption>
+ * // Sets length tool to Active
+ * setToolActiveForElement(element, 'Length', {
+ *   mouseButtonMask: 1
+ * }, ['Mouse'])
+ * @example <caption>Setting a tool 'active' for all interaction types.</caption>
+ * // Sets length tool to Active
+ * setToolActiveForElement(element, 'Length', {
+ *   mouseButtonMask: 1
+ * })
+ * @param {HTMLElement} element
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
- * @returns
+ * @param {(Object|string[]|number)} options
+ * @param {(string[])} interactionTypes
+ * @returns {undefined}
  */
 const setToolActiveForElement = function (
   element,
@@ -30,32 +41,34 @@ const setToolActiveForElement = function (
 
   if (tool) {
     _resolveInputConflicts(element, tool, options, interactionTypes);
-  }
 
-  // Iterate over specific interaction types and set active
-  // This is used as a secondary check on active tools to find the active "parts" of the tool
-  tool.supportedInteractionTypes.forEach((interactionType) => {
-    if (
-      interactionTypes === undefined ||
-      interactionTypes.includes(interactionType)
-    ) {
-      options[`is${interactionType}Active`] = true;
-    } else {
-      options[`is${interactionType}Active`] = false;
-    }
-  });
+    // Iterate over specific interaction types and set active
+    // This is used as a secondary check on active tools to find the active "parts" of the tool
+    tool.supportedInteractionTypes.forEach((interactionType) => {
+      if (
+        interactionTypes === undefined ||
+        interactionTypes.includes(interactionType)
+      ) {
+        options[`is${interactionType}Active`] = true;
+      } else {
+        options[`is${interactionType}Active`] = false;
+      }
+    });
+  }
 
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
 
 /**
- *
- * @export
+ * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,
+ * respond to user input, and can create new data.
+ * @export @public @method
+ * @name setToolActive
  * @param {string} toolName
- * @param {(Object|Array|number)} options
- * @param {(Array)} interactionTypes
- * @returns
+ * @param {(Object|string[]|number)} options
+ * @param {(string[])} interactionTypes
+ * @returns {undefined}
  */
 const setToolActive = function (toolName, options, interactionTypes) {
   state.enabledElements.forEach((element) => {
@@ -64,14 +77,13 @@ const setToolActive = function (toolName, options, interactionTypes) {
 };
 
 /**
- * Sets a tool's state to 'disabled'. Disabled tools are not rendered,
+ * Sets a tool's state, with the provided toolName and element, to 'disabled'. Disabled tools are not rendered,
  * and do not respond to user input
- *
- * @export
- * @param {object} element
+ * @export @public @method
+ * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolDisabledForElement = setToolModeForElement.bind(
   null,
@@ -80,23 +92,23 @@ const setToolDisabledForElement = setToolModeForElement.bind(
 );
 
 /**
- *
- * @export
+ * Sets all tool's state, with the provided toolName, to 'disabled'. Disabled tools are not rendered,
+ * and do not respond to user input
+ * @export @public @method
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolDisabled = setToolMode.bind(null, 'disabled', null);
 
 /**
- * Sets a tool's state to 'enabled'. Enabled tools are rendered,
+ * Sets a tool's state, with the provided toolName and element, to 'enabled'. Enabled tools are rendered,
  * but do not respond to user input
- *
- * @export
- * @param {object} element
+ * @export @public @method
+ * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolEnabledForElement = setToolModeForElement.bind(
   null,
@@ -105,23 +117,23 @@ const setToolEnabledForElement = setToolModeForElement.bind(
 );
 
 /**
- *
- * @export
+ * Sets all tool's state, with the provided toolName, to 'enabled'. Enabled tools are rendered,
+ * but do not respond to user input
+ * @export @public @method
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolEnabled = setToolMode.bind(null, 'enabled', null);
 
 /**
- * Sets a tool's state to 'passive'. Passive tools are rendered and respond to user input,
+ * Sets a tool's state, with the provided toolName and element, to 'passive'. Passive tools are rendered and respond to user input,
  * but do not create new measurements or annotations.
- *
- * @export
- * @param {object} element
+ * @export @public @method
+ * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolPassiveForElement = setToolModeForElement.bind(
   null,
@@ -130,11 +142,12 @@ const setToolPassiveForElement = setToolModeForElement.bind(
 );
 
 /**
- *
- * @export
+ * Sets all tool's state, with the provided toolName, to 'passive'. Passive tools are rendered and respond to user input,
+ * but do not create new measurements or annotations.
+ * @export @public @method
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 const setToolPassive = setToolMode.bind(
   null,
@@ -143,15 +156,15 @@ const setToolPassive = setToolMode.bind(
 );
 
 /**
- * An internal method that helps make sure we change tool state in a consistent
+ * An internal method that helps make sure we change tool mode in a consistent
  * way
- *
+ * @private @method
  * @param {string} mode
  * @param {string} changeEvent
- * @param {object} element
+ * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
- * @returns
+ * @returns {undefined}
  */
 function setToolModeForElement (mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
@@ -199,10 +212,12 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
 /**
  * A helper/quick way to set a tool's mode for all canvases
  *
+ * @private @method
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
  * @param {(object|number)} options
+ * @returns {undefined}
  */
 function setToolMode (mode, changeEvent, toolName, options) {
   state.enabledElements.forEach((element) => {
@@ -214,7 +229,7 @@ function setToolMode (mode, changeEvent, toolName, options) {
  * Find tool's that conflict with the incoming tool's mouse/touch bindings and
  * resolve those conflicts.
  *
- * @param {*} element
+ * @param {HTMLElement} element
  * @param {*} tool
  * @param {(Object|number)} options
  * @param {(Array)} interactionTypes
@@ -248,7 +263,7 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
  * conflicts.
  *
  * @param {*} tool
- * @param {*} element
+ * @param {HTMLElement} element
  * @param {(Object|number)} options
  * @private
  */
@@ -282,7 +297,7 @@ function _resolveMouseInputConflicts (tool, element, options) {
  *
  * @param {string} interactionType
  * @param {*} tool
- * @param {*} element
+ * @param {HTMLElement} element
  * @param {(Object|number)} options
  * @private
  */
