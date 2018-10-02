@@ -66,7 +66,11 @@ describe('customCallbackHandler.js', () => {
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);
 
-    expect(getters.mouseTools).toHaveBeenCalled();
+    expect(getActiveToolsForElement).toHaveBeenCalledWith(
+      fakeEvent.detail.element,
+      [state.tools[0], state.tools[1]],
+      handlerType
+    );
   });
 
   it('gets touch tools when handlerType is "Touch"', () => {
@@ -75,7 +79,11 @@ describe('customCallbackHandler.js', () => {
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);
 
-    expect(getters.touchTools).toHaveBeenCalled();
+    expect(getActiveToolsForElement).toHaveBeenCalledWith(
+      fakeEvent.detail.element,
+      [state.tools[1], state.tools[2]],
+      handlerType
+    );
   });
 
   it('returns false when "getActiveToolsForElements" returns an empty array', () => {
