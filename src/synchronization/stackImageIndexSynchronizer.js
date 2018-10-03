@@ -3,8 +3,14 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import clip from '../util/clip.js';
 
-// This function causes the image in the target stack to be set to the one closest
-// To the image in the source stack by image position
+/**
+ * Synchronize the target stack to the index closest to the source stack's index
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the index value
+ * @param {HTMLElement} targetElement - The target element
+ */
 export default function (synchronizer, sourceElement, targetElement) {
 
   // Ignore the case where the source and target are the same enabled element
