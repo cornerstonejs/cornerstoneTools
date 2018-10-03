@@ -12,7 +12,6 @@ import triggerEvent from '../../util/triggerEvent.js';
 import getInteractiveToolsForElement from '../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.js';
 
-
 export default function (evt) {
   console.log('touchStart');
   if (state.isToolLocked) {
@@ -25,9 +24,8 @@ export default function (evt) {
   const coords = eventData.startPoints.canvas;
 
   let tools = getInteractiveToolsForElement(element, getters.touchTools());
-  tools = tools.filter(
-    (tool) => tool.options.touchEnable || tool.options.touchEnable === undefined
-  );
+
+  tools = tools.filter((tool) => tool.options.isTouchActive);
   const activeTools = tools.filter((tool) => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.

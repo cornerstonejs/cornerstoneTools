@@ -27,7 +27,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   constructor (name = 'ArrowAnnotate') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         getTextCallback,
         changeTextCallback,
@@ -260,7 +260,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     // Since we are dragging to another place to drop the end point, we can just activate
     // The end point and let the moveHandle move it for us.
     const handleMover =
-      interactionType === 'mouse' ? moveNewHandle : moveNewHandleTouch;
+      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
 
     state.isToolLocked = true;
     handleMover(

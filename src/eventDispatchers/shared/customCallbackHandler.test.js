@@ -7,13 +7,16 @@ jest.mock('./../../store/index.js', () => ({
     isToolLocked: false,
     tools: [
       {
-        aDifferentCustomFunctionName: jest.fn()
+        aDifferentCustomFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Mouse']
       },
       {
-        customFunctionName: jest.fn()
+        customFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Mouse', 'Touch']
       },
       {
-        customFunctionName: jest.fn()
+        customFunctionName: jest.fn(),
+        supportedInteractionTypes: ['Touch']
       }
     ]
   },
@@ -57,22 +60,30 @@ describe('customCallbackHandler.js', () => {
     ).toHaveBeenCalledTimes(0);
   });
 
-  it('gets mouse tools when handlerType is "mouse"', () => {
-    const handlerType = 'mouse';
+  it('gets mouse tools when handlerType is "Mouse"', () => {
+    const handlerType = 'Mouse';
 
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);
 
-    expect(getters.mouseTools).toHaveBeenCalled();
+    expect(getActiveToolsForElement).toHaveBeenCalledWith(
+      fakeEvent.detail.element,
+      [state.tools[0], state.tools[1]],
+      handlerType
+    );
   });
 
-  it('gets touch tools when handlerType is "touch"', () => {
-    const handlerType = 'touch';
+  it('gets touch tools when handlerType is "Touch"', () => {
+    const handlerType = 'Touch';
 
     getActiveToolsForElement.mockReturnValueOnce([]);
     customCallbackHandler(handlerType, customFunction, fakeEvent);
 
-    expect(getters.touchTools).toHaveBeenCalled();
+    expect(getActiveToolsForElement).toHaveBeenCalledWith(
+      fakeEvent.detail.element,
+      [state.tools[1], state.tools[2]],
+      handlerType
+    );
   });
 
   it('returns false when "getActiveToolsForElements" returns an empty array', () => {

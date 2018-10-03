@@ -7,7 +7,7 @@ export default class StackScrollMouseWheelTool extends BaseTool {
   constructor (name = 'StackScrollMouseWheel') {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         loop: false,
         allowSkipping: true

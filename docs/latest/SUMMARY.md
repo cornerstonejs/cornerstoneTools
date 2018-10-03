@@ -17,9 +17,9 @@
 
 - [Anatomy of a Tool](anatomy-of-a-tool/index.md)
   - [Modes](anatomy-of-a-tool/index.md#modes)
+  - [Configuration](anatomy-of-a-tool/index.md#configuration)
   - [Interaction Types](anatomy-of-a-tool/index.md#interaction-types)
   - [Strategies](anatomy-of-a-tool/index.md#strategies)
-  - [Configuration](anatomy-of-a-tool/index.md#configuration)
   - [Mixins](anatomy-of-a-tool/index.md#mixins)
   - [Measurement Data](anatomy-of-a-tool/index.md#measurement-data)
 - [Tool Types](tool-types/index.md)

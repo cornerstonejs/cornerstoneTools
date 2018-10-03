@@ -12,7 +12,7 @@ export default class wwwcRegionTool extends BaseTool {
   constructor (name = 'WwwcRegion') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         minWindowWidth: 10
       }

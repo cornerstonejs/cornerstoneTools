@@ -18,7 +18,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   ) {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['Mouse'],
       mixins,
       configuration: getDefaultFreehandSculpterMouseToolConfiguration()
     });

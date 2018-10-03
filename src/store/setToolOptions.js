@@ -13,7 +13,7 @@ const setToolOptionsForElement = function (element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
-    tool.options = Object.assign({}, tool.options, options);
+    tool.mergeOptions(options);
   }
 };
 

@@ -6,7 +6,7 @@ export default class PanTool extends BaseTool {
   constructor (name = 'Pan') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
 
     // Touch

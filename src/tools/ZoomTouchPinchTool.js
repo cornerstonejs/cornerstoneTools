@@ -7,7 +7,7 @@ export default class ZoomTouchPinchTool extends BaseTool {
     super({
       name,
       // TODO: Do we need a better way to specify touchPinch?
-      supportedInteractionTypes: ['touch'],
+      supportedInteractionTypes: ['TouchPinch'],
       configuration: {
         minScale: 0.25,
         maxScale: 20.0
