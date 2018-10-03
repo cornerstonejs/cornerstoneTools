@@ -87,5 +87,8 @@
     "dist/cornerstoneTools.js.map",
     "dist/cornerstoneTools.min.js",
     "dist/cornerstoneTools.min.js.map"
-  ]
+  ],
+  "publishConfig": {
+    "registry": "https://nexus.mgmt.cleerlymedcloud.com/repository/npm-internal/"
+  }
 }
