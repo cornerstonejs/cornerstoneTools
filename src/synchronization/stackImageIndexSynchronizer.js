@@ -6,7 +6,7 @@ import clip from '../util/clip.js';
 /**
  * Synchronize the target stack to the index closest to the source stack's index
  *
- * @param {Synchronizer} synchronizer - The Synchronizer instance that attaches this
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the index value
  * @param {HTMLElement} targetElement - The target element

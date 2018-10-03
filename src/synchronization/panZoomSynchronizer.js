@@ -3,7 +3,7 @@ import external from '../externalModules.js';
 /**
  * Synchronize the target zoom and pan to match the source
  *
- * @param {Synchronizer} synchronizer - The Synchronizer instance that attaches this
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the zoom and pan values
  * @param {HTMLElement} targetElement - The target element

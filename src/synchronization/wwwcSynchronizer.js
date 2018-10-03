@@ -3,7 +3,7 @@ import external from '../externalModules.js';
 /**
  * Synchronize the target viewport ww/wc to match the source element
  *
- * @param {Synchronizer} synchronizer - The Synchronizer instance that attaches this
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the ww/wc values
  * @param {HTMLElement} targetElement - The target element

@@ -6,7 +6,7 @@ import clip from '../util/clip.js';
 /**
  * Propogate scrolling actions from the source element to the target element
  *
- * @param {Synchronizer} synchronizer - The Synchronizer instance that attaches this
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the scroll event
  * @param {HTMLElement} targetElement - The target element

@@ -3,7 +3,7 @@ import external from '../externalModules.js';
 /**
  * Redraw target image immediately any time handler is called from source element
  *
- * @param {Synchronizer} synchronizer - The Synchronizer instance that attaches this
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element
  * @param {HTMLElement} targetElement - The target element
