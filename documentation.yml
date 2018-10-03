@@ -11,11 +11,11 @@ toc:
     description: |
       This section needs a description
     children:
-      #- setToolActive
+      - setToolActive
       - setToolActiveForElement
-      #- setToolPassive
+      - setToolPassive
       - setToolPassiveForElement
-      #- setToolEnabled
+      - setToolEnabled
       - setToolEnabledForElement
-      #- setToolDisabled
+      - setToolDisabled
       - setToolDisabledForElement

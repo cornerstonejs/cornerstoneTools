@@ -1,4 +1,5 @@
 const state = {
+  mouseEnabled: true,
   touchEnabled: true
 };
 

@@ -13,8 +13,9 @@ export default function (synchronizer, sourceElement, targetElement) {
   }
 
   const cornerstone = external.cornerstone;
-  const sourceImage = cornerstone.getEnabledElement(sourceElement).image;
-  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImage.imageId);
+  const sourceStackData = getToolState(sourceElement, 'stack').data[0];
+  const sourceImageId = sourceStackData.imageIds[sourceStackData.currentImageIdIndex];
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
   if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
     // Console.log('No position found for image ' + sourceImage.imageId);

@@ -18,7 +18,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
   constructor (name = 'RectangleRoi') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
   }
 

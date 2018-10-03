@@ -10,7 +10,7 @@ export default class WwwcTool extends BaseTool {
     super({
       name,
       strategies,
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         orientation: 0
       }

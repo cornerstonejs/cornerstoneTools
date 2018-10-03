@@ -9,7 +9,7 @@ export default class extends baseTool {
   constructor (name = 'StackScrollMultiTouch') {
     super({
       name,
-      supportedInteractionTypes: ['touch'],
+      supportedInteractionTypes: ['MultiTouch'],
       configuration: {
         loop: false,
         allowSkipping: true,

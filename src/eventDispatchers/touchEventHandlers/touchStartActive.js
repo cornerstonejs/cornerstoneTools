@@ -11,20 +11,18 @@ export default function (evt) {
 
   const element = evt.detail.element;
   let tools = getActiveToolsForElement(element, getters.touchTools());
-  
-  tools = tools.filter(
-    (tool) => tool.options.touchEnable || tool.options.touchEnable === undefined
-  );
+
+  tools = tools.filter((tool) => tool.options.isTouchActive);
 
   if (tools.length === 0) {
     return;
   }
-  
+
   const activeTool = tools[0];
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool && activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(evt, 'touch');
+    activeTool.addNewMeasurement(evt, 'Touch');
   } else if (activeTool instanceof BaseAnnotationTool) {
     addNewMeasurement(evt, activeTool);
   }

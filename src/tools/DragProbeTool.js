@@ -21,7 +21,7 @@ export default class extends baseTool {
       name,
       strategies,
       defaultStrategy: 'default',
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {}
     });
 

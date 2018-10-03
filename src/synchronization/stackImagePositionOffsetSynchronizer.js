@@ -16,8 +16,9 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
   }
 
   const cornerstone = external.cornerstone;
-  const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
-  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceEnabledElement.image.imageId);
+  const sourceStackData = getToolState(sourceElement, 'stack').data[0];
+  const sourceImageId = sourceStackData.imageIds[sourceStackData.currentImageIdIndex];
+  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
   if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
     return;
