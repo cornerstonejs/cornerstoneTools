@@ -3,16 +3,28 @@ import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { clearToolOptionsByElement } from '../toolOptions.js';
 
+/**
+ * Return an array filtered to only its unique members
+ *
+ * @private
+ * @param {*[]} array - The array to filter
+ * @returns {*[]}
+ */
 function unique (array) {
   return array.filter(function (value, index, self) {
     return self.indexOf(value) === index;
   });
 }
 
-// This object is responsible for synchronizing target elements when an event fires on a source
-// Element
-// @param event can contain more than one event, separated by a space
-// TODO - > ES6 class syntax?
+/**
+ * Synchronize target and source elements when an event fires on the source element
+ *
+ * @constructor
+ * @param {String} event - The event(s) that will trigger synchronization. Separate multiple
+ * events by a space
+ * @param {Function} handler - The function that will make the necessary changes to the target
+ * element in order to synchronize it with the source element
+ */
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;
@@ -23,14 +35,25 @@ function Synchronizer (event, handler) {
   const initialData = {};
   let eventHandler = handler;
 
+  /**
+   * Update the event handler to perform synchronization
+   * @param {Function} handler - The event handler function
+   */
   this.setHandler = function (handler) {
     eventHandler = handler;
   };
 
+  /**
+   * Return a reference to the event handler function
+   */
   this.getHandler = function () {
     return eventHandler;
   };
 
+  /**
+   * Calculate the initial distances between the source image and each
+   * of the target images
+   */
   this.getDistances = function () {
     if (!sourceElements.length || !targetElements.length) {
       return;
@@ -106,6 +129,13 @@ function Synchronizer (event, handler) {
     });
   };
 
+  /**
+   * Gather necessary event data and call synchronization handler
+   *
+   * @private
+   * @param {HTMLElement} sourceElement - The source element for the event
+   * @param {Object} eventData - The data object for the source event
+   */
   function fireEvent (sourceElement, eventData) {
     // Broadcast an event that something changed
     if (!sourceElements.length || !targetElements.length) {
@@ -142,6 +172,12 @@ function Synchronizer (event, handler) {
     ignoreFiredEvents = false;
   }
 
+  /**
+   * Call fireEvent if not ignoring events, and pass along event data
+   *
+   * @private
+   * @param {Event} e - The source event object
+   */
   function onEvent (e) {
     const eventData = e.detail;
 
@@ -152,7 +188,11 @@ function Synchronizer (event, handler) {
     fireEvent(e.currentTarget, eventData);
   }
 
-  // Adds an element as a source
+  /**
+   * Add a source element to this synchronizer
+   *
+   * @param {HTMLElement} element - The new source element
+   */
   this.addSource = function (element) {
     // Return if this element was previously added
     const index = sourceElements.indexOf(element);
@@ -175,7 +215,11 @@ function Synchronizer (event, handler) {
     that.updateDisableHandlers();
   };
 
-  // Adds an element as a target
+  /**
+   * Add a target element to this synchronizer
+   *
+   * @param {HTMLElement} element - The new target element to be synchronized
+   */
   this.addTarget = function (element) {
     // Return if this element was previously added
     const index = targetElements.indexOf(element);
@@ -196,13 +240,21 @@ function Synchronizer (event, handler) {
     that.updateDisableHandlers();
   };
 
-  // Adds an element as both a source and a target
+  /**
+   * Add an element to this synchronizer as both a source and a target
+   *
+   * @param {HTMLElement} element - The new element
+   */
   this.add = function (element) {
     that.addSource(element);
     that.addTarget(element);
   };
 
-  // Removes an element as a source
+  /**
+   * Remove a source element from this synchronizer
+   *
+   * @param {HTMLElement} element - The element to be removed
+   */
   this.removeSource = function (element) {
     // Find the index of this element
     const index = sourceElements.indexOf(element);
@@ -227,7 +279,11 @@ function Synchronizer (event, handler) {
     that.updateDisableHandlers();
   };
 
-  // Removes an element as a target
+  /**
+   * Remove a target element from this synchronizer
+   *
+   * @param {HTMLElement} element - The element to be removed
+   */
   this.removeTarget = function (element) {
     // Find the index of this element
     const index = targetElements.indexOf(element);
@@ -247,34 +303,65 @@ function Synchronizer (event, handler) {
     that.updateDisableHandlers();
   };
 
-  // Removes an element as both a source and target
+  /**
+   * Remove an element from this synchronizer as both a target and source
+   *
+   * @param {HTMLElement} element - The element to be removed
+   */
   this.remove = function (element) {
     that.removeTarget(element);
     that.removeSource(element);
   };
 
-  // Returns the source elements
+  /**
+   * Get the array of source elements
+   *
+   * @returns {HTMLElement[]}
+   */
   this.getSourceElements = function () {
     return sourceElements;
   };
 
-  // Returns the target elements
+  /**
+   * Get the array of target elements
+   *
+   * @returns {HTMLElement[]}
+   */
   this.getTargetElements = function () {
     return targetElements;
   };
 
+  /**
+   * Display an image while halting synchronization
+   *
+   * @param {HTMLElement} element - The element containing the image
+   * @param {Object} image - The cornerstone image object
+   * @param {Object} viewport - The cornerstone viewport object
+   */
   this.displayImage = function (element, image, viewport) {
     ignoreFiredEvents = true;
     cornerstone.displayImage(element, image, viewport);
     ignoreFiredEvents = false;
   };
 
+  /**
+   * Update a viewport while halting synchronization
+   *
+   * @param {HTMLElement} element - The target element
+   * @param {Object} viewport - The new cornerstone viewport object
+   */
   this.setViewport = function (element, viewport) {
     ignoreFiredEvents = true;
     cornerstone.setViewport(element, viewport);
     ignoreFiredEvents = false;
   };
 
+  /**
+   * Remove an element from the synchronizer based on an event from that element
+   *
+   * @private
+   * @param {Event} e - The event whose element will be removed
+   */
   function disableHandler (e) {
     const element = e.detail.element;
 
@@ -282,6 +369,10 @@ function Synchronizer (event, handler) {
     clearToolOptionsByElement(element);
   }
 
+  /**
+   * Add an event listener to each element that can remove it from the synchronizer
+   *
+   */
   this.updateDisableHandlers = function () {
     const elements = unique(sourceElements.concat(targetElements));
 
@@ -291,6 +382,10 @@ function Synchronizer (event, handler) {
     });
   };
 
+  /**
+   * Remove all elements from this synchronizer
+   *
+   */
   this.destroy = function () {
     const elements = unique(sourceElements.concat(targetElements));
 

@@ -1,6 +1,13 @@
 import external from '../externalModules.js';
 
-// This function synchronizes the target zoom and pan to match the source
+/**
+ * Synchronize the target zoom and pan to match the source
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the zoom and pan values
+ * @param {HTMLElement} targetElement - The target element
+ */
 export default function (synchronizer, sourceElement, targetElement) {
 
   // Ignore the case where the source and target are the same enabled element

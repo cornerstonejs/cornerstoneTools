@@ -3,8 +3,14 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import convertToVector3 from '../util/convertToVector3.js';
 
-// This function causes the image in the target stack to be set to the one closest
-// To the image in the source stack by image position
+/**
+ * Synchronize the target stack to the image closest to the source image's position
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the image position
+ * @param {HTMLElement} targetElement - The target element
+ */
 export default function (synchronizer, sourceElement, targetElement) {
 
   // Ignore the case where the source and target are the same enabled element
