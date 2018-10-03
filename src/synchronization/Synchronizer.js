@@ -7,8 +7,8 @@ import { clearToolOptionsByElement } from '../toolOptions.js';
  * Return an array filtered to only its unique members
  *
  * @private
- * @param {Array} array - The array to filter
- * @returns {Array}
+ * @param {*[]} array - The array to filter
+ * @returns {*[]}
  */
 function unique (array) {
   return array.filter(function (value, index, self) {
@@ -316,7 +316,7 @@ function Synchronizer (event, handler) {
   /**
    * Get the array of source elements
    *
-   * @returns {Array}
+   * @returns {HTMLElement[]}
    */
   this.getSourceElements = function () {
     return sourceElements;
@@ -325,7 +325,7 @@ function Synchronizer (event, handler) {
   /**
    * Get the array of target elements
    *
-   * @returns {Array}
+   * @returns {HTMLElement[]}
    */
   this.getTargetElements = function () {
     return targetElements;
