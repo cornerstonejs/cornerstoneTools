@@ -45,7 +45,6 @@ function Synchronizer (event, handler) {
 
   /**
    * Return a reference to the event handler function
-   * @param {Function} handler - The event handler function
    */
   this.getHandler = function () {
     return eventHandler;
