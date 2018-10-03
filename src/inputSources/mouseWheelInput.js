@@ -58,6 +58,7 @@ function mouseWheel (e) {
 
   const mouseWheelData = {
     element,
+    event: e,
     viewport: cornerstone.getViewport(element),
     image: enabledElement.image,
     direction,
