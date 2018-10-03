@@ -94,6 +94,10 @@ export default class BaseTool {
     return internalOptions;
   }
 
+  setDefaultStrategy() {
+    this.activeStrategy = this.defaultStrategy;
+  }
+
   /**
    *
    *
