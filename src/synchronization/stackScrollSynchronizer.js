@@ -3,8 +3,15 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import clip from '../util/clip.js';
 
-// This function causes any scrolling actions within the stack to propagate to
-// All of the other viewports that are synced
+/**
+ * Propogate scrolling actions from the source element to the target element
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the scroll event
+ * @param {HTMLElement} targetElement - The target element
+ * @param {Object} eventData - The data object from the triggering event
+ */
 export default function (synchronizer, sourceElement, targetElement, eventData) {
   // If the target and source are the same, stop
   if (sourceElement === targetElement) {

@@ -3,11 +3,20 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import convertToVector3 from '../util/convertToVector3.js';
 
-// This function causes the image in the target stack to be set to the one closest
-// To the image in the source stack by image position
-
 // In the future we will want to have a way to manually register links sets of the same orientation (e.g. an axial link set from a prior with an axial link set of a current).  The user could do this by scrolling the two stacks to a similar location and then doing a user action (e.g. right click link) at which point the system will capture the delta between the image position (patient) of both stacks and use that to sync them.  This offset will need to be adjustable.
 
+/**
+ * Calculate a position in space that is offset from the source image's position,
+ * and synchronize the target stack to the image that is closest to that position
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element
+ * @param {HTMLElement} targetElement - The target element
+ * @param {Object} eventData - The data object from the triggering event
+ * @param {Object} positionDifference - An object with { x, y, z } values that will be
+ * added to the source image's coordinates
+ */
 export default function (synchronizer, sourceElement, targetElement, eventData, positionDifference) {
 
   // Ignore the case where the source and target are the same enabled element
