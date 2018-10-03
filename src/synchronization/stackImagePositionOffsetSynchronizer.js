@@ -14,7 +14,7 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @param {HTMLElement} sourceElement - The source element
  * @param {HTMLElement} targetElement - The target element
  * @param {Object} eventData - The data object from the triggering event
- * @param {Vector3} positionDifference - An object with { x, y, z } values that will be
+ * @param {Object} positionDifference - An object with { x, y, z } values that will be
  * added to the source image's coordinates
  */
 export default function (synchronizer, sourceElement, targetElement, eventData, positionDifference) {
