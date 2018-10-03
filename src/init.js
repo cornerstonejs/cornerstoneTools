@@ -1,6 +1,7 @@
 import external from './externalModules.js';
 import store from './store/index.js';
-import registerModule from './store/registerModule.js';
+import thirdParty from './thirdParty/index.js';
+
 import { addTool, addToolForElement } from './store/addTool.js';
 import { removeTool, removeToolForElement } from './store/removeTool.js';
 import getToolForElement from './store/getToolForElement.js';
@@ -42,7 +43,7 @@ export default function (configuration) {
     configuration
   );
 
-  const cornerstoneToolsInstance = Object.freeze({
+  return Object.freeze({
     store,
     addTool,
     addToolForElement,
@@ -51,6 +52,7 @@ export default function (configuration) {
     removeToolForElement,
     setToolOptions,
     setToolOptionsForElement,
+    thirdParty,
     // Tool Modes
     setToolActive,
     setToolActiveForElement,
@@ -61,13 +63,6 @@ export default function (configuration) {
     setToolPassive,
     setToolPassiveForElement
   });
-
-  // By assigning this here it is only accessible by initialised instances,
-  // This prevents users of the library from trying to register modules before
-  // Initialising cornerstoneTools.
-  cornerstoneToolsInstance.store.registerModule = registerModule;
-
-  return cornerstoneToolsInstance;
 }
 
 /**

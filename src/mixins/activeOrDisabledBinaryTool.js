@@ -18,6 +18,11 @@ function enabledCallback (element) {
   setToolActiveForElement(element, this.name);
 }
 
+
+/**
+ * @mixin activeOrDisabledBinaryTool - Redirect enabled/passive mode changes
+ *                                     to active/disabled.
+ */
 export default {
   passiveCallback,
   enabledCallback

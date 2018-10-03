@@ -26,359 +26,358 @@
     -   [Parameters][22]
 -   [setBrushColorMap][23]
     -   [Parameters][24]
--   [removeToolForElement][25]
+-   [enabledElementCallback][25]
     -   [Parameters][26]
--   [removeTool][27]
-    -   [Parameters][28]
+-   [onRegisterCallback][27]
+-   [registerModule][28]
     -   [Parameters][29]
--   [removeEnabledElement][30]
+-   [removeToolForElement][30]
     -   [Parameters][31]
--   [onImageRenderedBrushEventHandler][32]
+-   [removeTool][32]
     -   [Parameters][33]
--   [\_drawImageBitmap][34]
-    -   [Parameters][35]
--   [enable][36]
-    -   [Parameters][37]
--   [enable][38]
-    -   [Parameters][39]
--   [mouseDown][40]
-    -   [Parameters][41]
--   [mouseMove][42]
-    -   [Parameters][43]
--   [keyDown][44]
-    -   [Parameters][45]
--   [onNewImageBrushEventHandler][46]
-    -   [Parameters][47]
--   [setToolModeForElement][48]
-    -   [Parameters][49]
--   [setToolMode][50]
-    -   [Parameters][51]
--   [createNewMeasurement][52]
-    -   [Parameters][53]
--   [pointNearTool][54]
-    -   [Parameters][55]
--   [renderToolData][56]
-    -   [Parameters][57]
--   [addNewMeasurement][58]
-    -   [Parameters][59]
--   [createNewMeasurement][60]
-    -   [Parameters][61]
--   [pointNearTool][62]
-    -   [Parameters][63]
--   [renderToolData][64]
-    -   [Parameters][65]
--   [createNewMeasurement][66]
-    -   [Parameters][67]
--   [pointNearTool][68]
-    -   [Parameters][69]
--   [renderToolData][70]
-    -   [Parameters][71]
--   [defaultStrategy][72]
-    -   [Parameters][73]
--   [defaultStrategy][74]
-    -   [Parameters][75]
--   [minimalStrategy][76]
-    -   [Parameters][77]
--   [createNewMeasurement][78]
-    -   [Parameters][79]
--   [pointNearTool][80]
-    -   [Parameters][81]
--   [renderToolData][82]
-    -   [Parameters][83]
--   [createNewMeasurement][84]
-    -   [Parameters][85]
--   [pointNearTool][86]
-    -   [Parameters][87]
--   [distanceFromPoint][88]
-    -   [Parameters][89]
--   [renderToolData][90]
-    -   [Parameters][91]
--   [mouseMoveCallback][92]
+    -   [Parameters][34]
+-   [onImageRenderedBrushEventHandler][35]
+    -   [Parameters][36]
+-   [\_drawImageBitmap][37]
+    -   [Parameters][38]
+-   [enable][39]
+    -   [Parameters][40]
+-   [enable][41]
+    -   [Parameters][42]
+-   [mouseDown][43]
+    -   [Parameters][44]
+-   [mouseMove][45]
+    -   [Parameters][46]
+-   [onNewImageBrushEventHandler][47]
+    -   [Parameters][48]
+-   [removeEnabledElement][49]
+    -   [Parameters][50]
+-   [setToolModeForElement][51]
+    -   [Parameters][52]
+-   [setToolMode][53]
+    -   [Parameters][54]
+-   [createNewMeasurement][55]
+    -   [Parameters][56]
+-   [pointNearTool][57]
+    -   [Parameters][58]
+-   [renderToolData][59]
+    -   [Parameters][60]
+-   [addNewMeasurement][61]
+    -   [Parameters][62]
+-   [createNewMeasurement][63]
+    -   [Parameters][64]
+-   [pointNearTool][65]
+    -   [Parameters][66]
+-   [distanceFromPoint][67]
+    -   [Parameters][68]
+-   [renderToolData][69]
+    -   [Parameters][70]
+-   [mouseMoveCallback][71]
+    -   [Parameters][72]
+-   [handleSelectedCallback][73]
+    -   [Parameters][74]
+-   [toolSelectedCallback][75]
+    -   [Parameters][76]
+-   [createNewMeasurement][77]
+    -   [Parameters][78]
+-   [pointNearTool][79]
+    -   [Parameters][80]
+-   [renderToolData][81]
+    -   [Parameters][82]
+-   [createNewMeasurement][83]
+    -   [Parameters][84]
+-   [pointNearTool][85]
+    -   [Parameters][86]
+-   [renderToolData][87]
+    -   [Parameters][88]
+-   [applyActiveStrategy][89]
+    -   [Parameters][90]
+-   [\_applyMixins][91]
+    -   [Parameters][92]
     -   [Parameters][93]
--   [handleSelectedCallback][94]
+    -   [Parameters][94]
     -   [Parameters][95]
--   [toolSelectedCallback][96]
-    -   [Parameters][97]
--   [applyActiveStrategy][98]
-    -   [Parameters][99]
--   [onKeyDown][100]
-    -   [Parameters][101]
--   [\_applyMixins][102]
-    -   [Parameters][103]
+    -   [Parameters][96]
+-   [passiveCallback][97]
+    -   [Parameters][98]
+-   [passiveCallback][99]
+    -   [Parameters][100]
+-   [enabledCallback][101]
+    -   [Parameters][102]
+-   [activeCallback][103]
     -   [Parameters][104]
-    -   [Parameters][105]
+-   [defaultStrategy][105]
     -   [Parameters][106]
-    -   [Parameters][107]
--   [keyPress][108]
-    -   [Parameters][109]
--   [passiveCallback][110]
-    -   [Parameters][111]
--   [passiveCallback][112]
-    -   [Parameters][113]
--   [enabledCallback][114]
-    -   [Parameters][115]
--   [activeCallback][116]
-    -   [Parameters][117]
--   [createNewMeasurement][118]
-    -   [Parameters][119]
--   [pointNearTool][120]
-    -   [Parameters][121]
--   [distanceFromPoint][122]
-    -   [Parameters][123]
--   [distanceFromPointCanvas][124]
-    -   [Parameters][125]
--   [renderToolData][126]
-    -   [Parameters][127]
--   [addNewMeasurement][128]
-    -   [Parameters][129]
--   [preMouseDownCallback][130]
-    -   [Parameters][131]
--   [handleSelectedCallback][132]
-    -   [Parameters][133]
--   [\_drawingMouseMoveCallback][134]
-    -   [Parameters][135]
--   [\_drawingMouseDownCallback][136]
-    -   [Parameters][137]
--   [\_editMouseDragCallback][138]
-    -   [Parameters][139]
--   [\_editMouseUpCallback][140]
-    -   [Parameters][141]
--   [\_dropHandle][142]
-    -   [Parameters][143]
--   [\_checkHandlesPolygonMode][144]
-    -   [Parameters][145]
--   [insertOrDelete][146]
-    -   [Parameters][147]
--   [deletePoint][148]
-    -   [Parameters][149]
--   [insertPoint][150]
-    -   [Parameters][151]
--   [getInsertionIndex][152]
-    -   [Parameters][153]
--   [constructor][154]
-    -   [Parameters][155]
--   [findLine][156]
--   [findTool][157]
--   [\_nearestHandleToPointAllTools][158]
--   [\_nearestHandleToPoint][159]
-    -   [Parameters][160]
--   [\_getCloseLinesInTool][161]
-    -   [Parameters][162]
--   [\_findCorrectLine][163]
-    -   [Parameters][164]
--   [\_pointProjectsToLineSegment][165]
-    -   [Parameters][166]
--   [\_getLineOriginToMouseAsVector][167]
-    -   [Parameters][168]
--   [\_distanceOfPointfromLine][169]
-    -   [Parameters][170]
--   [getCanvasPointsFromHandles][171]
-    -   [Parameters][172]
--   [getLineAsVector][173]
-    -   [Parameters][174]
--   [getNextHandleIndex][175]
-    -   [Parameters][176]
--   [ClickedLineData][177]
-    -   [Properties][178]
--   [freehandArea][179]
-    -   [Parameters][180]
--   [calculateFreehandStatistics][181]
-    -   [Parameters][182]
--   [getSum][183]
-    -   [Parameters][184]
--   [sumPointIfInFreehand][185]
-    -   [Parameters][186]
--   [pointInFreehand][187]
-    -   [Parameters][188]
--   [isEnclosedY][189]
-    -   [Parameters][190]
--   [isLineRightOfPoint][191]
-    -   [Parameters][192]
--   [lineSegmentAtPoint][193]
-    -   [Parameters][194]
--   [rayFromPointCrosssesLine][195]
-    -   [Parameters][196]
--   [newHandle][197]
-    -   [Parameters][198]
--   [newHandle][199]
-    -   [Parameters][200]
--   [end][201]
-    -   [Parameters][202]
--   [modify][203]
-    -   [Parameters][204]
--   [doesIntersectOtherLines][205]
-    -   [Parameters][206]
--   [doesIntersect][207]
-    -   [Parameters][208]
--   [orientation][209]
-    -   [Parameters][210]
--   [onSegment][211]
-    -   [Parameters][212]
--   [FreehandHandleData][213]
-    -   [Properties][214]
--   [renderToolData][215]
-    -   [Parameters][216]
--   [preMouseDownCallback][217]
-    -   [Parameters][218]
--   [activeMouseDragCallback][219]
-    -   [Parameters][220]
--   [activeMouseUpCallback][221]
-    -   [Parameters][222]
--   [newImageCallback][223]
-    -   [Parameters][224]
--   [enabledCallback][225]
-    -   [Parameters][226]
--   [passiveCallback][227]
-    -   [Parameters][228]
--   [disabledCallback][229]
-    -   [Parameters][230]
--   [getDefaultFreehandSculpterMouseToolConfiguration][231]
--   [changeTextCallback][232]
-    -   [Parameters][233]
--   [createNewMeasurement][234]
-    -   [Parameters][235]
--   [pointNearTool][236]
-    -   [Parameters][237]
--   [renderToolData][238]
-    -   [Parameters][239]
--   [\_drawZoomedElement][240]
-    -   [Parameters][241]
--   [\_removeZoomElement][242]
--   [\_createMagnificationCanvas][243]
-    -   [Parameters][244]
--   [\_destroyMagnificationCanvas][245]
-    -   [Parameters][246]
--   [createNewMeasurement][247]
-    -   [Parameters][248]
--   [pointNearTool][249]
-    -   [Parameters][250]
--   [renderToolData][251]
-    -   [Parameters][252]
--   [createNewMeasurement][253]
-    -   [Parameters][254]
--   [pointNearTool][255]
-    -   [Parameters][256]
--   [renderToolData][257]
-    -   [Parameters][258]
--   [angleBetweenPoints][259]
-    -   [Parameters][260]
--   [computeScaleBounds][261]
-    -   [Parameters][262]
--   [drawVerticalScalebarIntervals][263]
-    -   [Parameters][264]
--   [basicLevelingStrategy][265]
-    -   [Parameters][266]
--   [\_startOutliningRegion][267]
-    -   [Parameters][268]
--   [\_setHandlesAndUpdate][269]
-    -   [Parameters][270]
--   [\_applyStrategy][271]
-    -   [Parameters][272]
--   [\_resetHandles][273]
--   [isEmptyObject][274]
-    -   [Parameters][275]
--   [applyWWWCRegion][276]
-    -   [Parameters][277]
--   [calculateMinMaxMean][278]
-    -   [Parameters][279]
--   [touchPinchCallback][280]
-    -   [Parameters][281]
--   [mouseWheelCallback][282]
-    -   [Parameters][283]
--   [convertToVector3][284]
-    -   [Parameters][285]
--   [renderBrush][286]
-    -   [Parameters][287]
--   [renderBrush][288]
-    -   [Parameters][289]
--   [\_paint][290]
-    -   [Parameters][291]
--   [mouseDragCallback][292]
-    -   [Parameters][293]
--   [preMouseDownCallback][294]
-    -   [Parameters][295]
--   [\_startPainting][296]
-    -   [Parameters][297]
--   [mouseMoveCallback][298]
-    -   [Parameters][299]
--   [passiveCallback][300]
-    -   [Parameters][301]
--   [renderToolData][302]
-    -   [Parameters][303]
--   [\_getBrushColor][304]
-    -   [Parameters][305]
--   [\_drawingMouseUpCallback][306]
-    -   [Parameters][307]
--   [\_startListeningForMouseUp][308]
-    -   [Parameters][309]
--   [\_stopListeningForMouseUp][310]
-    -   [Parameters][311]
--   [nextSegmentation][312]
--   [previousSegmentation][313]
--   [increaseBrushSize][314]
--   [decreaseBrushSize][315]
--   [showSegmentationOnElement][316]
-    -   [Parameters][317]
--   [hideSegmentationOnElement][318]
-    -   [Parameters][319]
--   [showAllSegmentationsOnElement][320]
--   [hideAllSegmentationsOnElement][321]
--   [getNumberOfColors][322]
--   [getReferencedToolDataName][323]
--   [setContextToDisplayFontSize][324]
-    -   [Parameters][325]
--   [triggerEvent][326]
-    -   [Parameters][327]
--   [makeUnselectable][328]
-    -   [Parameters][329]
--   [drawCircle][330]
-    -   [Parameters][331]
--   [drawCircle][332]
-    -   [Parameters][333]
--   [getPlayClipTimeouts][334]
-    -   [Parameters][335]
--   [stopClipWithData][336]
-    -   [Parameters][337]
--   [triggerStopEvent][338]
-    -   [Parameters][339]
--   [playClip][340]
-    -   [Parameters][341]
--   [stopClip][342]
-    -   [Parameters][343]
--   [getToolOptions][344]
-    -   [Parameters][345]
--   [clearToolOptions][346]
-    -   [Parameters][347]
--   [clearToolOptionsByToolType][348]
-    -   [Parameters][349]
--   [clearToolOptionsByElement][350]
-    -   [Parameters][351]
--   [StrokeStyle][352]
--   [getNewContext][353]
-    -   [Parameters][354]
--   [FillStyle][355]
--   [ContextFn][356]
-    -   [Parameters][357]
--   [draw][358]
-    -   [Parameters][359]
--   [path][360]
-    -   [Parameters][361]
--   [setShadow][362]
-    -   [Parameters][363]
--   [drawLine][364]
-    -   [Parameters][365]
--   [drawLines][366]
-    -   [Parameters][367]
--   [drawJoinedLines][368]
-    -   [Parameters][369]
--   [drawEllipse][370]
-    -   [Parameters][371]
--   [drawRect][372]
-    -   [Parameters][373]
--   [fillBox][374]
-    -   [Parameters][375]
--   [fillTextLines][376]
-    -   [Parameters][377]
+-   [defaultStrategy][107]
+    -   [Parameters][108]
+-   [minimalStrategy][109]
+    -   [Parameters][110]
+-   [createNewMeasurement][111]
+    -   [Parameters][112]
+-   [pointNearTool][113]
+    -   [Parameters][114]
+-   [renderToolData][115]
+    -   [Parameters][116]
+-   [createNewMeasurement][117]
+    -   [Parameters][118]
+-   [pointNearTool][119]
+    -   [Parameters][120]
+-   [distanceFromPoint][121]
+    -   [Parameters][122]
+-   [distanceFromPointCanvas][123]
+    -   [Parameters][124]
+-   [renderToolData][125]
+    -   [Parameters][126]
+-   [addNewMeasurement][127]
+    -   [Parameters][128]
+-   [preMouseDownCallback][129]
+    -   [Parameters][130]
+-   [handleSelectedCallback][131]
+    -   [Parameters][132]
+-   [\_drawingMouseMoveCallback][133]
+    -   [Parameters][134]
+-   [\_drawingMouseDownCallback][135]
+    -   [Parameters][136]
+-   [\_editMouseDragCallback][137]
+    -   [Parameters][138]
+-   [\_editMouseUpCallback][139]
+    -   [Parameters][140]
+-   [\_dropHandle][141]
+    -   [Parameters][142]
+-   [\_checkHandlesPolygonMode][143]
+    -   [Parameters][144]
+-   [insertOrDelete][145]
+    -   [Parameters][146]
+-   [deletePoint][147]
+    -   [Parameters][148]
+-   [insertPoint][149]
+    -   [Parameters][150]
+-   [getInsertionIndex][151]
+    -   [Parameters][152]
+-   [constructor][153]
+    -   [Parameters][154]
+-   [findLine][155]
+-   [findTool][156]
+-   [\_nearestHandleToPointAllTools][157]
+-   [\_nearestHandleToPoint][158]
+    -   [Parameters][159]
+-   [\_getCloseLinesInTool][160]
+    -   [Parameters][161]
+-   [\_findCorrectLine][162]
+    -   [Parameters][163]
+-   [\_pointProjectsToLineSegment][164]
+    -   [Parameters][165]
+-   [\_getLineOriginToMouseAsVector][166]
+    -   [Parameters][167]
+-   [\_distanceOfPointfromLine][168]
+    -   [Parameters][169]
+-   [getCanvasPointsFromHandles][170]
+    -   [Parameters][171]
+-   [getLineAsVector][172]
+    -   [Parameters][173]
+-   [getNextHandleIndex][174]
+    -   [Parameters][175]
+-   [ClickedLineData][176]
+    -   [Properties][177]
+-   [freehandArea][178]
+    -   [Parameters][179]
+-   [calculateFreehandStatistics][180]
+    -   [Parameters][181]
+-   [getSum][182]
+    -   [Parameters][183]
+-   [sumPointIfInFreehand][184]
+    -   [Parameters][185]
+-   [pointInFreehand][186]
+    -   [Parameters][187]
+-   [isEnclosedY][188]
+    -   [Parameters][189]
+-   [isLineRightOfPoint][190]
+    -   [Parameters][191]
+-   [lineSegmentAtPoint][192]
+    -   [Parameters][193]
+-   [rayFromPointCrosssesLine][194]
+    -   [Parameters][195]
+-   [newHandle][196]
+    -   [Parameters][197]
+-   [newHandle][198]
+    -   [Parameters][199]
+-   [end][200]
+    -   [Parameters][201]
+-   [modify][202]
+    -   [Parameters][203]
+-   [doesIntersectOtherLines][204]
+    -   [Parameters][205]
+-   [doesIntersect][206]
+    -   [Parameters][207]
+-   [orientation][208]
+    -   [Parameters][209]
+-   [onSegment][210]
+    -   [Parameters][211]
+-   [FreehandHandleData][212]
+    -   [Properties][213]
+-   [renderToolData][214]
+    -   [Parameters][215]
+-   [preMouseDownCallback][216]
+    -   [Parameters][217]
+-   [activeMouseDragCallback][218]
+    -   [Parameters][219]
+-   [activeMouseUpCallback][220]
+    -   [Parameters][221]
+-   [newImageCallback][222]
+    -   [Parameters][223]
+-   [enabledCallback][224]
+    -   [Parameters][225]
+-   [passiveCallback][226]
+    -   [Parameters][227]
+-   [disabledCallback][228]
+    -   [Parameters][229]
+-   [getDefaultFreehandSculpterMouseToolConfiguration][230]
+-   [changeTextCallback][231]
+    -   [Parameters][232]
+-   [createNewMeasurement][233]
+    -   [Parameters][234]
+-   [pointNearTool][235]
+    -   [Parameters][236]
+-   [renderToolData][237]
+    -   [Parameters][238]
+-   [\_drawZoomedElement][239]
+    -   [Parameters][240]
+-   [\_removeZoomElement][241]
+-   [\_createMagnificationCanvas][242]
+    -   [Parameters][243]
+-   [\_destroyMagnificationCanvas][244]
+    -   [Parameters][245]
+-   [createNewMeasurement][246]
+    -   [Parameters][247]
+-   [pointNearTool][248]
+    -   [Parameters][249]
+-   [renderToolData][250]
+    -   [Parameters][251]
+-   [createNewMeasurement][252]
+    -   [Parameters][253]
+-   [pointNearTool][254]
+    -   [Parameters][255]
+-   [renderToolData][256]
+    -   [Parameters][257]
+-   [angleBetweenPoints][258]
+    -   [Parameters][259]
+-   [computeScaleBounds][260]
+    -   [Parameters][261]
+-   [drawVerticalScalebarIntervals][262]
+    -   [Parameters][263]
+-   [basicLevelingStrategy][264]
+    -   [Parameters][265]
+-   [\_startOutliningRegion][266]
+    -   [Parameters][267]
+-   [\_setHandlesAndUpdate][268]
+    -   [Parameters][269]
+-   [\_applyStrategy][270]
+    -   [Parameters][271]
+-   [\_resetHandles][272]
+-   [isEmptyObject][273]
+    -   [Parameters][274]
+-   [applyWWWCRegion][275]
+    -   [Parameters][276]
+-   [calculateMinMaxMean][277]
+    -   [Parameters][278]
+-   [touchPinchCallback][279]
+    -   [Parameters][280]
+-   [mouseWheelCallback][281]
+    -   [Parameters][282]
+-   [convertToVector3][283]
+    -   [Parameters][284]
+-   [renderBrush][285]
+    -   [Parameters][286]
+-   [renderBrush][287]
+    -   [Parameters][288]
+-   [\_paint][289]
+    -   [Parameters][290]
+-   [mouseDragCallback][291]
+    -   [Parameters][292]
+-   [preMouseDownCallback][293]
+    -   [Parameters][294]
+-   [\_startPainting][295]
+    -   [Parameters][296]
+-   [mouseMoveCallback][297]
+    -   [Parameters][298]
+-   [passiveCallback][299]
+    -   [Parameters][300]
+-   [renderToolData][301]
+    -   [Parameters][302]
+-   [\_getBrushColor][303]
+    -   [Parameters][304]
+-   [\_drawingMouseUpCallback][305]
+    -   [Parameters][306]
+-   [\_startListeningForMouseUp][307]
+    -   [Parameters][308]
+-   [\_stopListeningForMouseUp][309]
+    -   [Parameters][310]
+-   [nextSegmentation][311]
+-   [previousSegmentation][312]
+-   [increaseBrushSize][313]
+-   [decreaseBrushSize][314]
+-   [showSegmentationOnElement][315]
+    -   [Parameters][316]
+-   [hideSegmentationOnElement][317]
+    -   [Parameters][318]
+-   [showAllSegmentationsOnElement][319]
+-   [hideAllSegmentationsOnElement][320]
+-   [getNumberOfColors][321]
+-   [getReferencedToolDataName][322]
+-   [setContextToDisplayFontSize][323]
+    -   [Parameters][324]
+-   [makeUnselectable][325]
+    -   [Parameters][326]
+-   [drawCircle][327]
+    -   [Parameters][328]
+-   [drawCircle][329]
+    -   [Parameters][330]
+-   [triggerEvent][331]
+    -   [Parameters][332]
+-   [getPlayClipTimeouts][333]
+    -   [Parameters][334]
+-   [stopClipWithData][335]
+    -   [Parameters][336]
+-   [triggerStopEvent][337]
+    -   [Parameters][338]
+-   [playClip][339]
+    -   [Parameters][340]
+-   [stopClip][341]
+    -   [Parameters][342]
+-   [getToolOptions][343]
+    -   [Parameters][344]
+-   [clearToolOptions][345]
+    -   [Parameters][346]
+-   [clearToolOptionsByToolType][347]
+    -   [Parameters][348]
+-   [clearToolOptionsByElement][349]
+    -   [Parameters][350]
+-   [getNewContext][351]
+    -   [Parameters][352]
+-   [FillStyle][353]
+-   [StrokeStyle][354]
+-   [ContextFn][355]
+    -   [Parameters][356]
+-   [draw][357]
+    -   [Parameters][358]
+-   [path][359]
+    -   [Parameters][360]
+-   [setShadow][361]
+    -   [Parameters][362]
+-   [drawLine][363]
+    -   [Parameters][364]
+-   [drawLines][365]
+    -   [Parameters][366]
+-   [drawJoinedLines][367]
+    -   [Parameters][368]
+-   [drawEllipse][369]
+    -   [Parameters][370]
+-   [drawRect][371]
+    -   [Parameters][372]
+-   [fillBox][373]
+    -   [Parameters][374]
+-   [fillTextLines][375]
+    -   [Parameters][376]
 
 ## Core
 
@@ -406,9 +405,9 @@ Set the options object associated with a particular toolType and element
 
 #### Parameters
 
--   `toolType` **[string][378]** Tool type identifier of the target options object
--   `element` **[HTMLElement][379]** Element of the target options object
--   `options` **[Object][380]** Options object to store at target
+-   `toolType` **[string][377]** Tool type identifier of the target options object
+-   `element` **[HTMLElement][378]** Element of the target options object
+-   `options` **[Object][379]** Options object to store at target
 
 Returns **void** 
 
@@ -416,16 +415,16 @@ Returns **void**
 
 #### Parameters
 
--   `toolName` **[string][378]** 
--   `options` **[Object][380]** 
+-   `toolName` **[string][377]** 
+-   `options` **[Object][379]** 
 
 ### setToolOptionsForElement
 
 #### Parameters
 
 -   `element` **any** 
--   `toolName` **[string][378]** 
--   `options` **[Object][380]** 
+-   `toolName` **[string][377]** 
+-   `options` **[Object][379]** 
 
 ## Tool Modes
 
@@ -491,7 +490,29 @@ Sets the brush color map to something other than the default
 
 ### Parameters
 
--   `colors` **[Array][381]** An array of 4D [red, green, blue, alpha] arrays.
+-   `colors` **[Array][380]** An array of 4D [red, green, blue, alpha] arrays.
+
+## enabledElementCallback
+
+enabledElementCallback - Element specific initilisation.
+
+### Parameters
+
+-   `enabledElement` **[Object][379]** The element on which the module is
+                                     being initialised.
+
+## onRegisterCallback
+
+onRegisterCallback - Initialise the module when a new element is added.
+
+## registerModule
+
+registerModule - register a module to the store.
+
+### Parameters
+
+-   `newModule` **[Object][379]** The module to register.
+-   `name`  
 
 ## removeToolForElement
 
@@ -519,21 +540,13 @@ Adds an enabledElement to our store.
 
 -   `elementEnabledEvt` **any** 
 
-## removeEnabledElement
-
-Removes an enabledElement from our store, and all associated tools that were added to it.
-
-### Parameters
-
--   `elementDisabledEvt` **any** 
-
 ## onImageRenderedBrushEventHandler
 
 Used to redraw the brush label map data per render.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_drawImageBitmap
 
@@ -541,7 +554,7 @@ Draws the ImageBitmap the canvas.
 
 ### Parameters
 
--   `evt` **[Object][380]** description
+-   `evt` **[Object][379]** description
 -   `imageBitmap`  
 -   `alwaysVisible`  
 
@@ -603,14 +616,6 @@ of a tool.
 
 -   `evt` **any** 
 
-## keyDown
-
-KeyDown is used for keyboard input for mouse tools.
-
-### Parameters
-
--   `evt` **[Object][380]** 
-
 ## onNewImageBrushEventHandler
 
 Clears the brush imageBitmapCache,
@@ -618,7 +623,15 @@ invaldates the data and calls for a re-render.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
+
+## removeEnabledElement
+
+Removes an enabledElement from our store, and all associated tools that were added to it.
+
+### Parameters
+
+-   `elementDisabledEvt` **any** 
 
 ## setToolModeForElement
 
@@ -675,6 +688,71 @@ Create the measurement data for this tool with the end handle activated
 
 ## createNewMeasurement
 
+### Parameters
+
+-   `evt` **type** description
+
+Returns **type** description
+
+## pointNearTool
+
+### Parameters
+
+-   `element` **any** 
+-   `data` **any** 
+-   `coords` **any** 
+
+Returns **[boolean][381]** If the point is near the tool
+
+## distanceFromPoint
+
+### Parameters
+
+-   `element` **any** 
+-   `data` **any** 
+-   `coords` **any** 
+
+Returns **[number][382]** the distance in px from the provided coordinates to the
+closest rendered portion of the annotation. -1 if the distance cannot be
+calculated.
+
+## renderToolData
+
+### Parameters
+
+-   `evt` **any** 
+
+## mouseMoveCallback
+
+Event handler for MOUSE_MOVE event.
+
+### Parameters
+
+-   `evt` **[Object][379]** The event.
+
+## handleSelectedCallback
+
+Custom callback for when a handle is selected.
+
+### Parameters
+
+-   `evt` **any** 
+-   `handle` **any** The selected handle.
+-   `data`  
+
+## toolSelectedCallback
+
+Custom callback for when a tool is selected.
+
+### Parameters
+
+-   `evt` **any** 
+-   `data`  
+-   `toolState`  
+-   `tool` **any** The selected tool.
+
+## createNewMeasurement
+
 Create the measurement data for this tool with the end handle activated
 
 ### Parameters
@@ -716,6 +794,131 @@ Create the measurement data for this tool with the end handle activated
 ### Parameters
 
 -   `evt` **any** 
+
+## applyActiveStrategy
+
+### Parameters
+
+-   `evt` **any** 
+
+Returns **any** Any
+
+## \_applyMixins
+
+Applys the requested mixins to the class.
+
+### Parameters
+
+-   `mixins`  
+-   `mixinArray` **[Array][380]** An array of mixin names (strings).
+
+## 
+
+Example implementation:
+
+postTouchStartCallback(evt) {
+   return false;
+}
+
+## 
+
+Callback that is called if the tool is active, after `TOUCH_START`
+events are processed. Does nothing by default.
+
+### Parameters
+
+-   `evt` **type** 
+
+Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+
+## 
+
+Example implementation:
+
+preTouchStartCallback(evt) {
+   return false;
+}
+
+## 
+
+Callback that takes priority if the tool is active, before `TOUCH_START`
+events are processed. Does nothing by default.
+
+### Parameters
+
+-   `evt` **type** 
+
+Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+
+## 
+
+Example implementation:
+
+postMouseDownCallback(evt) {
+   return false;
+}
+
+## 
+
+Callback that takes priority if the tool is active, before `MOUSE_DOWN`
+events are processed. Does nothing by default.
+
+### Parameters
+
+-   `evt` **type** 
+
+Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+
+## 
+
+Example implementation:
+
+preMouseDownCallback(evt) {
+   return false;
+}
+
+## 
+
+Callback that is called if the tool is active, after `MOUSE_DOWN`
+events are processed. Does nothing by default.
+
+### Parameters
+
+-   `evt` **type** 
+
+Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+
+## passiveCallback
+
+If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
+
+### Parameters
+
+-   `element` **type** The element on which the tool resides.
+
+## passiveCallback
+
+If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
+
+### Parameters
+
+-   `element` **type** The element on which the tool resides.
+
+## enabledCallback
+
+If one attempts to turn the tool 'enabled', redirect the tool to 'active'.
+
+### Parameters
+
+-   `element` **type** The element on which the tool resides.
+
+## activeCallback
+
+If one attempts to change mode to 'active', redirect the tool to 'enabled'.
+
+### Parameters
+
+-   `element` **type** The element on which the tool resides.
 
 ## defaultStrategy
 
@@ -772,214 +975,6 @@ Create the measurement data for this tool with the end handle activated
 
 ## createNewMeasurement
 
-### Parameters
-
--   `evt` **type** description
-
-Returns **type** description
-
-## pointNearTool
-
-### Parameters
-
--   `element` **any** 
--   `data` **any** 
--   `coords` **any** 
-
-Returns **[boolean][382]** If the point is near the tool
-
-## distanceFromPoint
-
-### Parameters
-
--   `element` **any** 
--   `data` **any** 
--   `coords` **any** 
-
-Returns **[number][383]** the distance in px from the provided coordinates to the
-closest rendered portion of the annotation. -1 if the distance cannot be
-calculated.
-
-## renderToolData
-
-### Parameters
-
--   `evt` **any** 
-
-## mouseMoveCallback
-
-Event handler for MOUSE_MOVE event.
-
-### Parameters
-
--   `evt` **[Object][380]** The event.
-
-## handleSelectedCallback
-
-Custom callback for when a handle is selected.
-
-### Parameters
-
--   `evt` **any** 
--   `handle` **any** The selected handle.
--   `data`  
-
-## toolSelectedCallback
-
-Custom callback for when a tool is selected.
-
-### Parameters
-
--   `evt` **any** 
--   `data`  
--   `toolState`  
--   `tool` **any** The selected tool.
-
-## applyActiveStrategy
-
-### Parameters
-
--   `evt` **any** 
-
-Returns **any** Any
-
-## onKeyDown
-
-Event handler for KEY_DOWN event.
-
-### Parameters
-
--   `evt` **[Object][380]** The event.
-
-## \_applyMixins
-
-Applys the requested mixins to the class.
-
-### Parameters
-
--   `mixins`  
--   `mixinArray` **[Array][381]** An array of mixin names (strings).
-
-## 
-
-Example implementation:
-
-preTouchStartCallback(evt) {
-   return false;
-}
-
-## 
-
-Callback that takes priority if the tool is active, before `MOUSE_DOWN`
-events are processed. Does nothing by default.
-
-### Parameters
-
--   `evt` **type** 
-
-Returns **[boolean][382]** consumedEvent - True if function consumed the event.
-
-## 
-
-Example implementation:
-
-postTouchStartCallback(evt) {
-   return false;
-}
-
-## 
-
-Callback that is called if the tool is active, after `TOUCH_START`
-events are processed. Does nothing by default.
-
-### Parameters
-
--   `evt` **type** 
-
-Returns **[boolean][382]** consumedEvent - True if function consumed the event.
-
-## 
-
-Callback that takes priority if the tool is active, before `TOUCH_START`
-events are processed. Does nothing by default.
-
-### Parameters
-
--   `evt` **type** 
-
-Returns **[boolean][382]** consumedEvent - True if function consumed the event.
-
-## 
-
-Example implementation:
-
-postMouseDownCallback(evt) {
-   return false;
-}
-
-## 
-
-Callback that is called if the tool is active, after `MOUSE_DOWN`
-events are processed. Does nothing by default.
-
-### Parameters
-
--   `evt` **type** 
-
-Returns **[boolean][382]** consumedEvent - True if function consumed the event.
-
-## 
-
-Example implementation:
-
-preMouseDownCallback(evt) {
-   return false;
-}
-
-## keyPress
-
-Calls the function mapped to the keypress
-
-### Parameters
-
--   `keyCode` **[Number][383]** description
-
-Returns **[Boolean][382]** Whether a function was called.
-
-## passiveCallback
-
-If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
-
-### Parameters
-
--   `element` **type** The element on which the tool resides.
-
-## passiveCallback
-
-If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
-
-### Parameters
-
--   `element` **type** The element on which the tool resides.
-
-## enabledCallback
-
-If one attempts to turn the tool 'enabled', redirect the tool to 'active'.
-
-### Parameters
-
--   `element` **type** The element on which the tool resides.
-
-## activeCallback
-
-If one attempts to change mode to 'active', redirect the tool to 'enabled'.
-
-### Parameters
-
--   `element` **type** The element on which the tool resides.
-
-## createNewMeasurement
-
 Create the measurement data for this tool
 
 ### Parameters
@@ -994,7 +989,7 @@ Create the measurement data for this tool
 -   `data` **any** 
 -   `coords` **any** 
 
-Returns **[Boolean][382]** 
+Returns **[Boolean][381]** 
 
 ## distanceFromPoint
 
@@ -1004,7 +999,7 @@ Returns **[Boolean][382]**
 -   `data` **any** 
 -   `coords` **any** 
 
-Returns **[number][383]** the distance in px from the provided coordinates to the
+Returns **[number][382]** the distance in px from the provided coordinates to the
 closest rendered portion of the annotation. -1 if the distance cannot be
 calculated.
 
@@ -1016,7 +1011,7 @@ calculated.
 -   `data` **any** 
 -   `coords` **any** 
 
-Returns **[number][383]** the distance in canvas units from the provided coordinates to the
+Returns **[number][382]** the distance in canvas units from the provided coordinates to the
 closest rendered portion of the annotation. -1 if the distance cannot be
 calculated.
 
@@ -1033,7 +1028,7 @@ the event is not caught by mouseDownCallback.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 -   `interactionType`  
 
 ## preMouseDownCallback
@@ -1043,7 +1038,7 @@ to insert or delete a handle with ctrl + click.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## handleSelectedCallback
 
@@ -1051,8 +1046,8 @@ Custom callback for when a handle is selected.
 
 ### Parameters
 
--   `evt` **[Object][380]** 
--   `handle` **[Object][380]** The selected handle.
+-   `evt` **[Object][379]** 
+-   `handle` **[Object][379]** The selected handle.
 -   `data`  
 
 ## \_drawingMouseMoveCallback
@@ -1061,7 +1056,7 @@ Event handler for MOUSE_MOVE during drawing event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_drawingMouseDownCallback
 
@@ -1069,7 +1064,7 @@ Event handler for MOUSE_DOWN during drawing event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_editMouseDragCallback
 
@@ -1077,7 +1072,7 @@ Event handler for MOUSE_DRAG during handle drag event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_editMouseUpCallback
 
@@ -1085,7 +1080,7 @@ Event handler for MOUSE_UP during handle drag event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_dropHandle
 
@@ -1094,8 +1089,8 @@ If the new location is invalid the handle snaps back to its previous position.
 
 ### Parameters
 
--   `eventData` **[Object][380]** Data object associated with the event.
--   `toolState` **[Object][380]** The data associated with the freehand tool.
+-   `eventData` **[Object][379]** Data object associated with the event.
+-   `toolState` **[Object][379]** The data associated with the freehand tool.
 
 ## \_checkHandlesPolygonMode
 
@@ -1103,9 +1098,9 @@ Returns true if the proposed location of a new handle is invalid (in polygon mod
 
 ### Parameters
 
--   `data` **[Object][380]** data object associated with the tool.
+-   `data` **[Object][379]** data object associated with the tool.
 
-Returns **[Boolean][382]** 
+Returns **[Boolean][381]** 
 
 ## insertOrDelete
 
@@ -1114,8 +1109,8 @@ Inserts or deletes a point from a freehand tool.
 ### Parameters
 
 -   `evt`  
--   `nearby` **[Object][380]** Object containing information about a nearby handle.
--   `e` **[Object][380]** The event.
+-   `nearby` **[Object][379]** Object containing information about a nearby handle.
+-   `e` **[Object][379]** The event.
 
 ## deletePoint
 
@@ -1123,8 +1118,8 @@ Deletes a point from a freehand tool.
 
 ### Parameters
 
--   `eventData` **[Object][380]** The data object associated with the event.
--   `deleteInfo` **[Object][380]** Object containing information about which point to delete.
+-   `eventData` **[Object][379]** The data object associated with the event.
+-   `deleteInfo` **[Object][379]** Object containing information about which point to delete.
 
 ## insertPoint
 
@@ -1132,8 +1127,8 @@ Inserts a new point into a freehand tool.
 
 ### Parameters
 
--   `eventData` **[Object][380]** The data object associated with the event.
--   `insertInfo` **[Object][380]** Object containing information about where to insert the point.
+-   `eventData` **[Object][379]** The data object associated with the event.
+-   `insertInfo` **[Object][379]** Object containing information about where to insert the point.
 
 ## getInsertionIndex
 
@@ -1141,7 +1136,7 @@ Gets the handle index of a tool in which to insert the new point.
 
 ### Parameters
 
--   `insertInfo` **[Object][380]** Object containing information about where to insert the point.
+-   `insertInfo` **[Object][379]** Object containing information about where to insert the point.
 
 ## constructor
 
@@ -1149,25 +1144,25 @@ Constructs a linefinder with the eventdata
 
 ### Parameters
 
--   `eventData` **[Object][380]** Data object associated with the event.
+-   `eventData` **[Object][379]** Data object associated with the event.
 
 ## findLine
 
 Looks for lines near the mouse cursor.
 
-Returns **[ClickedLineData][384]** 
+Returns **[ClickedLineData][383]** 
 
 ## findTool
 
 Looks for tools near the mouse cursor.
 
-Returns **[ClickedLineData][384]** 
+Returns **[ClickedLineData][383]** 
 
 ## \_nearestHandleToPointAllTools
 
 Finds the nearest handle to the mouse cursor for all tools.
 
-Returns **[Object][380]** closestHandle - The handle closest to the point.
+Returns **[Object][379]** closestHandle - The handle closest to the point.
 
 ## \_nearestHandleToPoint
 
@@ -1175,9 +1170,9 @@ Finds the nearest handle to the mouse cursor for a specific tool.
 
 ### Parameters
 
--   `toolIndex` **[Number][383]** The index of the particular freehand tool.
+-   `toolIndex` **[Number][382]** The index of the particular freehand tool.
 
-Returns **[Object][380]** An object containing information about the closest handle.
+Returns **[Object][379]** An object containing information about the closest handle.
 
 ## \_getCloseLinesInTool
 
@@ -1185,9 +1180,9 @@ Finds all the lines close to the mouse point for a particular tool.
 
 ### Parameters
 
--   `toolIndex` **[Number][383]** The index of the particular freehand tool.
+-   `toolIndex` **[Number][382]** The index of the particular freehand tool.
 
-Returns **[Object][380]** An array of lines close to the mouse point.
+Returns **[Object][379]** An array of lines close to the mouse point.
 
 ## \_findCorrectLine
 
@@ -1195,10 +1190,10 @@ Finds the line the user clicked on from an array of close lines.
 
 ### Parameters
 
--   `toolIndex` **[Number][383]** The index of the particular freehand tool.
--   `closeLines` **[Object][380]** An array of lines close to the mouse point.
+-   `toolIndex` **[Number][382]** The index of the particular freehand tool.
+-   `closeLines` **[Object][379]** An array of lines close to the mouse point.
 
-Returns **([ClickedLineData][384] | null)** An instance of ClickedLineData containing information about the line, or null if no line is correct.
+Returns **([ClickedLineData][383] | null)** An instance of ClickedLineData containing information about the line, or null if no line is correct.
 
 ## \_pointProjectsToLineSegment
 
@@ -1206,10 +1201,10 @@ Returns true if the mouse point projects onto the line segment.
 
 ### Parameters
 
--   `toolIndex` **[Number][383]** The index of the particular freehand tool.
--   `handleIndexArray` **[Object][380]** An array of indicies corresponding to the line segment.
+-   `toolIndex` **[Number][382]** The index of the particular freehand tool.
+-   `handleIndexArray` **[Object][379]** An array of indicies corresponding to the line segment.
 
-Returns **[Boolean][382]** True if the mouse point projects onto the line segment
+Returns **[Boolean][381]** True if the mouse point projects onto the line segment
 
 ## \_getLineOriginToMouseAsVector
 
@@ -1217,9 +1212,9 @@ Constructs a vector from the direction and magnitude of the line from the the li
 
 ### Parameters
 
--   `p` **[Object][380]** An array of two points respresenting the line segment.
+-   `p` **[Object][379]** An array of two points respresenting the line segment.
 
-Returns **[Object][380]** An array containing the x and y components of the vector.
+Returns **[Object][379]** An array containing the x and y components of the vector.
 
 ## \_distanceOfPointfromLine
 
@@ -1227,10 +1222,10 @@ Calculates the perpendicular distance of the mouse cursor from a line segment.
 
 ### Parameters
 
--   `handle1` **[FreehandHandleData][385]** The first handle.
--   `handle2` **[FreehandHandleData][385]** The first handle.
+-   `handle1` **[FreehandHandleData][384]** The first handle.
+-   `handle2` **[FreehandHandleData][384]** The first handle.
 
-Returns **[Number][383]** The perpendicular distance of the mouse cursor from the line segment.
+Returns **[Number][382]** The perpendicular distance of the mouse cursor from the line segment.
 
 ## getCanvasPointsFromHandles
 
@@ -1238,11 +1233,11 @@ Returns the canvas positions from the handle's pixel positions.
 
 ### Parameters
 
--   `handle1` **[FreehandHandleData][385]** The first handle.
--   `handle2` **[FreehandHandleData][385]** The second handle.
--   `element` **[Object][380]** The element on which the handles reside.
+-   `handle1` **[FreehandHandleData][384]** The first handle.
+-   `handle2` **[FreehandHandleData][384]** The second handle.
+-   `element` **[Object][379]** The element on which the handles reside.
 
-Returns **[Object][380]** An array contsining the handle positions in canvas coordinates.
+Returns **[Object][379]** An array contsining the handle positions in canvas coordinates.
 
 ## getLineAsVector
 
@@ -1250,9 +1245,9 @@ Converts a line segment to a vector.
 
 ### Parameters
 
--   `p` **[Object][380]** An array of two points respresenting the line segment.
+-   `p` **[Object][379]** An array of two points respresenting the line segment.
 
-Returns **[Object][380]** An array containing the x and y components of the vector, as well as a magnitude property.
+Returns **[Object][379]** An array containing the x and y components of the vector, as well as a magnitude property.
 
 ## getNextHandleIndex
 
@@ -1260,19 +1255,19 @@ Gets the next handl index from a cyclical array of points.
 
 ### Parameters
 
--   `currentIndex` **[Number][383]** The current index.
--   `length` **[Number][383]** The number of handles in the polygon.
+-   `currentIndex` **[Number][382]** The current index.
+-   `length` **[Number][382]** The number of handles in the polygon.
 
-Returns **[Number][383]** The index of the next handle.
+Returns **[Number][382]** The index of the next handle.
 
 ## ClickedLineData
 
-Type: [Object][380]
+Type: [Object][379]
 
 ### Properties
 
--   `toolIndex` **[Number][383]** ID of the tool that the line corresponds to.
--   `handleIndexArray` **[Object][380]** An array of the handle indicies that correspond to the line segment.
+-   `toolIndex` **[Number][382]** ID of the tool that the line corresponds to.
+-   `handleIndexArray` **[Object][379]** An array of the handle indicies that correspond to the line segment.
 
 ## freehandArea
 
@@ -1280,10 +1275,10 @@ Calculates the area of a freehand tool polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][380]** data object associated with the tool.
--   `scaling` **[Object][380]** Area scaling of image.
+-   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `scaling` **[Object][379]** Area scaling of image.
 
-Returns **[Number][383]** The area of the polygon.
+Returns **[Number][382]** The area of the polygon.
 
 ## calculateFreehandStatistics
 
@@ -1291,11 +1286,11 @@ Calculates the statistics of all the points within the freehand object.
 
 ### Parameters
 
--   `sp` **[Object][380]** An array of the pixel data.
--   `boundingBox` **[Object][380]** Rectangular box enclosing the polygon.
--   `dataHandles` **[Object][380]** Data object associated with the tool.
+-   `sp` **[Object][379]** An array of the pixel data.
+-   `boundingBox` **[Object][379]** Rectangular box enclosing the polygon.
+-   `dataHandles` **[Object][379]** Data object associated with the tool.
 
-Returns **[Object][380]** statisticsObj - Object containing the derived statistics.
+Returns **[Object][379]** statisticsObj - Object containing the derived statistics.
 
 ## getSum
 
@@ -1303,11 +1298,11 @@ Calculates the sum, squared sum and count of all pixels within the polygon.
 
 ### Parameters
 
--   `sp` **[Object][380]** An array of the pixel data.
--   `boundingBox` **[Object][380]** Rectangular box enclosing the polygon.
--   `dataHandles` **[Object][380]** Data object associated with the tool.
+-   `sp` **[Object][379]** An array of the pixel data.
+-   `boundingBox` **[Object][379]** Rectangular box enclosing the polygon.
+-   `dataHandles` **[Object][379]** Data object associated with the tool.
 
-Returns **[Object][380]** sum - Object containing the sum, squared sum and pixel count.
+Returns **[Object][379]** sum - Object containing the sum, squared sum and pixel count.
 
 ## sumPointIfInFreehand
 
@@ -1315,10 +1310,10 @@ Adds the pixel to the workingSum if it is within the polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][380]** Data object associated with the tool.
--   `point` **[Object][380]** The pixel coordinates.
--   `workingSum` **[Object][380]** The working sum, squared sum and pixel count.
--   `pixelValue` **[Object][380]** The pixel value.
+-   `dataHandles` **[Object][379]** Data object associated with the tool.
+-   `point` **[Object][379]** The pixel coordinates.
+-   `workingSum` **[Object][379]** The working sum, squared sum and pixel count.
+-   `pixelValue` **[Object][379]** The pixel value.
 
 ## pointInFreehand
 
@@ -1339,11 +1334,11 @@ Returns true if the y-position yp is enclosed within y-positions y1 and y2.
 
 ### Parameters
 
--   `yp` **[Number][383]** The y position of point p.
--   `y1` **[Number][383]** The y position of point 1.
--   `y2` **[Number][383]** The y position of point 2.
+-   `yp` **[Number][382]** The y position of point p.
+-   `y1` **[Number][382]** The y position of point 1.
+-   `y2` **[Number][382]** The y position of point 2.
 
-Returns **[Boolean][382]** True if the y-position yp is enclosed within y-positions y1 and y2.
+Returns **[Boolean][381]** True if the y-position yp is enclosed within y-positions y1 and y2.
 
 ## isLineRightOfPoint
 
@@ -1351,11 +1346,11 @@ Returns true if the line segment is to the right of the point.
 
 ### Parameters
 
--   `point` **[Object][380]** The point being queried.
--   `lp1` **[Object][380]** The first point of the line segment.
--   `lp2` **[Object][380]** The second point of the line segment.
+-   `point` **[Object][379]** The point being queried.
+-   `lp1` **[Object][379]** The first point of the line segment.
+-   `lp2` **[Object][379]** The second point of the line segment.
 
-Returns **[Boolean][382]** True if the line is to the right of the point.
+Returns **[Boolean][381]** True if the line is to the right of the point.
 
 ## lineSegmentAtPoint
 
@@ -1363,11 +1358,11 @@ Returns the y value of the line segment at the x value of the point.
 
 ### Parameters
 
--   `point` **[Object][380]** The point being queried.
--   `lp1` **[Object][380]** The first point of the line segment.
--   `lp2` **[Object][380]** The second point of the line segment.
+-   `point` **[Object][379]** The point being queried.
+-   `lp1` **[Object][379]** The first point of the line segment.
+-   `lp2` **[Object][379]** The second point of the line segment.
 
-Returns **[Object][380]** An object containing the y value as well as the gradient of the line segment.
+Returns **[Object][379]** An object containing the y value as well as the gradient of the line segment.
 
 ## rayFromPointCrosssesLine
 
@@ -1375,11 +1370,11 @@ Returns true if a rightwards ray originating from the point crosses the line def
 
 ### Parameters
 
--   `point` **[Object][380]** The point being queried.
--   `handleI` **[Object][380]** The first handle of the line segment.
--   `handleJ` **[Object][380]** The second handle of the line segment.
+-   `point` **[Object][379]** The point being queried.
+-   `handleI` **[Object][379]** The first handle of the line segment.
+-   `handleJ` **[Object][379]** The second handle of the line segment.
 
-Returns **[Boolean][382]** True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+Returns **[Boolean][381]** True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
 
 ## newHandle
 
@@ -1387,10 +1382,10 @@ Determines whether a new handle causes an intersection of the lines of the polyg
 
 ### Parameters
 
--   `candidateHandle` **[Object][380]** The new handle to check.
--   `dataHandles` **[Object][380]** data object associated with the tool.
+-   `candidateHandle` **[Object][379]** The new handle to check.
+-   `dataHandles` **[Object][379]** data object associated with the tool.
 
-Returns **[Boolean][382]** Whether the new line intersects with any other lines of the polygon.
+Returns **[Boolean][381]** Whether the new line intersects with any other lines of the polygon.
 
 ## newHandle
 
@@ -1408,9 +1403,9 @@ Checks if the last line of a polygon will intersect the other lines of the polgy
 
 ### Parameters
 
--   `dataHandles` **[Object][380]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the tool.
 
-Returns **[Boolean][382]** Whether the last line intersects with any other lines of the polygon.
+Returns **[Boolean][381]** Whether the last line intersects with any other lines of the polygon.
 
 ## modify
 
@@ -1418,10 +1413,10 @@ Checks whether the modification of a handle's position causes intersection of th
 
 ### Parameters
 
--   `dataHandles` **[Object][380]** data object associated with the tool.
--   `modifiedHandleId` **[Number][383]** The id of the handle being modified.
+-   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `modifiedHandleId` **[Number][382]** The id of the handle being modified.
 
-Returns **[Boolean][382]** Whether the modfication causes any intersections.
+Returns **[Boolean][381]** Whether the modfication causes any intersections.
 
 ## doesIntersectOtherLines
 
@@ -1429,12 +1424,12 @@ Checks whether the line (p1,q1) intersects any of the other lines in the polygon
 
 ### Parameters
 
--   `dataHandles` **[Object][380]** data object associated with the tool.
--   `p1` **[Object][380]** Coordinates of the start of the line.
--   `q1` **[Object][380]** Coordinates of the end of the line.
--   `ignoredHandleIds` **[Object][380]** Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
+-   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `p1` **[Object][379]** Coordinates of the start of the line.
+-   `q1` **[Object][379]** Coordinates of the end of the line.
+-   `ignoredHandleIds` **[Object][379]** Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
 
-Returns **[Boolean][382]** Whether the line intersects any of the other lines in the polygon.
+Returns **[Boolean][381]** Whether the line intersects any of the other lines in the polygon.
 
 ## doesIntersect
 
@@ -1442,12 +1437,12 @@ Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation a
 
 ### Parameters
 
--   `p1` **[Object][380]** Coordinates of the start of the line 2.
--   `q1` **[Object][380]** Coordinates of the end of the line 2.
+-   `p1` **[Object][379]** Coordinates of the start of the line 2.
+-   `q1` **[Object][379]** Coordinates of the end of the line 2.
 -   `p2`  
 -   `q2`  
 
-Returns **[Boolean][382]** Whether lines (p1,q1) and (p2,q2) intersect.
+Returns **[Boolean][381]** Whether lines (p1,q1) and (p2,q2) intersect.
 
 ## orientation
 
@@ -1455,11 +1450,11 @@ Checks the orientation of 3 points.
 
 ### Parameters
 
--   `p` **[Object][380]** First point.
--   `q` **[Object][380]** Second point.
--   `r` **[Object][380]** Third point.
+-   `p` **[Object][379]** First point.
+-   `q` **[Object][379]** Second point.
+-   `r` **[Object][379]** Third point.
 
-Returns **[Number][383]** 0: Colinear, 1: Clockwise, 2: Anticlockwise
+Returns **[Number][382]** 0: Colinear, 1: Clockwise, 2: Anticlockwise
 
 ## onSegment
 
@@ -1467,23 +1462,23 @@ Checks if point q lines on the segment (p,r).
 
 ### Parameters
 
--   `p` **[Object][380]** Point p.
--   `q` **[Object][380]** Point q.
--   `r` **[Object][380]** Point r.
+-   `p` **[Object][379]** Point p.
+-   `q` **[Object][379]** Point q.
+-   `r` **[Object][379]** Point r.
 
-Returns **[Boolean][382]** If q lies on line segment (p,r).
+Returns **[Boolean][381]** If q lies on line segment (p,r).
 
 ## FreehandHandleData
 
-Type: [Object][380]
+Type: [Object][379]
 
 ### Properties
 
--   `x` **[Number][383]** The x position.
--   `y` **[Number][383]** The y position.
--   `highlight` **[Boolean][382]** Whether the handle should be rendered as the highlighted color.
--   `active` **[Boolean][382]** Whether the handle is active.
--   `lines` **[Object][380]** An array of lines associated with the handle.
+-   `x` **[Number][382]** The x position.
+-   `y` **[Number][382]** The y position.
+-   `highlight` **[Boolean][381]** Whether the handle should be rendered as the highlighted color.
+-   `active` **[Boolean][381]** Whether the handle is active.
+-   `lines` **[Object][379]** An array of lines associated with the handle.
 
 ## renderToolData
 
@@ -1491,7 +1486,7 @@ Event handler for IMAGE_RENDERED event.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## preMouseDownCallback
 
@@ -1499,7 +1494,7 @@ Event handler for MOUSE_DOWN.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## activeMouseDragCallback
 
@@ -1507,7 +1502,7 @@ Event handler for MOUSE_DRAG during the active loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## activeMouseUpCallback
 
@@ -1515,7 +1510,7 @@ Event handler for MOUSE_UP during the active loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## newImageCallback
 
@@ -1523,7 +1518,7 @@ Event handler for NEW_IMAGE event.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## enabledCallback
 
@@ -1531,7 +1526,7 @@ Event handler for switching mode to enabled.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## passiveCallback
 
@@ -1539,7 +1534,7 @@ Event handler for switching mode to passive.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## disabledCallback
 
@@ -1547,13 +1542,13 @@ Event handler for switching mode to disabled.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## getDefaultFreehandSculpterMouseToolConfiguration
 
 Returns the default freehandSculpterMouseTool configuration.
 
-Returns **[Object][380]** The default configuration object.
+Returns **[Object][379]** The default configuration object.
 
 ## changeTextCallback
 
@@ -1698,7 +1693,7 @@ image will feel the same as a 16 bit image would)
 ### Parameters
 
 -   `evt`  
--   `$1` **[Object][380]** 
+-   `$1` **[Object][379]** 
     -   `$1.orientation`  
 -   `eventData`  
 
@@ -1710,7 +1705,7 @@ Sets the start handle point and claims the eventDispatcher event
 
 -   `evt` **any** 
 
-Returns **[Boolean][382]** True
+Returns **[Boolean][381]** True
 
 ## \_setHandlesAndUpdate
 
@@ -1726,7 +1721,7 @@ Event handler for MOUSE_UP during handle drag event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_resetHandles
 
@@ -1775,7 +1770,7 @@ Convert an Array to a cornerstoneMath.Vector3
 
 ### Parameters
 
--   `arrayOrVector3` **([Array][381] | cornerstoneMath.Vector3)** Input array or Vector3
+-   `arrayOrVector3` **([Array][380] | cornerstoneMath.Vector3)** Input array or Vector3
 
 Returns **cornerstoneMath.Vector3** 
 
@@ -1785,7 +1780,7 @@ Called by the event dispatcher to render the image.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## renderBrush
 
@@ -1793,7 +1788,7 @@ Helper function for rendering the brush.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_paint
 
@@ -1801,7 +1796,7 @@ Paints the data to the canvas.
 
 ### Parameters
 
--   `eventData` **[Object][380]** The data object associated with the event.
+-   `eventData` **[Object][379]** The data object associated with the event.
 
 ## mouseDragCallback
 
@@ -1809,7 +1804,7 @@ Event handler for MOUSE_DRAG event.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## preMouseDownCallback
 
@@ -1817,7 +1812,7 @@ Event handler for MOUSE_DOWN event.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_startPainting
 
@@ -1825,7 +1820,7 @@ Initialise painting with baseBrushTool
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## mouseMoveCallback
 
@@ -1833,7 +1828,7 @@ Event handler for MOUSE_MOVE event.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## passiveCallback
 
@@ -1841,7 +1836,7 @@ Event handler for switching mode to passive;
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## renderToolData
 
@@ -1849,7 +1844,7 @@ Used to redraw the tool's annotation data per render.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_getBrushColor
 
@@ -1857,7 +1852,7 @@ Get the draw color (segmentation) of the tool.
 
 ### Parameters
 
--   `drawId` **[Number][383]** The id of the color (segmentation) to switch to.
+-   `drawId` **[Number][382]** The id of the color (segmentation) to switch to.
 
 ## \_drawingMouseUpCallback
 
@@ -1865,7 +1860,7 @@ Event handler for MOUSE_UP during the drawing event loop.
 
 ### Parameters
 
--   `evt` **[Object][380]** The event.
+-   `evt` **[Object][379]** The event.
 
 ## \_startListeningForMouseUp
 
@@ -1873,7 +1868,7 @@ Adds modify loop event listeners.
 
 ### Parameters
 
--   `element` **[Object][380]** The viewport element to add event listeners to.
+-   `element` **[Object][379]** The viewport element to add event listeners to.
 
 ## \_stopListeningForMouseUp
 
@@ -1881,7 +1876,7 @@ Adds modify loop event listeners.
 
 ### Parameters
 
--   `element` **[Object][380]** The viewport element to add event listeners to.
+-   `element` **[Object][379]** The viewport element to add event listeners to.
 
 ## nextSegmentation
 
@@ -1905,8 +1900,8 @@ Displays a segmentation on the element.
 
 ### Parameters
 
--   `segIndex` **[Number][383]** The index of the segmentation.
--   `enabledElement` **[String][378]** The enabledElement on which to display.
+-   `segIndex` **[Number][382]** The index of the segmentation.
+-   `enabledElement` **[String][377]** The enabledElement on which to display.
 
 ## hideSegmentationOnElement
 
@@ -1914,7 +1909,7 @@ Hides a segmentation on an element.
 
 ### Parameters
 
--   `segIndex` **[Number][383]** The index of the segmentation.
+-   `segIndex` **[Number][382]** The index of the segmentation.
 
 ## showAllSegmentationsOnElement
 
@@ -1928,19 +1923,19 @@ Hides all segmentations on an element.
 
 Returns the number of colors in the colormap.
 
-Returns **[Number][383]** The number of colors in the color map.
+Returns **[Number][382]** The number of colors in the color map.
 
 ## getReferencedToolDataName
 
 Returns the toolData type assoicated with this type of tool.
 
-Returns **[String][378]** The number of colors in the color map.
+Returns **[String][377]** The number of colors in the color map.
 
 ## setContextToDisplayFontSize
 
 Sets the canvas context transformation matrix so it is scaled to show text
 more cleanly even if the image is scaled up.  See
-[https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText][386]
+[https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText][385]
 for more information
 
 ### Parameters
@@ -1949,19 +1944,7 @@ for more information
 -   `context`  
 -   `fontSize`  
 
-Returns **{fontSize: [number][383], lineHeight: [number][383], fontScale: [number][383]}** 
-
-## triggerEvent
-
-Trigger a CustomEvent
-
-### Parameters
-
--   `el` **EventTarget** The element or EventTarget to trigger the event upon
--   `type` **[String][378]** The event type name
--   `detail` **([Object][380] | null)** =null The event data to be sent (optional, default `null`)
-
-Returns **[Boolean][382]** The return value is false if at least one event listener called preventDefault(). Otherwise it returns true.
+Returns **{fontSize: [number][382], lineHeight: [number][382], fontScale: [number][382]}** 
 
 ## makeUnselectable
 
@@ -2002,14 +1985,26 @@ Draw a circle with given `center` and `radius`.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `center` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `radius` **[number][383]** The circle's radius in canvas units.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `center` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `radius` **[number][382]** The circle's radius in canvas units.
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
+
+## triggerEvent
+
+Trigger a CustomEvent
+
+### Parameters
+
+-   `el` **EventTarget** The element or EventTarget to trigger the event upon
+-   `type` **[String][377]** The event type name
+-   `detail` **([Object][379] | null)** =null The event data to be sent (optional, default `null`)
+
+Returns **[Boolean][381]** The return value is false if at least one event listener called preventDefault(). Otherwise it returns true.
 
 ## getPlayClipTimeouts
 
@@ -2018,10 +2013,10 @@ Draw a circle with given `center` and `radius`.
 
 ### Parameters
 
--   `vector` **[Array][381]** A Frame Time Vector (0018,1065) as specified in section C.7.6.5.1.2 of DICOM standard.
--   `speed` **[Number][383]** A speed factor which will be applied to each element of the resulting array.
+-   `vector` **[Array][380]** A Frame Time Vector (0018,1065) as specified in section C.7.6.5.1.2 of DICOM standard.
+-   `speed` **[Number][382]** A speed factor which will be applied to each element of the resulting array.
 
-Returns **[Array][381]** An array with timeouts for each animation frame.
+Returns **[Array][380]** An array with timeouts for each animation frame.
 
 ## stopClipWithData
 
@@ -2029,7 +2024,7 @@ Returns **[Array][381]** An array with timeouts for each animation frame.
 
 ### Parameters
 
--   `playClipData` **[Object][380]** The data from playClip that needs to be stopped.
+-   `playClipData` **[Object][379]** The data from playClip that needs to be stopped.
 
 Returns **any** void
 
@@ -2070,10 +2065,10 @@ Retrieve the options object associated with a particular toolType and element
 
 ### Parameters
 
--   `toolType` **[string][378]** Tool type identifier of the target options object
--   `element` **[HTMLElement][379]** Element of the target options object
+-   `toolType` **[string][377]** Tool type identifier of the target options object
+-   `element` **[HTMLElement][378]** Element of the target options object
 
-Returns **[Object][380]** Target options object (empty if not yet set)
+Returns **[Object][379]** Target options object (empty if not yet set)
 
 ## clearToolOptions
 
@@ -2081,8 +2076,8 @@ Clear the options object associated with a particular toolType and element
 
 ### Parameters
 
--   `toolType` **[string][378]** Tool type identifier of the target options object
--   `element` **[HTMLElement][379]** Element of the target options object
+-   `toolType` **[string][377]** Tool type identifier of the target options object
+-   `element` **[HTMLElement][378]** Element of the target options object
 
 Returns **void** 
 
@@ -2092,7 +2087,7 @@ Clear the options objects associated with a particular toolType
 
 ### Parameters
 
--   `toolType` **[string][378]** Tool type identifier of the target options objects
+-   `toolType` **[string][377]** Tool type identifier of the target options objects
 
 Returns **void** 
 
@@ -2102,82 +2097,82 @@ Clear the options objects associated with a particular element
 
 ### Parameters
 
--   `element` **[HTMLElement][379]** Element of the target options objects
+-   `element` **[HTMLElement][378]** Element of the target options objects
 
 Returns **void** 
 
-## StrokeStyle
-
-A [color, gradient or pattern][388] to use for the lines around shapes.
-
-Type: ([String][378] \| [CanvasGradient][389] \| [CanvasPattern][390])
-
 ## getNewContext
 
-Create a new [context][391] object for the given [canvas][392]
-and set the transform to the [identity transform][393].
+Create a new [context][387] object for the given [canvas][388]
+and set the transform to the [identity transform][389].
 
 ### Parameters
 
--   `canvas` **[HTMLCanvasElement][394]** 
+-   `canvas` **[HTMLCanvasElement][390]** 
 
-Returns **[CanvasRenderingContext2D][387]** 
+Returns **[CanvasRenderingContext2D][386]** 
 
 ## FillStyle
 
-A [color, gradient or pattern][395] to use inside shapes.
+A [color, gradient or pattern][391] to use inside shapes.
 
-Type: ([String][378] \| [CanvasGradient][389] \| [CanvasPattern][390])
+Type: ([String][377] \| [CanvasGradient][392] \| [CanvasPattern][393])
+
+## StrokeStyle
+
+A [color, gradient or pattern][394] to use for the lines around shapes.
+
+Type: ([String][377] \| [CanvasGradient][392] \| [CanvasPattern][393])
 
 ## ContextFn
 
-Type: [Function][396]
+Type: [Function][395]
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
+-   `context` **[CanvasRenderingContext2D][386]** 
 
 ## draw
 
-This function manages the [save/restore][397]
+This function manages the [save/restore][396]
 pattern for working in a new context state stack. The parameter `fn` is passed the `context` and can
 execute any API calls in a clean stack.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `fn` **[ContextFn][398]** A function which performs drawing operations within the given context.
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `fn` **[ContextFn][397]** A function which performs drawing operations within the given context.
 
 ## path
 
 This function manages the beginPath/stroke pattern for working with
-[path objects][399].
+[path objects][398].
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `options` **[Object][380]** 
-    -   `options.color` **[StrokeStyle][400]**  The stroke style of the path.
-    -   `options.lineWidth` **[Number][383]**  The width of lines in the path. If null, no line width is set.
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `options` **[Object][379]** 
+    -   `options.color` **[StrokeStyle][399]**  The stroke style of the path.
+    -   `options.lineWidth` **[Number][382]**  The width of lines in the path. If null, no line width is set.
             If undefined then toolStyle.getToolWidth() is set.
-    -   `options.fillStyle` **[FillStyle][401]** The style to fill the path with. If undefined then no filling is done.
-    -   `options.lineDash` **[Array][381]&lt;[Number][383]>** The [dash pattern][402]
+    -   `options.fillStyle` **[FillStyle][400]** The style to fill the path with. If undefined then no filling is done.
+    -   `options.lineDash` **[Array][380]&lt;[Number][382]>** The [dash pattern][401]
             to use on the lines.
--   `fn` **[ContextFn][398]** A drawing function to execute with the provided stroke pattern.
+-   `fn` **[ContextFn][397]** A drawing function to execute with the provided stroke pattern.
 
 ## setShadow
 
-Set the [shadow][403] properties of the context.
+Set the [shadow][402] properties of the context.
 Each property is set on the context object if defined, otherwise a default value is set.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `options` **[Object][380]** 
-    -   `options.shadow` **[Boolean][382]** Whether to set any shadow options
-    -   `options.shadowColor` **[String][378]** Default value: #000000
-    -   `options.shadowOffsetX` **[Number][383]** Default value: 1
-    -   `options.shadowOffsetY` **[Number][383]** Default value: 1
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `options` **[Object][379]** 
+    -   `options.shadow` **[Boolean][381]** Whether to set any shadow options
+    -   `options.shadowColor` **[String][377]** Default value: #000000
+    -   `options.shadowOffsetX` **[Number][382]** Default value: 1
+    -   `options.shadowOffsetY` **[Number][382]** Default value: 1
 
 ## drawLine
 
@@ -2185,12 +2180,12 @@ Draw a line between `start` and `end`.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `start` **[Object][380]** \`{ x, y } in either pixel or canvas coordinates.
--   `end` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `start` **[Object][379]** \`{ x, y } in either pixel or canvas coordinates.
+-   `end` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
@@ -2200,12 +2195,12 @@ Draw multiple lines.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `lines` **[Array][381]&lt;[Object][380]>** `[{ start: {x, y}, end: { x, y }]` An array of `start`, `end` pairs.
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `lines` **[Array][380]&lt;[Object][379]>** `[{ start: {x, y}, end: { x, y }]` An array of `start`, `end` pairs.
         Each point is `{ x, y }` in either pixel or canvas coordinates.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
@@ -2215,12 +2210,12 @@ Draw a series of joined lines, starting at `start` and then going to each point 
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `start` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `points` **[Array][381]&lt;[Object][380]>** `[{ x, y }]` An array of points in either pixel or canvas coordinates.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `start` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `points` **[Array][380]&lt;[Object][379]>** `[{ x, y }]` An array of points in either pixel or canvas coordinates.
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
@@ -2230,12 +2225,12 @@ Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `corner1` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `corner2` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `corner1` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `corner2` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
@@ -2245,12 +2240,12 @@ Draw a rectangle defined by `corner1` and `corner2`.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `element` **[HTMLElement][379]** The DOM Element to draw on
--   `corner1` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `corner2` **[Object][380]** `{ x, y }` in either pixel or canvas coordinates.
--   `options` **[Object][380]** See [path][360]
--   `coordSystem` **[String][378]** Can be "pixel" (default) or "canvas". The coordinate
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `element` **[HTMLElement][378]** The DOM Element to draw on
+-   `corner1` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `corner2` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
+-   `options` **[Object][379]** See [path][359]
+-   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
         system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
@@ -2260,9 +2255,9 @@ Draw a filled rectangle defined by `boundingBox` using the style defined by `fil
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `boundingBox` **[Object][380]** `{ left, top, width, height }` in canvas coordinates.
--   `fillStyle` **[FillStyle][401]** The fillStyle to apply to the region.
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `boundingBox` **[Object][379]** `{ left, top, width, height }` in canvas coordinates.
+-   `fillStyle` **[FillStyle][400]** The fillStyle to apply to the region.
 
 ## fillTextLines
 
@@ -2270,11 +2265,11 @@ Draw multiple lines of text within a bounding box.
 
 ### Parameters
 
--   `context` **[CanvasRenderingContext2D][387]** 
--   `boundingBox` **[Object][380]** `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
--   `textLines` **[Array][381]&lt;[String][378]>** The text to be displayed.
--   `fillStyle` **[FillStyle][401]** The fillStyle to apply to the text.
--   `padding` **[Number][383]** The amount of padding above/below each line in canvas units. Note this gives an inter-line spacing of `2*padding`.
+-   `context` **[CanvasRenderingContext2D][386]** 
+-   `boundingBox` **[Object][379]** `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
+-   `textLines` **[Array][380]&lt;[String][377]>** The text to be displayed.
+-   `fillStyle` **[FillStyle][400]** The fillStyle to apply to the text.
+-   `padding` **[Number][382]** The amount of padding above/below each line in canvas units. Note this gives an inter-line spacing of `2*padding`.
 
 [1]: #core
 
@@ -2324,760 +2319,758 @@ Draw multiple lines of text within a bounding box.
 
 [24]: #parameters-10
 
-[25]: #removetoolforelement
+[25]: #enabledelementcallback
 
 [26]: #parameters-11
 
-[27]: #removetool
+[27]: #onregistercallback
 
-[28]: #parameters-12
+[28]: #registermodule
 
-[29]: #parameters-13
+[29]: #parameters-12
 
-[30]: #removeenabledelement
+[30]: #removetoolforelement
 
-[31]: #parameters-14
+[31]: #parameters-13
 
-[32]: #onimagerenderedbrusheventhandler
+[32]: #removetool
 
-[33]: #parameters-15
+[33]: #parameters-14
 
-[34]: #_drawimagebitmap
+[34]: #parameters-15
 
-[35]: #parameters-16
+[35]: #onimagerenderedbrusheventhandler
 
-[36]: #enable
+[36]: #parameters-16
 
-[37]: #parameters-17
+[37]: #_drawimagebitmap
 
-[38]: #enable-1
+[38]: #parameters-17
 
-[39]: #parameters-18
+[39]: #enable
 
-[40]: #mousedown
+[40]: #parameters-18
 
-[41]: #parameters-19
+[41]: #enable-1
 
-[42]: #mousemove
+[42]: #parameters-19
 
-[43]: #parameters-20
+[43]: #mousedown
 
-[44]: #keydown
+[44]: #parameters-20
 
-[45]: #parameters-21
+[45]: #mousemove
 
-[46]: #onnewimagebrusheventhandler
+[46]: #parameters-21
 
-[47]: #parameters-22
+[47]: #onnewimagebrusheventhandler
 
-[48]: #settoolmodeforelement
+[48]: #parameters-22
 
-[49]: #parameters-23
+[49]: #removeenabledelement
 
-[50]: #settoolmode
+[50]: #parameters-23
 
-[51]: #parameters-24
+[51]: #settoolmodeforelement
 
-[52]: #createnewmeasurement
+[52]: #parameters-24
 
-[53]: #parameters-25
+[53]: #settoolmode
 
-[54]: #pointneartool
+[54]: #parameters-25
 
-[55]: #parameters-26
+[55]: #createnewmeasurement
 
-[56]: #rendertooldata
+[56]: #parameters-26
 
-[57]: #parameters-27
+[57]: #pointneartool
 
-[58]: #addnewmeasurement
+[58]: #parameters-27
 
-[59]: #parameters-28
+[59]: #rendertooldata
 
-[60]: #createnewmeasurement-1
+[60]: #parameters-28
 
-[61]: #parameters-29
+[61]: #addnewmeasurement
 
-[62]: #pointneartool-1
+[62]: #parameters-29
 
-[63]: #parameters-30
+[63]: #createnewmeasurement-1
 
-[64]: #rendertooldata-1
+[64]: #parameters-30
 
-[65]: #parameters-31
+[65]: #pointneartool-1
 
-[66]: #createnewmeasurement-2
+[66]: #parameters-31
 
-[67]: #parameters-32
+[67]: #distancefrompoint
 
-[68]: #pointneartool-2
+[68]: #parameters-32
 
-[69]: #parameters-33
+[69]: #rendertooldata-1
 
-[70]: #rendertooldata-2
+[70]: #parameters-33
 
-[71]: #parameters-34
+[71]: #mousemovecallback
 
-[72]: #defaultstrategy
+[72]: #parameters-34
 
-[73]: #parameters-35
+[73]: #handleselectedcallback
 
-[74]: #defaultstrategy-1
+[74]: #parameters-35
 
-[75]: #parameters-36
+[75]: #toolselectedcallback
 
-[76]: #minimalstrategy
+[76]: #parameters-36
 
-[77]: #parameters-37
+[77]: #createnewmeasurement-2
 
-[78]: #createnewmeasurement-3
+[78]: #parameters-37
 
-[79]: #parameters-38
+[79]: #pointneartool-2
 
-[80]: #pointneartool-3
+[80]: #parameters-38
 
-[81]: #parameters-39
+[81]: #rendertooldata-2
 
-[82]: #rendertooldata-3
+[82]: #parameters-39
 
-[83]: #parameters-40
+[83]: #createnewmeasurement-3
 
-[84]: #createnewmeasurement-4
+[84]: #parameters-40
 
-[85]: #parameters-41
+[85]: #pointneartool-3
 
-[86]: #pointneartool-4
+[86]: #parameters-41
 
-[87]: #parameters-42
+[87]: #rendertooldata-3
 
-[88]: #distancefrompoint
+[88]: #parameters-42
 
-[89]: #parameters-43
+[89]: #applyactivestrategy
 
-[90]: #rendertooldata-4
+[90]: #parameters-43
 
-[91]: #parameters-44
+[91]: #_applymixins
 
-[92]: #mousemovecallback
+[92]: #parameters-44
 
 [93]: #parameters-45
 
-[94]: #handleselectedcallback
+[94]: #parameters-46
 
-[95]: #parameters-46
+[95]: #parameters-47
 
-[96]: #toolselectedcallback
+[96]: #parameters-48
 
-[97]: #parameters-47
+[97]: #passivecallback
 
-[98]: #applyactivestrategy
+[98]: #parameters-49
 
-[99]: #parameters-48
+[99]: #passivecallback-1
 
-[100]: #onkeydown
+[100]: #parameters-50
 
-[101]: #parameters-49
+[101]: #enabledcallback
 
-[102]: #_applymixins
+[102]: #parameters-51
 
-[103]: #parameters-50
+[103]: #activecallback
 
-[104]: #parameters-51
+[104]: #parameters-52
 
-[105]: #parameters-52
+[105]: #defaultstrategy
 
 [106]: #parameters-53
 
-[107]: #parameters-54
+[107]: #defaultstrategy-1
 
-[108]: #keypress
+[108]: #parameters-54
 
-[109]: #parameters-55
+[109]: #minimalstrategy
 
-[110]: #passivecallback
+[110]: #parameters-55
 
-[111]: #parameters-56
+[111]: #createnewmeasurement-4
 
-[112]: #passivecallback-1
+[112]: #parameters-56
 
-[113]: #parameters-57
+[113]: #pointneartool-4
 
-[114]: #enabledcallback
+[114]: #parameters-57
 
-[115]: #parameters-58
+[115]: #rendertooldata-4
 
-[116]: #activecallback
+[116]: #parameters-58
 
-[117]: #parameters-59
+[117]: #createnewmeasurement-5
 
-[118]: #createnewmeasurement-5
+[118]: #parameters-59
 
-[119]: #parameters-60
+[119]: #pointneartool-5
 
-[120]: #pointneartool-5
+[120]: #parameters-60
 
-[121]: #parameters-61
+[121]: #distancefrompoint-1
 
-[122]: #distancefrompoint-1
+[122]: #parameters-61
 
-[123]: #parameters-62
+[123]: #distancefrompointcanvas
 
-[124]: #distancefrompointcanvas
+[124]: #parameters-62
 
-[125]: #parameters-63
+[125]: #rendertooldata-5
 
-[126]: #rendertooldata-5
+[126]: #parameters-63
 
-[127]: #parameters-64
+[127]: #addnewmeasurement-1
 
-[128]: #addnewmeasurement-1
+[128]: #parameters-64
 
-[129]: #parameters-65
+[129]: #premousedowncallback
 
-[130]: #premousedowncallback
+[130]: #parameters-65
 
-[131]: #parameters-66
+[131]: #handleselectedcallback-1
 
-[132]: #handleselectedcallback-1
+[132]: #parameters-66
 
-[133]: #parameters-67
+[133]: #_drawingmousemovecallback
 
-[134]: #_drawingmousemovecallback
+[134]: #parameters-67
 
-[135]: #parameters-68
+[135]: #_drawingmousedowncallback
 
-[136]: #_drawingmousedowncallback
+[136]: #parameters-68
 
-[137]: #parameters-69
+[137]: #_editmousedragcallback
 
-[138]: #_editmousedragcallback
+[138]: #parameters-69
 
-[139]: #parameters-70
+[139]: #_editmouseupcallback
 
-[140]: #_editmouseupcallback
+[140]: #parameters-70
 
-[141]: #parameters-71
+[141]: #_drophandle
 
-[142]: #_drophandle
+[142]: #parameters-71
 
-[143]: #parameters-72
+[143]: #_checkhandlespolygonmode
 
-[144]: #_checkhandlespolygonmode
+[144]: #parameters-72
 
-[145]: #parameters-73
+[145]: #insertordelete
 
-[146]: #insertordelete
+[146]: #parameters-73
 
-[147]: #parameters-74
+[147]: #deletepoint
 
-[148]: #deletepoint
+[148]: #parameters-74
 
-[149]: #parameters-75
+[149]: #insertpoint
 
-[150]: #insertpoint
+[150]: #parameters-75
 
-[151]: #parameters-76
+[151]: #getinsertionindex
 
-[152]: #getinsertionindex
+[152]: #parameters-76
 
-[153]: #parameters-77
+[153]: #constructor
 
-[154]: #constructor
+[154]: #parameters-77
 
-[155]: #parameters-78
+[155]: #findline
 
-[156]: #findline
+[156]: #findtool
 
-[157]: #findtool
+[157]: #_nearesthandletopointalltools
 
-[158]: #_nearesthandletopointalltools
+[158]: #_nearesthandletopoint
 
-[159]: #_nearesthandletopoint
+[159]: #parameters-78
 
-[160]: #parameters-79
+[160]: #_getcloselinesintool
 
-[161]: #_getcloselinesintool
+[161]: #parameters-79
 
-[162]: #parameters-80
+[162]: #_findcorrectline
 
-[163]: #_findcorrectline
+[163]: #parameters-80
 
-[164]: #parameters-81
+[164]: #_pointprojectstolinesegment
 
-[165]: #_pointprojectstolinesegment
+[165]: #parameters-81
 
-[166]: #parameters-82
+[166]: #_getlineorigintomouseasvector
 
-[167]: #_getlineorigintomouseasvector
+[167]: #parameters-82
 
-[168]: #parameters-83
+[168]: #_distanceofpointfromline
 
-[169]: #_distanceofpointfromline
+[169]: #parameters-83
 
-[170]: #parameters-84
+[170]: #getcanvaspointsfromhandles
 
-[171]: #getcanvaspointsfromhandles
+[171]: #parameters-84
 
-[172]: #parameters-85
+[172]: #getlineasvector
 
-[173]: #getlineasvector
+[173]: #parameters-85
 
-[174]: #parameters-86
+[174]: #getnexthandleindex
 
-[175]: #getnexthandleindex
+[175]: #parameters-86
 
-[176]: #parameters-87
+[176]: #clickedlinedata
 
-[177]: #clickedlinedata
+[177]: #properties
 
-[178]: #properties
+[178]: #freehandarea
 
-[179]: #freehandarea
+[179]: #parameters-87
 
-[180]: #parameters-88
+[180]: #calculatefreehandstatistics
 
-[181]: #calculatefreehandstatistics
+[181]: #parameters-88
 
-[182]: #parameters-89
+[182]: #getsum
 
-[183]: #getsum
+[183]: #parameters-89
 
-[184]: #parameters-90
+[184]: #sumpointifinfreehand
 
-[185]: #sumpointifinfreehand
+[185]: #parameters-90
 
-[186]: #parameters-91
+[186]: #pointinfreehand
 
-[187]: #pointinfreehand
+[187]: #parameters-91
 
-[188]: #parameters-92
+[188]: #isenclosedy
 
-[189]: #isenclosedy
+[189]: #parameters-92
 
-[190]: #parameters-93
+[190]: #islinerightofpoint
 
-[191]: #islinerightofpoint
+[191]: #parameters-93
 
-[192]: #parameters-94
+[192]: #linesegmentatpoint
 
-[193]: #linesegmentatpoint
+[193]: #parameters-94
 
-[194]: #parameters-95
+[194]: #rayfrompointcrosssesline
 
-[195]: #rayfrompointcrosssesline
+[195]: #parameters-95
 
-[196]: #parameters-96
+[196]: #newhandle
 
-[197]: #newhandle
+[197]: #parameters-96
 
-[198]: #parameters-97
+[198]: #newhandle-1
 
-[199]: #newhandle-1
+[199]: #parameters-97
 
-[200]: #parameters-98
+[200]: #end
 
-[201]: #end
+[201]: #parameters-98
 
-[202]: #parameters-99
+[202]: #modify
 
-[203]: #modify
+[203]: #parameters-99
 
-[204]: #parameters-100
+[204]: #doesintersectotherlines
 
-[205]: #doesintersectotherlines
+[205]: #parameters-100
 
-[206]: #parameters-101
+[206]: #doesintersect
 
-[207]: #doesintersect
+[207]: #parameters-101
 
-[208]: #parameters-102
+[208]: #orientation
 
-[209]: #orientation
+[209]: #parameters-102
 
-[210]: #parameters-103
+[210]: #onsegment
 
-[211]: #onsegment
+[211]: #parameters-103
 
-[212]: #parameters-104
+[212]: #freehandhandledata
 
-[213]: #freehandhandledata
+[213]: #properties-1
 
-[214]: #properties-1
+[214]: #rendertooldata-6
 
-[215]: #rendertooldata-6
+[215]: #parameters-104
 
-[216]: #parameters-105
+[216]: #premousedowncallback-1
 
-[217]: #premousedowncallback-1
+[217]: #parameters-105
 
-[218]: #parameters-106
+[218]: #activemousedragcallback
 
-[219]: #activemousedragcallback
+[219]: #parameters-106
 
-[220]: #parameters-107
+[220]: #activemouseupcallback
 
-[221]: #activemouseupcallback
+[221]: #parameters-107
 
-[222]: #parameters-108
+[222]: #newimagecallback
 
-[223]: #newimagecallback
+[223]: #parameters-108
 
-[224]: #parameters-109
+[224]: #enabledcallback-1
 
-[225]: #enabledcallback-1
+[225]: #parameters-109
 
-[226]: #parameters-110
+[226]: #passivecallback-2
 
-[227]: #passivecallback-2
+[227]: #parameters-110
 
-[228]: #parameters-111
+[228]: #disabledcallback
 
-[229]: #disabledcallback
+[229]: #parameters-111
 
-[230]: #parameters-112
+[230]: #getdefaultfreehandsculptermousetoolconfiguration
 
-[231]: #getdefaultfreehandsculptermousetoolconfiguration
+[231]: #changetextcallback
 
-[232]: #changetextcallback
+[232]: #parameters-112
 
-[233]: #parameters-113
+[233]: #createnewmeasurement-6
 
-[234]: #createnewmeasurement-6
+[234]: #parameters-113
 
-[235]: #parameters-114
+[235]: #pointneartool-6
 
-[236]: #pointneartool-6
+[236]: #parameters-114
 
-[237]: #parameters-115
+[237]: #rendertooldata-7
 
-[238]: #rendertooldata-7
+[238]: #parameters-115
 
-[239]: #parameters-116
+[239]: #_drawzoomedelement
 
-[240]: #_drawzoomedelement
+[240]: #parameters-116
 
-[241]: #parameters-117
+[241]: #_removezoomelement
 
-[242]: #_removezoomelement
+[242]: #_createmagnificationcanvas
 
-[243]: #_createmagnificationcanvas
+[243]: #parameters-117
 
-[244]: #parameters-118
+[244]: #_destroymagnificationcanvas
 
-[245]: #_destroymagnificationcanvas
+[245]: #parameters-118
 
-[246]: #parameters-119
+[246]: #createnewmeasurement-7
 
-[247]: #createnewmeasurement-7
+[247]: #parameters-119
 
-[248]: #parameters-120
+[248]: #pointneartool-7
 
-[249]: #pointneartool-7
+[249]: #parameters-120
 
-[250]: #parameters-121
+[250]: #rendertooldata-8
 
-[251]: #rendertooldata-8
+[251]: #parameters-121
 
-[252]: #parameters-122
+[252]: #createnewmeasurement-8
 
-[253]: #createnewmeasurement-8
+[253]: #parameters-122
 
-[254]: #parameters-123
+[254]: #pointneartool-8
 
-[255]: #pointneartool-8
+[255]: #parameters-123
 
-[256]: #parameters-124
+[256]: #rendertooldata-9
 
-[257]: #rendertooldata-9
+[257]: #parameters-124
 
-[258]: #parameters-125
+[258]: #anglebetweenpoints
 
-[259]: #anglebetweenpoints
+[259]: #parameters-125
 
-[260]: #parameters-126
+[260]: #computescalebounds
 
-[261]: #computescalebounds
+[261]: #parameters-126
 
-[262]: #parameters-127
+[262]: #drawverticalscalebarintervals
 
-[263]: #drawverticalscalebarintervals
+[263]: #parameters-127
 
-[264]: #parameters-128
+[264]: #basiclevelingstrategy
 
-[265]: #basiclevelingstrategy
+[265]: #parameters-128
 
-[266]: #parameters-129
+[266]: #_startoutliningregion
 
-[267]: #_startoutliningregion
+[267]: #parameters-129
 
-[268]: #parameters-130
+[268]: #_sethandlesandupdate
 
-[269]: #_sethandlesandupdate
+[269]: #parameters-130
 
-[270]: #parameters-131
+[270]: #_applystrategy
 
-[271]: #_applystrategy
+[271]: #parameters-131
 
-[272]: #parameters-132
+[272]: #_resethandles
 
-[273]: #_resethandles
+[273]: #isemptyobject
 
-[274]: #isemptyobject
+[274]: #parameters-132
 
-[275]: #parameters-133
+[275]: #applywwwcregion
 
-[276]: #applywwwcregion
+[276]: #parameters-133
 
-[277]: #parameters-134
+[277]: #calculateminmaxmean
 
-[278]: #calculateminmaxmean
+[278]: #parameters-134
 
-[279]: #parameters-135
+[279]: #touchpinchcallback
 
-[280]: #touchpinchcallback
+[280]: #parameters-135
 
-[281]: #parameters-136
+[281]: #mousewheelcallback
 
-[282]: #mousewheelcallback
+[282]: #parameters-136
 
-[283]: #parameters-137
+[283]: #converttovector3
 
-[284]: #converttovector3
+[284]: #parameters-137
 
-[285]: #parameters-138
+[285]: #renderbrush
 
-[286]: #renderbrush
+[286]: #parameters-138
 
-[287]: #parameters-139
+[287]: #renderbrush-1
 
-[288]: #renderbrush-1
+[288]: #parameters-139
 
-[289]: #parameters-140
+[289]: #_paint
 
-[290]: #_paint
+[290]: #parameters-140
 
-[291]: #parameters-141
+[291]: #mousedragcallback
 
-[292]: #mousedragcallback
+[292]: #parameters-141
 
-[293]: #parameters-142
+[293]: #premousedowncallback-2
 
-[294]: #premousedowncallback-2
+[294]: #parameters-142
 
-[295]: #parameters-143
+[295]: #_startpainting
 
-[296]: #_startpainting
+[296]: #parameters-143
 
-[297]: #parameters-144
+[297]: #mousemovecallback-1
 
-[298]: #mousemovecallback-1
+[298]: #parameters-144
 
-[299]: #parameters-145
+[299]: #passivecallback-3
 
-[300]: #passivecallback-3
+[300]: #parameters-145
 
-[301]: #parameters-146
+[301]: #rendertooldata-10
 
-[302]: #rendertooldata-10
+[302]: #parameters-146
 
-[303]: #parameters-147
+[303]: #_getbrushcolor
 
-[304]: #_getbrushcolor
+[304]: #parameters-147
 
-[305]: #parameters-148
+[305]: #_drawingmouseupcallback
 
-[306]: #_drawingmouseupcallback
+[306]: #parameters-148
 
-[307]: #parameters-149
+[307]: #_startlisteningformouseup
 
-[308]: #_startlisteningformouseup
+[308]: #parameters-149
 
-[309]: #parameters-150
+[309]: #_stoplisteningformouseup
 
-[310]: #_stoplisteningformouseup
+[310]: #parameters-150
 
-[311]: #parameters-151
+[311]: #nextsegmentation
 
-[312]: #nextsegmentation
+[312]: #previoussegmentation
 
-[313]: #previoussegmentation
+[313]: #increasebrushsize
 
-[314]: #increasebrushsize
+[314]: #decreasebrushsize
 
-[315]: #decreasebrushsize
+[315]: #showsegmentationonelement
 
-[316]: #showsegmentationonelement
+[316]: #parameters-151
 
-[317]: #parameters-152
+[317]: #hidesegmentationonelement
 
-[318]: #hidesegmentationonelement
+[318]: #parameters-152
 
-[319]: #parameters-153
+[319]: #showallsegmentationsonelement
 
-[320]: #showallsegmentationsonelement
+[320]: #hideallsegmentationsonelement
 
-[321]: #hideallsegmentationsonelement
+[321]: #getnumberofcolors
 
-[322]: #getnumberofcolors
+[322]: #getreferencedtooldataname
 
-[323]: #getreferencedtooldataname
+[323]: #setcontexttodisplayfontsize
 
-[324]: #setcontexttodisplayfontsize
+[324]: #parameters-153
 
-[325]: #parameters-154
+[325]: #makeunselectable
 
-[326]: #triggerevent
+[326]: #parameters-154
 
-[327]: #parameters-155
+[327]: #drawcircle
 
-[328]: #makeunselectable
+[328]: #parameters-155
 
-[329]: #parameters-156
+[329]: #drawcircle-1
 
-[330]: #drawcircle
+[330]: #parameters-156
 
-[331]: #parameters-157
+[331]: #triggerevent
 
-[332]: #drawcircle-1
+[332]: #parameters-157
 
-[333]: #parameters-158
+[333]: #getplaycliptimeouts
 
-[334]: #getplaycliptimeouts
+[334]: #parameters-158
 
-[335]: #parameters-159
+[335]: #stopclipwithdata
 
-[336]: #stopclipwithdata
+[336]: #parameters-159
 
-[337]: #parameters-160
+[337]: #triggerstopevent
 
-[338]: #triggerstopevent
+[338]: #parameters-160
 
-[339]: #parameters-161
+[339]: #playclip
 
-[340]: #playclip
+[340]: #parameters-161
 
-[341]: #parameters-162
+[341]: #stopclip
 
-[342]: #stopclip
+[342]: #parameters-162
 
-[343]: #parameters-163
+[343]: #gettooloptions
 
-[344]: #gettooloptions
+[344]: #parameters-163
 
-[345]: #parameters-164
+[345]: #cleartooloptions
 
-[346]: #cleartooloptions
+[346]: #parameters-164
 
-[347]: #parameters-165
+[347]: #cleartooloptionsbytooltype
 
-[348]: #cleartooloptionsbytooltype
+[348]: #parameters-165
 
-[349]: #parameters-166
+[349]: #cleartooloptionsbyelement
 
-[350]: #cleartooloptionsbyelement
+[350]: #parameters-166
 
-[351]: #parameters-167
+[351]: #getnewcontext
 
-[352]: #strokestyle
+[352]: #parameters-167
 
-[353]: #getnewcontext
+[353]: #fillstyle
 
-[354]: #parameters-168
+[354]: #strokestyle
 
-[355]: #fillstyle
+[355]: #contextfn
 
-[356]: #contextfn
+[356]: #parameters-168
 
-[357]: #parameters-169
+[357]: #draw
 
-[358]: #draw
+[358]: #parameters-169
 
-[359]: #parameters-170
+[359]: #path
 
-[360]: #path
+[360]: #parameters-170
 
-[361]: #parameters-171
+[361]: #setshadow
 
-[362]: #setshadow
+[362]: #parameters-171
 
-[363]: #parameters-172
+[363]: #drawline
 
-[364]: #drawline
+[364]: #parameters-172
 
-[365]: #parameters-173
+[365]: #drawlines
 
-[366]: #drawlines
+[366]: #parameters-173
 
-[367]: #parameters-174
+[367]: #drawjoinedlines
 
-[368]: #drawjoinedlines
+[368]: #parameters-174
 
-[369]: #parameters-175
+[369]: #drawellipse
 
-[370]: #drawellipse
+[370]: #parameters-175
 
-[371]: #parameters-176
+[371]: #drawrect
 
-[372]: #drawrect
+[372]: #parameters-176
 
-[373]: #parameters-177
+[373]: #fillbox
 
-[374]: #fillbox
+[374]: #parameters-177
 
-[375]: #parameters-178
+[375]: #filltextlines
 
-[376]: #filltextlines
+[376]: #parameters-178
 
-[377]: #parameters-179
+[377]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
 
-[378]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[378]: https://developer.mozilla.org/docs/Web/HTML/Element
 
-[379]: https://developer.mozilla.org/docs/Web/HTML/Element
+[379]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[380]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[380]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[381]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[381]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[382]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
+[382]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[383]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[383]: #clickedlinedata
 
-[384]: #clickedlinedata
+[384]: #freehandhandledata
 
-[385]: #freehandhandledata
+[385]: https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText
 
-[386]: https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText
+[386]: https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D
 
 [387]: https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D
 
-[388]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeStyle
+[388]: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement
 
-[389]: https://developer.mozilla.org/docs/Web/API/CanvasGradient
+[389]: https://www.w3.org/TR/2dcontext/#transformations
 
-[390]: https://developer.mozilla.org/docs/Web/API/CanvasPattern
+[390]: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement
 
-[391]: https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D
+[391]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle
 
-[392]: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement
+[392]: https://developer.mozilla.org/docs/Web/API/CanvasGradient
 
-[393]: https://www.w3.org/TR/2dcontext/#transformations
+[393]: https://developer.mozilla.org/docs/Web/API/CanvasPattern
 
-[394]: https://developer.mozilla.org/docs/Web/API/HTMLCanvasElement
+[394]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/strokeStyle
 
-[395]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle
+[395]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
 
-[396]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
+[396]: https://www.w3.org/TR/2dcontext/#the-canvas-state
 
-[397]: https://www.w3.org/TR/2dcontext/#the-canvas-state
+[397]: #contextfn
 
-[398]: #contextfn
+[398]: https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas
 
-[399]: https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas
+[399]: #strokestyle
 
-[400]: #strokestyle
+[400]: #fillstyle
 
-[401]: #fillstyle
+[401]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
 
-[402]: https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash
-
-[403]: https://www.w3.org/TR/2dcontext/#shadows
+[402]: https://www.w3.org/TR/2dcontext/#shadows
