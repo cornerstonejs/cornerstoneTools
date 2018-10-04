@@ -1,5 +1,6 @@
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import clip from './clip.js';
 
 function scrollWithoutSkipping (stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {
@@ -18,7 +19,7 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
 
       if (index === pendingEvent.index) {
         stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener('cornerstonenewimage', newImageHandler);
+        element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageHandler);
 
         if (stackData.pending.length > 0) {
           scrollWithoutSkipping(stackData, stackData.pending[0], element);
@@ -26,7 +27,7 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       }
     };
 
-    element.addEventListener('cornerstonenewimage', newImageHandler);
+    element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageHandler);
 
     scrollToIndex(element, pendingEvent.index);
   }
@@ -52,8 +53,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
 
     newImageIdIndex %= nbImages;
   } else {
-    newImageIdIndex = Math.min(stackData.imageIds.length - 1, newImageIdIndex);
-    newImageIdIndex = Math.max(0, newImageIdIndex);
+    newImageIdIndex = clip(newImageIdIndex, 0, stackData.imageIds.length - 1);
   }
 
   if (allowSkipping) {

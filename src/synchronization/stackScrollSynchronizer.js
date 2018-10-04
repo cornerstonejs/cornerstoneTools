@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
+import clip from '../util/clip.js';
 
 // This function causes any scrolling actions within the stack to propagate to
 // All of the other viewports that are synced
@@ -24,7 +25,7 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
   let newImageIdIndex = stackData.currentImageIdIndex + eventData.direction;
 
   // Ensure the index does not exceed the bounds of the stack
-  newImageIdIndex = Math.min(Math.max(newImageIdIndex, 0), stackData.imageIds.length - 1);
+  newImageIdIndex = clip(newImageIdIndex, 0, stackData.imageIds.length - 1);
 
   // If the index has not changed, stop here
   if (stackData.currentImageIdIndex === newImageIdIndex) {
@@ -35,6 +36,9 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
+  stackData.currentImageIdIndex = newImageIdIndex;
+  const newImageId = stackData.imageIds[newImageIdIndex];
+
   if (startLoadingHandler) {
     startLoadingHandler(targetElement);
   }
@@ -42,15 +46,18 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
   let loader;
 
   if (stackData.preventCache === true) {
-    loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+    loader = cornerstone.loadImage(newImageId);
   } else {
-    loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+    loader = cornerstone.loadAndCacheImage(newImageId);
   }
 
   loader.then(function (image) {
     const viewport = cornerstone.getViewport(targetElement);
 
-    stackData.currentImageIdIndex = newImageIdIndex;
+    if (stackData.currentImageIdIndex !== newImageIdIndex) {
+      return;
+    }
+
     synchronizer.displayImage(targetElement, image, viewport);
     if (endLoadingHandler) {
       endLoadingHandler(targetElement, image);

@@ -1,7 +1,11 @@
 language: node_js
+branches:
+  except:
+    - vNext
 node_js:
-  - "node"
-
+  - "lts/*"
+addons:
+  chrome: stable
 cache:
   yarn: true
   directories:

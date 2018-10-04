@@ -1,11 +1,12 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import getLuminance from '../util/getLuminance.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import clip from '../util/clip.js';
+import { draw, setShadow, drawRect } from '../util/drawing.js';
 
 const toolType = 'wwwcRegion';
 
@@ -111,10 +112,8 @@ function applyWWWCRegion (eventData) {
   let top = Math.min(startPoint.y, endPoint.y);
 
   // Bound the rectangle so we don't get undefined pixels
-  left = Math.max(left, 0);
-  left = Math.min(left, eventData.image.width);
-  top = Math.max(top, 0);
-  top = Math.min(top, eventData.image.height);
+  left = clip(left, 0, eventData.image.width);
+  top = clip(top, 0, eventData.image.height);
   width = Math.floor(Math.min(width, Math.abs(eventData.image.width - left)));
   height = Math.floor(Math.min(height, Math.abs(eventData.image.height - top)));
 
@@ -218,7 +217,6 @@ function onImageRendered (e) {
   const eventData = e.detail;
   const element = eventData.element;
   const context = eventData.canvasContext;
-  const cornerstone = external.cornerstone;
   const toolData = getToolState(eventData.element, toolType);
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -236,35 +234,13 @@ function onImageRendered (e) {
 
   // Set to the active tool color
   const color = toolColors.getActiveColor();
-
-  // Calculate the rectangle parameters
-  const startPointCanvas = cornerstone.pixelToCanvas(element, startPoint);
-  const endPointCanvas = cornerstone.pixelToCanvas(element, endPoint);
-
-  const left = Math.min(startPointCanvas.x, endPointCanvas.x);
-  const top = Math.min(startPointCanvas.y, endPointCanvas.y);
-  const width = Math.abs(startPointCanvas.x - endPointCanvas.x);
-  const height = Math.abs(startPointCanvas.y - endPointCanvas.y);
-
-  const lineWidth = toolStyle.getToolWidth();
   const config = wwwcRegion.getConfiguration();
 
   // Draw the rectangle
-  context.save();
-
-  if (config && config.shadow) {
-    context.shadowColor = config.shadowColor || '#000000';
-    context.shadowOffsetX = config.shadowOffsetX || 1;
-    context.shadowOffsetY = config.shadowOffsetY || 1;
-  }
-
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.rect(left, top, width, height);
-  context.stroke();
-
-  context.restore();
+  draw(context, (context) => {
+    setShadow(context, config);
+    drawRect(context, element, startPoint, endPoint, { color });
+  });
 }
 
 // --- Mouse tool enable / disable --- ///
@@ -277,8 +253,8 @@ function disable (element) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
@@ -302,15 +278,15 @@ function activate (element, mouseButtonMask) {
   element.removeEventListener(EVENTS.MOUSE_DRAG, dragCallback);
   element.removeEventListener(EVENTS.MOUSE_MOVE, dragCallback);
 
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
   // If the displayed image changes after the user has started clicking, we should
   // Cancel the handlers and prepare for another click
-  element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
   external.cornerstone.updateImage(element);
 }
@@ -320,7 +296,7 @@ function disableTouchDrag (element) {
   element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function activateTouchDrag (element) {
@@ -335,12 +311,12 @@ function activateTouchDrag (element) {
   element.removeEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.removeEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 
   element.addEventListener(EVENTS.TOUCH_DRAG, dragCallback);
   element.addEventListener(EVENTS.TOUCH_START, recordStartPoint);
   element.addEventListener(EVENTS.TOUCH_DRAG_END, applyWWWCRegion);
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
 }
 
 function getConfiguration () {

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <!-- support for mobile touch devices -->
   <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
-  
+
   <link href="../bootstrap.min.css" rel="stylesheet">
   <link href="../dialogPolyfill.css" rel="stylesheet">
   <link href="../cornerstone.min.css" rel="stylesheet">
@@ -35,17 +35,19 @@
           </div>
         </div>
       </div>
-      
-      <div class="col-xs-3">
-        <h5>Controls:</h5>
-        <ul>
-          <li>Left click paint</li>
-          <li>Middle Mouse button drag - pan</li>
-          <li>Right click drag - zoom</li>
-        </ul>
 
-        <div class="row">
-          <button id="drawErase" class="btn btn-primary">Erase</button>
+      <div class="col-xs-3">
+
+        <label for="toolColor">Color</label>
+        <div class="row" id="toolColor">
+          <button id="drawPrev" class="btn btn-primary">Prev Color</button>
+          <button id="drawNext" class="btn btn-primary">Next Color</button>
+        </div>
+
+        <label for="toolSize">Size</label>
+        <div class="row" id="toolSize">
+          <button id="drawDecrease" class="btn btn-primary">-</button>
+          <button id="drawIncrease" class="btn btn-primary">+</button>
         </div>
         <div class="row">
             <label for="toolType">Type</label>
@@ -54,19 +56,39 @@
                 <option value="adaptiveBrush">Adaptive</option>
             </select>
         </div>
-        
-        <div class="row">
-          <label for="radiusSlider">Radius: <span id="valBox">3</span>px</label>
-          <input id="radiusSlider" type="range" min="1" max="20" value="20" steps="1" style="width: 200px"/>
+
+        <label for="toolDeactivate">Deactivate</label>
+        <div class="row" id="toolDeactivate">
+          <button id="deactivate" class="btn btn-primary">Deactivate</button>
         </div>
+
       </div>
+
+      <div class="col-xs-9">
+        <h5>Controls:</h5>
+        <ul>
+          <li>Brush tool</li>
+          <ul>
+            <li>Left click: paint</li>
+            <li> '+' and '-' keys: increase/decrease brush size</li>
+            <li>'[' and ']' keys: change segmentation color</li>
+          </ul>
+          <li>Navigation</li>
+          <ul>
+            <li>Middle Mouse button drag: pan</li>
+            <li>Mouse Wheel: scroll through images</li>
+            <li>Right click drag: zoom</li>
+          </ul>
+        </ul>
+      </div>
+
     </div>
   </div>
 </body>
 
 <!-- include the cornerstone library -->
 <script src="../cornerstone.min.js"></script>
-  
+
 <script src="../cornerstoneMath.min.js"></script>
 
 <!-- include the cornerstone tools library -->
@@ -77,30 +99,12 @@
 <script src="../exampleImageLoader.js"></script>
 
 <script>
-  var radiusSlider = document.getElementById('radiusSlider');
-  var radius = radiusSlider.value;
-  var element = document.getElementById('dicomImage');
+  const element = document.getElementById('dicomImage');
+  const configuration = cornerstoneTools.brush.getConfiguration();
 
-  var configuration = cornerstoneTools.brush.getConfiguration();
-  configuration.radius = parseInt(radius, 10);
+  let toolType = 'brush';
 
-  const colormapId = 'MyNewColorMap';
-  const colormap = cornerstone.colors.getColormap(colormapId);
-
-  colormap.setNumberOfColors(2);
-  colormap.setColor(0, [0, 0, 0, 0]);
-  colormap.setColor(1, [200, 0, 0, 255]);
-
-  configuration.colormapId = colormapId;
-
-  var toolType = 'brush';
-  cornerstoneTools.brush.setConfiguration(configuration);
-
-  var adaptiveConfig = cornerstoneTools.adaptiveBrush.getConfiguration();
-  adaptiveConfig.colormapId = colormapId;
-  cornerstoneTools.adaptiveBrush.setConfiguration(adaptiveConfig);
-
-  var imageIds = [
+  const imageIds = [
       'example://1',
       'example://2',
   ];
@@ -110,63 +114,93 @@
       imageIds: imageIds
   };
 
-  cornerstone.enable(element);  
+  cornerstone.enable(element);
   cornerstone.loadImage(imageIds[0]).then(function(image) {
-    cornerstone.addLayer(element, image);
-    cornerstone.updateImage(element);
-    var viewport = cornerstone.getViewport(element);
-    viewport.pixelReplication = true;
-    cornerstone.setViewport(element, viewport);
+    cornerstone.displayImage(element, image);
 
     cornerstoneTools.addStackStateManager(element, ['stack']);
     cornerstoneTools.addToolState(element, 'stack', stack);
 
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.mouseWheelInput.enable(element);
+    cornerstoneTools.keyboardInput.enable(element);
+    element.tabIndex = 0;
+    element.focus();
+
     cornerstoneTools.stackScrollWheel.activate(element);
     cornerstoneTools.pan.activate(element, 2);
-    cornerstoneTools.zoom.activate(element, 4);    
+    cornerstoneTools.zoom.activate(element, 4);
     cornerstoneTools[toolType].activate(element, 1);
   });
 
-  var drawEraseButton = document.getElementById('drawErase');
-  let drawValue = 1;
-  drawEraseButton.addEventListener('click', function () {
-    var configuration = cornerstoneTools[toolType].getConfiguration();
-    if (configuration.draw === 0) {
-      configuration.draw = 1;
-      drawEraseButton.textContent = "Erase";
-    } else {
-      configuration.draw = 0;
-      drawEraseButton.textContent = "Draw";
+  const drawNextButton = document.getElementById('drawNext');
+  drawNextButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+    const numberOfColors = cornerstone.colors.getColormap("BrushColorMap").getNumberOfColors();
+    let drawId = configuration.draw + 1;
+
+    if (drawId === numberOfColors) {
+      drawId = 0;
     }
-    cornerstoneTools[toolType].setConfiguration(configuration);
+
+    cornerstoneTools[toolType].changeDrawColor(drawId);
+
+    element.focus();
   });
-  
-  var radiusSlider = document.getElementById('radiusSlider');
-  radiusSlider.addEventListener('input', function(){
-    var configuration = cornerstoneTools[toolType].getConfiguration();
-    var radius = radiusSlider.value;
-    document.getElementById('valBox').textContent = radius;
-    configuration.radius = parseInt(radius, 10);
-    cornerstoneTools[toolType].setConfiguration(configuration);
+
+  const drawPrevButton = document.getElementById('drawPrev');
+  drawPrevButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+    const numberOfColors = cornerstone.colors.getColormap("BrushColorMap").getNumberOfColors();
+    let drawId = configuration.draw - 1;
+
+    if (drawId < 0 ) {
+      drawId = numberOfColors - 1;
+    }
+
+    cornerstoneTools[toolType].changeDrawColor(drawId);
+
+    element.focus();
+  });
+
+  const drawIncreaseButton = document.getElementById('drawIncrease');
+  drawIncreaseButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+
+    cornerstoneTools[toolType].increaseRadius();
+
+    element.focus();
+  });
+
+  const drawDecreaseButton = document.getElementById('drawDecrease');
+  drawDecreaseButton.addEventListener('click', function () {
+    const configuration = cornerstoneTools[toolType].getConfiguration();
+
+    cornerstoneTools[toolType].decreaseRadius();
+
+    element.focus();
+  });
+
+  const deactivateButton = document.getElementById('deactivate');
+  deactivateButton.addEventListener('click', function(){
+    cornerstoneTools.brush.deactivate(element);
+    cornerstoneTools.adaptiveBrush.deactivate(element);
+
     cornerstone.updateImage(element, true);
+    element.focus();
   });
 
-  var toolTypeSelect = document.getElementById('toolType');
+  const toolTypeSelect = document.getElementById('toolType');
   toolTypeSelect.addEventListener('change', function(){
-    toolType = toolTypeSelect.value;
-    cornerstoneTools.brush.disable(element);
-    cornerstoneTools.adaptiveBrush.disable(element);
+    cornerstoneTools.brush.deactivate(element);
+    cornerstoneTools.adaptiveBrush.deactivate(element);
 
-    var configuration = cornerstoneTools[toolType].getConfiguration();
-    var radius = radiusSlider.value;
-    configuration.radius = parseInt(radius, 10);
-    configuration.draw = drawValue;
-    cornerstoneTools[toolType].setConfiguration(configuration);
-    
+    toolType = toolTypeSelect.value;
     cornerstoneTools[toolType].activate(element, 1);
     cornerstone.updateImage(element, true);
+    element.focus();
   });
+
+
 </script>
 </html>

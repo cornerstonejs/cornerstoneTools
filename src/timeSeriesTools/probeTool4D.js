@@ -4,8 +4,8 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import MeasurementManager from '../measurementManager/measurementManager.js';
 import LineSampleMeasurement from '../measurementManager/lineSampleMeasurement.js';
-import textStyle from '../stateManagement/textStyle.js';
 import drawTextBox from '../util/drawTextBox.js';
+import { draw } from '../util/drawing.js';
 
 const toolType = 'probe4D';
 
@@ -83,32 +83,23 @@ function onImageRendered (e) {
   context.setTransform(1, 0, 0, 1, 0, 0);
 
   const color = 'white';
-  const font = textStyle.getFont();
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-    const data = toolData.data[i];
+    draw(context, (context) => {
+      const data = toolData.data[i];
 
-    // Draw the handles
-    context.beginPath();
-    drawHandles(context, eventData, data.handles, color);
-    context.stroke();
+      drawHandles(context, eventData, data.handles, color);
 
-    context.font = font;
+      const coords = {
+        // Translate the x/y away from the cursor
+        x: data.handles.end.x + 3,
+        y: data.handles.end.y - 3
+      };
 
-    const coords = {
-      // Translate the x/y away from the cursor
-      x: data.handles.end.x + 3,
-      y: data.handles.end.y - 3
-    };
+      const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-    const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
-
-    context.fillStyle = color;
-
-    drawTextBox(context, `${data.handles.end.x}, ${data.handles.end.y}`, textCoords.x, textCoords.y, color);
-
-    context.restore();
+      drawTextBox(context, `${data.handles.end.x}, ${data.handles.end.y}`, textCoords.x, textCoords.y, color);
+    });
   }
 }
 // /////// END IMAGE RENDERING ///////

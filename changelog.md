@@ -5,8 +5,96 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+- Added a configuration setting on the stackPrefetch tool, called "preserveExistingPool", that prevents resetting the prefetch pool each time a new stack viewer is activated.
+
+## [2.3.9] - 2018-07-24
+### Changed
+- Make use of drawRect, drawCircle and drawLine in the tools (thanks @timleslie)
+
+## [2.3.8] - 2018-07-12
+### Added
+- Added Webpack-web-server and hotReloader for development
+- Added invert effect on mouse zoom (thanks @posegae)
+- Added tool data docs page
+- Added new tool Eraser that Erases marks from other tools (thanks @dlwire)
+- Added Freehand Sculpter tool (#431) (thanks @JamesAPetts)
+
+### Changed
+- Changed more functions drawing.js being applied to the tools: path, drawLine, setShadow (thanks @timleslie)
+
+### Fixed
+- Fixed dragProbe touch issue (issue/390)
+- Fixed paintbrush tool, Improvements to brush tool and example (issue/434) (thanks @JamesAPetts)
+
+## [2.3.7] - 2018-07-05
+### Added
+- Added an utility file drawing.js to make it simpler to draw shapes (thanks @timleslie)
+
+### Changed
+- Revamped freehandROI pencil mode and added handle editing (thanks @JamesAPetts)
+- Deprecated drawCircle.js and drawEllipse.js files and recommended use of drawing.js instead (thanks @timleslie)
+- Replaced all duplicated context declarations and its initial transformation with getNewContext (thanks @timleslie)
+- Using EVENTS.NEW_IMAGE constant instead of 'cornerstonenewimage' string on scroll.js
+- Changed the way things are drawn. Making use of draw method of drawing.js to follow W3C canvas state save/restore specification (thanks @timleslie)
+
+### Fixed
+- Fixed incorrect center point for rotation calculations on rotation tool (thanks @medihack)
+- Prevent stackImagePositionOffsetSynchronizer from throwing an exception when no imagePlane is set (thanks @freund17)
+- Fixed errors being thrown after usage of magnify tool (thanks @dlwire)
+
+## [2.3.6] - 2018-06-06
+### Fixed
+- Fixed X and Y values on Length tool (thanks @catalinaduplat)
+
+## [2.3.5] - 2018-05-28
+### Changed
+- Updated package.json dependencies to latest versions
+
+### Fixed
+- Fixed saveAs for Internet Explorer by adding canvas.msToBlob. Note that for some reason this appears to be lower quality than on other browsers. We may need to implement another approach.
+
+## [2.3.4] - 2018-05-28
+### Changed
+- Refactoring / cleanup of tools to clarify how to create new tools.
+
+drawLink, drawLinkedTextBox, and lineSegDistance functions were added to make each tool code as similar as possible. (thanks @timleslie)
+
+- Each tool was given a textBoxText function to clearly separate where the information for it's text callout comes from (thanks @timleslie)
+- .color attribute added to tool data for each tool. This can be used to specify for each individual tool instance, which color it should be while active.
+- Refactoring and cleanup of Freehand tool ahead of major changes (thanks @JamesAPetts)
+
+### Fixed
+- Stack Scroll Synchronizer's (stackImagePosition, stackImagePositionOffset, stackScroll) will now verify, after an image has been loaded, if it is still intended to be displayed. This prevents the appearance of 'jumping' of a synchronized stack while scrolling.
+- Fixed incorrect statistical calculations in Freehand tool (thanks @JamesAPetts)
+
+## [2.3.3] - 2018-04-25
+### Fixed
+- fix(scaleOverlayTool) persist tool's default configuration into displayTool instance.
+- fix(travis build) node version is now set to latest LTS version
+
+## [2.3.2] - 2018-04-18
+### Fixed
+- fix(interaction) No tool interaction when tool is invisible (thanks @floryst)
+
+## [2.3.1] - 2018-04-11
+### Fixed
+- fix(visibility) Make tools' visible property actually change their visibility
+- Prevent crosshairs tool from throwing an exception when no imagePlaneModule metadata is present (now it fails gracefully) (thanks @fegemo!)
+
+### Removed
+- Removed unused karma.conf.js file
+
+## [2.3.0] - 2018-04-11
+### Added
+- Added an [example for the scale overlay tool](https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/scaleOverlayTool/index.html) (thanks @evren217)
+
 ### Changed
 - Improved Magnifying glass tool to display full resolution image (thanks @diego0020!)
+- Switch from PhantomJS to ChromeHeadless for tests
+- Updated to Webpack 4
+
+### Fixed
+- Adding a request now wakes up the requestPoolManager. (thanks @adreyfus!)
 
 ## [2.2.0] - 2018-04-02
 ### Added

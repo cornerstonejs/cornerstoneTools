@@ -3,18 +3,19 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import drawTextBox from '../util/drawTextBox.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import moveHandle from '../manipulators/moveHandle.js';
 import drawHandles from '../manipulators/drawHandles.js';
-import drawCircle from '../util/drawCircle.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { drawCircle, getNewContext, draw, setShadow } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 const toolType = 'seedAnnotate';
 
@@ -81,6 +82,7 @@ function createNewMeasurement (mouseEventData) {
   const measurementData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       end: {
         x: mouseEventData.currentPoints.image.x,
@@ -105,6 +107,10 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   if (!data.handles.end) {
     return;
   }
@@ -130,141 +136,96 @@ function onImageRendered (e) {
   const enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   // We need the canvas width
   const canvasWidth = eventData.canvasContext.canvas.width;
 
-  let color;
   const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = seedAnnotate.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
     const data = toolData.data[i];
 
-    if (data.active) {
-      color = toolColors.getActiveColor();
+    if (data.visible === false) {
+      continue;
+    }
+
+    draw(context, (context) => {
+      setShadow(context, config);
+
+      const color = toolColors.getColorIfActive(data);
+
+      // Draw
+      const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+
+      // Draw the circle always at the end of the handle
+      const handleRadius = 6;
+
+      drawCircle(context, eventData.element, data.handles.end, handleRadius, { color });
+
+      const handleOptions = {
+        drawHandlesIfActive: (config && config.drawHandlesOnHover)
+      };
+
+      if (config.drawHandles) {
+        drawHandles(context, eventData, handleCanvas, color, handleOptions);
+      }
+
+      // Draw the text
+      if (data.text && data.text !== '') {
+        const text = textBoxText(data);
+
+        // Calculate the text coordinates.
+        const padding = 5;
+        const textWidth = textBoxWidth(context, text, padding);
+        const textHeight = textStyle.getFontSize() + 10;
+
+        let distance = Math.max(textWidth, textHeight) / 2 + 5;
+
+        if (handleCanvas.x > (canvasWidth / 2)) {
+          distance = -distance;
+        }
+
+        let textCoords;
+
+        if (!data.handles.textBox.hasMoved) {
+          textCoords = {
+            x: handleCanvas.x - textWidth / 2 + distance,
+            y: handleCanvas.y - textHeight / 2
+          };
+
+          const transform = cornerstone.internal.getTransform(enabledElement);
+
+          transform.invert();
+
+          const coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
+        }
+
+        drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
+          data.handles, textBoxAnchorPoints, color, lineWidth, 0, false);
+      }
+    });
+  }
+
+  function textBoxText (data) {
+    let textPlusCoords = '';
+
+    if (config.showCoordinates) {
+      textPlusCoords = `${data.text} x: ${Math.round(data.handles.end.x)
+      } y: ${Math.round(data.handles.end.y)}`;
     } else {
-      color = toolColors.getToolColor();
+      textPlusCoords = data.text;
     }
 
-    // Draw
-    const handleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    return textPlusCoords;
+  }
 
-    // Draw the circle always at the end of the handle
-    drawCircle(context, handleCanvas, color, lineWidth);
-
-    const handleOptions = {
-      drawHandlesIfActive: (config && config.drawHandlesOnHover)
-    };
-
-    if (config.drawHandles) {
-      drawHandles(context, eventData, handleCanvas, color, handleOptions);
-    }
-
-    // Draw the text
-    if (data.text && data.text !== '') {
-      context.font = font;
-
-      let textPlusCoords = '';
-
-      if (config.showCoordinates) {
-        textPlusCoords = `${data.text} x: ${Math.round(data.handles.end.x)
-        } y: ${Math.round(data.handles.end.y)}`;
-      } else {
-        textPlusCoords = data.text;
-      }
-
-      // Calculate the text coordinates.
-      const textWidth = context.measureText(textPlusCoords).width + 10;
-      const textHeight = textStyle.getFontSize() + 10;
-
-      let distance = Math.max(textWidth, textHeight) / 2 + 5;
-
-      if (handleCanvas.x > (canvasWidth / 2)) {
-        distance = -distance;
-      }
-
-      let textCoords;
-
-      if (!data.handles.textBox.hasMoved) {
-        textCoords = {
-          x: handleCanvas.x - textWidth / 2 + distance,
-          y: handleCanvas.y - textHeight / 2
-        };
-
-        const transform = cornerstone.internal.getTransform(enabledElement);
-
-        transform.invert();
-
-        const coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
-      }
-
-      textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-
-      const boundingBox = drawTextBox(context, textPlusCoords, textCoords.x, textCoords.y, color);
-
-      data.handles.textBox.boundingBox = boundingBox;
-
-      if (data.handles.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-        const link = {
-          start: {},
-          end: {}
-        };
-
-        link.end.x = textCoords.x;
-        link.end.y = textCoords.y;
-
-        link.start = handleCanvas;
-
-        const boundingBoxPoints = [
-          {
-            // Top middle point of bounding box
-            x: boundingBox.left + boundingBox.width / 2,
-            y: boundingBox.top
-          }, {
-            // Left middle point of bounding box
-            x: boundingBox.left,
-            y: boundingBox.top + boundingBox.height / 2
-          }, {
-            // Bottom middle point of bounding box
-            x: boundingBox.left + boundingBox.width / 2,
-            y: boundingBox.top + boundingBox.height
-          }, {
-            // Right middle point of bounding box
-            x: boundingBox.left + boundingBox.width,
-            y: boundingBox.top + boundingBox.height / 2
-          }
-        ];
-
-        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.setLineDash([2, 3]);
-        context.moveTo(link.start.x, link.start.y);
-        context.lineTo(link.end.x, link.end.y);
-        context.stroke();
-      }
-    }
-
-    context.restore();
+  function textBoxAnchorPoints (handles) {
+    return [handles.end];
   }
 }
 // ---- Touch tool ----

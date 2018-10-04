@@ -36,6 +36,9 @@
             <ul class="list-group">
                 <a id="clearToolData" class="list-group-item">Clear drawing</a>
             </ul>
+            <ul class="col-xs-12 col-sm-2">
+                <div id="keyPressed">Holding:</div>
+            </ul>
             <br/>
         </div>
         <div class="col-xs-10">
@@ -54,12 +57,24 @@
     <div class="row">
         <div class="col-xs-12">
             <h3>Functionality</h3>
+            <h4>Polygon Mode</h4>
             <ul>
-                <li>Click to draw a point</li>
-                <li>Keep clicking to draw a shape</li>
-                <li>Hold Shift while dragging to draw freehand</li>
-                <li>End the shape by connecting it to one of the other nodes</li>
-                <li>Click elsewhere to start a new shape</li>
+                <li>Click to draw a point.</li>
+                <li>Keep clicking to draw a shape.</li>
+                <li>End the shape by connecting it to the origin node without crossing any lines.</li>
+            </ul>
+            <h4>Pencil Mode</h4>
+            <ul>
+                <li>Shift-click to start drawing.</li>
+                <li>Move the mouse to draw the shape.</li>
+                <li>End the shape by mousing over the origin and clicking.</li>
+            </ul>
+            <h4>Edit</h4>
+            <ul>
+                <li>Holding ctrl will display all the handles of each polygon.</li>
+                <li>Ctrl-click on a handle to delete it.</li>
+                <li>Ctrl-click on a line to insert a new handle.</li>
+                <li>Release ctrl and drag a handle to move it.</li>
             </ul>
         </div>
     </div>
@@ -80,9 +95,80 @@
 
 <script>
     var element = document.getElementById('dicomImage');
-
     var imageId = 'example://1';
-    
+
+    const keyCodes = {
+        SHIFT: 16,
+        CTRL: 17,
+        ALT: 18
+    };
+
+    const config = {
+      ctrl: false,
+      shift: false,
+      alt: false
+    };
+
+    function onKeyDown(e) {
+      const data = e.detail;
+      const keyCode = data.keyCode;
+
+      if (keyCode === keyCodes.CTRL) {
+        config.ctrl = true;
+      } else if (keyCode === keyCodes.SHIFT) {
+        config.shift = true;
+      } else if (keyCode === keyCodes.ALT) {
+        config.alt = true;
+      }
+
+      let keyName = '';
+
+      if (config.ctrl) {
+        keyName += ' Ctrl';
+      }
+      if (config.shift) {
+        keyName += ' Shift';
+      }
+      if (config.alt) {
+        keyName += ' Alt';
+      }
+
+      document.getElementById('keyPressed').textContent = "Holding:" + keyName;
+    }
+
+    function onKeyUp(e) {
+      const data = e.detail;
+      const keyCode = data.keyCode;
+
+      if (keyCode === keyCodes.CTRL) {
+        config.ctrl = false;
+      } else if (keyCode === keyCodes.SHIFT) {
+        config.shift = false;
+      } else if (keyCode === keyCodes.ALT) {
+        config.alt = false;
+      }
+
+      let keyName = '';
+
+      if (config.ctrl) {
+        keyName += ' Ctrl';
+      }
+      if (config.shift) {
+        keyName += ' Shift';
+      }
+      if (config.alt) {
+        keyName += ' Alt';
+      }
+
+      document.getElementById('keyPressed').textContent = "Holding:" + keyName;
+    }
+
+    element.tabIndex = 0;
+    element.focus();
+
+    element.addEventListener("cornerstonetoolskeydown", onKeyDown);
+    element.addEventListener("cornerstonetoolskeyup", onKeyUp);
+
     cornerstoneTools.toolStyle.setToolWidth(3);
     cornerstoneTools.toolColors.setToolColor("#ffcc33");
     cornerstoneTools.toolColors.setActiveColor("#0099ff");
@@ -90,14 +176,16 @@
 
     // image enable the dicomImage element
     cornerstone.enable(element);
+    cornerstoneTools.keyboardInput.enable(element);
+    cornerstoneTools.mouseInput.enable(element);
     cornerstone.loadImage(imageId).then(function(image) {
         cornerstone.displayImage(element, image);
-        cornerstoneTools.mouseInput.enable(element);
 
         // Enable all tools we want to use with this element
         cornerstoneTools.freehand.activate(element, 1);
 
         activate("activate");
+        element.focus();
 
         function activate(id)
         {
@@ -109,29 +197,34 @@
         document.getElementById('disable').addEventListener('click', function() {
             activate("disable");
             cornerstoneTools.freehand.disable(element);
+            element.focus();
             return false;
         });
         document.getElementById('enable').addEventListener('click', function() {
             activate("enable");
             cornerstoneTools.freehand.enable(element);
+            element.focus();
             return false;
         });
         document.getElementById('activate').addEventListener('click', function() {
             activate("activate");
             cornerstoneTools.freehand.activate(element, 1);
+            element.focus();
             return false;
         });
         document.getElementById('deactivate').addEventListener('click', function() {
             activate("deactivate");
             cornerstoneTools.freehand.deactivate(element, 1);
+            element.focus();
             return false;
         });
 
         document.getElementById('clearToolData').addEventListener('click', function() {
             var toolStateManager = cornerstoneTools.getElementToolStateManager(element);
             // Note that this only works on ImageId-specific tool state managers (for now)
-            toolStateManager.clear(element)
+            toolStateManager.clear(element);
             cornerstone.updateImage(element);
+            element.focus();
         });
     });
 

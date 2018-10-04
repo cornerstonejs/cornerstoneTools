@@ -5,9 +5,10 @@ import touchTool from './touchTool.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
-import drawTextBox from '../util/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getToolOptions } from '../toolOptions.js';
+import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
 const toolType = 'textMarker';
 
@@ -24,6 +25,7 @@ function createNewMeasurement (mouseEventData) {
     visible: true,
     active: true,
     text: config.current,
+    color: undefined,
     handles: {
       end: {
         x: mouseEventData.currentPoints.image.x,
@@ -80,6 +82,10 @@ function createNewMeasurement (mouseEventData) {
 
 // /////// BEGIN IMAGE RENDERING ///////
 function pointNearTool (element, data, coords) {
+  if (data.visible === false) {
+    return false;
+  }
+
   if (!data.handles.end.boundingBox) {
     return;
   }
@@ -102,47 +108,38 @@ function onImageRendered (e) {
   }
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(eventData.canvasContext.canvas);
 
   const config = textMarker.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
 
-    let color = toolColors.getToolColor();
-
-    if (data.active) {
-      color = toolColors.getActiveColor();
+    if (data.visible === false) {
+      continue;
     }
 
-    context.save();
+    const color = toolColors.getColorIfActive(data);
 
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
+    draw(context, (context) => {
+      setShadow(context, config);
 
-    // Draw text
-    context.fillStyle = color;
-    const measureText = context.measureText(data.text);
+      // Draw text
+      const padding = 5;
 
-    data.textWidth = measureText.width + 10;
+      data.textWidth = textBoxWidth(context, data.text, padding);
 
-    const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+      const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
 
-    const options = {
-      centering: {
-        x: true,
-        y: true
-      }
-    };
+      const options = {
+        centering: {
+          x: true,
+          y: true
+        }
+      };
 
-    data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
-
-    context.restore();
+      data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+    });
   }
 }
 

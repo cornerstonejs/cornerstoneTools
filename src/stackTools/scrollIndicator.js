@@ -1,5 +1,6 @@
 import displayTool from '../imageTools/displayTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
+import { getNewContext, draw, fillBox } from '../util/drawing.js';
 
 /*
 Display scroll progress bar across bottom of image.
@@ -22,45 +23,62 @@ function onImageRendered (e) {
     return false;
   }
 
-  const context = eventData.enabledElement.canvas.getContext('2d');
+  const context = getNewContext(eventData.enabledElement.canvas);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-  context.save();
+  draw(context, (context) => {
+    const config = scrollIndicator.getConfiguration();
 
-  const config = scrollIndicator.getConfiguration();
+    // Draw indicator background
+    let boundingBox;
 
-  // Draw indicator background
-  context.fillStyle = config.backgroundColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(0, height - scrollBarHeight, width, scrollBarHeight);
-  } else {
-    context.fillRect(0, 0, scrollBarHeight, height);
-  }
+    if (config.orientation === 'horizontal') {
+      boundingBox = {
+        left: 0,
+        top: height - scrollBarHeight,
+        width,
+        height: scrollBarHeight
+      };
+    } else {
+      boundingBox = {
+        left: 0,
+        top: 0,
+        width: scrollBarHeight,
+        height
+      };
+    }
+    fillBox(context, boundingBox, config.backgroundColor);
 
-  // Get current image index
-  const stackData = getToolState(element, 'stack');
+    // Get current image index
+    const stackData = getToolState(element, 'stack');
 
-  if (!stackData || !stackData.data || !stackData.data.length) {
-    return;
-  }
+    if (stackData && stackData.data && stackData.data.length) {
+      const imageIds = stackData.data[0].imageIds;
+      const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
 
-  const imageIds = stackData.data[0].imageIds;
-  const currentImageIdIndex = stackData.data[0].currentImageIdIndex;
+      // Draw current image cursor
+      const cursorWidth = width / imageIds.length;
+      const cursorHeight = height / imageIds.length;
+      const xPosition = cursorWidth * currentImageIdIndex;
+      const yPosition = cursorHeight * currentImageIdIndex;
 
-  // Draw current image cursor
-  const cursorWidth = width / imageIds.length;
-  const cursorHeight = height / imageIds.length;
-  const xPosition = cursorWidth * currentImageIdIndex;
-  const yPosition = cursorHeight * currentImageIdIndex;
-
-  context.fillStyle = config.fillColor;
-  if (config.orientation === 'horizontal') {
-    context.fillRect(xPosition, height - scrollBarHeight, cursorWidth, scrollBarHeight);
-  } else {
-    context.fillRect(0, yPosition, scrollBarHeight, cursorHeight);
-  }
-
-  context.restore();
+      if (config.orientation === 'horizontal') {
+        boundingBox = {
+          left: xPosition,
+          top: height - scrollBarHeight,
+          width: cursorWidth,
+          height: scrollBarHeight
+        };
+      } else {
+        boundingBox = {
+          left: 0,
+          top: yPosition,
+          width: scrollBarHeight,
+          height: cursorHeight
+        };
+      }
+      fillBox(context, boundingBox, config.fillColor);
+    }
+  });
 }
 
 const scrollIndicator = displayTool(onImageRendered);

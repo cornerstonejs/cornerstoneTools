@@ -163,7 +163,7 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
   // Not visible, not interactive
   function disable (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
@@ -173,12 +173,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
 
   // Visible but not interactive
   function enable (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
 
     external.cornerstone.updateImage(element);
   }
@@ -187,12 +187,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
   function activate (element, mouseButtonMask) {
     setToolOptions(toolType, element, { mouseButtonMask });
 
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
@@ -204,12 +204,12 @@ export default function (mouseToolInterface, preventHandleOutsideImage) {
   function deactivate (element, mouseButtonMask) {
     setToolOptions(toolType, element, { mouseButtonMask });
 
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, mouseToolInterface.onImageRendered);
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
 

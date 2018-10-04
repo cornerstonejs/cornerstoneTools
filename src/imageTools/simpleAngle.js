@@ -1,9 +1,8 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
-import drawTextBox from '../util/drawTextBox.js';
 import roundToDecimal from '../util/roundToDecimal.js';
-import textStyle from '../stateManagement/textStyle.js';
+import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
@@ -11,7 +10,10 @@ import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import touchTool from './touchTool.js';
+import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
+import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
+import { textBoxWidth } from '../util/drawTextBox.js';
 
 
 const toolType = 'simpleAngle';
@@ -22,6 +24,7 @@ function createNewMeasurement (mouseEventData) {
   const angleData = {
     visible: true,
     active: true,
+    color: undefined,
     handles: {
       start: {
         x: mouseEventData.currentPoints.image.x,
@@ -57,24 +60,12 @@ function createNewMeasurement (mouseEventData) {
 // /////// END ACTIVE TOOL ///////
 
 function pointNearTool (element, data, coords) {
-  const cornerstone = external.cornerstone;
-  const lineSegment = {
-    start: cornerstone.pixelToCanvas(element, data.handles.start),
-    end: cornerstone.pixelToCanvas(element, data.handles.middle)
-  };
-
-  let distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  if (distanceToPoint < 25) {
-    return true;
+  if (data.visible === false) {
+    return false;
   }
 
-  lineSegment.start = cornerstone.pixelToCanvas(element, data.handles.middle);
-  lineSegment.end = cornerstone.pixelToCanvas(element, data.handles.end);
-
-  distanceToPoint = external.cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
-
-  return (distanceToPoint < 25);
+  return lineSegDistance(element, data.handles.start, data.handles.middle, coords) < 25 ||
+    lineSegDistance(element, data.handles.middle, data.handles.end, coords) < 25;
 }
 
 function length (vector) {
@@ -95,184 +86,113 @@ function onImageRendered (e) {
   const enabledElement = eventData.enabledElement;
 
   // We have tool data for this element - iterate over each one and draw it
-  const context = eventData.canvasContext.canvas.getContext('2d');
+  const context = getNewContext(eventData.canvasContext.canvas);
 
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  // Activation color
-  let color;
   const lineWidth = toolStyle.getToolWidth();
-  const font = textStyle.getFont();
   const config = simpleAngle.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
-    context.save();
-
-    if (config && config.shadow) {
-      context.shadowColor = config.shadowColor || '#000000';
-      context.shadowOffsetX = config.shadowOffsetX || 1;
-      context.shadowOffsetY = config.shadowOffsetY || 1;
-    }
-
     const data = toolData.data[i];
 
-    // Differentiate the color of activation tool
-    if (data.active) {
-      color = toolColors.getActiveColor();
-    } else {
-      color = toolColors.getToolColor();
+    if (data.visible === false) {
+      continue;
     }
 
-    const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
-    const handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
-    const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+    draw(context, (context) => {
+      setShadow(context, config);
 
-    // Draw the line
-    context.beginPath();
-    context.strokeStyle = color;
-    context.lineWidth = lineWidth;
-    context.moveTo(handleStartCanvas.x, handleStartCanvas.y);
-    context.lineTo(handleMiddleCanvas.x, handleMiddleCanvas.y);
-    context.lineTo(handleEndCanvas.x, handleEndCanvas.y);
-    context.stroke();
+      // Differentiate the color of activation tool
+      const color = toolColors.getColorIfActive(data);
 
-    // Draw the handles
-    const handleOptions = {
-      drawHandlesIfActive: (config && config.drawHandlesOnHover)
-    };
+      const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start);
+      const handleMiddleCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.middle);
 
-    drawHandles(context, eventData, data.handles, color, handleOptions);
+      drawJoinedLines(context, eventData.element, data.handles.start, [data.handles.middle, data.handles.end], { color });
 
-    // Draw the text
-    context.fillStyle = color;
-
-    // Default to isotropic pixel size, update suffix to reflect this
-    const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-    const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-    let suffix = '';
-
-    if (!eventData.image.rowPixelSpacing || !eventData.image.columnPixelSpacing) {
-      suffix = ' (isotropic)';
-    }
-
-    const sideA = {
-      x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-    };
-
-    const sideB = {
-      x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
-    };
-
-    const sideC = {
-      x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
-      y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
-    };
-
-    const sideALength = length(sideA);
-    const sideBLength = length(sideB);
-    const sideCLength = length(sideC);
-
-    // Cosine law
-    let angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
-
-    angle *= (180 / Math.PI);
-
-    const rAngle = roundToDecimal(angle, 2);
-
-    if (rAngle) {
-      const str = '00B0'; // Degrees symbol
-      const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
-
-      const distance = 15;
-
-      let textCoords;
-
-      if (data.handles.textBox.hasMoved) {
-        textCoords = cornerstone.pixelToCanvas(eventData.element, data.handles.textBox);
-      } else {
-        textCoords = {
-          x: handleMiddleCanvas.x,
-          y: handleMiddleCanvas.y
-        };
-
-        context.font = font;
-        const textWidth = context.measureText(text).width;
-
-        if (handleMiddleCanvas.x < handleStartCanvas.x) {
-          textCoords.x -= distance + textWidth + 10;
-        } else {
-          textCoords.x += distance;
-        }
-
-        const transform = cornerstone.internal.getTransform(enabledElement);
-
-        transform.invert();
-
-        const coords = transform.transformPoint(textCoords.x, textCoords.y);
-
-        data.handles.textBox.x = coords.x;
-        data.handles.textBox.y = coords.y;
-      }
-
-      const options = {
-        centering: {
-          x: false,
-          y: true
-        }
+      // Draw the handles
+      const handleOptions = {
+        drawHandlesIfActive: (config && config.drawHandlesOnHover)
       };
 
-      const boundingBox = drawTextBox(context, text, textCoords.x, textCoords.y, color, options);
+      drawHandles(context, eventData, data.handles, color, handleOptions);
 
-      data.handles.textBox.boundingBox = boundingBox;
+      // Default to isotropic pixel size, update suffix to reflect this
+      const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+      const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
 
-      if (data.handles.textBox.hasMoved) {
-        // Draw dashed link line between tool and text
-        const link = {
-          start: {},
-          end: {}
-        };
+      const sideA = {
+        x: (Math.ceil(data.handles.middle.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.middle.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+      };
 
-        const points = [handleStartCanvas, handleEndCanvas, handleMiddleCanvas];
+      const sideB = {
+        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.middle.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.middle.y)) * rowPixelSpacing
+      };
 
-        link.end.x = textCoords.x;
-        link.end.y = textCoords.y;
+      const sideC = {
+        x: (Math.ceil(data.handles.end.x) - Math.ceil(data.handles.start.x)) * columnPixelSpacing,
+        y: (Math.ceil(data.handles.end.y) - Math.ceil(data.handles.start.y)) * rowPixelSpacing
+      };
 
-        link.start = external.cornerstoneMath.point.findClosestPoint(points, link.end);
+      const sideALength = length(sideA);
+      const sideBLength = length(sideB);
+      const sideCLength = length(sideC);
 
-        const boundingBoxPoints = [{
-          // Top middle point of bounding box
-          x: boundingBox.left + boundingBox.width / 2,
-          y: boundingBox.top
-        }, {
-          // Left middle point of bounding box
-          x: boundingBox.left,
-          y: boundingBox.top + boundingBox.height / 2
-        }, {
-          // Bottom middle point of bounding box
-          x: boundingBox.left + boundingBox.width / 2,
-          y: boundingBox.top + boundingBox.height
-        }, {
-          // Right middle point of bounding box
-          x: boundingBox.left + boundingBox.width,
-          y: boundingBox.top + boundingBox.height / 2
+      // Cosine law
+      let angle = Math.acos((Math.pow(sideALength, 2) + Math.pow(sideBLength, 2) - Math.pow(sideCLength, 2)) / (2 * sideALength * sideBLength));
+
+      angle *= (180 / Math.PI);
+
+      data.rAngle = roundToDecimal(angle, 2);
+
+      if (data.rAngle) {
+        const text = textBoxText(data, eventData.image.rowPixelSpacing, eventData.image.columnPixelSpacing);
+
+        const distance = 15;
+
+        let textCoords;
+
+        if (!data.handles.textBox.hasMoved) {
+          textCoords = {
+            x: handleMiddleCanvas.x,
+            y: handleMiddleCanvas.y
+          };
+
+          const padding = 5;
+          const textWidth = textBoxWidth(context, text, padding);
+
+          if (handleMiddleCanvas.x < handleStartCanvas.x) {
+            textCoords.x -= distance + textWidth;
+          } else {
+            textCoords.x += distance;
+          }
+
+          const transform = cornerstone.internal.getTransform(enabledElement);
+
+          transform.invert();
+
+          const coords = transform.transformPoint(textCoords.x, textCoords.y);
+
+          data.handles.textBox.x = coords.x;
+          data.handles.textBox.y = coords.y;
         }
-        ];
 
-        link.end = external.cornerstoneMath.point.findClosestPoint(boundingBoxPoints, link.start);
-
-        context.beginPath();
-        context.strokeStyle = color;
-        context.lineWidth = lineWidth;
-        context.setLineDash([2, 3]);
-        context.moveTo(link.start.x, link.start.y);
-        context.lineTo(link.end.x, link.end.y);
-        context.stroke();
+        drawLinkedTextBox(context, eventData.element, data.handles.textBox, text,
+          data.handles, textBoxAnchorPoints, color, lineWidth, 0, true);
       }
-    }
+    });
+  }
 
-    context.restore();
+  function textBoxText (data, rowPixelSpacing, columnPixelSpacing) {
+    const suffix = (!rowPixelSpacing || !columnPixelSpacing) ? ' (isotropic)' : '';
+    const str = '00B0'; // Degrees symbol
+
+    return data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
+  }
+
+  function textBoxAnchorPoints (handles) {
+    return [handles.start, handles.middle, handles.end];
   }
 }
 // /////// END IMAGE RENDERING ///////

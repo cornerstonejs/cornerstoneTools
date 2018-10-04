@@ -22,6 +22,14 @@ export default function (touchDragCallback, toolType, options) {
       if (options && options.activateCallback) {
         options.activateCallback(element);
       }
+
+      if (options && options.touchStartCallback) {
+        element.addEventListener(EVENTS.TOUCH_START, options.touchStartCallback);
+      }
+
+      if (options && options.touchEndCallback) {
+        element.addEventListener(EVENTS.TOUCH_END, options.touchEndCallback);
+      }
     },
     disable (element) {
       events.forEach((eventType) => {
@@ -30,6 +38,14 @@ export default function (touchDragCallback, toolType, options) {
 
       if (options && options.disableCallback) {
         options.disableCallback(element);
+      }
+
+      if (options && options.touchStartCallback) {
+        element.removeEventListener(EVENTS.TOUCH_START, options.touchStartCallback);
+      }
+
+      if (options && options.touchEndCallback) {
+        element.removeEventListener(EVENTS.TOUCH_END, options.touchEndCallback);
       }
     },
     enable (element) {
@@ -40,6 +56,14 @@ export default function (touchDragCallback, toolType, options) {
       if (options && options.enableCallback) {
         options.enableCallback(element);
       }
+
+      if (options && options.touchStartCallback) {
+        element.removeEventListener(EVENTS.TOUCH_START, options.touchStartCallback);
+      }
+
+      if (options && options.touchEndCallback) {
+        element.removeEventListener(EVENTS.TOUCH_END, options.touchEndCallback);
+      }
     },
     deactivate (element) {
       events.forEach((eventType) => {
@@ -48,6 +72,14 @@ export default function (touchDragCallback, toolType, options) {
 
       if (options && options.deactivateCallback) {
         options.deactivateCallback(element);
+      }
+
+      if (options && options.touchStartCallback) {
+        element.removeEventListener(EVENTS.TOUCH_START, options.touchStartCallback);
+      }
+
+      if (options && options.touchEndCallback) {
+        element.removeEventListener(EVENTS.TOUCH_END, options.touchEndCallback);
       }
     }
   };

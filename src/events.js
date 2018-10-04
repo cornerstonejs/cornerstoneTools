@@ -1,10 +1,4 @@
 const EVENTS = {
-  // Events from Cornerstone Core
-  IMAGE_RENDERED: 'cornerstoneimagerendered',
-  NEW_IMAGE: 'cornerstonenewimage',
-  IMAGE_CACHE_PROMISE_REMOVED: 'cornerstoneimagecachepromiseremoved',
-  ELEMENT_DISABLED: 'cornerstoneelementdisabled',
-
   // Mouse events
   MOUSE_DOWN: 'cornerstonetoolsmousedown',
   MOUSE_UP: 'cornerstonetoolsmouseup',

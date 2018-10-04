@@ -3,6 +3,8 @@ import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { clipToBox } from '../util/clip.js';
+import { getNewContext, fillBox } from '../util/drawing.js';
 
 const toolType = 'magnify';
 
@@ -49,7 +51,7 @@ function mouseDownCallback (e) {
     element.addEventListener(EVENTS.TOUCH_END, mouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+    element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
 
     // Ignore until next event
     drawZoomedElement(eventData);
@@ -61,17 +63,20 @@ function mouseDownCallback (e) {
   }
 }
 
-function newImageCallback (e, eventData) {
+function newImageCallback (e) {
+  const eventData = e.detail;
+
   eventData.currentPoints = currentPoints;
   drawMagnificationTool(eventData);
 }
 
-function dragEndCallback (e, eventData) {
+function dragEndCallback (e) {
+  const eventData = e.detail;
   const element = eventData.element;
 
   element.removeEventListener(EVENTS.TOUCH_DRAG_END, dragEndCallback);
   element.removeEventListener(EVENTS.TOUCH_END, dragEndCallback);
-  element.removeEventListener(EVENTS.NEW_IMAGE, newImageCallback);
+  element.removeEventListener(external.cornerstone.EVENTS.NEW_IMAGE, newImageCallback);
   hideTool(eventData);
 }
 
@@ -110,32 +115,27 @@ function drawMagnificationTool (eventData) {
   // The 'not' magnifyTool class here is necessary because cornerstone places
   // No classes of it's own on the canvas we want to select
   const canvas = element.querySelector('canvas:not(.magnifyTool)');
-  const context = canvas.getContext('2d');
-
-  context.setTransform(1, 0, 0, 1, 0, 0);
-
-  const zoomCtx = magnifyCanvas.getContext('2d');
-
-  zoomCtx.setTransform(1, 0, 0, 1, 0, 0);
+  const context = getNewContext(magnifyCanvas);
 
   const getSize = magnifySize;
 
   // Calculate the on-canvas location of the mouse pointer / touch
   const canvasLocation = external.cornerstone.pixelToCanvas(eventData.element, eventData.currentPoints.image);
 
-
-  canvasLocation.x = Math.max(canvasLocation.x, 0);
-  canvasLocation.x = Math.min(canvasLocation.x, canvas.width);
-
-  canvasLocation.y = Math.max(canvasLocation.y, 0);
-  canvasLocation.y = Math.min(canvasLocation.y, canvas.height);
+  clipToBox(canvasLocation, canvas);
 
   // Clear the rectangle
-  zoomCtx.clearRect(0, 0, magnifySize, magnifySize);
-  zoomCtx.fillStyle = 'transparent';
+  context.clearRect(0, 0, magnifySize, magnifySize);
 
   // Fill it with the pixels that the mouse is clicking on
-  zoomCtx.fillRect(0, 0, magnifySize, magnifySize);
+  const boundingBox = {
+    left: 0,
+    top: 0,
+    width: magnifySize,
+    height: magnifySize
+  };
+
+  fillBox(context, boundingBox, 'transparent');
 
   const copyFrom = {
     x: canvasLocation.x * magnificationLevel - 0.5 * getSize,
@@ -152,7 +152,7 @@ function drawMagnificationTool (eventData) {
   copyFrom.x = Math.min(copyFrom.x, zoomCanvas.width);
   copyFrom.y = Math.min(copyFrom.y, zoomCanvas.height);
 
-  zoomCtx.drawImage(zoomCanvas, copyFrom.x, copyFrom.y, getSize, getSize, 0, 0, getSize, getSize);
+  context.drawImage(zoomCanvas, copyFrom.x, copyFrom.y, getSize, getSize, 0, 0, getSize, getSize);
 
   // Place the magnification tool at the same location as the pointer
   magnifyCanvas.style.top = `${canvasLocation.y - 0.5 * magnifySize}px`;

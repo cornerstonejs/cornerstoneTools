@@ -1,3 +1,7 @@
+import * as drawing from './util/drawing.js';
+
+export { drawing };
+
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
 
@@ -115,7 +119,9 @@ export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
 export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
 
 export { ellipticalRoi, ellipticalRoiTouch } from './imageTools/ellipticalRoi.js';
+export { eraser, eraserTouch } from './imageTools/eraser.js';
 export { freehand } from './imageTools/freehand.js';
+export { freehandSculpter } from './imageTools/freehandSculpter.js';
 
 export { highlight, highlightTouch } from './imageTools/highlight.js';
 export { default as imageStats } from './imageTools/imageStats.js';

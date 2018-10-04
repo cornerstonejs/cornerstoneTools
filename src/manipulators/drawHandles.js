@@ -1,11 +1,9 @@
-import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
+import { drawCircle } from '../util/drawing.js';
 
-const handleRadius = 6;
+const defaultHandleRadius = 6;
 
 export default function (context, renderData, handles, color, options) {
-  context.strokeStyle = color;
-
   Object.keys(handles).forEach(function (name) {
     const handle = handles[name];
 
@@ -17,23 +15,26 @@ export default function (context, renderData, handles, color, options) {
       return;
     }
 
-    context.beginPath();
+    const handleRadius = getHandleRadius(options);
 
-    if (handle.active) {
-      context.lineWidth = toolStyle.getActiveWidth();
-    } else {
-      context.lineWidth = toolStyle.getToolWidth();
-    }
+    const circleOptions = {
+      color,
+      lineWidth: handle.active ? toolStyle.getActiveWidth() : toolStyle.getToolWidth(),
+      fillStyle: options && options.fill
+    };
 
-    const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
-
-    context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
-
-    if (options && options.fill) {
-      context.fillStyle = options.fill;
-      context.fill();
-    }
-
-    context.stroke();
+    drawCircle(context, renderData.element, handle, handleRadius, circleOptions);
   });
+}
+
+function getHandleRadius (options) {
+  let handleRadius;
+
+  if (options && options.handleRadius) {
+    handleRadius = options.handleRadius;
+  } else {
+    handleRadius = defaultHandleRadius;
+  }
+
+  return handleRadius;
 }

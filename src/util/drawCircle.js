@@ -1,9 +1,14 @@
+import { drawCircle } from './drawing.js';
+
+/**
+ * @deprecated Use drawing.js:drawCircle()
+ */
 export default function (context, start, color, lineWidth) {
   const handleRadius = 6;
+  const options = {
+    color,
+    lineWidth
+  };
 
-  context.beginPath();
-  context.strokeStyle = color;
-  context.lineWidth = lineWidth;
-  context.arc(start.x, start.y, handleRadius, 0, 2 * Math.PI);
-  context.stroke();
+  drawCircle(context, undefined, start, handleRadius, options, 'canvas');
 }

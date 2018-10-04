@@ -1,5 +1,4 @@
 
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 
 export default function (onImageRendered) {
@@ -7,11 +6,11 @@ export default function (onImageRendered) {
 
   return {
     disable (element) {
-      element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+      element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
     },
     enable (element) {
-      element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
-      element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+      element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
+      element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, onImageRendered);
       external.cornerstone.updateImage(element);
     },
     getConfiguration () {

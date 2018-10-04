@@ -270,7 +270,7 @@ function touchTool (touchToolInterface) {
 
   // Not visible, not interactive
   function disable (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
     element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     element.removeEventListener(EVENTS.TAP, touchToolInterface.tapCallback || tapCallback);
@@ -288,12 +288,12 @@ function touchTool (touchToolInterface) {
 
   // Visible but not interactive
   function enable (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
     element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     element.removeEventListener(EVENTS.TAP, touchToolInterface.tapCallback || tapCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
 
     if (touchToolInterface.doubleTapCallback) {
       element.removeEventListener(EVENTS.DOUBLE_TAP, touchToolInterface.doubleTapCallback);
@@ -308,12 +308,12 @@ function touchTool (touchToolInterface) {
 
   // Visible, interactive and can create
   function activate (element) {
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
     element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     element.removeEventListener(EVENTS.TAP, touchToolInterface.tapCallback || tapCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.addEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
     element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     element.addEventListener(EVENTS.TAP, touchToolInterface.tapCallback || tapCallback);
@@ -341,12 +341,12 @@ function touchTool (touchToolInterface) {
 
     triggerEvent(element, eventType, statusChangeEventData);
 
-    element.removeEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.removeEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
     element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
     element.removeEventListener(EVENTS.TAP, touchToolInterface.tapCallback || tapCallback);
 
-    element.addEventListener(EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
+    element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, touchToolInterface.onImageRendered);
     element.addEventListener(EVENTS.TOUCH_START, touchToolInterface.touchStartCallback || touchStartCallback);
 
     if (touchToolInterface.doubleTapCallback) {

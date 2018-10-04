@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { clearToolOptionsByElement } from '../toolOptions.js';
@@ -21,6 +20,9 @@ function Synchronizer (event, handler) {
   let ignoreFiredEvents = false;
   const initialData = {};
   let eventHandler = handler;
+
+  // This setting can be disabled to easily prevent the synchronizer from working.
+  this.enabled = true;
 
   this.setHandler = function (handler) {
     eventHandler = handler;
@@ -106,6 +108,12 @@ function Synchronizer (event, handler) {
   };
 
   function fireEvent (sourceElement, eventData) {
+
+    // If the synchronizer is disabled, bail out.
+    if(!that.enabled) {
+      return;
+    }
+
     // Broadcast an event that something changed
     if (!sourceElements.length || !targetElements.length) {
       return;
@@ -285,8 +293,8 @@ function Synchronizer (event, handler) {
     const elements = unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
-      element.removeEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
-      element.addEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
+      element.removeEventListener(external.cornerstone.EVENTS.ELEMENT_DISABLED, disableHandler);
+      element.addEventListener(external.cornerstone.EVENTS.ELEMENT_DISABLED, disableHandler);
     });
   };
 
