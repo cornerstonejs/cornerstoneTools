@@ -3,10 +3,10 @@ import { state, modules } from '../store/index.js';
 /**
  * Register a module.
  *
+ * @param {string} name The name of the module.
  * @param  {Object} newModule The module to register.
- * @param {string} name - The name of the module.
  */
-export default function (newModule, name) {
+export default function (name, newModule) {
   if (isModuleNameRegistered(name)) {
     console.warning(`A module with the name ${name} is already registered`);
 
@@ -29,7 +29,6 @@ export default function (newModule, name) {
     }
   }
 }
-
 
 function isModuleNameRegistered (name) {
   return Object.keys(modules).some((key) => {

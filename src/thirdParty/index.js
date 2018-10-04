@@ -1,19 +1,10 @@
-import registerPlugin from './registerPlugin.js';
-import registerMixin from './registerMixin.js';
+import registerItem from './registerItem.js';
 import registerModule from './registerModule.js';
-import registerTool from './registerTool.js';
-
-// TODO: Maybe these belongs in store? Not sure.
-const tools = {}; // Object of imported tool constuctors.
-const pluginList = []; // List of plugins imported.
-
-export { tools, pluginList };
+import registerPlugin from './registerPlugin.js';
+import getPluginList from './getPluginList.js';
 
 export default {
+  registerItem,
   registerPlugin,
-  registerMixin,
-  registerModule,
-  registerTool,
-  tools,
-  pluginList
+  getPluginList
 };

@@ -13,7 +13,8 @@ import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from '../manipulators/touchMoveAllHandles.js';
 import touchMoveHandle from '../manipulators/touchMoveHandle.js';
 
-import mixins from '../mixins/index.js';
+import activeOrDisabledBinaryTool from '../mixins/activeOrDisabledBinaryTool.js';
+import enabledOrDisabledBinaryTool from '../mixins/enabledOrDisabledBinaryTool.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -54,32 +55,32 @@ export default function (uri) {
   }
 
   // Check that whatever is being requested exists.
-  if (depth >= 1 && !library[namespace]) {
+  if (depth >= 1 && !lib[namespace]) {
     console.warn(`Namespace ${namespace} does not exist.`);
     return;
   }
 
-  if (depth >= 2 && !library[namespace][directory]) {
+  if (depth >= 2 && !lib[namespace][directory]) {
     console.warn(`${namespace}/${directory} does not exist.`);
     return;
   }
 
-  if (depth === 3 && !library[namespace][directory][item]) {
+  if (depth === 3 && !lib[namespace][directory][item]) {
     console.warn(`${namespace}/${directory}/${item} does not exist.`);
     return;
   }
 
   switch (depth) {
     case 1:
-      return library[namespace];
+      return lib[namespace];
     case 2:
-      return library[namespace][directory];
+      return lib[namespace][directory];
     case 3:
-      return library[namespace][directory][item];
+      return lib[namespace][directory][item];
   }
 }
 
-const library = {
+export const lib = {
   core: {
     base: {
       BaseTool,
@@ -99,8 +100,8 @@ const library = {
       touchMoveHandle
     },
     mixins: {
-      activeOrDisabledBinaryTool: mixins.activeOrDisabledBinaryTool, // Note: Change the way mixins are registered.
-      enabledOrDisabledBinaryTool: mixins.enabledOrDisabledBinaryTool
+      activeOrDisabledBinaryTool,
+      enabledOrDisabledBinaryTool
     },
     stateManagement: {
       textStyle,

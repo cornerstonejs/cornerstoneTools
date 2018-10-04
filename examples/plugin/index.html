@@ -48,16 +48,7 @@
 
 <script>
   //====== Define a simple plugin: ======//
-  // 1) A mixin
-  const evenMoreHelloWorld = {
-    evenMoreHelloWorldMixin: () => {
-      // Note this would need to be called from somewhere
-     // Within the tool's implementation.
-     console.log('Hello World from the even more hello world mixin!');
-    }
-  };
-
-  // 2) A module
+  // 1) A module
   const state = {
     isPolite: true,
     responses: {
@@ -97,20 +88,27 @@
       );
     }
   };
+  // 2) A mixin
+  const evenMoreHelloWorld = {
+    evenMoreHelloWorldMixin: () => {
+      // Note this would need to be called from somewhere
+     // Within the tool's implementation.
+     console.log('Hello World from the even more hello world mixin!');
+    }
+  };
 
-  // Grab the Class we wish to use and the store object, to implement in our class.
+  // 3) A Tool
   const BaseTool = cornerstoneTools.import('core/base/BaseTool');
   const modules = cornerstoneTools.import('core/store/modules');
 
-  // 3) a Tool
   class HelloWorldMouseTool extends BaseTool {
     constructor (name = 'HelloWorldMouse') {
       super({
         name,
         supportedInteractionTypes: ['mouse'],
         mixins: [
-          'activeOrDisabledBinaryTool', // Mixin from cornerstoneTools source.
-          'evenMoreHelloWorld'          // Mixin from the plugin.
+          'core/mixins/activeOrDisabledBinaryTool', // Mixin from cornerstoneTools source.
+          'hellowWorldPlugin/mixins/evenMoreHelloWorld'          // Mixin from the plugin.
         ]
       });
 
@@ -147,22 +145,17 @@
   // For legacy browser support.
   const helloWorldPlugin = {
     name: 'helloWorldPlugin',
-    mixins: [
+    module: helloWorldModule,
+    items: [
       {
-        mixin: evenMoreHelloWorld,
-        name: 'evenMoreHelloWorld'
-      }
-    ],
-    modules: [
+        type: 'mixins',
+        name: 'evenMoreHelloWorld',
+        payload: evenMoreHelloWorld
+      },
       {
-        module: helloWorldModule,
-        name: 'helloWorld'
-      }
-    ],
-    tools: [
-      {
-        tool: HelloWorldMouseTool,
-        name: 'HelloWorldMouseTool'
+        type: 'tools',
+        name: 'HelloWorldMouseTool',
+        payload: HelloWorldMouseTool
       }
     ]
   };
@@ -228,9 +221,7 @@
   // Add the tool
   const toolName = toolBtn.getAttribute('data-tool');
   // Add the 3rd party tool:
-  const apiTool = cTools.thirdParty.tools.HelloWorldMouseTool;
-
-  console.log(apiTool);
+  const apiTool = cornerstoneTools.import('helloWorldPlugin/tools/HelloWorldMouseTool');
 
   cTools.addTool(apiTool);
 
