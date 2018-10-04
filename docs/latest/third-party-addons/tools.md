@@ -4,8 +4,8 @@ Third party tools you must correctly extend the base class provided by `cornerst
 
 ```js
 
-const BaseTool = cornerstoneTools.import('base/BaseTool');
-const store = cornerstoneTools.import('store');
+const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+const modules = cornerstoneTools.import('core/store/modules');
 
 class HelloWorldMouseTool extends BaseTool {
   constructor (name = 'HelloWorldMouse') {
