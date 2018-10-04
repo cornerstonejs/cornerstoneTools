@@ -23,14 +23,7 @@ module.exports = {
     'brace-style': 'warn',
     'callback-return': 'warn',
     'camelcase': 'warn',
-    'capitalized-comments': [
-        "warn",
-        "always",
-        {
-            "ignorePattern": "pragma|ignored",
-            "ignoreInlineComments": true
-        }
-    ],
+    'capitalized-comments': 'off',
     'class-methods-use-this': 'warn',
     'comma-dangle': 'warn',
     'comma-spacing': [
@@ -111,7 +104,7 @@ module.exports = {
     'multiline-ternary': 'off',
     //'new-cap': 'warn',
     'new-parens': 'warn',
-    'newline-after-var': 'warn',
+    'newline-after-var': 'off',
     'newline-before-return': 'warn',
     //'newline-per-chained-call': 'warn',
     'no-alert': 'warn',
@@ -239,7 +232,7 @@ module.exports = {
     'sort-keys': 'off',
     'sort-vars': 'off',
     'space-before-blocks': 'warn',
-    'space-before-function-paren': 'warn',
+    'space-before-function-paren': 'off',
     'space-in-parens': [
       'warn',
       'never'
@@ -254,7 +247,7 @@ module.exports = {
       'warn',
       'never'
     ],
-    'valid-jsdoc': 'warn',
+    'valid-jsdoc': 'off',
     'vars-on-top': 'warn',
     'wrap-iife': ['warn', 'inside'],
     'wrap-regex': 'warn',
