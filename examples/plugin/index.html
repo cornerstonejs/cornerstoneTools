@@ -98,8 +98,12 @@
     }
   };
 
+  // Grab the Class we wish to use and the store object, to implement in our class.
+  const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+  const modules = cornerstoneTools.import('core/store/modules');
+
   // 3) a Tool
-  class HelloWorldMouseTool extends cornerstoneTools.BaseTool {
+  class HelloWorldMouseTool extends BaseTool {
     constructor (name = 'HelloWorldMouse') {
       super({
         name,
@@ -110,7 +114,7 @@
         ]
       });
 
-      this._helloWorldModule = cornerstoneTools.store.modules.helloWorld;
+      this._helloWorldModule = modules.helloWorld;
     }
 
     preMouseDownCallback (evt) {

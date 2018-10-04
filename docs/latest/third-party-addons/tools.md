@@ -4,7 +4,10 @@ Third party tools you must correctly extend the base class provided by `cornerst
 
 ```js
 
-class HelloWorldMouseTool extends cornerstoneTools.BaseTool {
+const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+const modules = cornerstoneTools.import('core/store/modules');
+
+class HelloWorldMouseTool extends BaseTool {
   constructor (name = 'HelloWorldMouse') {
     super({
       name,
@@ -16,7 +19,7 @@ class HelloWorldMouseTool extends cornerstoneTools.BaseTool {
     });
 
     // Use a module from the plugin.
-    this._helloWorldModule = cornerstoneTools.store.modules.helloWorld;
+    this._helloWorldModule = store.modules.helloWorld;
   }
 
   preMouseDownCallback (evt) {
