@@ -13,12 +13,12 @@ import { lib } from './import.js';
 export default function (namespace, items, overwrite) {
   buildNamespaceIfNonExistant(namespace);
 
-  for (let i = 0; i < plugin.items.length; i++) {
+  for (let i = 0; i < items.length; i++) {
     const {
       type,
       name,
       payload
-    } = plugin.items[i];
+    } = items[i];
 
     registerOneItem(namespace, type, name, payload, overwrite);
   }

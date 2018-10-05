@@ -31,6 +31,11 @@ import {
   setToolEnabledForElement,
   setToolDisabledForElement
 } from '../store/setToolMode.js';
+import {
+  state,
+  getters,
+  modules
+} from '../store/index.js';
 
 
 /**
@@ -76,6 +81,17 @@ export default function (uri) {
 }
 
 export const lib = {
+  store: {
+    state,
+    getters,
+    modules,
+    setToolMode: {
+      setToolPassiveForElement,
+      setToolActiveForElement,
+      setToolDisabledForElement,
+      setToolEnabledForElement
+    }
+  },
   core: {
     base: {
       BaseTool,
@@ -106,12 +122,6 @@ export const lib = {
       getToolState,
       removeToolState,
       clearToolState
-    },
-    setToolMode: {
-      setToolPassiveForElement,
-      setToolActiveForElement,
-      setToolDisabledForElement,
-      setToolEnabledForElement
     },
     drawing: {
       getNewContext,

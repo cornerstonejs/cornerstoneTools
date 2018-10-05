@@ -47,6 +47,16 @@ The types typically employed by plugins are:
 The `core` library  has these additional types (a plugin could expand these, but is unlikely to):
 - `drawing`
 - `stateManagement`
+
+And there is also the common `store` library access to the following:
+
+- `state`,
+- `getters`,
+- `modules`,
 - `setToolMode`
+  - `setToolPassiveForElement`
+  - `setToolActiveForElement`
+  - `setToolDisabledForElement`
+  - `setToolEnabledForElement`
 
 A plugin can also define its own arbitrary `types`, should it need to.
