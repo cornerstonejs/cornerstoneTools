@@ -7,6 +7,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
+
 const mockEvt = {
   detail: {
     element: {},

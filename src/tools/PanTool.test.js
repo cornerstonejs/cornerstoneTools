@@ -4,6 +4,10 @@ import external from './../externalModules.js';
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {}
 }));
+
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
 describe('PanTool.js', () => {
   describe('default values', () => {
     it('has a default name of "Pan"', () => {

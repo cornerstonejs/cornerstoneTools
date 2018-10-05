@@ -5,6 +5,10 @@ jest.mock('./../externalModules.js', () => ({
   cornerstone: {}
 }));
 
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
+
 const mockEvt = {
   detail: {
     viewport: {

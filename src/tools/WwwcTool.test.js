@@ -7,6 +7,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
+
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('WwwcTool.js', () => {
   describe('default values', () => {

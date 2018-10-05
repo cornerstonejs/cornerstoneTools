@@ -11,8 +11,17 @@ jest.mock('./../externalModules.js', () => ({
     }
   }
 }));
+
 jest.mock('../util/drawing.js', () => ({
   getNewContext: jest.fn()
+}));
+
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
+
+jest.mock('../base/BaseTool.js', () => ({
+  cToolsImport: jest.fn()
 }));
 
 

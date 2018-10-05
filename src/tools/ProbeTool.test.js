@@ -5,6 +5,10 @@ jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
+jest.mock('../thirdParty/import.js', () => ({
+  default: jest.fn()
+}));
+
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
   currentPoints: {
