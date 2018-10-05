@@ -9,7 +9,7 @@ export default class ScaleOverlayTool extends BaseTool {
   constructor (
     name = 'ScaleOverlay',
     mixins = [
-      'enabledOrDisabledBinaryTool'
+      'core/mixins/enabledOrDisabledBinaryTool'
     ]
   ) {
     super({

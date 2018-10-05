@@ -114,9 +114,12 @@ export default class BaseTool {
    * @param  {Array} mixinArray An array of mixin URIs (strings).
    */
   _applyMixins (mixins) {
+    if (typeof cToolsImport !== 'function') {
+      return;
+    }
+
     for (let i = 0; i < mixins.length; i++) {
       const mixinUri = mixins[i];
-
       const mixin = cToolsImport(mixinUri);
 
       if (typeof mixin === 'object') {
