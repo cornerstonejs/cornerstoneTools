@@ -26,11 +26,6 @@ import {
   clearToolState
 } from '../stateManagement/toolState.js';
 import {
-  modules,
-  state,
-  getters
-} from '../store/index.js';
-import {
   setToolPassiveForElement,
   setToolActiveForElement,
   setToolEnabledForElement,
@@ -112,10 +107,7 @@ export const lib = {
       removeToolState,
       clearToolState
     },
-    store: {
-      state,
-      modules,
-      getters,
+    setToolMode: {
       setToolPassiveForElement,
       setToolActiveForElement,
       setToolDisabledForElement,

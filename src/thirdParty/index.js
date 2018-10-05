@@ -5,6 +5,7 @@ import getPluginList from './getPluginList.js';
 
 export default {
   registerItem,
+  registerModule,
   registerPlugin,
   getPluginList
 };
