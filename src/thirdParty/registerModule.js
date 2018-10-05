@@ -4,10 +4,12 @@ import { state, modules } from '../store/index.js';
  * Register a module.
  *
  * @param {string} name The name of the module.
- * @param  {Object} newModule The module to register.
+ * @param {Object} newModule The module to register.
+ * @param {boolean} [overwrite] Whether a module should be overwritten,
+ *                              should it have the same name.
  */
-export default function (name, newModule) {
-  if (isModuleNameRegistered(name)) {
+export default function (name, newModule, overwrite = false) {
+  if (!overwrite && isModuleNameRegistered(name)) {
     console.warning(`A module with the name ${name} is already registered`);
 
     return;

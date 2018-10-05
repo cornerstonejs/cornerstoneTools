@@ -3,7 +3,30 @@ import { lib } from './import.js';
 
 
 /**
- * Registers the item to the importLibrary.
+ * Registers an array of items to the lib.
+ *
+ * @param  {string}   namespace The namespace to register to.
+ * @param  {Object[]} items     The array of items.
+ * @param  {booelan}  [overwrite] Whether the item may be overwritten if
+ *                                is already defined.
+ */
+export default function (namespace, items, overwrite) {
+  buildNamespaceIfNonExistant(namespace);
+
+  for (let i = 0; i < plugin.items.length; i++) {
+    const {
+      type,
+      name,
+      payload
+    } = plugin.items[i];
+
+    registerOneItem(namespace, type, name, payload, overwrite);
+  }
+}
+
+
+/**
+ * Registers the item to the lib.
  *
  * @param  {string} namespace The plugin namespace.
  * @param  {string} type      The item type.
@@ -11,8 +34,7 @@ import { lib } from './import.js';
  * @param  {Object|Function} payload the item itself.
  * @param  {boolean} [overwrite] Pass true to overwrite a previously registered item.
  */
-export default function (namespace, type, name, payload, overwrite = false) {
-
+function registerOneItem (namespace, type, name, payload, overwrite = false) {
   if (!overwrite && doesItemExist(namespace, type, name)) {
     console.warn(`A mixin with the name ${name} is already registered`);
 
@@ -29,12 +51,13 @@ function doesItemExist (namespace, type, name) {
   return lib[namespace] && lib[namespace][type] && lib[namespace][type][name];
 }
 
-
-function buildPathIfNonExistant (namespace, type) {
+function buildNamespaceIfNonExistant (namespace) {
   if (!lib[namespace]) {
     lib[namespace] = {};
   }
+}
 
+function buildPathIfNonExistant (namespace, type) {
   if (!lib[namespace][type]) {
     lib[namespace][type] = {};
   }

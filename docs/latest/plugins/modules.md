@@ -63,21 +63,3 @@ export default {
 ```
 
 A more complete and realistic example of a module including both optional callbacks can be found in `src/store/modules/brushModule.js`.
-
-### Registering a Module
-
-Once you have built your module you need to register it. For 3rd party modules you can do this after you initialize `cornerstoneTools`, as follows.
-
-```js
-import helloWorldModule from './helloWorldModule.js';
-
-const cTools = cornerstoneTools.init();
-
-cTools.thirdParty.registerModule(helloWorldModule, 'helloWorld');
-```
-
-The `registerModule` function takes two arguments, the module itself, and the name for it to be referenced by. Once registered, `onRegisterCallback` is called once, followed by `enabledElementCallback` for each enabled element.
-
-The module can then be accessed by `cTools.store.helloWorld`.
-
-If you wish to associate a module with a particular tool or set of tools, we recommend bundling them together in a [Plugin](index.md#plugins).

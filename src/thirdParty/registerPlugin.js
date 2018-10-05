@@ -1,4 +1,4 @@
-import registerItem from './registerItem.js';
+import registerItems from './registerItems.js';
 import registerModule from './registerModule.js';
 import { lib } from './import.js';
 
@@ -24,18 +24,11 @@ export default function (plugin, overwrite = false) {
     registerModule(plugin.name, plugin.module);
   }
 
-  for (let i = 0; i < plugin.items.length; i++) {
-    const {
-      type,
-      name,
-      payload
-    } = plugin.items[i];
-
-    registerItem(plugin.name, type, name, payload, overwrite);
+  if (plugin.items) {
+    registerItems(plugin.name, plugin.items, overwrite)
   }
 
 }
-
 
 function isPluginNameRegistered (namespace) {
   return lib[namespace] !== undefined;
