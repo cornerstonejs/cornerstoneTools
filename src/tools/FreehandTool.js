@@ -604,32 +604,32 @@ export default class FreehandTool extends BaseAnnotationTool {
   * @param {Object} evt - The event.
   */
  _editMouseDragCallback (evt) {
-  const eventData = evt.detail;
-  const toolState = getToolState(eventData.element, this.name);
+    const eventData = evt.detail;
+    const toolState = getToolState(eventData.element, this.name);
 
-  const config = this.configuration;
-  const data = toolState.data[config.currentTool];
-  const currentHandle = config.currentHandle;
+    const config = this.configuration;
+    const data = toolState.data[config.currentTool];
+    const currentHandle = config.currentHandle;
 
-  // Set the mouseLocation handle
-  this._getMouseLocation(eventData);
+    // Set the mouseLocation handle
+    this._getMouseLocation(eventData);
 
-  data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
-  data.active = true;
-  data.highlight = true;
-  
-  data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
-  data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+    data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
+    data.active = true;
+    data.highlight = true;
+    
+    data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+    data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
 
-  if (currentHandle !== 0) {
-    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+    if (currentHandle !== 0) {
+      const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+      const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
 
-    lastLine.x = config.mouseLocation.handles.start.x;
-    lastLine.y = config.mouseLocation.handles.start.y;
-  }  
-  // Update the image
-  external.cornerstone.updateImage(eventData.element);
+      lastLine.x = config.mouseLocation.handles.start.x;
+      lastLine.y = config.mouseLocation.handles.start.y;
+    }  
+    // Update the image
+    external.cornerstone.updateImage(eventData.element);
 }
 
 
@@ -640,41 +640,41 @@ export default class FreehandTool extends BaseAnnotationTool {
   * @param {Object} evt - The event.
   */
  _editTouchDragCallback (evt) {
-  const eventData = evt.detail;
-  const toolState = getToolState(eventData.element, this.name);
+    const eventData = evt.detail;
+    const toolState = getToolState(eventData.element, this.name);
 
-  const config = this.configuration;
-  const data = toolState.data[config.currentTool];
-  const currentHandle = config.currentHandle;
+    const config = this.configuration;
+    const data = toolState.data[config.currentTool];
+    const currentHandle = config.currentHandle;
 
-  // Set the mouseLocation handle
-  this._getMouseLocation(eventData);
+    // Set the mouseLocation handle
+    this._getMouseLocation(eventData);
 
-  data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
-  data.active = true;
-  data.highlight = true;
-  
-  const fingerDistance = -57;
+    data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
+    data.active = true;
+    data.highlight = true;
+    
+    const fingerDistance = -57;
 
-  const aboveFinger = {
-    x: event.detail.currentPoints.page.x,
-    y: event.detail.currentPoints.page.y + fingerDistance
-  };
+    const aboveFinger = {
+      x: event.detail.currentPoints.page.x,
+      y: event.detail.currentPoints.page.y + fingerDistance
+    };
 
-  let targetLocation = external.cornerstone.pageToPixel(eventData.element, aboveFinger.x, aboveFinger.y);
-  
-  data.handles[currentHandle].x = targetLocation.x;
-  data.handles[currentHandle].y = targetLocation.y;
+    let targetLocation = external.cornerstone.pageToPixel(eventData.element, aboveFinger.x, aboveFinger.y);
+    
+    data.handles[currentHandle].x = targetLocation.x;
+    data.handles[currentHandle].y = targetLocation.y;
 
-  if (currentHandle !== 0) {
-    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+    if (currentHandle !== 0) {
+      const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+      const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
 
-    lastLine.x = targetLocation.x;
-    lastLine.y = targetLocation.y;
-  }
-  // Update the image
-  external.cornerstone.updateImage(eventData.element);
+      lastLine.x = targetLocation.x;
+      lastLine.y = targetLocation.y;
+    }
+    // Update the image
+    external.cornerstone.updateImage(eventData.element);
 }
 
 
