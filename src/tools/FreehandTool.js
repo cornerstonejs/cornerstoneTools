@@ -43,6 +43,8 @@ export default class FreehandTool extends BaseAnnotationTool {
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
+    
+    this._editTouchDragCallback = this._editTouchDragCallback.bind(this);
   }
 
   /**
@@ -601,57 +603,80 @@ export default class FreehandTool extends BaseAnnotationTool {
   * @event
   * @param {Object} evt - The event.
   */
-  _editMouseDragCallback (evt) {
-    const eventData = evt.detail;
-    const toolState = getToolState(eventData.element, this.name);
+ _editMouseDragCallback (evt) {
+  const eventData = evt.detail;
+  const toolState = getToolState(eventData.element, this.name);
 
-    const config = this.configuration;
-    const data = toolState.data[config.currentTool];
-    const currentHandle = config.currentHandle;
+  const config = this.configuration;
+  const data = toolState.data[config.currentTool];
+  const currentHandle = config.currentHandle;
 
-    // Set the mouseLocation handle
-    this._getMouseLocation(eventData);
+  // Set the mouseLocation handle
+  this._getMouseLocation(eventData);
 
-    data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
-    data.active = true;
-    data.highlight = true;
-    
-    if(eventData.type == EVENTS.TOUCH_DRAG){
-      const fingerDistance = -57;
-    
-      const aboveFinger = {
-        x: event.detail.currentPoints.page.x,
-        y: event.detail.currentPoints.page.y + fingerDistance
-      };
-    
-      let targetLocation = external.cornerstone.pageToPixel(eventData.element, aboveFinger.x, aboveFinger.y);
-      
-      data.handles[currentHandle].x = targetLocation.x;
-      data.handles[currentHandle].y = targetLocation.y;
-
-      if (currentHandle !== 0) {
-        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
-
-        lastLine.x = targetLocation.x;
-        lastLine.y = targetLocation.y;
-      }
-
-    } else {
-      data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
-      data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+  data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
+  data.active = true;
+  data.highlight = true;
   
-      if (currentHandle !== 0) {
-        const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-        const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+  data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
+  data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
+
+  if (currentHandle !== 0) {
+    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+    lastLine.x = config.mouseLocation.handles.start.x;
+    lastLine.y = config.mouseLocation.handles.start.y;
+  }  
+  // Update the image
+  external.cornerstone.updateImage(eventData.element);
+}
+
+
+  /**
+  * Event handler for TOUCH_DRAG during handle drag event loop.
+  *
+  * @event
+  * @param {Object} evt - The event.
+  */
+ _editTouchDragCallback (evt) {
+  const eventData = evt.detail;
+  const toolState = getToolState(eventData.element, this.name);
+
+  const config = this.configuration;
+  const data = toolState.data[config.currentTool];
+  const currentHandle = config.currentHandle;
+
+  // Set the mouseLocation handle
+  this._getMouseLocation(eventData);
+
+  data.handles.invalidHandlePlacement = freehandIntersect.modify(data.handles, currentHandle);
+  data.active = true;
+  data.highlight = true;
   
-        lastLine.x = config.mouseLocation.handles.start.x;
-        lastLine.y = config.mouseLocation.handles.start.y;
-      }  
-    }
-    // Update the image
-    external.cornerstone.updateImage(eventData.element);
+  const fingerDistance = -57;
+
+  const aboveFinger = {
+    x: event.detail.currentPoints.page.x,
+    y: event.detail.currentPoints.page.y + fingerDistance
+  };
+
+  let targetLocation = external.cornerstone.pageToPixel(eventData.element, aboveFinger.x, aboveFinger.y);
+  
+  data.handles[currentHandle].x = targetLocation.x;
+  data.handles[currentHandle].y = targetLocation.y;
+
+  if (currentHandle !== 0) {
+    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
+    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+    lastLine.x = targetLocation.x;
+    lastLine.y = targetLocation.y;
   }
+  // Update the image
+  external.cornerstone.updateImage(eventData.element);
+}
+
 
   /**
   * Event handler for MOUSE_UP during handle drag event loop.
@@ -1067,7 +1092,7 @@ export default class FreehandTool extends BaseAnnotationTool {
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
     element.addEventListener(EVENTS.TOUCH_END, this._editMouseUpCallback);
-    element.addEventListener(EVENTS.TOUCH_DRAG, this._editMouseDragCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, this._editTouchDragCallback);
     external.cornerstone.updateImage(element);
   }
 
@@ -1084,7 +1109,7 @@ export default class FreehandTool extends BaseAnnotationTool {
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
     element.removeEventListener(EVENTS.TOUCH_END, this._editMouseUpCallback);
-    element.removeEventListener(EVENTS.TOUCH_DRAG, this._editMouseDragCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, this._editTouchDragCallback);
   
     external.cornerstone.updateImage(element);
   }
