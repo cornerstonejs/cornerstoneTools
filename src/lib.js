@@ -67,6 +67,7 @@ import {
   drawCircle,
   drawEllipse,
   drawRect,
+  fillOutsideRect,
   fillBox,
   fillTextLines
 } from './util/drawing.js';
@@ -172,6 +173,7 @@ export const lib = {
       drawCircle,
       drawEllipse,
       drawRect,
+      fillOutsideRect,
       drawTextBox,
       drawArrow,
       fillBox,

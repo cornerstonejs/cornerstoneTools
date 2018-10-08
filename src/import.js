@@ -1,10 +1,10 @@
 import { lib } from './lib.js';
 
 /**
- * anonymous function - description
+ * Imports functionality from cornerstoneTools for use in external packages/plugins.
  *
- * @param  {string} item the import path for the entity to import.
- * @return {Class|Object}
+ * @param  {string} uri the import path for the entity to import.
+ * @return {Class|Object|Function} The entity requested.
  */
 export default function (uri) {
   const splitUri = uri.split('/');
