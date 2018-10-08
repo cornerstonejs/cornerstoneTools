@@ -69,7 +69,7 @@ function removeToolState (element, toolType, data) {
 
 function clearToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
-  
+
   toolStateManager.clearToolState(element, toolType);
 }
 
