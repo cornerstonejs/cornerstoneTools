@@ -84,11 +84,23 @@ function newImageIdSpecificToolStateManager () {
 
     delete toolState[enabledImage.image.imageId];
   }
+  
+  // Clears specific tool data from this toolStateManager.
+  function clearToolImageIdSpecificToolStateManager(element,toolType) {
+    var enabledImage = _externalModules2.default.cornerstone.getEnabledElement(element);
+
+    if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+      return;
+    }
+
+    delete toolState[enabledImage.image.imageId][toolType];
+  }
 
   return {
     get: getImageIdSpecificToolState,
     add: addImageIdSpecificToolState,
     clear: clearImageIdSpecificToolStateManager,
+    clearTool: clearToolImageIdSpecificToolStateManager,
     saveImageIdToolState,
     restoreImageIdToolState,
     saveToolState,
