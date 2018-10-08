@@ -69,12 +69,8 @@ function removeToolState (element, toolType, data) {
 
 function clearToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
-  const toolData = toolStateManager.get(element, toolType);
-
-  // If any toolData actually exists, clear it
-  if (toolData !== undefined) {
-    toolData.data = [];
-  }
+  
+  toolStateManager.clearToolState(element, toolType);
 }
 
 // Sets the tool state manager for an element
