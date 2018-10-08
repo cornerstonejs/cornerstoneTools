@@ -1,4 +1,4 @@
-import { lib } from './import.js';
+import { lib } from '../lib.js';
 
 
 

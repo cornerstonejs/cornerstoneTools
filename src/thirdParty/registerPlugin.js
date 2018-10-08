@@ -1,6 +1,6 @@
 import registerItems from './registerItems.js';
 import registerModule from './registerModule.js';
-import { lib } from './import.js';
+import { lib } from '../lib.js';
 
 /**
  * Register a plugin.

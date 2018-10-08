@@ -1,4 +1,4 @@
-import cToolsImport from '../thirdParty/import.js';
+import cToolsImport from '../import.js';
 
 export default class BaseTool {
   constructor ({
