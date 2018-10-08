@@ -34,12 +34,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     });
 
     this._drawing = false;
-    this._activePencilMode = false;
+    this._dragging = false;
     this._modifying = false;
 
     // Create bound callback functions for private event loops
     this._drawingMouseDownCallback = this._drawingMouseDownCallback.bind(this);
     this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
+    this._drawingMouseDragCallback = this._drawingMouseDragCallback.bind(this);
+    this._drawingMouseUpCallback   = this._drawingMouseUpCallback.bind(this);
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
@@ -260,7 +262,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
         if (
           config.alwaysShowHandles ||
-          config.keyDown.ctrl ||
           (data.active && data.polyBoundingBox)
         ) {
           // Render all handles
@@ -499,10 +500,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     this._drawing = true;
 
-    if (eventData.event.shiftKey) {
-      this._activePencilMode = true;
-    }
-
     this._startDrawing(eventData);
     this._addPoint(eventData);
 
@@ -596,26 +593,85 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._getMouseLocation(eventData);
     this._checkInvalidHandleLocation(data);
 
-    if (this._activePencilMode) {
-      this._addPointPencilMode(eventData, data.handles);
-    } else {
-      // Polygon Mode
-      const handleNearby = this._pointNearHandle(element, data, coords);
+    // Mouse move -> Polygon Mode
+    const handleNearby = this._pointNearHandle(element, data, coords);
 
-      // If there is a handle nearby to snap to
-      // (and it's not the actual mouse handle)
-      if (
-        handleNearby !== undefined &&
-        !handleNearby.hasBoundingBox &&
-        handleNearby < data.handles.length - 1
-      ) {
-        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
-        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
-      }
+    // If there is a handle nearby to snap to
+    // (and it's not the actual mouse handle)
+    if (
+      handleNearby !== undefined &&
+      !handleNearby.hasBoundingBox &&
+      handleNearby < data.handles.length - 1
+    ) {
+      config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
+      config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
     }
 
     // Force onImageRendered
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  /**
+   * Event handler for MOUSE_DRAG during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   */
+  _drawingMouseDragCallback (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const toolState = getToolState(eventData.element, this.name);
+
+    const config = this.configuration;
+    const currentTool = config.currentTool;
+
+    const data = toolState.data[currentTool];
+    const coords = eventData.currentPoints.canvas;
+
+    // Set the mouseLocation handle
+    this._getMouseLocation(eventData);
+    this._checkInvalidHandleLocation(data);
+    this._addPointPencilMode(eventData, data.handles);
+    this._dragging = true;
+
+    // Force onImageRendered
+    external.cornerstone.updateImage(eventData.element);
+  }
+
+
+  /**
+   * Event handler for MOUSE_UP during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   */
+  _drawingMouseUpCallback(evt) {
+    if (!this._dragging) {
+      return;
+    }
+
+    this._dragging = false;
+
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const coords = eventData.currentPoints.canvas;
+
+    const config = this.configuration;
+    const currentTool = config.currentTool;
+    const toolState = getToolState(eventData.element, this.name);
+    const data = toolState.data[currentTool];
+
+    const handleNearby = this._pointNearHandle(element, data, coords);
+
+    if (!freehandIntersect.end(data.handles) && data.canComplete) {
+      const lastHandlePlaced = config.currentHandle;
+
+      this._endDrawing(element, lastHandlePlaced);
+    }
+
+    preventPropagation(evt);
+
+    return;
   }
 
   /**
@@ -863,7 +919,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     // Reset the current handle
     config.currentHandle = 0;
     config.currentTool = -1;
-    this._activePencilMode = false;
     data.canComplete = false;
 
     if (this._drawing) {
@@ -980,11 +1035,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     let invalidHandlePlacement;
 
-    if (this._activePencilMode) {
-      // Pencil mode
+    if (this._dragging) {
       invalidHandlePlacement = this._checkHandlesPencilMode(data);
     } else {
-      // Polygon mode
       invalidHandlePlacement = this._checkHandlesPolygonMode(data);
     }
 
@@ -1089,8 +1142,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @modifies {element}
    */
   _activateDraw (element) {
+    // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
+
+    // Drag/Pencil Mode
+    element.addEventListener(EVENTS.MOUSE_DRAG, this._drawingMouseDragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
     external.cornerstone.updateImage(element);
   }
@@ -1110,6 +1168,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(
       EVENTS.MOUSE_MOVE,
       this._drawingMouseMoveCallback
+    );
+    element.removeEventListener(
+      EVENTS.MOUSE_DRAG,
+      this._drawingMouseDragCallback
+    );
+    element.removeEventListener(
+      EVENTS.MOUSE_UP,
+      this._drawingMouseUpCallback
     );
 
     external.cornerstone.updateImage(element);
@@ -1259,11 +1325,6 @@ function defaultFreehandConfiguration () {
           active: true
         }
       }
-    },
-    keyDown: {
-      shift: false,
-      ctrl: false,
-      alt: false
     },
     spacing: 5,
     activeHandleRadius: 3,
