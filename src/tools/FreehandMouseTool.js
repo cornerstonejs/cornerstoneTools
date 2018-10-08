@@ -591,7 +591,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
-    this._checkInvalidHandleLocation(data);
+    this._checkInvalidHandleLocation(data, eventData);
 
     // Mouse move -> Polygon Mode
     const handleNearby = this._pointNearHandle(element, data, coords);
@@ -630,7 +630,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
-    this._checkInvalidHandleLocation(data);
+    this._checkInvalidHandleLocation(data, eventData);
     this._addPointPencilMode(eventData, data.handles);
     this._dragging = true;
 
@@ -874,14 +874,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _addPointPencilMode (eventData, dataHandles) {
     const config = this.configuration;
+    const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
 
-    function handleFurtherThanMinimumSpacing (handle) {
-      return (
-        external.cornerstoneMath.point.distance(handle, mousePoint) >
-        config.spacing
-      );
-    }
+    console.log(mousePoint);
+
+    const handleFurtherThanMinimumSpacing = ((handle) => {
+      return this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
+    }).bind(this);
 
     if (dataHandles.every(handleFurtherThanMinimumSpacing)) {
       this._addPoint(eventData);
@@ -1008,7 +1008,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Gets the current mouse location and stores it in the configuration object.
    *
    * @private
-   * @param {Object} eventData - The data assoicated with the event.
+   * @param {Object} eventData The data assoicated with the event.
    */
   _getMouseLocation (eventData) {
     // Set the mouseLocation handle
@@ -1023,10 +1023,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Returns true if the proposed location of a new handle is invalid.
    *
    * @private
-   * @param {Object} data - data object associated with the tool.
+   * @param {Object} data      Data object associated with the tool.
+   * @param {Object} eventData The data assoicated with the event.
    * @return {Boolean}
    */
-  _checkInvalidHandleLocation (data) {
+  _checkInvalidHandleLocation (data, eventData) {
     const config = this.configuration;
 
     if (data.handles.length < 2) {
@@ -1036,9 +1037,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     let invalidHandlePlacement;
 
     if (this._dragging) {
-      invalidHandlePlacement = this._checkHandlesPencilMode(data);
+      invalidHandlePlacement = this._checkHandlesPencilMode(data, eventData);
     } else {
-      invalidHandlePlacement = this._checkHandlesPolygonMode(data);
+      invalidHandlePlacement = this._checkHandlesPolygonMode(data, eventData);
     }
 
     data.handles.invalidHandlePlacement = invalidHandlePlacement;
@@ -1048,19 +1049,23 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Returns true if the proposed location of a new handle is invalid (in polygon mode).
    *
    * @param {Object} data - data object associated with the tool.
+   * @param {Object} eventData The data assoicated with the event.
    * @return {Boolean}
    */
-  _checkHandlesPolygonMode (data) {
+  _checkHandlesPolygonMode (data, eventData) {
     const config = this.configuration;
+    const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
     let invalidHandlePlacement = false;
 
     data.canComplete = false;
 
-    const mouseAtOriginHandle =
-      external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) <
-      config.spacing;
+    const mouseAtOriginHandle = this._isDistanceSmallerThanSpacingCanvas(
+      element,
+      dataHandles[0],
+      mousePoint
+    );
 
     if (mouseAtOriginHandle && !freehandIntersect.end(dataHandles)) {
       data.canComplete = true;
@@ -1082,7 +1087,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} data - data object associated with the tool.
    * @return {Boolean}
    */
-  _checkHandlesPencilMode (data) {
+  _checkHandlesPencilMode (data, eventData) {
     const config = this.configuration;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
@@ -1092,7 +1097,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     );
 
     if (invalidHandlePlacement === false) {
-      invalidHandlePlacement = this._invalidHandlePencilMode(data, mousePoint);
+      invalidHandlePlacement = this._invalidHandlePencilMode(data, eventData);
     }
 
     return invalidHandlePlacement;
@@ -1103,17 +1108,22 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} data - data object associated with the tool.
-   * @param {Object} mousePoint - the position of the mouse cursor.
+   * @param {Object} eventData The data associated with the event.
    * @return {Boolean}
    */
-  _invalidHandlePencilMode (data, mousePoint) {
+  _invalidHandlePencilMode (data, eventData) {
     const config = this.configuration;
+    const element = eventData.element;
+    const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
 
-    if (
-      external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) <
-      config.spacing
-    ) {
+    const mouseAtOriginHandle = this._isDistanceSmallerThanSpacingCanvas(
+      element,
+      dataHandles[0],
+      mousePoint
+    );
+
+    if (mouseAtOriginHandle) {
       data.canComplete = true;
 
       return false;
@@ -1123,16 +1133,79 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Compare with all other handles appart from the last one
     for (let i = 1; i < dataHandles.length - 1; i++) {
-      if (
-        external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) <
-        config.spacing
-      ) {
+      if (this._isDistanceSmallerThanSpacingCanvas(
+        element,
+        dataHandles[i],
+        mousePoint
+      )) {
         return true;
       }
     }
 
     return false;
   }
+
+  /**
+   * Returns true if two points are closer than this.configuration.spacing.
+   *
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _isDistanceSmallerThanSpacingCanvas (element, p1, p2) {
+    return this._compareDistanceToSpacingCanvas(element, p1, p2, '<');
+  }
+
+  /**
+   * Returns true if two points are farther than this.configuration.spacing.
+   *
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _isDistanceLargerThanSpacingCanvas (element, p1, p2) {
+    return this._compareDistanceToSpacingCanvas(element, p1, p2, '>');
+  }
+
+  /**
+   * Compares the distance between two points to this.configuration.spacing.
+   *
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @param  {string} comparison  The comparison to make.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _compareDistanceToSpacingCanvas (element, p1, p2, comparison = '>') {
+    const config = this.configuration;
+
+    const p1Canvas = external.cornerstone.pixelToCanvas(
+      element,
+      p1
+    );
+    const p2Canvas = external.cornerstone.pixelToCanvas(
+      element,
+      p2
+    );
+
+    let result;
+
+    if (comparison === '>') {
+      result = external.cornerstoneMath.point.distance(p1, p2) >
+      config.spacing
+    } else {
+      result = external.cornerstoneMath.point.distance(p1, p2) <
+      config.spacing
+    }
+
+    return result;
+  }
+
 
   /**
    * Adds drawing loop event listeners.
