@@ -877,8 +877,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
 
-    console.log(mousePoint);
-
     const handleFurtherThanMinimumSpacing = ((handle) => {
       return this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
     }).bind(this);
@@ -1085,6 +1083,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} data - data object associated with the tool.
+   * @param {Object} eventData The data associated with the event.
    * @return {Boolean}
    */
   _checkHandlesPencilMode (data, eventData) {
@@ -1148,6 +1147,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    * Returns true if two points are closer than this.configuration.spacing.
    *
+   * @private
    * @param  {Object} element     The element on which the roi is being drawn.
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
@@ -1161,6 +1161,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    * Returns true if two points are farther than this.configuration.spacing.
    *
+   * @private
    * @param  {Object} element     The element on which the roi is being drawn.
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
@@ -1174,6 +1175,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    * Compares the distance between two points to this.configuration.spacing.
    *
+   * @private
    * @param  {Object} element     The element on which the roi is being drawn.
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
