@@ -1,6 +1,6 @@
 import CrosshairsTool from './CrosshairsTool.js';
 
-jest.mock('../thirdParty/import.js', () => ({
+jest.mock('../import.js', () => ({
   default: jest.fn()
 }));
 

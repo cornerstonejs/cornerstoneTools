@@ -9,7 +9,7 @@ jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
-jest.mock('../thirdParty/import.js', () => ({
+jest.mock('../import.js', () => ({
   default: jest.fn()
 }));
 

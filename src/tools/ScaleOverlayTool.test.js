@@ -16,7 +16,7 @@ jest.mock('../util/drawing.js', () => ({
   getNewContext: jest.fn()
 }));
 
-jest.mock('../thirdParty/import.js', () => ({
+jest.mock('../import.js', () => ({
   default: jest.fn()
 }));
 
