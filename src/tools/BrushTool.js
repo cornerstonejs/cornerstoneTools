@@ -13,7 +13,7 @@ export default class BrushTool extends BaseBrushTool {
   constructor (name = 'Brush') {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['Mouse'],
       configuration: {}
     });
   }

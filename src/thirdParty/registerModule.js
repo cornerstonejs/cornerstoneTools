@@ -1,19 +1,19 @@
-import { state, modules } from './index.js';
+import { state, modules } from '../store/index.js';
 
 /**
- * registerModule - register a module to the store.
+ * Register a module.
  *
  * @param  {Object} newModule The module to register.
+ * @param {string} name - The name of the module.
  */
 export default function (newModule, name) {
   if (isModuleNameRegistered(name)) {
-    throw new Error(`A module with the name ${name} is already registered`);
+    console.warning(`A module with the name ${name} is already registered`);
+
+    return;
   }
 
   modules[name] = newModule;
-
-
-  Object.assign(modules, newModule);
 
   // Initialise module
   if (typeof newModule.onRegisterCallback === 'function') {

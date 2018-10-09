@@ -12,7 +12,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
   constructor (name = 'TextMarker') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         markers: [],
         current: '',

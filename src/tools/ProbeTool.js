@@ -18,7 +18,7 @@ export default class ProbeTool extends BaseAnnotationTool {
   constructor (name = 'Probe') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
   }
 

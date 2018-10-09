@@ -1,6 +1,6 @@
-## Store Modules {#modules}
+## Modules {#modules}
 
-A store module is a namespaced storage object in the `store` that contains the following properties:
+A module is a namespaced storage object in the `store` that contains the following properties:
 
 | Property | Requirement | Description |
 | --- | ---- |
@@ -10,17 +10,13 @@ A store module is a namespaced storage object in the `store` that contains the f
 | onRegisterCallback (name) | Optional | This function is called when the module is registered to the `cornerstoneTools` `store`. It is used to perform any global initialization the modules requires. The `name` the module was given upon registration is passed to the callback. |
 | enabledElementCallback (enabledElement) | Optional | This function is called once for each `enabledElement` upon registering the module, and again any time a new `enabledElement` is added to the `cornerstoneTools` instance. The `enabledElement` is passed to the callback.|
 
-Most modules will have getters and setters, unless they only contain primitives (e.g. the modules state is only comprised of `boolean` toggles).
-
-### Creating a 3rd party module
-
-Here is a simple toy example of a module with state, setters and getters:
+Most modules will have getters and setters, unless they only contain primitives (e.g. the modules state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
 
 ```js
 // helloWorldModule.js
 
 const state = {
-  isPolite: true
+  isPolite: true,
   responses: {
     polite: 'Hello World!',
     rude: 'Go away, World.'
@@ -33,6 +29,9 @@ const setters = {
   },
   rudeResponse: (response) => {
     state.responses.rude = response;
+  },
+  moodSwitch: () => {
+    state.isPolite = !state.isPolite;
   }
 };
 
@@ -41,7 +40,7 @@ const getters = {
     if (state.isPolite) {
       return state.responses.polite;
     } else {
-      return state.response.rude;
+      return state.responses.rude;
     }
   }
 }
@@ -51,7 +50,7 @@ function onRegisterCallback () {
 }
 
 function enabledElementCallback (enabledElement) {
-  console.log(`hello element ${enabledElement.uuid}.`)
+  console.log(`hello element ${enabledElement.uuid}.`);
 }
 
 export default {
@@ -65,7 +64,7 @@ export default {
 
 A more complete and realistic example of a module including both optional callbacks can be found in `src/store/modules/brushModule.js`.
 
-### Registering a 3rd party module
+### Registering a Module
 
 Once you have built your module you need to register it. For 3rd party modules you can do this after you initialize `cornerstoneTools`, as follows.
 
@@ -74,9 +73,11 @@ import helloWorldModule from './helloWorldModule.js';
 
 const cTools = cornerstoneTools.init();
 
-cTools.store.registerModule(helloWorldModule, 'helloWorld');
+cTools.thirdParty.registerModule(helloWorldModule, 'helloWorld');
 ```
 
 The `registerModule` function takes two arguments, the module itself, and the name for it to be referenced by. Once registered, `onRegisterCallback` is called once, followed by `enabledElementCallback` for each enabled element.
 
 The module can then be accessed by `cTools.store.helloWorld`.
+
+If you wish to associate a module with a particular tool or set of tools, we recommend bundling them together in a [Plugin](index.md#plugins).

@@ -16,7 +16,7 @@ export default class LengthTool extends BaseAnnotationTool {
   constructor (name = 'Length') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
   }
 

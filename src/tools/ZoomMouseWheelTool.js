@@ -6,8 +6,7 @@ export default class ZoomMouseWheelTool extends BaseTool {
   constructor (name = 'ZoomMouseWheel') {
     super({
       name,
-      // TODO: Do we need a better way to specify mouseWheel?
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         minScale: 0.25,
         maxScale: 20.0

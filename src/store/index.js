@@ -13,11 +13,11 @@ export const state = {
 export const getters = {
   mouseTools: () =>
     state.tools.filter((tool) =>
-      tool.supportedInteractionTypes.includes('mouse')
+      tool.supportedInteractionTypes.includes('Mouse')
     ),
   touchTools: () =>
     state.tools.filter((tool) =>
-      tool.supportedInteractionTypes.includes('touch')
+      tool.supportedInteractionTypes.includes('Touch')
     ),
   enabledElementByUID: (enabledElementUID) =>
     state.enabledElements.filter(

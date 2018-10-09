@@ -12,7 +12,7 @@ export default class EraserTool extends BaseTool {
   constructor (name = 'Eraser') {
     super({
       name,
-      supportedInteractionTypes: ['mouse', 'touch']
+      supportedInteractionTypes: ['Mouse', 'Touch']
     });
 
     this.preMouseDownCallback = this._deleteAllNearbyTools.bind(this);
