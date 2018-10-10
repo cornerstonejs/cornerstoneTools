@@ -86,7 +86,8 @@
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
-    "cornerstone-math": "^0.1.6"
+    "cornerstone-math": "^0.1.6",
+    "regenerator-runtime": "^0.12.1"
   },
   "files": [
     "dist/cornerstoneTools.js",
