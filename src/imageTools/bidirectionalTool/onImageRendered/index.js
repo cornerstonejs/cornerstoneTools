@@ -1,2 +1,3 @@
-import onImageRendered from './onImageRendered';
+import onImageRendered from './onImageRendered.js';
+
 export default onImageRendered;

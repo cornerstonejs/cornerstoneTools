@@ -1,2 +1,3 @@
-import moveHandle from './moveHandle';
+import moveHandle from './moveHandle.js';
+
 export default moveHandle;

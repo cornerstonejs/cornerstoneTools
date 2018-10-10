@@ -1,67 +1,82 @@
 /* jshint -W083 */
-
-import { cornerstone, cornerstoneTools } from 'meteor/ohif:cornerstone';
-import { toolType } from './definitions';
-import pointNearTool from './pointNearTool';
+import external from '../../externalModules.js';
+import { toolType } from './definitions.js';
+import pointNearTool from './pointNearTool.js';
+import toolCoordinates from '../../stateManagement/toolCoordinates.js';
+import { getToolState } from '../../stateManagement/toolState.js';
 
 // Replaces the cornerstoneTools.handleActivator function by skiping the active handle comparison
-const handleActivator = (element, handles, canvasPoint, distanceThreshold=6) => {
-    const getHandle = cornerstoneTools.getHandleNearImagePoint;
-    const nearbyHandle = getHandle(element, handles, canvasPoint, distanceThreshold);
+const handleActivator = (element, handles, canvasPoint, distanceThreshold = 6) => {
+  const getHandle = external.cornerstoneTools.getHandleNearImagePoint;
+  const nearbyHandle = getHandle(element, handles, canvasPoint, distanceThreshold);
 
-    let handleActivatorChanged = false;
-    Object.keys(handles).forEach(handleKey => {
-        if (handleKey === 'textBox') return;
-        const handle = handles[handleKey];
-        const newActiveState = handle === nearbyHandle;
-        if (handle.active !== newActiveState) {
-            handleActivatorChanged = true;
-        }
+  let handleActivatorChanged = false;
 
-        handle.active = newActiveState;
-    });
+  Object.keys(handles).forEach((handleKey) => {
+    if (handleKey === 'textBox') {
+      return;
+    }
+    const handle = handles[handleKey];
+    const newActiveState = handle === nearbyHandle;
 
-    return handleActivatorChanged;
+    if (handle.active !== newActiveState) {
+      handleActivatorChanged = true;
+    }
+
+    handle.active = newActiveState;
+  });
+
+  return handleActivatorChanged;
 };
 
-// mouseMoveCallback is used to hide handles when mouse is away
+// MouseMoveCallback is used to hide handles when mouse is away
 export default function (event) {
-    const eventData = event.detail;
-    const { element } = eventData;
-    cornerstoneTools.toolCoordinates.setCoords(eventData);
+  const eventData = event.detail;
+  const { element } = eventData;
 
-    // if we have no tool data for this element, do nothing
-    const toolData = cornerstoneTools.getToolState(element, toolType);
-    if (!toolData) return;
+  toolCoordinates.setCoords(eventData);
 
-    // We have tool data, search through all data and see if we can activate a handle
-    let imageNeedsUpdate = false;
-    for (let i = 0; i < toolData.data.length; i++) {
-        // get the cursor position in canvas coordinates
-        const coords = eventData.currentPoints.canvas;
+  // If we have no tool data for this element, do nothing
+  const toolData = getToolState(element, toolType);
 
-        const data = toolData.data[i];
-        const handleActivatorChanged = handleActivator(element, data.handles, coords);
-        Object.keys(data.handles).forEach(handleKey => {
-            if (handleKey === 'textBox') return;
-            const handle = data.handles[handleKey];
-            handle.hover = handle.active;
-        });
+  if (!toolData) {
+    return;
+  }
 
-        if (handleActivatorChanged) {
-            imageNeedsUpdate = true;
-        }
+  // We have tool data, search through all data and see if we can activate a handle
+  let imageNeedsUpdate = false;
 
-        const nearToolAndInactive = pointNearTool(element, data, coords) && !data.active;
-        const notNearToolAndActive = !pointNearTool(element, data, coords) && data.active;
-        if (nearToolAndInactive || notNearToolAndActive) {
-            data.active = !data.active;
-            imageNeedsUpdate = true;
-        }
+  for (let i = 0; i < toolData.data.length; i++) {
+    // Get the cursor position in canvas coordinates
+    const coords = eventData.currentPoints.canvas;
+
+    const data = toolData.data[i];
+    const handleActivatorChanged = handleActivator(element, data.handles, coords);
+
+    Object.keys(data.handles).forEach((handleKey) => {
+      if (handleKey === 'textBox') {
+        return;
+      }
+      const handle = data.handles[handleKey];
+
+      handle.hover = handle.active;
+    });
+
+    if (handleActivatorChanged) {
+      imageNeedsUpdate = true;
     }
 
-    // Handle activation status changed, redraw the image
-    if (imageNeedsUpdate === true) {
-        cornerstone.updateImage(element);
+    const nearToolAndInactive = pointNearTool(element, data, coords) && !data.active;
+    const notNearToolAndActive = !pointNearTool(element, data, coords) && data.active;
+
+    if (nearToolAndInactive || notNearToolAndActive) {
+      data.active = !data.active;
+      imageNeedsUpdate = true;
     }
+  }
+
+  // Handle activation status changed, redraw the image
+  if (imageNeedsUpdate === true) {
+    external.cornerstone.updateImage(element);
+  }
 }
