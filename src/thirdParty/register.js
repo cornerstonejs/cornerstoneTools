@@ -1,5 +1,6 @@
-import { registerModule } from './registerModule.js';
-import { registerItem } from './registerItem.js';
+import registerModule from './registerModule.js';
+import registerMixin from './registerMixin.js';
+import registerItem from './registerItem.js';
 
 /**
  * Register an item or module to cornerstoneTools.
@@ -15,10 +16,16 @@ export default function (type, name, item, overwrite = false) {
     return;
   }
 
-  if (type === 'module') {
-    registerModule(name, item, overwrite);
-  } else {
-    registerItem(type, name, item, overwrite);
+  switch (type) {
+    case 'module':
+      registerModule(name, item, overwrite);
+      break;
+    case 'mixin':
+      registerMixin(name, item, overwrite);
+      break;
+    default:
+      registerItem(type, name, item, overwrite);
+      console.warn(`unrecognised type ${type}, not registering ${name}`);
   }
 }
 

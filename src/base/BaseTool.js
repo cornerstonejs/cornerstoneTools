@@ -1,4 +1,4 @@
-import cToolsImport from '../import.js';
+import mixins from '../mixins/index.js';
 
 export default class BaseTool {
   constructor ({
@@ -111,15 +111,11 @@ export default class BaseTool {
   /**
    * Applys the requested mixins to the class.
    *
-   * @param  {Array} mixinArray An array of mixin identifiers (strings).
+   * @param {string[]} mixinsArray An array of mixin identifiers (strings).
    */
-  _applyMixins (mixins) {
-    if (typeof cToolsImport !== 'function') { // Makes testing a lot easier.
-      return;
-    }
-
-    for (let i = 0; i < mixins.length; i++) {
-      const mixin = cToolsImport(`mixins/${mixins[i]}`);
+  _applyMixins (mixinsArray) {
+    for (let i = 0; i < mixinsArray.length; i++) {
+      const mixin = mixins[`${mixinsArray[i]}`];
 
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);

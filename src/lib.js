@@ -13,8 +13,7 @@ import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from './manipulators/touchMoveAllHandles.js';
 import touchMoveHandle from './manipulators/touchMoveHandle.js';
 
-import activeOrDisabledBinaryTool from './mixins/activeOrDisabledBinaryTool.js';
-import enabledOrDisabledBinaryTool from './mixins/enabledOrDisabledBinaryTool.js';
+import mixins from './mixins/index.js';
 
 import textStyle from './stateManagement/textStyle.js';
 import toolColors from './stateManagement/toolColors.js';
@@ -128,8 +127,8 @@ export const lib = {
     touchMoveHandle
   },
   mixins: {
-    activeOrDisabledBinaryTool,
-    enabledOrDisabledBinaryTool
+    activeOrDisabledBinaryTool: mixins.activeOrDisabledBinaryTool,
+    enabledOrDisabledBinaryTool: mixins.enabledOrDisabledBinaryTool
   },
   stateManagement: {
     textStyle,

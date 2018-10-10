@@ -1,6 +1,5 @@
 import { lib } from '../lib.js';
 
-
 /**
  * Register an item to cornerstoneTools.
  *
@@ -21,9 +20,14 @@ export default function (type, name, item, overwrite = false) {
     }
   }
 
+  // TODO: Should we allow users to add new types? Maybe we should restrict it?
+  if (!lib[type]) {
+    lib[type] = {};
+  }
+
   lib[type][name] = item;
 }
 
 function isItemNameRegistered (type, name) {
-  return lib[type][name] !== undefined;
+  return lib[type] !== undefined && lib[type][name] !== undefined;
 }

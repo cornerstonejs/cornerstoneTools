@@ -22,6 +22,8 @@ export default function (uri) {
     return;
   }
 
+  console.log(lib[type]);
+
   if (depth === 2 && !lib[type][item]) {
     console.warn(`${type}/${item} does not exist.`);
     return;
