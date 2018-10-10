@@ -20,14 +20,9 @@ export default function (type, name, item, overwrite = false) {
     }
   }
 
-  // TODO: Should we allow users to add new types? Maybe we should restrict it?
-  if (!lib[type]) {
-    lib[type] = {};
-  }
-
-  lib[type][name] = item;
+  lib[`${type}/${name}`] = item;
 }
 
 function isItemNameRegistered (type, name) {
-  return lib[type] !== undefined && lib[type][name] !== undefined;
+  return lib[`${type}/${name}`] !== undefined;
 }

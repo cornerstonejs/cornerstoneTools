@@ -7,6 +7,11 @@ import { lib } from './lib.js';
  * @return {Class|Object|Function} The entity requested.
  */
 export default function (uri) {
+  return lib[uri];
+
+
+  /*
+
   const splitUri = uri.split('/');
   const depth = splitUri.length;
 
@@ -35,4 +40,5 @@ export default function (uri) {
     case 2:
       return lib[type][item];
   }
+  */
 }

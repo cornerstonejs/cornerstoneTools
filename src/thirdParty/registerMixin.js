@@ -24,7 +24,7 @@ export default function (name, mixin, overwrite = false) {
   mixins[name] = mixin;
 
   // Reference the mixin from the library so it can be exported externally.
-  lib.mixins[name] = mixins[name];
+  lib[`mixins/${name}`] = mixins[name];
 
 }
 

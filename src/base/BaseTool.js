@@ -117,6 +117,8 @@ export default class BaseTool {
     for (let i = 0; i < mixinsArray.length; i++) {
       const mixin = mixins[`${mixinsArray[i]}`];
 
+      console.log(mixinsArray[i]);
+
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
       } else {
