@@ -1,5 +1,6 @@
 /* jshint -W083 */
 import external from '../../externalModules.js';
+import EVENTS from '../../events.js';
 import { toolType, distanceThreshold } from './definitions.js';
 import mouseMoveCallback from './mouseMoveCallback.js';
 import pointNearTool from './pointNearTool.js';
@@ -101,7 +102,7 @@ export default function (event) {
     }
 
     external.cornerstone.updateImage(element);
-    element.addEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
   }
 
   const coords = eventData.startPoints.canvas;
@@ -124,7 +125,7 @@ export default function (event) {
       // TODO: FIX THIS COMMMENT
       // $element.css('cursor', handle.hasBoundingBox ? 'move' : 'none');
 
-      element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
+      element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
       data.active = true;
 
       unselectAllHandles(data.handles);
@@ -158,7 +159,7 @@ export default function (event) {
       // TODO: FIX THIS COMMMENT
       // $element.css('cursor', 'move');
 
-      element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
+      element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
       data.active = true;
 
       unselectAllHandles(data.handles);

@@ -1,4 +1,5 @@
 import external from '../../externalModules.js';
+import EVENTS from '../../events.js';
 import { toolType } from './definitions.js';
 import createNewMeasurement from './createNewMeasurement.js';
 import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js';
@@ -30,15 +31,15 @@ export default function (touchEventData) {
   // The end point and let the moveHandle move it for us.
   const { touchMoveHandle, tapCallback, touchDownActivateCallback } = cornerstoneTools[toolType];
 
-  element.removeEventListener('cornerstonetoolstouchdrag', touchMoveHandle);
-  element.removeEventListener('cornerstonetoolstap', tapCallback);
-  element.removeEventListener('cornerstonetoolsdragstartactive', touchDownActivateCallback);
+  element.removeEventListener(EVENTS.TOUCH_DRAG, touchMoveHandle);
+  element.removeEventListener(EVENTS.TAP, tapCallback);
+  element.removeEventListener(EVENTS.TOUCH_START_ACTIVE, touchDownActivateCallback);
 
   // Update the perpendicular line handles position
   const updateHandler = (event) => updatePerpendicularLineHandles(event.detail, measurementData);
 
-  element.addEventListener('cornerstonetoolstouchdrag', updateHandler);
-  element.addEventListener('cornerstonetoolstouchend', updateHandler);
+  element.addEventListener(EVENTS.TOUCH_DRAG, updateHandler);
+  element.addEventListener(EVENTS.TOUCH_END, updateHandler);
 
   external.cornerstone.updateImage(element);
   const { end, perpendicularStart } = handles;
@@ -56,12 +57,12 @@ export default function (touchEventData) {
     perpendicularStart.locked = false;
 
     // Unbind the handlers to update perpendicular line
-    element.removeEventListener('cornerstonetoolstouchdrag', updateHandler);
-    element.removeEventListener('cornerstonetoolstouchend', updateHandler);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, updateHandler);
+    element.removeEventListener(EVENTS.TOUCH_END, updateHandler);
 
-    element.addEventListener('cornerstonetoolstouchdrag', touchMoveHandle);
-    element.addEventListener('cornerstonetoolstap', tapCallback);
-    element.addEventListener('cornerstonetoolsdragstartactive', touchDownActivateCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, touchMoveHandle);
+    element.addEventListener(EVENTS.TAP, tapCallback);
+    element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchDownActivateCallback);
     external.cornerstone.updateImage(element);
   });
 }

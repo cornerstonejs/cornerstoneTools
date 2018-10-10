@@ -1,4 +1,5 @@
 import external from './../../externalModules.js';
+import EVENTS from '../../events.js';
 import { toolType } from './definitions.js';
 import createNewMeasurement from './createNewMeasurement.js';
 import mouseMoveCallback from './mouseMoveCallback.js';
@@ -49,10 +50,10 @@ export default function (mouseEventData) {
   const disableDefaultHandlers = () => {
     // Since we are dragging to another place to drop the end point, we can just activate
     // The end point and let the moveHandle move it for us.
-    element.removeEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
-    element.removeEventListener('cornerstonetoolsmousedown', mouseDownCallback);
-    element.removeEventListener('cornerstonetoolsmousedownactivate', mouseDownActivateCallback);
-    element.removeEventListener('cornerstonetoolsmousedoubleclick', doubleClickCallback);
+    element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+    element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
   };
 
   disableDefaultHandlers();
@@ -60,8 +61,8 @@ export default function (mouseEventData) {
   // Update the perpendicular line handles position
   const updateHandler = (event) => updatePerpendicularLineHandles(event.detail, measurementData);
 
-  element.addEventListener('cornerstonetoolsmousedrag', updateHandler);
-  element.addEventListener('cornerstonetoolsmouseup', updateHandler);
+  element.addEventListener(EVENTS.MOUSE_DRAG, updateHandler);
+  element.addEventListener(EVENTS.MOUSE_UP, updateHandler);
 
   let cancelled = false;
   const cancelAction = () => {
@@ -111,11 +112,13 @@ export default function (mouseEventData) {
   };
 
     // Bind the event listener for image rendering
-  element.addEventListener('cornerstoneimagerendered', imageRenderedHandler);
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
 
   // Bind the tool deactivation and enlargement handlers
-  element.addEventListener('cornerstonetoolstooldeactivated', cancelAction);
-  $element.one('ohif.viewer.viewport.toggleEnlargement', cancelAction);
+  element.addEventListener(EVENTS.TOOL_DEACTIVATED, cancelAction);
+
+  // TODO: FIGURED OUT WHAT IS enlargement
+  // $element.one('ohif.viewer.viewport.toggleEnlargement', cancelAction);
 
   external.cornerstone.updateImage(element);
 
@@ -146,25 +149,26 @@ export default function (mouseEventData) {
     $element.off('mousedown', mousedownHandler);
 
     // Unbind the event listener for image rendering
-    element.removeEventListener('cornerstoneimagerendered', imageRenderedHandler);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
 
     // Unbind the tool deactivation and enlargement handlers
-    element.removeEventListener('cornerstonetoolstooldeactivated', cancelAction);
-    $element.off('ohif.viewer.viewport.toggleEnlargement', cancelAction);
+    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, cancelAction);
+    // TODO: FIGURED OUT WHAT IS enlargement
+    // $element.off('ohif.viewer.viewport.toggleEnlargement', cancelAction);
 
     // Perpendicular line is not connected to long-line
     perpendicularStart.locked = false;
 
     // Unbind the handlers to update perpendicular line
-    element.removeEventListener('cornerstonetoolsmousedrag', updateHandler);
-    element.removeEventListener('cornerstonetoolsmouseup', updateHandler);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, updateHandler);
+    element.removeEventListener(EVENTS.MOUSE_UP, updateHandler);
 
     // Disable the default handlers and re-enable again
     disableDefaultHandlers();
-    element.addEventListener('cornerstonetoolsmousemove', mouseMoveCallback);
-    element.addEventListener('cornerstonetoolsmousedown', mouseDownCallback);
-    element.addEventListener('cornerstonetoolsmousedownactivate', mouseDownActivateCallback);
-    element.addEventListener('cornerstonetoolsmousedoubleclick', doubleClickCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
+    element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
+    element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
 
     external.cornerstone.updateImage(element);
   });

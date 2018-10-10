@@ -1,4 +1,5 @@
 import external from '../../../externalModules.js';
+import EVENTS from '../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
@@ -30,7 +31,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
     external.cornerstone.updateImage(element);
 
-    const eventType = 'cornerstonetoolsmeasurementmodified';
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
@@ -40,7 +41,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
   };
 
-  element.addEventListener('cornerstonetoolsmousedrag', mouseDragCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
   const currentImage = external.cornerstone.getImage(element);
   const imageRenderedHandler = () => {
@@ -52,14 +53,14 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   };
 
-    // Bind the event listener for image rendering
-  element.addEventListener('cornerstoneimagerendered', imageRenderedHandler);
+  // Bind the event listener for image rendering
+  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
 
   const mouseUpCallback = () => {
-    element.removeEventListener('cornerstonetoolsmousedrag', mouseDragCallback);
-    element.removeEventListener('cornerstonetoolsmouseup', mouseUpCallback);
-    element.removeEventListener('cornerstonetoolsmouseclick', mouseUpCallback);
-    element.removeEventListener('cornerstoneimagerendered', imageRenderedHandler);
+    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
     external.cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
@@ -67,6 +68,6 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   };
 
-  element.addEventListener('cornerstonetoolsmouseup', mouseUpCallback);
-  element.addEventListener('cornerstonetoolsmouseclick', mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 }
