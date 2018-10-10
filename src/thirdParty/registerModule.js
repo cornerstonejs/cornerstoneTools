@@ -9,27 +9,17 @@ import { state, modules } from '../store/index.js';
  *                              should it have the same name.
  */
 export default function (name, newModule, overwrite = false) {
-  if (!overwrite && isModuleNameRegistered(name)) {
-    console.warning(`A module with the name ${name} is already registered`);
+  if (isModuleNameRegistered(name)) {
+    console.warn(`A module with the name ${name} is already registered`);
 
-    return;
+    if (overwrite) {
+      console.warn(`Overwriting module ${name}`);
+    } else {
+      return;
+    }
   }
 
   modules[name] = newModule;
-
-  // Initialise module
-  if (typeof newModule.onRegisterCallback === 'function') {
-    newModule.onRegisterCallback(name);
-  }
-
-  // Element specific initilisation
-  if (typeof newModule.enabledElementCallback === 'function') {
-    const enabledElements = state.enabledElements;
-
-    for (let i = 0; i < enabledElements.length; i++) {
-      newModule.enabledElementCallback();
-    }
-  }
 }
 
 function isModuleNameRegistered (name) {

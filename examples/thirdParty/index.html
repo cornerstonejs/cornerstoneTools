@@ -47,7 +47,7 @@
 <script src="../imageLoader.js"></script>
 
 <script>
-  //====== Define a simple plugin: ======//
+  //====== Define some thirdParty functionality: ======//
   // 1) A module
   const state = {
     isPolite: true,
@@ -57,7 +57,7 @@
     }
   };
 
-  const helloWorldModule = {
+  const myModule = {
     state,
     getters: {
       response: () => {
@@ -89,7 +89,7 @@
     }
   };
   // 2) A mixin
-  const evenMoreHelloWorld = {
+  const myMixin = {
     evenMoreHelloWorldMixin: () => {
       // Note this would need to be called from somewhere
      // Within the tool's implementation.
@@ -98,7 +98,7 @@
   };
 
   // 3) A Tool
-  const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+  const BaseTool = cornerstoneTools.import('base/BaseTool');
   const modules = cornerstoneTools.import('store/modules');
 
   class HelloWorldMouseTool extends BaseTool {
@@ -140,32 +140,12 @@
     }
   }
 
-  // Add the mixin, module and tool to a plugin:
-  // Note, you would of course transpile this with Babel
-  // For legacy browser support.
-  const helloWorldPlugin = {
-    name: 'helloWorldPlugin',
-    module: helloWorldModule,
-    items: [
-      {
-        type: 'mixins',
-        name: 'evenMoreHelloWorld',
-        payload: evenMoreHelloWorld
-      },
-      {
-        type: 'tools',
-        name: 'HelloWorldMouseTool',
-        payload: HelloWorldMouseTool
-      }
-    ]
-  };
+  // Register the thirdParty functionality
+  cornerstoneTools.register('module', 'helloWorldModule', myModule);
+  cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
 
-  //====== END - Define a simple plugin ======//
-
+  // Initialise the extended cornerstoneTools library.
   const cTools = cornerstoneTools.init();
-
-  // Apply the plugin!
-  cTools.thirdParty.registerPlugin(helloWorldPlugin);
 
   const imageIds = [
     'example://1',
@@ -215,15 +195,11 @@
 
   // Iterate over all tool buttons
   const toolButtons = document.querySelectorAll('a[data-tool]');
-
   const toolBtn = document.querySelector('a[data-tool]');
-
-  // Add the tool
   const toolName = toolBtn.getAttribute('data-tool');
-  // Add the 3rd party tool:
-  const apiTool = cornerstoneTools.import('helloWorldPlugin/tools/HelloWorldMouseTool');
+  // Add the 3rd party tool (may be locally defined, or from an npm library)
 
-  cTools.addTool(apiTool);
+  cTools.addTool(HelloWorldMouseTool);
 
   // Setup button listener
   // Prevent right click context menu for our menu buttons

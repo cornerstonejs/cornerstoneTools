@@ -97,15 +97,6 @@ import {
   getBrowserInfo,
   isMobileDevice
 } from './util/getMaxSimultaneousRequests.js';
-import wwwcSynchronizer from './synchronization/wwwcSynchronizer.js';
-import updateImageSynchronizer from './synchronization/updateImageSynchronizer.js';
-import Synchronizer from './synchronization/Synchronizer.js';
-import stackScrollSynchronizer from './synchronization/stackScrollSynchronizer.js';
-import stackImagePositionSynchronizer from './synchronization/stackImagePositionSynchronizer.js';
-import stackImagePositionOffsetSynchronizer from './synchronization/stackImagePositionOffsetSynchronizer.js';
-import stackImageIndexSynchronizer from './synchronization/stackImageIndexSynchronizer.js';
-import panZoomSynchronizer from './synchronization/panZoomSynchronizer.js';
-import requestPoolManager from './requestPool/requestPoolManager.js';
 
 export const lib = {
   store: {
@@ -119,99 +110,84 @@ export const lib = {
       setToolEnabledForElement
     }
   },
-  core: {
-    base: {
-      BaseTool,
-      BaseAnnotationTool,
-      BaseBrushTool
-    },
-    manipulators: {
-      anyHandlesOutsideImage,
-      drawHandles,
-      getHandleNearImagePoint,
-      handleActivator,
-      moveAllHandles,
-      moveHandle,
-      moveNewHandle,
-      moveNewHandleTouch,
-      touchMoveAllHandles,
-      touchMoveHandle
-    },
-    mixins: {
-      activeOrDisabledBinaryTool,
-      enabledOrDisabledBinaryTool
-    },
-    stateManagement: {
-      textStyle,
-      toolColors,
-      toolCoordinates,
-      addToolState,
-      getToolState,
-      removeToolState,
-      clearToolState,
-      setElementToolStateManager,
-      getElementToolStateManager,
-      addTimeSeriesStateManager,
-      newTimeSeriesSpecificToolStateManager,
-      stackSpecificStateManager,
-      newStackSpecificToolStateManager,
-      addStackStateManager,
-      loadHandlerManager,
-      newImageIdSpecificToolStateManager,
-      globalImageIdSpecificToolStateManager,
-      newFrameOfReferenceSpecificToolStateManager,
-      globalFrameOfReferenceSpecificToolStateManager
-    },
-    drawing: {
-      getNewContext,
-      draw,
-      path,
-      setShadow,
-      drawLine,
-      drawLines,
-      drawJoinedLines,
-      drawCircle,
-      drawEllipse,
-      drawRect,
-      fillOutsideRect,
-      drawTextBox,
-      drawArrow,
-      fillBox,
-      fillTextLines
-    },
-    util: {
-      getLuminance,
-      copyPoints,
-      calculateSUV,
-      calculateEllipseStatistics,
-      setContextToDisplayFontSize,
-      scrollToIndex,
-      scroll,
-      roundToDecimal,
-      projectPatientPointToImagePlane,
-      imagePointToPatientPoint,
-      planePlaneIntersection,
-      pointInsideBoundingBox,
-      pointInEllipse,
-      makeUnselectable,
-      getRGBPixels,
-      getDefaultSimultaneousRequests,
-      getMaxSimultaneousRequests,
-      getBrowserInfo,
-      isMobileDevice
-    },
-    synchronization: {
-      wwwcSynchronizer,
-      updateImageSynchronizer,
-      Synchronizer,
-      stackScrollSynchronizer,
-      stackImagePositionSynchronizer,
-      stackImagePositionOffsetSynchronizer,
-      stackImageIndexSynchronizer,
-      panZoomSynchronizer
-    },
-    requestPool: {
-      requestPoolManager
-    }
+  base: {
+    BaseTool,
+    BaseAnnotationTool,
+    BaseBrushTool
+  },
+  manipulators: {
+    anyHandlesOutsideImage,
+    drawHandles,
+    getHandleNearImagePoint,
+    handleActivator,
+    moveAllHandles,
+    moveHandle,
+    moveNewHandle,
+    moveNewHandleTouch,
+    touchMoveAllHandles,
+    touchMoveHandle
+  },
+  mixins: {
+    activeOrDisabledBinaryTool,
+    enabledOrDisabledBinaryTool
+  },
+  stateManagement: {
+    textStyle,
+    toolColors,
+    toolCoordinates,
+    addToolState,
+    getToolState,
+    removeToolState,
+    clearToolState,
+    setElementToolStateManager,
+    getElementToolStateManager,
+    addTimeSeriesStateManager,
+    newTimeSeriesSpecificToolStateManager,
+    stackSpecificStateManager,
+    newStackSpecificToolStateManager,
+    addStackStateManager,
+    loadHandlerManager,
+    newImageIdSpecificToolStateManager,
+    globalImageIdSpecificToolStateManager,
+    newFrameOfReferenceSpecificToolStateManager,
+    globalFrameOfReferenceSpecificToolStateManager
+  },
+  drawing: {
+    getNewContext,
+    draw,
+    path,
+    setShadow,
+    drawLine,
+    drawLines,
+    drawJoinedLines,
+    drawCircle,
+    drawEllipse,
+    drawRect,
+    fillOutsideRect,
+    drawTextBox,
+    drawArrow,
+    fillBox,
+    fillTextLines
+  },
+  util: {
+    getLuminance,
+    copyPoints,
+    calculateSUV,
+    calculateEllipseStatistics,
+    setContextToDisplayFontSize,
+    scrollToIndex,
+    scroll,
+    roundToDecimal,
+    projectPatientPointToImagePlane,
+    imagePointToPatientPoint,
+    planePlaneIntersection,
+    pointInsideBoundingBox,
+    pointInEllipse,
+    makeUnselectable,
+    getRGBPixels,
+    getDefaultSimultaneousRequests,
+    getMaxSimultaneousRequests,
+    getBrowserInfo,
+    isMobileDevice
   }
 };

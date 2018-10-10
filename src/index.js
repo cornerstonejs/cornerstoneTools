@@ -32,16 +32,52 @@ export { default as ZoomMouseWheelTool } from './tools/ZoomMouseWheelTool.js';
 export { default as CrosshairsTool } from './tools/CrosshairsTool.js';
 export { default as BrushTool } from './tools/BrushTool.js';
 
-export { default as referenceLines } from './referenceLines/index.js';
-export { default as orientation } from './orientation/index.js';
-
-// ~~~~~~ STACK TOOLS  ~~~~~ //
+// ~~~~~~ STACK TOOLS ~~~~~ //
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
 
-// Exposed entities for 3rd party usage/plugins.
+// ~~~~~~ ORIENTATION  ~~~~~ //
+export { default as orientation } from './orientation/index.js';
+export { default as referenceLines } from './referenceLines/index.js';
+
+// ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
 export { default as import } from './import.js';
+export { default as register } from './thirdParty/register.js';
+export { default as registerSome } from './thirdParty/registerSome.js';
+
+// ~~~~~~ SYNCHRONIZERS ~~~~~ //
+export {
+  default as wwwcSynchronizer
+} from './synchronization/wwwcSynchronizer.js';
+export {
+  default as updateImageSynchronizer
+} from './synchronization/updateImageSynchronizer.js';
+export {
+  default as Synchronizer
+} from './synchronization/Synchronizer.js';
+export {
+  default as stackScrollSynchronizer
+} from './synchronization/stackScrollSynchronizer.js';
+export {
+  default as stackImagePositionSynchronizer
+} from './synchronization/stackImagePositionSynchronizer.js';
+export {
+  default as stackImagePositionOffsetSynchronizer
+} from './synchronization/stackImagePositionOffsetSynchronizer.js';
+export {
+  default as stackImageIndexSynchronizer
+} from './synchronization/stackImageIndexSynchronizer.js';
+export {
+  default as panZoomSynchronizer
+} from './synchronization/panZoomSynchronizer.js';
+
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
+import requestPoolManager from './requestPool/requestPoolManager.js';
+
+
+
+
 
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';

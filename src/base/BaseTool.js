@@ -111,35 +111,20 @@ export default class BaseTool {
   /**
    * Applys the requested mixins to the class.
    *
-   * @param  {Array} mixinArray An array of mixin URIs (strings).
+   * @param  {Array} mixinArray An array of mixin identifiers (strings).
    */
   _applyMixins (mixins) {
-    // TODO:
-    // TODO: deal with: missing namespace + type
-
     if (typeof cToolsImport !== 'function') { // Makes testing a lot easier.
       return;
     }
 
     for (let i = 0; i < mixins.length; i++) {
-      let mixinUri = mixins[i];
-
-      const split = mixinUri.split('/');
-
-      if (split.length === 2) {
-        // Fill in ommited type term (mixin).
-        mixinUri = `${split[0]}/mixins/${split[1]}`;
-      } else if (split.length === 1) {
-        // Assume core if no namespace given.
-        mixinUri = `core/mixins/${split[0]}`;
-      }
-
-      const mixin = cToolsImport(mixinUri);
+      const mixin = cToolsImport(`mixins/${mixins[i]}`);
 
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
       } else {
-        console.warn(`${this.name}: mixin ${mixinUri} does not exist.`);
+        console.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
       }
     }
   }

@@ -10,34 +10,27 @@ export default function (uri) {
   const splitUri = uri.split('/');
   const depth = splitUri.length;
 
-  let [namespace, directory, item] = splitUri;
+  let [type, item] = splitUri;
 
-  if (depth > 3) {
-    console.warn(`${uri} doesn't exist, too deep.`);
+  if (depth > 2) {
+    console.warn(`${uri} doesn't exist, directory level too deep.`);
   }
 
   // Check that whatever is being requested exists.
-  if (depth >= 1 && !lib[namespace]) {
-    console.warn(`Namespace ${namespace} does not exist.`);
+  if (depth >= 1 && !lib[type]) {
+    console.warn(`Type ${type} does not exist.`);
     return;
   }
 
-  if (depth >= 2 && !lib[namespace][directory]) {
-    console.warn(`${namespace}/${directory} does not exist.`);
-    return;
-  }
-
-  if (depth === 3 && !lib[namespace][directory][item]) {
-    console.warn(`${namespace}/${directory}/${item} does not exist.`);
+  if (depth === 2 && !lib[type][item]) {
+    console.warn(`${type}/${item} does not exist.`);
     return;
   }
 
   switch (depth) {
     case 1:
-      return lib[namespace];
+      return lib[type];
     case 2:
-      return lib[namespace][directory];
-    case 3:
-      return lib[namespace][directory][item];
+      return lib[type][item];
   }
 }
