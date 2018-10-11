@@ -36,11 +36,13 @@ export default function (evt) {
   // High level filtering
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter(
-    (tool) => eventData.buttons === tool.options.mouseButtonMask
+    (tool) =>
+      eventData.buttons === tool.options.mouseButtonMask &&
+      tool.options.isMouseActive
   );
 
   // ACTIVE TOOL W/ PRE CALLBACK?
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
+  let activeTools = tools.filter((tool) => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
