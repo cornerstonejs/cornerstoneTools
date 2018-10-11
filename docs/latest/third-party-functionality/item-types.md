@@ -1,4 +1,69 @@
-## Modules {#modules}
+## Item Types {#item-types}
+The types typically registered by third parties are:
+- `base`
+- `mixins`
+- `manipulators`
+- `utils`
+
+`cornerstoneTools` has these additional types (third parties could expand these, but are unlikely to):
+- `drawing` (for drawing api functions)
+- `stateManagement`
+
+Additionally, custom `module`s can be added to the `store`.
+
+### Base
+
+A user can define a new `abstract` base tool type, from which third-party tools can inherit from. The new tool type must inherit from either `BaseTool`, `BaseAnnotationTool` or `BaseBrushTool`. To create a new base tool type simply [`import`](index.md#imports.md) the base type you wish to extend and extend it as:
+
+```js
+const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+
+export default class BaseNewTypeTool extends BaseTool {
+  // implementation ...
+}
+```
+
+### Mixins
+
+You may want to make custom `mixin`s if you re-use some functionality between various custom `tool`s. Mixins are simply `Object`s consisting of `function`s that may assigned to any tool as member functions, e.g.:
+
+```js
+function evenMoreHelloWorld () {
+  // Note this would need to be called from somewhere
+  // Within the tool's implementation.
+  console.log('Hello World from the even more hello world mixin!');
+}
+
+export default {
+  evenMoreHelloWorld
+};
+```
+
+
+### Manipulators
+
+`BaseAnnotationTool`s use `manipulators` to interact with the annotation's `handle`s data in a particular way. If you need to build a custom interaction mechanism you envisage using more than once, you may want to make a custom manipulator. A manipulator is just a `function`. They have rather freeform structure, but principally take `eventData` and `toolData` and perform an operation, e.g.:
+
+```js
+export default function (eventData, toolType, data, handle, someCallback) {
+  // Implementation, Do something with the handle.
+  // ...
+  someCallback();
+}
+
+```
+
+### Utils
+
+`Utils` are just functions that perform some generic common process, e.g.:
+
+```js
+export default function () {
+  console.log('Super important hello world util.');
+}
+```
+
+### Modules
 
 A module is a namespaced storage object in the `store` that contains the following properties:
 
@@ -10,11 +75,9 @@ A module is a namespaced storage object in the `store` that contains the followi
 | onRegisterCallback (name) | Optional | This function is called when the module is registered to the `cornerstoneTools` `store`. It is used to perform any global initialization the modules requires. The `name` the module was given upon registration is passed to the callback. |
 | enabledElementCallback (enabledElement) | Optional | This function is called once for each `enabledElement` upon registering the module, and again any time a new `enabledElement` is added to the `cornerstoneTools` instance. The `enabledElement` is passed to the callback.|
 
-Most modules will have getters and setters, unless they only contain primitives (e.g. the modules state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
+Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
 
 ```js
-// helloWorldModule.js
-
 const state = {
   isPolite: true,
   responses: {
