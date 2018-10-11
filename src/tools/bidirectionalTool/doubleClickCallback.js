@@ -2,7 +2,6 @@ import external from '../../externalModules.js';
 import { toolType } from './definitions.js';
 import pointNearTool from './pointNearTool.js';
 import { removeToolState, getToolState } from '../../stateManagement/toolState.js';
-import isMouseButtonEnabled from '../../util/isMouseButtonEnabled.js';
 
 export default function (event) {
   const eventData = event.detail;
@@ -15,12 +14,6 @@ export default function (event) {
     }
   }
 
-  const buttonMask = event.data && event.data.mouseButtonMask;
-
-  if (buttonMask && !isMouseButtonEnabled(eventData.which, buttonMask)) {
-    return false;
-  }
-
   // Check if the element is enabled and stop here if not
   try {
     external.cornerstone.getEnabledElement(element);
@@ -28,7 +21,7 @@ export default function (event) {
     return;
   }
 
-  const config = cornerstoneTools.bidirectional.getConfiguration();
+  const config = this.configutation;
 
   const coords = eventData.currentPoints.canvas;
   const toolData = getToolState(element, toolType);

@@ -3,12 +3,12 @@ import external from '../../externalModules.js';
 import { toolType } from './definitions.js';
 import pointNearTool from './pointNearTool.js';
 import toolCoordinates from '../../stateManagement/toolCoordinates.js';
+import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 
 // Replaces the cornerstoneTools.handleActivator function by skiping the active handle comparison
 const handleActivator = (element, handles, canvasPoint, distanceThreshold = 6) => {
-  const getHandle = external.cornerstoneTools.getHandleNearImagePoint;
-  const nearbyHandle = getHandle(element, handles, canvasPoint, distanceThreshold);
+  const nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
 
   let handleActivatorChanged = false;
 

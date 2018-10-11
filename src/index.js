@@ -30,6 +30,7 @@ export { default as ZoomTouchPinchTool } from './tools/ZoomTouchPinchTool.js';
 export { default as ZoomMouseWheelTool } from './tools/ZoomMouseWheelTool.js';
 export { default as CrosshairsTool } from './tools/CrosshairsTool.js';
 export { default as BrushTool } from './tools/BrushTool.js';
+export { default as BidirectionalTool } from './tools/BidirectionalTool.js';
 
 // ~~~~~~ STACK TOOLS ~~~~~ //
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';

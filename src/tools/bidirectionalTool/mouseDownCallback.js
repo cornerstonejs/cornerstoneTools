@@ -8,9 +8,7 @@ import { removeToolState, getToolState } from '../../stateManagement/toolState.j
 import anyHandlesOutsideImage from '../../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
 import moveAllHandles from '../../manipulators/moveAllHandles.js';
-import isMouseButtonEnabled from '../../util/isMouseButtonEnabled.js';
-import { getToolOptions } from '../../toolOptions.js';
-import moveHandle from './moveHandle/index.js';
+import moveHandle from './moveHandle/moveHandle.js';
 
 // Clear the selected state for the given handles object
 const unselectAllHandles = (handles) => {
@@ -59,11 +57,6 @@ export default function (event) {
   const eventData = event.detail;
   let data;
   const element = eventData.element;
-  const options = getToolOptions(toolType, element);
-
-  if (!isMouseButtonEnabled(eventData.which, options.mouseButtonMask)) {
-    return;
-  }
 
   // Add an event listener to clear the selected state when a measurement is activated
   const activateEventKey = 'ViewerMeasurementsActivated';

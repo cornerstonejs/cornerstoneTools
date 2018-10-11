@@ -10,11 +10,11 @@ import moveNewHandle from '../../manipulators/moveNewHandle.js';
 import anyHandlesOutsideImage from '../../manipulators/anyHandlesOutsideImage.js';
 import { addToolState, removeToolState } from '../../stateManagement/toolState.js';
 
-export default function (mouseEventData) {
-  const { element } = mouseEventData;
-  const $element = $(element);
+export default function (evt) {
+  const eventData = evt.detail;
+  const { element, image } = eventData;
 
-  const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', mouseEventData.image.imageId);
+  const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let rowPixelSpacing;
   let colPixelSpacing;
 
@@ -22,8 +22,8 @@ export default function (mouseEventData) {
     rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
     colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
   } else {
-    rowPixelSpacing = mouseEventData.image.rowPixelSpacing;
-    colPixelSpacing = mouseEventData.image.columnPixelSpacing;
+    rowPixelSpacing = image.rowPixelSpacing;
+    colPixelSpacing = image.columnPixelSpacing;
   }
 
   // LT-29 Disable Target Measurements when pixel spacing is not available
@@ -36,13 +36,11 @@ export default function (mouseEventData) {
     external.cornerstone.updateImage(element);
   }
 
-  const measurementData = createNewMeasurement(mouseEventData);
+  const measurementData = createNewMeasurement(eventData);
 
   measurementData.viewport = external.cornerstone.getViewport(element);
 
-  const tool = cornerstoneTools[toolType];
-  const config = tool.getConfiguration();
-  const { mouseDownActivateCallback } = tool;
+  const config = this.configuration;
 
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, toolType, measurementData);
@@ -52,7 +50,6 @@ export default function (mouseEventData) {
     // The end point and let the moveHandle move it for us.
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-    element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
   };
 
@@ -69,33 +66,6 @@ export default function (mouseEventData) {
     cancelled = true;
     removeToolState(element, toolType, measurementData);
   };
-
-    // Add a flag for using Esc to cancel tool placement
-  const keyDownHandler = (event) => {
-    // If the Esc key was pressed, set the flag to true
-    if (event.which === 27) {
-      cancelAction();
-    }
-
-    // Don't propagate this keydown event so it can't interfere
-    // With anything outside of this tool
-    return false;
-  };
-
-    // Bind a one-time event listener for the Esc key
-  $element.one('keydown', keyDownHandler);
-
-  // Bind a mousedown handler to cancel the measurement if it's zero-sized
-  const mousedownHandler = () => {
-    const { start, end } = measurementData.handles;
-
-    if (!external.cornerstoneMath.point.distance(start, end)) {
-      cancelAction();
-    }
-  };
-
-    // Bind a one-time event listener for mouse down
-  $element.one('mousedown', mousedownHandler);
 
   // Keep the current image and create a handler for new rendered images
   const currentImage = external.cornerstone.getImage(element);
@@ -125,9 +95,9 @@ export default function (mouseEventData) {
   const timestamp = new Date().getTime();
   const { end, perpendicularStart } = measurementData.handles;
 
-  moveNewHandle(mouseEventData, toolType, measurementData, end, () => {
+  moveNewHandle(eventData, toolType, measurementData, end, () => {
     const { handles, longestDiameter, shortestDiameter } = measurementData;
-    const hasHandlesOutside = anyHandlesOutsideImage(mouseEventData, handles);
+    const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
     const longestDiameterSize = parseFloat(longestDiameter) || 0;
     const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
     const isTooSmal = (longestDiameterSize < 1) || (shortestDiameterSize < 1);
@@ -139,20 +109,15 @@ export default function (mouseEventData) {
       removeToolState(element, toolType, measurementData);
     } else {
       // Set lesionMeasurementData Session
-      config.getMeasurementLocationCallback(measurementData, mouseEventData, doneCallback);
+      config.getMeasurementLocationCallback(measurementData, eventData, doneCallback);
     }
-
-    // Unbind the Esc keydown hook
-    $element.off('keydown', keyDownHandler);
-
-    // Unbind the mouse down hook
-    $element.off('mousedown', mousedownHandler);
 
     // Unbind the event listener for image rendering
     element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
 
     // Unbind the tool deactivation and enlargement handlers
     element.removeEventListener(EVENTS.TOOL_DEACTIVATED, cancelAction);
+
     // TODO: FIGURED OUT WHAT IS enlargement
     // $element.off('ohif.viewer.viewport.toggleEnlargement', cancelAction);
 
@@ -167,7 +132,6 @@ export default function (mouseEventData) {
     disableDefaultHandlers();
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-    element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivateCallback);
     element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
 
     external.cornerstone.updateImage(element);

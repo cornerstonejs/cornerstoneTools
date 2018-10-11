@@ -1,17 +1,18 @@
-import external from '../../../externalModules.js';
-import { toolType } from '../definitions.js';
-import drawHandles from './drawHandles.js';
-import updatePerpendicularLineHandles from '../updatePerpendicularLineHandles.js';
-import drawPerpendicularLine from './drawPerpendicularLine.js';
-import drawSelectedMarker from './drawSelectedMarker.js';
-import drawTextBox from '../../../util/drawTextBox.js';
-import toolStyle from '../../../stateManagement/toolStyle.js';
-import toolColors from '../../../stateManagement/toolColors.js';
-import { getToolState } from '../../../stateManagement/toolState.js';
+import external from '../../externalModules.js';
+import { toolType } from './definitions.js';
+import drawHandles from './drawUtils/drawHandles.js';
+import drawPerpendicularLine from './drawUtils/drawPerpendicularLine.js';
+import drawSelectedMarker from './drawUtils/drawSelectedMarker.js';
+import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js';
 
-export default function (event) {
-  const eventData = event.detail;
-  const { element, canvasContext } = eventData;
+import drawTextBox from '../../util/drawTextBox.js';
+import toolStyle from '../../stateManagement/toolStyle.js';
+import toolColors from '../../stateManagement/toolColors.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+
+export default function (evt) {
+  const eventData = evt.detail;
+  const { element, canvasContext, image } = eventData;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, toolType);
@@ -20,7 +21,11 @@ export default function (event) {
     return;
   }
 
-  const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', eventData.image.imageId);
+  const imagePlane = external.cornerstone.metaData.get(
+    'imagePlaneModule',
+    image.imageId
+  );
+
   let rowPixelSpacing;
   let colPixelSpacing;
 

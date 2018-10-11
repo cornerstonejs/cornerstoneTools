@@ -1,13 +1,13 @@
-import { OHIF } from 'meteor/ohif:core';
 import toolStyle from '../../../stateManagement/toolStyle.js';
 import external from '../../../externalModules.js';
+import getSelectedHandleKey from './../utils/getSelectedHandleKey.js';
+import repositionBidirectionalArmHandle from './../utils/repositionBidirectionalArmHandle.js';
 
 // Draw a line marker over the selected arm
 export default function (eventData, handles, color) {
-  const lib = OHIF.lesiontracker.bidirectional;
   const { canvasContext, element } = eventData;
 
-  const handleKey = lib.getSelectedHandleKey(handles);
+  const handleKey = getSelectedHandleKey(handles);
 
   if (!handleKey) {
     return;
@@ -22,7 +22,7 @@ export default function (eventData, handles, color) {
     columnPixelSpacing: eventData.viewport.scale,
     rowPixelSpacing: eventData.viewport.scale
   };
-  const pointA = lib.repositionBidirectionalArmHandle(fakeImage, handles, handleKey, mmStep, 0);
+  const pointA = repositionBidirectionalArmHandle(fakeImage, handles, handleKey, mmStep, 0);
   const pointB = Object.assign({}, ...['x', 'y'].map((key) => ({ [key]: handle[key] })));
 
   // Stop here if pointA is not present
