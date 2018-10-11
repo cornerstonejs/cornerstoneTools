@@ -68,6 +68,14 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
   }
 
+  doubleClickCallback (evt) {
+    const eventData = evt.detail;
+
+    this._selectFreehandTool(eventData);
+
+    external.cornerstone.updateImage(eventData.element);
+  }
+
   /**
    * Event handler for MOUSE_DOWN.
    *
@@ -79,24 +87,15 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     let imageNeedsUpdate = false;
 
-    if (eventData.event.ctrlKey) {
-      // Select
+    if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
-      imageNeedsUpdate = true;
-    } else if (config.currentTool !== null) {
-      // Drag
+    } else {
       this._initialiseSculpting(eventData);
-      imageNeedsUpdate = true;
     }
 
-    if (imageNeedsUpdate) {
-      // Force onImageRendered
-      external.cornerstone.updateImage(eventData.element);
+    external.cornerstone.updateImage(eventData.element);
 
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   /**
@@ -1147,11 +1146,6 @@ function getDefaultFreehandSculpterMouseToolConfiguration () {
           active: true
         }
       }
-    },
-    keyDown: {
-      shift: false,
-      ctrl: false,
-      alt: false
     },
     minSpacing: 5,
     maxSpacing: 20,

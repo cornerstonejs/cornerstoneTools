@@ -5,6 +5,43 @@ import external from '../externalModules.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
 import { getNewContext } from '../util/drawing.js';
 
+/* Safari and Edge polyfill for createImageBitmap
+ * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
+ */
+
+import regeneratorRuntime from "regenerator-runtime";
+
+if (!('createImageBitmap' in window)) {
+  window.createImageBitmap = async function (imageData) {
+    return new Promise((resolve) => {
+      const img = document.createElement('img');
+
+      img.addEventListener('load', function () {
+        resolve(this);
+      });
+
+      const conversionCanvas = document.createElement('canvas');
+
+      conversionCanvas.width = imageData.width;
+      conversionCanvas.height = imageData.height;
+
+      const conversionCanvasContext = conversionCanvas.getContext('2d');
+
+      conversionCanvasContext.putImageData(
+        imageData,
+        0,
+        0,
+        0,
+        0,
+        conversionCanvas.width,
+        conversionCanvas.height
+      );
+      img.src = conversionCanvas.toDataURL();
+    });
+  };
+}
+
+
 const { state, getters, setters } = store.modules.brush;
 
 /**
