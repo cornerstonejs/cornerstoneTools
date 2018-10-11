@@ -7,7 +7,8 @@ export const state = {
   tools: [],
   clickProximity: 6,
   mousePositionImage: {},
-  enabledElements: []
+  enabledElements: [],
+  svgCursorUrl: null
 };
 
 export const getters = {

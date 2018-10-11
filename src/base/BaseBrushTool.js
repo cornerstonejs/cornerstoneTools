@@ -25,7 +25,7 @@ export default class BaseBrushTool extends BaseTool {
       mixins
     });
 
-    this.hasCursor = true;
+    this.hasCanvasCursor = true;
     this.referencedToolData = 'brush';
 
     this._drawing = false;

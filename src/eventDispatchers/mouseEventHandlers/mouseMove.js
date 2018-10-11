@@ -35,7 +35,7 @@ export default function (evt) {
     const firstActiveTool = activeTools[0];
 
     // Force image update if the active tool has a cusror that should update on mouseMove.
-    if (firstActiveTool.hasCursor) {
+    if (firstActiveTool.hasCanvasCursor) {
       external.cornerstone.updateImage(element);
     }
   }

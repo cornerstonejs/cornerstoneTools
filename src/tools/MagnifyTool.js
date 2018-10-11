@@ -33,6 +33,20 @@ export default class MagnifyTool extends BaseTool {
       this.browserName = info[0];
     }
 
+    this.hasSvgCursor = true;
+    this.svgCursor = new Blob(
+      [
+        `<svg data-icon="magnify" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32">
+            <path fill="#ffffff" d="M508.5 481.6l-129-129c-2.3-2.3-5.3-3.5-8.5-3.5h-10.3C395 312 416 262.5 416 208 416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c54.5 0 104-21 141.1-55.2V371c0 3.2 1.3 6.2 3.5 8.5l129 129c4.7 4.7 12.3 4.7 17 0l9.9-9.9c4.7-4.7 4.7-12.3 0-17zM208 384c-97.3 0-176-78.7-176-176S110.7 32 208 32s176 78.7 176 176-78.7 176-176 176z">
+            </path>
+        </svg>`
+      ],
+      { type: 'image/svg+xml' }
+    );
+
+    this.activeCallback = this._createMagnificationCanvas.bind(this);
+    this.disabledCallback = this._destroyMagnificationCanvas.bind(this);
+
     // Touch
     this.postTouchStartCallback = this._addMagnifyingGlass.bind(this);
     this.touchDragCallback = this._updateMagnifyingGlass.bind(this);
@@ -47,67 +61,6 @@ export default class MagnifyTool extends BaseTool {
     // Misc
     this.newImageCallback = this._drawMagnificationTool.bind(this);
   }
-
-
-  activeCallback (element) {
-    console.log('MagnifyTool activeCallback');
-    this._createMagnificationCanvas(element);
-    this._setCursor();
-  }
-
-  disabledCallback (element) {
-    console.log('MagnifyTool disableCallback');
-    this._destroyMagnificationCanvas(element);
-    this._clearCursor();
-  }
-
-  /**
-   * Creates an SVG Cursor for the target element
-   *
-   * @returns
-   */
-  _setCursor () {
-    console.log('attempting to set cursor...');
-    // TODO: (state vs options) Exit if cursors wasn't updated
-    // TODO: Exit if invalid options to create cursor
-
-    // TODO: Clear Cursor:
-    // If (currentCursor.url) {
-    //   Window.URL.revokeObjectURL(currentCursor.url);
-    //   CurrentCursor.url = undefined;
-    // }
-
-    // Max size of 128x128
-    // Use 32 to be safe
-    const cursorBlob = new Blob(
-      [
-        `<svg data-icon="magnify" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32">
-            <path fill="#ffffff" d="M508.5 481.6l-129-129c-2.3-2.3-5.3-3.5-8.5-3.5h-10.3C395 312 416 262.5 416 208 416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c54.5 0 104-21 141.1-55.2V371c0 3.2 1.3 6.2 3.5 8.5l129 129c4.7 4.7 12.3 4.7 17 0l9.9-9.9c4.7-4.7 4.7-12.3 0-17zM208 384c-97.3 0-176-78.7-176-176S110.7 32 208 32s176 78.7 176 176-78.7 176-176 176z">
-            </path>
-        </svg>`
-      ],
-      { type: 'image/svg+xml' }
-    );
-
-    this._currentCursorUrl = window.URL.createObjectURL(cursorBlob);
-
-    console.log(this.element.style.cursor);
-    this.element.style.cursor = `url('${this._currentCursorUrl}') 5 5, auto`;
-
-    console.log('cursor set?');
-    console.log(this.element.style.cursor);
-  }
-
-  _clearCursor () {
-    console.log('_clearCursor');
-    if (this._currentCursorUrl) {
-      window.URL.revokeObjectURL(this._currentCursorUrl);
-      this._currentCursorUrl = undefined;
-      this.element.style.cursor = "initial";
-      console.log(this.element.style.cursor)
-    }
-  }
-
 
   _addMagnifyingGlass (evt) {
     // Ignore until next event

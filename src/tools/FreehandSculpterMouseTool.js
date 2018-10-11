@@ -23,7 +23,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       configuration: getDefaultFreehandSculpterMouseToolConfiguration()
     });
 
-    this.hasCursor = true;
+    this.hasCanvasCursor = true;
     this.referencedToolName = referencedToolName;
 
     this._active = false;
