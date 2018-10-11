@@ -4,6 +4,7 @@ import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import { clipToBox } from '../util/clip.js';
 import { getNewContext, fillBox } from '../util/drawing.js';
+import { setToolDisabledForElement, setToolActiveForElement } from '../store/setToolMode.js';
 import BaseTool from '../base/BaseTool.js';
 
 export default class MagnifyTool extends BaseTool {
@@ -14,7 +15,10 @@ export default class MagnifyTool extends BaseTool {
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2
-      }
+      },
+      mixins: [
+        'activeOrDisabledBinaryTool'
+      ]
     });
 
     this.browserName = undefined;
@@ -29,11 +33,6 @@ export default class MagnifyTool extends BaseTool {
       this.browserName = info[0];
     }
 
-    // Mode Callbacks: (element, options)
-    this.activeCallback = this._createMagnificationCanvas.bind(this);
-    this.enableCallback = this._createMagnificationCanvas.bind(this);
-    this.disableCallback = this._destroyMagnificationCanvas.bind(this);
-
     // Touch
     this.postTouchStartCallback = this._addMagnifyingGlass.bind(this);
     this.touchDragCallback = this._updateMagnifyingGlass.bind(this);
@@ -47,6 +46,19 @@ export default class MagnifyTool extends BaseTool {
     this.mouseClickCallback = this._removeMagnifyingGlass.bind(this);
     // Misc
     this.newImageCallback = this._drawMagnificationTool.bind(this);
+  }
+
+
+  activeCallback (element) {
+    console.log('MagnifyTool activeCallback');
+    this._createMagnificationCanvas(element);
+    this._setCursor();
+  }
+
+  disabledCallback (element) {
+    console.log('MagnifyTool disableCallback');
+    this._destroyMagnificationCanvas(element);
+    this._clearCursor();
   }
 
   /**
@@ -77,14 +89,25 @@ export default class MagnifyTool extends BaseTool {
       { type: 'image/svg+xml' }
     );
 
-    const currentCursorUrl = window.URL.createObjectURL(cursorBlob);
+    this._currentCursorUrl = window.URL.createObjectURL(cursorBlob);
 
-    console.log(this.element);
-    this.element.style.cursor = `url('${currentCursorUrl}') 5 5, auto`;
+    console.log(this.element.style.cursor);
+    this.element.style.cursor = `url('${this._currentCursorUrl}') 5 5, auto`;
 
     console.log('cursor set?');
-    console.log(this.element);
+    console.log(this.element.style.cursor);
   }
+
+  _clearCursor () {
+    console.log('_clearCursor');
+    if (this._currentCursorUrl) {
+      window.URL.revokeObjectURL(this._currentCursorUrl);
+      this._currentCursorUrl = undefined;
+      this.element.style.cursor = "initial";
+      console.log(this.element.style.cursor)
+    }
+  }
+
 
   _addMagnifyingGlass (evt) {
     // Ignore until next event
@@ -270,8 +293,6 @@ export default class MagnifyTool extends BaseTool {
       magnifyCanvas.style.display = 'none';
       element.appendChild(magnifyCanvas);
     }
-
-    this._setCursor();
   }
 
   /**
@@ -279,8 +300,7 @@ export default class MagnifyTool extends BaseTool {
    *
    * @param {*} evt
    */
-  _destroyMagnificationCanvas (evt) {
-    const element = evt.detail.element;
+  _destroyMagnificationCanvas (element) {
     const magnifyCanvas = element.querySelector('.magnifyTool');
 
     if (magnifyCanvas) {
