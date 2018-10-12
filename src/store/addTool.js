@@ -13,6 +13,7 @@ const addToolForElement = function (element, apiTool) {
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
   const tool = new apiTool();
+
   const toolAlreadyAddedToElement = getToolForElement(element, tool.toolName);
 
   if (toolAlreadyAddedToElement) {

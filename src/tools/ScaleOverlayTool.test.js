@@ -11,10 +11,14 @@ jest.mock('./../externalModules.js', () => ({
     }
   }
 }));
+
 jest.mock('../util/drawing.js', () => ({
   getNewContext: jest.fn()
 }));
 
+jest.mock('../import.js', () => ({
+  default: jest.fn()
+}));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('ScaleOverlayTool.js', () => {

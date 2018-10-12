@@ -14,7 +14,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   constructor (
     name = 'FreehandSculpterMouse',
     referencedToolName = 'FreehandMouse',
-    mixins = ['activeOrDisabledBinaryTool']
+    mixins = [
+      'activeOrDisabledBinaryTool'
+    ]
   ) {
     super({
       name,

@@ -13,6 +13,10 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
+jest.mock('../import.js', () => ({
+  default: jest.fn()
+}));
+
 describe('BaseTool.js', () => {
   describe('default values', () => {
     it('has a default mode of "disabled"', () => {

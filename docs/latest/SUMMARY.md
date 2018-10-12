@@ -34,11 +34,13 @@
   - [Mixin Behaviors](custom-tools/index.md#mixin-behaviors)
   - [Mode Change Callbacks](custom-tools/index.md#mode-change-callbacks)
   - [Event Dispatcher Callbacks](custom-tools/index.md#event-dispatcher-callbacks)
-- [Third Party Addons](third-party-addons/index.md)
-  - [Tools](third-party-addons/index.md#tools)
-  - [Mixins](third-party-addons/index.md#mixins)
-  - [Store Modules](third-party-addons/index.md#modules)
-  - [Plugins](third-party-addons/index.md#plugins)
+- [Third-Party Functionality](third-party-functionality/index.md)
+  - [Item Types](third-party-functionality/index.md#item-types.md)
+  - [Registration](third-party-functionality/index.md#registration.md)
+  - [Imports](third-party-functionality/index.md#imports.md)
+  - [Tools](third-party-functionality/index.md#tools.md)
+
+
 
 ## Migrating
 
