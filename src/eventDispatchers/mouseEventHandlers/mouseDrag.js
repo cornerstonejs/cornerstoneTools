@@ -18,7 +18,9 @@ export default function (evt) {
   // Filter out disabled, enabled, and passive
   tools = getActiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter(
-    (tool) => eventData.buttons === tool.options.mouseButtonMask
+    (tool) =>
+      eventData.buttons === tool.options.mouseButtonMask &&
+      tool.options.isMouseActive
   );
   tools = tools.filter((tool) => typeof tool.mouseDragCallback === 'function');
 
