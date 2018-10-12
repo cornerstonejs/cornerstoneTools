@@ -7,6 +7,7 @@ import {
   removeToolState
 } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
+import svgCursors from '../assets/svgCursors.js';
 
 export default class EraserTool extends BaseTool {
   constructor (name = 'Eraser') {
@@ -14,6 +15,8 @@ export default class EraserTool extends BaseTool {
       name,
       supportedInteractionTypes: ['Mouse', 'Touch']
     });
+
+    this.svgCursor = svgCursors.eraser;
 
     this.preMouseDownCallback = this._deleteAllNearbyTools.bind(this);
     this.preTouchStartCallback = this._deleteAllNearbyTools.bind(this);

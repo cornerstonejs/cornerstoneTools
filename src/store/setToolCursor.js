@@ -11,14 +11,18 @@ export function setSVGCursor (tool, element) {
   // TODO: (state vs options) Exit if cursors wasn't updated
   // TODO: Exit if invalid options to create cursor
 
-  // Max size of 128x128
-  // Use 32 to be safe
+  // Note: Max size of an SVG cursor is 128x128, default is 32x32.
   const cursorBlob = tool.svgCursor;
+  const mousePoint = cursorBlob.mousePoint ? cursorBlob.mousePoint : '4 4';
+
+  console.log(cursorBlob);
 
   const svgCursorUrl = window.URL.createObjectURL(cursorBlob);
 
+  console.log(svgCursorUrl);
+
   console.log(element.style.cursor);
-  element.style.cursor = `url('${svgCursorUrl}') 5 5, auto`;
+  element.style.cursor = `url('${svgCursorUrl}') ${mousePoint}, auto`;
 
   state.svgCursorUrl = svgCursorUrl;
 

@@ -82,7 +82,7 @@ function _setCursorIfPrimary(element, options, tool) {
 
   if (mouseButtonMask === 1) {
     console.log('-----CURSOR MAGIC-----');
-    if (tool.hasSvgCursor) {
+    if (tool.svgCursor) {
       setSVGCursor(tool, element);
     } else if (tool.hideDefaultCursor) {
       hideCursor(element);

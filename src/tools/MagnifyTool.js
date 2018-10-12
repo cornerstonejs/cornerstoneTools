@@ -34,8 +34,7 @@ export default class MagnifyTool extends BaseTool {
       this.browserName = info[0];
     }
 
-    this.hasSvgCursor = true;
-    this.svgCursor =svgCursors.magnify;
+    this.svgCursor = svgCursors.magnify;
 
     this.activeCallback = this._createMagnificationCanvas.bind(this);
     this.disabledCallback = this._destroyMagnificationCanvas.bind(this);

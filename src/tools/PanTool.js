@@ -9,7 +9,6 @@ export default class PanTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch']
     });
 
-    this.hasSvgCursor = true;
     this.svgCursor = svgCursors.pan;
 
     // Touch
