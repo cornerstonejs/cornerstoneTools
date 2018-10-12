@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import EVENTS from './../events.js';
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './BaseTool.js';
 // Utils
 import isToolActive from '../tools/shared/isToolActive.js';
 import store from '../store/index.js';

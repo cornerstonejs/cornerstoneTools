@@ -34,12 +34,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     });
 
     this._drawing = false;
-    this._activePencilMode = false;
+    this._dragging = false;
     this._modifying = false;
 
     // Create bound callback functions for private event loops
     this._drawingMouseDownCallback = this._drawingMouseDownCallback.bind(this);
     this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
+    this._drawingMouseDragCallback = this._drawingMouseDragCallback.bind(this);
+    this._drawingMouseUpCallback   = this._drawingMouseUpCallback.bind(this);
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
@@ -260,7 +262,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
         if (
           config.alwaysShowHandles ||
-          config.keyDown.ctrl ||
           (data.active && data.polyBoundingBox)
         ) {
           // Render all handles
@@ -499,10 +500,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     this._drawing = true;
 
-    if (eventData.event.shiftKey) {
-      this._activePencilMode = true;
-    }
-
     this._startDrawing(eventData);
     this._addPoint(eventData);
 
@@ -594,28 +591,87 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
-    this._checkInvalidHandleLocation(data);
+    this._checkInvalidHandleLocation(data, eventData);
 
-    if (this._activePencilMode) {
-      this._addPointPencilMode(eventData, data.handles);
-    } else {
-      // Polygon Mode
-      const handleNearby = this._pointNearHandle(element, data, coords);
+    // Mouse move -> Polygon Mode
+    const handleNearby = this._pointNearHandle(element, data, coords);
 
-      // If there is a handle nearby to snap to
-      // (and it's not the actual mouse handle)
-      if (
-        handleNearby !== undefined &&
-        !handleNearby.hasBoundingBox &&
-        handleNearby < data.handles.length - 1
-      ) {
-        config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
-        config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
-      }
+    // If there is a handle nearby to snap to
+    // (and it's not the actual mouse handle)
+    if (
+      handleNearby !== undefined &&
+      !handleNearby.hasBoundingBox &&
+      handleNearby < data.handles.length - 1
+    ) {
+      config.mouseLocation.handles.start.x = data.handles[handleNearby].x;
+      config.mouseLocation.handles.start.y = data.handles[handleNearby].y;
     }
 
     // Force onImageRendered
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  /**
+   * Event handler for MOUSE_DRAG during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   */
+  _drawingMouseDragCallback (evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const toolState = getToolState(eventData.element, this.name);
+
+    const config = this.configuration;
+    const currentTool = config.currentTool;
+
+    const data = toolState.data[currentTool];
+    const coords = eventData.currentPoints.canvas;
+
+    // Set the mouseLocation handle
+    this._getMouseLocation(eventData);
+    this._checkInvalidHandleLocation(data, eventData);
+    this._addPointPencilMode(eventData, data.handles);
+    this._dragging = true;
+
+    // Force onImageRendered
+    external.cornerstone.updateImage(eventData.element);
+  }
+
+
+  /**
+   * Event handler for MOUSE_UP during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   */
+  _drawingMouseUpCallback(evt) {
+    if (!this._dragging) {
+      return;
+    }
+
+    this._dragging = false;
+
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const coords = eventData.currentPoints.canvas;
+
+    const config = this.configuration;
+    const currentTool = config.currentTool;
+    const toolState = getToolState(eventData.element, this.name);
+    const data = toolState.data[currentTool];
+
+    const handleNearby = this._pointNearHandle(element, data, coords);
+
+    if (!freehandIntersect.end(data.handles) && data.canComplete) {
+      const lastHandlePlaced = config.currentHandle;
+
+      this._endDrawing(element, lastHandlePlaced);
+    }
+
+    preventPropagation(evt);
+
+    return;
   }
 
   /**
@@ -818,14 +874,12 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _addPointPencilMode (eventData, dataHandles) {
     const config = this.configuration;
+    const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
 
-    function handleFurtherThanMinimumSpacing (handle) {
-      return (
-        external.cornerstoneMath.point.distance(handle, mousePoint) >
-        config.spacing
-      );
-    }
+    const handleFurtherThanMinimumSpacing = ((handle) => {
+      return this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
+    }).bind(this);
 
     if (dataHandles.every(handleFurtherThanMinimumSpacing)) {
       this._addPoint(eventData);
@@ -863,7 +917,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     // Reset the current handle
     config.currentHandle = 0;
     config.currentTool = -1;
-    this._activePencilMode = false;
     data.canComplete = false;
 
     if (this._drawing) {
@@ -953,7 +1006,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Gets the current mouse location and stores it in the configuration object.
    *
    * @private
-   * @param {Object} eventData - The data assoicated with the event.
+   * @param {Object} eventData The data assoicated with the event.
    */
   _getMouseLocation (eventData) {
     // Set the mouseLocation handle
@@ -968,10 +1021,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Returns true if the proposed location of a new handle is invalid.
    *
    * @private
-   * @param {Object} data - data object associated with the tool.
+   * @param {Object} data      Data object associated with the tool.
+   * @param {Object} eventData The data assoicated with the event.
    * @return {Boolean}
    */
-  _checkInvalidHandleLocation (data) {
+  _checkInvalidHandleLocation (data, eventData) {
     const config = this.configuration;
 
     if (data.handles.length < 2) {
@@ -980,12 +1034,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     let invalidHandlePlacement;
 
-    if (this._activePencilMode) {
-      // Pencil mode
-      invalidHandlePlacement = this._checkHandlesPencilMode(data);
+    if (this._dragging) {
+      invalidHandlePlacement = this._checkHandlesPencilMode(data, eventData);
     } else {
-      // Polygon mode
-      invalidHandlePlacement = this._checkHandlesPolygonMode(data);
+      invalidHandlePlacement = this._checkHandlesPolygonMode(data, eventData);
     }
 
     data.handles.invalidHandlePlacement = invalidHandlePlacement;
@@ -995,19 +1047,23 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Returns true if the proposed location of a new handle is invalid (in polygon mode).
    *
    * @param {Object} data - data object associated with the tool.
+   * @param {Object} eventData The data assoicated with the event.
    * @return {Boolean}
    */
-  _checkHandlesPolygonMode (data) {
+  _checkHandlesPolygonMode (data, eventData) {
     const config = this.configuration;
+    const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
     let invalidHandlePlacement = false;
 
     data.canComplete = false;
 
-    const mouseAtOriginHandle =
-      external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) <
-      config.spacing;
+    const mouseAtOriginHandle = this._isDistanceSmallerThanSpacingCanvas(
+      element,
+      dataHandles[0],
+      mousePoint
+    );
 
     if (mouseAtOriginHandle && !freehandIntersect.end(dataHandles)) {
       data.canComplete = true;
@@ -1027,9 +1083,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} data - data object associated with the tool.
+   * @param {Object} eventData The data associated with the event.
    * @return {Boolean}
    */
-  _checkHandlesPencilMode (data) {
+  _checkHandlesPencilMode (data, eventData) {
     const config = this.configuration;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
@@ -1039,7 +1096,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     );
 
     if (invalidHandlePlacement === false) {
-      invalidHandlePlacement = this._invalidHandlePencilMode(data, mousePoint);
+      invalidHandlePlacement = this._invalidHandlePencilMode(data, eventData);
     }
 
     return invalidHandlePlacement;
@@ -1050,17 +1107,22 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} data - data object associated with the tool.
-   * @param {Object} mousePoint - the position of the mouse cursor.
+   * @param {Object} eventData The data associated with the event.
    * @return {Boolean}
    */
-  _invalidHandlePencilMode (data, mousePoint) {
+  _invalidHandlePencilMode (data, eventData) {
     const config = this.configuration;
+    const element = eventData.element;
+    const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
 
-    if (
-      external.cornerstoneMath.point.distance(dataHandles[0], mousePoint) <
-      config.spacing
-    ) {
+    const mouseAtOriginHandle = this._isDistanceSmallerThanSpacingCanvas(
+      element,
+      dataHandles[0],
+      mousePoint
+    );
+
+    if (mouseAtOriginHandle) {
       data.canComplete = true;
 
       return false;
@@ -1070,16 +1132,82 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Compare with all other handles appart from the last one
     for (let i = 1; i < dataHandles.length - 1; i++) {
-      if (
-        external.cornerstoneMath.point.distance(dataHandles[i], mousePoint) <
-        config.spacing
-      ) {
+      if (this._isDistanceSmallerThanSpacingCanvas(
+        element,
+        dataHandles[i],
+        mousePoint
+      )) {
         return true;
       }
     }
 
     return false;
   }
+
+  /**
+   * Returns true if two points are closer than this.configuration.spacing.
+   *
+   * @private
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _isDistanceSmallerThanSpacingCanvas (element, p1, p2) {
+    return this._compareDistanceToSpacingCanvas(element, p1, p2, '<');
+  }
+
+  /**
+   * Returns true if two points are farther than this.configuration.spacing.
+   *
+   * @private
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _isDistanceLargerThanSpacingCanvas (element, p1, p2) {
+    return this._compareDistanceToSpacingCanvas(element, p1, p2, '>');
+  }
+
+  /**
+   * Compares the distance between two points to this.configuration.spacing.
+   *
+   * @private
+   * @param  {Object} element     The element on which the roi is being drawn.
+   * @param  {Object} p1          The first point, in pixel space.
+   * @param  {Object} p2          The second point, in pixel space.
+   * @param  {string} comparison  The comparison to make.
+   * @return {boolean}            True if the distance is smaller than the
+   *                              allowed canvas spacing.
+   */
+  _compareDistanceToSpacingCanvas (element, p1, p2, comparison = '>') {
+    const config = this.configuration;
+
+    const p1Canvas = external.cornerstone.pixelToCanvas(
+      element,
+      p1
+    );
+    const p2Canvas = external.cornerstone.pixelToCanvas(
+      element,
+      p2
+    );
+
+    let result;
+
+    if (comparison === '>') {
+      result = external.cornerstoneMath.point.distance(p1, p2) >
+      config.spacing
+    } else {
+      result = external.cornerstoneMath.point.distance(p1, p2) <
+      config.spacing
+    }
+
+    return result;
+  }
+
 
   /**
    * Adds drawing loop event listeners.
@@ -1089,8 +1217,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @modifies {element}
    */
   _activateDraw (element) {
+    // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
+
+    // Drag/Pencil Mode
+    element.addEventListener(EVENTS.MOUSE_DRAG, this._drawingMouseDragCallback);
+    element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
     external.cornerstone.updateImage(element);
   }
@@ -1110,6 +1243,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(
       EVENTS.MOUSE_MOVE,
       this._drawingMouseMoveCallback
+    );
+    element.removeEventListener(
+      EVENTS.MOUSE_DRAG,
+      this._drawingMouseDragCallback
+    );
+    element.removeEventListener(
+      EVENTS.MOUSE_UP,
+      this._drawingMouseUpCallback
     );
 
     external.cornerstone.updateImage(element);
@@ -1259,11 +1400,6 @@ function defaultFreehandConfiguration () {
           active: true
         }
       }
-    },
-    keyDown: {
-      shift: false,
-      ctrl: false,
-      alt: false
     },
     spacing: 5,
     activeHandleRadius: 3,

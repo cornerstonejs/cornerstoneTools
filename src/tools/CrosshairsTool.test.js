@@ -1,5 +1,9 @@
 import CrosshairsTool from './CrosshairsTool.js';
 
+jest.mock('../import.js', () => ({
+  default: jest.fn()
+}));
+
 describe('CrosshairsTool.js', () => {
   describe('default values', () => {
     it('has a default name of "Crosshairs"', () => {

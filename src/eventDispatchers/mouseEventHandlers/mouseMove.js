@@ -26,7 +26,11 @@ export default function (evt) {
   // Filter out disabled and enabled
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
 
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
+  const activeTools = tools.filter(
+    (tool) =>
+    tool.mode === 'active' &&
+    tool.options.isMouseActive
+  );
 
   // If any tools are active, check if they have a cursor.
   if (activeTools.length > 0) {

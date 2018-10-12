@@ -1,6 +1,5 @@
 import external from './externalModules.js';
 import store from './store/index.js';
-import thirdParty from './thirdParty/index.js';
 
 import { addTool, addToolForElement } from './store/addTool.js';
 import { removeTool, removeToolForElement } from './store/removeTool.js';
@@ -52,7 +51,6 @@ export default function (configuration) {
     removeToolForElement,
     setToolOptions,
     setToolOptionsForElement,
-    thirdParty,
     // Tool Modes
     setToolActive,
     setToolActiveForElement,
