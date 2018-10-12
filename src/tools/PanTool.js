@@ -1,6 +1,6 @@
-/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
+import svgCursors from './../assets/svgCursors.js';
 
 export default class PanTool extends BaseTool {
   constructor (name = 'Pan') {
@@ -8,6 +8,9 @@ export default class PanTool extends BaseTool {
       name,
       supportedInteractionTypes: ['Mouse', 'Touch']
     });
+
+    this.hasSvgCursor = true;
+    this.svgCursor = svgCursors.pan;
 
     // Touch
     this.touchDragCallback = this._dragCallback.bind(this);

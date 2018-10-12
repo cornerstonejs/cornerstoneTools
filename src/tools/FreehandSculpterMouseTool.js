@@ -9,6 +9,10 @@ import { clipToBox } from '../util/clip.js';
 import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from '../base/BaseTool.js';
+import {
+  hideCursor,
+  resetCursor
+} from '../store/setToolCursor.js';
 
 export default class FreehandSculpterMouseTool extends BaseTool {
   constructor (
@@ -280,6 +284,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
 
     config.currentTool = closestToolIndex;
+    hideCursor(element);
   }
 
   /**
@@ -787,6 +792,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
         toolData.data[i].active = false;
       }
     }
+
+    resetCursor(this.element);
 
     external.cornerstone.updateImage(this.element);
   }

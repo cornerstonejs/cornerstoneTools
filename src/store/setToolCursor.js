@@ -27,12 +27,20 @@ export function setSVGCursor (tool, element) {
 }
 
 
-export function clearSVGCursor (element) {
-  console.log('clearCursor');
+export function resetCursor (element) {
+  _clearStateAndSetCursor(element, 'initial')
+}
+
+export function hideCursor (element) {
+  _clearStateAndSetCursor(element, 'none')
+}
+
+
+function _clearStateAndSetCursor(element, cursorSeting) {
   if (state.svgCursorUrl) {
     window.URL.revokeObjectURL(state.svgCursorUrl);
   }
 
   state.svgCursorUrl = null;
-  element.style.cursor = "initial";
+  element.style.cursor = cursorSeting;
 }

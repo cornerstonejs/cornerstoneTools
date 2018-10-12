@@ -31,6 +31,7 @@ export default class BaseTool {
     // True if tool has a custom cursor, causes the frame to render on every mouse move when the tool is active.
     this.hasCanvasCursor = false;
     this.hasSvgCursor = false;
+    this.hideDefaultCursor = false;
 
     // Apply mixins if mixinsArray is not empty.
     if (mixins && mixins.length) {

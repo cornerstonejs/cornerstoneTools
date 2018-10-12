@@ -2,7 +2,11 @@ import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
 import { state } from './../store/index.js';
-import { setSVGCursor, clearSVGCursor } from './setToolCursor.js';
+import {
+  setSVGCursor,
+  resetCursor,
+  hideCursor
+} from './setToolCursor.js';
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -80,8 +84,10 @@ function _setCursorIfPrimary(element, options, tool) {
     console.log('-----CURSOR MAGIC-----');
     if (tool.hasSvgCursor) {
       setSVGCursor(tool, element);
+    } else if (tool.hideDefaultCursor) {
+      hideCursor(element);
     } else {
-      clearSVGCursor(element);
+      resetCursor(element);
     }
   }
 }
