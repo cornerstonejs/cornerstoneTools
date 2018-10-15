@@ -3,6 +3,12 @@ import BaseTool from '../base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import { correctShift, changeViewportScale } from './shared/zoom.js';
 
+/**
+ * @export @public @class
+ * @name ZoomMouseWheelTool
+ * @classdesc Tool for changing magnification.
+ * @extends BaseTool
+ */
 export default class ZoomTool extends BaseTool {
   constructor (name = 'Zoom') {
     const strategies = {

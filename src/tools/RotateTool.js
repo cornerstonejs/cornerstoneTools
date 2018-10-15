@@ -3,6 +3,12 @@ import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 import angleBetweenPoints from './shared/angleBetweenPoints.js';
 
+/**
+ * @export @public @class
+ * @name RotateTool
+ * @classdesc Tool for rotating the image.
+ * @extends BaseTool
+ */
 export default class RotateTool extends BaseTool {
   constructor (name = 'Rotate') {
     const strategies = {

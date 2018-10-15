@@ -1,7 +1,12 @@
-/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 
+/**
+ * @export @public @class
+ * @name PanTool
+ * @classdesc Tool for panning the image.
+ * @extends BaseTool
+ */
 export default class PanTool extends BaseTool {
   constructor (name = 'Pan') {
     super({

@@ -1,5 +1,4 @@
 /* eslint class-methods-use-this: 0 */
-/* eslint no-underscore-dangle: 0 */
 import external from '../externalModules.js';
 import BaseTool from '../base/BaseTool.js';
 import {
@@ -8,6 +7,12 @@ import {
 } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
+/**
+ * @export @public @class
+ * @name EraserTool
+ * @classdesc Tool for deleting the data of other Annotation Tools.
+ * @extends BaseTool
+ */
 export default class EraserTool extends BaseTool {
   constructor (name = 'Eraser') {
     super({

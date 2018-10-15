@@ -2,6 +2,12 @@ import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 import { changeViewportScale } from './shared/zoom.js';
 
+/**
+ * @export @public @class
+ * @name ZoomMouseWheelTool
+ * @classdesc Tool for changing magnification with the mouse wheel.
+ * @extends BaseTool
+ */
 export default class ZoomMouseWheelTool extends BaseTool {
   constructor (name = 'ZoomMouseWheel') {
     super({

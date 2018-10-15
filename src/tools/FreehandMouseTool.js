@@ -1,5 +1,4 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import EVENTS from './../events.js';
 import external from './../externalModules.js';
 import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
@@ -25,6 +24,13 @@ import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
 
+/**
+ * @export @public @class
+ * @name FreehandMouseTool
+ * @classdesc Tool for drawing arbitrary polygonal regions of interest, and
+ * measuring the statistics of the enclosed pixels.
+ * @extends BaseAnnotationTool
+ */
 export default class FreehandMouseTool extends BaseAnnotationTool {
   constructor (name = 'FreehandMouse') {
     super({

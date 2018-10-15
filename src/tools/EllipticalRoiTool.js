@@ -16,6 +16,13 @@ import calculateSUV from '../util/calculateSUV.js';
 //
 import numberWithCommas from './shared/numbersWithCommas.js';
 
+/**
+ * @export @public @class
+ * @name EllipticalRoiTool
+ * @classdesc Tool for drawing elliptical regions of interest, and measuring
+ * the statistics of the enclosed pixels.
+ * @extends BaseAnnotationTool
+ */
 export default class EllipticalRoiTool extends BaseAnnotationTool {
   constructor (name = 'EllipticalRoi') {
     super({

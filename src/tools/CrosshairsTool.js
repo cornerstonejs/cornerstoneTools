@@ -1,5 +1,4 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import BaseTool from './../base/BaseTool.js';
 import external from './../externalModules.js';
 
@@ -9,6 +8,13 @@ import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
 
+/**
+ * @export @public @class
+ * @name CrosshairsTool
+ * @classdesc Tool for finding the slice in another element corresponding to the
+ * image position in a synchronized image series.
+ * @extends BaseTool
+ */
 export default class CrosshairsTool extends BaseTool {
   constructor (name = 'Crosshairs') {
     super({

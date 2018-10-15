@@ -9,6 +9,12 @@ import store from './../store/index.js';
 
 const { state } = store.modules.brush;
 
+/**
+ * @export @public @class
+ * @name BrushTool
+ * @classdesc Tool for drawing segmentations on an image.
+ * @extends BaseBrushTool
+ */
 export default class BrushTool extends BaseBrushTool {
   constructor (name = 'Brush') {
     super({

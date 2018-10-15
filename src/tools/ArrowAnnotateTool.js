@@ -23,6 +23,12 @@ import { state } from '../store/index.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
+/**
+ * @export @public @class
+ * @name ArrowAnnotateTool
+ * @classdesc Tool for annotating a region of an image with some text.
+ * @extends BaseAnnotationTool
+ */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
   constructor (name = 'ArrowAnnotate') {
     super({

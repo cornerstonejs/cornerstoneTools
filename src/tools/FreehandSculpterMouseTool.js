@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -10,6 +9,13 @@ import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from '../base/BaseTool.js';
 
+/**
+ * @export @public @class
+ * @name FreehandSculpterMouseTool
+ * @classdesc Tool for easily sculpting annotations drawn with
+ * the FreehandMouseTool.
+ * @extends BaseTool
+ */
 export default class FreehandSculpterMouseTool extends BaseTool {
   constructor (
     name = 'FreehandSculpterMouse',

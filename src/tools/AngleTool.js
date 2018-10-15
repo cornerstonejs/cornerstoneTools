@@ -27,6 +27,13 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 
+/**
+ * @export @public @class
+ * @name AngleTool
+ * @classdesc Tool for measuring/annotating an angle by placing
+ * three consecutive points.
+ * @extends BaseAnnotationTool
+ */
 export default class AngleTool extends BaseAnnotationTool {
   constructor (name = 'Angle') {
     super({

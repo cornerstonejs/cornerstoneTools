@@ -1,5 +1,13 @@
+/**
+ * Exports an image of the canvas.
+ * @export @public @method
+ * @name saveAs
+ *
+ * @param {HTMLElement} element The element to export.
+ * @param {string} filename The name of the exported image.
+ * @param {string} [mimetype = 'image/png'] The mimetype of the exported image.
+ */
 export default (element, filename, mimetype = 'image/png') => {
-  // Setting the default value for mimetype to image/png
   const canvas = element.querySelector('canvas');
 
   // If we are using IE, use canvas.msToBlob

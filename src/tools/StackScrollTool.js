@@ -1,10 +1,15 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import BaseTool from './../base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
+/**
+ * @export @public @class
+ * @name StackScrollTool
+ * @classdesc Tool for scrolling through a series.
+ * @extends BaseTool
+ */
 export default class StackScrollTool extends BaseTool {
   constructor (name = 'StackScroll') {
     super({

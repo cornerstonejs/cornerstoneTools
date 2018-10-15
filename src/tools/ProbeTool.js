@@ -14,6 +14,13 @@ import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 
+/**
+ * @export @public @class
+ * @name ProbeTool
+ * @classdesc Tool which provides a probe of the image data at the
+ * desired position.
+ * @extends BaseAnnotationTool
+ */
 export default class ProbeTool extends BaseAnnotationTool {
   constructor (name = 'Probe') {
     super({

@@ -1,6 +1,5 @@
-/* eslint no-underscore-dangle: 0 */
 import external from '../externalModules.js';
-import baseTool from '../base/BaseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -9,8 +8,14 @@ import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getNewContext, draw, setShadow, drawCircle } from '../util/drawing.js';
 
-
-export default class extends baseTool {
+/**
+ * @export @public @class
+ * @name DragProbeTool
+ * @classdesc Tool which provides a probe of the image data at the
+ * input position on drag.
+ * @extends BaseTool
+ */
+export default class DragProbeTool extends BaseTool {
   constructor (name = 'DragProbe') {
     const strategies = {
       default: defaultStrategy,

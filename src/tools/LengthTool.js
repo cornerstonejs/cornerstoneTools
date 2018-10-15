@@ -12,6 +12,12 @@ import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 
+/**
+ * @export @public @class
+ * @name LengthTool
+ * @classdesc Tool for measuring distances.
+ * @extends BaseAnnotationTool
+ */
 export default class LengthTool extends BaseAnnotationTool {
   constructor (name = 'Length') {
     super({
