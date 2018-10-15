@@ -5,6 +5,18 @@ import convertToVector3 from '../util/convertToVector3.js';
 import { draw, drawLine } from '../util/drawing.js';
 
 // Renders the active reference line
+
+
+/**
+ * Renders the active reference line.
+ *
+ * @export @public @method
+ * @name renderActiveReferenceLine
+ * @param  {object} context        The canvas context.
+ * @param  {object} eventData      The data associated with the event.
+ * @param  {HTMLElement} targetElement    The element on which to render the reference line.
+ * @param  {HTMLElement} referenceElement The element referenced by the line.
+ */
 export default function (context, eventData, targetElement, referenceElement) {
   const cornerstone = external.cornerstone;
   const targetImage = cornerstone.getEnabledElement(targetElement).image;

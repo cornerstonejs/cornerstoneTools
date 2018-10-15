@@ -3,20 +3,37 @@ import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
 
+
+/**
+ * Returns the toolstate for a specific element.
+ * @export @public @method
+ * @name getElementToolStateManager
+ *
+ * @param  {HTMLElement} element The element.
+ * @return {object} The toolState.
+ */
 function getElementToolStateManager (element) {
-  const enabledImage = external.cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
   // If the enabledImage has no toolStateManager, create a default one for it
   // NOTE: This makes state management element specific
 
-  if (enabledImage.toolStateManager === undefined) {
-    enabledImage.toolStateManager = globalImageIdSpecificToolStateManager;
+  if (enabledElement.toolStateManager === undefined) {
+    enabledElement.toolStateManager = globalImageIdSpecificToolStateManager;
   }
 
-  return enabledImage.toolStateManager;
+  return enabledElement.toolStateManager;
 }
 
-// Here we add tool state, this is done by tools as well
-// As modules that restore saved state
+/**
+ * Adds tool state to the toolStateManager, this is done by tools as well
+ * as modules that restore saved state.
+ * @export @public @method
+ * @name addToolState
+ *
+ * @param  {HTMLElement} element  The element.
+ * @param  {string} toolType      The toolType of the state.
+ * @param  {object} measurementData The data to store in the state.
+ */
 function addToolState (element, toolType, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
@@ -32,8 +49,16 @@ function addToolState (element, toolType, measurementData) {
   triggerEvent(element, eventType, eventData);
 }
 
-// Here you can get state - used by tools as well as modules
-// That save state persistently
+/**
+ * Returns tool specific state of an element. Used by tools as well as modules
+ * that save state persistently
+ * @export @public @method
+ * @name getToolState
+ *
+ * @param  {HTMLElement} element The element.
+ * @param  {string} toolType The toolType of the state.
+ * @return {object}          The element's state for the given toolType.
+ */
 function getToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
 
@@ -41,6 +66,16 @@ function getToolState (element, toolType) {
   return toolStateManager.get(element, toolType);
 }
 
+
+/**
+ * Removes specific tool state from the toolStateManager.
+ * @export @public @method
+ * @name removeToolState
+ *
+ * @param  {HTMLElement} element  The element.
+ * @param  {string} toolType      The toolType of the state.
+ * @param  {object} data          The data to remove from the toolStateManager.
+ */
 function removeToolState (element, toolType, data) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
@@ -67,6 +102,15 @@ function removeToolState (element, toolType, data) {
   }
 }
 
+/**
+ * Removes all toolState from the toolStateManager corresponding to
+ * the toolType and element.
+ * @export @public @method
+ * @name clearToolState
+ *
+ * @param  {HTMLElement} element  The element.
+ * @param  {string} toolType      The toolType of the state.
+ */
 function clearToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
@@ -77,11 +121,18 @@ function clearToolState (element, toolType) {
   }
 }
 
-// Sets the tool state manager for an element
+/**
+ * Sets the tool state manager for an element
+ * @export @public @method
+ * @name setElementToolStateManager
+ *
+ * @param  {HTMLElement} element The element.
+ * @param {object} toolStateManager The toolStateManager.
+ */
 function setElementToolStateManager (element, toolStateManager) {
-  const enabledImage = external.cornerstone.getEnabledElement(element);
+  const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  enabledImage.toolStateManager = toolStateManager;
+  enabledElement.toolStateManager = toolStateManager;
 }
 
 export {

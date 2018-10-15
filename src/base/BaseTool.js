@@ -1,5 +1,10 @@
 import mixins from '../mixins/index.js';
 
+/**
+ * @export @abstract @class
+ * @name BaseTool
+ * @classdesc The fundemental abstract class from which all other tools inherit.
+ */
 export default class BaseTool {
   constructor ({
     name,

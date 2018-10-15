@@ -9,6 +9,14 @@ import {
   moveAnnotationNearClick
 } from '../util/findAndMoveHelpers.js';
 
+
+/**
+ * @export @abstract @class
+ * @name BaseAnnotationTool
+ * @classdesc Abstract class for tools which create and display annotations on the
+ * cornerstone canvas.
+ * @extends BaseTool
+ */
 export default class BaseAnnotationTool extends BaseTool {
   constructor ({
     name,
@@ -45,7 +53,7 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract Returns true if the given coords are need the tool.
+   * @abstract @public Returns true if the given coords are need the tool.
    *
    * @param {*} element
    * @param {*} data

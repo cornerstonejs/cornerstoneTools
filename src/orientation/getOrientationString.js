@@ -1,6 +1,14 @@
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 
+
+/**
+ * Returns the orientation of the vector in the patient coordinate system.
+ * @export @public @method
+ * @name getOrientationString
+ * @param  {Array|cornerstoneMath.Vector3} vector Input array or Vector3
+ * @return {string} The orientation in the patient coordinate system.
+ */
 export default function (vector) {
   const vec3 = convertToVector3(vector);
 

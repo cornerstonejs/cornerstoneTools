@@ -7,6 +7,13 @@ import store from '../store/index.js';
 
 const { state, setters } = store.modules.brush;
 
+/**
+ * @export @abstract @class
+ * @name BaseBrushTool
+ * @classdesc Abstract class for tools which manipulate the mask data to be displayed on
+ * the cornerstone canvas.
+ * @extends BaseTool
+ */
 export default class BaseBrushTool extends BaseTool {
   constructor ({
     name,
