@@ -19,7 +19,6 @@ export { default as PanMultiTouchTool } from './tools/PanMultiTouchTool.js';
 export { default as RectangleRoiTool } from './tools/RectangleRoiTool.js';
 export { default as RotateTool } from './tools/RotateTool.js';
 export { default as RotateTouchTool } from './tools/RotateTouchTool.js';
-export { default as SaveAsTool } from './tools/SaveAsTool.js';
 export { default as ScaleOverlayTool } from './tools/ScaleOverlayTool.js';
 export { default as StackScrollTool } from './tools/StackScrollTool.js';
 export { default as StackScrollMultiTouchTool } from './tools/StackScrollMultiTouchTool.js';
@@ -40,6 +39,9 @@ export { playClip, stopClip } from './stackTools/playClip.js';
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';
 export { default as referenceLines } from './referenceLines/index.js';
+
+// ~~~~~~ CANVAS EXPORT  ~~~~~ //
+export { default as SaveAs } from './util/SaveAs.js';
 
 // ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
 export { default as import } from './import.js';
