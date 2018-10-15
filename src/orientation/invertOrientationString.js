@@ -1,11 +1,9 @@
-
-
 /**
  * Inverts an orientation string.
  * @export @public @method
  * @name invertOrientationString
  * @param  {string} orientationString The orientation.
- * @return {string}  The inverted orientationString.
+ * @returns {string}  The inverted orientationString.
  */
 export default function (orientationString) {
   let inverted = orientationString.replace('H', 'f');

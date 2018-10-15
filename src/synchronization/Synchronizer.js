@@ -18,8 +18,9 @@ function unique (array) {
 
 /**
  * Synchronize target and source elements when an event fires on the source element
- *
- * @constructor
+ * @export @public constructor
+ * @name Synchronizer
+ * 
  * @param {String} event - The event(s) that will trigger synchronization. Separate multiple
  * events by a space
  * @param {Function} handler - The function that will make the necessary changes to the target

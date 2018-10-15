@@ -3,6 +3,8 @@ import mixins from '../mixins/index.js';
 
 /**
  * Register an mixin to cornerstoneTools.
+ * @export @private @method
+ * @name registerMixin
  *
  * @param {string} name The name of the mixin.
  * @param {Object} mixin The mixin itself.

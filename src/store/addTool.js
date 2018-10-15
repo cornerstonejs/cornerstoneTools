@@ -2,11 +2,11 @@ import { state } from './index.js';
 import getToolForElement from './getToolForElement.js';
 
 /**
- *
- *
- * @export
- * @param {*} element
- * @param {baseTool} tool
+ * Adds a tool to an element.
+ * @export @public @method
+ * @name addToolForElement
+ * @param {HTMLElement} element The element to add the tool to.
+ * @param {baseTool} tool The tool to add to the element.
  */
 const addToolForElement = function (element, apiTool) {
   // Instantiating the tool here makes it harder to accidentally add
@@ -29,10 +29,10 @@ const addToolForElement = function (element, apiTool) {
 };
 
 /**
- *
- *
- * @export
- * @param {baseTool} tool
+ * Adds a tool to each element.
+ * @export @public @method
+ * @name addTool
+ * @param {baseTool} tool The tool to add to each element.
  */
 const addTool = function (apiTool) {
   state.enabledElements.forEach((element) => {

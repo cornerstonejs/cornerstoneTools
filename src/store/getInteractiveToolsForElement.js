@@ -1,3 +1,12 @@
+/**
+ * Filters an array of tools, returning only tools which are active or passive.
+ * @export @public @method
+ * @name getInteractiveToolsForElement
+ *
+ * @param  {HTMLElement} element The element.
+ * @param  {object[]} tools      The input tool array.
+ * @returns {object[]}            The filtered array.
+ */
 export default function (element, tools) {
   return tools.filter(
     (tool) =>

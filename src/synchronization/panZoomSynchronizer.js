@@ -2,6 +2,8 @@ import external from '../externalModules.js';
 
 /**
  * Synchronize the target zoom and pan to match the source
+ * @export @public @method
+ * @name panZoomSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event

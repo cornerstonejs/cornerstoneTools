@@ -2,12 +2,13 @@ import { state } from './index.js';
 import getToolForElement from './getToolForElement.js';
 
 /**
+ * Sets the options of a tool on a specific element.
+ * @export @public @method
+ * @name setToolOptionsForElement
  *
- *
- * @export
- * @param {*} element
- * @param {string} toolName
- * @param {Object} options
+ * @param {HTMLElement} element The element.
+ * @param {string} toolName The name of the tool.
+ * @param {Object} options The options to set.
  */
 const setToolOptionsForElement = function (element, toolName, options) {
   const tool = getToolForElement(element, toolName);
@@ -18,9 +19,10 @@ const setToolOptionsForElement = function (element, toolName, options) {
 };
 
 /**
+ * Sets the options of a tool for all elements.
+ * @export @public @method
+ * @name setToolOptions
  *
- *
- * @export
  * @param {string} toolName
  * @param {Object} options
  */

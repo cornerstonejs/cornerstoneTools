@@ -9,7 +9,7 @@ import { planePlaneIntersection, projectPatientPointToImagePlane } from '../util
  * @name calculateReferenceLine
  * @param  {Object} targetImagePlane    The imagePlane on which the reference line will be drawn.
  * @param  {Object} referenceImagePlane The imagePlane being referenced.
- * @return {Object}  The start and end points of the line to be drawn.
+ * @returns {Object}  The start and end points of the line to be drawn.
  */
 export default function (targetImagePlane, referenceImagePlane) {
   const points = planePlaneIntersection(targetImagePlane, referenceImagePlane);

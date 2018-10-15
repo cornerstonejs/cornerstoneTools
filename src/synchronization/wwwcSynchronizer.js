@@ -1,7 +1,9 @@
 import external from '../externalModules.js';
 
 /**
- * Synchronize the target viewport ww/wc to match the source element
+ * Synchronize the target viewport ww/wc to match the source element.
+ * @export @public @method
+ * @name wwwcSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event

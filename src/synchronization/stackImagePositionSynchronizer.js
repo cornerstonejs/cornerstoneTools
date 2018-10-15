@@ -5,6 +5,8 @@ import convertToVector3 from '../util/convertToVector3.js';
 
 /**
  * Synchronize the target stack to the image closest to the source image's position
+ * @export @public @method
+ * @name stackImagePositionSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event

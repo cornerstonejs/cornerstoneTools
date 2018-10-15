@@ -4,7 +4,7 @@ import { getElementToolStateManager, setElementToolStateManager } from './toolSt
 /**
  * Implements an Stack specific tool state management strategy. This means
  * That tool data is shared between all imageIds in a given stack.
- * @export @public @method
+ * @export @public @constructor
  * @name newStackSpecificToolStateManager
  *
  * @param  {string[]} toolTypes       The tool types to apply to the stack.
