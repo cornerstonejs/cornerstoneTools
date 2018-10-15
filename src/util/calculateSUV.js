@@ -1,10 +1,14 @@
 import external from '../externalModules.js';
 
-// Returns a decimal value given a fractional value
-function fracToDec (fractionalValue) {
-  return parseFloat(`.${fractionalValue}`);
-}
-
+/**
+ * Calculates a Standardized Uptake Value.
+ * @export @public @method
+ * @name calculateSUV
+ *
+ * @param  {object} image            The image.
+ * @param  {number} storedPixelValue The raw pixel value.
+ * @returns {number}                  The SUV.
+ */
 export default function (image, storedPixelValue) {
   const cornerstone = external.cornerstone;
   const patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
@@ -52,4 +56,16 @@ export default function (image, storedPixelValue) {
   const suv = modalityPixelValue * patientWeight / correctedDose * 1000;
 
   return suv;
+}
+
+/**
+ * Returns a decimal value given a fractional value.
+ * @private @method
+ * @name fracToDec
+ *
+ * @param  {number} fractionalValue The value to convert.
+ * @return {number}                 The value converted to decimal.
+ */
+function fracToDec (fractionalValue) {
+  return parseFloat(`.${fractionalValue}`);
 }

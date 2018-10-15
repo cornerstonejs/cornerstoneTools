@@ -1,7 +1,15 @@
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 
-// Projects a patient point to an image point
+/**
+ * Projects a patient point to an image point
+ * @export @public @method
+ * @name projectPatientPointToImagePlane
+ *
+ * @param  {object} patientPoint The patient point.
+ * @param  {object} imagePlane   The image plane used for projection.
+ * @return {object}              The projected coordinates.
+ */
 export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
   const rowCosines = convertToVector3(imagePlane.rowCosines);
   const columnCosines = convertToVector3(imagePlane.columnCosines);
@@ -10,14 +18,22 @@ export function projectPatientPointToImagePlane (patientPoint, imagePlane) {
   const x = rowCosines.dot(point) / imagePlane.columnPixelSpacing;
   const y = columnCosines.dot(point) / imagePlane.rowPixelSpacing;
 
-
   return {
     x,
     y
   };
 }
 
-// Projects an image point to a patient point
+//
+/**
+ * Projects an image point to a patient point
+ * @export @public @method
+ * @name imagePointToPatientPoint
+ *
+ * @param  {object} imagePoint   The image point.
+ * @param  {object} imagePlane   The image plane used for projection.
+ * @return {object}              The projected coordinates.
+ */
 export function imagePointToPatientPoint (imagePoint, imagePlane) {
   const rowCosines = convertToVector3(imagePlane.rowCosines);
   const columnCosines = convertToVector3(imagePlane.columnCosines);
@@ -36,6 +52,15 @@ export function imagePointToPatientPoint (imagePoint, imagePlane) {
   return patientPoint;
 }
 
+
+/**
+ * Returns a rectangle from the imagePlane.
+ * @export @public @method
+ * @name getRectangleFromImagePlane
+ *
+ * @param  {object} imagePlane The imagePlane.
+ * @return {object} The rect.
+ */
 function getRectangleFromImagePlane (imagePlane) {
   // Get the points
   const topLeft = imagePointToPatientPoint({
@@ -63,10 +88,19 @@ function getRectangleFromImagePlane (imagePlane) {
     bottom: new external.cornerstoneMath.Line3(bottomLeft, bottomRight)
   };
 
-
   return rect;
 }
 
+
+/**
+ * Gets all the intersections of a line with a rect.
+ * @private @method
+ * @name lineRectangleIntersection
+ *
+ * @param  {object} line The line to check.
+ * @param  {object} rect The rect being intersected.
+ * @return {object[]} An array of the intersections.
+ */
 function lineRectangleIntersection (line, rect) {
   const intersections = [];
 
@@ -82,7 +116,15 @@ function lineRectangleIntersection (line, rect) {
   return intersections;
 }
 
-// Gets the line of intersection between two planes in patient space
+/**
+ * Gets the line of intersection between two planes in patient space.
+ * @export @public @method
+ * @name planePlaneIntersection
+ *
+ * @param  {object} targetImagePlane    The target plane.
+ * @param  {object} referenceImagePlane The reference plane
+ * @return {object}                   The intersections.
+ */
 export function planePlaneIntersection (targetImagePlane, referenceImagePlane) {
   const targetRowCosines = convertToVector3(targetImagePlane.rowCosines);
   const targetColumnCosines = convertToVector3(targetImagePlane.columnCosines);

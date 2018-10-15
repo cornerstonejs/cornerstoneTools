@@ -1,5 +1,16 @@
 import external from '../externalModules.js';
 
+/**
+ * Returns the luminance of a region.
+ * @export @public @method
+ *
+ * @param  {HTMLElement} element The element.
+ * @param  {number} x       The x position of the top-left corner of the region.
+ * @param  {number} y       The y position of the top-left corner of the region.
+ * @param  {number} width   The width of the region.
+ * @param  {number} height  The height of the region
+ * @return {number[]}         The luminance.
+ */
 export default function (element, x, y, width, height) {
   if (!element) {
     throw new Error('getLuminance: parameter element must not be undefined');

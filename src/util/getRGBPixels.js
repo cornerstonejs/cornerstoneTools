@@ -1,5 +1,18 @@
 import external from '../externalModules.js';
 
+
+/**
+ * Gets pixels of an RGB image.
+ * @export @public @method
+ * @name getRGBPixels
+ *
+ * @param  {HTMLElement} element The element.
+ * @param  {number} x       The x position of the top-left corner of the region.
+ * @param  {number} y       The y position of the top-left corner of the region.
+ * @param  {number} width   The width of the region.
+ * @param  {number} height  The height of the region
+ * @return {number[]}       The pixel data.
+ */
 export default function (element, x, y, width, height) {
   if (!element) {
     throw new Error('getRGBPixels: parameter element must not be undefined');

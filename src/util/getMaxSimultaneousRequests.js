@@ -27,7 +27,18 @@ const maxSimultaneousRequests = {
 };
 
 // Browser name / version detection
-// http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+//
+//
+
+
+/**
+ * Browser name / version detection
+ * http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+ * @export @public @method
+ * @name getBrowserInfo
+ *
+ * @return {string} The name and version of the browser.
+ */
 function getBrowserInfo () {
   const ua = navigator.userAgent;
   let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
@@ -54,10 +65,25 @@ function getBrowserInfo () {
   return M.join(' ');
 }
 
+
+/**
+ * Sets the maximum number of simultaneous requests.
+ * @export @public @method
+ * @name setMaxSimultaneousRequests
+ *
+ * @param  {number} newMaxSimultaneousRequests The value.
+ */
 function setMaxSimultaneousRequests (newMaxSimultaneousRequests) {
   configMaxSimultaneousRequests = newMaxSimultaneousRequests;
 }
 
+/**
+ * Returns the maximum number of simultaneous requests.
+ * @export @public @method
+ * @name getMaxSimultaneousRequests
+ *
+ * @returns {number} The maximum number of simultaneous requests
+ */
 function getMaxSimultaneousRequests () {
   if (configMaxSimultaneousRequests) {
     return configMaxSimultaneousRequests;
@@ -66,6 +92,14 @@ function getMaxSimultaneousRequests () {
   return getDefaultSimultaneousRequests();
 }
 
+
+/**
+ * Returns the default number of simultaneous requests.
+ * @export @public @method
+ * @name getDefaultSimultaneousRequests
+ *
+ * @return {number} The default number of simultaneous requests.
+ */
 function getDefaultSimultaneousRequests () {
   const infoString = getBrowserInfo();
   const info = infoString.split(' ');
@@ -84,6 +118,14 @@ function getDefaultSimultaneousRequests () {
   return browserData[browserVersion];
 }
 
+
+/**
+ * Checks if cornerstoneTools is operating on a mobile device.
+ * @export @public @method
+ * @name isMobileDevice
+ *
+ * @return {boolean} True if running on a mobile device.
+ */
 function isMobileDevice () {
   const pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
 

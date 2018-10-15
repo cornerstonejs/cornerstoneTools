@@ -2,7 +2,7 @@ import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 
 /**
- * @export @private @class
+ * @export @public @class
  * @name WwwcTool
  * @classdesc Tool for setting wwwc by dragging with mouse/touch.
  * @extends BaseTool

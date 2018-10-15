@@ -1,6 +1,19 @@
 import external from '../externalModules.js';
 import { drawLine } from './drawing.js';
 
+
+/**
+ * Draw a link between an annotation to a box.
+ * @export @public @method
+ * @name drawLink
+ *
+ * @param  {object[]} linkAnchorPoints An array of possible anchor points.
+ * @param  {object} refPoint         A reference point to select the anchor point.
+ * @param  {object} boundingBox    The bounding box to link.
+ * @param  {object} context          The canvas context.
+ * @param  {string} color            The link color.
+ * @param  {number} lineWidth        The line width of the link.
+ */
 export default function (linkAnchorPoints, refPoint, boundingBox, context, color, lineWidth) {
   // Draw a link from "the closest anchor point to refPoint" to "the nearest midpoint on the bounding box".
 

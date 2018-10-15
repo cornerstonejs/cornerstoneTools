@@ -1,5 +1,16 @@
 import { drawLine, drawJoinedLines } from './drawing.js';
 
+/**
+ * Draw an arrow using the drawing API.
+ * @export @public @method
+ * @name drawArrow
+ *
+ * @param  {object} context   The canvas context.
+ * @param  {object} start     The start position.
+ * @param  {object} end       The end position.
+ * @param  {string} color     The color of the arrow.
+ * @param  {number} lineWidth The width of the arrow line.
+ */
 export default function (context, start, end, color, lineWidth) {
   // Variables to be used when creating the arrow
   const headLength = 10;
