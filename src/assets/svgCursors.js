@@ -35,41 +35,21 @@ const pan = new Blob(
 
 pan.mousePoint = mousePoints.center32;
 
-// WIP TODO -> Eraser just used as test so we have a working example of pan in parallel.
-const eraser = new Blob(
+const rotate = new Blob(
   [
     `
-    <svg data-icon="pan" role="img" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-      <symbol id="cursor" width="16" height="16" viewBox="0 0 1792 1792">
-        <path fill="#000000" d="M1389 1043q31 30 14 69-17 40-59 40h-382l201 476q10 25 0 49t-34 35l-177 75q-25 10-49 0t-35-34l-191-452-312 312q-19 19-45 19-12 0-24-5-40-17-40-59v-1504q0-42 40-59 12-5 24-5 27 0 45 19z"/>
-      </symbol>
-
-       <symbol id="pan" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 1792 1792">
-          <path fill="#000000" d="M1411 541l-355 355 355 355 144-144q29-31 70-14 39 17 39 59v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l144-144-355-355-355 355 144 144q31 30 14 69-17 40-59 40h-448q-26 0-45-19t-19-45v-448q0-42 40-59 39-17 69 14l144 144 355-355-355-355-144 144q-19 19-45 19-12 0-24-5-40-17-40-59v-448q0-26 19-45t45-19h448q42 0 59 40 17 39-14 69l-144 144 355 355 355-355-144-144q-31-30-14-69 17-40 59-40h448q26 0 45 19t19 45v448q0 42-39 59-13 5-25 5-26 0-45-19z"/>
-       </symbol>
-
-      <use xlink:href="#cursor" x="0"  y="0" />
-      <use xlink:href="#pan" x="16"  y="16" />
+    <svg data-icon="pan" role="img" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 1792 1792">
+      <path fill="#ffffff" d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39 14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5 163.5-40.5 198.5 40.5 198.5 109.5 163.5 163.5 109.5 198.5 40.5q119 0 225-52t179-147q7-10 23-12 15 0 25 9l137 138q9 8 9.5 20.5t-7.5 22.5q-109 132-264 204.5t-327 72.5q-156 0-298-61t-245-164-164-245-61-298 61-298 164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14 39 17 39 59z"/>
     </svg>
     `
   ],
   { type: 'image/svg+xml' }
 );
 
-eraser.mousePoint = mousePoints.topLeft;
+rotate.mousePoint = mousePoints.center32;
 
 export default {
   magnify,
   pan,
-  eraser
+  rotate
 };
-
-
-/*
-`<svg data-icon="eraser" role="img" width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
-  <symbol id="cursor" width="16" height="16" viewBox="0 0 1792 1792">
-    <path fill="#ffffff" d="M1389 1043q31 30 14 69-17 40-59 40h-382l201 476q10 25 0 49t-34 35l-177 75q-25 10-49 0t-35-34l-191-452-312 312q-19 19-45 19-12 0-24-5-40-17-40-59v-1504q0-42 40-59 12-5 24-5 27 0 45 19z"/>
-  </symbol>
-  <use xlink:href="#cursor" x="0"  y="0" />
-</svg>`
-*/

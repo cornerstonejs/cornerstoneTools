@@ -2,6 +2,7 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 import angleBetweenPoints from './shared/angleBetweenPoints.js';
+import svgCursors from '../assets/svgCursors.js';
 
 export default class RotateTool extends BaseTool {
   constructor (name = 'Rotate') {
@@ -17,6 +18,8 @@ export default class RotateTool extends BaseTool {
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch']
     });
+
+    this.svgCursor = svgCursors.rotate;
   }
 
   touchDragCallback (evt) {
