@@ -211,7 +211,7 @@ export default class MagnifyTool extends BaseTool {
    */
   _removeZoomElement () {
     if (this.zoomElement !== undefined) {
-      external.cornerstone.disable(this.zoomElement);
+      external.cornerstone.disable(this.zoomCanvas);
       this.zoomElement = undefined;
       this.zoomCanvas = undefined;
     }
