@@ -27,10 +27,6 @@ import {
   getElementToolStateManager
 } from './stateManagement/toolState.js';
 import {
-  addTimeSeriesStateManager,
-  newTimeSeriesSpecificToolStateManager
-} from './stateManagement/timeSeriesSpecificStateManager.js';
-import {
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
   addStackStateManager
@@ -133,8 +129,6 @@ export const lib = {
   'stateManagement/clearToolState': clearToolState,
   'stateManagement/setElementToolStateManager': setElementToolStateManager,
   'stateManagement/getElementToolStateManager': getElementToolStateManager,
-  'stateManagement/addTimeSeriesStateManager': addTimeSeriesStateManager,
-  'stateManagement/newTimeSeriesSpecificToolStateManager': newTimeSeriesSpecificToolStateManager,
   'stateManagement/stackSpecificStateManager': stackSpecificStateManager,
   'stateManagement/newStackSpecificToolStateManager': newStackSpecificToolStateManager,
   'stateManagement/addStackStateManager': addStackStateManager,
