@@ -6,7 +6,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
 import { getNewContext, draw, setShadow, drawCircle } from '../drawing/index.js';
-import drawTextBox from '../drawing/drawTextBox.js';
+import drawTextBox, {textBoxWidth} from '../drawing/drawTextBox.js';
 
 /**
  * @export @public @class
@@ -190,7 +190,7 @@ const minimalStrategy = (evt, config) => {
 
     const handleRadius = 6;
     const padding = 5;
-    const width = context.measureText(text).width + 2 * padding;
+    const width = textBoxWidth(context, text, padding);
 
     if (isTouchEvent) {
       translation = {
