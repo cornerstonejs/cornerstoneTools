@@ -1,7 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles.js';
+import drawHandles from '../drawing/drawHandles.js';
 import { state } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';

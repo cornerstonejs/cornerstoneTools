@@ -1,11 +1,11 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import external from '../externalModules.js';
+import BaseTool from '../base/BaseTool.js';
 // Drawing
-import { draw, drawRect, getNewContext } from '../util/drawing.js';
+import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolColors from '../stateManagement/toolColors.js';
 
 /**
  * @export @public @class

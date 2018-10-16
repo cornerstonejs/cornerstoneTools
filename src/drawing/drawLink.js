@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
-import { drawLine } from './drawing.js';
-
+import { drawLine } from './index.js';
 
 /**
  * Draw a link between an annotation to a box.

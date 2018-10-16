@@ -5,11 +5,10 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-// Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw } from '../util/drawing.js';
-import drawTextBox from '../util/drawTextBox.js';
+import { getNewContext, draw } from '../drawing/index.js';
+import drawTextBox from '../drawing/drawTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 // Utilities
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';

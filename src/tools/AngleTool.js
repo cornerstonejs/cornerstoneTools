@@ -12,7 +12,6 @@ import {
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
@@ -22,8 +21,9 @@ import {
   draw,
   setShadow,
   drawJoinedLines
-} from '../util/drawing.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+} from '../drawing/index.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 

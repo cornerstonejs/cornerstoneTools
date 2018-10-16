@@ -1,7 +1,7 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 

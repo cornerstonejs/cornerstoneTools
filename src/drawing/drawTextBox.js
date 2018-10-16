@@ -1,6 +1,5 @@
 import textStyle from '../stateManagement/textStyle.js';
-import { draw, fillTextLines, fillBox } from './drawing.js';
-
+import { draw, fillTextLines, fillBox } from './index.js';
 
 /**
  * Draws a textBox.

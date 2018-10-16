@@ -3,10 +3,10 @@ import BaseTool from '../base/BaseTool.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
-import { getNewContext, draw, setShadow, drawCircle } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawCircle } from '../drawing/index.js';
+import drawTextBox from '../drawing/drawTextBox.js';
 
 /**
  * @export @public @class

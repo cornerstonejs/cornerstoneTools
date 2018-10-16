@@ -1,6 +1,6 @@
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
-import { path } from '../util/drawing.js';
+import { path } from './index.js';
 
 const defaultHandleRadius = 6;
 

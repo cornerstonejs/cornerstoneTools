@@ -3,7 +3,7 @@ import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext } from '../drawing/index.js';
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap

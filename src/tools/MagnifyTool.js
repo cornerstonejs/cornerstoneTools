@@ -2,7 +2,7 @@
 import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
 import { clipToBox } from '../util/clip.js';
-import { getNewContext, fillBox } from '../util/drawing.js';
+import { getNewContext, fillBox } from '../drawing/index.js';
 import BaseTool from '../base/BaseTool.js';
 
 /**

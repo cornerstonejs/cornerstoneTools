@@ -3,9 +3,9 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import external from '../externalModules.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawTextBox from '../util/drawTextBox.js';
+import { getNewContext, draw, setShadow } from '../drawing/index.js';
+import drawTextBox from '../drawing/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
-import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
 /**
  * @export @public @class

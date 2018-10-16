@@ -8,7 +8,6 @@ import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 import { state } from '../store/index.js';
 // Manipulators
-import drawHandles from './../manipulators/drawHandles.js';
 import { moveHandleNearImagePoint } from '../util/findAndMoveHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
@@ -16,8 +15,9 @@ import calculateSUV from '../util/calculateSUV.js';
 import numbersWithCommas from '../util/numbersWithCommas.js';
 
 // Drawing
-import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
-import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
+import { getNewContext, draw, drawJoinedLines } from '../drawing/index.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 import { clipToBox } from '../util/clip.js';
 
 import freehandUtils from '../util/freehand/index.js';
