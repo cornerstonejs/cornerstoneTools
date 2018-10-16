@@ -1,5 +1,4 @@
 import external from './../../../externalModules.js';
-import { inverseKeyMap, perpendicularKeyMap } from './keyMaps.js';
 
 // Return the newPosition for the handle based on the mmStep and handles
 export default function (image, handles, handleKey, mmStep, mmLimit = 1) {
@@ -64,3 +63,17 @@ export default function (image, handles, handleKey, mmStep, mmLimit = 1) {
 
   return newPosition;
 }
+
+const inverseKeyMap = {
+  start: 'end',
+  end: 'start',
+  perpendicularStart: 'perpendicularEnd',
+  perpendicularEnd: 'perpendicularStart'
+};
+
+const perpendicularKeyMap = {
+  start: 'perpendicularStart',
+  end: 'perpendicularEnd',
+  perpendicularStart: 'start',
+  perpendicularEnd: 'end'
+};
