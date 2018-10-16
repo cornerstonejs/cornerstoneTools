@@ -2,13 +2,35 @@ import textStyle from '../stateManagement/textStyle.js';
 import { draw, fillTextLines, fillBox } from './index.js';
 
 /**
+ * Compute the width of the box required to display the given `text` with a given `padding`.
+ * @export @public @method
+ * @name textBoxWidth
+ *
+ * @param {CanvasRenderingContext2D} context
+ * @param {String} text - The text to find the width of.
+ * @param {Number} padding - The padding to apply on either end of the text.
+ */
+export function textBoxWidth (context, text, padding) {
+  const font = textStyle.getFont();
+  const origFont = context.font;
+  if (font && font !== origFont) {
+    context.font = font;
+  }
+  const width = context.measureText(text).width;
+  if (font && font !== origFont) {
+    context.font = origFont;
+  }
+  return width + 2 * padding;
+}
+
+/**
  * Draws a textBox.
  * @export @public @method
  * @name drawTextBox
  *
- * @param  {object} context   The canvas context.
- * @param  {string} textLines The text to display.
- * @param  {number} x         The x position of the textBox.
+ * @param  {CanvasRenderingContext2D} context The canvas context.
+ * @param  {string} textLines   The text to display.
+ * @param  {number} x           The x position of the textBox.
  * @param  {number} y           The y position of the textBox.
  * @param  {string} color       The color of the textBox.
  * @param  {object} options     Options for the textBox.

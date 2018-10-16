@@ -12,7 +12,7 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-jest.mock('../util/drawing.js', () => ({
+jest.mock('../drawing/index.js', () => ({
   getNewContext: jest.fn()
 }));
 

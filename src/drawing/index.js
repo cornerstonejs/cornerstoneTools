@@ -302,7 +302,7 @@ export function drawRect (context, element, corner1, corner2, options, coordSyst
 /**
  * Fill the region outside a rectangle defined by `corner1` and `corner2`.
  * @export @public @method
- * @name drawRect
+ * @name fillOutsideRect
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
