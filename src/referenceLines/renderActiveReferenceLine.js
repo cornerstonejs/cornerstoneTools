@@ -2,7 +2,7 @@ import external from '../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
 import toolColors from '../stateManagement/toolColors.js';
 import convertToVector3 from '../util/convertToVector3.js';
-import { draw, drawLine } from '../util/drawing.js';
+import { draw, drawLine } from '../drawing/index.js';
 
 // Renders the active reference line
 

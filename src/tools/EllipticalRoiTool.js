@@ -5,11 +5,10 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-// Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawEllipse } from '../util/drawing.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow, drawEllipse } from '../drawing/index.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
 //
 import numbersWithCommas from '../util/numbersWithCommas.js';

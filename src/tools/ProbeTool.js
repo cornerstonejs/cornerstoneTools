@@ -5,11 +5,10 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-// Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw } from '../util/drawing.js';
-import drawTextBox from '../util/drawTextBox.js';
+import { getNewContext, draw } from '../drawing/index.js';
+import drawTextBox from '../drawing/drawTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 // Utilities
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
@@ -109,7 +108,6 @@ export default class ProbeTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image } = eventData;
-    const font = textStyle.getFont();
     const fontHeight = textStyle.getFontSize();
 
     for (let i = 0; i < toolData.data.length; i++) {
@@ -159,9 +157,6 @@ export default class ProbeTool extends BaseAnnotationTool {
             y: data.handles.end.y - 3
           };
           const textCoords = external.cornerstone.pixelToCanvas(eventData.element, coords);
-
-          context.font = font;
-          context.fillStyle = color;
 
           drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
           drawTextBox(context, text, textCoords.x, textCoords.y, color);

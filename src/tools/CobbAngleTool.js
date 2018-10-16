@@ -10,13 +10,13 @@ import {
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
+import drawHandles from '../drawing/drawHandles.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 import EVENTS from './../events.js';

@@ -1,4 +1,4 @@
-import { drawLine, drawJoinedLines } from './drawing.js';
+import { drawLine, drawJoinedLines } from './index.js';
 
 /**
  * Draw an arrow using the drawing API.

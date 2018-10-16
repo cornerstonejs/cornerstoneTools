@@ -1,6 +1,6 @@
 import ScaleOverlayTool from './ScaleOverlayTool.js';
 import external from './../externalModules.js';
-import { getNewContext } from '../util/drawing.js';
+import { getNewContext } from '../drawing/index.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
@@ -12,7 +12,7 @@ jest.mock('./../externalModules.js', () => ({
   }
 }));
 
-jest.mock('../util/drawing.js', () => ({
+jest.mock('../drawing/index.js', () => ({
   getNewContext: jest.fn()
 }));
 

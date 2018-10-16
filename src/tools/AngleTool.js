@@ -3,7 +3,6 @@
 import external from '../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import textStyle from '../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
@@ -12,7 +11,6 @@ import {
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 // Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
@@ -22,8 +20,10 @@ import {
   draw,
   setShadow,
   drawJoinedLines
-} from '../util/drawing.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+} from '../drawing/index.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import { textBoxWidth } from '../drawing/drawTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 
@@ -132,7 +132,6 @@ export default class AngleTool extends BaseAnnotationTool {
     const context = getNewContext(eventData.canvasContext.canvas);
 
     const lineWidth = toolStyle.getToolWidth();
-    const font = textStyle.getFont();
     const config = this.configuration;
 
     for (let i = 0; i < toolData.data.length; i++) {
@@ -171,9 +170,6 @@ export default class AngleTool extends BaseAnnotationTool {
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
-
-        // Draw the text
-        context.fillStyle = color;
 
         // Default to isotropic pixel size, update suffix to reflect this
         const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
@@ -238,9 +234,9 @@ export default class AngleTool extends BaseAnnotationTool {
               x: handleMiddleCanvas.x,
               y: handleMiddleCanvas.y
             };
-
-            context.font = font;
-            const textWidth = context.measureText(text).width;
+            
+            const padding = 5;
+            const textWidth = textBoxWidth(context, text, padding);
 
             if (handleMiddleCanvas.x < handleStartCanvas.x) {
               textCoords.x -= distance + textWidth + 10;

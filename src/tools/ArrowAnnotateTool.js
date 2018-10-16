@@ -7,21 +7,22 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-import drawHandles from '../manipulators/drawHandles.js';
-import drawArrow from '../util/drawArrow.js';
 import moveNewHandle from '../manipulators/moveNewHandle.js';
 import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import lineSegDistance from '../util/lineSegDistance.js';
 import {
   addToolState,
   removeToolState,
   getToolState
 } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
-import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw, setShadow } from '../util/drawing.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow } from '../drawing/index.js';
+import drawArrow from '../drawing/drawArrow.js';
+import drawHandles from '../drawing/drawHandles.js';
+import { textBoxWidth } from '../drawing/drawTextBox.js';
 
 /**
  * @export @public @class
@@ -123,7 +124,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const context = getNewContext(canvas);
 
     const lineWidth = toolStyle.getToolWidth();
-    const font = textStyle.getFont();
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -178,10 +178,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
         // Draw the text
         if (text && text !== '') {
-          context.font = font;
-
           // Calculate the text coordinates.
-          const textWidth = context.measureText(text).width + 10;
+          const padding = 5;
+          const textWidth = textBoxWidth(context, text, padding);
           const textHeight = textStyle.getFontSize() + 10;
 
           let distance = Math.max(textWidth, textHeight) / 2 + 5;

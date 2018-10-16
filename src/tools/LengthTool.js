@@ -5,11 +5,10 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
-// Manipulators
-import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
-import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
+import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
+import drawHandles from '../drawing/drawHandles.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 
 /**
@@ -165,9 +164,6 @@ export default class LengthTool extends BaseAnnotationTool {
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
-
-        // Draw the text
-        context.fillStyle = color;
 
         // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
         const dx =

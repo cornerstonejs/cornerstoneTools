@@ -1,5 +1,5 @@
 import external from '../../externalModules.js';
-import { draw, fillBox } from '../drawing.js';
+import { draw, fillBox } from '../../drawing/index.js';
 
 
 /**

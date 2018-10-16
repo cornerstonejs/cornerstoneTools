@@ -3,7 +3,6 @@ import BaseAnnotationTool from './base/BaseAnnotationTool.js';
 import BaseBrushTool from './base/BaseBrushTool.js';
 
 import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import drawHandles from './manipulators/drawHandles.js';
 import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
 import handleActivator from './manipulators/handleActivator.js';
 import moveAllHandles from './manipulators/moveAllHandles.js';
@@ -65,9 +64,12 @@ import {
   fillOutsideRect,
   fillBox,
   fillTextLines
-} from './util/drawing.js';
-import drawTextBox from './util/drawTextBox.js';
-import drawArrow from './util/drawArrow.js';
+} from './drawing/index.js';
+import drawTextBox from './drawing/drawTextBox.js';
+import drawArrow from './drawing/drawArrow.js';
+import drawLink from './drawing/drawLink.js';
+import drawLinkedTextBox from './drawing/drawLinkedTextBox.js';
+import drawHandles from './drawing/drawHandles.js';
 import getLuminance from './util/getLuminance.js';
 import copyPoints from './util/copyPoints.js';
 import calculateSUV from './util/calculateSUV.js';
@@ -113,7 +115,6 @@ export const lib = {
   'base/BaseBrushTool': BaseBrushTool,
 
   'manipulators/anyHandlesOutsideImage': anyHandlesOutsideImage,
-  'manipulators/drawHandles': drawHandles,
   'manipulators/getHandleNearImagePoint': getHandleNearImagePoint,
   'manipulators/handleActivator': handleActivator,
   'manipulators/moveAllHandles': moveAllHandles,
@@ -159,6 +160,9 @@ export const lib = {
   'drawing/drawArrow': drawArrow,
   'drawing/fillBox': fillBox,
   'drawing/fillTextLines': fillTextLines,
+  'drawing/drawLink': drawLink,
+  'drawing/drawLinkedTextBox': drawLinkedTextBox,
+  'drawing/drawHandles': drawHandles,
 
   'util/getLuminance': getLuminance,
   'util/copyPoints': copyPoints,
