@@ -2,7 +2,7 @@ import external from './../externalModules.js';
 import EVENTS from './../events.js';
 import BaseTool from './BaseTool.js';
 // Utils
-import isToolActive from '../tools/shared/isToolActive.js';
+import isToolActive from '../store/isToolActive.js';
 import store from '../store/index.js';
 
 const { state, setters } = store.modules.brush;
