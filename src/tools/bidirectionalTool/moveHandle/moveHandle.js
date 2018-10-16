@@ -14,6 +14,10 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
     handle.active = true;
 
+    if (handle.hasMoved === false) {
+      handle.hasMoved = true;
+    }
+
     if (handle.index === undefined || handle.index === null) {
       handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
       handle.y = eventData.currentPoints.image.y + distanceFromTool.y;

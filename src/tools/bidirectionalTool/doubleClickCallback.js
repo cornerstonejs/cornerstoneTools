@@ -5,7 +5,7 @@ import { removeToolState, getToolState } from '../../stateManagement/toolState.j
 
 export default function (event) {
   const eventData = event.detail;
-  const { element } = eventData.element;
+  const { element } = eventData;
 
   function doneCallback (data, deleteTool) {
     if (deleteTool === true) {
@@ -21,7 +21,7 @@ export default function (event) {
     return;
   }
 
-  const config = this.configutation;
+  const config = this.configuration;
 
   const coords = eventData.currentPoints.canvas;
   const toolData = getToolState(element, toolType);

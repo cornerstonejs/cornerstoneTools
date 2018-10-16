@@ -12,9 +12,7 @@ import addNewMeasurement from './bidirectionalTool/addNewMeasurement.js';
 import mouseMoveCallback from './bidirectionalTool/mouseMoveCallback.js';
 import mouseDownCallback from './bidirectionalTool/mouseDownCallback.js';
 
-const emptyLocationCallback = () => {
-  return;
-};
+const emptyLocationCallback = (measurementData, eventData, doneCallback) => doneCallback();
 
 export default class BidirectionalTool extends BaseAnnotationTool {
   constructor (name = 'Bidirectional') {
