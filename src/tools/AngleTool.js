@@ -234,7 +234,9 @@ export default class AngleTool extends BaseAnnotationTool {
               x: handleMiddleCanvas.x,
               y: handleMiddleCanvas.y
             };
-            const textWidth = textBoxWidth(context, text, 5);
+            
+            const padding = 5;
+            const textWidth = textBoxWidth(context, text, padding);
 
             if (handleMiddleCanvas.x < handleStartCanvas.x) {
               textCoords.x -= distance + textWidth + 10;

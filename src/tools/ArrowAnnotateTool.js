@@ -22,6 +22,7 @@ import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow } from '../drawing/index.js';
 import drawArrow from '../drawing/drawArrow.js';
 import drawHandles from '../drawing/drawHandles.js';
+import { textBoxWidth } from '../drawing/drawTextBox.js';
 
 /**
  * @export @public @class
@@ -123,7 +124,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const context = getNewContext(canvas);
 
     const lineWidth = toolStyle.getToolWidth();
-    const font = textStyle.getFont();
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -178,10 +178,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
         // Draw the text
         if (text && text !== '') {
-          context.font = font;
-
           // Calculate the text coordinates.
-          const textWidth = context.measureText(text).width + 10;
+          const padding = 5;
+          const textWidth = textBoxWidth(context, text, padding);
           const textHeight = textStyle.getFontSize() + 10;
 
           let distance = Math.max(textWidth, textHeight) / 2 + 5;
