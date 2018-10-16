@@ -1,6 +1,8 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
-import { changeViewportScale } from '../util/zoom.js';
+import zoomUtils from '../util/zoom/index.js';
+
+const { changeViewportScale } = zoomUtils;
 
 /**
  * @export @public @class

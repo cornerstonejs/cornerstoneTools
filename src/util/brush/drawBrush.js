@@ -1,7 +1,18 @@
 import external from '../../externalModules.js';
 import { draw, fillBox } from '../drawing.js';
 
-function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns, shouldErase = false) {
+
+/**
+ * Fills in the brush mask data with new data.
+ * @export @public @method
+ * @name drawBrushPixels
+ *
+ * @param  {object[]} pointerArray        The array of points to draw.
+ * @param  {number[]} storedPixels        The brush mask to modify.
+ * @param  {number} columns             The number of columns in the mask.
+ * @param  {boolean} [shouldErase = false] If true the modified mask pixels will be set to 0, rather than 1.
+ */
+function drawBrushPixels (pointerArray, storedPixels, columns, shouldErase = false) {
   const getPixelIndex = (x, y) => (y * columns) + x;
 
   pointerArray.forEach((point) => {
@@ -11,6 +22,16 @@ function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns, 
   });
 }
 
+
+/**
+ * Draws the brush data to the canvas.
+ * @export @public @method
+ *
+ * @param  {object[]} pointerArray Array of points to draw.
+ * @param  {object} context      The canvas context.
+ * @param  {string} color        The color to draw the pixels.
+ * @param  {HTMLElement} element      The element on which the canvas resides.
+ */
 function drawBrushOnCanvas (pointerArray, context, color, element) {
   const canvasPtTL = external.cornerstone.pixelToCanvas(element, { x: 0,
     y: 0 });

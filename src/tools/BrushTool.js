@@ -134,7 +134,6 @@ export default class BrushTool extends BaseBrushTool {
     drawBrushPixels(
       pointerArray,
       pixelData,
-      segmentationIndex,
       columns,
       shouldErase
     );

@@ -97,6 +97,7 @@ import numbersWithCommas from './util/numbersWithCommas.js';
 import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
 import brushUtils from './util/brush/index.js';
+import zoomUtils from './util/zoom/index.js';
 
 export const lib = {
   'store/state': state,
@@ -183,5 +184,6 @@ export const lib = {
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
-  'util/brushUtils': brushUtils
+  'util/brushUtils': brushUtils,
+  'util/zoomUtils': zoomUtils
 };
