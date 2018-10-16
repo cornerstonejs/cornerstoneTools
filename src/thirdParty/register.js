@@ -4,6 +4,8 @@ import registerItem from './registerItem.js';
 
 /**
  * Register an item or module to cornerstoneTools.
+ * @export @public @method
+ * @name register
  *
  * @param {string} type The type of the item/module.
  * @param {string} name The name of the item/module.
@@ -33,6 +35,8 @@ export default function (type, name, item, overwrite = false) {
 /**
  * Returns true if the item is valid, this avoids
  * clogging up the library with invalid data.
+ * @private @method
+ * @name isValidInput
  *
  * @param {string} type The type of the item/module.
  * @param {string} name The name of the item/module.

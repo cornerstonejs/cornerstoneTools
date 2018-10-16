@@ -7,7 +7,9 @@ import convertToVector3 from '../util/convertToVector3.js';
 
 /**
  * Calculate a position in space that is offset from the source image's position,
- * and synchronize the target stack to the image that is closest to that position
+ * and synchronize the target stack to the image that is closest to that position.
+ * @export @public @method
+ * @name stackImagePositionOffsetSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event

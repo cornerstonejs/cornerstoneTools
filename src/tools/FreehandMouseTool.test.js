@@ -1,9 +1,13 @@
 import FreehandMouseTool from './FreehandMouseTool.js';
-import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
-import freehandArea from './shared/freehandUtils/freehandArea.js';
-import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
-import pointInFreehand from './shared/freehandUtils/pointInFreehand.js';
-import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
+import freehandUtils from '../util/freehand/index.js';
+
+const {
+  calculateFreehandStatistics,
+  freehandArea,
+  freehandIntersect,
+  pointInFreehand,
+  FreehandHandleData
+} = freehandUtils;
 
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
@@ -22,7 +26,6 @@ const goodMouseEventData = {
     }
   }
 };
-
 
 describe('FreehandMouseTool.js', function () {
   beforeEach(() => {

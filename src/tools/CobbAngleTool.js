@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import baseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import textStyle from '../stateManagement/textStyle.js';
 import {
@@ -21,7 +21,13 @@ import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 import EVENTS from './../events.js';
 
-export default class extends baseAnnotationTool {
+/**
+ * @export @public @class
+ * @name CobbAngleTool
+ * @classdesc Tool for measuring the angle between two straight lines.
+ * @extends BaseAnnotationTool
+ */
+export default class CobbAngleTool extends BaseAnnotationTool {
   constructor (name = 'CobbAngle') {
     super({
       name,
@@ -352,4 +358,3 @@ export default class extends baseAnnotationTool {
     element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
   }
 }
-

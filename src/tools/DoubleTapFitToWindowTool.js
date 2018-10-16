@@ -1,8 +1,15 @@
 /* eslint class-methods-use-this: 0 */ // --> OFF
 import external from '../externalModules.js';
-import baseTool from '../base/BaseTool.js';
+import BaseTool from '../base/BaseTool.js';
 
-export default class extends baseTool {
+/**
+ * @export @public @class
+ * @name DoubleTapFitToWindowTool
+ * @classdesc Tool which calls the external cornerstone.fitToWindow() function
+ * on double tap.
+ * @extends BaseTool
+ */
+export default class DoubleTapFitToWindowTool extends BaseTool {
   constructor (name = 'DoubleTapFitToWindow') {
     super({
       name,

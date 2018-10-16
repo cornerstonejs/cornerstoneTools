@@ -2,6 +2,8 @@ import { state, modules } from '../store/index.js';
 
 /**
  * Register a module.
+ * @export @private @method
+ * @name registerModule
  *
  * @param {string} name The name of the module.
  * @param {Object} newModule The module to register.

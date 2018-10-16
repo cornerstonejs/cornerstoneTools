@@ -1,7 +1,9 @@
 import external from '../externalModules.js';
 
 /**
- * Redraw target image immediately any time handler is called from source element
+ * Redraw target image immediately any time handler is called from source element.
+ * @export @public @method
+ * @name updateImageSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
  * handler to an event

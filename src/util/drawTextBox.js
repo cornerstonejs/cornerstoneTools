@@ -1,6 +1,19 @@
 import textStyle from '../stateManagement/textStyle.js';
 import { draw, fillTextLines, fillBox } from './drawing.js';
 
+
+/**
+ * Draws a textBox.
+ * @export @public @method
+ * @name drawTextBox
+ *
+ * @param  {object} context   The canvas context.
+ * @param  {string} textLines The text to display.
+ * @param  {number} x         The x position of the textBox.
+ * @param  {number} y           The y position of the textBox.
+ * @param  {string} color       The color of the textBox.
+ * @param  {object} options     Options for the textBox.
+ */
 export default function (context, textLines, x, y, color, options) {
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {
     textLines = [textLines];

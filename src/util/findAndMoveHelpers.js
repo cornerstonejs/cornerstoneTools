@@ -3,10 +3,21 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
 import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
 
+
+/**
+ * Moves a handle near the image point.
+ * @export @public @method
+ * @name moveHandleNearImagePoint
+ *
+ * @param  {Event} evt      The event.
+ * @param  {object} handle  The handle to be moved.
+ * @param  {object} data     The toolData that corresponds to the handle.
+ * @param  {string} toolName The name of the tool the handle corrosponds to.
+ */
 const moveHandleNearImagePoint = function (evt, handle, data, toolName) {
   data.active = true;
   state.isToolLocked = true;
-  
+
   moveHandle(
     evt.detail,
     toolName,
@@ -26,6 +37,17 @@ const moveHandleNearImagePoint = function (evt, handle, data, toolName) {
   return;
 };
 
+/**
+ * Finds the handle near the image point and its corresponding data.
+ * @export @public @method
+ * @name findHandleDataNearImagePoint
+ *
+ * @param  {HTMLElement} element  The elment.
+ * @param  {Event}  evt           The event.
+ * @param  {object} toolState     The state of the tool.
+ * @param  {string} toolName The name of the tool the handle corrosponds to.
+ * @param  {object} coords The coordinates that need to be checked.
+ */
 const findHandleDataNearImagePoint = function (
   element,
   evt,
@@ -51,6 +73,16 @@ const findHandleDataNearImagePoint = function (
   }
 };
 
+/**
+ * Moves an entire annotation near the click.
+ * @export @public @method
+ * @name moveAnnotationNearClick
+ *
+ * @param  {Event}  evt           The event.
+ * @param  {object} toolState     The state of the tool.
+ * @param  {object} tool The tool that the annotation belongs to.
+ * @param  {object} data The toolData that corresponds to the annotation.
+ */
 const moveAnnotationNearClick = function (evt, toolState, tool, data) {
   const opt = tool.options || {
     deleteIfHandleOutsideImage: true,
@@ -74,6 +106,17 @@ const moveAnnotationNearClick = function (evt, toolState, tool, data) {
   return;
 };
 
+/**
+ * Finds the annotation near the image point.
+ * @export @public @method
+ * @name findAnnotationNearClick
+ *
+ * @param  {HTMLElement} element  The elment.
+ * @param  {Event}  evt           The event.
+ * @param  {object} toolState     The state of the tool.
+ * @param  {string} tool The tool that the annotation belongs to.
+ * @param  {object} coords The coordinates that need to be checked.
+ */
 const findAnnotationNearClick = function (
   element,
   evt,

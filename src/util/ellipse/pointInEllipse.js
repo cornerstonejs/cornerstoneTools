@@ -1,3 +1,12 @@
+/**
+ * Returns true if a point is within an ellipse
+ * @export @public @method
+ * @name pointInEllipse
+ *
+ * @param  {object} ellipse  Object defining the ellipse.
+ * @param  {object} location The location of the point.
+ * @return {boolean} True if the point is within the ellipse.
+ */
 export default function (ellipse, location) {
   const xRadius = ellipse.width / 2;
   const yRadius = ellipse.height / 2;
@@ -11,10 +20,10 @@ export default function (ellipse, location) {
     y: ellipse.top + yRadius
   };
 
-    /* This is a more general form of the circle equation
-     *
-     * X^2/a^2 + Y^2/b^2 <= 1
-     */
+  /* This is a more general form of the circle equation
+   *
+   * X^2/a^2 + Y^2/b^2 <= 1
+   */
 
   const normalized = {
     x: location.x - center.x,

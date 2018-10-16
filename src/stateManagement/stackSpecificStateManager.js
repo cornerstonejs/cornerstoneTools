@@ -1,8 +1,16 @@
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import { getElementToolStateManager, setElementToolStateManager } from './toolState.js';
 
-// This implements an Stack specific tool state management strategy.  This means
-// That tool data is shared between all imageIds in a given stack
+/**
+ * Implements an Stack specific tool state management strategy. This means
+ * That tool data is shared between all imageIds in a given stack.
+ * @export @public @constructor
+ * @name newStackSpecificToolStateManager
+ *
+ * @param  {string[]} toolTypes       The tool types to apply to the stack.
+ * @param  {object} oldStateManager The imageIdSpecificStateManager.
+ * @return {object} A stackSpecificToolStateManager instance.
+ */
 function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
   let toolState = {};
 

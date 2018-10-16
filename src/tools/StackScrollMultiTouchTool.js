@@ -1,11 +1,16 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
-import baseTool from '../base/BaseTool.js';
+import BaseTool from '../base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 
-export default class extends baseTool {
+/**
+ * @export @public @class
+ * @name StackScrollMultiTouchTool
+ * @classdesc Tool for scrolling through a series using multi-touch.
+ * @extends BaseTool
+ */
+export default class StackScrollMultiTouchTool extends BaseTool {
   constructor (name = 'StackScrollMultiTouch') {
     super({
       name,

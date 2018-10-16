@@ -5,6 +5,14 @@ import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import triggerEvent from '../util/triggerEvent.js';
 
+/**
+ * Scrolls through the stack to the image index requested.
+ * @export @public @method
+ * @name scrollToIndex
+ *
+ * @param  {type} element         The element to scroll through.
+ * @param  {type} newImageIdIndex The target image index.
+ */
 export default function (element, newImageIdIndex) {
   const toolData = getToolState(element, 'stack');
 

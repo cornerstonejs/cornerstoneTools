@@ -2,6 +2,23 @@ import external from '../externalModules.js';
 import drawTextBox from './drawTextBox.js';
 import drawLink from './drawLink.js';
 
+/**
+ * Draw a link between an annotation to a textBox.
+ * @export @public @method
+ * @name drawLinkedTextBox
+ *
+ * @param {object} context      The canvas context.
+ * @param {HTMLElement} element The element on which to draw the link.
+ * @param {object} textBox      The textBox to link.
+ * @param {object} text         The text to display in the textbox.
+ * @param {object[]} handles    The handles of the annotation.
+ * @param {object[]} textBoxAnchorPoints  An array of possible anchor points
+ *                                        on the textBox.
+ * @param {string} color         The link color.
+ * @param {number} lineWidth     The line width of the link.
+ * @param {number} xOffset       The x offset of the textbox.
+ * @param {boolean} yCenter      Vertically centers the text if true.
+ */
 export default function (context, element, textBox, text,
   handles, textBoxAnchorPoints, color, lineWidth, xOffset, yCenter) {
   const cornerstone = external.cornerstone;

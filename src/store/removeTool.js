@@ -2,10 +2,11 @@ import { state } from './index.js';
 
 /**
  * Removes all tools from the target element with the provided name
+ * @export @public @method
+ * @name removeToolForElement
  *
- * @export
- * @param {*} element
- * @param {baseTool} tool
+ * @param {HTMLElement} element The element.
+ * @param {string} toolName The name of the tool.
  */
 const removeToolForElement = function (element, toolName) {
   const toolIndex = state.tools.findIndex(
@@ -18,10 +19,11 @@ const removeToolForElement = function (element, toolName) {
 };
 
 /**
- * Removes all tools from all enabled elements with the provided name
+ * Removes all tools from all enabled elements with the provided name.
+ * @export @public @method
+ * @name removeTool
  *
- * @export
- * @param {baseTool} toolName
+ * @param {string} toolName The name of the tool.
  */
 const removeTool = function (toolName) {
   state.enabledElements.forEach((element) => {

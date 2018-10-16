@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
@@ -6,6 +5,12 @@ import { clipToBox } from '../util/clip.js';
 import { getNewContext, fillBox } from '../util/drawing.js';
 import BaseTool from '../base/BaseTool.js';
 
+/**
+ * @export @public @class
+ * @name MagnifyTool
+ * @classdesc Tool for inspecting a region at increased magnification.
+ * @extends BaseTool
+ */
 export default class MagnifyTool extends BaseTool {
   constructor (name = 'Magnify') {
     super({

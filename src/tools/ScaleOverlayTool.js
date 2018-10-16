@@ -5,6 +5,12 @@ import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
+/**
+ * @export @public @class
+ * @name ScaleOverlayTool
+ * @classdesc Tool for displaying a scale overlay on the image.
+ * @extends BaseTool
+ */
 export default class ScaleOverlayTool extends BaseTool {
   constructor (
     name = 'ScaleOverlay',

@@ -1,7 +1,12 @@
-// This implements a frame-of-reference specific tool state management strategy.  This means that
-// Measurement data are tied to a specific frame of reference UID and only visible to objects using
-// That frame-of-reference UID
-
+/**
+ * Implements a frame-of-reference specific tool state management strategy.  This means that
+ * Measurement data are tied to a specific frame of reference UID and only visible to objects using
+ * That frame-of-reference UID.
+ * @export @public @constructor
+ * @name newFrameOfReferenceSpecificToolStateManager
+ *
+ * @return {Object} A frameOfReferenceSpecificToolStateManager instance.
+ */
 function newFrameOfReferenceSpecificToolStateManager () {
   const toolState = {};
 

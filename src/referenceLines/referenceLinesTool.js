@@ -5,6 +5,7 @@ import renderActiveReferenceLine from './renderActiveReferenceLine.js';
 
 const toolType = 'referenceLines';
 
+// TODO -> convert to class tool, similar to ScaleOverLayTool.
 function onImageRendered (e) {
   const eventData = e.detail;
 

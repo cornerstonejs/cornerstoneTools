@@ -1,16 +1,18 @@
 import { FreehandLineFinder } from './FreehandLineFinder.js';
 import { FreehandHandleData } from './FreehandHandleData.js';
-import { getToolState } from '../../../stateManagement/toolState.js';
-import external from '../../../externalModules.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import external from '../../externalModules.js';
 
 const toolType = 'freehandMouse';
 
 /**
-* Inserts or deletes a point from a freehand tool.
-*
-* @param {Object} e - The event.
-* @param {Object} nearby - Object containing information about a nearby handle.
-*/
+ * Inserts or deletes a point from a freehand tool.
+ * @export @public @method
+ * @name insertOrDelete
+ *
+ * @param {object} e The event.
+ * @param {object} nearby Object containing information about a nearby handle.
+ */
 export default function (evt, nearby) {
   const eventData = evt.detail;
 
@@ -26,16 +28,17 @@ export default function (evt, nearby) {
     const insertInfo = freehandLineFinder.findLine();
 
     if (insertInfo) {
-      insertPoint(eventData, insertInfo);
+      _insertPoint(eventData, insertInfo);
     }
   }
 }
 
 /**
 * Deletes a point from a freehand tool.
+* @private @method
 *
-* @param {Object} eventData - The data object associated with the event.
-* @param {Object} deleteInfo - Object containing information about which point to delete.
+* @param {object} eventData The data object associated with the event.
+* @param {object} deleteInfo Object containing information about which point to delete.
 */
 function deletePoint (eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, toolType);
@@ -79,12 +82,13 @@ function deletePoint (eventData, deleteInfo) {
 }
 
 /**
-* Inserts a new point into a freehand tool.
-*
-* @param {Object} eventData - The data object associated with the event.
-* @param {Object} insertInfo - Object containing information about where to insert the point.
-*/
-function insertPoint (eventData, insertInfo) {
+ * Inserts a new point into a freehand tool.
+ * @private @method
+ *
+ * @param {Object} eventData - The data object associated with the event.
+ * @param {Object} insertInfo - Object containing information about where to insert the point.
+ */
+function _insertPoint (eventData, insertInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
   if (toolData === undefined) {
@@ -94,7 +98,7 @@ function insertPoint (eventData, insertInfo) {
   // Get the toolData from insertInfo
   const data = toolData.data[insertInfo.toolIndex];
 
-  const insertIndex = getInsertionIndex(insertInfo);
+  const insertIndex = _getInsertionIndex(insertInfo);
 
   if (insertIndex === Infinity) {
     return;
@@ -125,11 +129,12 @@ function insertPoint (eventData, insertInfo) {
 }
 
 /**
-* Gets the handle index of a tool in which to insert the new point.
-*
-* @param {Object} insertInfo - Object containing information about where to insert the point.
-*/
-function getInsertionIndex (insertInfo) {
+ * Gets the handle index of a tool in which to insert the new point.
+ * @private @method
+ *
+ * @param {Object} insertInfo - Object containing information about where to insert the point.
+ */
+function _getInsertionIndex (insertInfo) {
   // Get lowest index that isn't zero
   const handleIndexArray = insertInfo.handleIndexArray;
   let insertIndex = Infinity;

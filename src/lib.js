@@ -27,10 +27,6 @@ import {
   getElementToolStateManager
 } from './stateManagement/toolState.js';
 import {
-  addTimeSeriesStateManager,
-  newTimeSeriesSpecificToolStateManager
-} from './stateManagement/timeSeriesSpecificStateManager.js';
-import {
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
   addStackStateManager
@@ -75,7 +71,6 @@ import drawArrow from './util/drawArrow.js';
 import getLuminance from './util/getLuminance.js';
 import copyPoints from './util/copyPoints.js';
 import calculateSUV from './util/calculateSUV.js';
-import calculateEllipseStatistics from './util/calculateEllipseStatistics.js';
 import setContextToDisplayFontSize from './util/setContextToDisplayFontSize.js';
 import scrollToIndex from './util/scrollToIndex.js';
 import scroll from './util/scroll.js';
@@ -87,7 +82,6 @@ import {
 } from './util/pointProjector.js';
 
 import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
-import pointInEllipse from './util/pointInEllipse.js';
 import makeUnselectable from './util/makeUnselectable.js';
 import getRGBPixels from './util/getRGBPixels.js';
 import {
@@ -96,6 +90,14 @@ import {
   getBrowserInfo,
   isMobileDevice
 } from './util/getMaxSimultaneousRequests.js';
+import angleBetweenPoints from './util/angleBetweenPoints.js';
+import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
+import numbersWithCommas from './util/numbersWithCommas.js';
+
+import ellipseUtils from './util/ellipse/index.js';
+import freehandUtils from './util/freehand/index.js';
+import brushUtils from './util/brush/index.js';
+import zoomUtils from './util/zoom/index.js';
 
 export const lib = {
   'store/state': state,
@@ -133,8 +135,6 @@ export const lib = {
   'stateManagement/clearToolState': clearToolState,
   'stateManagement/setElementToolStateManager': setElementToolStateManager,
   'stateManagement/getElementToolStateManager': getElementToolStateManager,
-  'stateManagement/addTimeSeriesStateManager': addTimeSeriesStateManager,
-  'stateManagement/newTimeSeriesSpecificToolStateManager': newTimeSeriesSpecificToolStateManager,
   'stateManagement/stackSpecificStateManager': stackSpecificStateManager,
   'stateManagement/newStackSpecificToolStateManager': newStackSpecificToolStateManager,
   'stateManagement/addStackStateManager': addStackStateManager,
@@ -163,7 +163,6 @@ export const lib = {
   'util/getLuminance': getLuminance,
   'util/copyPoints': copyPoints,
   'util/calculateSUV': calculateSUV,
-  'util/calculateEllipseStatistics': calculateEllipseStatistics,
   'util/setContextToDisplayFontSize': setContextToDisplayFontSize,
   'util/scrollToIndex': scrollToIndex,
   'util/scroll': scroll,
@@ -172,11 +171,19 @@ export const lib = {
   'util/imagePointToPatientPoint': imagePointToPatientPoint,
   'util/planePlaneIntersection': planePlaneIntersection,
   'util/pointInsideBoundingBox': pointInsideBoundingBox,
-  'util/pointInEllipse': pointInEllipse,
   'util/makeUnselectable': makeUnselectable,
   'util/getRGBPixels': getRGBPixels,
   'util/getDefaultSimultaneousRequests': getDefaultSimultaneousRequests,
   'util/getMaxSimultaneousRequests': getMaxSimultaneousRequests,
   'util/getBrowserInfo': getBrowserInfo,
-  'util/isMobileDevice': isMobileDevice
+  'util/isMobileDevice': isMobileDevice,
+  'util/angleBetweenPoints': angleBetweenPoints,
+  'util/getKeyFromKeyCode': getKeyFromKeyCode,
+  'util/numbersWithCommas': numbersWithCommas,
+
+  // Whole tool specific util packages
+  'util/ellipseUtils': ellipseUtils,
+  'util/freehandUtils': freehandUtils,
+  'util/brushUtils': brushUtils,
+  'util/zoomUtils': zoomUtils
 };

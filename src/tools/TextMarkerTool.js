@@ -1,4 +1,3 @@
-/* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import external from '../externalModules.js';
@@ -8,6 +7,12 @@ import drawTextBox from '../util/drawTextBox.js';
 import { removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 
+/**
+ * @export @public @class
+ * @name StackScrollTool
+ * @classdesc Tool for annotating an image with text markers.
+ * @extends BaseAnnotationTool
+ */
 export default class TextMarkerTool extends BaseAnnotationTool {
   constructor (name = 'TextMarker') {
     super({

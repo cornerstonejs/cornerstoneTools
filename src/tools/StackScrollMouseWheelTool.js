@@ -1,8 +1,13 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import BaseTool from './../base/BaseTool.js';
 import scroll from '../util/scroll.js';
 
+/**
+ * @export @public @class
+ * @name StackScrollMouseWheelTool
+ * @classdesc Tool for scrolling through a series using the mouse wheel.
+ * @extends BaseTool
+ */
 export default class StackScrollMouseWheelTool extends BaseTool {
   constructor (name = 'StackScrollMouseWheel') {
     super({

@@ -1,5 +1,4 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-/* eslint no-underscore-dangle: 0 */
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 // Drawing
@@ -8,6 +7,12 @@ import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from './../stateManagement/toolColors.js';
 
+/**
+ * @export @public @class
+ * @name wwwcRegionTool
+ * @classdesc Tool for setting wwwc based on a rectangular region.
+ * @extends BaseTool
+ */
 export default class wwwcRegionTool extends BaseTool {
   constructor (name = 'WwwcRegion') {
     super({

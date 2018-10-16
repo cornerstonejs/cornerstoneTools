@@ -1,14 +1,21 @@
 import external from './../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-// Utils
-import getCircle from './shared/brushUtils/getCircle.js';
-import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 // State
 import { getToolState } from './../stateManagement/toolState.js';
 import store from './../store/index.js';
 
+// Brush Utils
+import brushUtils from '../util/brush/index.js';
+
+const { drawBrushPixels, getCircle } = brushUtils;
 const { state } = store.modules.brush;
 
+/**
+ * @export @public @class
+ * @name BrushTool
+ * @classdesc Tool for drawing segmentations on an image.
+ * @extends BaseBrushTool
+ */
 export default class BrushTool extends BaseBrushTool {
   constructor (name = 'Brush') {
     super({
@@ -127,7 +134,6 @@ export default class BrushTool extends BaseBrushTool {
     drawBrushPixels(
       pointerArray,
       pixelData,
-      segmentationIndex,
       columns,
       shouldErase
     );

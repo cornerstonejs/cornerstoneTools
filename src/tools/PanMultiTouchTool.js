@@ -1,8 +1,13 @@
-/* eslint no-underscore-dangle: 0 */
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import BaseTool from '../base/BaseTool.js';
 
+/**
+ * @export @public @class
+ * @name PanMultiTouchTool
+ * @classdesc Tool for panning the image using multi-touch.
+ * @extends BaseTool
+ */
 export default class PanMultiTouchTool extends BaseTool {
   constructor (name = 'PanMultiTouch') {
     super({
