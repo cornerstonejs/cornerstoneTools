@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
-import { correctShift } from './shared/zoom.js';
+import { correctShift, changeViewportScale } from '../util/zoom.js';
 
 export default class ZoomTouchPinchTool extends BaseTool {
   constructor (name = 'ZoomTouchPinch') {

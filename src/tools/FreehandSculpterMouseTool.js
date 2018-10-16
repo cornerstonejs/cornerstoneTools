@@ -5,9 +5,12 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { state } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
-import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from '../base/BaseTool.js';
+
+import freehandUtils from '../util/freehand/index.js';
+
+const { FreehandHandleData } = freehandUtils
 
 /**
  * @export @public @class

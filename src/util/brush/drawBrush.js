@@ -1,5 +1,5 @@
-import external from '../../../externalModules.js';
-import { draw, fillBox } from '../../../util/drawing.js';
+import external from '../../externalModules.js';
+import { draw, fillBox } from '../drawing.js';
 
 function drawBrushPixels (pointerArray, storedPixels, brushPixelValue, columns, shouldErase = false) {
   const getPixelIndex = (x, y) => (y * columns) + x;

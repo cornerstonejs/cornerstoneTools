@@ -1,3 +1,15 @@
+/**
+ * Gets the pixels within the circle.
+ * @export @public @method
+ * @name getCircle
+ *
+ * @param  {number} radius     The radius of the circle.
+ * @param  {number} rows       The number of rows.
+ * @param  {number} columns    The number of columns.
+ * @param  {number} [xCoord = 0] The x-location of the center of the circle.
+ * @param  {number} [yCoord = 0] The y-location of the center of the circle.
+ * @return {number[][]}        Array of pixels contained within the circle.
+ */
 export default function getCircle (radius, rows, columns, xCoord = 0, yCoord = 0) {
   const x0 = Math.round(xCoord);
   const y0 = Math.round(yCoord);

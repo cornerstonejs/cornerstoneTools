@@ -1,4 +1,13 @@
-export function getKey (keyCode) {
+/**
+ * Returns a string representation of the a key, given a keycode. Useful for
+ * hooking up api calls to buttons using external libraries.
+ * @export @public @method
+ * @name getKeyFromKeyCode
+ *
+ * @param  {number} keyCode The keycode to look up.
+ * @returns {string} The corresponding character.
+ */
+export default function (keyCode) {
   return KEY_CODES[keyCode];
 }
 

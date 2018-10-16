@@ -1,12 +1,13 @@
 import external from './../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-// Utils
-import getCircle from './shared/brushUtils/getCircle.js';
-import { drawBrushPixels } from './shared/brushUtils/drawBrush.js';
 // State
 import { getToolState } from './../stateManagement/toolState.js';
 import store from './../store/index.js';
 
+// Brush Utils
+import brushUtils from '../util/brush/index.js';
+
+const { drawBrushPixels, getCircle } = brushUtils;
 const { state } = store.modules.brush;
 
 /**

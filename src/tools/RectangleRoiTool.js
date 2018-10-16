@@ -12,7 +12,7 @@ import { getNewContext, draw, setShadow, drawRect } from '../util/drawing.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import calculateSUV from '../util/calculateSUV.js';
 //
-import numberWithCommas from './shared/numbersWithCommas.js';
+import numbersWithCommas from '../util/numbersWithCommas.js';
 
 /**
  * @export @public @class
@@ -312,11 +312,11 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         }
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numberWithCommas(
+        let meanText = `Mean: ${numbersWithCommas(
           meanStdDev.mean.toFixed(2)
         )}${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numberWithCommas(
+        let stdDevText = `StdDev: ${numbersWithCommas(
           meanStdDev.stdDev.toFixed(2)
         )}${moSuffix}`;
 
@@ -324,9 +324,9 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
           const SUVtext = ' SUV: ';
 
-          meanText += SUVtext + numberWithCommas(meanStdDevSUV.mean.toFixed(2));
+          meanText += SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
           stdDevText +=
-            SUVtext + numberWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+            SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
         }
 
         // Add these text lines to the array to be displayed in the textbox
@@ -346,7 +346,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `Area: ${numberWithCommas(area.toFixed(2))}${suffix}`;
+        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);

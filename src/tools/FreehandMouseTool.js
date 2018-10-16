@@ -13,16 +13,22 @@ import { moveHandleNearImagePoint } from '../util/findAndMoveHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
-import numbersWithCommas from './shared/numbersWithCommas.js';
-import insertOrDelete from './shared/freehandUtils/insertOrDelete.js';
-import freehandArea from './shared/freehandUtils/freehandArea.js';
-import calculateFreehandStatistics from './shared/freehandUtils/calculateFreehandStatistics.js';
-import freehandIntersect from './shared/freehandUtils/freehandIntersect.js';
-import { FreehandHandleData } from './shared/freehandUtils/FreehandHandleData.js';
+import numbersWithCommas from '../util/numbersWithCommas.js';
+
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from './../util/drawing.js';
 import drawLinkedTextBox from './../util/drawLinkedTextBox.js';
 import { clipToBox } from '../util/clip.js';
+
+import freehandUtils from '../util/freehand/index.js';
+
+const {
+  insertOrDelete,
+  freehandArea,
+  calculateFreehandStatistics,
+  freehandIntersect,
+  FreehandHandleData
+} = freehandUtils;
 
 /**
  * @export @public @class

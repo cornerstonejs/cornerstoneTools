@@ -92,6 +92,11 @@ import {
   getBrowserInfo,
   isMobileDevice
 } from './util/getMaxSimultaneousRequests.js';
+import angleBetweenPoints from './util/angleBetweenPoints.js';
+import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
+import numbersWithCommas from './util/numbersWithCommas.js';
+import freehandUtils from './util/freehand/index.js';
+import brushUtils from './util/brush/index.js';
 
 export const lib = {
   'store/state': state,
@@ -172,5 +177,12 @@ export const lib = {
   'util/getDefaultSimultaneousRequests': getDefaultSimultaneousRequests,
   'util/getMaxSimultaneousRequests': getMaxSimultaneousRequests,
   'util/getBrowserInfo': getBrowserInfo,
-  'util/isMobileDevice': isMobileDevice
+  'util/isMobileDevice': isMobileDevice,
+  'util/angleBetweenPoints': angleBetweenPoints,
+  'util/getKeyFromKeyCode': getKeyFromKeyCode,
+  'util/numbersWithCommas': numbersWithCommas,
+
+  // Whole tool specific util packages
+  'util/freehand': freehandUtils,
+  'util/brush': brushUtils
 };
