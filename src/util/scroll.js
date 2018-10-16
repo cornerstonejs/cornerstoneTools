@@ -3,37 +3,17 @@ import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import clip from './clip.js';
 
-function scrollWithoutSkipping (stackData, pendingEvent, element) {
-  if (stackData.pending[0] === pendingEvent) {
-    if (stackData.currentImageIdIndex === pendingEvent.index) {
-      stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
 
-      if (stackData.pending.length > 0) {
-        scrollWithoutSkipping(stackData, stackData.pending[0], element);
-      }
-
-      return;
-    }
-
-    const newImageHandler = function (event) {
-      const index = stackData.imageIds.indexOf(event.detail.image.imageId);
-
-      if (index === pendingEvent.index) {
-        stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener(EVENTS.NEW_IMAGE, newImageHandler);
-
-        if (stackData.pending.length > 0) {
-          scrollWithoutSkipping(stackData, stackData.pending[0], element);
-        }
-      }
-    };
-
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageHandler);
-
-    scrollToIndex(element, pendingEvent.index);
-  }
-}
-
+/**
+ * Scrolls through the stack.
+ * @export @public @method
+ * @name scroll
+ *
+ * @param  {HTMLElement} element          The element to scroll.
+ * @param  {number} images                The number of images to scroll through.
+ * @param  {type} [loop = false]          Whether to loop the scrolling.
+ * @param  {type} [allowSkipping = true]  Whether frames can be skipped.
+ */
 export default function (element, images, loop = false, allowSkipping = true) {
   const toolData = getToolState(element, 'stack');
 
@@ -66,5 +46,45 @@ export default function (element, images, loop = false, allowSkipping = true) {
 
     stackData.pending.push(pendingEvent);
     scrollWithoutSkipping(stackData, pendingEvent, element);
+  }
+}
+
+/**
+ * Recursively scrolls the stack until the desired image is reached.
+ * @private @method
+ * @name scrollWithoutSkipping
+ *
+ * @param  {type} stackData    Data object containing information about the stack.
+ * @param  {object} pendingEvent The event to process next.
+ * @param  {HTMLElement} element      The element being scrolled through.
+ */
+function scrollWithoutSkipping (stackData, pendingEvent, element) {
+  if (stackData.pending[0] === pendingEvent) {
+    if (stackData.currentImageIdIndex === pendingEvent.index) {
+      stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
+
+      if (stackData.pending.length > 0) {
+        scrollWithoutSkipping(stackData, stackData.pending[0], element);
+      }
+
+      return;
+    }
+
+    const newImageHandler = function (event) {
+      const index = stackData.imageIds.indexOf(event.detail.image.imageId);
+
+      if (index === pendingEvent.index) {
+        stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
+        element.removeEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+
+        if (stackData.pending.length > 0) {
+          scrollWithoutSkipping(stackData, stackData.pending[0], element);
+        }
+      }
+    };
+
+    element.addEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+
+    scrollToIndex(element, pendingEvent.index);
   }
 }

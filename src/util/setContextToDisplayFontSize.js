@@ -5,10 +5,12 @@ import external from '../externalModules.js';
  * more cleanly even if the image is scaled up.  See
  * https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText
  * for more information
+ * @export @public @function
+ * @name setContextToDisplayFontSize
  *
- * @param enabledElement
- * @param context
- * @param fontSize
+ * @param enabledElement The cornerstone enabled element.
+ * @param context The canvas context.
+ * @param fontSize The font size.
  * @returns {{fontSize: number, lineHeight: number, fontScale: number}}
  */
 export default function (enabledElement, context, fontSize) {
