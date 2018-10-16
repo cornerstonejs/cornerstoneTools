@@ -108,7 +108,6 @@ export default class ProbeTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image } = eventData;
-    const font = textStyle.getFont();
     const fontHeight = textStyle.getFontSize();
 
     for (let i = 0; i < toolData.data.length; i++) {
@@ -158,9 +157,6 @@ export default class ProbeTool extends BaseAnnotationTool {
             y: data.handles.end.y - 3
           };
           const textCoords = external.cornerstone.pixelToCanvas(eventData.element, coords);
-
-          context.font = font;
-          context.fillStyle = color;
 
           drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
           drawTextBox(context, text, textCoords.x, textCoords.y, color);
