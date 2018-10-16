@@ -1,6 +1,5 @@
 import pointInEllipse from './pointInEllipse.js';
 
-
 /**
  * Calculates the statistics of an elliptical region of interest.
  * @export @public @method

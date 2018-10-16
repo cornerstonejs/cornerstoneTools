@@ -10,11 +10,16 @@ import drawHandles from '../manipulators/drawHandles.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawEllipse } from '../util/drawing.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import pointInEllipse from '../util/pointInEllipse.js';
-import calculateEllipseStatistics from '../util/calculateEllipseStatistics.js';
 import calculateSUV from '../util/calculateSUV.js';
 //
 import numbersWithCommas from '../util/numbersWithCommas.js';
+
+import ellipseUtils from '../util/ellipse/index.js';
+
+const {
+  pointInEllipse,
+  calculateEllipseStatistics
+} = ellipseUtils;
 
 /**
  * @export @public @class

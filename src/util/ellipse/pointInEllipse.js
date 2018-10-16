@@ -1,4 +1,3 @@
-
 /**
  * Returns true if a point is within an ellipse
  * @export @public @method
