@@ -7,8 +7,8 @@ import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js'
 import toolStyle from '../../stateManagement/toolStyle.js';
 import toolColors from '../../stateManagement/toolColors.js';
 import { getToolState } from '../../stateManagement/toolState.js';
-import { getNewContext, draw, setShadow, drawLine } from '../../util/drawing.js';
-import drawLinkedTextBox from '../../util/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow, drawLine } from '../../drawing/index.js';
+import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
 
 export default function (evt) {
   const eventData = evt.detail;
