@@ -23,7 +23,7 @@ function mouseWheel (e) {
   if (e.type === 'DOMMouseScroll' && e.axis === 1) {
     return;
   }
-
+  
   e.preventDefault();
 
   let x;
@@ -70,7 +70,7 @@ function mouseWheel (e) {
   triggerEvent(element, EVENTS.MOUSE_WHEEL, mouseWheelData);
 }
 
-const mouseWheelEvents = ['mousewheel', 'DOMMouseScroll'];
+const mouseWheelEvents = ['wheel'];
 
 function enable (element) {
   // Prevent handlers from being attached multiple times
