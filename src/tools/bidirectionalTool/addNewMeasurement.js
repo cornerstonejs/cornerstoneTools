@@ -4,7 +4,6 @@ import { toolType } from './definitions.js';
 import createNewMeasurement from './createNewMeasurement.js';
 import mouseMoveCallback from './mouseMoveCallback.js';
 import mouseDownCallback from './mouseDownCallback.js';
-import doubleClickCallback from './doubleClickCallback.js';
 import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js';
 import moveNewHandle from '../../manipulators/moveNewHandle.js';
 import anyHandlesOutsideImage from '../../manipulators/anyHandlesOutsideImage.js';
@@ -50,7 +49,6 @@ export default function (evt) {
     // The end point and let the moveHandle move it for us.
     element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-    element.removeEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
   };
 
   disableDefaultHandlers();
@@ -132,7 +130,6 @@ export default function (evt) {
     disableDefaultHandlers();
     element.addEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
     element.addEventListener(EVENTS.MOUSE_DOWN, mouseDownCallback);
-    element.addEventListener(EVENTS.MOUSE_DOUBLE_CLICK, doubleClickCallback);
 
     external.cornerstone.updateImage(element);
   });

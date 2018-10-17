@@ -1,7 +1,7 @@
+/* eslint no-loop-func: 0 */ // --> OFF
 import external from '../../externalModules.js';
 import { toolType } from './definitions.js';
 import drawHandles from './drawUtils/drawHandles.js';
-import drawPerpendicularLine from './drawUtils/drawPerpendicularLine.js';
 import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js';
 
 import toolStyle from '../../stateManagement/toolStyle.js';
@@ -63,7 +63,7 @@ export default function (evt) {
       // Configurable shadow
       setShadow(context, config);
 
-      const { start, end, textBox } = data.handles;
+      const { start, end, perpendicularStart, perpendicularEnd, textBox } = data.handles;
 
       // Draw the measurement line
       drawLine(context, element, start, end, { color });
@@ -72,7 +72,8 @@ export default function (evt) {
       const strokeWidth = lineWidth;
 
       updatePerpendicularLineHandles(eventData, data);
-      drawPerpendicularLine(context, element, data, color, strokeWidth);
+      drawLine(context, element, perpendicularStart, perpendicularEnd, { color,
+        strokeWidth });
 
       // Draw the handles
       const handleOptions = {
