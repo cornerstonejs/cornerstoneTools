@@ -29,7 +29,7 @@ const unselectAllHandles = (handles) => {
 // Clear the bidirectional tool's selection for all tool handles
 const clearBidirectionalSelection = (event) => {
   let imageNeedsUpdate = false;
-  const toolData = getToolState(event.target, 'bidirectional');
+  const toolData = getToolState(event.target, toolType);
 
   if (!toolData) {
     return;

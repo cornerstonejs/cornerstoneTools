@@ -1,4 +1,4 @@
-const toolType = 'bidirectional';
+const toolType = 'Bidirectional';
 const distanceThreshold = 6;
 
 export {
