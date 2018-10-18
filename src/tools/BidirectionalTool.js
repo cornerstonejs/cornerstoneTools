@@ -18,10 +18,10 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       name,
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        getMeasurementLocationCallback: emptyLocationCallback,
         changeMeasurementLocationCallback: emptyLocationCallback,
         textBox: textBoxConfig,
-        shadow: shadowConfig
+        shadow: shadowConfig,
+        distanceThreshold: 6
       }
     });
 
@@ -32,5 +32,6 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.mouseMoveCallback = _moveCallback.bind(this);
     this.preMouseDownCallback = _downCallback.bind(this);
   }
+
 }
 

@@ -1,8 +1,7 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from '../../externalModules.js';
-import { toolType } from './definitions.js';
 import drawHandles from './drawUtils/drawHandles.js';
-import updatePerpendicularLineHandles from './updatePerpendicularLineHandles.js';
+import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 import toolStyle from '../../stateManagement/toolStyle.js';
 import toolColors from '../../stateManagement/toolColors.js';
@@ -15,7 +14,7 @@ export default function (evt) {
   const { element, canvasContext, image } = eventData;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
-  const toolData = getToolState(element, toolType);
+  const toolData = getToolState(element, this.name);
 
   if (!toolData) {
     return;

@@ -1,5 +1,3 @@
-import { toolType } from './definitions.js';
-
 const getHandle = (x, y, index, extraAttributes = {}) => Object.assign({
   x,
   y,
@@ -14,7 +12,7 @@ export default function (mouseEventData) {
   const { x, y } = mouseEventData.currentPoints.image;
   // Create the measurement data for this tool with the end handle activated
   const measurementData = {
-    toolType,
+    toolType: this.name,
     isCreating: true,
     visible: true,
     active: true,

@@ -1,7 +1,4 @@
-/* jshint -W083 */
 import external from '../../externalModules.js';
-import { toolType } from './definitions.js';
-import pointNearTool from './pointNearTool.js';
 import toolCoordinates from '../../stateManagement/toolCoordinates.js';
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
 import { getToolState } from '../../stateManagement/toolState.js';
@@ -37,7 +34,7 @@ export default function (event) {
   toolCoordinates.setCoords(eventData);
 
   // If we have no tool data for this element, do nothing
-  const toolData = getToolState(element, toolType);
+  const toolData = getToolState(element, this.name);
 
   if (!toolData) {
     return;
@@ -66,8 +63,8 @@ export default function (event) {
       imageNeedsUpdate = true;
     }
 
-    const nearToolAndInactive = pointNearTool(element, data, coords) && !data.active;
-    const notNearToolAndActive = !pointNearTool(element, data, coords) && data.active;
+    const nearToolAndInactive = this.pointNearTool(element, data, coords) && !data.active;
+    const notNearToolAndActive = !this.pointNearTool(element, data, coords) && data.active;
 
     if (nearToolAndInactive || notNearToolAndActive) {
       data.active = !data.active;

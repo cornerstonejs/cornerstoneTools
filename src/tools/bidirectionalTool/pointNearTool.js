@@ -1,8 +1,7 @@
 import external from '../../externalModules.js';
-import { distanceThreshold } from './definitions.js';
 import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
 
-const pointNearPerpendicular = (element, handles, coords) => {
+const pointNearPerpendicular = (element, handles, coords, distanceThreshold) => {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
@@ -30,9 +29,9 @@ export default function (element, data, coords) {
     return true;
   }
 
-  if (pointNearPerpendicular(element, handles, coords)) {
+  if (pointNearPerpendicular(element, handles, coords, this.configuration.distanceThreshold)) {
     return true;
   }
 
-  return (distanceToPoint < distanceThreshold);
+  return (distanceToPoint < this.configuration.distanceThreshold);
 }
