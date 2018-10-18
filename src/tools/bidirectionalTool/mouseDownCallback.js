@@ -77,11 +77,6 @@ export default function (event) {
   }
 
   function handleDoneMove (handle) {
-    // Set the cursor back to its default
-
-    // TODO: FIX THIS COMMMENT
-    // $element.css('cursor', '');
-
     data.invalidated = true;
     if (anyHandlesOutsideImage(eventData, data.handles)) {
       // Delete the measurement
@@ -128,7 +123,7 @@ export default function (event) {
       event.stopPropagation();
       event.preventDefault();
 
-      return;
+      return true;
     }
   }
 
@@ -147,11 +142,6 @@ export default function (event) {
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
     if (pointNearTool(element, data, coords)) {
-      // Set the cursor to move
-
-      // TODO: FIX THIS COMMMENT
-      // $element.css('cursor', 'move');
-
       element.removeEventListener(EVENTS.MOUSE_MOVE, mouseMoveCallback);
       data.active = true;
 
@@ -166,7 +156,7 @@ export default function (event) {
       event.stopPropagation();
       event.preventDefault();
 
-      return;
+      return true;
     }
   }
 }
