@@ -9,14 +9,11 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     y: handle.y - mouseEventData.currentPoints.image.y
   };
 
-  const mouseDragCallback = (event) => {
+  const _dragCallback = (event) => {
     const eventData = event.detail;
 
     handle.active = true;
-
-    if (handle.hasMoved === false) {
-      handle.hasMoved = true;
-    }
+    handle.hasMoved = true;
 
     if (handle.index === undefined || handle.index === null) {
       handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
@@ -35,17 +32,17 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
     external.cornerstone.updateImage(element);
 
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
       measurementData: data
     };
 
-    external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
+    external.cornerstone.triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
   };
 
-  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  element.addEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
+  element.addEventListener(EVENTS.TOUCH_DRAG, _dragCallback);
 
   const currentImage = external.cornerstone.getImage(element);
   const imageRenderedHandler = () => {
@@ -53,18 +50,24 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
     // Check if the rendered image changed during measurement modifying and stop it if so
     if (newImage.imageId !== currentImage.imageId) {
-      mouseUpCallback();
+      interactionEndCallback();
     }
   };
 
   // Bind the event listener for image rendering
   element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
 
-  const mouseUpCallback = () => {
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  const interactionEndCallback = () => {
     element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
+
+    element.removeEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
+    element.removeEventListener(EVENTS.MOUSE_UP, interactionEndCallback);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, interactionEndCallback);
+
+    element.removeEventListener(EVENTS.TOUCH_DRAG, _dragCallback);
+    element.removeEventListener(EVENTS.TOUCH_DRAG_END, interactionEndCallback);
+    element.removeEventListener(EVENTS.TAP, interactionEndCallback);
+
     external.cornerstone.updateImage(element);
 
     if (typeof doneMovingCallback === 'function') {
@@ -72,6 +75,9 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   };
 
-  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  element.addEventListener(EVENTS.MOUSE_UP, interactionEndCallback);
+  element.addEventListener(EVENTS.MOUSE_CLICK, interactionEndCallback);
+
+  element.addEventListener(EVENTS.TOUCH_DRAG_END, interactionEndCallback);
+  element.addEventListener(EVENTS.TAP, interactionEndCallback);
 }

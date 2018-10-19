@@ -7,7 +7,6 @@ import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.
 import moveAllHandles from '../../manipulators/moveAllHandles.js';
 import moveHandle from './moveHandle/moveHandle.js';
 
-// MouseDownCallback is used to restrict behaviour of perpendicular-line
 export default function (evt) {
   const eventData = evt.detail;
   const { element } = eventData;
@@ -27,7 +26,8 @@ export default function (evt) {
     }
 
     external.cornerstone.updateImage(element);
-    element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+    element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
+    element.addEventListener(EVENTS.TOUCH_START, this._moveCallback);
   };
 
   const coords = eventData.startPoints.canvas;
@@ -44,7 +44,9 @@ export default function (evt) {
     const handle = getHandleNearImagePoint(...handleParams);
 
     if (handle) {
-      element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+      element.removeEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
+      element.removeEventListener(EVENTS.TOUCH_START, this._moveCallback);
+
       data.active = true;
 
       unselectAllHandles(data.handles);
@@ -69,7 +71,8 @@ export default function (evt) {
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
     if (this.pointNearTool(element, data, coords)) {
-      element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+      element.removeEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
+      element.removeEventListener(EVENTS.TOUCH_START, this._moveCallback);
       data.active = true;
 
       unselectAllHandles(data.handles);
