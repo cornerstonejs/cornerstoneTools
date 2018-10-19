@@ -26,10 +26,7 @@ export default function (evt, nearby) {
     const freehandLineFinder = new FreehandLineFinder(eventData);
     const insertInfo = freehandLineFinder.findLine();
 
-    console.log(insertInfo);
-
     if (insertInfo) {
-      console.log(`insertPoint`);
       _insertPoint(eventData, insertInfo);
     }
   }
@@ -74,8 +71,6 @@ function deletePoint (eventData, deleteInfo) {
 
   // Remove the handle
   data.handles.splice(deleteHandle, 1);
-
-  console.log('removing handle');
 
   data.invalidated = true;
   data.active = true;
