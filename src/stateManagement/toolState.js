@@ -62,7 +62,6 @@ function addToolState (element, toolType, measurementData) {
 function getToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
 
-
   return toolStateManager.get(element, toolType);
 }
 

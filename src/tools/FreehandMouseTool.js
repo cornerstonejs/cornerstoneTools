@@ -563,20 +563,21 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     const config = this.configuration;
 
+    config.dragOrigin = {
+      x: handle.x,
+      y: handle.y
+    };
+
+    // Have to do this to get tool index.
     const nearby = this._pointNearHandleAllTools(eventData);
     const handleNearby = nearby.handleNearby;
     const toolIndex = nearby.toolIndex;
-
-    config.dragOrigin = {
-      x: toolState.data[toolIndex].handles[handleNearby].x,
-      y: toolState.data[toolIndex].handles[handleNearby].y
-    };
 
     this._modifying = true;
     config.currentHandle = handleNearby;
     config.currentTool = toolIndex;
 
-    this._activateModifty(element);
+    this._activateModify(element);
 
     // Interupt eventDispatchers
     state.isToolLocked = true;
@@ -1275,7 +1276,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _activateModifty (element) {
+  _activateModify (element) {
     element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
