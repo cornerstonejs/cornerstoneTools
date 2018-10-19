@@ -1,6 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import external from '../../externalModules.js';
-import drawHandles from './drawUtils/drawHandles.js';
+import drawHandles from '../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 import toolStyle from '../../stateManagement/toolStyle.js';
