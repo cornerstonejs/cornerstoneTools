@@ -22,7 +22,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         changeMeasurementLocationCallback: emptyLocationCallback,
         textBox: textBoxConfig,
         shadow: shadowConfig,
-        distanceThreshold: 6
+        distanceThreshold: 28
       }
     });
 
