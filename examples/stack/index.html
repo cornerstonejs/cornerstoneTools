@@ -61,7 +61,7 @@
 <script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
 
 <!-- include special code for these examples which provides images -->
-<script src="../imageLoader.js"></script>
+<script src="../textImageLoader.js"></script>
 
 <script>
 	const cTools = cornerstoneTools.init();
@@ -126,9 +126,19 @@
 	}
 
 	function loadStack(nFrames, element) {
-		cornerstone.loadImage(imageIds[0]).then(function (image) {
-			cornerstone.displayImage(element, image);
+		const n0 = Math.floor(nFrames / 2);
+		const imageIds = (new Array(Number(nFrames)))
+			.fill()
+			.map(
+				(_, i) => `example-n://${i}`
+			);
+		stack = {
+			currentImageIdIndex: n0,
+			imageIds
+		};
 
+		cornerstone.loadImage(imageIds[n0]).then(function (image) {
+			cornerstone.displayImage(element, image);
 			cornerstoneTools.addStackStateManager(element, ['stack']);
 			cornerstoneTools.addToolState(element, 'stack', stack);
 		});
