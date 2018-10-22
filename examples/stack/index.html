@@ -20,7 +20,7 @@
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="tools">
-				<li><a href="#" data-tool="StackScroll" data-tool-type="">Mouse stack</a></li>
+				<li><a href="#" data-tool="StackScroll" data-tool-type="drag">Mouse stack</a></li>
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
 			</ul>
 
@@ -105,7 +105,6 @@
 			toolBtn.addEventListener('click', (evt) => {
 				const toolType = evt.target.getAttribute('data-tool-type')
 				const isInActive = !evt.target.classList.contains('active');
-				setAllToolsPassive();
 				if (isInActive) {
 					setButtonActive(toolName, mouseButtonMask, toolType);
 					cTools.setToolActive(toolName, { mouseButtonMask });
@@ -116,7 +115,14 @@
 			});
 		});
 
+		cTools.setToolActive('StackScroll', { mouseButtonMask });
+		cTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask });
+		setButtonActive('StackScroll', mouseButtonMask, 'drag');
+		setButtonActive('StackScrollMouseWheel', mouseButtonMask, 'wheel');
+
 		document.getElementById('loadStackBtn').onclick = loadStackCb;
+
+		loadStack(150, element);
 	}
 
 	function setAllToolsPassive() {
