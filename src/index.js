@@ -74,12 +74,8 @@ export {
   default as panZoomSynchronizer
 } from './synchronization/panZoomSynchronizer.js';
 
-// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
-import requestPoolManager from './requestPool/requestPoolManager.js';
-
-
-
-
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
+export { default as requestPoolManager } from './requestPool/requestPoolManager.js';
 
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
