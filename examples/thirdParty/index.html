@@ -99,7 +99,6 @@
 
   // 3) A Tool
   const BaseTool = cornerstoneTools.import('base/BaseTool');
-  const modules = cornerstoneTools.import('store/modules');
 
   class HelloWorldMouseTool extends BaseTool {
     constructor (name = 'HelloWorldMouse') {
@@ -112,7 +111,7 @@
         ]
       });
 
-      this._helloWorldModule = modules.helloWorld;
+      this._helloWorldModule = cornerstoneTools.store.modules.helloWorld;
     }
 
     preMouseDownCallback (evt) {
@@ -145,7 +144,7 @@
   cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
 
   // Initialise the extended cornerstoneTools library.
-  const cTools = cornerstoneTools.init();
+  cornerstoneTools.init();
 
   const imageIds = [
     'example://1',
@@ -173,8 +172,8 @@
   });
 
   function setAllToolsPassive() {
-    cTools.store.state.tools.forEach((tool) => {
-      cTools.setToolPassive(tool.name);
+    cornerstoneTools.store.state.tools.forEach((tool) => {
+      cornerstoneTools.setToolPassive(tool.name);
     });
   }
 
@@ -199,7 +198,7 @@
   const toolName = toolBtn.getAttribute('data-tool');
   // Add the 3rd party tool (may be locally defined, or from an npm library)
 
-  cTools.addTool(HelloWorldMouseTool);
+  cornerstoneTools.addTool(HelloWorldMouseTool);
 
   // Setup button listener
   // Prevent right click context menu for our menu buttons
@@ -218,7 +217,7 @@
     setAllToolsPassive();
     const toolType = evt.target.getAttribute('data-tool-type')
     setButtonActive(toolName, mouseButtonMask, toolType);
-    cTools.setToolActive(toolName, { mouseButtonMask });
+    cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 
     evt.preventDefault();
     evt.stopPropagation();
@@ -227,7 +226,7 @@
   });
 
   // Activate first tool
-  cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 
   const setToolCategoryActive = (categoryName) => {
     Array.from(toolCategoryLinks).forEach(toolLink => {

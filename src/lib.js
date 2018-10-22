@@ -14,42 +14,6 @@ import touchMoveHandle from './manipulators/touchMoveHandle.js';
 
 import mixins from './mixins/index.js';
 
-import textStyle from './stateManagement/textStyle.js';
-import toolColors from './stateManagement/toolColors.js';
-import toolCoordinates from './stateManagement/toolCoordinates.js';
-import {
-  addToolState,
-  getToolState,
-  removeToolState,
-  clearToolState,
-  setElementToolStateManager,
-  getElementToolStateManager
-} from './stateManagement/toolState.js';
-import {
-  stackSpecificStateManager,
-  newStackSpecificToolStateManager,
-  addStackStateManager
-} from './stateManagement/stackSpecificStateManager.js';
-import loadHandlerManager from './stateManagement/loadHandlerManager.js';
-import {
-  newImageIdSpecificToolStateManager,
-  globalImageIdSpecificToolStateManager
-} from './stateManagement/imageIdSpecificStateManager.js';
-import {
-  newFrameOfReferenceSpecificToolStateManager,
-  globalFrameOfReferenceSpecificToolStateManager
-} from './stateManagement/frameOfReferenceStateManager.js';
-import {
-  setToolPassiveForElement,
-  setToolActiveForElement,
-  setToolEnabledForElement,
-  setToolDisabledForElement
-} from './store/setToolMode.js';
-import {
-  state,
-  getters,
-  modules
-} from './store/index.js';
 import {
   getNewContext,
   draw,
@@ -102,14 +66,6 @@ import brushUtils from './util/brush/index.js';
 import zoomUtils from './util/zoom/index.js';
 
 export const lib = {
-  'store/state': state,
-  'store/getters': getters,
-  'store/modules': modules,
-  'store/setToolPassiveForElement': setToolPassiveForElement,
-  'store/setToolActiveForElement': setToolActiveForElement,
-  'store/setToolEnabledForElement': setToolEnabledForElement,
-  'store/setToolDisabledForElement': setToolDisabledForElement,
-
   'base/BaseTool': BaseTool,
   'base/BaseAnnotationTool': BaseAnnotationTool,
   'base/BaseBrushTool': BaseBrushTool,
@@ -126,24 +82,6 @@ export const lib = {
 
   'mixins/activeOrDisabledBinaryTool': mixins.activeOrDisabledBinaryTool,
   'mixins/enabledOrDisabledBinaryTool': mixins.enabledOrDisabledBinaryTool,
-
-  'stateManagement/textStyle': textStyle,
-  'stateManagement/toolColors': toolColors,
-  'stateManagement/toolCoordinates': toolCoordinates,
-  'stateManagement/addToolState': addToolState,
-  'stateManagement/getToolState': getToolState,
-  'stateManagement/removeToolState': removeToolState,
-  'stateManagement/clearToolState': clearToolState,
-  'stateManagement/setElementToolStateManager': setElementToolStateManager,
-  'stateManagement/getElementToolStateManager': getElementToolStateManager,
-  'stateManagement/stackSpecificStateManager': stackSpecificStateManager,
-  'stateManagement/newStackSpecificToolStateManager': newStackSpecificToolStateManager,
-  'stateManagement/addStackStateManager': addStackStateManager,
-  'stateManagement/loadHandlerManager': loadHandlerManager,
-  'stateManagement/newImageIdSpecificToolStateManager': newImageIdSpecificToolStateManager,
-  'stateManagement/globalImageIdSpecificToolStateManager': globalImageIdSpecificToolStateManager,
-  'stateManagement/newFrameOfReferenceSpecificToolStateManager': newFrameOfReferenceSpecificToolStateManager,
-  'stateManagement/globalFrameOfReferenceSpecificToolStateManager': globalFrameOfReferenceSpecificToolStateManager,
 
   'drawing/getNewContext': getNewContext,
   'drawing/draw': draw,
