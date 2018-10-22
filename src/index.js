@@ -1,3 +1,6 @@
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
+import requestPoolManager from './requestPool/requestPoolManager.js';
+
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
@@ -35,6 +38,8 @@ export { default as BrushTool } from './tools/BrushTool.js';
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
+export { addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
+export { addToolState } from './stateManagement/toolState.js';
 
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';
@@ -73,12 +78,6 @@ export {
 export {
   default as panZoomSynchronizer
 } from './synchronization/panZoomSynchronizer.js';
-
-// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
-import requestPoolManager from './requestPool/requestPoolManager.js';
-
-
-
 
 
 export { default as external } from './externalModules.js';
