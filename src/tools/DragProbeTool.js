@@ -56,6 +56,10 @@ export default class DragProbeTool extends BaseTool {
   }
 
   renderToolData (evt) {
+    if (!this.dragEventData.currentPoints) {
+      return;
+    }
+
     if (evt && evt.detail && Boolean(Object.keys(this.dragEventData.currentPoints).length)) {
       evt.detail.currentPoints = this.dragEventData.currentPoints;
       this.applyActiveStrategy(evt);
