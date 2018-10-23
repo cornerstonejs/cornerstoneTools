@@ -64,7 +64,7 @@
 <script src="../textImageLoader.js"></script>
 
 <script>
-	const cTools = cornerstoneTools.init();
+	cornerstoneTools.init();
 
 	function init() {
 		const element = document.querySelector('.cornerstone-element-help');
@@ -96,7 +96,7 @@
 			const apiTool = cornerstoneTools[`${toolName}Tool`];
 
 			if (apiTool) {
-				cTools.addTool(apiTool);
+				cornerstoneTools.addTool(apiTool);
 			} else {
 				console.warn(`unable to add tool with name ${toolName}Tool`);
 				console.log(cornerstoneTools)
@@ -107,16 +107,16 @@
 				const isInActive = !evt.target.classList.contains('active');
 				if (isInActive) {
 					setButtonActive(toolName, mouseButtonMask, toolType);
-					cTools.setToolActive(toolName, { mouseButtonMask });
+					cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 				} else {
 					setButtonInActive(evt.target, mouseButtonMask, toolType);
-					cTools.setToolDisabled(toolName);
+					cornerstoneTools.setToolDisabled(toolName);
 				}
 			});
 		});
 
-		cTools.setToolActive('StackScroll', { mouseButtonMask });
-		cTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask });
+		cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask });
+		cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask });
 		setButtonActive('StackScroll', mouseButtonMask, 'drag');
 		setButtonActive('StackScrollMouseWheel', mouseButtonMask, 'wheel');
 
@@ -126,8 +126,8 @@
 	}
 
 	function setAllToolsPassive() {
-		cTools.store.state.tools.forEach((tool) => {
-			cTools.setToolPassive(tool.name);
+		cornerstoneTools.store.state.tools.forEach((tool) => {
+			cornerstoneTools.setToolPassive(tool.name);
 		});
 	}
 
