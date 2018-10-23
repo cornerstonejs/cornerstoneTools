@@ -154,7 +154,7 @@
 <script src="../imageLoader.js"></script>
 
 <script>
-	const cTools = cornerstoneTools.init();
+	cornerstoneTools.init();
 	const imageIds = [
 		'example://1',
 		'example://2',
@@ -181,8 +181,8 @@
 	});
 
 	function setAllToolsPassive() {
-		cTools.store.state.tools.forEach((tool) => {
-			cTools.setToolPassive(tool.name);
+		cornerstoneTools.store.state.tools.forEach((tool) => {
+			cornerstoneTools.setToolPassive(tool.name);
 		});
 	}
 
@@ -219,7 +219,7 @@
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 
 		if (apiTool) {
-			cTools.addTool(apiTool);
+			cornerstoneTools.addTool(apiTool);
 		} else {
 			console.warn(`unable to add tool with name ${toolName}Tool`);
 			console.log(cornerstoneTools)
@@ -242,7 +242,7 @@
 			setAllToolsPassive();
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
-			cTools.setToolActive(toolName, { mouseButtonMask });
+			cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -252,7 +252,7 @@
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+	cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, { mouseButtonMask: 1 });
 
 	const setToolCategoryActive = (categoryName) => {
 		Array.from(toolCategoryLinks).forEach(toolLink => {
@@ -339,7 +339,7 @@
 
 	// BRUSH TOOL API //
 
-	const brushTool = cTools.getToolForElement(element, 'Brush');
+	const brushTool = cornerstoneTools.getToolForElement(element, 'Brush');
 
 	function brushApiCall (opperation) {
 		switch (opperation) {
