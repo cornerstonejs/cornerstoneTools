@@ -97,7 +97,7 @@
 <script src="../exampleMetaDataProvider.js"></script>
 
 <script>
-    const cTools = cornerstoneTools.init();
+    cornerstoneTools.init();
 
     const axialElement = document.querySelector('.canvasAxial');
     const coronalElement = document.querySelector('.canvasCoronal');
@@ -115,10 +115,9 @@
 
     const synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
 
-    // image enable the dicomImage element and add canvas to it 
+    // image enable the dicomImage element and add canvas to it
     elements.forEach(element => {
         cornerstone.enable(element);
-        cTools.addCanvas(element);
     });
 
     var axialPromise = cornerstone.loadImage(axialImageIds[0]).then(function(image) {
@@ -144,28 +143,28 @@
 
         elements.forEach(element => {
             const CrosshairsTool = new cornerstoneTools.crosshairsTool();
-            cTools.addTool(element, CrosshairsTool);
-            //cTools.setToolActive(element, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
+            cornerstoneTools.addTool(element, CrosshairsTool);
+            //cornerstoneTools.setToolActive(element, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
         });
     });
 
     const StackScrollTool = new cornerstoneTools.stackScrollTool();
     const StackScrollMouseWheelTool = new cornerstoneTools.stackScrollMouseWheelTool();
 
-    cTools.addTool(axialElement, StackScrollTool, {mouseButtonMask: 1});
-    cTools.addTool(axialElement, StackScrollMouseWheelTool);
-    cTools.setToolActive(axialElement, 'stackScroll', {mouseButtonMask: 1});
-    cTools.setToolActive(axialElement, 'stackScrollMouseWheel', {mouseButtonMask: 4});
+    cornerstoneTools.addTool(axialElement, StackScrollTool, {mouseButtonMask: 1});
+    cornerstoneTools.addTool(axialElement, StackScrollMouseWheelTool);
+    cornerstoneTools.setToolActive(axialElement, 'stackScroll', {mouseButtonMask: 1});
+    cornerstoneTools.setToolActive(axialElement, 'stackScrollMouseWheel', {mouseButtonMask: 4});
 
     toolCheckBox = document.querySelector('input[type="checkbox"]');
     const toolLabel = document.querySelector(`#Crosshairs`);
     toolCheckBox.addEventListener('change', (evt) => {
         if (evt.currentTarget.checked) {
-            cTools.setToolActive(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
-            cTools.setToolActive(coronalElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer});
+            cornerstoneTools.setToolActive(axialElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
+            cornerstoneTools.setToolActive(coronalElement, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer});
         } else {
-            cTools.setToolPassive(axialElement, 'crosshairs');
-            cTools.setToolPassive(coronalElement, 'crosshairs');
+            cornerstoneTools.setToolPassive(axialElement, 'crosshairs');
+            cornerstoneTools.setToolPassive(coronalElement, 'crosshairs');
         }
         toolLabel.classList.toggle('turned-on');
     });

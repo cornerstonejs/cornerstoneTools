@@ -41,6 +41,48 @@ export { playClip, stopClip } from './stackTools/playClip.js';
 export { addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
 export { addToolState } from './stateManagement/toolState.js';
 
+// ~~~~~~ STATE MANAGEMENT ~~~~~ //
+export { default as store } from './store/index.js';
+export { default as getToolForElement } from './store/getToolForElement.js';
+export { addTool, addToolForElement } from './store/addTool.js';
+export { removeTool, removeToolForElement } from './store/removeTool.js';
+export { setToolOptions, setToolOptionsForElement } from './store/setToolOptions.js';
+export {
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement
+} from './store/setToolMode.js';
+export {
+  addToolState,
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager
+} from './stateManagement/toolState.js';
+export { default as textStyle } from './stateManagement/textStyle.js';
+export { default as toolColors } from './stateManagement/toolColors.js';
+export { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
+export {
+  stackSpecificStateManager,
+  newStackSpecificToolStateManager,
+  addStackStateManager
+} from './stateManagement/stackSpecificStateManager.js';
+export { default as loadHandlerManager} from './stateManagement/loadHandlerManager.js';
+export {
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager
+} from './stateManagement/imageIdSpecificStateManager.js';
+export {
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager
+} from './stateManagement/frameOfReferenceStateManager.js';
+
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';
 export { default as referenceLines } from './referenceLines/index.js';
@@ -79,13 +121,9 @@ export {
   default as panZoomSynchronizer
 } from './synchronization/panZoomSynchronizer.js';
 
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
+export { requestPoolManager } from './requestPool/requestPoolManager.js';
 
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
 export { default as version } from './version.js';
-
-/*  TODO: Should this be top level? we could add it to the import lib,
- *    but it currently sits on the top level, and so we would need to move
- *   it somewhere.
- */
-export { setToolOptions, getToolOptions } from './toolOptions.js';
