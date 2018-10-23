@@ -34,6 +34,7 @@ import drawArrow from './drawing/drawArrow.js';
 import drawLink from './drawing/drawLink.js';
 import drawLinkedTextBox from './drawing/drawLinkedTextBox.js';
 import drawHandles from './drawing/drawHandles.js';
+
 import getLuminance from './util/getLuminance.js';
 import copyPoints from './util/copyPoints.js';
 import calculateSUV from './util/calculateSUV.js';
