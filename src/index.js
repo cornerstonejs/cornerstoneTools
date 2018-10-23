@@ -117,7 +117,7 @@ export {
 } from './synchronization/panZoomSynchronizer.js';
 
 // ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
-export { requestPoolManager } from './requestPool/requestPoolManager.js';
+export { default as requestPoolManager } from './requestPool/requestPoolManager.js';
 
 export { default as external } from './externalModules.js';
 export { default as EVENTS } from './events.js';
