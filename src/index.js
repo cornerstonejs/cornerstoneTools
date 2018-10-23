@@ -38,8 +38,6 @@ export { default as BrushTool } from './tools/BrushTool.js';
 export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
 export { default as stackRenderers } from './stackTools/stackRenderers.js';
 export { playClip, stopClip } from './stackTools/playClip.js';
-export { addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
-export { addToolState } from './stateManagement/toolState.js';
 
 // ~~~~~~ STATE MANAGEMENT ~~~~~ //
 export { default as store } from './store/index.js';
