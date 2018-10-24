@@ -14,12 +14,10 @@ const addToolForElement = function (element, apiTool) {
   // To a new element).
   const tool = new apiTool();
 
-  const toolAlreadyAddedToElement = getToolForElement(element, tool.toolName);
+  const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
-    console.warn(
-      `${tool.toolName} has already been added to the target element`
-    );
+    console.warn(`${tool.name} has already been added to the target element`);
 
     return;
   }
