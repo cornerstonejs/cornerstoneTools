@@ -436,7 +436,7 @@ function _resolveGenericInputConflicts (
 function _trackGlobalToolModeChange (mode, toolName, options, interactionTypes) {
   const historyEvent = {
     mode,
-    arguments: [toolName, options]
+    args: [toolName, options]
   };
 
   if (interactionTypes) {
