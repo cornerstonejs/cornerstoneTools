@@ -1,7 +1,7 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
-import { state } from './../store/index.js';
+import store from './../store/index.js';
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -72,7 +72,7 @@ const setToolActiveForElement = function (
  */
 const setToolActive = function (toolName, options, interactionTypes) {
   _trackGlobalToolModeChange('active', toolName, options, interactionTypes);
-  state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach((element) => {
     setToolActiveForElement(element, toolName, options, interactionTypes);
   });
 };
@@ -222,7 +222,7 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
  */
 function setToolMode (mode, changeEvent, toolName, options) {
   _trackGlobalToolModeChange(mode, toolName, options);
-  state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach((element) => {
     setToolModeForElement(mode, changeEvent, element, toolName, options);
   });
 }
@@ -259,7 +259,7 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
     }
   });
 
-  const activeToolsForElement = state.tools.filter(
+  const activeToolsForElement = store.state.tools.filter(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
@@ -296,7 +296,7 @@ function _resolveMouseInputConflicts (tool, element, options) {
   const hasMouseButtonMask =
     mouseButtonMask !== undefined && mouseButtonMask > 0;
 
-  const activeToolWithMatchingMouseButtonMask = state.tools.find(
+  const activeToolWithMatchingMouseButtonMask = store.state.tools.find(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
@@ -323,14 +323,14 @@ function _resolveMouseInputConflicts (tool, element, options) {
  * @returns {undefined}
  */
 function _resolveTouchInputConflicts (tool, element, options) {
-  const activeTouchTool = state.tools.find(
+  const activeTouchTool = store.state.tools.find(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isTouchActive === true
   );
 
-  const activeMultiTouchToolWithOneTouchPointer = state.tools.find(
+  const activeMultiTouchToolWithOneTouchPointer = store.state.tools.find(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
@@ -363,7 +363,7 @@ function _resolveTouchInputConflicts (tool, element, options) {
  * @returns {undefined}
  */
 function _resolveMultiTouchInputConflicts (tool, element, options) {
-  const activeMultiTouchTool = state.tools.find(
+  const activeMultiTouchTool = store.state.tools.find(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
@@ -374,7 +374,7 @@ function _resolveMultiTouchInputConflicts (tool, element, options) {
   let activeTouchTool;
 
   if (tool.configuration.touchPointers === 1) {
-    activeTouchTool = state.tools.find(
+    activeTouchTool = store.state.tools.find(
       (t) =>
         t.element === element &&
         t.mode === 'active' &&
@@ -414,7 +414,7 @@ function _resolveGenericInputConflicts (
   element,
   options
 ) {
-  const activeToolWithActiveInteractionType = state.tools.find(
+  const activeToolWithActiveInteractionType = store.state.tools.find(
     (t) =>
       t.element === element &&
       t.mode === 'active' &&
@@ -434,6 +434,11 @@ function _resolveGenericInputConflicts (
 }
 
 function _trackGlobalToolModeChange (mode, toolName, options, interactionTypes) {
+  console.log(store);
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
   const historyEvent = {
     mode,
     args: [toolName, options]
@@ -443,12 +448,14 @@ function _trackGlobalToolModeChange (mode, toolName, options, interactionTypes) 
     historyEvent.push(interactionTypes);
   }
 
-  state.globalToolChangeHistory.push(historyEvent);
+  store.state.globalToolChangeHistory.push(historyEvent);
 
   const arbitraryChangeHistoryLimit = 50;
 
-  if (state.globalToolChangeHistory.length > arbitraryChangeHistoryLimit) {
-    state.globalToolChangeHistory.shift();
+  if (
+    store.state.globalToolChangeHistory.length > arbitraryChangeHistoryLimit
+  ) {
+    store.state.globalToolChangeHistory.shift();
   }
 }
 

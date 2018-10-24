@@ -97,6 +97,10 @@ function _initModulesOnElement (enabledElement) {
 }
 
 function _addGlobalToolsToElement (enabledElement) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
   Object.keys(store.state.globalTools).forEach(function (key) {
     const { tool, configuration } = store.state.globalTools[key];
 
@@ -105,6 +109,10 @@ function _addGlobalToolsToElement (enabledElement) {
 }
 
 function _repeatGlobalToolHistory (enabledElement) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
   const setToolModeFns = {
     active: setToolActiveForElement,
     passive: setToolPassiveForElement,
