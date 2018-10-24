@@ -139,6 +139,5 @@ export const lib = {
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
   'util/brushUtils': brushUtils,
-  'util/zoomUtils': zoomUtils,
-  'util/findAndMoveHelpers': findAndMoveHelpers
+  'util/zoomUtils': zoomUtils
 };
