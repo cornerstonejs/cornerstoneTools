@@ -113,8 +113,9 @@ function _repeatGlobalToolHistory (enabledElement) {
   };
 
   store.state.globalToolChangeHistory.forEach((historyEvent) => {
-    const args = historyEvent.args.unshift(enabledElement);
+    const args = historyEvent.args.slice(0);
 
+    args.unshift(enabledElement);
     setToolModeFns[historyEvent.mode].apply(null, args);
   });
 }
