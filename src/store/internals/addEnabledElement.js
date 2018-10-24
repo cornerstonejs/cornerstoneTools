@@ -9,6 +9,7 @@ import {
   newImageEventDispatcher,
   touchToolEventDispatcher
 } from '../../eventDispatchers/index.js';
+import { addToolForElement } from './../addTool.js';
 import store from '../index.js';
 
 /**
@@ -69,6 +70,7 @@ const _addEnabledElmenet = function (enabledElement) {
   if (store.modules) {
     _initModulesOnElement(enabledElement);
   }
+  _addGlobalToolsToElement(enabledElement);
 };
 
 /**
@@ -84,5 +86,13 @@ function _initModulesOnElement (enabledElement) {
     if (typeof modules[key].enabledElementCallback === 'function') {
       modules[key].enabledElementCallback(enabledElement);
     }
+  });
+}
+
+function _addGlobalToolsToElement (enabledElement) {
+  Object.keys(store.state.globalTools).forEach(function (key) {
+    const { tool, configuration } = store.state.globalTools[key];
+
+    addToolForElement(enabledElement, tool, configuration);
   });
 }
