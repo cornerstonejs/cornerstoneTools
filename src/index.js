@@ -64,6 +64,7 @@ export {
   getElementToolStateManager
 } from './stateManagement/toolState.js';
 export { default as textStyle } from './stateManagement/textStyle.js';
+export { default as toolStyle } from './stateManagement/toolStyle.js';
 export { default as toolColors } from './stateManagement/toolColors.js';
 export { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
 export {
