@@ -38,10 +38,13 @@ function dragCallback (e) {
   let widthScale = eventData.viewport.scale;
   let heightScale = eventData.viewport.scale;
 
-  if (eventData.image.rowPixelSpacing < eventData.image.columnPixelSpacing) {
-    widthScale *= (eventData.image.columnPixelSpacing / eventData.image.rowPixelSpacing);
-  } else if (eventData.image.columnPixelSpacing < eventData.image.rowPixelSpacing) {
-    heightScale *= (eventData.image.rowPixelSpacing / eventData.image.columnPixelSpacing);
+  const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
+  const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
+
+  if (rowPixelSpacing < columnPixelSpacing) {
+    widthScale *= (columnPixelSpacing / rowPixelSpacing);
+  } else if (columnPixelSpacing < rowPixelSpacing) {
+    heightScale *= (rowPixelSpacing / columnPixelSpacing);
   }
 
   eventData.viewport.translation.x += (eventData.deltaPoints.page.x / widthScale);

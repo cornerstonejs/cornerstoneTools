@@ -25,10 +25,10 @@ export function imagePointToPatientPoint (imagePoint, imagePlane) {
 
   const x = rowCosines.clone().multiplyScalar(imagePoint.x);
 
-  x.multiplyScalar(imagePlane.columnPixelSpacing);
+  x.multiplyScalar(imagePlane.columnPixelSpacing || 1);
   const y = columnCosines.clone().multiplyScalar(imagePoint.y);
 
-  y.multiplyScalar(imagePlane.rowPixelSpacing);
+  y.multiplyScalar(imagePlane.rowPixelSpacing || 1);
   const patientPoint = x.add(y);
 
   patientPoint.add(imagePositionPatient);
