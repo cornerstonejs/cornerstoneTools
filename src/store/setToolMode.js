@@ -71,6 +71,7 @@ const setToolActiveForElement = function (
  * @returns {undefined}
  */
 const setToolActive = function (toolName, options, interactionTypes) {
+  _trackGlobalToolModeChange('active', toolName, options, interactionTypes);
   state.enabledElements.forEach((element) => {
     setToolActiveForElement(element, toolName, options, interactionTypes);
   });
@@ -220,6 +221,7 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
  * @returns {undefined}
  */
 function setToolMode (mode, changeEvent, toolName, options) {
+  _trackGlobalToolModeChange(mode, toolName, options);
   state.enabledElements.forEach((element) => {
     setToolModeForElement(mode, changeEvent, element, toolName, options);
   });
@@ -428,6 +430,25 @@ function _resolveGenericInputConflicts (
     activeToolWithActiveInteractionType.options[
       `is${interactionType}Active`
     ] = false;
+  }
+}
+
+function _trackGlobalToolModeChange (mode, toolName, options, interactionTypes) {
+  const historyEvent = {
+    mode,
+    arguments: [toolName, options]
+  };
+
+  if (interactionTypes) {
+    historyEvent.push(interactionTypes);
+  }
+
+  state.globalToolChangeHistory.push(historyEvent);
+
+  const arbitraryChangeHistoryLimit = 50;
+
+  if (state.globalToolChangeHistory.length > arbitraryChangeHistoryLimit) {
+    state.globalToolChangeHistory.shift();
   }
 }
 
