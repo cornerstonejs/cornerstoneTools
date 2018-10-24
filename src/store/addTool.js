@@ -36,8 +36,9 @@ const addToolForElement = function (element, apiTool, configuration) {
  */
 const addTool = function (apiTool, configuration) {
   const tool = new apiTool(configuration);
-  const toolAlreadyAddedGlobally =
-    typeof state.globalTools[tool.name] !== undefined;
+  const toolAlreadyAddedGlobally = state.globalTools[tool.name] !== undefined;
+
+  console.log(state.globalTools[tool.name]);
 
   if (toolAlreadyAddedGlobally) {
     console.warn(`${tool.name} has already been added globally`);
