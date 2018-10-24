@@ -2,15 +2,21 @@ import {
   mouseEventListeners,
   mouseWheelEventListeners,
   touchEventListeners
-} from '../../eventListeners/index.js';
+} from "../../eventListeners/index.js";
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher
-} from '../../eventDispatchers/index.js';
-import { addToolForElement } from './../addTool.js';
-import store from '../index.js';
+} from "../../eventDispatchers/index.js";
+import { addToolForElement } from "./../addTool.js";
+import {
+  setToolActiveForElement,
+  setToolPassiveForElement,
+  setToolEnabledForElement,
+  setToolDisabledForElement
+} from "./../setToolMode.js";
+import store from "../index.js";
 
 /**
  * Element Enabled event.
@@ -36,7 +42,7 @@ import store from '../index.js';
  * @param {Cornerstone#ElementEnabled} elementEnabledEvt
  * @listens Cornerstone#ElementEnabled
  */
-export default function (elementEnabledEvt) {
+export default function(elementEnabledEvt) {
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers
@@ -65,12 +71,13 @@ export default function (elementEnabledEvt) {
  * @private @method
  * @param {HTMLElement} enabledElement
  */
-const _addEnabledElmenet = function (enabledElement) {
+const _addEnabledElmenet = function(enabledElement) {
   store.state.enabledElements.push(enabledElement);
   if (store.modules) {
     _initModulesOnElement(enabledElement);
   }
   _addGlobalToolsToElement(enabledElement);
+  _repeatGlobalToolHistory(enabledElement);
 };
 
 /**
@@ -79,20 +86,34 @@ const _addEnabledElmenet = function (enabledElement) {
  * @private @method
  * @param  {Object} enabledElement
  */
-function _initModulesOnElement (enabledElement) {
+function _initModulesOnElement(enabledElement) {
   const modules = store.modules;
 
-  Object.keys(modules).forEach(function (key) {
-    if (typeof modules[key].enabledElementCallback === 'function') {
+  Object.keys(modules).forEach(function(key) {
+    if (typeof modules[key].enabledElementCallback === "function") {
       modules[key].enabledElementCallback(enabledElement);
     }
   });
 }
 
-function _addGlobalToolsToElement (enabledElement) {
-  Object.keys(store.state.globalTools).forEach(function (key) {
+function _addGlobalToolsToElement(enabledElement) {
+  Object.keys(store.state.globalTools).forEach(function(key) {
     const { tool, configuration } = store.state.globalTools[key];
 
     addToolForElement(enabledElement, tool, configuration);
+  });
+}
+
+function _repeatGlobalToolHistory(enabledElement) {
+  const setToolModeFns = {
+    active: setToolActiveForElement,
+    passive: setToolPassiveForElement,
+    enabled: setToolEnabledForElement,
+    disabled: setToolDisabledForElement
+  };
+
+  store.state.globalToolChangeHistory.forEach(historyEvent => {
+    const arguments = historyEvent.arguments.unshift(enabledElement);
+    setToolModeFns[historyEvent.mode].apply(null, arguments);
   });
 }
