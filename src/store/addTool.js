@@ -34,7 +34,22 @@ const addToolForElement = function (element, apiTool, configuration) {
  * @name addTool
  * @param {baseTool} tool The tool to add to each element.
  */
-const addTool = function (apiTool) {
+const addTool = function (apiTool, configuration) {
+  const tool = new apiTool();
+  const toolAlreadyAddedGlobally =
+    typeof state.globalTools[tool.name] !== undefined;
+
+  if (toolAlreadyAddedGlobally) {
+    console.warn(`${tool.name} has already been added globally`);
+
+    return;
+  }
+
+  state.globalTools = state.globalTools[tool.name] = {
+    tool: apiTool,
+    configuration
+  };
+
   state.enabledElements.forEach((element) => {
     addToolForElement(element, apiTool);
   });
