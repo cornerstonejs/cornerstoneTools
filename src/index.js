@@ -1,3 +1,6 @@
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
+import requestPoolManager from './requestPool/requestPoolManager.js';
+
 export { default as init } from './init.js';
 
 // ~~~~~~ TOOLS ~~~~~ //
