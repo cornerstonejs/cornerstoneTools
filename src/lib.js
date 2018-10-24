@@ -12,6 +12,8 @@ import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from './manipulators/touchMoveAllHandles.js';
 import touchMoveHandle from './manipulators/touchMoveHandle.js';
 
+import findAndMoveHelpers from './util/findAndMoveHelpers.js';
+
 import mixins from './mixins/index.js';
 
 import {
@@ -128,5 +130,6 @@ export const lib = {
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
   'util/brushUtils': brushUtils,
-  'util/zoomUtils': zoomUtils
+  'util/zoomUtils': zoomUtils,
+  'util/findAndMoveHelpers': findAndMoveHelpers
 };
