@@ -4,6 +4,7 @@ import globalConfiguration from './modules/globalConfigurationModule.js';
 
 export const state = {
   isToolLocked: false,
+  globalTools: {},
   tools: [],
   clickProximity: 6,
   mousePositionImage: {},
