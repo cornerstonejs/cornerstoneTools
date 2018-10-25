@@ -571,7 +571,7 @@ function enable (element) {
   const touchEvents = ['touchstart', 'touchend'];
 
   touchEvents.forEach((eventType) => {
-    element.addEventListener(eventType, onTouch);
+    element.addEventListener(eventType, onTouch, { passive: false });
   });
 
   const options = getToolOptions(toolType, element);

@@ -28,8 +28,8 @@ import {
  */
 const enable = function (element) {
   element.addEventListener(EVENTS.TAP, tap);
-  element.addEventListener(EVENTS.TOUCH_START, touchStart);
-  element.addEventListener(EVENTS.TOUCH_DRAG, touchDrag);
+  element.addEventListener(EVENTS.TOUCH_START, touchStart, { passive: false });
+  element.addEventListener(EVENTS.TOUCH_DRAG, touchDrag, { passive: false });
   element.addEventListener(EVENTS.TOUCH_END, touchEnd);
   // Mouse equivelant is `mouse_down_activate`
   // Should the naming pattern here match?
