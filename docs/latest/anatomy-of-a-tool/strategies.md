@@ -1,6 +1,6 @@
 ## Strategies {#strategies}
 
-Tools may optionally have multiple strategies of operation. [`BaseTool`](../tool-types/base-tool.md), from which all Tools inherit, takes two arguments related to the Tools strategies:
+Tools may optionally have multiple strategies of operation. [`BaseTool`](../tool-types/index.md#base-tool), from which all Tools inherit, takes two arguments related to the Tools strategies:
 
 | Argument | Type | Description |
 |----------|------|-------------|

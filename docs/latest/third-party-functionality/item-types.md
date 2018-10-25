@@ -16,7 +16,7 @@ Additionally, custom `module`s can be added to the `store`.
 
 ### Base
 
-A user can define a new `abstract` base Tool type, from which third-party Tools can inherit from. The new Tool type must inherit from either `BaseTool`, `BaseAnnotationTool` or `BaseBrushTool`. To create a new base Tool type simply [`import`](index.md#imports.md) the base type you wish to extend and extend it as:
+A user can define a new `abstract` base Tool type, from which third-party Tools can inherit from. The new Tool type must inherit from either `BaseTool`, `BaseAnnotationTool` or `BaseBrushTool`. To create a new base Tool type simply [`import`](index.md#imports) the base type you wish to extend and extend it as:
 
 ```js
 const BaseTool = cornerstoneTools.import('core/base/BaseTool');
@@ -75,7 +75,7 @@ A module is a namespaced storage object in the `store` that contains the followi
 | getters | Optional | An object comprised of functions that query state. Getters can be used for more complex queries of the state (e.g. to yield a value that references a specific `cornerstone` enabled element). Top level primitives that require no calculation should instead by accessed by `const property = state.property`, as this reduces boilerplate in implementation code. |
 | setters | Optional | An object comprised of functions that modify state. Setters can be used for more complex input (e.g. `push` object `x` to array `y`). Top level primitives should be set by `state.property = value`, as this reduces boilerplate in implementation code. |
 | onRegisterCallback (name) | Optional | This function is called when the module is registered to the `cornerstoneTools` `store`. It is used to perform any global initialization the modules requires. The `name` the module was given upon registration is passed to the callback. |
-| enabledElementCallback (enabledElement) | Optional | This function is called once for each `Enabled` element upon registering the module, and again any time a new `Enabled` element is added to the `cornerstoneTools` instance. The `Enabled` element is passed to the callback.|
+| enabledElementCallback (enabledElement) | Optional | This function is called once for each `Enabled` element upon registering the module, and again any time a new `Enabled` element is added to the `cornerstoneTools` instance. The `Enabled` Element is passed to the callback.|
 
 Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
 

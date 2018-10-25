@@ -1,6 +1,6 @@
 ## Configuration {#configuration}
 
-While changing a Tool's [mode](./modes.md), you also have the option of updating its internal configuration. While Tool configuration varies widely, there are a few commonly used configuration values. For example, all Tools that respond to `mouse input` use `mouseButtonMask` to determine which mouse button triggers their behavior. To better understand how configuration is applied, check out the below examples:
+While changing a Tool's [mode](./index.md/#modes), you also have the option of updating its internal configuration. While Tool configuration varies widely, there are a few commonly used configuration values. For example, all Tools that respond to `mouse input` use `mouseButtonMask` to determine which mouse button triggers their behavior. To better understand how configuration is applied, check out the below examples:
 
 ```js
 // Set's the tool's configuration to `{ mouseButtonMask: 1 }`

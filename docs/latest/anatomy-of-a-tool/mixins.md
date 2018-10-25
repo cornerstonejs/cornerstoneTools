@@ -25,7 +25,7 @@ export default class ExampleOverlayTool extends BaseTool {
 }
 ```
 
-Thanks to this mixin, the Tool's [mode](./modes.md) will now switch to `Enabled` when set `Active`, and to `Disabled` when set `Passive`.
+Thanks to this mixin, the Tool's [mode](index.md#modes) will now switch to `Enabled` when set `Active`, and to `Disabled` when set `Passive`.
 
 ### Registering a new mixin
 
