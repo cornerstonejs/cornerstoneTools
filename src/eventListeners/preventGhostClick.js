@@ -38,7 +38,7 @@ function attachEvents (element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
   eventList.forEach(function (eventName) {
-    element.addEventListener(eventName, tapHandler);
+    element.addEventListener(eventName, tapHandler, { passive: false });
   });
 }
 

@@ -9,7 +9,6 @@ import {
   moveAnnotationNearClick
 } from '../util/findAndMoveHelpers.js';
 
-
 /**
  * @export @abstract @class
  * @name BaseAnnotationTool
@@ -48,7 +47,7 @@ export default class BaseAnnotationTool extends BaseTool {
    */
   createNewMeasurement (evt) {
     throw new Error(
-      `Method createNewMeasurement not implemented for ${this.toolName}.`
+      `Method createNewMeasurement not implemented for ${this.name}.`
     );
   }
 
@@ -61,9 +60,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @returns {boolean} If the point is near the tool
    */
   pointNearTool (element, data, coords) {
-    throw new Error(
-      `Method pointNearTool not implemented for ${this.toolName}.`
-    );
+    throw new Error(`Method pointNearTool not implemented for ${this.name}.`);
   }
 
   /**
@@ -79,7 +76,7 @@ export default class BaseAnnotationTool extends BaseTool {
    */
   distanceFromPoint (element, data, coords) {
     throw new Error(
-      `Method distanceFromPoint not implemented for ${this.toolName}.`
+      `Method distanceFromPoint not implemented for ${this.name}.`
     );
   }
 
@@ -89,7 +86,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @param {*} evt
    */
   renderToolData (evt) {
-    throw new Error(`renderToolData not implemented for ${this.toolName}.`);
+    throw new Error(`renderToolData not implemented for ${this.name}.`);
   }
 
   // ===================================================================

@@ -47,8 +47,8 @@ describe('touchToolEventDispatcher.js', () => {
     // https://github.com/jasmine/jasmine/issues/228#issuecomment-270599719
     expect(element.addEventListener.mock.calls).toEqual([
       [EVENTS.TAP, tap], // First call
-      [EVENTS.TOUCH_START, touchStart], // Second call
-      [EVENTS.TOUCH_DRAG, touchDrag],
+      [EVENTS.TOUCH_START, touchStart, { passive: false }], // Second call
+      [EVENTS.TOUCH_DRAG, touchDrag, { passive: false }],
       [EVENTS.TOUCH_END, touchEnd],
       [EVENTS.TOUCH_START_ACTIVE, touchStartActive],
       [EVENTS.TOUCH_PRESS, touchPress],

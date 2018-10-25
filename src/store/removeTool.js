@@ -1,34 +1,53 @@
-import { state } from './index.js';
+import store from './index.js';
 
 /**
- * Removes all tools from the target element with the provided name
+ * Deactivates and removes the tool from the target element with the provided name
+ *
  * @export @public @method
  * @name removeToolForElement
- *
  * @param {HTMLElement} element The element.
  * @param {string} toolName The name of the tool.
  */
 const removeToolForElement = function (element, toolName) {
-  const toolIndex = state.tools.findIndex(
+  const toolIndex = store.state.tools.findIndex(
     (tool) => tool.element === element && tool.name === toolName
   );
 
   if (toolIndex >= 0) {
-    state.tools.splice(toolIndex, 1);
+    store.state.tools.splice(toolIndex, 1);
   }
 };
 
 /**
  * Removes all tools from all enabled elements with the provided name.
+ *
  * @export @public @method
  * @name removeTool
- *
  * @param {string} toolName The name of the tool.
  */
 const removeTool = function (toolName) {
-  state.enabledElements.forEach((element) => {
+  _removeToolGlobally(toolName);
+  store.state.enabledElements.forEach((element) => {
     removeToolForElement(element, toolName);
   });
+};
+
+/**
+ * Removes tool with matching name from globally registered tools.
+ * Requires `globalToolSyncEnabled` to be set to true
+ *
+ * @private @method
+ * @name removeToolGlobally
+ * @param {string} toolName The name of the tool to remove.
+ */
+const _removeToolGlobally = function (toolName) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
+  if (store.state.globalTools[toolName]) {
+    delete store.state.globalTools[toolName];
+  }
 };
 
 export { removeTool, removeToolForElement };

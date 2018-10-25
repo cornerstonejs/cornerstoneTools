@@ -115,7 +115,7 @@
 <script src="examples/imageLoader.js"></script>
 
 <script>
-	const cTools = cornerstoneTools.init();
+	cornerstoneTools.init();
 	const imageIds = [
 		'example://1',
 		'example://2',
@@ -172,7 +172,7 @@
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 
 		if (apiTool) {
-			cTools.addTool(apiTool);
+			cornerstoneTools.addTool(apiTool);
 		} else {
 			console.warn(`unable to add tool with name ${toolName}Tool`);
 			console.log(cornerstoneTools)
@@ -194,7 +194,7 @@
 
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
-			cTools.setToolActive(toolName, { mouseButtonMask, isTouchActive: true });
+			cornerstoneTools.setToolActive(toolName, { mouseButtonMask, isTouchActive: true });
 
 			evt.preventDefault();
 			evt.stopPropagation();
@@ -212,16 +212,16 @@
 		const apiTool = cornerstoneTools[`${toolName}Tool`];
 
 		if (apiTool) {
-			cTools.addTool(apiTool);
+			cornerstoneTools.addTool(apiTool);
 		}
 
-		cTools.setToolDisabled(toolName);
+		cornerstoneTools.setToolDisabled(toolName);
 
 		toolCheckBox.addEventListener('change', (evt) => {
 			if (evt.currentTarget.checked) {
-				cTools.setToolEnabled(toolName);
+				cornerstoneTools.setToolEnabled(toolName);
 			} else {
-				cTools.setToolDisabled(toolName);
+				cornerstoneTools.setToolDisabled(toolName);
 			}
 			const toolLabel = document.querySelector('#scaleOverlay');
 			toolLabel.classList.toggle('turned-on');
@@ -229,7 +229,7 @@
 	});
 
 	// Activate first tool
-	cTools.setToolActive(cTools.store.state.tools[0].name, {
+	cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
 		mouseButtonMask: 1,
 		isTouchActive: true
 	});
@@ -300,7 +300,7 @@
 	}
 
 	// Find all and configure each textMarkers
-	const textMarkerTools = cTools.store.state.tools.forEach((element) => {
+	const textMarkerTools = cornerstoneTools.store.state.tools.forEach((element) => {
 		if (element.name === 'TextMarker') {
 			element.configuration.markers = ['F5', 'F4', 'F3', 'F2', 'F1'];
 			element.configuration.current = 'F5';

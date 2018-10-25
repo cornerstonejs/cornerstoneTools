@@ -1,6 +1,7 @@
 const state = {
   mouseEnabled: true,
-  touchEnabled: true
+  touchEnabled: true,
+  globalToolSyncEnabled: false
 };
 
 export default {

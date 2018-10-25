@@ -4,6 +4,8 @@ import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
 
 
+//TODO this should just be in manipulators? They are just manipulator wrappers anyway.
+
 /**
  * Moves a handle near the image point.
  * @export @public @method
