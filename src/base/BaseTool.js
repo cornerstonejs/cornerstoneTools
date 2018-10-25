@@ -1,8 +1,21 @@
 import mixins from '../mixins/index.js';
 
 /**
- * @export @abstract @class
+ * The fundemental abstract class from which all other tools inherit.
+ *
+ * @typedef {Object} BaseTool
+ * @property {String} activeStrategy Strategy name to use when a strategy needs to be applied
+ * @property {String} defaultStrategy Strategy name to "reset" the activeStrategy to if default behavior is desired
+ * @property {String} mode 1 of 4 modes that influence the tool's behavior
+ * @property {String} name
+ * @property {Object} strategies
+ * @property {Array} supportedInteractionTypes
+ */
+
+/**
+ * @export @interface @class
  * @name BaseTool
+ * @type {BaseTool}
  * @classdesc The fundemental abstract class from which all other tools inherit.
  */
 export default class BaseTool {
