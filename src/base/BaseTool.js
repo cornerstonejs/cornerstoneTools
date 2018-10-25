@@ -99,7 +99,7 @@ export default class BaseTool {
     return internalOptions;
   }
 
-  setDefaultStrategy() {
+  setDefaultStrategy () {
     this.activeStrategy = this.defaultStrategy;
   }
 
@@ -121,8 +121,6 @@ export default class BaseTool {
   _applyMixins (mixinsArray) {
     for (let i = 0; i < mixinsArray.length; i++) {
       const mixin = mixins[`${mixinsArray[i]}`];
-
-      console.log(mixinsArray[i]);
 
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);

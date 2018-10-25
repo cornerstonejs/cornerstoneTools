@@ -42,7 +42,6 @@ const addTool = function (apiTool, configuration) {
 };
 
 const _addToolGlobally = function (apiTool, configuration) {
-  console.log(store.modules.globalConfiguration.state.globalToolSyncEnabled);
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
