@@ -1,6 +1,6 @@
 ## Adding Mixins {#adding-mixins}
 
-Next you can add any mixins you wish to add the tool. These are passed to super, and initialized in `BaseTool`. For our example, our tool only makes sense in `active` or `disbled` modes, as it has none of its own data, and logs 'Hello cornerstoneTools!' on click, as such we shall include the `activeOrDisabledBinaryTool` mixin:
+Next you can add any [mixins](../anatomy-of-a-tool/index.md/#mixins) you wish to add the Tool. These are passed to `super`, and initialized in `BaseTool`. For our example, our Tool only makes sense in `Active` or `Disabled` modes, as it has none of its own data, and logs `'Hello cornerstoneTools!'` on click, as such we shall include the `activeOrDisabledBinaryTool` mixin:
 
 ```js
 import external from './../externalModules.js';
@@ -19,4 +19,4 @@ export default class HelloWorldMouseTool extends BaseTool {
 }
 ```
 
-You need not import any mixins to you're class file, this is dealt with in `BaseTool`.
+You need not import any mixins to your class file; this is dealt with in `BaseTool`.

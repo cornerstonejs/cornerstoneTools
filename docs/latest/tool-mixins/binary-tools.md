@@ -1,15 +1,15 @@
 ## Binary Tools {#binary-tools}
 
-In general, tools can be in four modes, `active` , `passive`, `enabled` or `disabled`. However, for some tools only a subset of these are required/useful. For example, an overlay that can only be toggled on/off only makes sense to be `enabled` or `disabled` (e.g. `ScaleOverlayTool`). Using a binary tools mixin will re-direct the unused modes so that the caller of api doesn't have to worry about this.
+In general, Tools can be in four [modes](../anatomy-of-a-tool/modes.md): `Active` , `Passive`, `Enabled` or `Disabled`. However, for some Tools only a subset of these are required/useful. For example, an overlay that can only be toggled on/off only makes sense to be `Enabled` or `Disabled` (e.g. `ScaleOverlayTool`). Using a binary mixin will re-direct the unused modes so that the caller of api doesn't have to worry about this.
 
 ### enabledOrDisabledBinaryTool
 
-A tool with the `enabledOrDisabledBinaryTool` mixin can only be `enabled` or `disabled` (e.g. `ScaleOverlayTool`).
-If the tool is set `active`, the mode will be redirected to `enabled`.
-If the tool is set `passive`, the mode will be redirected to `disabled`.
+A Tool with the `enabledOrDisabledBinaryTool` mixin can only be `Enabled` or `Disabled` (e.g. `ScaleOverlayTool`).
+If the Tool is set `Active`, the mode will be redirected to `Enabled`.
+If the Tool is set `Passive`, the mode will be redirected to `Disabled`.
 
 ### activeOrDisabledBinaryTool
 
-A tool with the `activeOrDisabledBinaryTool` mixin can only be `active` or `disabled` (e.g. `FreehandSculpterMouseTool`).
-If the tool is set `enabled`, the mode will be redirected to `active`.
-If the tool is set `passive`, the mode will be redirected to `disabled`.
+A Tool with the `activeOrDisabledBinaryTool` mixin can only be `Active` or `Disabled` (e.g. `FreehandSculpterMouseTool`).
+If the Tool is set `Enabled`, the mode will be redirected to `Active`.
+If the Tool is set `Passive`, the mode will be redirected to `Disabled`.

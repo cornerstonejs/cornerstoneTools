@@ -13,7 +13,9 @@ And store modules may be retrieved from the modules object:
 const modules = cornerstoneTools.import('store/modules');
 const helloWorldModule = modules.helloWorldModule;
 ```
-Or in a single line by using a destructuring assingment.
+
+Or in a single line by using a destructuring assignment:
+
 ```js
 const {helloWorldModule} = cornerstoneTools.import('store/modules');
 ```
