@@ -12,7 +12,12 @@ import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
 import touchMoveAllHandles from './manipulators/touchMoveAllHandles.js';
 import touchMoveHandle from './manipulators/touchMoveHandle.js';
 
-import findAndMoveHelpers from './util/findAndMoveHelpers.js';
+import {
+  moveHandleNearImagePoint,
+  findHandleDataNearImagePoint,
+  moveAnnotationNearClick,
+  findAnnotationNearClick
+} from './util/findAndMoveHelpers.js';
 
 import mixins from './mixins/index.js';
 
@@ -82,6 +87,10 @@ export const lib = {
   'manipulators/moveNewHandleTouch': moveNewHandleTouch,
   'manipulators/touchMoveAllHandles': touchMoveAllHandles,
   'manipulators/touchMoveHandle': touchMoveHandle,
+  'manipulators/moveHandleNearImagePoint': moveHandleNearImagePoint,
+  'manipulators/findHandleDataNearImagePoint': findHandleDataNearImagePoint,
+  'manipulators/moveAnnotationNearClick': moveAnnotationNearClick,
+  'manipulators/findAnnotationNearClick': findAnnotationNearClick,
 
   'mixins/activeOrDisabledBinaryTool': mixins.activeOrDisabledBinaryTool,
   'mixins/enabledOrDisabledBinaryTool': mixins.enabledOrDisabledBinaryTool,
@@ -130,6 +139,5 @@ export const lib = {
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
   'util/brushUtils': brushUtils,
-  'util/zoomUtils': zoomUtils,
-  'util/findAndMoveHelpers': findAndMoveHelpers
+  'util/zoomUtils': zoomUtils
 };
