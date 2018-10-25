@@ -1,6 +1,6 @@
 ## Configuration {#configuration}
 
-While changing a Tool's [mode](./index.md/#modes), you also have the option of updating its internal configuration. While Tool configuration varies widely, there are a few commonly used configuration values. For example, all Tools that respond to `mouse input` use `mouseButtonMask` to determine which mouse button triggers their behavior. To better understand how configuration is applied, check out the below examples:
+While changing a Tool's [mode](index.md#modes), you also have the option of updating its internal configuration. While Tool configuration varies widely, there are a few commonly used configuration values. For example, all Tools that respond to `mouse input` use `mouseButtonMask` to determine which mouse button triggers their behavior. To better understand how configuration is applied, check out the below examples:
 
 ```js
 // Set's the tool's configuration to `{ mouseButtonMask: 1 }`
@@ -21,7 +21,7 @@ csTools.setToolModeActive("ToolName", { mouseButtonMask: 2 });
 
 ### Common Configuration Options
 
-> TODO: Create a property on [`BaseTool`](../tool-types/base-tool.md) that is a string list of all configuration options used internally by the tool? Then maintain a list here that denotes what each property is used for?
+> TODO: Create a property on [`BaseTool`](../tool-types/index.md#base-tool) that is a string list of all configuration options used internally by the tool? Then maintain a list here that denotes what each property is used for?
 
 | Option                      | Mouse | Touch | Annotation | Brush |
 | --------------------------- | :---: | :---: | :--------: | :---: |

@@ -68,7 +68,7 @@ A full list of the settings and their defaults can be found here: [globalConfigu
 
 ## Adding and Using Tools {#adding-and-using-tools}
 
-In previous versions of Cornerstone Tools, users would need to implement their own Tool manager. This version includes the concept of "adding" Tools to [`Enabled` elements](https://tools.cornerstonejs.org/anatomy-of-a-tool/#modes) to make tracking and managing Tool state across your application easier.
+In previous versions of Cornerstone Tools, users would need to implement their own Tool manager. This version includes the concept of "adding" Tools to `Enabled` elements to make tracking and managing Tool state across your application easier.
 
 ### _Adding a Tool to one or more `Enabled` elements:_
 
