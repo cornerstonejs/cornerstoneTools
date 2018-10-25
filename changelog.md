@@ -4,8 +4,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-- Added a configuration setting on the stackPrefetch tool, called "preserveExistingPool", that prevents resetting the prefetch pool each time a new stack viewer is activated.
+## [2.4.0] - 2018-10-25
+### Added
+- Added a configuration setting on the stackPrefetch tool, called "preserveExistingPool", that prevents resetting the prefetch pool each time a new stack viewer is activated (thanks @Saucistophe)
+- Added double-click to flood fill an enclosed region with the brush tool (thanks @sisobus)
+### Changed
+- Increment on the eraser tool, delete one piece of data at a time, highlight only the data which will be deleted (thanks @dlwire)
+- Trigger modified event after text change for arrowAnnotate tool (thanks @galelis)
+- Use event names directly from cornerstone-core (thanks @galelis)
+- Default rowPixelSpacing and columnPixelSpacing to 1 for angleTool, pan and pointProjector (thanks @kofifus)
+### Fixed
+- Fixed the freehand tool consuming mouse clicks not on its mask (thanks @JamesAPetts)
+- Fixed missing element declaration in freehand tool (thanks @JamesAPetts)
+- Fixed arrowAnnotate example (thanks @galelis)
+- Fixed a breaking issue that occurs when one attempts to switch tool half way through drawing a freehand ROI (thanks @JamesAPetts)
 
 ## [2.3.9] - 2018-07-24
 ### Changed
