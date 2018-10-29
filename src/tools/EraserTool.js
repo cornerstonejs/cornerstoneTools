@@ -1,10 +1,7 @@
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import BaseTool from '../base/BaseTool.js';
-import {
-  getToolState,
-  removeToolState
-} from '../stateManagement/toolState.js';
+import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
 /**

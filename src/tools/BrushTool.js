@@ -136,12 +136,7 @@ export default class BrushTool extends BaseBrushTool {
 
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    drawBrushPixels(
-      pointerArray,
-      pixelData,
-      columns,
-      shouldErase
-    );
+    drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
 
     toolData.data[segmentationIndex].invalidated = true;
 

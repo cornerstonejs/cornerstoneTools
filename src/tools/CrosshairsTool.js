@@ -3,7 +3,11 @@ import BaseTool from './../base/BaseTool.js';
 import external from './../externalModules.js';
 
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
+import {
+  addToolState,
+  getToolState,
+  clearToolState
+} from '../stateManagement/toolState.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
@@ -155,5 +159,4 @@ export default class CrosshairsTool extends BaseTool {
       synchronizationContext
     });
   }
-
 }

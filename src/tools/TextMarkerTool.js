@@ -100,11 +100,13 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       return;
     }
 
-    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(data.handles.end.boundingBox, coords);
+    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
+      data.handles.end.boundingBox,
+      coords
+    );
     const insideBoundingBox = pointInsideBoundingBox(data.handles.end, coords);
 
-
-    return (distanceToPoint < 10) || insideBoundingBox;
+    return distanceToPoint < 10 || insideBoundingBox;
   }
 
   renderToolData (evt) {
@@ -121,7 +123,6 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
 
-
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
 
@@ -134,7 +135,10 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       draw(context, (context) => {
         setShadow(context, config);
 
-        const textCoords = external.cornerstone.pixelToCanvas(eventData.element, data.handles.end);
+        const textCoords = external.cornerstone.pixelToCanvas(
+          eventData.element,
+          data.handles.end
+        );
 
         const options = {
           centering: {
@@ -143,7 +147,14 @@ export default class TextMarkerTool extends BaseAnnotationTool {
           }
         };
 
-        data.handles.end.boundingBox = drawTextBox(context, data.text, textCoords.x, textCoords.y - 10, color, options);
+        data.handles.end.boundingBox = drawTextBox(
+          context,
+          data.text,
+          textCoords.x,
+          textCoords.y - 10,
+          color,
+          options
+        );
       });
     }
   }

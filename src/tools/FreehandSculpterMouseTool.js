@@ -10,7 +10,7 @@ import BaseTool from '../base/BaseTool.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
-const { FreehandHandleData } = freehandUtils
+const { FreehandHandleData } = freehandUtils;
 
 /**
  * @export @public @class
@@ -93,7 +93,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const eventData = evt.detail;
     const config = this.configuration;
 
-    let imageNeedsUpdate = false;
+    const imageNeedsUpdate = false;
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
