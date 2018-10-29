@@ -39,7 +39,7 @@ describe('EllipticalRoiTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new EllipticalRoiTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

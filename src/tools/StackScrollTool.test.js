@@ -33,7 +33,7 @@ describe('StachScroll.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new StackScrollTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
 
     it('should have default configuration loop as false', () => {

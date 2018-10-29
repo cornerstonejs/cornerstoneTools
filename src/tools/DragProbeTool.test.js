@@ -39,7 +39,7 @@ describe('DragProbeTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new DragProbeTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

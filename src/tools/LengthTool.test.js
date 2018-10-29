@@ -39,7 +39,7 @@ describe('LengthTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new LengthTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

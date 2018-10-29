@@ -17,7 +17,7 @@ describe('CrosshairsTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new CrosshairsTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 });

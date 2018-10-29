@@ -47,7 +47,7 @@ describe('FreehandMouseTool.js', function () {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new FreehandMouseTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

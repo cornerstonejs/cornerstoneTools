@@ -23,11 +23,11 @@ describe('StachScrollMouseWheelTool.js', () => {
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
-    it('can be created with a custom tool name', () => {
-      const customToolName = { name: 'customToolName' };
+    it("can be created with a custom tool name", () => {
+      const customToolName = { name: "customToolName" };
       const instantiatedTool = new StackScrollMouseWheelTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
 
     it('should have default configuration loop as false', () => {

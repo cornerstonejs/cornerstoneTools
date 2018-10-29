@@ -28,7 +28,7 @@ describe('DoubleTapFitToWindowTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new DoubleTapFitToWindowTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

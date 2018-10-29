@@ -22,7 +22,7 @@ describe('PanMultiTouchTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new PanMultiTouchTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
   describe('Interaction\'s behavior', () => {

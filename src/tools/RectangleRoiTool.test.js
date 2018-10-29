@@ -39,7 +39,7 @@ describe('RectangleRoiTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new RectangleRoiTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 
