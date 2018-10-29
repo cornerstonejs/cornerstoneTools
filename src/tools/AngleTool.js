@@ -35,12 +35,16 @@ import roundToDecimal from '../util/roundToDecimal.js';
  * @extends BaseAnnotationTool
  */
 export default class AngleTool extends BaseAnnotationTool {
-  constructor (name = 'Angle') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.preventNewMeasurement = false;
   }
 
@@ -177,29 +181,18 @@ export default class AngleTool extends BaseAnnotationTool {
 
         const sideA = {
           x:
-            (data.handles.middle.x - data.handles.start.x) *
-            columnPixelSpacing,
-          y:
-            (data.handles.middle.y - data.handles.start.y) *
-            rowPixelSpacing
+            (data.handles.middle.x - data.handles.start.x) * columnPixelSpacing,
+          y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing
         };
 
         const sideB = {
-          x:
-            (data.handles.end.x - data.handles.middle.x) *
-            columnPixelSpacing,
-          y:
-            (data.handles.end.y - data.handles.middle.y) *
-            rowPixelSpacing
+          x: (data.handles.end.x - data.handles.middle.x) * columnPixelSpacing,
+          y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing
         };
 
         const sideC = {
-          x:
-            (data.handles.end.x - data.handles.start.x) *
-            columnPixelSpacing,
-          y:
-            (data.handles.end.y - data.handles.start.y) *
-            rowPixelSpacing
+          x: (data.handles.end.x - data.handles.start.x) * columnPixelSpacing,
+          y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing
         };
 
         const sideALength = length(sideA);
@@ -234,7 +227,7 @@ export default class AngleTool extends BaseAnnotationTool {
               x: handleMiddleCanvas.x,
               y: handleMiddleCanvas.y
             };
-            
+
             const padding = 5;
             const textWidth = textBoxWidth(context, text, padding);
 
@@ -244,7 +237,9 @@ export default class AngleTool extends BaseAnnotationTool {
               textCoords.x += distance;
             }
 
-            const transform = external.cornerstone.internal.getTransform(enabledElement);
+            const transform = external.cornerstone.internal.getTransform(
+              enabledElement
+            );
 
             transform.invert();
 

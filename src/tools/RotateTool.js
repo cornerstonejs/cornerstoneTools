@@ -10,19 +10,22 @@ import angleBetweenPoints from '../util/angleBetweenPoints.js';
  * @extends BaseTool
  */
 export default class RotateTool extends BaseTool {
-  constructor (name = 'Rotate') {
-    const strategies = {
-      default: defaultStrategy,
-      horizontal: horizontalStrategy,
-      vertical: verticalStrategy
-    };
-
-    super({
-      name,
-      strategies,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Rotate',
+      strategies: {
+        default: defaultStrategy,
+        horizontal: horizontalStrategy,
+        vertical: verticalStrategy
+      },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   touchDragCallback (evt) {

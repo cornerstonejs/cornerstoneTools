@@ -11,15 +11,20 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @extends BaseTool
  */
 export default class StackScrollTool extends BaseTool {
-  constructor (name = 'StackScroll') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'StackScroll',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         loop: false,
         allowSkipping: true
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
 
     this.mouseDragCallback = this._dragCallback.bind(this);
     this.touchDragCallback = this._dragCallback.bind(this);

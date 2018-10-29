@@ -14,8 +14,7 @@ const addToolForElement = function (element, apiTool, configuration) {
   // Instantiating the tool here makes it harder to accidentally add
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
-  const tool = new apiTool(configuration.name);
-
+  const tool = new apiTool(configuration);
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
@@ -57,7 +56,7 @@ const _addToolGlobally = function (apiTool, configuration) {
     return;
   }
 
-  const tool = new apiTool(configuration.name);
+  const tool = new apiTool(configuration);
   const toolAlreadyAddedGlobally =
     store.state.globalTools[tool.name] !== undefined;
 

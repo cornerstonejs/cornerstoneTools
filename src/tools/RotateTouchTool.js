@@ -9,11 +9,16 @@ import BaseTool from './../base/BaseTool.js';
  * @extends BaseTool
  */
 export default class RotateTouchTool extends BaseTool {
-  constructor (name = 'RotateTouch') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'RotateTouch',
       supportedInteractionTypes: ['TouchRotate']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   touchRotateCallback (evt) {

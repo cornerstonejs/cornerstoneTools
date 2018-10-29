@@ -28,11 +28,16 @@ const {
  * @extends BaseAnnotationTool
  */
 export default class EllipticalRoiTool extends BaseAnnotationTool {
-  constructor (name = 'EllipticalRoi') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

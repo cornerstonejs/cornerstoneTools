@@ -36,7 +36,7 @@ import {
   fillBox,
   fillTextLines
 } from './drawing/index.js';
-import drawTextBox from './drawing/drawTextBox.js';
+import drawTextBox, { textBoxWidth } from './drawing/drawTextBox.js';
 import drawArrow from './drawing/drawArrow.js';
 import drawLink from './drawing/drawLink.js';
 import drawLinkedTextBox from './drawing/drawLinkedTextBox.js';
@@ -113,6 +113,7 @@ export const lib = {
   'drawing/drawLink': drawLink,
   'drawing/drawLinkedTextBox': drawLinkedTextBox,
   'drawing/drawHandles': drawHandles,
+  'drawing/textBoxWidth': textBoxWidth,
 
   'util/getLuminance': getLuminance,
   'util/copyPoints': copyPoints,

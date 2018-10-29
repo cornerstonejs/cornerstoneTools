@@ -31,9 +31,9 @@ import { textBoxWidth } from '../drawing/drawTextBox.js';
  * @extends BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor (name = 'ArrowAnnotate') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         getTextCallback,
@@ -42,8 +42,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         drawHandlesOnHover: true,
         arrowFirst: true
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.preventNewMeasurement = false;
   }
 

@@ -5,16 +5,21 @@ import zoomUtils from '../util/zoom/index.js';
 const { correctShift, changeViewportScale } = zoomUtils;
 
 export default class ZoomTouchPinchTool extends BaseTool {
-  constructor (name = 'ZoomTouchPinch') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'ZoomTouchPinch',
       // TODO: Do we need a better way to specify touchPinch?
       supportedInteractionTypes: ['TouchPinch'],
       configuration: {
         minScale: 0.25,
         maxScale: 20.0
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

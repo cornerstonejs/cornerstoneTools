@@ -28,11 +28,16 @@ import EVENTS from './../events.js';
  * @extends BaseAnnotationTool
  */
 export default class CobbAngleTool extends BaseAnnotationTool {
-  constructor (name = 'CobbAngle') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.hasIncomplete = false;
   }
 
@@ -200,7 +205,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       });
     }
 
-
     function textBoxAnchorPoints (handles) {
       return [handles.start, handles.start2, handles.end, handles.end2];
     }
@@ -221,7 +225,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   }
 
   addNewMeasurement (evt, interactionType) {
-
     evt.preventDefault();
     evt.stopPropagation();
 
@@ -330,13 +333,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
 
-
       return (
         rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
     }
-
-
   }
 
   activeCallback (element) {
