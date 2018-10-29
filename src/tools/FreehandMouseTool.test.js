@@ -44,7 +44,7 @@ describe('FreehandMouseTool.js', function () {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = 'customToolName';
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new FreehandMouseTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName);

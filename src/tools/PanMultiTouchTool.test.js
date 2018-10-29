@@ -19,7 +19,7 @@ describe('PanMultiTouchTool.js', () => {
       expect(instantiatedTool.name).toEqual(defaultName);
     });
     it('can be created with a custom tool name', () => {
-      const customToolName = 'customToolName';
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new PanMultiTouchTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName);

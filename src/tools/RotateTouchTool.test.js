@@ -31,7 +31,7 @@ describe('RotateTouchTool.js', () => {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = 'customToolName';
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new RotateTouchTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName);
