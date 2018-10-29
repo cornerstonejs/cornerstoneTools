@@ -11,15 +11,20 @@ const { changeViewportScale } = zoomUtils;
  * @extends BaseTool
  */
 export default class ZoomMouseWheelTool extends BaseTool {
-  constructor (name = 'ZoomMouseWheel') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'ZoomMouseWheel',
       supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         minScale: 0.25,
         maxScale: 20.0
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

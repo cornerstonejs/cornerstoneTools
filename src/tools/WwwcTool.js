@@ -8,19 +8,20 @@ import BaseTool from '../base/BaseTool.js';
  * @extends BaseTool
  */
 export default class WwwcTool extends BaseTool {
-  constructor (name = 'Wwwc') {
-    const strategies = {
-      basicLevelingStrategy
-    };
-
-    super({
-      name,
-      strategies,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Wwwc',
+      strategies: { basicLevelingStrategy },
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         orientation: 0
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   mouseDragCallback (evt) {

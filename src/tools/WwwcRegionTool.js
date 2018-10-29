@@ -14,15 +14,19 @@ import toolColors from '../stateManagement/toolColors.js';
  * @extends BaseTool
  */
 export default class wwwcRegionTool extends BaseTool {
-  constructor (name = 'WwwcRegion') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'WwwcRegion',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         minWindowWidth: 10
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this._resetHandles();
     // Touch
     this.postTouchStartCallback = this._startOutliningRegion.bind(this);

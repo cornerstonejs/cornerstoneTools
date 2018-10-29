@@ -18,11 +18,16 @@ import lineSegDistance from '../util/lineSegDistance.js';
  * @extends BaseAnnotationTool
  */
 export default class LengthTool extends BaseAnnotationTool {
-  constructor (name = 'Length') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

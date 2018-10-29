@@ -36,10 +36,10 @@ describe('ScaleOverlayTool.js', () => {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = 'customToolName';
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new ScaleOverlayTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
 
     it('sets a default configuration with an minorTickLength as 12.5', () => {
