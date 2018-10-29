@@ -31,5 +31,6 @@ function actualResizeHandler () {
 
 export default {
   enable,
-  disable
+  disable,
+  forceEnabledElementResize: actualResizeHandler
 };
