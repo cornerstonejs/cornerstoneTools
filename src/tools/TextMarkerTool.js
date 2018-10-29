@@ -14,9 +14,9 @@ import { removeToolState, getToolState } from '../stateManagement/toolState.js';
  * @extends BaseAnnotationTool
  */
 export default class TextMarkerTool extends BaseAnnotationTool {
-  constructor (name = 'TextMarker') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'TextMarker',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         markers: [],
@@ -25,8 +25,12 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         loop: false,
         changeTextCallback
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.touchPressCallback = this._changeText.bind(this);
     this.doubleClickCallback = this._changeText.bind(this);
   }

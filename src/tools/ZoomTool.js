@@ -12,16 +12,14 @@ const { correctShift, changeViewportScale } = zoomUtils;
  * @extends BaseTool
  */
 export default class ZoomTool extends BaseTool {
-  constructor (name = 'Zoom') {
-    const strategies = {
-      default: defaultStrategy,
-      translate: translateStrategy,
-      zoomToCenter: zoomToCenterStrategy
-    };
-
-    super({
-      name,
-      strategies,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Zoom',
+      strategies: {
+        default: defaultStrategy,
+        translate: translateStrategy,
+        zoomToCenter: zoomToCenterStrategy
+      },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -30,7 +28,12 @@ export default class ZoomTool extends BaseTool {
         minScale: 0.25,
         maxScale: 20.0
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   touchDragCallback (evt) {

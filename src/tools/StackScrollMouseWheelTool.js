@@ -9,15 +9,20 @@ import scroll from '../util/scroll.js';
  * @extends BaseTool
  */
 export default class StackScrollMouseWheelTool extends BaseTool {
-  constructor (name = 'StackScrollMouseWheel') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'StackScrollMouseWheel',
       supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         loop: false,
         allowSkipping: true
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   mouseWheelCallback (evt) {

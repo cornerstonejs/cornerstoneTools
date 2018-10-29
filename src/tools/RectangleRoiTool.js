@@ -21,11 +21,16 @@ import numbersWithCommas from '../util/numbersWithCommas.js';
  * @extends BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
-  constructor (name = 'RectangleRoi') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

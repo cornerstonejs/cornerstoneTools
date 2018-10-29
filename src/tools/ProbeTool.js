@@ -21,11 +21,16 @@ import calculateSUV from '../util/calculateSUV.js';
  * @extends BaseAnnotationTool
  */
 export default class ProbeTool extends BaseAnnotationTool {
-  constructor (name = 'Probe') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

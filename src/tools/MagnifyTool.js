@@ -10,17 +10,20 @@ import BaseTool from '../base/BaseTool.js';
  * @extends BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor (name = 'Magnify') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    this.browserName = undefined;
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 
