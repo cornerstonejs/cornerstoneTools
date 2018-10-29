@@ -81,6 +81,9 @@ export {
   newFrameOfReferenceSpecificToolStateManager,
   globalFrameOfReferenceSpecificToolStateManager
 } from './stateManagement/frameOfReferenceStateManager.js';
+export {
+  forceEnabledElementResize
+} from "./eventListeners/windowResizeHandler.js";
 
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';
