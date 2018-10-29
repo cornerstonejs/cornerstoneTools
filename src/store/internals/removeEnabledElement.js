@@ -77,7 +77,7 @@ const _removeEnabledElement = function (enabledElement) {
     (element) => element === enabledElement
   );
 
-  if (foundElementIndex) {
+  if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
   } else {
     console.warn("unable to remove element");
