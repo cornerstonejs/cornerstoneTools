@@ -6,7 +6,7 @@ const enable = function () {
 };
 
 const disable = function () {
-  window.addEventListener('resize', resizeThrottler, false);
+  window.removeEventListener('resize', resizeThrottler, false);
 };
 
 let resizeTimeout;
