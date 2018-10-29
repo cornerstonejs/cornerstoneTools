@@ -18,7 +18,7 @@ import drawTextBox, {textBoxWidth} from '../drawing/drawTextBox.js';
 export default class DragProbeTool extends BaseTool {
   constructor (configuration = {}) {
     const defaultConfig = {
-      name,
+      name: "DragProbe",
       strategies: {
         default: defaultStrategy,
         minimal: minimalStrategy

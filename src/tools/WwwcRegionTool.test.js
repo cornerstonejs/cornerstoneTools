@@ -17,7 +17,7 @@ describe('WwwcRegionTool.js', () => {
       const customToolName = { name: 'customToolName' };
       const instantiatedTool = new WwwcRegionTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
 
     it('sets a default configuration with an minWindowWidth of 10', () => {
