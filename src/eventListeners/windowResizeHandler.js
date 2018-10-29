@@ -2,6 +2,7 @@ import { state } from './../store/index.js';
 import external from './../externalModules.js';
 
 const enable = function () {
+  disable(); // Clean up any lingering listeners
   window.addEventListener('resize', resizeThrottler, false);
 };
 
