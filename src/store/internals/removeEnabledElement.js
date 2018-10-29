@@ -29,6 +29,7 @@ import store from '../index.js';
  * @listens Cornerstone#ElementDisabled
  */
 export default function (elementDisabledEvt) {
+  console.log("EVENT:ELEMENT_DISABLED");
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers
@@ -78,5 +79,7 @@ const _removeEnabledElement = function (enabledElement) {
 
   if (foundElementIndex) {
     store.state.enabledElements.splice(foundElementIndex, 1);
+  } else {
+    console.warn("unable to remove element");
   }
 };
