@@ -17,21 +17,20 @@ function resizeThrottler () {
   if (!resizeTimeout) {
     resizeTimeout = setTimeout(function () {
       resizeTimeout = null;
-      actualResizeHandler();
+      forceEnabledElementResize();
 
       // The actualResizeHandler will execute at a rate of 15fps
     }, 66);
   }
 }
 
-function actualResizeHandler () {
+export const forceEnabledElementResize = function () {
   state.enabledElements.forEach((element) => {
     external.cornerstone.resize(element);
   });
-}
+};
 
 export default {
   enable,
-  disable,
-  forceEnabledElementResize: actualResizeHandler
+  disable
 };
