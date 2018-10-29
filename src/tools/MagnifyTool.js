@@ -29,8 +29,8 @@ export default class MagnifyTool extends BaseTool {
 
     // Mode Callbacks: (element, options)
     this.activeCallback = this._createMagnificationCanvas.bind(this);
-    this.enableCallback = this._createMagnificationCanvas.bind(this);
-    this.disableCallback = this._destroyMagnificationCanvas.bind(this);
+    this.enabledCallback = this._createMagnificationCanvas.bind(this);
+    this.disabledCallback = this._destroyMagnificationCanvas.bind(this);
 
     // Touch
     this.postTouchStartCallback = this._addMagnifyingGlass.bind(this);
