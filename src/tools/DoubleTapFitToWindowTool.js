@@ -10,11 +10,16 @@ import BaseTool from '../base/BaseTool.js';
  * @extends BaseTool
  */
 export default class DoubleTapFitToWindowTool extends BaseTool {
-  constructor (name = 'DoubleTapFitToWindow') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'DoubleTapFitToWindow',
       supportedInteractionTypes: ['DoubleTap']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   doubleTapCallback (evt) {

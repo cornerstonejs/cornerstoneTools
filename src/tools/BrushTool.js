@@ -17,12 +17,17 @@ const { state } = store.modules.brush;
  * @extends BaseBrushTool
  */
 export default class BrushTool extends BaseBrushTool {
-  constructor (name = 'Brush') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Brush',
       supportedInteractionTypes: ['Mouse'],
       configuration: {}
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**

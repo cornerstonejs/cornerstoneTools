@@ -16,19 +16,20 @@ import drawTextBox, {textBoxWidth} from '../drawing/drawTextBox.js';
  * @extends BaseTool
  */
 export default class DragProbeTool extends BaseTool {
-  constructor (name = 'DragProbe') {
-    const strategies = {
-      default: defaultStrategy,
-      minimal: minimalStrategy
-    };
-
-    super({
+  constructor (configuration = {}) {
+    const defaultConfig = {
       name,
-      strategies,
+      strategies: {
+        default: defaultStrategy,
+        minimal: minimalStrategy
+      },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {}
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
 
     this.touchDragCallback = this._movingEventCallback.bind(this);
     this.touchEndCallback = this._endMovingEventCallback.bind(this);
@@ -36,6 +37,7 @@ export default class DragProbeTool extends BaseTool {
     this.mouseDragCallback = this._movingEventCallback.bind(this);
     this.mouseUpCallback = this._endMovingEventCallback.bind(this);
 
+    this.initialConfiguration = initialConfiguration;
     this.dragEventData = {};
   }
 

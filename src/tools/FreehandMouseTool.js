@@ -38,12 +38,17 @@ const {
  * @extends BaseAnnotationTool
  */
 export default class FreehandMouseTool extends BaseAnnotationTool {
-  constructor (name = 'FreehandMouse') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse'],
       configuration: defaultFreehandConfiguration()
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
 
     this._drawing = false;
     this._dragging = false;
