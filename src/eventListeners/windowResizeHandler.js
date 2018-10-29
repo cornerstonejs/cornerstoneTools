@@ -2,11 +2,12 @@ import { state } from './../store/index.js';
 import external from './../externalModules.js';
 
 const enable = function () {
+  disable(); // Clean up any lingering listeners
   window.addEventListener('resize', resizeThrottler, false);
 };
 
 const disable = function () {
-  window.addEventListener('resize', resizeThrottler, false);
+  window.removeEventListener('resize', resizeThrottler, false);
 };
 
 let resizeTimeout;
