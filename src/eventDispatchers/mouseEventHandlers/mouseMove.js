@@ -28,20 +28,15 @@ export default function (evt) {
 
   const activeTools = tools.filter(
     (tool) =>
-    tool.mode === 'active' &&
-    tool.options.isMouseActive
+      tool.mode === 'active' &&
+      tool.options.isMouseActive
   );
 
-  // If any tools are active, check if they have a cursor.
-  if (activeTools.length > 0) {
-    // TODO: If length > 1, you could assess fitness and select the ideal tool
-    // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
-    const firstActiveTool = activeTools[0];
+  let imageNeedsUpdate = false;
 
-    // Force image update if the active tool has a cusror that should update on mouseMove.
-    if (firstActiveTool.hasCursor) {
-      external.cornerstone.updateImage(element);
-    }
+  // If any tools are active, check if they have a cursor, and if so update image.
+  if (activeTools.length > 0) {
+    imageNeedsUpdate = activeTools.some((tool) => tool.hasCursor);
   }
 
   tools = getToolsWithDataForElement(element, tools);
@@ -49,7 +44,7 @@ export default function (evt) {
   // Iterate over each tool, and each tool's data
   // Activate any handles we're hovering over, or whole tools if we're near the tool
   // If we've changed the state of anything, redrawn the image
-  let imageNeedsUpdate = false;
+
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];
