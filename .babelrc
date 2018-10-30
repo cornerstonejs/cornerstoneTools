@@ -1,8 +1,16 @@
 {
-  "presets": ["env"],
-  "env": {
-    "test": {
-      "plugins": ["transform-es2015-modules-commonjs"]
-    }
-  }
+	"presets": [
+		"env"
+	],
+	"env": {
+		"test": {
+			"plugins": [
+				"transform-es2015-modules-commonjs"
+			]
+		}
+	},
+	"targets": {
+		"chrome": "58",
+		"ie": "11"
+	}
 }
