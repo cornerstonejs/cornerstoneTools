@@ -433,8 +433,8 @@ This section needs a description
 
 ### setToolActiveForElement
 
-Sets a tool's state to 'active'. Active tools are rendered,
-respond to user input, and can create new data
+Sets a Tool's mode to `Active`. `Active` Tools are rendered,
+respond to user input, and can create new data.
 
 #### Parameters
 
@@ -444,7 +444,7 @@ respond to user input, and can create new data
 
 ### setToolPassiveForElement
 
-Sets a tool's state to 'passive'. Passive tools are rendered and respond to user input,
+Sets a Tool's mode to `Passive`. `Passive` Tools are rendered and respond to user input,
 but do not create new measurements or annotations.
 
 #### Parameters
@@ -455,8 +455,8 @@ but do not create new measurements or annotations.
 
 ### setToolEnabledForElement
 
-Sets a tool's state to 'enabled'. Enabled tools are rendered,
-but do not respond to user input
+Sets a Tool's mode to `Enabled`. `Enabled` Tools are rendered,
+but do not respond to user input.
 
 #### Parameters
 
@@ -466,8 +466,8 @@ but do not respond to user input
 
 ### setToolDisabledForElement
 
-Sets a tool's state to 'disabled'. Disabled tools are not rendered,
-and do not respond to user input
+Sets a Tool's mode to `Disabled`. `Disabled` Tools are not rendered,
+and do not respond to user input.
 
 #### Parameters
 
@@ -516,7 +516,7 @@ registerModule - register a module to the store.
 
 ## removeToolForElement
 
-Removes all tools from the target element with the provided name
+Removes all Tools from the target element with the provided name.
 
 ### Parameters
 
@@ -526,7 +526,7 @@ Removes all tools from the target element with the provided name
 
 ## removeTool
 
-Removes all tools from all enabled elements with the provided name
+Removes all Tools from all `Enabled` elements with the provided name.
 
 ### Parameters
 
@@ -534,7 +534,7 @@ Removes all tools from all enabled elements with the provided name
 
 ## 
 
-Adds an enabledElement to our store.
+Adds an `Enabled` element to our store.
 
 ### Parameters
 
@@ -550,7 +550,7 @@ Used to redraw the brush label map data per render.
 
 ## \_drawImageBitmap
 
-Draws the ImageBitmap the canvas.
+Draws the `ImageBitmap` the canvas.
 
 ### Parameters
 
@@ -563,12 +563,12 @@ Draws the ImageBitmap the canvas.
 These listeners are emitted in order, and can be cancelled/prevented from bubbling
 by any previous event.
 
--   mouseMove: used to update the [un]hover state of a tool (highlighting)
--   mouseDown: check to see if we are close to an existing annotation, grab it
--   mouseDownActivate: createNewMeasurement (usually)
--   mouseDrag: update measurement or apply strategy (wwwc)
--   mouseDoubleClick: usually a one-time apply specialty action
--   onImageRendered: redraw visible tool data
+-   `mouseMove`: used to update the [un]hover state of a Tool (highlighting)
+-   `mouseDown`: check to see if we are close to an existing annotation, grab it
+-   `mouseDownActivate`: createNewMeasurement (usually)
+-   `mouseDrag`: update measurement or apply strategy (wwwc)
+-   `mouseDoubleClick`: usually a one-time apply specialty action
+-   `onImageRendered`: redraw visible Tool data
 
 ### Parameters
 
@@ -579,15 +579,15 @@ by any previous event.
 These listeners are emitted in order, and can be cancelled/prevented from bubbling
 by any previous event.
 
--   tap:
--   touchStart: check to see if we are close to an existing annotation, grab it
--   touchDrag:
--   touchStartActive: createNewMeasurement (usually)
--   touchPress:
--   touchRotate:
--   doubleTap: usually a one-time apply specialty action
--   touchPinch:
--   onImageRendered: redraw visible tool data
+-   `tap`:
+-   `touchStart`: check to see if we are close to an existing annotation, grab it
+-   `touchDrag`:
+-   `touchStartActive`: createNewMeasurement (usually)
+-   `touchPress`:
+-   `touchRotate`:
+-   `doubleTap`: usually a one-time apply specialty action
+-   `touchPinch`:
+-   `onImageRendered`: redraw visible Tool data
 
 ### Parameters
 
@@ -595,9 +595,9 @@ by any previous event.
 
 ## mouseDown
 
-MouseDown is called before MouseDownActivate. If MouseDown
-finds an existing tool to interact with, it can prevent the
-event from bubbling to MouseDownActivate.
+`MouseDown` is called before `MouseDownActivate`. If `MouseDown`
+finds an existing Tool to interact with, it can prevent the
+event from bubbling to `MouseDownActivate`.
 
 TODO: Set that a tool is active to prevent multiple event fires
 TODO: Handles should trigger image update when released
@@ -610,7 +610,7 @@ TODO: Handles should handle deleting out of bound data by setting
 ## mouseMove
 
 This is mostly used to update the [un]hover state
-of a tool.
+of a Tool.
 
 ### Parameters
 
@@ -627,7 +627,7 @@ invaldates the data and calls for a re-render.
 
 ## removeEnabledElement
 
-Removes an enabledElement from our store, and all associated tools that were added to it.
+Removes an `Enabled` element from our store, and all associated Tools that were added to it.
 
 ### Parameters
 
@@ -635,8 +635,8 @@ Removes an enabledElement from our store, and all associated tools that were add
 
 ## setToolModeForElement
 
-An internal method that helps make sure we change tool state in a consistent
-way
+An internal method that helps make sure we change Tool state in a consistent
+way.
 
 ### Parameters
 
@@ -648,7 +648,7 @@ way
 
 ## setToolMode
 
-A helper/quick way to set a tool's mode for all canvases
+A helper/quick way to set a Tool's [mode](anatomy-of-a-tool/index.md#modes) for all canvases.
 
 ### Parameters
 
@@ -659,7 +659,7 @@ A helper/quick way to set a tool's mode for all canvases
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -702,7 +702,7 @@ Returns **type** description
 -   `data` **any** 
 -   `coords` **any** 
 
-Returns **[boolean][381]** If the point is near the tool
+Returns **[boolean][381]** If the point is near the Tool.
 
 ## distanceFromPoint
 
@@ -724,7 +724,7 @@ calculated.
 
 ## mouseMoveCallback
 
-Event handler for MOUSE_MOVE event.
+Event handler for `MOUSE_MOVE` event.
 
 ### Parameters
 
@@ -742,18 +742,18 @@ Custom callback for when a handle is selected.
 
 ## toolSelectedCallback
 
-Custom callback for when a tool is selected.
+Custom callback for when a Tool is selected.
 
 ### Parameters
 
 -   `evt` **any** 
 -   `data`  
 -   `toolState`  
--   `tool` **any** The selected tool.
+-   `tool` **any** The selected Tool.
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -775,7 +775,7 @@ Create the measurement data for this tool with the end handle activated
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -805,7 +805,7 @@ Returns **any** Any
 
 ## \_applyMixins
 
-Applys the requested mixins to the class.
+Applies the requested mixins to the class.
 
 ### Parameters
 
@@ -816,109 +816,117 @@ Applys the requested mixins to the class.
 
 Example implementation:
 
+```js
 postTouchStartCallback(evt) {
    return false;
 }
+```
 
 ## 
 
-Callback that is called if the tool is active, after `TOUCH_START`
+Callback that is called if the Tool is `Active`, after `TOUCH_START`
 events are processed. Does nothing by default.
 
 ### Parameters
 
 -   `evt` **type** 
 
-Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+Returns **[boolean][381]** consumedEvent - `true` if function consumed the event.
 
 ## 
 
 Example implementation:
 
+```js
 preTouchStartCallback(evt) {
    return false;
 }
+```
 
 ## 
 
-Callback that takes priority if the tool is active, before `TOUCH_START`
+Callback that takes priority if the Tool is `Active`, before `TOUCH_START`
 events are processed. Does nothing by default.
 
 ### Parameters
 
 -   `evt` **type** 
 
-Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+Returns **[boolean][381]** consumedEvent - `true` if function consumed the event.
 
 ## 
 
 Example implementation:
 
+```js
 postMouseDownCallback(evt) {
    return false;
 }
+```
 
 ## 
 
-Callback that takes priority if the tool is active, before `MOUSE_DOWN`
+Callback that takes priority if the Tool is `Active`, before `MOUSE_DOWN`
 events are processed. Does nothing by default.
 
 ### Parameters
 
 -   `evt` **type** 
 
-Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+Returns **[boolean][381]** consumedEvent - `true` if function consumed the event.
 
 ## 
 
 Example implementation:
 
+```js
 preMouseDownCallback(evt) {
    return false;
 }
+```
 
 ## 
 
-Callback that is called if the tool is active, after `MOUSE_DOWN`
+Callback that is called if the Tool is `Active`, after `MOUSE_DOWN`
 events are processed. Does nothing by default.
 
 ### Parameters
 
 -   `evt` **type** 
 
-Returns **[boolean][381]** consumedEvent - True if function consumed the event.
+Returns **[boolean][381]** consumedEvent - `true` if function consumed the event.
 
 ## passiveCallback
 
-If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
+If one attempts to change mode to `Passive`, redirect the Tool to `Disabled`.
 
 ### Parameters
 
--   `element` **type** The element on which the tool resides.
+-   `element` **type** The element on which the Tool resides.
 
 ## passiveCallback
 
-If one attempts to change mode to 'passive', redirect the tool to 'disabled'.
+If one attempts to change mode to `Passive`, redirect the Tool to `Disabled`.
 
 ### Parameters
 
--   `element` **type** The element on which the tool resides.
+-   `element` **type** The element on which the Tool resides.
 
 ## enabledCallback
 
-If one attempts to turn the tool 'enabled', redirect the tool to 'active'.
+If one attempts to turn the Tool `Enabled`, redirect the Tool to `Active`.
 
 ### Parameters
 
--   `element` **type** The element on which the tool resides.
+-   `element` **type** The element on which the Tool resides.
 
 ## activeCallback
 
-If one attempts to change mode to 'active', redirect the tool to 'enabled'.
+If one attempts to change mode to `Active`, redirect the Tool to `Enabled`.
 
 ### Parameters
 
--   `element` **type** The element on which the tool resides.
+-   `element` **type** The element on which the Tool resides.
 
 ## defaultStrategy
 
@@ -953,7 +961,7 @@ Minimal strategy will position a circle and use the center of the circle to calc
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -975,7 +983,7 @@ Create the measurement data for this tool with the end handle activated
 
 ## createNewMeasurement
 
-Create the measurement data for this tool
+Create the measurement data for this Tool
 
 ### Parameters
 
@@ -1023,8 +1031,8 @@ calculated.
 
 ## addNewMeasurement
 
-Event handler for called by the mouseDownActivate event, if tool is active and
-the event is not caught by mouseDownCallback.
+Event handler for called by the `mouseDownActivate` event, if Tool is `Active` and
+the event is not caught by `mouseDownCallback`.
 
 ### Parameters
 
@@ -1034,7 +1042,7 @@ the event is not caught by mouseDownCallback.
 ## preMouseDownCallback
 
 Active mouse down callback that takes priority if the user is attempting
-to insert or delete a handle with ctrl + click.
+to insert or delete a handle with `ctrl + click`.
 
 ### Parameters
 
@@ -1052,7 +1060,7 @@ Custom callback for when a handle is selected.
 
 ## \_drawingMouseMoveCallback
 
-Event handler for MOUSE_MOVE during drawing event loop.
+Event handler for `MOUSE_MOVE` during drawing event loop.
 
 ### Parameters
 
@@ -1060,7 +1068,7 @@ Event handler for MOUSE_MOVE during drawing event loop.
 
 ## \_drawingMouseDownCallback
 
-Event handler for MOUSE_DOWN during drawing event loop.
+Event handler for `MOUSE_DOWN` during drawing event loop.
 
 ### Parameters
 
@@ -1068,7 +1076,7 @@ Event handler for MOUSE_DOWN during drawing event loop.
 
 ## \_editMouseDragCallback
 
-Event handler for MOUSE_DRAG during handle drag event loop.
+Event handler for `MOUSE_DRAG` during handle drag event loop.
 
 ### Parameters
 
@@ -1076,7 +1084,7 @@ Event handler for MOUSE_DRAG during handle drag event loop.
 
 ## \_editMouseUpCallback
 
-Event handler for MOUSE_UP during handle drag event loop.
+Event handler for `MOUSE_UP` during handle drag event loop.
 
 ### Parameters
 
@@ -1084,27 +1092,27 @@ Event handler for MOUSE_UP during handle drag event loop.
 
 ## \_dropHandle
 
-Places a handle of the freehand tool if the new location is valid.
+Places a handle of the freehand Tool if the new location is valid.
 If the new location is invalid the handle snaps back to its previous position.
 
 ### Parameters
 
 -   `eventData` **[Object][379]** Data object associated with the event.
--   `toolState` **[Object][379]** The data associated with the freehand tool.
+-   `toolState` **[Object][379]** The data associated with the freehand Tool.
 
 ## \_checkHandlesPolygonMode
 
-Returns true if the proposed location of a new handle is invalid (in polygon mode).
+Returns `true` if the proposed location of a new handle is invalid (in polygon mode).
 
 ### Parameters
 
--   `data` **[Object][379]** data object associated with the tool.
+-   `data` **[Object][379]** data object associated with the Tool.
 
 Returns **[Boolean][381]** 
 
 ## insertOrDelete
 
-Inserts or deletes a point from a freehand tool.
+Inserts or deletes a point from a freehand Tool.
 
 ### Parameters
 
@@ -1114,7 +1122,7 @@ Inserts or deletes a point from a freehand tool.
 
 ## deletePoint
 
-Deletes a point from a freehand tool.
+Deletes a point from a freehand Tool.
 
 ### Parameters
 
@@ -1123,7 +1131,7 @@ Deletes a point from a freehand tool.
 
 ## insertPoint
 
-Inserts a new point into a freehand tool.
+Inserts a new point into a freehand Tool.
 
 ### Parameters
 
@@ -1132,7 +1140,7 @@ Inserts a new point into a freehand tool.
 
 ## getInsertionIndex
 
-Gets the handle index of a tool in which to insert the new point.
+Gets the handle index of a Tool in which to insert the new point.
 
 ### Parameters
 
@@ -1154,33 +1162,33 @@ Returns **[ClickedLineData][383]**
 
 ## findTool
 
-Looks for tools near the mouse cursor.
+Looks for Tools near the mouse cursor.
 
 Returns **[ClickedLineData][383]** 
 
 ## \_nearestHandleToPointAllTools
 
-Finds the nearest handle to the mouse cursor for all tools.
+Finds the nearest handle to the mouse cursor for all Tools.
 
 Returns **[Object][379]** closestHandle - The handle closest to the point.
 
 ## \_nearestHandleToPoint
 
-Finds the nearest handle to the mouse cursor for a specific tool.
+Finds the nearest handle to the mouse cursor for a specific Tool.
 
 ### Parameters
 
--   `toolIndex` **[Number][382]** The index of the particular freehand tool.
+-   `toolIndex` **[Number][382]** The index of the particular freehand Tool.
 
 Returns **[Object][379]** An object containing information about the closest handle.
 
 ## \_getCloseLinesInTool
 
-Finds all the lines close to the mouse point for a particular tool.
+Finds all the lines close to the mouse point for a particular Tool.
 
 ### Parameters
 
--   `toolIndex` **[Number][382]** The index of the particular freehand tool.
+-   `toolIndex` **[Number][382]** The index of the particular freehand Tool.
 
 Returns **[Object][379]** An array of lines close to the mouse point.
 
@@ -1193,18 +1201,18 @@ Finds the line the user clicked on from an array of close lines.
 -   `toolIndex` **[Number][382]** The index of the particular freehand tool.
 -   `closeLines` **[Object][379]** An array of lines close to the mouse point.
 
-Returns **([ClickedLineData][383] | null)** An instance of ClickedLineData containing information about the line, or null if no line is correct.
+Returns **([ClickedLineData][383] | null)** An instance of `ClickedLineData` containing information about the line, or `null` if no line is correct.
 
 ## \_pointProjectsToLineSegment
 
-Returns true if the mouse point projects onto the line segment.
+Returns `true` if the mouse point projects onto the line segment.
 
 ### Parameters
 
--   `toolIndex` **[Number][382]** The index of the particular freehand tool.
+-   `toolIndex` **[Number][382]** The index of the particular freehand Tool.
 -   `handleIndexArray` **[Object][379]** An array of indicies corresponding to the line segment.
 
-Returns **[Boolean][381]** True if the mouse point projects onto the line segment
+Returns **[Boolean][381]** `true` if the mouse point projects onto the line segment
 
 ## \_getLineOriginToMouseAsVector
 
@@ -1237,7 +1245,7 @@ Returns the canvas positions from the handle's pixel positions.
 -   `handle2` **[FreehandHandleData][384]** The second handle.
 -   `element` **[Object][379]** The element on which the handles reside.
 
-Returns **[Object][379]** An array contsining the handle positions in canvas coordinates.
+Returns **[Object][379]** An array consisting of the handle positions in canvas coordinates.
 
 ## getLineAsVector
 
@@ -1251,7 +1259,7 @@ Returns **[Object][379]** An array containing the x and y components of the vect
 
 ## getNextHandleIndex
 
-Gets the next handl index from a cyclical array of points.
+Gets the next handle index from a cyclical array of points.
 
 ### Parameters
 
@@ -1266,7 +1274,7 @@ Type: [Object][379]
 
 ### Properties
 
--   `toolIndex` **[Number][382]** ID of the tool that the line corresponds to.
+-   `toolIndex` **[Number][382]** ID of the Tool that the line corresponds to.
 -   `handleIndexArray` **[Object][379]** An array of the handle indicies that correspond to the line segment.
 
 ## freehandArea
@@ -1275,7 +1283,7 @@ Calculates the area of a freehand tool polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the Tool.
 -   `scaling` **[Object][379]** Area scaling of image.
 
 Returns **[Number][382]** The area of the polygon.
@@ -1310,7 +1318,7 @@ Adds the pixel to the workingSum if it is within the polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][379]** Data object associated with the tool.
+-   `dataHandles` **[Object][379]** Data object associated with the Tool.
 -   `point` **[Object][379]** The pixel coordinates.
 -   `workingSum` **[Object][379]** The working sum, squared sum and pixel count.
 -   `pixelValue` **[Object][379]** The pixel value.
@@ -1319,9 +1327,9 @@ Adds the pixel to the workingSum if it is within the polygon.
 
 Calculates if "point" is inside the polygon defined by dataHandles by counting
 the number of times a ray originating from "point" crosses the edges of the
-polygon. Odd === inside, Even === outside. The bool "inROI" flips every time
+polygon. `Odd === inside`, `Even === outside`. The bool "inROI" flips every time
 the ray originating from location and pointing to the right crosses a
-linesegment.
+line segment.
 
 ### Parameters
 
@@ -1330,7 +1338,7 @@ linesegment.
 
 ## isEnclosedY
 
-Returns true if the y-position yp is enclosed within y-positions y1 and y2.
+Returns `true` if the y-position `yp` is enclosed within y-positions `y1` and `y2`.
 
 ### Parameters
 
@@ -1338,11 +1346,11 @@ Returns true if the y-position yp is enclosed within y-positions y1 and y2.
 -   `y1` **[Number][382]** The y position of point 1.
 -   `y2` **[Number][382]** The y position of point 2.
 
-Returns **[Boolean][381]** True if the y-position yp is enclosed within y-positions y1 and y2.
+Returns **[Boolean][381]** `true` if the y-position `yp` is enclosed within y-positions `y1` and `y2`.
 
 ## isLineRightOfPoint
 
-Returns true if the line segment is to the right of the point.
+Returns `true` if the line segment is to the right of the point.
 
 ### Parameters
 
@@ -1350,7 +1358,7 @@ Returns true if the line segment is to the right of the point.
 -   `lp1` **[Object][379]** The first point of the line segment.
 -   `lp2` **[Object][379]** The second point of the line segment.
 
-Returns **[Boolean][381]** True if the line is to the right of the point.
+Returns **[Boolean][381]** `true` if the line is to the right of the point.
 
 ## lineSegmentAtPoint
 
@@ -1366,7 +1374,7 @@ Returns **[Object][379]** An object containing the y value as well as the gradie
 
 ## rayFromPointCrosssesLine
 
-Returns true if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+Returns `true` if a rightwards ray originating from the point crosses the line defined by `handleI` and `handleJ`.
 
 ### Parameters
 
@@ -1374,7 +1382,7 @@ Returns true if a rightwards ray originating from the point crosses the line def
 -   `handleI` **[Object][379]** The first handle of the line segment.
 -   `handleJ` **[Object][379]** The second handle of the line segment.
 
-Returns **[Boolean][381]** True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+Returns **[Boolean][381]** `true` if a rightwards ray originating from the point crosses the line defined by `handleI` and `handleJ`.
 
 ## newHandle
 
@@ -1383,13 +1391,13 @@ Determines whether a new handle causes an intersection of the lines of the polyg
 ### Parameters
 
 -   `candidateHandle` **[Object][379]** The new handle to check.
--   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the Tool.
 
 Returns **[Boolean][381]** Whether the new line intersects with any other lines of the polygon.
 
 ## newHandle
 
-Orientation algoritm to determine if two lines cross.
+Orientation algorithm to determine if two lines cross.
 Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
 
 ### Parameters
@@ -1403,28 +1411,28 @@ Checks if the last line of a polygon will intersect the other lines of the polgy
 
 ### Parameters
 
--   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the Tool.
 
 Returns **[Boolean][381]** Whether the last line intersects with any other lines of the polygon.
 
 ## modify
 
-Checks whether the modification of a handle's position causes intersection of the lines of the polygon
+Checks whether the modification of a handle's position causes intersection of the lines of the polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the Tool.
 -   `modifiedHandleId` **[Number][382]** The id of the handle being modified.
 
 Returns **[Boolean][381]** Whether the modfication causes any intersections.
 
 ## doesIntersectOtherLines
 
-Checks whether the line (p1,q1) intersects any of the other lines in the polygon.
+Checks whether the line `(p1,q1)` intersects any of the other lines in the polygon.
 
 ### Parameters
 
--   `dataHandles` **[Object][379]** data object associated with the tool.
+-   `dataHandles` **[Object][379]** data object associated with the Tool.
 -   `p1` **[Object][379]** Coordinates of the start of the line.
 -   `q1` **[Object][379]** Coordinates of the end of the line.
 -   `ignoredHandleIds` **[Object][379]** Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
@@ -1433,7 +1441,7 @@ Returns **[Boolean][381]** Whether the line intersects any of the other lines in
 
 ## doesIntersect
 
-Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation algorithm.
+Checks whether the line `(p1,q1)` intersects the line `(p2,q2)` via an orientation algorithm.
 
 ### Parameters
 
@@ -1442,7 +1450,7 @@ Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation a
 -   `p2`  
 -   `q2`  
 
-Returns **[Boolean][381]** Whether lines (p1,q1) and (p2,q2) intersect.
+Returns **[Boolean][381]** Whether lines `(p1,q1)` and `(p2,q2)` intersect.
 
 ## orientation
 
@@ -1458,7 +1466,7 @@ Returns **[Number][382]** 0: Colinear, 1: Clockwise, 2: Anticlockwise
 
 ## onSegment
 
-Checks if point q lines on the segment (p,r).
+Checks if point `q` lies on the segment `(p,r)`.
 
 ### Parameters
 
@@ -1466,7 +1474,7 @@ Checks if point q lines on the segment (p,r).
 -   `q` **[Object][379]** Point q.
 -   `r` **[Object][379]** Point r.
 
-Returns **[Boolean][381]** If q lies on line segment (p,r).
+Returns **[Boolean][381]** If `q` lies on line segment `(p,r)`.
 
 ## FreehandHandleData
 
@@ -1482,7 +1490,7 @@ Type: [Object][379]
 
 ## renderToolData
 
-Event handler for IMAGE_RENDERED event.
+Event handler for `IMAGE_RENDERED` event.
 
 ### Parameters
 
@@ -1490,7 +1498,7 @@ Event handler for IMAGE_RENDERED event.
 
 ## preMouseDownCallback
 
-Event handler for MOUSE_DOWN.
+Event handler for `MOUSE_DOWN`.
 
 ### Parameters
 
@@ -1498,7 +1506,7 @@ Event handler for MOUSE_DOWN.
 
 ## activeMouseDragCallback
 
-Event handler for MOUSE_DRAG during the active loop.
+Event handler for `MOUSE_DRAG` during the active loop.
 
 ### Parameters
 
@@ -1506,7 +1514,7 @@ Event handler for MOUSE_DRAG during the active loop.
 
 ## activeMouseUpCallback
 
-Event handler for MOUSE_UP during the active loop.
+Event handler for `MOUSE_UP` during the active loop.
 
 ### Parameters
 
@@ -1514,7 +1522,7 @@ Event handler for MOUSE_UP during the active loop.
 
 ## newImageCallback
 
-Event handler for NEW_IMAGE event.
+Event handler for `NEW_IMAGE` event.
 
 ### Parameters
 
@@ -1522,7 +1530,7 @@ Event handler for NEW_IMAGE event.
 
 ## enabledCallback
 
-Event handler for switching mode to enabled.
+Event handler for switching mode to `Enabled`.
 
 ### Parameters
 
@@ -1530,7 +1538,7 @@ Event handler for switching mode to enabled.
 
 ## passiveCallback
 
-Event handler for switching mode to passive.
+Event handler for switching mode to `Passive`.
 
 ### Parameters
 
@@ -1538,7 +1546,7 @@ Event handler for switching mode to passive.
 
 ## disabledCallback
 
-Event handler for switching mode to disabled.
+Event handler for switching mode to `Disabled`.
 
 ### Parameters
 
@@ -1546,13 +1554,13 @@ Event handler for switching mode to disabled.
 
 ## getDefaultFreehandSculpterMouseToolConfiguration
 
-Returns the default freehandSculpterMouseTool configuration.
+Returns the default `freehandSculpterMouseTool` configuration.
 
 Returns **[Object][379]** The default configuration object.
 
 ## changeTextCallback
 
-This function is a callback to be overwriten in order to provide the wante feature
+This function is a callback to be overwritten in order to provide the wanted feature
 modal, overlay, popup or any kind of interaction with the user to be able to update
 the text marker label.
 
@@ -1564,7 +1572,7 @@ the text marker label.
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -1586,7 +1594,7 @@ Create the measurement data for this tool with the end handle activated
 
 ## \_drawZoomedElement
 
-Creates a cornerstone enabled element, and renders the target image at the
+Creates a Cornerstone `Enabled` element, and renders the target image at the
 desired magnification level using it.
 
 ### Parameters
@@ -1595,7 +1603,7 @@ desired magnification level using it.
 
 ## \_removeZoomElement
 
-Removes the canvas and associated enabled element that's
+Removes the canvas and associated `Enabled` element that's
 used to render the zoomed image.
 
 ## \_createMagnificationCanvas
@@ -1615,7 +1623,7 @@ It will be displayed and clipped inside the magnifying glass frame/element.
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -1637,7 +1645,7 @@ Create the measurement data for this tool with the end handle activated
 
 ## createNewMeasurement
 
-Create the measurement data for this tool with the end handle activated
+Create the measurement data for this Tool with the end handle activated.
 
 ### Parameters
 
@@ -1667,7 +1675,7 @@ Create the measurement data for this tool with the end handle activated
 
 ## computeScaleBounds
 
-Computes the max bound for scales on the image
+Computes the max bound for scales on the image.
 
 ### Parameters
 
@@ -1685,10 +1693,10 @@ Computes the max bound for scales on the image
 
 ## basicLevelingStrategy
 
-Here we normalize the ww/wc adjustments so the same number of on screen pixels
-adjusts the same percentage of the dynamic range of the image.  This is needed to
-provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
-image will feel the same as a 16 bit image would)
+Here we normalize the ww/wc adjustments so the same number of on-screen pixels
+adjusts the same percentage of the dynamic range of the image. This is needed to
+provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8-bit
+image will feel the same as a 16 bit-image would)
 
 ### Parameters
 
@@ -1699,17 +1707,17 @@ image will feel the same as a 16 bit image would)
 
 ## \_startOutliningRegion
 
-Sets the start handle point and claims the eventDispatcher event
+Sets the start handle point and claims the `eventDispatcher` event.
 
 ### Parameters
 
 -   `evt` **any** 
 
-Returns **[Boolean][381]** True
+Returns **[Boolean][381]** `true`
 
 ## \_setHandlesAndUpdate
 
-This function will update the handles and updateImage to force re-draw
+This function will update the handles and updateImage to force re-draw.
 
 ### Parameters
 
@@ -1717,7 +1725,7 @@ This function will update the handles and updateImage to force re-draw
 
 ## \_applyStrategy
 
-Event handler for MOUSE_UP during handle drag event loop.
+Event handler for `MOUSE_UP` during handle drag event loop.
 
 ### Parameters
 
@@ -1725,7 +1733,7 @@ Event handler for MOUSE_UP during handle drag event loop.
 
 ## \_resetHandles
 
-Sets the start and end handle points to empty objects
+Sets the start and end handle points to empty objects.
 
 ## isEmptyObject
 
@@ -1735,7 +1743,7 @@ Sets the start and end handle points to empty objects
 
 ## applyWWWCRegion
 
-Calculates the minimum and maximum value in the given pixel array
+Calculates the minimum and maximum value in the given pixel array.
 
 ### Parameters
 
@@ -1744,7 +1752,7 @@ Calculates the minimum and maximum value in the given pixel array
 
 ## calculateMinMaxMean
 
-Calculates the minimum, maximum, and mean value in the given pixel array
+Calculates the minimum, maximum, and mean value in the given pixel array.
 
 ### Parameters
 
@@ -1766,7 +1774,7 @@ Calculates the minimum, maximum, and mean value in the given pixel array
 
 ## convertToVector3
 
-Convert an Array to a cornerstoneMath.Vector3
+Convert an Array to a `cornerstoneMath.Vector3`.
 
 ### Parameters
 
@@ -1800,7 +1808,7 @@ Paints the data to the canvas.
 
 ## mouseDragCallback
 
-Event handler for MOUSE_DRAG event.
+Event handler for `MOUSE_DRAG` event.
 
 ### Parameters
 
@@ -1808,7 +1816,7 @@ Event handler for MOUSE_DRAG event.
 
 ## preMouseDownCallback
 
-Event handler for MOUSE_DOWN event.
+Event handler for `MOUSE_DOWN` event.
 
 ### Parameters
 
@@ -1816,7 +1824,7 @@ Event handler for MOUSE_DOWN event.
 
 ## \_startPainting
 
-Initialise painting with baseBrushTool
+Initialise painting with `baseBrushTool`
 
 ### Parameters
 
@@ -1824,7 +1832,7 @@ Initialise painting with baseBrushTool
 
 ## mouseMoveCallback
 
-Event handler for MOUSE_MOVE event.
+Event handler for `MOUSE_MOVE` event.
 
 ### Parameters
 
@@ -1832,7 +1840,7 @@ Event handler for MOUSE_MOVE event.
 
 ## passiveCallback
 
-Event handler for switching mode to passive;
+Event handler for switching mode to `Passive`.
 
 ### Parameters
 
@@ -1840,7 +1848,7 @@ Event handler for switching mode to passive;
 
 ## renderToolData
 
-Used to redraw the tool's annotation data per render.
+Used to redraw the Tool's annotation data per render.
 
 ### Parameters
 
@@ -1848,7 +1856,7 @@ Used to redraw the tool's annotation data per render.
 
 ## \_getBrushColor
 
-Get the draw color (segmentation) of the tool.
+Get the draw color (segmentation) of the Tool.
 
 ### Parameters
 
@@ -1856,7 +1864,7 @@ Get the draw color (segmentation) of the tool.
 
 ## \_drawingMouseUpCallback
 
-Event handler for MOUSE_UP during the drawing event loop.
+Event handler for `MOUSE_UP` during the drawing event loop.
 
 ### Parameters
 
@@ -1888,11 +1896,11 @@ Switches to the previous segmentation color.
 
 ## increaseBrushSize
 
-Increases the brush size
+Increases the brush size.
 
 ## decreaseBrushSize
 
-Decreases the brush size
+Decreases the brush size.
 
 ## showSegmentationOnElement
 
@@ -1927,7 +1935,7 @@ Returns **[Number][382]** The number of colors in the color map.
 
 ## getReferencedToolDataName
 
-Returns the toolData type assoicated with this type of tool.
+Returns the `toolData` type assoicated with this type of Tool.
 
 Returns **[String][377]** The number of colors in the color map.
 
@@ -1936,7 +1944,7 @@ Returns **[String][377]** The number of colors in the color map.
 Sets the canvas context transformation matrix so it is scaled to show text
 more cleanly even if the image is scaled up.  See
 [https://github.com/cornerstonejs/cornerstoneTools/wiki/DrawingText][385]
-for more information
+for more information.
 
 ### Parameters
 
@@ -1948,13 +1956,13 @@ Returns **{fontSize: [number][382], lineHeight: [number][382], fontScale: [numbe
 
 ## makeUnselectable
 
-A helper function to make an element (and its content) being non selectable.
+A helper function to make an element (and its content) unselectable.
 
 ### Parameters
 
 -   `element`  {HTMLElement} The element to make unselectable
--   `ignorePointerEvents`  {Boolean} true to make this element also ignore events
-    (e.g. mouse click), false otherwise
+-   `ignorePointerEvents`  {Boolean} `true` to make this element also ignore events
+    (e.g. mouse click), `false` otherwise
 
 Returns **void** 
 
@@ -1962,8 +1970,7 @@ Returns **void**
 
 **Meta**
 
--   **deprecated**: Use drawing.js:drawEllipse()
-
+-   **deprecated**: Use `drawing.js:drawEllipse()`
 
 ## drawCircle
 
@@ -1976,8 +1983,7 @@ Returns **void**
 
 **Meta**
 
--   **deprecated**: Use drawing.js:drawCircle()
-
+-   **deprecated**: Use `drawing.js:drawCircle()`
 
 ## drawCircle
 
@@ -1996,15 +2002,15 @@ Draw a circle with given `center` and `radius`.
 
 ## triggerEvent
 
-Trigger a CustomEvent
+Trigger a `CustomEvent`.
 
 ### Parameters
 
--   `el` **EventTarget** The element or EventTarget to trigger the event upon
+-   `el` **EventTarget** The element or `EventTarget` to trigger the event upon
 -   `type` **[String][377]** The event type name
--   `detail` **([Object][379] | null)** =null The event data to be sent (optional, default `null`)
+-   `detail` **([Object][379] | null)** =`null` The event data to be sent (optional, default `null`)
 
-Returns **[Boolean][381]** The return value is false if at least one event listener called preventDefault(). Otherwise it returns true.
+Returns **[Boolean][381]** The return value is `false` if at least one event listener called `preventDefault()`. Otherwise it returns `true`.
 
 ## getPlayClipTimeouts
 
@@ -2030,7 +2036,7 @@ Returns **any** void
 
 ## triggerStopEvent
 
-[private] Trigger playClip tool stop event.
+[private] Trigger playClip Tool stop event.
 
 ### Parameters
 
@@ -2040,9 +2046,9 @@ Returns **any** void
 
 ## playClip
 
-Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
-optional and defaults to 30 if not specified.  A negative framesPerSecond will play the clip in reverse.
-The element must be a stack of images
+Starts playing a clip or adjusts the frame rate of an already playing clip. `framesPerSecond` is
+optional and defaults to 30 if not specified. A negative `framesPerSecond` will play the clip in reverse.
+The element must be a stack of images.
 
 ### Parameters
 
@@ -2061,7 +2067,7 @@ Stops an already playing clip.
 
 ## getToolOptions
 
-Retrieve the options object associated with a particular toolType and element
+Retrieve the options object associated with a particular `toolType` and element.
 
 ### Parameters
 
@@ -2072,7 +2078,7 @@ Returns **[Object][379]** Target options object (empty if not yet set)
 
 ## clearToolOptions
 
-Clear the options object associated with a particular toolType and element
+Clear the options object associated with a particular `toolType` and element.
 
 ### Parameters
 
@@ -2083,7 +2089,7 @@ Returns **void**
 
 ## clearToolOptionsByToolType
 
-Clear the options objects associated with a particular toolType
+Clear the options objects associated with a particular `toolType`.
 
 ### Parameters
 
@@ -2093,7 +2099,7 @@ Returns **void**
 
 ## clearToolOptionsByElement
 
-Clear the options objects associated with a particular element
+Clear the options objects associated with a particular element.
 
 ### Parameters
 
@@ -2153,9 +2159,9 @@ This function manages the beginPath/stroke pattern for working with
 -   `context` **[CanvasRenderingContext2D][386]** 
 -   `options` **[Object][379]** 
     -   `options.color` **[StrokeStyle][399]**  The stroke style of the path.
-    -   `options.lineWidth` **[Number][382]**  The width of lines in the path. If null, no line width is set.
+    -   `options.lineWidth` **[Number][382]**  The width of lines in the path. If `null`, no line width is set.
             If undefined then toolStyle.getToolWidth() is set.
-    -   `options.fillStyle` **[FillStyle][400]** The style to fill the path with. If undefined then no filling is done.
+    -   `options.fillStyle` **[FillStyle][400]** The style to fill the path with. If `undefined` then no filling is done.
     -   `options.lineDash` **[Array][380]&lt;[Number][382]>** The [dash pattern][401]
             to use on the lines.
 -   `fn` **[ContextFn][397]** A drawing function to execute with the provided stroke pattern.
@@ -2186,7 +2192,7 @@ Draw a line between `start` and `end`.
 -   `end` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
 -   `options` **[Object][379]** See [path][359]
 -   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
-        system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+        system of the points passed in to the function. If "pixel" then `cornerstone.pixelToCanvas`
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
 ## drawLines
@@ -2201,7 +2207,7 @@ Draw multiple lines.
         Each point is `{ x, y }` in either pixel or canvas coordinates.
 -   `options` **[Object][379]** See [path][359]
 -   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
-        system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+        system of the points passed in to the function. If "pixel" then `cornerstone.pixelToCanvas`
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
 ## drawJoinedLines
@@ -2216,7 +2222,7 @@ Draw a series of joined lines, starting at `start` and then going to each point 
 -   `points` **[Array][380]&lt;[Object][379]>** `[{ x, y }]` An array of points in either pixel or canvas coordinates.
 -   `options` **[Object][379]** See [path][359]
 -   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
-        system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+        system of the points passed in to the function. If "pixel" then `cornerstone.pixelToCanvas`
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
 ## drawEllipse
@@ -2231,7 +2237,7 @@ Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
 -   `corner2` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
 -   `options` **[Object][379]** See [path][359]
 -   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
-        system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+        system of the points passed in to the function. If "pixel" then `cornerstone.pixelToCanvas`
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
 ## drawRect
@@ -2246,7 +2252,7 @@ Draw a rectangle defined by `corner1` and `corner2`.
 -   `corner2` **[Object][379]** `{ x, y }` in either pixel or canvas coordinates.
 -   `options` **[Object][379]** See [path][359]
 -   `coordSystem` **[String][377]** Can be "pixel" (default) or "canvas". The coordinate
-        system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
+        system of the points passed in to the function. If "pixel" then `cornerstone.pixelToCanvas`
         is used to transform the points from pixel to canvas coordinates. (optional, default `'pixel'`)
 
 ## fillBox

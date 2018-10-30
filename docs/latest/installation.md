@@ -4,14 +4,14 @@
 
 ### Compatibility Note
 
-CornerstoneTools.js does not support IE8 and below, because it uses ECMAScript 5 features that are un-shimmable in IE8. However it supports all [ECMAScript 5 compliant browsers](https://caniuse.com/#feat=es5).
+CornerstoneTools.js does not support IE8 and below because it uses ECMAScript 5 features that are un-shimmable in IE8. However it supports all [ECMAScript 5 compliant browsers](https://caniuse.com/#feat=es5).
 
 ### Release Notes
 
 We're a small team, so our docs may not always be 100% accurate. Please feel free to create an issue and/or PR a change to update our docs.
 
-- Latest stable version: `@latest` 2.5.17
-- Latest beta version: `@next` 3.0.0-b.516
+- Latest stable version: `@latest` 2.3.9
+- Latest beta version: `@next` 3.0.0-b.1003
 
 You can find the latest versions for each tag by clicking the `versions` tab for [the cornerstone-tools npm listing](https://www.npmjs.com/package/cornerstone-tools)
 
@@ -66,4 +66,20 @@ In the `dist/` [directory of the NPM package](https://cdn.jsdelivr.net/npm/corne
 
 ## Dev Build
 
-_This section needs content..._
+1. Update dependencies (after each pull):
+
+```bash
+npm install
+```
+
+2. Running the build:
+
+```bash
+npm start
+```
+
+3. Run the local development server:
+
+```bash
+npm run start:dev
+```

@@ -2,7 +2,7 @@
 
 Registration is abstracted to a simple top-level `register` function, taking `type`, `name` and `item` as arguments e.g.:
 
-```JS
+```js
 cornerstoneTools.register('module', 'helloWorldModule', myModule);
 cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
 ```
@@ -13,8 +13,7 @@ By default, trying to register an item that would occupy and already registered 
 cornerstoneTools.register('mixin', 'evenMoreHelloWorld', mySuperiorMixin, true);
 ```
 
-If a library has lots of items it would like to register at once, it can pack its items into an `array` such as:
-
+If a library has lots of items it would like to register at once, it can pack its items into an array such as:
 
 ```js
 const lotsOfItems = [

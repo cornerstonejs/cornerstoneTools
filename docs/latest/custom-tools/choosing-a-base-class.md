@@ -2,14 +2,14 @@
 
 There are 3 base classes to choose from when building a tool:
 
-### BaseTool
+### [BaseTool](../tool-types/index.md#base-tool)
 
-The `BaseTool` is the fundamental base class, with just the functionality required to function within the `cornerstoneTools` framework. This is the base class to choose if the tool you wish to create won't have its own annotation data (.e.g `MagnifyTool`), or only interacts with a different tool's data (e.g. `FreehandMouseSculpterTool`). The other two base classes `BaseAnnotationTool` and `BaseBrushTool` both inherit from `BaseTool`.
+The `BaseTool` is the fundamental base class, with just the functionality required to function within the Cornerstone Tools framework. This is the base class to choose if the Tool you wish to create won't have its own annotation data (.e.g `MagnifyTool`), or only interacts with a different Tool's data (e.g. `FreehandMouseSculpterTool`). The other two base classes `BaseAnnotationTool` and `BaseBrushTool` both inherit from `BaseTool`.
 
-### BaseAnnotationTool
+### [BaseAnnotationTool](../tool-types/index.md#base-annotation-tool)
 
-The `BaseAnnotationTool` inherits from `BaseTool`, and is intended for any tool that will create/modify and display its own annotation data on the canvas (e.g. `LengthTool`).
+The `BaseAnnotationTool` inherits from `BaseTool`, and is intended for any Tool that will create/modify and display its own annotation data on the canvas (e.g. `LengthTool`).
 
-### BaseBrushTool
+### [BaseBrushTool](../tool-types/index.md#base-brush-tool)
 
-The `BaseBrushTool` inherits from `BaseTool` and is intended specifically for tools that want to create/modify/delete segmentation data (e.g. `BrushTool`). Potential subclasses could include adaptive brush tools, or region growing tools that require a seed area to be drawn.
+The `BaseBrushTool` inherits from `BaseTool` and is intended specifically for Tools that want to create/modify/delete segmentation data (e.g. `BrushTool`). Potential subclasses could include adaptive brush Tools, or region growing Tools that require a seed area to be drawn.

@@ -9,5 +9,5 @@ const evenMoreHelloWorldMixin = cornerstoneTools.import('mixins/evenMoreHelloWor
 And store modules may be retrieved from the modules object of cornerstoneTools:
 
 ```js
-const helloWorldModule = cornerstoneTools.store.modules;
+const { helloWorldModule } = cornerstoneTools.store.modules;
 ```
