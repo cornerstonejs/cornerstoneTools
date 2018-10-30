@@ -63,7 +63,7 @@ const _removeAllToolsForElement = function (enabledElement) {
   // Note: We may want to `setToolDisabled` before removing from store
   // Or take other action to remove any lingering eventListeners/state
   store.state.tools = store.state.tools.filter(
-    (tool) => tool.element === enabledElement
+    (tool) => tool.element !== enabledElement
   );
 };
 

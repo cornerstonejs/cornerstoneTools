@@ -32,12 +32,32 @@ export default function (configuration) {
  * @private @method
  */
 function _addCornerstoneEventListeners () {
+  // Clear any listeners that may already be set
+  _removeCornerstoneEventListeners();
+
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
   const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
 
   cornerstone.events.addEventListener(elementEnabledEvent, addEnabledElement);
   cornerstone.events.addEventListener(
+    elementDisabledEvent,
+    removeEnabledElement
+  );
+}
+
+/**
+ * Removes event listeners for the Cornerstone#ElementDisabled and
+ * Cornerstone#ElementEnabled events.
+ * @private @method
+ */
+function _removeCornerstoneEventListeners () {
+  const cornerstone = external.cornerstone;
+  const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
+  const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
+
+  cornerstone.events.removeEventListener(elementEnabledEvent, addEnabledElement);
+  cornerstone.events.removeEventListener(
     elementDisabledEvent,
     removeEnabledElement
   );
