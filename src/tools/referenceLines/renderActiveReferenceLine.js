@@ -1,11 +1,8 @@
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import calculateReferenceLine from './calculateReferenceLine.js';
-import toolColors from '../stateManagement/toolColors.js';
-import convertToVector3 from '../util/convertToVector3.js';
-import { draw, drawLine } from '../drawing/index.js';
-
-// Renders the active reference line
-
+import toolColors from './../../stateManagement/toolColors.js';
+import convertToVector3 from './../../util/convertToVector3.js';
+import { draw, drawLine } from './../../drawing/index.js';
 
 /**
  * Renders the active reference line.
@@ -32,13 +29,13 @@ export default function (context, eventData, targetElement, referenceElement) {
 
   // Make sure the target and reference actually have image plane metadata
   if (!targetImagePlane ||
-        !referenceImagePlane ||
-        !targetImagePlane.rowCosines ||
-        !targetImagePlane.columnCosines ||
-        !targetImagePlane.imagePositionPatient ||
-        !referenceImagePlane.rowCosines ||
-        !referenceImagePlane.columnCosines ||
-        !referenceImagePlane.imagePositionPatient) {
+		!referenceImagePlane ||
+		!targetImagePlane.rowCosines ||
+		!targetImagePlane.columnCosines ||
+		!targetImagePlane.imagePositionPatient ||
+		!referenceImagePlane.rowCosines ||
+		!referenceImagePlane.columnCosines ||
+		!referenceImagePlane.imagePositionPatient) {
     return;
   }
 

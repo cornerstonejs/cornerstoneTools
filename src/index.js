@@ -20,6 +20,7 @@ export { default as ProbeTool } from './tools/ProbeTool.js';
 export { default as PanTool } from './tools/PanTool.js';
 export { default as PanMultiTouchTool } from './tools/PanMultiTouchTool.js';
 export { default as RectangleRoiTool } from './tools/RectangleRoiTool.js';
+export { default as ReferenceLinesTool } from './tools/ReferenceLinesTool.js';
 export { default as RotateTool } from './tools/RotateTool.js';
 export { default as RotateTouchTool } from './tools/RotateTouchTool.js';
 export { default as ScaleOverlayTool } from './tools/ScaleOverlayTool.js';
@@ -88,7 +89,6 @@ export {
 
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';
-export { default as referenceLines } from './referenceLines/index.js';
 
 // ~~~~~~ CANVAS EXPORT  ~~~~~ //
 export { default as SaveAs } from './util/SaveAs.js';
