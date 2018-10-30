@@ -5,6 +5,7 @@ import BaseTool from './../base/BaseTool.js';
 import { getNewContext } from '../drawing/index.js';
 import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';
+import { waitForEnabledElementImageToLoad } from './../util/wait.js';
 
 /**
  * When enabled, this tool will display references lines for each source
@@ -35,8 +36,15 @@ export default class ReferenceLinesTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  enabledCallback (element, { synchronizationContext } = {}) {
+  async enabledCallback (element, { synchronizationContext } = {}) {
     const renderer = this.configuration.renderer;
+    const enabledElement = await waitForEnabledElementImageToLoad(element);
+
+    if (!enabledElement) {
+      // TODO: Unable to add tool state, image never loaded.
+      // Should we `setToolDisabledForElement` here?
+      return;
+    }
 
     addToolState(element, this.name, {
       synchronizationContext,
