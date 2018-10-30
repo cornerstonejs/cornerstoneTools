@@ -1,10 +1,7 @@
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import BaseTool from '../base/BaseTool.js';
-import {
-  getToolState,
-  removeToolState
-} from '../stateManagement/toolState.js';
+import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
 /**
@@ -14,11 +11,16 @@ import { state } from '../store/index.js';
  * @extends BaseTool
  */
 export default class EraserTool extends BaseTool {
-  constructor (name = 'Eraser') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Eraser',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
 
     this.preMouseDownCallback = this._deleteAllNearbyTools.bind(this);
     this.preTouchStartCallback = this._deleteAllNearbyTools.bind(this);

@@ -29,6 +29,7 @@ import store from '../index.js';
  * @listens Cornerstone#ElementDisabled
  */
 export default function (elementDisabledEvt) {
+  console.log("EVENT:ELEMENT_DISABLED");
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers
@@ -62,7 +63,7 @@ const _removeAllToolsForElement = function (enabledElement) {
   // Note: We may want to `setToolDisabled` before removing from store
   // Or take other action to remove any lingering eventListeners/state
   store.state.tools = store.state.tools.filter(
-    (tool) => tool.element === enabledElement
+    (tool) => tool.element !== enabledElement
   );
 };
 
@@ -76,7 +77,9 @@ const _removeEnabledElement = function (enabledElement) {
     (element) => element === enabledElement
   );
 
-  if (foundElementIndex) {
+  if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
+  } else {
+    console.warn("unable to remove element");
   }
 };

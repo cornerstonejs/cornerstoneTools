@@ -18,9 +18,8 @@ export default class HelloWorldMouseTool extends BaseTool {
       ]
     });
 
-    // Use a module from the plugin. It should be added here
-    const {helloWorld} = cornerstoneTools.import('store/modules');
-    this._helloWorldModule = helloWorld;
+    // Use a module from the plugin. It should be first accessed in constructor.
+    this._helloWorldModule = cornerstoneTools.store.modules.helloWorld;
   }
 
   // implementation ...
@@ -29,7 +28,7 @@ export default class HelloWorldMouseTool extends BaseTool {
 
 The array of mixins to add to the Tool may be from either the core library or registered functionality. You needn't import any mixin used, the heavy lifting is performed in the `constructor` of `BaseTool`.
 
-Any other functionality imported must be done so in the constructor, to ensure it is already registered upon import (e.g. the `module` in the example above).
+Any other functionality imported must be done so in the constructor, to ensure it is already registered upon import. This includes accessing modules which might not be there when the file is loaded (e.g. the example above).
 
 The tool can then be added to a `cornerstoneTools` instance that has the required functionality registered, e.g.:
 
@@ -39,8 +38,8 @@ cornerstoneTools.register('module', 'helloWorldModule', myModule);
 cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
 
 // Initialise cornerstoneTools.
-const cTools = cornerstoneTools.init();
+cornerstoneTools.init();
 
 // Add the custom tool!
-cTools.addTool(HelloWorldMouseTool);
+cornerstoneTools.addTool(HelloWorldMouseTool);
 ```

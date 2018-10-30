@@ -1,8 +1,6 @@
 /* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
-import { getBrowserInfo } from '../util/getMaxSimultaneousRequests.js';
-import { clipToBox } from '../util/clip.js';
-import { getNewContext, fillBox } from '../drawing/index.js';
+import { getNewContext } from '../drawing/index.js';
 import BaseTool from '../base/BaseTool.js';
 
 /**
@@ -12,32 +10,27 @@ import BaseTool from '../base/BaseTool.js';
  * @extends BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor (name = 'Magnify') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2
       }
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    this.browserName = undefined;
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 
-    // Needed for Safari Canvas Hack
-    if (!this.browserName) {
-      const infoString = getBrowserInfo();
-      const info = infoString.split(' ');
-
-      this.browserName = info[0];
-    }
-
     // Mode Callbacks: (element, options)
     this.activeCallback = this._createMagnificationCanvas.bind(this);
-    this.enableCallback = this._createMagnificationCanvas.bind(this);
-    this.disableCallback = this._destroyMagnificationCanvas.bind(this);
+    this.enabledCallback = this._createMagnificationCanvas.bind(this);
+    this.disabledCallback = this._destroyMagnificationCanvas.bind(this);
 
     // Touch
     this.postTouchStartCallback = this._addMagnifyingGlass.bind(this);
@@ -93,14 +86,10 @@ export default class MagnifyTool extends BaseTool {
       return;
     }
 
-    const magnifySize = this.configuration.magnifySize;
-    const magnificationLevel = this.configuration.magnificationLevel;
-
     // The 'not' magnifyTool class here is necessary because cornerstone places
     // No classes of it's own on the canvas we want to select
     const canvas = element.querySelector('canvas:not(.magnifyTool)');
     const context = getNewContext(magnifyCanvas);
-    const getSize = magnifySize;
 
     // Calculate the on-canvas location of the mouse pointer / touch
     const canvasLocation = external.cornerstone.pixelToCanvas(
@@ -108,59 +97,56 @@ export default class MagnifyTool extends BaseTool {
       evt.detail.currentPoints.image
     );
 
-    clipToBox(canvasLocation, canvas);
+    // Shrink magnifier to smallest canvas dimension if smaller than desired magnifier size
+    const magnifySize = Math.min(this.configuration.magnifySize, canvas.width, canvas.height);
+    const magnificationLevel = this.configuration.magnificationLevel;
 
-    // Clear the rectangle
-    context.clearRect(0, 0, magnifySize, magnifySize);
+    magnifyCanvas.width = magnifySize;
+    magnifyCanvas.height = magnifySize;
 
-    // Fill it with the pixels that the mouse is clicking on
-    const boundingBox = {
-      left: 0,
-      top: 0,
-      width: magnifySize,
-      height: magnifySize
-    };
-
-    fillBox(context, boundingBox, 'transparent');
+    // Constrain drag movement to zoomed image boundaries
+    canvasLocation.x = Math.max(canvasLocation.x, 0.5 * magnifySize / magnificationLevel);
+    canvasLocation.x = Math.min(canvasLocation.x, canvas.width - 0.5 * magnifySize / magnificationLevel);
+    canvasLocation.y = Math.max(canvasLocation.y, 0.5 * magnifySize / magnificationLevel);
+    canvasLocation.y = Math.min(canvasLocation.y, canvas.height - 0.5 * magnifySize / magnificationLevel);
 
     const copyFrom = {
-      x: canvasLocation.x * magnificationLevel - 0.5 * getSize,
-      y: canvasLocation.y * magnificationLevel - 0.5 * getSize
+      x: canvasLocation.x * magnificationLevel - 0.5 * magnifySize,
+      y: canvasLocation.y * magnificationLevel - 0.5 * magnifySize
     };
 
-    if (this.browserName === 'Safari') {
-      // Safari breaks when trying to copy pixels with negative indices
-      // This prevents proper Magnify usage
-      copyFrom.x = Math.max(copyFrom.x, 0);
-      copyFrom.y = Math.max(copyFrom.y, 0);
-    }
-
-    copyFrom.x = Math.min(copyFrom.x, this.zoomCanvas.width);
-    copyFrom.y = Math.min(copyFrom.y, this.zoomCanvas.height);
+    copyFrom.x = Math.max(copyFrom.x, 0);
+    copyFrom.y = Math.max(copyFrom.y, 0);
 
     context.drawImage(
       this.zoomCanvas,
       copyFrom.x,
       copyFrom.y,
-      getSize,
-      getSize,
+      magnifySize,
+      magnifySize,
       0,
       0,
-      getSize,
-      getSize
+      magnifySize,
+      magnifySize
     );
 
     // Place the magnification tool at the same location as the pointer
-    magnifyCanvas.style.top = `${canvasLocation.y - 0.5 * magnifySize}px`;
-    magnifyCanvas.style.left = `${canvasLocation.x - 0.5 * magnifySize}px`;
+    const touchOffset = evt.detail.isTouchEvent ? 120 : 0;
+    const magnifyPosition = {
+      top: Math.max(canvasLocation.y - 0.5 * magnifySize - touchOffset, 0),
+      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0)
+    };
 
-    if (evt.detail.isTouchEvent) {
-      magnifyCanvas.style.top = `${canvasLocation.y -
-        0.5 * magnifySize -
-        120}px`;
-    }
+    // Get full magnifier dimensions with borders
+    const magnifierBox = magnifyCanvas.getBoundingClientRect();
 
+    // Constrain magnifier to canvas boundaries
+    magnifyPosition.top = Math.min(magnifyPosition.top, canvas.height - magnifierBox.height);
+    magnifyPosition.left = Math.min(magnifyPosition.left, canvas.width - magnifierBox.width);
+    magnifyCanvas.style.top = `${magnifyPosition.top}px`;
+    magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
+
     // Hide the mouse cursor, so the user can see better
     document.body.style.cursor = 'none';
   }

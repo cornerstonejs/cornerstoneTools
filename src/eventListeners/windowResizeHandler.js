@@ -2,11 +2,12 @@ import { state } from './../store/index.js';
 import external from './../externalModules.js';
 
 const enable = function () {
+  disable(); // Clean up any lingering listeners
   window.addEventListener('resize', resizeThrottler, false);
 };
 
 const disable = function () {
-  window.addEventListener('resize', resizeThrottler, false);
+  window.removeEventListener('resize', resizeThrottler, false);
 };
 
 let resizeTimeout;
@@ -16,18 +17,18 @@ function resizeThrottler () {
   if (!resizeTimeout) {
     resizeTimeout = setTimeout(function () {
       resizeTimeout = null;
-      actualResizeHandler();
+      forceEnabledElementResize();
 
       // The actualResizeHandler will execute at a rate of 15fps
     }, 66);
   }
 }
 
-function actualResizeHandler () {
+export const forceEnabledElementResize = function () {
   state.enabledElements.forEach((element) => {
     external.cornerstone.resize(element);
   });
-}
+};
 
 export default {
   enable,

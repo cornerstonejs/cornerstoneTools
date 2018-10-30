@@ -9,6 +9,13 @@ import {
   newImageEventDispatcher,
   touchToolEventDispatcher
 } from '../../eventDispatchers/index.js';
+import { addToolForElement } from './../addTool.js';
+import {
+  setToolActiveForElement,
+  setToolPassiveForElement,
+  setToolEnabledForElement,
+  setToolDisabledForElement
+} from './../setToolMode.js';
 import store from '../index.js';
 
 /**
@@ -36,6 +43,7 @@ import store from '../index.js';
  * @listens Cornerstone#ElementEnabled
  */
 export default function (elementEnabledEvt) {
+  console.log("EVENT:ELEMENT_ENABLED");
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers
@@ -69,6 +77,8 @@ const _addEnabledElmenet = function (enabledElement) {
   if (store.modules) {
     _initModulesOnElement(enabledElement);
   }
+  _addGlobalToolsToElement(enabledElement);
+  _repeatGlobalToolHistory(enabledElement);
 };
 
 /**
@@ -84,5 +94,37 @@ function _initModulesOnElement (enabledElement) {
     if (typeof modules[key].enabledElementCallback === 'function') {
       modules[key].enabledElementCallback(enabledElement);
     }
+  });
+}
+
+function _addGlobalToolsToElement (enabledElement) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
+  Object.keys(store.state.globalTools).forEach(function (key) {
+    const { tool, configuration } = store.state.globalTools[key];
+
+    addToolForElement(enabledElement, tool, configuration);
+  });
+}
+
+function _repeatGlobalToolHistory (enabledElement) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+    return;
+  }
+
+  const setToolModeFns = {
+    active: setToolActiveForElement,
+    passive: setToolPassiveForElement,
+    enabled: setToolEnabledForElement,
+    disabled: setToolDisabledForElement
+  };
+
+  store.state.globalToolChangeHistory.forEach((historyEvent) => {
+    const args = historyEvent.args.slice(0);
+
+    args.unshift(enabledElement);
+    setToolModeFns[historyEvent.mode].apply(null, args);
   });
 }

@@ -10,7 +10,7 @@ import BaseTool from '../base/BaseTool.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
-const { FreehandHandleData } = freehandUtils
+const { FreehandHandleData } = freehandUtils;
 
 /**
  * @export @public @class
@@ -20,22 +20,21 @@ const { FreehandHandleData } = freehandUtils
  * @extends BaseTool
  */
 export default class FreehandSculpterMouseTool extends BaseTool {
-  constructor (
-    name = 'FreehandSculpterMouse',
-    referencedToolName = 'FreehandMouse',
-    mixins = [
-      'activeOrDisabledBinaryTool'
-    ]
-  ) {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'FreehandSculpterMouse',
+      referencedToolName: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse'],
-      mixins,
+      mixins: ['activeOrDisabledBinaryTool'],
       configuration: getDefaultFreehandSculpterMouseToolConfiguration()
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
 
     this.hasCursor = true;
-    this.referencedToolName = referencedToolName;
+    this.initialConfiguration = initialConfiguration;
+    this.referencedToolName = initialConfiguration.referencedToolName;
 
     this._active = false;
 
@@ -94,7 +93,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const eventData = evt.detail;
     const config = this.configuration;
 
-    let imageNeedsUpdate = false;
+    const imageNeedsUpdate = false;
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);

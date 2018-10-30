@@ -21,11 +21,16 @@ import calculateSUV from '../util/calculateSUV.js';
  * @extends BaseAnnotationTool
  */
 export default class ProbeTool extends BaseAnnotationTool {
-  constructor (name = 'Probe') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
   }
 
   /**
@@ -72,8 +77,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    * @returns
    */
   pointNearTool (element, data, coords) {
-    const hasEndHandle =
-      data && data.handles && data.handles.end;
+    const hasEndHandle = data && data.handles && data.handles.end;
     const validParameters = hasEndHandle;
 
     if (!validParameters) {
@@ -118,7 +122,6 @@ export default class ProbeTool extends BaseAnnotationTool {
       }
 
       draw(context, (context) => {
-
         const color = toolColors.getColorIfActive(data);
 
         // Draw the handles
@@ -128,8 +131,7 @@ export default class ProbeTool extends BaseAnnotationTool {
         const y = Math.round(data.handles.end.y);
         let storedPixels;
 
-        let text,
-          str;
+        let text, str;
 
         if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
           text = `${x}, ${y}`;

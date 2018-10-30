@@ -50,7 +50,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param {Object} evt - The event.
    */
   renderBrush (evt) {
-    throw new Error(`Method renderBrush not implemented for ${this.toolName}.`);
+    throw new Error(`Method renderBrush not implemented for ${this.name}.`);
   }
 
   /**
@@ -61,7 +61,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param  {Object} eventData The data object associated with the event.
    */
   _paint (eventData) {
-    throw new Error(`Method _paint not implemented for ${this.toolName}.`);
+    throw new Error(`Method _paint not implemented for ${this.name}.`);
   }
 
   // ===================================================================

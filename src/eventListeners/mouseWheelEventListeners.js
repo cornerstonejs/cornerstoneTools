@@ -77,7 +77,7 @@ function enable (element) {
   disable(element);
 
   mouseWheelEvents.forEach((eventType) => {
-    element.addEventListener(eventType, mouseWheel);
+    element.addEventListener(eventType, mouseWheel, { passive: false });
   });
 }
 

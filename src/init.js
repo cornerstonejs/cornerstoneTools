@@ -1,25 +1,7 @@
 import external from './externalModules.js';
 import store from './store/index.js';
-
-import { addTool, addToolForElement } from './store/addTool.js';
-import { removeTool, removeToolForElement } from './store/removeTool.js';
-import getToolForElement from './store/getToolForElement.js';
-import {
-  setToolOptions,
-  setToolOptionsForElement
-} from './store/setToolOptions.js';
 import addEnabledElement from './store/internals/addEnabledElement.js';
 import removeEnabledElement from './store/internals/removeEnabledElement.js';
-import {
-  setToolActive,
-  setToolActiveForElement,
-  setToolEnabled,
-  setToolEnabledForElement,
-  setToolDisabled,
-  setToolDisabledForElement,
-  setToolPassive,
-  setToolPassiveForElement
-} from './store/setToolMode.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
 /**
@@ -42,26 +24,6 @@ export default function (configuration) {
     store.modules.globalConfiguration.state,
     configuration
   );
-
-  return Object.freeze({
-    store,
-    addTool,
-    addToolForElement,
-    getToolForElement,
-    removeTool,
-    removeToolForElement,
-    setToolOptions,
-    setToolOptionsForElement,
-    // Tool Modes
-    setToolActive,
-    setToolActiveForElement,
-    setToolEnabled,
-    setToolEnabledForElement,
-    setToolDisabled,
-    setToolDisabledForElement,
-    setToolPassive,
-    setToolPassiveForElement
-  });
 }
 
 /**
@@ -70,12 +32,32 @@ export default function (configuration) {
  * @private @method
  */
 function _addCornerstoneEventListeners () {
+  // Clear any listeners that may already be set
+  _removeCornerstoneEventListeners();
+
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
   const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
 
   cornerstone.events.addEventListener(elementEnabledEvent, addEnabledElement);
   cornerstone.events.addEventListener(
+    elementDisabledEvent,
+    removeEnabledElement
+  );
+}
+
+/**
+ * Removes event listeners for the Cornerstone#ElementDisabled and
+ * Cornerstone#ElementEnabled events.
+ * @private @method
+ */
+function _removeCornerstoneEventListeners () {
+  const cornerstone = external.cornerstone;
+  const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
+  const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
+
+  cornerstone.events.removeEventListener(elementEnabledEvent, addEnabledElement);
+  cornerstone.events.removeEventListener(
     elementDisabledEvent,
     removeEnabledElement
   );

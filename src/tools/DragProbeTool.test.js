@@ -27,7 +27,6 @@ const mockEventDrag = {
 };
 
 describe('DragProbeTool.js', () => {
-
   describe('default values', () => {
     it('has a default name of "DragProbe"', () => {
       const defaultName = 'DragProbe';
@@ -37,10 +36,10 @@ describe('DragProbeTool.js', () => {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = 'customToolName';
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new DragProbeTool(customToolName);
 
-      expect(instantiatedTool.name).toEqual(customToolName);
+      expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 

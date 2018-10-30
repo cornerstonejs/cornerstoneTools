@@ -3,7 +3,11 @@ import BaseTool from './../base/BaseTool.js';
 import external from './../externalModules.js';
 
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-import { addToolState, getToolState, clearToolState } from '../stateManagement/toolState.js';
+import {
+  addToolState,
+  getToolState,
+  clearToolState
+} from '../stateManagement/toolState.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
@@ -16,15 +20,18 @@ import { setToolOptions } from '../toolOptions.js';
  * @extends BaseTool
  */
 export default class CrosshairsTool extends BaseTool {
-  constructor (name = 'Crosshairs') {
-    super({
-      name,
+  constructor (configuration = {}) {
+    const defaultConfig = {
+      name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch']
-    });
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
+    super(initialConfiguration);
+
+    this.initialConfiguration = initialConfiguration;
     this.mouseDownCallback = this._chooseLocation.bind(this);
     this.mouseDragCallback = this._chooseLocation.bind(this);
-
     this.touchDragCallback = this._chooseLocation.bind(this);
   }
 
@@ -152,5 +159,4 @@ export default class CrosshairsTool extends BaseTool {
       synchronizationContext
     });
   }
-
 }
