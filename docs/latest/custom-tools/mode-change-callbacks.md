@@ -1,15 +1,15 @@
 ## Mode Change Callbacks {#mode-change-callbacks}
 
-In the `cornerstoneTools` framework if a tool changes mode, an appropriate callback is called if the tool has one. These are, quite simply:
+In the Cornerstone Tools framework, if a Tool changes [mode](../anatomy-of-a-tool/index.md#modes), an appropriate callback is called if the Tool has one. These are, quite simply:
 
-- active - `activeCallback (element)`
-- passive - `passiveCallback (element)`
-- enabled - `enabledCallback (element)`
-- disabled - `enabledCallback (element)`
+- `Active` - `activeCallback (element)`
+- `Passive` - `passiveCallback (element)`
+- `Enabled` - `enabledCallback (element)`
+- `Disabled` - `enabledCallback (element)`
 
-Note that unlike a lot of the tool's, the `element` on which the tool resides is passed to the callback, not `evt`.
+Note that unlike a lot of the Tools, the `element` on which the Tool resides is passed to the callback, not `evt`.
 
-For our example tool, this gives us more chances to log hello to the console:
+For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
 import external from './../externalModules.js';
