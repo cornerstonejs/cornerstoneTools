@@ -9,6 +9,7 @@ import moveHandle from './moveHandle/moveHandle.js';
 
 export default function (evt) {
   const eventData = evt.detail;
+
   const { element } = eventData;
   let data;
 
@@ -31,7 +32,7 @@ export default function (evt) {
   };
 
   const coords = eventData.startPoints.canvas;
-  const toolData = getToolState(event.currentTarget, this.name);
+  const toolData = getToolState(evt.currentTarget, this.name);
 
   if (!toolData) {
     return;

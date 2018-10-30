@@ -30,7 +30,7 @@ export default function (evt) {
   };
 
   const coords = eventData.startPoints.canvas;
-  const toolData = getToolState(event.currentTarget, this.name);
+  const toolData = getToolState(evt.currentTarget, this.name);
 
   if (!toolData) {
     return;
