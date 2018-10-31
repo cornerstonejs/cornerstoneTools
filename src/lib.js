@@ -54,6 +54,7 @@ import {
   imagePointToPatientPoint,
   planePlaneIntersection
 } from './util/pointProjector.js';
+import lineSegDistance from './util/lineSegDistance.js';
 
 import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
 import makeUnselectable from './util/makeUnselectable.js';
@@ -135,6 +136,7 @@ export const lib = {
   'util/angleBetweenPoints': angleBetweenPoints,
   'util/getKeyFromKeyCode': getKeyFromKeyCode,
   'util/numbersWithCommas': numbersWithCommas,
+  'util/lineSegDistance': lineSegDistance,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
