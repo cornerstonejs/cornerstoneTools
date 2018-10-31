@@ -1,42 +1,80 @@
 import external from '../externalModules.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 
-export default function (element, handles, coords, distanceThreshold) {
+/**
+ * Returns the first handle found to be near the provided point. Handles to search can be an array of handles, an
+ * object of named handles, or an object of named handles AND named arrays of handles.
+ *
+ * @exports @public @function
+ * @param {*} element
+ * @param {(Array|Object)} handles - An arry of handles, object with named handles, or object with named handles AND named arrays of handles
+ * @param {*} coords
+ * @param {number} distanceThreshold
+ * @returns [Handle]
+ */
+const getHandleNearImagePoint = function (element, handles, coords, distanceThreshold) {
   let nearbyHandle;
 
   if (!handles) {
     return;
   }
 
-  Object.keys(handles).forEach(function (name) {
-    const handle = handles[name];
+  if (Array.isArray(handles)) {
+    for (let i = 0; i < handles.length; i++) {
+      const handle = handles[i];
 
-    if (handle.hasOwnProperty('pointNearHandle')) {
-      if (handle.pointNearHandle(element, handle, coords)) {
+      if (_isHandleNearImagePoint(handle, element, coords, distanceThreshold)) {
         nearbyHandle = handle;
-
-        return;
-      }
-    } else if (handle.hasBoundingBox === true) {
-      if (pointInsideBoundingBox(handle, coords)) {
-        nearbyHandle = handle;
-
-        return;
-      }
-    } else {
-      const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
-      const distance = external.cornerstoneMath.point.distance(
-        handleCanvas,
-        coords
-      );
-
-      if (distance <= distanceThreshold) {
-        nearbyHandle = handle;
-
-        return;
+        break;
       }
     }
-  });
+  } else if (typeof handles === 'object') {
+    const handleKeys = Object.keys(handles);
+
+    for (let i = 0; i < handleKeys.length; i++) {
+      const handleName = handleKeys[i];
+
+      if (Array.isArray(handles[handleName])) {
+        nearbyHandle = getHandleNearImagePoint(element, handles[handleName], coords, distanceThreshold);
+        if (nearbyHandle) {
+          break;
+        }
+      } else {
+        const handle = handles[name];
+
+        if (_isHandleNearImagePoint(handle, element, coords, distanceThreshold)) {
+          nearbyHandle = handle;
+          break;
+        }
+      }
+    }
+
+  }
 
   return nearbyHandle;
-}
+};
+
+
+const _isHandleNearImagePoint = function (handle, element, coords, distanceThreshold) {
+  if (handle.hasOwnProperty('pointNearHandle')) {
+    if (handle.pointNearHandle(element, handle, coords)) {
+      return true;
+    }
+  } else if (handle.hasBoundingBox === true) {
+    if (pointInsideBoundingBox(handle, coords)) {
+      return true;
+    }
+  } else {
+    const handleCanvas = external.cornerstone.pixelToCanvas(element, handle);
+    const distance = external.cornerstoneMath.point.distance(
+      handleCanvas,
+      coords
+    );
+
+    if (distance <= distanceThreshold) {
+      return true;
+    }
+  }
+
+  return false;
+};
