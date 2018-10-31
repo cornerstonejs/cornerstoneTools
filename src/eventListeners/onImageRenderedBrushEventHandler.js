@@ -9,7 +9,11 @@ import { getNewContext } from '../drawing/index.js';
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
 
-import regeneratorRuntime from "regenerator-runtime";
+// TODO: Do we still need this? I've yanked the package for now
+// It should be covered by @babel/runtime and plugin-transform-runtime:
+// https://babeljs.io/docs/en/babel-plugin-transform-runtime
+// @James, I think Babel should take care of this for us
+// Import regeneratorRuntime from "regenerator-runtime";
 
 if (!('createImageBitmap' in window)) {
   window.createImageBitmap = async function (imageData) {
