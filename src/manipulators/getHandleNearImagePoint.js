@@ -78,3 +78,5 @@ const _isHandleNearImagePoint = function (handle, element, coords, distanceThres
 
   return false;
 };
+
+export default getHandleNearImagePoint;
