@@ -2,7 +2,7 @@
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 // Util
-import getToolsWithMovableHandles from '../../store/getToolsWithMoveableHandles.js';
+import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
 import {
   findHandleDataNearImagePoint,
   findAnnotationNearClick
@@ -68,7 +68,7 @@ export default function (evt) {
   const annotationTools = getToolsWithDataForElement(element, tools);
 
   // NEAR HANDLES?
-  const annotationToolsWithMoveableHandles = getToolsWithMovableHandles(
+  const annotationToolsWithMoveableHandles = getToolsWithMoveableHandles(
     element,
     annotationTools,
     coords
