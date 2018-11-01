@@ -29,6 +29,16 @@ export default function (evt) {
 
   const activeTool = tools[0];
 
+  if (typeof activeTool.preMouseDownActivateCallback === 'function') {
+    const consumedEvent = activeTool.preMouseDownActivateCallback(
+      evt
+    );
+
+    if (consumedEvent) {
+      return;
+    }
+  }
+
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool.addNewMeasurement) {
     activeTool.addNewMeasurement(evt, 'Mouse');
