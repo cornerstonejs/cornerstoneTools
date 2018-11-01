@@ -40,7 +40,7 @@ const getHandleNearImagePoint = function (element, handles, coords, distanceThre
           break;
         }
       } else {
-        const handle = handles[name];
+        const handle = handles[handleName];
 
         if (_isHandleNearImagePoint(handle, element, coords, distanceThreshold)) {
           nearbyHandle = handle;
