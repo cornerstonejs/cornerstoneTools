@@ -70,8 +70,6 @@ export default function (evt) {
     return false;
   });
 
-  console.log('toolsWithMoveableHandles: ', annotationToolsWithMoveableHandles);
-
   // TODO: More than one? Which one was moved most recently?
   // We'll just grab the first one we encounter for now
   if (annotationToolsWithMoveableHandles.length > 0) {
@@ -94,8 +92,6 @@ export default function (evt) {
       coords,
       distanceFromHandle
     );
-
-    console.log('moveableHandle: ', moveableHandle);
 
     dataWithMoveableHandle.active = true;
     touchMoveHandle(

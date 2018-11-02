@@ -73,6 +73,7 @@ import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
 import brushUtils from './util/brush/index.js';
 import zoomUtils from './util/zoom/index.js';
+import triggerEvent from './util/triggerEvent.js';
 
 export const lib = {
   'base/BaseTool': BaseTool,
@@ -137,6 +138,7 @@ export const lib = {
   'util/getKeyFromKeyCode': getKeyFromKeyCode,
   'util/numbersWithCommas': numbersWithCommas,
   'util/lineSegDistance': lineSegDistance,
+  'util/triggerEvent': triggerEvent,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
