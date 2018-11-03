@@ -11,20 +11,25 @@ import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js'
 const emptyLocationCallback = (measurementData, eventData, doneCallback) => doneCallback();
 
 export default class BidirectionalTool extends BaseAnnotationTool {
-  constructor (name = 'Bidirectional') {
+  constructor (configuration = {}) {
     const textBoxConfig = '';
     const shadowConfig = '';
 
-    super({
-      name,
+    const defaultConfig = {
+      name: 'Bidirectional',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         changeMeasurementLocationCallback: emptyLocationCallback,
         textBox: textBoxConfig,
         shadow: shadowConfig,
+        drawHandlesOnHover: true,
         distanceThreshold: 28
       }
-    });
+    };
+
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
 
     this.createNewMeasurement = createNewMeasurement.bind(this);
     this.pointNearTool = pointNearTool.bind(this);
