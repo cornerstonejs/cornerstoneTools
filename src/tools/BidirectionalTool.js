@@ -27,7 +27,8 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       }
     };
 
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
+    const mergedConfiguration = Object.assign(defaultConfig.configuration, configuration)
+    const initialConfiguration = Object.assign(defaultConfig, { configuration: mergedConfiguration });
 
     super(initialConfiguration);
 
