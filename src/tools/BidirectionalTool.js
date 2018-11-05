@@ -23,7 +23,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         textBox: textBoxConfig,
         shadow: shadowConfig,
         drawHandlesOnHover: true,
-        distanceThreshold: 28
+        distanceThreshold: 6
       }
     };
 
