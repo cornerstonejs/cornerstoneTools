@@ -74,6 +74,7 @@ import freehandUtils from './util/freehand/index.js';
 import brushUtils from './util/brush/index.js';
 import zoomUtils from './util/zoom/index.js';
 import triggerEvent from './util/triggerEvent.js';
+import convertToVector3 from './util/convertToVector3.js';
 
 export const lib = {
   'base/BaseTool': BaseTool,
@@ -139,6 +140,7 @@ export const lib = {
   'util/numbersWithCommas': numbersWithCommas,
   'util/lineSegDistance': lineSegDistance,
   'util/triggerEvent': triggerEvent,
+  'util/convertToVectro3': convertToVector3,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
