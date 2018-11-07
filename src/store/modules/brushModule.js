@@ -10,7 +10,8 @@ const state = {
   hiddenButActiveAlpha: 0.2,
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {},
-  imageBitmapCache: {}
+  imageBitmapCache: {},
+  segmentationMetadata: {}
 };
 
 const setters = {
@@ -78,6 +79,13 @@ const setters = {
   },
   clearImageBitmapCacheForElement: (enabledElementUID) => {
     state.imageBitmapCache[enabledElementUID] = [];
+  },
+  setMetadata: (seriesInstanceUid, segIndex, metadata) => {
+    if (!state.segmentationMetadata[seriesInstanceUid]) {
+      state.segmentationMetadata[seriesInstanceUid] = [];
+    }
+
+    state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
   }
 };
 
@@ -95,6 +103,13 @@ const getters = {
     }
 
     return state.visibleSegmentations[enabledElementUID];
+  },
+  metadata: (seriesInstanceUid, segIndex) => {
+    if (!state.segmentationMetadata[seriesInstanceUid]) {
+      return;
+    }
+
+    return state.segmentationMetadata[seriesInstanceUid][segIndex];
   }
 };
 
@@ -107,6 +122,30 @@ const getters = {
  */
 function enabledElementCallback (enabledElement) {
   setters.setElementVisible(enabledElement);
+}
+
+
+/**
+ * removeEnabledElementCallback - Element specific memory cleanup.
+ * @public
+ * @param  {Object} enabledElement  The element being removed.
+ */
+function removeEnabledElementCallback (enabledElement) {
+  if (!external.cornerstone) {
+    return;
+  }
+
+  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
+    enabledElement
+  );
+
+  const enabledElementUID = cornerstoneEnabledElement.uuid;
+  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  const numberOfColors = colormap.getNumberOfColors();
+
+  // Remove enabledElement specific data.
+  delete state.visibleSegmentations[enabledElementUID];
+  delete state.imageBitmapCache[enabledElementUID];
 }
 
 /**
