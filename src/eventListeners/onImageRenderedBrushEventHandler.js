@@ -180,7 +180,7 @@ function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
   );
 
   window.createImageBitmap(imageData).then((newImageBitmap) => {
-    setters.setImageBitmapCacheForElement(
+    setters.imageBitmapCacheForElement(
       enabledElement.uuid,
       segIndex,
       newImageBitmap

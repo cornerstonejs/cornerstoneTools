@@ -21,7 +21,7 @@ const setters = {
    *
    * @param {*} radius
    */
-  setRadius: (radius) => {
+  radius: (radius) => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
   },
 
@@ -31,7 +31,7 @@ const setters = {
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  setBrushColorMap: (colors) => {
+  brushColorMap: (colors) => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
@@ -40,7 +40,7 @@ const setters = {
       colormap.setColor(i, colors[i]);
     }
   },
-  setElementVisible: (enabledElement) => {
+  elementVisible: (enabledElement) => {
     if (!external.cornerstone) {
       return;
     }
@@ -59,7 +59,7 @@ const setters = {
       state.visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  setBrushVisibilityForElement: (
+  brushVisibilityForElement: (
     enabledElementUID,
     segIndex,
     visible = true
@@ -70,7 +70,7 @@ const setters = {
 
     state.visibleSegmentations[enabledElementUID][segIndex] = visible;
   },
-  setImageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
+  imageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
@@ -80,7 +80,7 @@ const setters = {
   clearImageBitmapCacheForElement: (enabledElementUID) => {
     state.imageBitmapCache[enabledElementUID] = [];
   },
-  setMetadata: (seriesInstanceUid, segIndex, metadata) => {
+  metadata: (seriesInstanceUid, segIndex, metadata) => {
     if (!state.segmentationMetadata[seriesInstanceUid]) {
       state.segmentationMetadata[seriesInstanceUid] = [];
     }
@@ -121,7 +121,7 @@ const getters = {
  *                                  being initialised.
  */
 function enabledElementCallback (enabledElement) {
-  setters.setElementVisible(enabledElement);
+  setters.elementVisible(enabledElement);
 }
 
 

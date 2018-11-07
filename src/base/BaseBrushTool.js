@@ -282,7 +282,7 @@ export default class BaseBrushTool extends BaseTool {
       newRadius += 1;
     }
 
-    setters.setRadius(newRadius);
+    setters.radius(newRadius);
   }
 
   /**
@@ -294,7 +294,7 @@ export default class BaseBrushTool extends BaseTool {
     const oldRadius = state.radius;
     const newRadius = Math.floor(oldRadius * 0.8);
 
-    setters.setRadius(newRadius);
+    setters.radius(newRadius);
   }
 
   /**
@@ -308,7 +308,7 @@ export default class BaseBrushTool extends BaseTool {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
-    setters.setBrushVisibilityForElement(enabledElementUID, segIndex, true);
+    setters.brushVisibilityForElement(enabledElementUID, segIndex, true);
 
     external.cornerstone.updateImage(enabledElement.element);
   }
@@ -323,7 +323,7 @@ export default class BaseBrushTool extends BaseTool {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
-    setters.setBrushVisibilityForElement(enabledElementUID, segIndex, false);
+    setters.brushVisibilityForElement(enabledElementUID, segIndex, false);
     external.cornerstone.updateImage(enabledElement.element);
   }
 
@@ -339,7 +339,7 @@ export default class BaseBrushTool extends BaseTool {
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      setters.setBrushVisibilityForElement(enabledElementUID, segIndex, true);
+      setters.brushVisibilityForElement(enabledElementUID, segIndex, true);
     }
 
     external.cornerstone.updateImage(enabledElement.element);
@@ -357,7 +357,7 @@ export default class BaseBrushTool extends BaseTool {
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      setters.setBrushVisibilityForElement(enabledElementUID, segIndex, false);
+      setters.brushVisibilityForElement(enabledElementUID, segIndex, false);
     }
 
     external.cornerstone.updateImage(enabledElement.element);
