@@ -73,6 +73,10 @@ const _removeAllToolsForElement = function (enabledElement) {
  * @param {HTMLElement} enabledElement
  */
 const _removeEnabledElement = function (enabledElement) {
+  if (store.modules) {
+    _cleanModulesOnElement(enabledElement);
+  }
+
   const foundElementIndex = store.state.enabledElements.findIndex(
     (element) => element === enabledElement
   );
@@ -83,3 +87,19 @@ const _removeEnabledElement = function (enabledElement) {
     console.warn("unable to remove element");
   }
 };
+
+/**
+ * Iterate over our store's modules. If the module has a
+ * `removeEnabledElementCallback` call it and clean up unneeded metadata.
+ * @private @method
+ * @param  {Object} enabledElement
+ */
+function _cleanModulesOnElement (enabledElement) {
+  const modules = store.modules;
+
+  Object.keys(modules).forEach(function (key) {
+    if (typeof modules[key].removeEnabledElementCallback === 'function') {
+      modules[key].removeEnabledElementCallback(enabledElement);
+    }
+  });
+}
