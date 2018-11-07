@@ -10,7 +10,8 @@ const state = {
   hiddenButActiveAlpha: 0.2,
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {},
-  imageBitmapCache: {}
+  imageBitmapCache: {},
+  segmentationMetadata: {}
 };
 
 const setters = {
@@ -20,7 +21,7 @@ const setters = {
    *
    * @param {*} radius
    */
-  setRadius: (radius) => {
+  radius: (radius) => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
   },
 
@@ -30,7 +31,7 @@ const setters = {
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  setBrushColorMap: (colors) => {
+  brushColorMap: (colors) => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
@@ -39,7 +40,7 @@ const setters = {
       colormap.setColor(i, colors[i]);
     }
   },
-  setElementVisible: (enabledElement) => {
+  elementVisible: (enabledElement) => {
     if (!external.cornerstone) {
       return;
     }
@@ -58,7 +59,7 @@ const setters = {
       state.visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  setBrushVisibilityForElement: (
+  brushVisibilityForElement: (
     enabledElementUID,
     segIndex,
     visible = true
@@ -69,7 +70,7 @@ const setters = {
 
     state.visibleSegmentations[enabledElementUID][segIndex] = visible;
   },
-  setImageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
+  imageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
@@ -78,6 +79,13 @@ const setters = {
   },
   clearImageBitmapCacheForElement: (enabledElementUID) => {
     state.imageBitmapCache[enabledElementUID] = [];
+  },
+  metadata: (seriesInstanceUid, segIndex, metadata) => {
+    if (!state.segmentationMetadata[seriesInstanceUid]) {
+      state.segmentationMetadata[seriesInstanceUid] = [];
+    }
+
+    state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
   }
 };
 
@@ -95,6 +103,13 @@ const getters = {
     }
 
     return state.visibleSegmentations[enabledElementUID];
+  },
+  metadata: (seriesInstanceUid, segIndex) => {
+    if (!state.segmentationMetadata[seriesInstanceUid]) {
+      return;
+    }
+
+    return state.segmentationMetadata[seriesInstanceUid][segIndex];
   }
 };
 
@@ -106,7 +121,31 @@ const getters = {
  *                                  being initialised.
  */
 function enabledElementCallback (enabledElement) {
-  setters.setElementVisible(enabledElement);
+  setters.elementVisible(enabledElement);
+}
+
+
+/**
+ * removeEnabledElementCallback - Element specific memory cleanup.
+ * @public
+ * @param  {Object} enabledElement  The element being removed.
+ */
+function removeEnabledElementCallback (enabledElement) {
+  if (!external.cornerstone) {
+    return;
+  }
+
+  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
+    enabledElement
+  );
+
+  const enabledElementUID = cornerstoneEnabledElement.uuid;
+  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  const numberOfColors = colormap.getNumberOfColors();
+
+  // Remove enabledElement specific data.
+  delete state.visibleSegmentations[enabledElementUID];
+  delete state.imageBitmapCache[enabledElementUID];
 }
 
 /**
