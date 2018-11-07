@@ -36,6 +36,8 @@ function Synchronizer (event, handler) {
   const initialData = {};
   let eventHandler = handler;
 
+  this.enabled = true;
+
   /**
    * Update the event handler to perform synchronization
    * @param {Function} handler - The event handler function
@@ -138,8 +140,10 @@ function Synchronizer (event, handler) {
    * @param {Object} eventData - The data object for the source event
    */
   function fireEvent (sourceElement, eventData) {
-    // Broadcast an event that something changed
-    if (!sourceElements.length || !targetElements.length) {
+    const isDisabled = !that.enabled;
+    const noElements = !sourceElements.length || !targetElements.length;
+
+    if (isDisabled || noElements) {
       return;
     }
 
