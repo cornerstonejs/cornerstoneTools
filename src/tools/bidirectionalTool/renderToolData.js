@@ -86,14 +86,18 @@ export default function (evt) {
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
       const xOffset = 10;
-      const text = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
       const textBoxAnchorPoints = (handles) => ([handles.start, handles.end, handles.perpendicularStart, handles.perpendicularEnd]);
+      let textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
+
+      if (data.additionalData && Array.isArray(data.additionalData)) {
+        textLines = data.additionalData.concat(textLines);
+      }
 
       drawLinkedTextBox(
         context,
         element,
         textBox,
-        text,
+        textLines,
         data.handles,
         textBoxAnchorPoints,
         color,

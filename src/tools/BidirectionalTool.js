@@ -20,14 +20,16 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         changeMeasurementLocationCallback: emptyLocationCallback,
+        getMeasurementLocationCallback: emptyLocationCallback,
         textBox: textBoxConfig,
         shadow: shadowConfig,
         drawHandlesOnHover: true,
+        additionalData: [],
         distanceThreshold: 6
       }
     };
 
-    const mergedConfiguration = Object.assign(defaultConfig.configuration, configuration)
+    const mergedConfiguration = Object.assign(defaultConfig.configuration, configuration);
     const initialConfiguration = Object.assign(defaultConfig, { configuration: mergedConfiguration });
 
     super(initialConfiguration);

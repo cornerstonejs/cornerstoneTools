@@ -7,6 +7,7 @@ import { addToolState, removeToolState } from '../../stateManagement/toolState.j
 export default function (evt, interactionType) {
   const eventData = evt.detail;
   const { element, image } = eventData;
+  const config = this.configuration;
 
   if (checkPixelSpacing(image)) {
     return;
@@ -18,6 +19,11 @@ export default function (evt, interactionType) {
       interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
 
   const measurementData = this.createNewMeasurement(eventData);
+
+  const doneCallback = () => {
+    measurementData.active = false;
+    external.cornerstone.updateImage(element);
+  };
 
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, this.name, measurementData);
@@ -43,6 +49,9 @@ export default function (evt, interactionType) {
       // Delete the measurement
         measurementData.cancelled = true;
         removeToolState(element, this.name, measurementData);
+      } else {
+        // Set lesionMeasurementData Session
+        config.getMeasurementLocationCallback(measurementData, eventData, doneCallback);
       }
 
       // Perpendicular line is not connected to long-line
