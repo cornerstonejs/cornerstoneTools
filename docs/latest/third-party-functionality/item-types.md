@@ -76,6 +76,7 @@ A module is a namespaced storage object in the `store` that contains the followi
 | setters | Optional | An object comprised of functions that modify state. Setters can be used for more complex input (e.g. `push` object `x` to array `y`). Top level primitives should be set by `state.property = value`, as this reduces boilerplate in implementation code. |
 | onRegisterCallback (name) | Optional | This function is called when the module is registered to the `cornerstoneTools` `store`. It is used to perform any global initialization the modules requires. The `name` the module was given upon registration is passed to the callback. |
 | enabledElementCallback (enabledElement) | Optional | This function is called once for each `Enabled` element upon registering the module, and again any time a new `Enabled` element is added to the `cornerstoneTools` instance. The `Enabled` Element is passed to the callback.|
+| removeEnabledElementCallback (enabledElement) | Optional | This function is called whenever an `Enabled` element is removed from the `cornerstoneTools` instance, allowing cleanup of unneeded data. The `Enabled` Element is passed to the callback.|
 
 Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
 
