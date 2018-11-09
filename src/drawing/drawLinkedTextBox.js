@@ -4,7 +4,9 @@ import drawLink from './drawLink.js';
 
 /**
  * Draw a link between an annotation to a textBox.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawLinkedTextBox
  *
  * @param {object} context      The canvas context.

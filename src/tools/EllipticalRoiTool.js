@@ -6,7 +6,12 @@ import { getToolState } from '../stateManagement/toolState.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawEllipse } from '../drawing/index.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawEllipse
+} from '../drawing/index.js';
 import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
 import drawHandles from '../drawing/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
@@ -15,10 +20,7 @@ import numbersWithCommas from '../util/numbersWithCommas.js';
 
 import ellipseUtils from '../util/ellipse/index.js';
 
-const {
-  pointInEllipse,
-  calculateEllipseStatistics
-} = ellipseUtils;
+const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
 
 /**
  * @export @public @class
@@ -44,7 +46,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * Create the measurement data for this tool with the end handle activated
    *
    * @param {*} eventData
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (eventData) {
     const goodEventData =
@@ -52,7 +54,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     if (!goodEventData) {
       console.error(
-        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
       );
 
       return;
@@ -94,7 +98,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     // TODO: How should we handle touch? for mouse, distance is 15 for touch its 25
@@ -145,7 +149,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const eventData = evt.detail;

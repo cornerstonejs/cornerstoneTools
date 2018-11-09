@@ -3,14 +3,15 @@ import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
 
-
 /**
  * Returns the toolstate for a specific element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getElementToolStateManager
  *
  * @param  {HTMLElement} element The element.
- * @return {object} The toolState.
+ * @returns {object} The toolState.
  */
 function getElementToolStateManager (element) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
@@ -27,7 +28,9 @@ function getElementToolStateManager (element) {
 /**
  * Adds tool state to the toolStateManager, this is done by tools as well
  * as modules that restore saved state.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name addToolState
  *
  * @param  {HTMLElement} element  The element.
@@ -52,12 +55,14 @@ function addToolState (element, toolType, measurementData) {
 /**
  * Returns tool specific state of an element. Used by tools as well as modules
  * that save state persistently
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getToolState
  *
  * @param  {HTMLElement} element The element.
  * @param  {string} toolType The toolType of the state.
- * @return {object}          The element's state for the given toolType.
+ * @returns {object}          The element's state for the given toolType.
  */
 function getToolState (element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
@@ -65,10 +70,11 @@ function getToolState (element, toolType) {
   return toolStateManager.get(element, toolType);
 }
 
-
 /**
  * Removes specific tool state from the toolStateManager.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name removeToolState
  *
  * @param  {HTMLElement} element  The element.
@@ -104,7 +110,9 @@ function removeToolState (element, toolType, data) {
 /**
  * Removes all toolState from the toolStateManager corresponding to
  * the toolType and element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name clearToolState
  *
  * @param  {HTMLElement} element  The element.
@@ -122,7 +130,9 @@ function clearToolState (element, toolType) {
 
 /**
  * Sets the tool state manager for an element
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name setElementToolStateManager
  *
  * @param  {HTMLElement} element The element.

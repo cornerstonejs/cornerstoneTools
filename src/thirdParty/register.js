@@ -4,7 +4,9 @@ import registerItem from './registerItem.js';
 
 /**
  * Register an item or module to cornerstoneTools.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name register
  *
  * @param {string} type The type of the item/module.
@@ -19,23 +21,23 @@ export default function (type, name, item, overwrite = false) {
   }
 
   switch (type) {
-    case 'module':
-      registerModule(name, item, overwrite);
-      break;
-    case 'mixin':
-      registerMixin(name, item, overwrite);
-      break;
-    default:
-      registerItem(type, name, item, overwrite);
-      console.warn(`unrecognised type ${type}, not registering ${name}`);
+  case 'module':
+    registerModule(name, item, overwrite);
+    break;
+  case 'mixin':
+    registerMixin(name, item, overwrite);
+    break;
+  default:
+    registerItem(type, name, item, overwrite);
+    console.warn(`unrecognised type ${type}, not registering ${name}`);
   }
 }
-
 
 /**
  * Returns true if the item is valid, this avoids
  * clogging up the library with invalid data.
- * @private @method
+ * @private
+ * @method
  * @name isValidInput
  *
  * @param {string} type The type of the item/module.
@@ -45,7 +47,7 @@ export default function (type, name, item, overwrite = false) {
  */
 function isValidInput (type, name, item) {
   if (!type) {
-    console.warn(`The type must be given in order to register.`);
+    console.warn('The type must be given in order to register.');
 
     return false;
   }
@@ -57,8 +59,11 @@ function isValidInput (type, name, item) {
   }
 
   if (typeof item !== 'object' && typeof item !== 'function') {
-    console.warn(`The ${item} is a ${typeof item}, it should be an Object or a function.`);
-    return false;
+    console.warn(
+      `The ${item} is a ${typeof item}, it should be an Object or a function.`
+    );
+    
+return false;
   }
 
   return true;

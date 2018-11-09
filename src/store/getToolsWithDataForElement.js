@@ -2,7 +2,9 @@ import { getToolState } from './../stateManagement/toolState.js';
 
 /**
  * Filters an array of tools, returning only tools which have annotation data.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getToolsWithDataForElement
  *
  * @param  {HTMLElement} element The element.

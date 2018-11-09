@@ -3,7 +3,9 @@ import mixins from '../mixins/index.js';
 
 /**
  * Register an mixin to cornerstoneTools.
- * @export @private @method
+ * @export
+ * @private
+ * @method
  * @name registerMixin
  *
  * @param {string} name The name of the mixin.
@@ -27,7 +29,6 @@ export default function (name, mixin, overwrite = false) {
 
   // Reference the mixin from the library so it can be exported externally.
   lib[`mixins/${name}`] = mixins[name];
-
 }
 
 function isMixinRegistered (name) {

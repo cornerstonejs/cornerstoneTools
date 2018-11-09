@@ -5,7 +5,7 @@ import external from '../externalModules.js';
  * @export @public @method
  *
  * @param  {object} points The object to copy.
- * @return {object}        The copy.
+ * @returns {object}        The copy.
  */
 export default function (points) {
   const page = external.cornerstoneMath.point.copy(points.page);

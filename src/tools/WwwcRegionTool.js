@@ -180,7 +180,7 @@ const applyWWWCRegion = (evt, config) => {
  * @param {*} storedPixelLuminanceData
  * @param {*} globalMin
  * @param {*} globalMax
- * @returns
+ * @returns {Object}
  */
 const calculateMinMaxMean = (
   storedPixelLuminanceData,

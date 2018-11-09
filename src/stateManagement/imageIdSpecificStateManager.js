@@ -7,7 +7,7 @@ import external from '../externalModules.js';
  * @export @public @constructor
  * @name newImageIdSpecificToolStateManager
  *
- * @return {object} An imageIdSpecificToolStateManager instance.
+ * @returns {object} An imageIdSpecificToolStateManager instance.
  */
 function newImageIdSpecificToolStateManager () {
   let toolState = {};

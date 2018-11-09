@@ -5,7 +5,7 @@
  *
  * @param  {object} shift      The shift to correct.
  * @param  {object} viewportOrientation  Object containing information on the viewport orientation.
- * @return {object}            The corrected shift.
+ * @returns {object}            The corrected shift.
  */
 export default function (shift, viewportOrientation) {
   const {hflip, vflip, rotation} = viewportOrientation;

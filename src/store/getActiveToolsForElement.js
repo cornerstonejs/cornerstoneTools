@@ -1,6 +1,8 @@
 /**
  * Filters an array of tools, returning only tools which are active.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getActiveToolsForElement
  *
  * @param  {HTMLElement} element The element.

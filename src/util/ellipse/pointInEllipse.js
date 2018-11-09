@@ -5,7 +5,7 @@
  *
  * @param  {object} ellipse  Object defining the ellipse.
  * @param  {object} location The location of the point.
- * @return {boolean} True if the point is within the ellipse.
+ * @returns {boolean} True if the point is within the ellipse.
  */
 export default function (ellipse, location) {
   const xRadius = ellipse.width / 2;

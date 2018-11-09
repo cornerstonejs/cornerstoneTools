@@ -37,7 +37,7 @@ const maxSimultaneousRequests = {
  * @export @public @method
  * @name getBrowserInfo
  *
- * @return {string} The name and version of the browser.
+ * @returns {string} The name and version of the browser.
  */
 function getBrowserInfo () {
   const ua = navigator.userAgent;
@@ -98,7 +98,7 @@ function getMaxSimultaneousRequests () {
  * @export @public @method
  * @name getDefaultSimultaneousRequests
  *
- * @return {number} The default number of simultaneous requests.
+ * @returns {number} The default number of simultaneous requests.
  */
 function getDefaultSimultaneousRequests () {
   const infoString = getBrowserInfo();
@@ -124,7 +124,7 @@ function getDefaultSimultaneousRequests () {
  * @export @public @method
  * @name isMobileDevice
  *
- * @return {boolean} True if running on a mobile device.
+ * @returns {boolean} True if running on a mobile device.
  */
 function isMobileDevice () {
   const pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');

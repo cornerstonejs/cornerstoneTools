@@ -55,7 +55,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    * Create the measurement data for this tool with the end handle activated
    *
    * @param {*} evt
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (evt) {
     // Create the measurement data for this tool with the end handle activated
@@ -94,7 +94,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     if (data.visible === false) {
@@ -111,7 +111,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const { element, enabledElement } = evt.detail;

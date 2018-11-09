@@ -10,7 +10,9 @@ import {
 } from '../util/findAndMoveHelpers.js';
 
 /**
- * @export @abstract @class
+ * @export
+ * @abstract
+ * @class
  * @name BaseAnnotationTool
  * @classdesc Abstract class for tools which create and display annotations on the
  * cornerstone canvas.
@@ -40,10 +42,11 @@ export default class BaseAnnotationTool extends BaseTool {
   // ===================================================================
 
   /**
-   * @abstract Creates a new annotation.
+   * Creates a new annotation.
    *
+   * @abstract
    * @param  {type} evt description
-   * @return {type}     description
+   * @returns {type}     description
    */
   createNewMeasurement (evt) {
     throw new Error(
@@ -52,8 +55,11 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract @public Returns true if the given coords are need the tool.
    *
+   * Returns true if the given coords are need the tool.
+   *
+   * @abstract
+   * @public
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -64,9 +70,9 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract  Returns the distance in px from the given coords to the
-   *            closest handle of the annotation.
+   * Returns the distance in px from the given coords to the closest handle of the annotation.
    *
+   * @abstract
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -81,8 +87,9 @@ export default class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * @abstract Used to redraw the tool's annotation data per render
+   * Used to redraw the tool's annotation data per render
    *
+   * @abstract
    * @param {*} evt
    */
   renderToolData (evt) {

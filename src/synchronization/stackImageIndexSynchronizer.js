@@ -5,7 +5,9 @@ import clip from '../util/clip.js';
 
 /**
  * Synchronize the target stack to the index closest to the source stack's index
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name stackImageIndexSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
@@ -14,7 +16,6 @@ import clip from '../util/clip.js';
  * @param {HTMLElement} targetElement - The target element
  */
 export default function (synchronizer, sourceElement, targetElement) {
-
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;

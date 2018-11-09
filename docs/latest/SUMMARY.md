@@ -40,8 +40,6 @@
   - [Imports](third-party-functionality/index.md#imports.md)
   - [Tools](third-party-functionality/index.md#tools.md)
 
-
-
 ## Migrating
 
 - [Migration from 2.x](migration/index.md#2x)
@@ -49,6 +47,6 @@
 
 ## Misc
 
-- [API](api.md)
+- [API](https://tools.cornerstonejs.org/api/)
 - 3rd Party Tool Directory _coming soon_
 - Custom Tool Example Repositories _coming soon_

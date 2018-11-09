@@ -120,7 +120,7 @@ export default class BaseTool {
    *
    *
    * @param {*} evt
-   * @returns Any
+   * @returns {*}
    */
   applyActiveStrategy (evt) {
     return this.strategies[this.activeStrategy](evt, this.configuration);
@@ -129,6 +129,8 @@ export default class BaseTool {
   /**
    * Applys the requested mixins to the class.
    *
+   * @private
+   * @method
    * @param {string[]} mixinsArray An array of mixin identifiers (strings).
    */
   _applyMixins (mixinsArray) {
@@ -153,7 +155,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -169,7 +171,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -185,7 +187,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -201,7 +203,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:

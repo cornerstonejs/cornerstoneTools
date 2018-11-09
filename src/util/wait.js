@@ -18,7 +18,7 @@ export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {HTMLElement} element - An element that is an EnabledElement
  * @returns {EnabledElement}
  */
-export const waitForEnabledElementImageToLoad = (element) => {
+export function waitForEnabledElementImageToLoad (element) {
   try {
     const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -32,6 +32,6 @@ export const waitForEnabledElementImageToLoad = (element) => {
     // Is no longer, or never was an enabled element, stop polling
     return null;
   }
-};
+}
 
 export default wait;

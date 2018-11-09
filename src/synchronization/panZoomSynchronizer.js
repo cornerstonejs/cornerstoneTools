@@ -2,7 +2,9 @@ import external from '../externalModules.js';
 
 /**
  * Synchronize the target zoom and pan to match the source
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name panZoomSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
@@ -11,7 +13,6 @@ import external from '../externalModules.js';
  * @param {HTMLElement} targetElement - The target element
  */
 export default function (synchronizer, sourceElement, targetElement) {
-
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;

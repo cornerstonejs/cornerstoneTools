@@ -10,7 +10,7 @@ import external from '../externalModules.js';
  * @param  {object} start   The starting position of the line.
  * @param  {object} end     The end position of the line.
  * @param  {object} coords  The coordinates of the point.
- * @return {name}         The distance between the line and the point.
+ * @returns {name}         The distance between the line and the point.
  */
 export default function (element, start, end, coords) {
   const cornerstone = external.cornerstone;

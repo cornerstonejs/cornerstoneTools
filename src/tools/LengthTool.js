@@ -34,7 +34,7 @@ export default class LengthTool extends BaseAnnotationTool {
    * Create the measurement data for this tool with the end handle activated
    *
    * @param {*} eventData
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (eventData) {
     const goodEventData =
@@ -85,7 +85,7 @@ export default class LengthTool extends BaseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     const hasStartAndEndHandles =
@@ -112,7 +112,6 @@ export default class LengthTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const eventData = evt.detail;

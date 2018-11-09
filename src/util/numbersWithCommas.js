@@ -5,7 +5,7 @@
  * @name numbersWithCommas
  *
  * @param  {number} x The number to convert.
- * @return {string}   The pretty-printed number as a string.
+ * @returns {string}   The pretty-printed number as a string.
  */
 export default function (x) {
   const parts = x.toString().split('.');

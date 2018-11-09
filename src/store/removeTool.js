@@ -3,7 +3,9 @@ import store from './index.js';
 /**
  * Deactivates and removes the tool from the target element with the provided name
  *
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name removeToolForElement
  * @param {HTMLElement} element The element.
  * @param {string} toolName The name of the tool.
@@ -21,7 +23,9 @@ const removeToolForElement = function (element, toolName) {
 /**
  * Removes all tools from all enabled elements with the provided name.
  *
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name removeTool
  * @param {string} toolName The name of the tool.
  */
@@ -36,7 +40,8 @@ const removeTool = function (toolName) {
  * Removes tool with matching name from globally registered tools.
  * Requires `globalToolSyncEnabled` to be set to true
  *
- * @private @method
+ * @private
+ * @method
  * @name removeToolGlobally
  * @param {string} toolName The name of the tool to remove.
  */

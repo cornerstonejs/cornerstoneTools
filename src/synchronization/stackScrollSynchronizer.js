@@ -5,7 +5,9 @@ import clip from '../util/clip.js';
 
 /**
  * Propogate scrolling actions from the source element to the target element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name stackScrollSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this

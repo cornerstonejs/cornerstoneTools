@@ -8,7 +8,7 @@ import external from '../externalModules.js';
  *
  * @param  {object} handle The handle containing the boundingBox.
  * @param  {object} coords The coordinate to check.
- * @return {boolean} True if the point is enclosed within the bounding box.
+ * @returns {boolean} True if the point is enclosed within the bounding box.
  */
 export default function (handle, coords) {
   if (!handle.boundingBox) {

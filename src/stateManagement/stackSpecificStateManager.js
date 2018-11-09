@@ -9,7 +9,7 @@ import { getElementToolStateManager, setElementToolStateManager } from './toolSt
  *
  * @param  {string[]} toolTypes       The tool types to apply to the stack.
  * @param  {object} oldStateManager The imageIdSpecificStateManager.
- * @return {object} A stackSpecificToolStateManager instance.
+ * @returns {object} A stackSpecificToolStateManager instance.
  */
 function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
   let toolState = {};

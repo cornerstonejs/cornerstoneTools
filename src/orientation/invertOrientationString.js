@@ -1,6 +1,8 @@
 /**
  * Inverts an orientation string.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name invertOrientationString
  * @param  {string} orientationString The orientation.
  * @returns {string}  The inverted orientationString.

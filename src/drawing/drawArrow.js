@@ -2,7 +2,9 @@ import { drawLine, drawJoinedLines } from './index.js';
 
 /**
  * Draw an arrow using the drawing API.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawArrow
  *
  * @param  {object} context   The canvas context.

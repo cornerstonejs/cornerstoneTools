@@ -1,0 +1,20 @@
+{
+  "src": ["./src/**/*.js", "./README.md"],
+  "dest": "./docs/latest/api",
+  "app": {
+    "title": "Cornerstone Tools: API Docs",
+    "routing": "query",
+    "base": "/api",
+    "server": "github"
+  },
+  "template": {
+    "path": "zebra",
+    "options": {
+      "navbar": true,
+      "sidebar": {
+        "enabled": true,
+        "outline": "tree"
+      }
+    }
+  }
+}

@@ -215,7 +215,7 @@ function _initDefaultColorMap() {
  *                              ~15-20 colors, so this is the best we can do.
  * @private
  *
- * @return {type}  description
+ * @returns {type}  description
  */
 function _generateInterpolatedColor () {
   const randIndicies = _getNextColorPair();
@@ -241,7 +241,7 @@ function _generateInterpolatedColor () {
  *
  * @private
  *
- * @return {Array} An array containing the two indicies.
+ * @returns {Array} An array containing the two indicies.
  */
 function _getNextColorPair() {
   const indexPair = [

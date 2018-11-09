@@ -4,12 +4,12 @@ _book/
 
 ## Files
 .npmrc
-docs/api.md
 
 ## File Types
 .idea
 
 ## Output
 coverage/
+docs/latest/api
 dist/
 junit.xml
