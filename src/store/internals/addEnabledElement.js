@@ -37,13 +37,15 @@ import store from '../index.js';
  */
 /**
  * Adds an enabledElement to our store.
- * @export @private @method
+ * @export
+ * @private
+ * @method
  * @name addEnabledElement
  * @param {Cornerstone#ElementEnabled} elementEnabledEvt
  * @listens Cornerstone#ElementEnabled
  */
 export default function (elementEnabledEvt) {
-  console.log("EVENT:ELEMENT_ENABLED");
+  console.log('EVENT:ELEMENT_ENABLED');
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers
@@ -69,7 +71,8 @@ export default function (elementEnabledEvt) {
 
 /**
  * Adds the enabled element to the store.
- * @private @method
+ * @private
+ * @method
  * @param {HTMLElement} enabledElement
  */
 const _addEnabledElmenet = function (enabledElement) {
@@ -84,7 +87,8 @@ const _addEnabledElmenet = function (enabledElement) {
 /**
  * Iterate over our store's modules. If the module has an `enabledElementCallback`
  * call it and pass it a reference to our enabled element.
- * @private @method
+ * @private
+ * @method
  * @param  {Object} enabledElement
  */
 function _initModulesOnElement (enabledElement) {

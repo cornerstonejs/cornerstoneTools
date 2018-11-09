@@ -3,7 +3,9 @@ import { drawLine } from './index.js';
 
 /**
  * Draw a link between an annotation to a box.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawLink
  *
  * @param  {object[]} linkAnchorPoints An array of possible anchor points.

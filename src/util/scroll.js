@@ -3,7 +3,6 @@ import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import clip from './clip.js';
 
-
 /**
  * Scrolls through the stack.
  * @export @public @method
@@ -51,7 +50,8 @@ export default function (element, images, loop = false, allowSkipping = true) {
 
 /**
  * Recursively scrolls the stack until the desired image is reached.
- * @private @method
+ * @private
+ * @method
  * @name scrollWithoutSkipping
  *
  * @param  {type} stackData    Data object containing information about the stack.

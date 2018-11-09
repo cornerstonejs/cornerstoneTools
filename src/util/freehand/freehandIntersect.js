@@ -44,7 +44,7 @@ function end (dataHandles) {
  *
  * @param {object} dataHandles Data object associated with the tool.
  * @param {number} modifiedHandleId The id of the handle being modified.
- * @return {boolean} Whether the modfication causes any intersections.
+ * @returns {boolean} Whether the modfication causes any intersections.
  */
 function modify (dataHandles, modifiedHandleId) {
   // Check if the modifiedHandle's previous and next lines will intersect any other line in the polygon
@@ -77,14 +77,15 @@ function modify (dataHandles, modifiedHandleId) {
 
 /**
  * Checks whether the line (p1,q1) intersects any of the other lines in the polygon.
- * @private @method
+ * @private
+ * @method
  * @name doesIntersectOtherLines
  *
  * @param {object} dataHandles Data object associated with the tool.
  * @param {object} p1 Coordinates of the start of the line.
  * @param {object} q1 Coordinates of the end of the line.
  * @param {object} ignoredHandleIds Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
- * @return {boolean} Whether the line intersects any of the other lines in the polygon.
+ * @returns {boolean} Whether the line intersects any of the other lines in the polygon.
  */
 function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
   let j = dataHandles.length - 1;
@@ -112,7 +113,8 @@ function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
 
 /**
  * Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation algorithm.
- * @private @method
+ * @private
+ * @method
  * @name doesIntersect
  *
  * @param {object} p1 Coordinates of the start of the line 1.
@@ -152,7 +154,8 @@ function doesIntersect (p1, q1, p2, q2) {
 
 /**
  * Returns an object with two properties, x and y, from a heavier FreehandHandleData object.
- * @private @method
+ * @private
+ * @method
  * @name getCoords
  *
  * @param {object} dataHandle Data object associated with a single handle in the freehand tool.
@@ -167,7 +170,8 @@ function getCoords (dataHandle) {
 
 /**
  * Checks the orientation of 3 points.
- * @private @method
+ * @private
+ * @method
  * @name orientation
  *
  * @param {object} p First point.
@@ -187,7 +191,8 @@ function orientation (p, q, r) {
 
 /**
  * Checks if point q lines on the segment (p,r).
- * @private @method
+ * @private
+ * @method
  * @name onSegment
  *
  * @param {object} p Point p.

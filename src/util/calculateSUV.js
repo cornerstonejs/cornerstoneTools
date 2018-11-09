@@ -60,11 +60,12 @@ export default function (image, storedPixelValue) {
 
 /**
  * Returns a decimal value given a fractional value.
- * @private @method
+ * @private
+ * @method
  * @name fracToDec
  *
  * @param  {number} fractionalValue The value to convert.
- * @return {number}                 The value converted to decimal.
+ * @returns {number}                 The value converted to decimal.
  */
 function fracToDec (fractionalValue) {
   return parseFloat(`.${fractionalValue}`);

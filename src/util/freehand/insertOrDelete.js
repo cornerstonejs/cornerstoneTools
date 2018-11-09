@@ -21,6 +21,7 @@ export default function (evt, nearby) {
       toolIndex: nearby.toolIndex,
       handleIndex: nearby.handleNearby
     };
+
     deletePoint(eventData, deleteInfo);
   } else {
     const freehandLineFinder = new FreehandLineFinder(eventData);
@@ -33,12 +34,13 @@ export default function (evt, nearby) {
 }
 
 /**
-* Deletes a point from a freehand tool.
-* @private @method
-*
-* @param {object} eventData The data object associated with the event.
-* @param {object} deleteInfo Object containing information about which point to delete.
-*/
+ * Deletes a point from a freehand tool.
+ * @private
+ * @method
+ *
+ * @param {object} eventData The data object associated with the event.
+ * @param {object} deleteInfo Object containing information about which point to delete.
+ */
 function deletePoint (eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
@@ -82,7 +84,8 @@ function deletePoint (eventData, deleteInfo) {
 
 /**
  * Inserts a new point into a freehand tool.
- * @private @method
+ * @private
+ * @method
  *
  * @param {Object} eventData - The data object associated with the event.
  * @param {Object} insertInfo - Object containing information about where to insert the point.
@@ -129,7 +132,8 @@ function _insertPoint (eventData, insertInfo) {
 
 /**
  * Gets the handle index of a tool in which to insert the new point.
- * @private @method
+ * @private
+ * @method
  *
  * @param {Object} insertInfo - Object containing information about where to insert the point.
  */

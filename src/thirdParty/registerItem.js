@@ -2,7 +2,9 @@ import { lib } from '../lib.js';
 
 /**
  * Register an item to cornerstoneTools.
- * @export @private @method
+ * @export
+ * @private
+ * @method
  * @name registerItem
  *
  * @param {string} type The type of the item.

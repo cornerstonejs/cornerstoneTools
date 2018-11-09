@@ -23,13 +23,15 @@ import store from '../index.js';
 
 /**
  * Removes an enabledElement from our store, and all associated tools that were added to it.
- * @export @private @method
+ * @export
+ * @private
+ * @method
  * @name removeEnabledElement
  * @param {Cornerstone#ElementDisabled} elementDisabledEvt
  * @listens Cornerstone#ElementDisabled
  */
 export default function (elementDisabledEvt) {
-  console.log("EVENT:ELEMENT_DISABLED");
+  console.log('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers
@@ -56,7 +58,8 @@ export default function (elementDisabledEvt) {
 
 /**
  * Remove all tools associated with enabled element.
- * @private @method
+ * @private
+ * @method
  * @param {HTMLElement} enabledElement
  */
 const _removeAllToolsForElement = function (enabledElement) {
@@ -69,7 +72,8 @@ const _removeAllToolsForElement = function (enabledElement) {
 
 /**
  * Remove the enabled element from the store if it exists.
- * @private @method
+ * @private
+ * @method
  * @param {HTMLElement} enabledElement
  */
 const _removeEnabledElement = function (enabledElement) {
@@ -84,14 +88,15 @@ const _removeEnabledElement = function (enabledElement) {
   if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
   } else {
-    console.warn("unable to remove element");
+    console.warn('unable to remove element');
   }
 };
 
 /**
  * Iterate over our store's modules. If the module has a
  * `removeEnabledElementCallback` call it and clean up unneeded metadata.
- * @private @method
+ * @private
+ * @method
  * @param  {Object} enabledElement
  */
 function _cleanModulesOnElement (enabledElement) {

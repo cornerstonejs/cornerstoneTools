@@ -26,10 +26,10 @@ export default function (dataHandles, location) {
   return inROI;
 }
 
-
 /**
  * Returns true if the y-position yp is enclosed within y-positions y1 and y2.
- * @private @method
+ * @private
+ * @method
  * @name isEnclosedY
  *
  * @param {number} yp The y position of point p.
@@ -47,13 +47,14 @@ function isEnclosedY (yp, y1, y2) {
 
 /**
  * Returns true if the line segment is to the right of the point.
- * @private @method
+ * @private
+ * @method
  * @name isLineRightOfPoint
  *
  * @param {object} point The point being queried.
  * @param {object} lp1 The first point of the line segment.
  * @param {object} lp2 The second point of the line segment.
- * @return {boolean} True if the line is to the right of the point.
+ * @returns {boolean} True if the line is to the right of the point.
  */
 function isLineRightOfPoint (point, lp1, lp2) {
   // If both right of point return true
@@ -86,7 +87,8 @@ function isLineRightOfPoint (point, lp1, lp2) {
 
 /**
  * Returns the y value of the line segment at the x value of the point.
- * @private @method
+ * @private
+ * @method
  * @name lineSegmentAtPoint
  *
  * @param {object} point The point being queried.
@@ -106,13 +108,14 @@ function lineSegmentAtPoint (point, lp1, lp2) {
 
 /**
  * Returns true if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
- * @private @method
+ * @private
+ * @method
  * @name rayFromPointCrosssesLine
  *
  * @param {object} point The point being queried.
  * @param {object} handleI The first handle of the line segment.
  * @param {object} handleJ The second handle of the line segment.
- * @return {boolean} True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
+ * @returns {boolean} True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
  */
 function rayFromPointCrosssesLine (point, handleI, handleJ) {
   if (isEnclosedY(point.y, handleI.y, handleJ.y) && isLineRightOfPoint(point, handleI, handleJ)) {

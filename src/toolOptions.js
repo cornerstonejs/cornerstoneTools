@@ -2,7 +2,9 @@ const elementToolOptions = {};
 
 /**
  * Retrieve the options object associated with a particular toolType and element
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getToolOptions
  *
  * @param {string} toolType Tool type identifier of the target options object
@@ -27,7 +29,9 @@ function getToolOptions (toolType, element) {
 
 /**
  * Set the options object associated with a particular toolType and element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name setToolOptions
  *
  * @param {string} toolType Tool type identifier of the target options object.
@@ -61,7 +65,9 @@ function setToolOptions (toolType, element, options) {
 
 /**
  * Clear the options object associated with a particular toolType and element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name clearToolOptions
  *
  * @param {string} toolType Tool type identifier of the target options object.
@@ -79,7 +85,9 @@ function clearToolOptions (toolType, element) {
 
 /**
  * Clear the options objects associated with a particular toolType.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name clearToolOptionsByToolType
  *
  * @param {string} toolType Tool type identifier of the target options objects.
@@ -90,7 +98,9 @@ function clearToolOptionsByToolType (toolType) {
 
 /**
  * Clear the options objects associated with a particular element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name clearToolOptionsByElement
  *
  * @param {HTMLElement} element Element of the target options objects.

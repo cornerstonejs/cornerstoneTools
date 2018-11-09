@@ -8,7 +8,9 @@ import store from '../store/index.js';
 const { state, setters } = store.modules.brush;
 
 /**
- * @export @abstract @class
+ * @export
+ * @abstract
+ * @class
  * @name BaseBrushTool
  * @classdesc Abstract class for tools which manipulate the mask data to be displayed on
  * the cornerstone canvas.
@@ -236,7 +238,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Switches to the next segmentation color.
    *
-   * @public @api
+   * @public
+   * @api
    */
   nextSegmentation () {
     const numberOfColors = this.constructor.getNumberOfColors();
@@ -253,7 +256,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Switches to the previous segmentation color.
    *
-   * @public @api
+   * @public
+   * @api
    */
   previousSegmentation () {
     const numberOfColors = this.constructor.getNumberOfColors();
@@ -270,7 +274,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Increases the brush size
    *
-   * @public @api
+   * @public
+   * @api
    */
   increaseBrushSize () {
     const oldRadius = state.radius;
@@ -288,7 +293,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Decreases the brush size
    *
-   * @public @api
+   * @public
+   * @api
    */
   decreaseBrushSize () {
     const oldRadius = state.radius;
@@ -300,7 +306,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Displays a segmentation on the element.
    *
-   * @public @api
+   * @public
+   * @api
    * @param  {String} enabledElement  The enabledElement on which to display.
    * @param  {Number} segIndex        The index of the segmentation.
    */
@@ -316,7 +323,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Hides a segmentation on an element.
    *
-   * @public @api
+   * @public
+   * @api
    * @param  {Number} segIndex        The index of the segmentation.
    */
   hideSegmentationOnElement (segIndex) {
@@ -330,7 +338,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Displays all segmentations on an element.
    *
-   * @public @api
+   * @public
+   * @api
    */
   showAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
@@ -348,7 +357,8 @@ export default class BaseBrushTool extends BaseTool {
   /**
    * Hides all segmentations on an element.
    *
-   * @public @api
+   * @public
+   * @api
    */
   hideAllSegmentationsOnElement () {
     const enabledElement = this._getEnabledElement();
@@ -367,8 +377,9 @@ export default class BaseBrushTool extends BaseTool {
    * Returns the number of colors in the colormap.
    *
    * @static
-   * @public @api
-   * @return {Number} The number of colors in the color map.
+   * @public
+   * @api
+   * @returns {Number} The number of colors in the color map.
    */
   static getNumberOfColors () {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -407,7 +418,7 @@ export default class BaseBrushTool extends BaseTool {
    *
    * @static
    * @public
-   * @return {String} The number of colors in the color map.
+   * @returns {String} The number of colors in the color map.
    */
   static getReferencedToolDataName () {
     return 'brush';

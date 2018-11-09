@@ -37,7 +37,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    * Create the measurement data for this tool with the end handle activated
    *
    * @param {*} eventData
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (eventData) {
     const goodEventData =
@@ -74,7 +74,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     const hasEndHandle = data && data.handles && data.handles.end;
@@ -99,7 +99,6 @@ export default class ProbeTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const eventData = evt.detail;

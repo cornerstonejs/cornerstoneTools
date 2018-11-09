@@ -45,7 +45,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    * Create the measurement data for this tool with the end handle activated
    *
    * @param {*} eventData
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (eventData) {
     // Create the measurement data for this tool with the end handle activated
@@ -102,7 +102,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns
+   * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
     if (data.visible === false) {
@@ -125,7 +125,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const eventData = evt.detail;

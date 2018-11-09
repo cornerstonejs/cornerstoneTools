@@ -16,12 +16,10 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * finds an existing tool to interact with, it can prevent the
  * event from bubbling to MouseDownActivate.
  *
- * TODO: Set that a tool is active to prevent multiple event fires
- * TODO: Handles should trigger image update when released
  * TODO: Handles should handle deleting out of bound data by setting
  *
- * @param {*} evt
- * @returns
+ * @param {mousedown} evt
+ * @listens {mousedown}
  */
 export default function (evt) {
   if (state.isToolLocked) {
@@ -42,7 +40,7 @@ export default function (evt) {
   );
 
   // ACTIVE TOOL W/ PRE CALLBACK?
-  let activeTools = tools.filter((tool) => tool.mode === 'active');
+  const activeTools = tools.filter((tool) => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {

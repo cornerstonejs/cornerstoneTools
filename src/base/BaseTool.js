@@ -120,7 +120,7 @@ export default class BaseTool {
    *
    *
    * @param {*} evt
-   * @returns Any
+   * @returns {*}
    */
   applyActiveStrategy (evt) {
     return this.strategies[this.activeStrategy](evt, this.configuration);
@@ -153,7 +153,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -169,7 +169,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -185,7 +185,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:
@@ -201,7 +201,7 @@ export default class BaseTool {
    *
    * @virtual
    * @param  {type} evt
-   * @return {boolean} consumedEvent - True if function consumed the event.
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
    * Example implementation:

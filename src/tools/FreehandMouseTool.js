@@ -68,7 +68,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Create the measurement data for this tool
    *
    * @param {*} eventData
-   * @returns
+   * @returns {Object}
    */
   createNewMeasurement (eventData) {
     const goodEventData =
@@ -199,7 +199,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    *
    * @param {*} evt
-   * @returns
    */
   renderToolData (evt) {
     const eventData = evt.detail;
@@ -952,7 +951,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} eventData - data object associated with an event.
    * @param {Number} toolIndex - the ID of the tool
-   * @return {Number|Object|Boolean}
+   * @returns {Number|Object|Boolean}
    */
   _pointNearHandle (element, data, coords) {
     const config = this.configuration;
@@ -992,7 +991,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} eventData - data object associated with an event.
-   * @return {Object}
+   * @returns {Object}
    */
   _pointNearHandleAllTools (eventData) {
     const element = eventData.element;
@@ -1041,7 +1040,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} data      Data object associated with the tool.
    * @param {Object} eventData The data assoicated with the event.
-   * @return {Boolean}
+   * @returns {Boolean}
    */
   _checkInvalidHandleLocation (data, eventData) {
     const config = this.configuration;
@@ -1066,7 +1065,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @param {Object} data - data object associated with the tool.
    * @param {Object} eventData The data assoicated with the event.
-   * @return {Boolean}
+   * @returns {Boolean}
    */
   _checkHandlesPolygonMode (data, eventData) {
     const config = this.configuration;
@@ -1102,7 +1101,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} data - data object associated with the tool.
    * @param {Object} eventData The data associated with the event.
-   * @return {Boolean}
+   * @returns {Boolean}
    */
   _checkHandlesPencilMode (data, eventData) {
     const config = this.configuration;
@@ -1126,7 +1125,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} data - data object associated with the tool.
    * @param {Object} eventData The data associated with the event.
-   * @return {Boolean}
+   * @returns {Boolean}
    */
   _invalidHandlePencilMode (data, eventData) {
     const config = this.configuration;
@@ -1169,7 +1168,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} element     The element on which the roi is being drawn.
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
-   * @return {boolean}            True if the distance is smaller than the
+   * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
   _isDistanceSmallerThanSpacingCanvas (element, p1, p2) {
@@ -1183,7 +1182,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} element     The element on which the roi is being drawn.
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
-   * @return {boolean}            True if the distance is smaller than the
+   * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
   _isDistanceLargerThanSpacingCanvas (element, p1, p2) {
@@ -1198,7 +1197,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
    * @param  {string} comparison  The comparison to make.
-   * @return {boolean}            True if the distance is smaller than the
+   * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
   _compareDistanceToSpacingCanvas (element, p1, p2, comparison = '>') {

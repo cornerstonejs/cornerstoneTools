@@ -34,13 +34,14 @@ export default function (sp, boundingBox, dataHandles) {
 
 /**
  * Calculates the sum, squared sum and count of all pixels within the polygon.
- * @private @method
+ * @private
+ * @method
  * @name getSum
  *
  * @param {object} sp An array of the pixel data.
  * @param {object} boundingBox Rectangular box enclosing the polygon.
  * @param {object} dataHandles Data object associated with the tool.
- * @return {object} Object containing the sum, squared sum and pixel count.
+ * @returns {object} Object containing the sum, squared sum and pixel count.
  */
 function getSum (sp, boundingBox, dataHandles) {
   const sum = {
@@ -67,7 +68,8 @@ function getSum (sp, boundingBox, dataHandles) {
 
 /**
  * Adds the pixel to the workingSum if it is within the polygon.
- * @private @method
+ * @private
+ * @method
  * @name sumPointIfInFreehand
  *
  * @param {object} dataHandles Data object associated with the tool.

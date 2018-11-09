@@ -5,12 +5,14 @@ import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
  * Returns the first handle found to be near the provided point. Handles to search can be an array of handles, an
  * object of named handles, or an object of named handles AND named arrays of handles.
  *
- * @exports @public @function
+ * @export
+ * @public
+ * @method
  * @param {*} element
  * @param {(Array|Object)} handles - An arry of handles, object with named handles, or object with named handles AND named arrays of handles
  * @param {*} coords
  * @param {number} distanceThreshold
- * @returns [Handle]
+ * @returns {Object} Handle
  */
 const getHandleNearImagePoint = function (element, handles, coords, distanceThreshold) {
   let nearbyHandle;

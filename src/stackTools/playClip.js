@@ -12,10 +12,9 @@ const toolType = 'playClip';
  * ... of the resulting array represents the amount of time each frame will remain on the screen.
  * @param {Array} vector A Frame Time Vector (0018,1065) as specified in section C.7.6.5.1.2 of DICOM standard.
  * @param {Number} speed A speed factor which will be applied to each element of the resulting array.
- * @return {Array} An array with timeouts for each animation frame.
+ * @returns {Array} An array with timeouts for each animation frame.
  */
 function getPlayClipTimeouts (vector, speed) {
-
   let i;
   let sample;
   let delay;
@@ -55,13 +54,11 @@ function getPlayClipTimeouts (vector, speed) {
   }
 
   return timeouts;
-
 }
 
 /**
  * [private] Performs the heavy lifting of stopping an ongoing animation.
  * @param {Object} playClipData The data from playClip that needs to be stopped.
- * @return void
  */
 function stopClipWithData (playClipData) {
   const id = playClipData.intervalId;
@@ -79,7 +76,6 @@ function stopClipWithData (playClipData) {
 /**
  * [private] Trigger playClip tool stop event.
  * @param element
- * @return void
  */
 function triggerStopEvent (element) {
   const eventDetail = {
@@ -198,7 +194,6 @@ function playClip (element, framesPerSecond) {
     }
 
     if (newImageIdIndex !== stackData.currentImageIdIndex) {
-
       startLoadingHandler = loadHandlerManager.getStartLoadHandler();
       endLoadingHandler = loadHandlerManager.getEndLoadHandler();
       errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();

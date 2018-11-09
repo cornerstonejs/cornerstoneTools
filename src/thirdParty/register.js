@@ -4,7 +4,9 @@ import registerItem from './registerItem.js';
 
 /**
  * Register an item or module to cornerstoneTools.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name register
  *
  * @param {string} type The type of the item/module.

@@ -5,7 +5,7 @@
  * @export @public @constructor
  * @name newFrameOfReferenceSpecificToolStateManager
  *
- * @return {Object} A frameOfReferenceSpecificToolStateManager instance.
+ * @returns {Object} A frameOfReferenceSpecificToolStateManager instance.
  */
 function newFrameOfReferenceSpecificToolStateManager () {
   const toolState = {};

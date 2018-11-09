@@ -7,11 +7,13 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 /**
  * Merges the provided configuration with default values and returns a
  * configured CornerstoneTools instance.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name init
  *
  * @param {object} configuration
- * @returns {object} A configured CornerstoneTools instance with top level API members.
+ * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
 export default function (configuration) {
   _addCornerstoneEventListeners();
@@ -29,7 +31,8 @@ export default function (configuration) {
 /**
  * Wires up event listeners for the Cornerstone#ElementDisabled and
  * Cornerstone#ElementEnabled events.
- * @private @method
+ * @private
+ * @method
  */
 function _addCornerstoneEventListeners () {
   // Clear any listeners that may already be set
@@ -49,7 +52,8 @@ function _addCornerstoneEventListeners () {
 /**
  * Removes event listeners for the Cornerstone#ElementDisabled and
  * Cornerstone#ElementEnabled events.
- * @private @method
+ * @private
+ * @method
  */
 function _removeCornerstoneEventListeners () {
   const cornerstone = external.cornerstone;
@@ -74,7 +78,8 @@ function _removeCornerstoneEventListeners () {
  * Iterate over our store's modules. If the module has an `onRegisterCallback`
  * call it. This hook can be used to setup any global store requirements per
  * module.
- * @private @method
+ * @private
+ * @method
  */
 function _initModules () {
   const modules = store.modules;

@@ -5,7 +5,9 @@ import convertToVector3 from '../util/convertToVector3.js';
 
 /**
  * Synchronize the target stack to the image closest to the source image's position
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name stackImagePositionSynchronizer
  *
  * @param {Object} synchronizer - The Synchronizer instance that attaches this
@@ -14,7 +16,6 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @param {HTMLElement} targetElement - The target element
  */
 export default function (synchronizer, sourceElement, targetElement) {
-
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;

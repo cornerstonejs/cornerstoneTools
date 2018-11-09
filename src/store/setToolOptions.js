@@ -3,7 +3,9 @@ import getToolForElement from './getToolForElement.js';
 
 /**
  * Sets the options of a tool on a specific element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name setToolOptionsForElement
  *
  * @param {HTMLElement} element The element.
@@ -20,7 +22,9 @@ const setToolOptionsForElement = function (element, toolName, options) {
 
 /**
  * Sets the options of a tool for all elements.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name setToolOptions
  *
  * @param {string} toolName

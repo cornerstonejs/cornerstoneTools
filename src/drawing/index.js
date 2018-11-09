@@ -20,7 +20,9 @@ import textStyle from '../stateManagement/textStyle.js';
 /**
  * Create a new {@link CanvasRenderingContext2D|context} object for the given {@link HTMLCanvasElement|canvas}
  * and set the transform to the {@link https://www.w3.org/TR/2dcontext/#transformations|identity transform}.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getNewContext
  *
  * @param {HTMLCanvasElement} canvas
@@ -38,7 +40,9 @@ export function getNewContext (canvas) {
  * This function manages the {@link https://www.w3.org/TR/2dcontext/#the-canvas-state|save/restore}
  * pattern for working in a new context state stack. The parameter `fn` is passed the `context` and can
  * execute any API calls in a clean stack.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name draw
  *
  * @param {CanvasRenderingContext2D} context
@@ -53,7 +57,9 @@ export function draw (context, fn) {
 /**
  * This function manages the beginPath/stroke pattern for working with
  * {@link https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas|path objects}.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name path
  *
  * @param {CanvasRenderingContext2D} context
@@ -67,7 +73,6 @@ export function draw (context, fn) {
  * @param {ContextFn} fn - A drawing function to execute with the provided stroke pattern.
  */
 export function path (context, options, fn) {
-
   const { color, lineWidth, fillStyle, lineDash } = options;
 
   context.beginPath();
@@ -92,7 +97,9 @@ export function path (context, options, fn) {
 /**
  * Set the {@link https://www.w3.org/TR/2dcontext/#shadows|shadow} properties of the context.
  * Each property is set on the context object if defined, otherwise a default value is set.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name setShadow
  *
  * @param {CanvasRenderingContext2D} context
@@ -112,7 +119,9 @@ export function setShadow (context, options) {
 
 /**
  * Draw a line between `start` and `end`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawLine
  *
  * @param {CanvasRenderingContext2D} context
@@ -140,7 +149,9 @@ export function drawLine (context, element, start, end, options, coordSystem = '
 
 /**
  * Draw multiple lines.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawLines
  *
  * @param {CanvasRenderingContext2D} context
@@ -173,7 +184,9 @@ export function drawLines (context, element, lines, options, coordSystem = 'pixe
 
 /**
  * Draw a series of joined lines, starting at `start` and then going to each point in `points`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawJoinedLines
  *
  * @param {CanvasRenderingContext2D} context
@@ -202,7 +215,9 @@ export function drawJoinedLines (context, element, start, points, options, coord
 
 /**
  * Draw a circle with given `center` and `radius`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawCircle
  *
  * @param {CanvasRenderingContext2D} context
@@ -226,7 +241,9 @@ export function drawCircle (context, element, center, radius, options, coordSyst
 
 /**
  * Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawEllipse
  *
  * @param {CanvasRenderingContext2D} context
@@ -269,7 +286,9 @@ export function drawEllipse (context, element, corner1, corner2, options, coordS
 
 /**
  * Draw a rectangle defined by `corner1` and `corner2`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawRect
  *
  * @param {CanvasRenderingContext2D} context
@@ -301,7 +320,9 @@ export function drawRect (context, element, corner1, corner2, options, coordSyst
 
 /**
  * Fill the region outside a rectangle defined by `corner1` and `corner2`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name fillOutsideRect
  *
  * @param {CanvasRenderingContext2D} context
@@ -332,10 +353,11 @@ export function fillOutsideRect (context, element, corner1, corner2, options, co
   });
 }
 
-
 /**
  * Draw a filled rectangle defined by `boundingBox` using the style defined by `fillStyle`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name fillBox
  *
  * @param {CanvasRenderingContext2D} context

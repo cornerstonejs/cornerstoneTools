@@ -11,7 +11,7 @@ import external from '../externalModules.js';
  * @param enabledElement The cornerstone enabled element.
  * @param context The canvas context.
  * @param fontSize The font size.
- * @returns {{fontSize: number, lineHeight: number, fontScale: number}}
+ * @returns {Object} {fontSize: number, lineHeight: number, fontScale: number}
  */
 export default function (enabledElement, context, fontSize) {
   const fontScale = 0.1;
@@ -21,7 +21,6 @@ export default function (enabledElement, context, fontSize) {
   const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
   // TODO: actually calculate this?
   const lineHeight = fontSize / enabledElement.viewport.scale / fontScale;
-
 
   return {
     fontSize: scaledFontSize,

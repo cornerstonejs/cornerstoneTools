@@ -3,7 +3,9 @@ import { draw, fillTextLines, fillBox } from './index.js';
 
 /**
  * Compute the width of the box required to display the given `text` with a given `padding`.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name textBoxWidth
  *
  * @param {CanvasRenderingContext2D} context
@@ -13,19 +15,24 @@ import { draw, fillTextLines, fillBox } from './index.js';
 export function textBoxWidth (context, text, padding) {
   const font = textStyle.getFont();
   const origFont = context.font;
+
   if (font && font !== origFont) {
     context.font = font;
   }
   const width = context.measureText(text).width;
+
   if (font && font !== origFont) {
     context.font = origFont;
   }
+
   return width + 2 * padding;
 }
 
 /**
  * Draws a textBox.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name drawTextBox
  *
  * @param  {CanvasRenderingContext2D} context The canvas context.

@@ -2,7 +2,9 @@ import { state } from './index.js';
 
 /**
  * Returns the tool instance attached to the element.
- * @export @public @method
+ * @export
+ * @public
+ * @method
  * @name getToolForElement
  *
  * @param  {HTMLElement} element The element.

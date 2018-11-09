@@ -7,8 +7,8 @@ import { clearToolOptionsByElement } from '../toolOptions.js';
  * Return an array filtered to only its unique members
  *
  * @private
- * @param {*[]} array - The array to filter
- * @returns {*[]}
+ * @param {Array} array - The array to filter
+ * @returns {Array}
  */
 function unique (array) {
   return array.filter(function (value, index, self) {
@@ -20,11 +20,9 @@ function unique (array) {
  * Synchronize target and source elements when an event fires on the source element
  * @export @public constructor
  * @name Synchronizer
- * 
- * @param {String} event - The event(s) that will trigger synchronization. Separate multiple
- * events by a space
- * @param {Function} handler - The function that will make the necessary changes to the target
- * element in order to synchronize it with the source element
+ *
+ * @param {String} event - The event(s) that will trigger synchronization. Separate multiple events by a space
+ * @param {Function} handler - The function that will make the necessary changes to the target element in order to synchronize it with the source element
  */
 function Synchronizer (event, handler) {
   const cornerstone = external.cornerstone;

@@ -74,7 +74,7 @@ export {
   newStackSpecificToolStateManager,
   addStackStateManager
 } from './stateManagement/stackSpecificStateManager.js';
-export { default as loadHandlerManager} from './stateManagement/loadHandlerManager.js';
+export { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
 export {
   newImageIdSpecificToolStateManager,
   globalImageIdSpecificToolStateManager
@@ -85,7 +85,7 @@ export {
 } from './stateManagement/frameOfReferenceStateManager.js';
 export {
   forceEnabledElementResize
-} from "./eventListeners/windowResizeHandler.js";
+} from './eventListeners/windowResizeHandler.js';
 
 // ~~~~~~ ORIENTATION  ~~~~~ //
 export { default as orientation } from './orientation/index.js';

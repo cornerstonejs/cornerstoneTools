@@ -459,7 +459,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} sculptData - Data object associated with the sculpt event.
-   * @return {Object} An array of indicies that describe where new handles should be inserted.
+   * @returns {Object} An array of indicies that describe where new handles should be inserted.
    */
   _findNewHandleIndicies (sculptData) {
     const element = sculptData.element;
@@ -557,7 +557,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} sculptData - Data object associated with the sculpt event.
-   * @return {Object} An array of close pairs in dataHandles.
+   * @returns {Object} An array of close pairs in dataHandles.
    */
   _findCloseHandlePairs (sculptData) {
     const dataHandles = sculptData.dataHandles;
@@ -831,7 +831,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @param  {Object}  eventData    Data object associated with the event.
    * @param  {Number}  radius       The distance from the mouse to the ROI
    *                                in canvas coordinates.
-   * @return {Number}               The limited radius in canvas coordinates.
+   * @returns {Number}               The limited radius in canvas coordinates.
    */
   _limitCursorRadiusCanvas (eventData, radiusCanvas) {
     return this._limitCursorRadius(eventData, radiusCanvas, true);
@@ -845,7 +845,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @param  {Object}  eventData    Data object associated with the event.
    * @param  {Number}  radius       The distance from the mouse to the ROI
    *                                in image coordinates.
-   * @return {Number}               The limited radius in image coordinates.
+   * @returns {Number}               The limited radius in image coordinates.
    */
   _limitCursorRadiusImage (eventData, radiusImage) {
     return this._limitCursorRadius(eventData, radiusImage, false);
@@ -860,7 +860,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @param  {Number}  radius       The distance from the mouse to the ROI.
    * @param  {Boolean} canvasCoords Whether the calculation should be performed
    *                                In canvas coordinates.
-   * @return {Number}               The limited radius.
+   * @returns {Number}               The limited radius.
    */
   _limitCursorRadius (eventData, radius, canvasCoords = false) {
     const element = eventData.element;
@@ -900,7 +900,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @private
    * @param {Object} element - The element.
    * @param {Object} eventData - Data object associated with the event.
-   * @return {Number} The tool index of the closest freehand tool.
+   * @returns {Number} The tool index of the closest freehand tool.
    */
   _getClosestFreehandToolOnElement (element, eventData) {
     const freehand = getToolForElement(element, this.referencedToolName);
@@ -1143,7 +1143,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 /**
  * Returns the default freehandSculpterMouseTool configuration.
  *
- * @return {Object} The default configuration object.
+ * @returns {Object} The default configuration object.
  */
 function getDefaultFreehandSculpterMouseToolConfiguration () {
   return {
