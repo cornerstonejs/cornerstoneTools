@@ -129,6 +129,8 @@ export default class BaseTool {
   /**
    * Applys the requested mixins to the class.
    *
+   * @private
+   * @method
    * @param {string[]} mixinsArray An array of mixin identifiers (strings).
    */
   _applyMixins (mixinsArray) {
