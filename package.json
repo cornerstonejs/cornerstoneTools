@@ -37,6 +37,7 @@
     "test:firefox": "karma start config/karma/karma-firefox.js",
     "test:all": "npm run test:chrome && npm run test:firefox",
     "watch": "npm run webpack:watch",
+    "watch:apidocs": "nodemon --watch src/**/* -x \"npm run docs:api\"",
     "webpack": "npm run clean:dist && npm run webpack:prod && npm run webpack:dev",
     "webpack:dev": "webpack --progress --config ./config/webpack/webpack-dev",
     "webpack:prod": "webpack --progress --config ./config/webpack/webpack-prod",
