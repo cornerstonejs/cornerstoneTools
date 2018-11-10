@@ -8,12 +8,12 @@ import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
 
 /**
- * @export @public @class
- * @name wwwcRegionTool
+ * @exports WwwcRegionTool
+ * @public
  * @classdesc Tool for setting wwwc based on a rectangular region.
  * @extends BaseTool
  */
-export default class wwwcRegionTool extends BaseTool {
+export default class WwwcRegionTool extends BaseTool {
   constructor (configuration = {}) {
     const defaultConfig = {
       name: 'WwwcRegion',
@@ -79,6 +79,7 @@ export default class wwwcRegionTool extends BaseTool {
   /**
    * This function will update the handles and updateImage to force re-draw
    *
+   * @memberof WwwcRegionTool
    * @param  {} evt
    */
   _setHandlesAndUpdate (evt) {
@@ -92,7 +93,11 @@ export default class wwwcRegionTool extends BaseTool {
   /**
    * Event handler for MOUSE_UP during handle drag event loop.
    *
-   * @param {Object} evt - The event.
+   * @private
+   * @method _applyStrategy
+   * @memberof WwwcRegionTool
+   * @param {document#event:mousedown} evt - The event.
+   * @returns {undefined}
    */
   _applyStrategy (evt) {
     if (isEmptyObject(this.handles.start) || isEmptyObject(this.handles.end)) {
@@ -107,6 +112,10 @@ export default class wwwcRegionTool extends BaseTool {
   /**
    * Sets the start and end handle points to empty objects
    *
+   * @private
+   * @method _resetHandles
+   * @memberof WwwcRegionTool
+   * @returns {undefined}
    */
   _resetHandles () {
     this.handles = {
@@ -151,7 +160,7 @@ const applyWWWCRegion = (evt, config) => {
   const pixelLuminanceData = getLuminance(element, left, top, width, height);
 
   // Calculate the minimum and maximum pixel values
-  const minMaxMean = calculateMinMaxMean(
+  const minMaxMean = _calculateMinMaxMean(
     pixelLuminanceData,
     image.minPixelValue,
     image.maxPixelValue
@@ -177,17 +186,15 @@ const applyWWWCRegion = (evt, config) => {
 /**
  * Calculates the minimum, maximum, and mean value in the given pixel array
  *
- * @param {*} storedPixelLuminanceData
- * @param {*} globalMin
- * @param {*} globalMax
- * @returns {Object}
+ * @private
+ * @method _calculateMinMaxMean
+ * @param {number[]} pixelLuminance array of pixel luminance values
+ * @param {number} globalMin starting "min" valie
+ * @param {bumber} globalMax starting "max" value
+ * @returns {Object} {min: number, max: number, mean: number }
  */
-const calculateMinMaxMean = (
-  storedPixelLuminanceData,
-  globalMin,
-  globalMax
-) => {
-  const numPixels = storedPixelLuminanceData.length;
+const _calculateMinMaxMean = function (pixelLuminance, globalMin, globalMax) {
+  const numPixels = pixelLuminance.length;
   let min = globalMax;
   let max = globalMin;
   let sum = 0;
@@ -201,7 +208,7 @@ const calculateMinMaxMean = (
   }
 
   for (let index = 0; index < numPixels; index++) {
-    const spv = storedPixelLuminanceData[index];
+    const spv = pixelLuminance[index];
 
     min = Math.min(min, spv);
     max = Math.max(max, spv);
