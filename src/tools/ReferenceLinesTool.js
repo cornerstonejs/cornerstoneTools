@@ -74,10 +74,7 @@ export default class ReferenceLinesTool extends BaseTool {
     const eventData = evt.detail;
 
     // No renderer or synch context? Adios
-    if (
-      this.renderer === undefined ||
-      this.synchronizationContext === undefined
-    ) {
+    if (!this.renderer || !this.synchronizationContext) {
       return;
     }
 
