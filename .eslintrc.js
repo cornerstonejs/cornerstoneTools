@@ -238,7 +238,7 @@ module.exports = {
     "symbol-description": "warn",
     "template-curly-spacing": "warn",
     "unicode-bom": ["warn", "never"],
-    //'valid-jsdoc': 'warn',
+    "valid-jsdoc": "error",
     "vars-on-top": "warn",
     "wrap-iife": ["warn", "inside"],
     "wrap-regex": "warn",
