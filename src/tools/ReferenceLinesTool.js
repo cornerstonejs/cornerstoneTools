@@ -3,7 +3,6 @@ import external from './../externalModules.js';
 import BaseTool from './../base/BaseTool.js';
 
 import { getNewContext } from '../drawing/index.js';
-import { addToolState, getToolState } from './../stateManagement/toolState.js';
 import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';
 import { waitForEnabledElementImageToLoad } from './../util/wait.js';
 
@@ -34,22 +33,28 @@ export default class ReferenceLinesTool extends BaseTool {
 
     super(initialConfiguration);
     this.initialConfiguration = initialConfiguration;
+    this.renderer = null;
+    this.synchronizationContext = null;
   }
 
   async enabledCallback (element, { synchronizationContext } = {}) {
     const renderer = this.configuration.renderer;
     const enabledElement = await waitForEnabledElementImageToLoad(element);
 
-    if (!enabledElement) {
+    if (!enabledElement || !renderer || !synchronizationContext) {
       // TODO: Unable to add tool state, image never loaded.
       // Should we `setToolDisabledForElement` here?
+      console.warn(
+        `Unable to enable ${
+          this.name
+        }. Exiting enable callback. Tool will be enabled, but will not render.`
+      );
+
       return;
     }
+    this.renderer = renderer;
+    this.synchronizationContext = synchronizationContext;
 
-    addToolState(element, this.name, {
-      synchronizationContext,
-      renderer
-    });
     this.forceImageUpdate(element);
   }
 
@@ -67,35 +72,36 @@ export default class ReferenceLinesTool extends BaseTool {
 
   renderToolData (evt) {
     const eventData = evt.detail;
-    const toolData = getToolState(evt.currentTarget, this.name);
-
-    // No tool data? Bail out
-    if (toolData === undefined) {
-      return;
-    }
-
-    const { renderer, synchronizationContext } = toolData.data[0];
 
     // No renderer or synch context? Adios
-    if (renderer === undefined || synchronizationContext === undefined) {
+    if (
+      this.renderer === undefined ||
+      this.synchronizationContext === undefined
+    ) {
       return;
     }
 
     // Get the enabled elements associated with this synchronization context and draw them
-    const enabledElements = synchronizationContext.getSourceElements();
+    const enabledElements = this.synchronizationContext.getSourceElements();
     const context = getNewContext(eventData.canvasContext.canvas);
 
-    external.cornerstone.setToPixelCoordinateSystem(eventData.enabledElement, context);
+    external.cornerstone.setToPixelCoordinateSystem(
+      eventData.enabledElement,
+      context
+    );
     enabledElements.forEach((referenceEnabledElement) => {
-
       // Don't draw ourselves
       if (referenceEnabledElement === evt.currentTarget) {
         return;
       }
 
       // Render it
-      renderer(context, eventData, evt.currentTarget, referenceEnabledElement);
+      this.renderer(
+        context,
+        eventData,
+        evt.currentTarget,
+        referenceEnabledElement
+      );
     });
-
   }
 }
