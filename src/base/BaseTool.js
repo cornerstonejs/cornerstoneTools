@@ -1,24 +1,38 @@
 import mixins from '../mixins/index.js';
 
 /**
- * The fundemental abstract class from which all other tools inherit.
  *
- * @typedef {Object} BaseTool
- * @property {String} activeStrategy Strategy name to use when a strategy needs to be applied
- * @property {String} defaultStrategy Strategy name to "reset" the activeStrategy to if default behavior is desired
- * @property {String} mode 1 of 4 modes that influence the tool's behavior
- * @property {String} name
- * @property {Object} strategies
- * @property {Array} supportedInteractionTypes
+ *
+ * @export
+ * @class BaseTool
  */
 
 /**
- * @export @interface @class
- * @name BaseTool
+ * @interface
+ * @class BaseTool
  * @type {BaseTool}
  * @classdesc The fundemental abstract class from which all other tools inherit.
+ * @property {String} activeStrategy The name of the strategy that should be used
+ * @property {String} defaultStrategy The initial `activeStrategy` when the tool was initialized
+ * @property {CornerstoneTools.ToolMode} mode 1 of 4 modes that influence the tool's behavior
+ * @property {String} name A descriptive, unique tool name
+ * @property {Object} strategies An object containing available tool strategies
+ * @property {Array} supportedInteractionTypes
  */
 export default class BaseTool {
+
+  /**
+   *Creates an instance of BaseTool.
+   * @param {*} [{
+   *     name,
+   *     strategies,
+   *     defaultStrategy,
+   *     configuration,
+   *     supportedInteractionTypes,
+   *     mixins
+   *   }={}]
+   * @memberof BaseTool
+   */
   constructor ({
     name,
     strategies,
@@ -32,7 +46,6 @@ export default class BaseTool {
     this.element = undefined;
     this.supportedInteractionTypes = supportedInteractionTypes || [];
 
-    // Todo: should this live in baseTool?
     this.strategies = strategies || {};
     this.defaultStrategy =
       defaultStrategy || Object.keys(this.strategies)[0] || undefined;
@@ -53,64 +66,85 @@ export default class BaseTool {
     }
   }
 
+  //
+  // CONFIGURATION
+  //
+
+  /**
+   *
+   *
+   * @memberof BaseTool
+   */
   get configuration () {
     return this._configuration;
   }
 
+  /**
+   *
+   *
+   * @memberof BaseTool
+   */
   set configuration (configuration) {
     this._configuration = configuration;
   }
 
-  // ToolOptions.js
+  //
+  // OPTIONS
+  //
+
+  /**
+   * @readonly
+   * @memberof BaseTool
+   */
   get options () {
     return this._options;
   }
 
   /**
-   * Merges provided options with existing options
+   * Merges provided options with existing options.
    *
+   * @public
    * @memberof BaseTool
+   * @param {Object} options - options object to merge with existing options.
+   * @returns {undefined}
    */
   mergeOptions (options) {
     this._options = Object.assign({}, this._options, options);
   }
 
   /**
-   * Clears the tools options; preserves internal options, but
-   * with `undefined` values.
+   * Clears the tools options.
    *
+   * @public
    * @memberof BaseTool
+   * @returns {undefined}
    */
   clearOptions () {
     this._options = {};
   }
 
   /**
-   * Internal options that "MUST" be in the tool's options if
-   * certain conditions are met. Method is also good for inspecting
-   * options that can be used to change tool behavior.
+   * Apply the currently set/active strategy.
    *
-   * @readonly
+   * @public
    * @memberof BaseTool
-   */
-
-
-  /**
-   *
-   *
-   * @param {*} evt
-   * @returns {*}
+   * @method applyActiveStrategy
+   * @param {*} evt The event that triggered the strategies application
+   * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
   applyActiveStrategy (evt) {
     return this.strategies[this.activeStrategy](evt, this.configuration);
   }
 
   /**
-   * Applys the requested mixins to the class.
+   * Iterates over registered mixins; any matching names in the provided `mixinsArray` will
+   * be merged with this instance.
    *
    * @private
-   * @method
+   * @memberof BaseTool
+   * @method _applyMixins
    * @param {string[]} mixinsArray An array of mixin identifiers (strings).
+   * @returns {undefined}
    */
   _applyMixins (mixinsArray) {
     for (let i = 0; i < mixinsArray.length; i++) {
