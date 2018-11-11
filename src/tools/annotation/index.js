@@ -1,5 +1,5 @@
 /**
- * Some description
+ * Tools that extend the {@link #Tools.Base.BaseAnnotationTool|`BaseAnnotationTool`}
  *
  * @namespace Tools.Annotation
  */
@@ -18,6 +18,14 @@ import TextMarkerTool from './TextMarkerTool.js';
 // Named Exports
 export { default as AngleTool } from './AngleTool.js';
 export { default as ArrowAnnotateTool } from './ArrowAnnotateTool.js';
+export { default as BidirectionalTool } from './BidirectionalTool.js';
+export { default as CobbAngleTool } from './CobbAngleTool.js';
+export { default as EllipticalRoiTool } from './EllipticalRoiTool.js';
+export { default as FreehandMouseTool } from './FreehandMouseTool.js';
+export { default as LengthTool } from './LengthTool.js';
+export { default as ProbeTool } from './ProbeTool.js';
+export { default as RectangleRoiTool } from './RectangleRoiTool.js';
+export { default as TextMarkerTool } from './TextMarkerTool.js';
 
 // Namespace, default export
 export default {
