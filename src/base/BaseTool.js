@@ -85,9 +85,6 @@ export default class BaseTool {
    */
   clearOptions () {
     this._options = {};
-    this.internalOptions().forEach(
-      (option) => (this._options[option] = undefined)
-    );
   }
 
   /**
@@ -98,19 +95,6 @@ export default class BaseTool {
    * @readonly
    * @memberof BaseTool
    */
-  get internalOptions () {
-    const internalOptions = [];
-
-    // Should be on _every_ mouse tool
-    if (this.supportedInteractionTypes.contains('Mouse')) {
-      internalOptions.push('mouseButtonMask');
-    }
-    if (this.supportedInteractionTypes.contains('MultiTouch')) {
-      internalOptions.push('touchPointers');
-    }
-
-    return internalOptions;
-  }
 
   setDefaultStrategy () {
     this.activeStrategy = this.defaultStrategy;
