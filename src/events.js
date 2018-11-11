@@ -38,7 +38,6 @@ const EVENTS = {
   CLIP_STOPPED: 'cornerstonetoolsclipstopped',
   STACK_SCROLL: 'cornerstonestackscroll', // Should be renamed
 
-  LINE_SAMPLE_UPDATED: 'cornerstonelinesampleupdated'
 };
 
 export default EVENTS;
