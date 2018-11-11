@@ -96,9 +96,6 @@ export default class BaseTool {
    * @memberof BaseTool
    */
 
-  setDefaultStrategy () {
-    this.activeStrategy = this.defaultStrategy;
-  }
 
   /**
    *
