@@ -31,7 +31,7 @@ import store from '../index.js';
  * @listens Cornerstone#ElementDisabled
  */
 export default function (elementDisabledEvt) {
-  console.log('EVENT:ELEMENT_DISABLED');
+  console.info('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers

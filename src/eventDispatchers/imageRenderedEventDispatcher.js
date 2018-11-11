@@ -1,7 +1,7 @@
-import EVENTS from './../events.js';
 import { state } from './../store/index.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
+import external from './../externalModules.js';
 
 const onImageRendered = function (evt) {
   const eventData = evt.detail;
@@ -32,11 +32,17 @@ const onImageRendered = function (evt) {
 };
 
 const enable = function (element) {
-  element.addEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.addEventListener(
+    external.cornerstone.EVENTS.IMAGE_RENDERED,
+    onImageRendered
+  );
 };
 
 const disable = function (element) {
-  element.removeEventListener(EVENTS.IMAGE_RENDERED, onImageRendered);
+  element.removeEventListener(
+    external.cornerstone.EVENTS.IMAGE_RENDERED,
+    onImageRendered
+  );
 };
 
 export default {

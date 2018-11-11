@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { clearToolOptionsByElement } from '../toolOptions.js';
@@ -380,8 +379,14 @@ function Synchronizer (event, handler) {
     const elements = unique(sourceElements.concat(targetElements));
 
     elements.forEach(function (element) {
-      element.removeEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
-      element.addEventListener(EVENTS.ELEMENT_DISABLED, disableHandler);
+      element.removeEventListener(
+        external.cornerstone.EVENTS.ELEMENT_DISABLED,
+        disableHandler
+      );
+      element.addEventListener(
+        external.cornerstone.EVENTS.ELEMENT_DISABLED,
+        disableHandler
+      );
     });
   };
 

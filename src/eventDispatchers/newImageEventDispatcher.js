@@ -1,7 +1,7 @@
-import EVENTS from './../events.js';
 import { state } from './../store/index.js';
 import BaseBrushTool from '../base/BaseBrushTool.js';
 import onNewImageBrushEventHandler from '../eventListeners/onNewImageBrushEventHandler.js';
+import external from './../externalModules.js';
 
 const onNewImage = function (evt) {
   if (state.isToolLocked) {
@@ -29,9 +29,7 @@ const onNewImage = function (evt) {
   });
 
   // Check if any brush tools are present.
-  const brushTools = tools.filter(
-    (tool) => tool instanceof BaseBrushTool
-  );
+  const brushTools = tools.filter((tool) => tool instanceof BaseBrushTool);
 
   if (brushTools.length > 0) {
     onNewImageBrushEventHandler(evt);
@@ -39,11 +37,14 @@ const onNewImage = function (evt) {
 };
 
 const enable = function (element) {
-  element.addEventListener(EVENTS.NEW_IMAGE, onNewImage);
+  element.addEventListener(external.cornerstone.EVENTS.NEW_IMAGE, onNewImage);
 };
 
 const disable = function (element) {
-  element.removeEventListener(EVENTS.NEW_IMAGE, onNewImage);
+  element.removeEventListener(
+    external.cornerstone.EVENTS.NEW_IMAGE,
+    onNewImage
+  );
 };
 
 export default {
