@@ -1,9 +1,9 @@
-import mixins from '../mixins/index.js';
+import mixins from './../../mixins/index.js';
 
 /**
  * @interface
  * @class BaseTool
- * @memberof Tools
+ * @memberof Tools.Base
  * @classdesc The fundemental abstract class from which all other tools inherit.
  * @property {String} activeStrategy The name of the strategy that should be used
  * @property {String} defaultStrategy The initial `activeStrategy` when the tool was initialized

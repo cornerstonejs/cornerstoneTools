@@ -1,18 +1,15 @@
 import BaseTool from './BaseTool.js';
-// State
-import { getToolState } from './../stateManagement/toolState.js';
-// Manipulators
-import handleActivator from './../manipulators/handleActivator.js';
-
+import { getToolState } from './../../stateManagement/toolState.js';
+import handleActivator from './../../manipulators/handleActivator.js';
 import {
   moveHandleNearImagePoint,
   moveAnnotationNearClick
-} from '../util/findAndMoveHelpers.js';
+} from './../../util/findAndMoveHelpers.js';
 
 /**
  * @abstract
  * @class BaseAnnotationTool
- * @memberof Tools
+ * @memberof Tools.Base
  * @classdesc Abstract class for tools which create and display annotations on the
  * cornerstone canvas.
  * @extends BaseTool

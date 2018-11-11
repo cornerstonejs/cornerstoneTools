@@ -1,16 +1,15 @@
-import external from './../externalModules.js';
-import EVENTS from './../events.js';
+import external from './../../externalModules.js';
+import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
-// Utils
-import isToolActive from '../store/isToolActive.js';
-import store from '../store/index.js';
+import isToolActive from './../../store/isToolActive.js';
+import store from './../../store/index.js';
 
 const { state, setters } = store.modules.brush;
 
 /**
  * @abstract
  * @class BaseBrushTool
- * @memberof Tools
+ * @memberof Tools.Base
  * @classdesc Abstract class for tools which manipulate the mask data to be displayed on
  * the cornerstone canvas.
  * @extends BaseTool

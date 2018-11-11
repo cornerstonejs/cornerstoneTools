@@ -1,5 +1,7 @@
 /**
  * The parent (abstract) classes that all tools derive from.
+ *
+ * @namespace Tools.Base
  */
 
 import BaseAnnotationTool from './BaseAnnotationTool.js';
