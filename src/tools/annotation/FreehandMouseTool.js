@@ -1,26 +1,29 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import EVENTS from './../events.js';
-import external from './../externalModules.js';
-import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
+import BaseAnnotationTool from './../../base/BaseAnnotationTool.js';
 // State
-import { addToolState, getToolState } from './../stateManagement/toolState.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
-import { state } from '../store/index.js';
+import {
+  addToolState,
+  getToolState
+} from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import { state } from '../../store/index.js';
 // Manipulators
-import { moveHandleNearImagePoint } from '../util/findAndMoveHelpers.js';
+import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
 // Implementation Logic
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import calculateSUV from '../util/calculateSUV.js';
-import numbersWithCommas from '../util/numbersWithCommas.js';
+import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
+import calculateSUV from '../../util/calculateSUV.js';
+import numbersWithCommas from '../../util/numbersWithCommas.js';
 
 // Drawing
-import { getNewContext, draw, drawJoinedLines } from '../drawing/index.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import drawHandles from '../drawing/drawHandles.js';
-import { clipToBox } from '../util/clip.js';
+import { getNewContext, draw, drawJoinedLines } from '../../drawing/index.js';
+import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
+import drawHandles from '../../drawing/drawHandles.js';
+import { clipToBox } from '../../util/clip.js';
 
-import freehandUtils from '../util/freehand/index.js';
+import freehandUtils from '../../util/freehand/index.js';
 
 const {
   insertOrDelete,
@@ -31,8 +34,9 @@ const {
 } = freehandUtils;
 
 /**
- * @export @public @class
- * @name FreehandMouseTool
+ * @public
+ * @class FreehandMouseTool
+ * @memberof Tools.Annotation
  * @classdesc Tool for drawing arbitrary polygonal regions of interest, and
  * measuring the statistics of the enclosed pixels.
  * @extends BaseAnnotationTool
@@ -58,7 +62,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._drawingMouseDownCallback = this._drawingMouseDownCallback.bind(this);
     this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
     this._drawingMouseDragCallback = this._drawingMouseDragCallback.bind(this);
-    this._drawingMouseUpCallback   = this._drawingMouseUpCallback.bind(this);
+    this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
@@ -276,10 +280,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
           fill: fillColor
         };
 
-        if (
-          config.alwaysShowHandles ||
-          (data.active && data.polyBoundingBox)
-        ) {
+        if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
           // Render all handles
           options.handleRadius = config.activeHandleRadius;
           drawHandles(context, eventData, data.handles, color, options);
@@ -655,14 +656,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(eventData.element);
   }
 
-
   /**
    * Event handler for MOUSE_UP during drawing event loop.
    *
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseUpCallback(evt) {
+  _drawingMouseUpCallback (evt) {
     if (!this._dragging) {
       return;
     }
@@ -894,9 +894,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
 
-    const handleFurtherThanMinimumSpacing = ((handle) => {
-      return this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
-    }).bind(this);
+    const handleFurtherThanMinimumSpacing = (handle) =>
+      this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
 
     if (dataHandles.every(handleFurtherThanMinimumSpacing)) {
       this._addPoint(eventData);
@@ -1149,11 +1148,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Compare with all other handles appart from the last one
     for (let i = 1; i < dataHandles.length - 1; i++) {
-      if (this._isDistanceSmallerThanSpacingCanvas(
-        element,
-        dataHandles[i],
-        mousePoint
-      )) {
+      if (
+        this._isDistanceSmallerThanSpacingCanvas(
+          element,
+          dataHandles[i],
+          mousePoint
+        )
+      ) {
         return true;
       }
     }
@@ -1203,28 +1204,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   _compareDistanceToSpacingCanvas (element, p1, p2, comparison = '>') {
     const config = this.configuration;
 
-    const p1Canvas = external.cornerstone.pixelToCanvas(
-      element,
-      p1
-    );
-    const p2Canvas = external.cornerstone.pixelToCanvas(
-      element,
-      p2
-    );
+    const p1Canvas = external.cornerstone.pixelToCanvas(element, p1);
+    const p2Canvas = external.cornerstone.pixelToCanvas(element, p2);
 
     let result;
 
     if (comparison === '>') {
-      result = external.cornerstoneMath.point.distance(p1, p2) >
-      config.spacing
+      result = external.cornerstoneMath.point.distance(p1, p2) > config.spacing;
     } else {
-      result = external.cornerstoneMath.point.distance(p1, p2) <
-      config.spacing
+      result = external.cornerstoneMath.point.distance(p1, p2) < config.spacing;
     }
 
     return result;
   }
-
 
   /**
    * Adds drawing loop event listeners.
@@ -1265,10 +1257,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       EVENTS.MOUSE_DRAG,
       this._drawingMouseDragCallback
     );
-    element.removeEventListener(
-      EVENTS.MOUSE_UP,
-      this._drawingMouseUpCallback
-    );
+    element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
     external.cornerstone.updateImage(element);
   }

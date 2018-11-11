@@ -1,21 +1,22 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import { getToolState } from '../stateManagement/toolState.js';
-import textStyle from '../stateManagement/textStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
 // Drawing
-import { getNewContext, draw } from '../drawing/index.js';
-import drawTextBox from '../drawing/drawTextBox.js';
-import drawHandles from '../drawing/drawHandles.js';
+import { getNewContext, draw } from './../../drawing/index.js';
+import drawTextBox from './../../drawing/drawTextBox.js';
+import drawHandles from './../../drawing/drawHandles.js';
 // Utilities
-import getRGBPixels from '../util/getRGBPixels.js';
-import calculateSUV from '../util/calculateSUV.js';
+import getRGBPixels from './../../util/getRGBPixels.js';
+import calculateSUV from './../../util/calculateSUV.js';
 
 /**
- * @export @public @class
- * @name ProbeTool
+ * @public
+ * @class ProbeTool
+ * @memberof Tools.Annotation
  * @classdesc Tool which provides a probe of the image data at the
  * desired position.
  * @extends BaseAnnotationTool
@@ -90,7 +91,10 @@ export default class ProbeTool extends BaseAnnotationTool {
       return false;
     }
 
-    const probeCoords = external.cornerstone.pixelToCanvas(element, data.handles.end);
+    const probeCoords = external.cornerstone.pixelToCanvas(
+      element,
+      data.handles.end
+    );
 
     return external.cornerstoneMath.point.distance(probeCoords, coords) < 5;
   }
@@ -137,9 +141,17 @@ export default class ProbeTool extends BaseAnnotationTool {
 
           if (image.color) {
             storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
-            str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+            str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${
+              storedPixels[2]
+            }`;
           } else {
-            storedPixels = external.cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
+            storedPixels = external.cornerstone.getStoredPixels(
+              eventData.element,
+              x,
+              y,
+              1,
+              1
+            );
             const sp = storedPixels[0];
             const mo = sp * image.slope + image.intercept;
             const suv = calculateSUV(image, sp);
@@ -157,9 +169,18 @@ export default class ProbeTool extends BaseAnnotationTool {
             x: data.handles.end.x + 3,
             y: data.handles.end.y - 3
           };
-          const textCoords = external.cornerstone.pixelToCanvas(eventData.element, coords);
+          const textCoords = external.cornerstone.pixelToCanvas(
+            eventData.element,
+            coords
+          );
 
-          drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+          drawTextBox(
+            context,
+            str,
+            textCoords.x,
+            textCoords.y + fontHeight + 5,
+            color
+          );
           drawTextBox(context, text, textCoords.x, textCoords.y, color);
         }
       });

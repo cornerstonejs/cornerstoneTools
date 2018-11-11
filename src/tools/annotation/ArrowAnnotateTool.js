@@ -1,33 +1,33 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
 /* eslint no-alert: 0 */ // --> OFF
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
-import toolStyle from '../stateManagement/toolStyle.js';
-import textStyle from '../stateManagement/textStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
-import moveNewHandle from '../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import lineSegDistance from '../util/lineSegDistance.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import textStyle from './../../stateManagement/textStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import moveNewHandle from './../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
 import {
   addToolState,
   removeToolState,
   getToolState
-} from '../stateManagement/toolState.js';
-import { state } from '../store/index.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import { getNewContext, draw, setShadow } from '../drawing/index.js';
-import drawArrow from '../drawing/drawArrow.js';
-import drawHandles from '../drawing/drawHandles.js';
-import { textBoxWidth } from '../drawing/drawTextBox.js';
+} from './../../stateManagement/toolState.js';
+import { state } from './../../store/index.js';
+import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
+import { getNewContext, draw, setShadow } from './../../drawing/index.js';
+import drawArrow from './../../drawing/drawArrow.js';
+import drawHandles from './../../drawing/drawHandles.js';
+import { textBoxWidth } from './../../drawing/drawTextBox.js';
 
 /**
  * @public
  * @class ArrowAnnotateTool
- * @memberof Tools
+ * @memberof Tools.Annotation
  * @classdesc Create and position an arrow and label
  * @extends BaseAnnotationTool
  */

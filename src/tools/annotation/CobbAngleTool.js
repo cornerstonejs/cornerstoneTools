@@ -1,29 +1,35 @@
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import textStyle from '../stateManagement/textStyle.js';
+import textStyle from './../../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
   removeToolState
-} from '../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+} from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
-import moveNewHandle from '../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
+import moveNewHandle from './../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
-import drawHandles from '../drawing/drawHandles.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import lineSegDistance from '../util/lineSegDistance.js';
-import roundToDecimal from '../util/roundToDecimal.js';
-import EVENTS from './../events.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawLine
+} from './../../drawing/index.js';
+import drawHandles from './../../drawing/drawHandles.js';
+import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
+import EVENTS from './../../events.js';
 
 /**
- * @export @public @class
- * @name CobbAngleTool
+ * @public
+ * @class CobbAngleTool
+ * @memberof Tools.Annotation
  * @classdesc Tool for measuring the angle between two straight lines.
  * @extends BaseAnnotationTool
  */
@@ -155,15 +161,26 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
 
-        drawLine(context, eventData.element, data.handles.start, data.handles.end, {
-          color
-        });
-
+        drawLine(
+          context,
+          eventData.element,
+          data.handles.start,
+          data.handles.end,
+          {
+            color
+          }
+        );
 
         if (data.complete) {
-          drawLine(context, eventData.element, data.handles.start2, data.handles.end2, {
-            color
-          });
+          drawLine(
+            context,
+            eventData.element,
+            data.handles.start2,
+            data.handles.end2,
+            {
+              color
+            }
+          );
         }
 
         // Draw the handles
@@ -269,29 +286,24 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     // Associate this data with this imageId so we can render it and manipulate it
     external.cornerstone.updateImage(element);
 
-    handleMover(
-      eventData,
-      this.name,
-      measurementData,
-      toMoveHandle,
-      () => {
-        measurementData.active = false;
-        measurementData.handles.end.active = true;
+    handleMover(eventData, this.name, measurementData, toMoveHandle, () => {
+      measurementData.active = false;
+      measurementData.handles.end.active = true;
 
-        // TODO: `anyHandlesOutsideImage` deletion should be a config setting
-        // TODO: Maybe globally? Mayber per tool?
-        // If any handle is outside image, delete and abort
-        if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-          // Delete the measurement
-          removeToolState(element, this.name, measurementData);
-        }
-        external.cornerstone.updateImage(element);
+      // TODO: `anyHandlesOutsideImage` deletion should be a config setting
+      // TODO: Maybe globally? Mayber per tool?
+      // If any handle is outside image, delete and abort
+      if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
+        // Delete the measurement
+        removeToolState(element, this.name, measurementData);
       }
-    );
+      external.cornerstone.updateImage(element);
+    });
   }
 
   onMeasureModified (ev) {
-    const image = external.cornerstone.getEnabledElement(ev.detail.element).image;
+    const image = external.cornerstone.getEnabledElement(ev.detail.element).
+      image;
 
     if (ev.detail.toolType !== this.name) {
       return;
@@ -305,14 +317,28 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       const columnPixelSpacing = image.columnPixelSpacing || 1;
       const rowPixelSpacing = image.rowPixelSpacing || 1;
 
-      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
-      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
-      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
-      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+      const dx1 =
+        (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
+        columnPixelSpacing;
+      const dy1 =
+        (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
+        rowPixelSpacing;
+      const dx2 =
+        (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
+        columnPixelSpacing;
+      const dy2 =
+        (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
+        rowPixelSpacing;
 
-      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+      let angle = Math.acos(
+        Math.abs(
+          (dx1 * dx2 + dy1 * dy2) /
+            (Math.sqrt(dx1 * dx1 + dy1 * dy1) *
+              Math.sqrt(dx2 * dx2 + dy2 * dy2))
+        )
+      );
 
-      angle *= (180 / Math.PI);
+      angle *= 180 / Math.PI;
 
       const rAngle = roundToDecimal(angle, 2);
 
@@ -340,20 +366,31 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
   activeCallback (element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
-    element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.addEventListener(
+      EVENTS.MEASUREMENT_MODIFIED,
+      this.onMeasureModified
+    );
   }
 
   passiveCallback (element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
-    element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.addEventListener(
+      EVENTS.MEASUREMENT_MODIFIED,
+      this.onMeasureModified
+    );
   }
 
   enabledCallback (element) {
-    element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
-
+    element.removeEventListener(
+      EVENTS.MEASUREMENT_MODIFIED,
+      this.onMeasureModified
+    );
   }
 
   disabledCallback (element) {
-    element.removeEventListener(EVENTS.MEASUREMENT_MODIFIED, this.onMeasureModified);
+    element.removeEventListener(
+      EVENTS.MEASUREMENT_MODIFIED,
+      this.onMeasureModified
+    );
   }
 }

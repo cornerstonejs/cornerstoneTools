@@ -1,19 +1,25 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import { getToolState } from '../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
 // Drawing
-import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import drawHandles from '../drawing/drawHandles.js';
-import lineSegDistance from '../util/lineSegDistance.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawLine
+} from './../../drawing/index.js';
+import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
+import drawHandles from './../../drawing/drawHandles.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
 
 /**
- * @export @public @class
- * @name LengthTool
+ * @public
+ * @class LengthTool
+ * @memberof Tools.Annotation
  * @classdesc Tool for measuring distances.
  * @extends BaseAnnotationTool
  */

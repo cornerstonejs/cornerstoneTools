@@ -1,38 +1,35 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import { getToolState } from '../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
-  drawEllipse
-} from '../drawing/index.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import drawHandles from '../drawing/drawHandles.js';
-import calculateSUV from '../util/calculateSUV.js';
+  drawRect
+} from './../../drawing/index.js';
+import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
+import drawHandles from './../../drawing/drawHandles.js';
+import calculateSUV from './../../util/calculateSUV.js';
 //
-import numbersWithCommas from '../util/numbersWithCommas.js';
-
-import ellipseUtils from '../util/ellipse/index.js';
-
-const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
+import numbersWithCommas from './../../util/numbersWithCommas.js';
 
 /**
- * @export @public @class
- * @name EllipticalRoiTool
- * @classdesc Tool for drawing elliptical regions of interest, and measuring
+ * @public
+ * @class RectangleRoiTool
+ * @memberof Tools.Annotation
+ * @classdesc Tool for drawing rectangular regions of interest, and measuring
  * the statistics of the enclosed pixels.
  * @extends BaseAnnotationTool
  */
-export default class EllipticalRoiTool extends BaseAnnotationTool {
+export default class RectangleRoiTool extends BaseAnnotationTool {
   constructor (configuration = {}) {
     const defaultConfig = {
-      name: 'EllipticalRoi',
+      name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch']
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -101,9 +98,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * @returns {Boolean}
    */
   pointNearTool (element, data, coords) {
-    // TODO: How should we handle touch? for mouse, distance is 15 for touch its 25
-    const distance = 15;
-
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -118,31 +112,28 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
-    const startCanvas = external.cornerstone.pixelToCanvas(element, data.handles.start);
-    const endCanvas = external.cornerstone.pixelToCanvas(element, data.handles.end);
+    const startCanvas = external.cornerstone.pixelToCanvas(
+      element,
+      data.handles.start
+    );
+    const endCanvas = external.cornerstone.pixelToCanvas(
+      element,
+      data.handles.end
+    );
 
-    const minorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) - distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) - distance
+    const rect = {
+      left: Math.min(startCanvas.x, endCanvas.x),
+      top: Math.min(startCanvas.y, endCanvas.y),
+      width: Math.abs(startCanvas.x - endCanvas.x),
+      height: Math.abs(startCanvas.y - endCanvas.y)
     };
 
-    const majorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) + distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) + distance
-    };
+    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
+      rect,
+      coords
+    );
 
-    const pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
-    const pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
-
-    if (pointInMajorEllipse && !pointInMinorEllipse) {
-      return true;
-    }
-
-    return false;
+    return distanceToPoint < 5;
   }
 
   /**
@@ -203,8 +194,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // Check which color the rendered tool should be
         const color = toolColors.getColorIfActive(data);
 
-        // Draw the ellipse on the canvas
-        drawEllipse(context, element, data.handles.start, data.handles.end, {
+        // Draw the rectangle on the canvas
+        drawRect(context, element, data.handles.start, data.handles.end, {
           color
         });
 
@@ -229,34 +220,28 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         } else {
           // If the data has been invalidated, we need to calculate it again
 
-          // Retrieve the bounds of the ellipse in image coordinates
-          const ellipse = {
-            left: Math.round(
-              Math.min(data.handles.start.x, data.handles.end.x)
-            ),
-            top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-            width: Math.round(
-              Math.abs(data.handles.start.x - data.handles.end.x)
-            ),
-            height: Math.round(
-              Math.abs(data.handles.start.y - data.handles.end.y)
-            )
+          // Retrieve the bounds of the rectangle in image coordinates
+          const rectangle = {
+            left: Math.min(data.handles.start.x, data.handles.end.x),
+            top: Math.min(data.handles.start.y, data.handles.end.y),
+            width: Math.abs(data.handles.start.x - data.handles.end.x),
+            height: Math.abs(data.handles.start.y - data.handles.end.y)
           };
 
           // First, make sure this is not a color image, since no mean / standard
           // Deviation will be calculated for color images.
           if (!image.color) {
-            // Retrieve the array of pixels that the ellipse bounds cover
+            // Retrieve the array of pixels that the rectangle bounds cover
             const pixels = external.cornerstone.getPixels(
               element,
-              ellipse.left,
-              ellipse.top,
-              ellipse.width,
-              ellipse.height
+              rectangle.left,
+              rectangle.top,
+              rectangle.width,
+              rectangle.height
             );
 
-            // Calculate the mean & standard deviation from the pixels and the ellipse details
-            meanStdDev = calculateEllipseStatistics(pixels, ellipse);
+            // Calculate the mean & standard deviation from the pixels and the rectangle details
+            meanStdDev = calculateMeanStdDev(pixels, rectangle);
 
             if (modality === 'PT') {
               // If the image is from a PET scan, use the DICOM tags to
@@ -285,11 +270,11 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
             }
           }
 
-          // Calculate the image area from the ellipse dimensions and pixel spacing
+          // Calculate the image area from the rectangle dimensions and pixel spacing
           area =
-            Math.PI *
-            ((ellipse.width * (colPixelSpacing || 1)) / 2) *
-            ((ellipse.height * (rowPixelSpacing || 1)) / 2);
+            rectangle.width *
+            (colPixelSpacing || 1) *
+            (rectangle.height * (rowPixelSpacing || 1));
 
           // If the area value is sane, store it for later retrieval
           if (!isNaN(area)) {
@@ -300,10 +285,12 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.invalidated = false;
         }
 
+        const text = textBoxText(data);
+
         // If the textbox has not been moved by the user, it should be displayed on the right-most
         // Side of the tool.
         if (!data.handles.textBox.hasMoved) {
-          // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
+          // Find the rightmost side of the rectangle at its vertical center, and place the textbox here
           // Note that this calculates it in image coordinates
           data.handles.textBox.x = Math.max(
             data.handles.start.x,
@@ -312,8 +299,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.handles.textBox.y =
             (data.handles.start.y + data.handles.end.y) / 2;
         }
-
-        const text = textBoxText(data);
 
         drawLinkedTextBox(
           context,
@@ -358,7 +343,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
           const SUVtext = ' SUV: ';
 
-          meanText += SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
+          meanText +=
+            SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
           stdDevText +=
             SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
         }
@@ -390,7 +376,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     }
 
     function textBoxAnchorPoints (handles) {
-      // Retrieve the bounds of the ellipse (left, top, width, and height)
+      // Retrieve the bounds of the rectangle (left, top, width, and height)
       const left = Math.min(handles.start.x, handles.end.x);
       const top = Math.min(handles.start.y, handles.end.y);
       const width = Math.abs(handles.start.x - handles.end.x);
@@ -398,22 +384,22 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
       return [
         {
-          // Top middle point of ellipse
+          // Top middle point of rectangle
           x: left + width / 2,
           y: top
         },
         {
-          // Left middle point of ellipse
+          // Left middle point of rectangle
           x: left,
           y: top + height / 2
         },
         {
-          // Bottom middle point of ellipse
+          // Bottom middle point of rectangle
           x: left + width / 2,
           y: top + height
         },
         {
-          // Right middle point of ellipse
+          // Right middle point of rectangle
           x: left + width,
           y: top + height / 2
         }
@@ -421,3 +407,40 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     }
   }
 }
+
+const calculateMeanStdDev = (sp, rectangle) => {
+  // TODO: Get a real statistics library here that supports large counts
+
+  let sum = 0;
+  let sumSquared = 0;
+  let count = 0;
+  let index = 0;
+
+  for (let y = rectangle.top; y < rectangle.top + rectangle.height; y++) {
+    for (let x = rectangle.left; x < rectangle.left + rectangle.width; x++) {
+      sum += sp[index];
+      sumSquared += sp[index] * sp[index];
+      count++;
+      index++;
+    }
+  }
+
+  if (count === 0) {
+    return {
+      count,
+      mean: 0.0,
+      variance: 0.0,
+      stdDev: 0.0
+    };
+  }
+
+  const mean = sum / count;
+  const variance = sumSquared / count - mean * mean;
+
+  return {
+    count,
+    mean,
+    variance,
+    stdDev: Math.sqrt(variance)
+  };
+};

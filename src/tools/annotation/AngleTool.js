@@ -1,36 +1,36 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 /* eslint class-methods-use-this: 0 */ // --> OFF
-import external from '../externalModules.js';
+import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import {
   addToolState,
   getToolState,
   removeToolState
-} from '../stateManagement/toolState.js';
-import toolStyle from '../stateManagement/toolStyle.js';
-import toolColors from '../stateManagement/toolColors.js';
+} from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
-import moveNewHandle from '../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from '../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
+import moveNewHandle from './../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawJoinedLines
-} from '../drawing/index.js';
-import drawLinkedTextBox from '../drawing/drawLinkedTextBox.js';
-import { textBoxWidth } from '../drawing/drawTextBox.js';
-import drawHandles from '../drawing/drawHandles.js';
-import lineSegDistance from '../util/lineSegDistance.js';
-import roundToDecimal from '../util/roundToDecimal.js';
+} from './../../drawing/index.js';
+import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
+import { textBoxWidth } from './../../drawing/drawTextBox.js';
+import drawHandles from './../../drawing/drawHandles.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
+import roundToDecimal from './../../util/roundToDecimal.js';
 
 /**
  * @public
  * @class AngleTool
- * @memberof Tools
+ * @memberof Tools.Annotation
  * @classdesc Create and position an angle by placing
  * three consecutive points.
  * @extends BaseAnnotationTool

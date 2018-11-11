@@ -1,15 +1,19 @@
 /* eslint class-methods-use-this: 0 */
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import external from '../externalModules.js';
-import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
-import toolColors from '../stateManagement/toolColors.js';
-import { getNewContext, draw, setShadow } from '../drawing/index.js';
-import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
-import { removeToolState, getToolState } from '../stateManagement/toolState.js';
+import external from './../../externalModules.js';
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import toolColors from './../../stateManagement/toolColors.js';
+import { getNewContext, draw, setShadow } from './../../drawing/index.js';
+import drawTextBox from './../../drawing/drawTextBox.js';
+import {
+  removeToolState,
+  getToolState
+} from './../../stateManagement/toolState.js';
 
 /**
- * @export @public @class
- * @name StackScrollTool
+ * @public
+ * @class StackScrollTool
+ * @memberof Tools.Annotation
  * @classdesc Tool for annotating an image with text markers.
  * @extends BaseAnnotationTool
  */
@@ -69,7 +73,12 @@ export default class TextMarkerTool extends BaseAnnotationTool {
 
     // Check if the current handle is outside the image,
     // If it is, prevent the handle creation
-    if (!external.cornerstoneMath.point.insideRect(measurementData.handles.end, imageRect)) {
+    if (
+      !external.cornerstoneMath.point.insideRect(
+        measurementData.handles.end,
+        imageRect
+      )
+    ) {
       return;
     }
 

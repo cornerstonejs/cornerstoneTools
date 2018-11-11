@@ -10,10 +10,9 @@ import {
 } from '../util/findAndMoveHelpers.js';
 
 /**
- * @export
  * @abstract
- * @class
- * @name BaseAnnotationTool
+ * @class BaseAnnotationTool
+ * @memberof Tools
  * @classdesc Abstract class for tools which create and display annotations on the
  * cornerstone canvas.
  * @extends BaseTool

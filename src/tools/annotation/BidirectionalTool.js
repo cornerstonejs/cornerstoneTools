@@ -8,11 +8,13 @@ import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
 import preMouseDownCallback from './bidirectionalTool/preMouseDownCallback.js';
 import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js';
 
-const emptyLocationCallback = (measurementData, eventData, doneCallback) => doneCallback();
+const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
+  doneCallback();
+
 /**
  * @public
  * @class BidirectionalTool
- * @memberof Tools
+ * @memberof Tools.Annotation
  * @classdesc Create and position an annotation that measures the
  * length and width of a region.
  * @extends BaseAnnotationTool
@@ -37,8 +39,13 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       }
     };
 
-    const mergedConfiguration = Object.assign(defaultConfig.configuration, configuration);
-    const initialConfiguration = Object.assign(defaultConfig, { configuration: mergedConfiguration });
+    const mergedConfiguration = Object.assign(
+      defaultConfig.configuration,
+      configuration
+    );
+    const initialConfiguration = Object.assign(defaultConfig, {
+      configuration: mergedConfiguration
+    });
 
     super(initialConfiguration);
 
