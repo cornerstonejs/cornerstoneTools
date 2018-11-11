@@ -28,9 +28,10 @@ import lineSegDistance from '../util/lineSegDistance.js';
 import roundToDecimal from '../util/roundToDecimal.js';
 
 /**
- * @export @public @class
- * @name AngleTool
- * @classdesc Tool for measuring/annotating an angle by placing
+ * @public
+ * @class AngleTool
+ * @memberof Tools
+ * @classdesc Create and position an angle by placing
  * three consecutive points.
  * @extends BaseAnnotationTool
  */

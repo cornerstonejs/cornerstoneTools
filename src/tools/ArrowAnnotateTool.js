@@ -25,9 +25,10 @@ import drawHandles from '../drawing/drawHandles.js';
 import { textBoxWidth } from '../drawing/drawTextBox.js';
 
 /**
- * @export @public @class
- * @name ArrowAnnotateTool
- * @classdesc Tool for annotating a region of an image with some text.
+ * @public
+ * @class ArrowAnnotateTool
+ * @memberof Tools
+ * @classdesc Create and position an arrow and label
  * @extends BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
