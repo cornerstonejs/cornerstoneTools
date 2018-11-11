@@ -1,3 +1,7 @@
+/**
+ * @namespace CornerstoneTools
+ */
+
 // ~~~~~~ REQUEST POOL MANAGER  ~~~~~ // // TODO: Should this be top level? ¯\_(ツ)_/¯
 import requestPoolManager from './requestPool/requestPoolManager.js';
 
