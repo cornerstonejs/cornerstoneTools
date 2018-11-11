@@ -33,11 +33,11 @@ const EVENTS = {
   // Measurement / tool events
   MEASUREMENT_ADDED: 'cornerstonetoolsmeasurementadded',
   MEASUREMENT_MODIFIED: 'cornerstonetoolsmeasurementmodified',
-  MEASUREMENT_REMOVED: 'cornerstonemeasurementremoved',
+  MEASUREMENT_REMOVED: 'cornerstonetoolsmeasurementremoved',
   TOOL_DEACTIVATED: 'cornerstonetoolstooldeactivated',
   CLIP_STOPPED: 'cornerstonetoolsclipstopped',
-  STACK_SCROLL: 'cornerstonestackscroll', // Should be renamed
 
+  STACK_SCROLL: 'cornerstonetoolsstackscroll'
 };
 
 export default EVENTS;
