@@ -38,8 +38,6 @@ export default class BaseTool {
       defaultStrategy || Object.keys(this.strategies)[0] || undefined;
     this.activeStrategy = this.defaultStrategy;
 
-    //
-    this.data = {};
     // Options are set when a tool is added, during a "mode" change,
     // Or via a tool's option's setter
     this._options = {};
