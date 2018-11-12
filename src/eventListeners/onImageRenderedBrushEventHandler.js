@@ -2,7 +2,7 @@ import store from '../store/index.js';
 import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
-import BaseBrushTool from '../base/BaseBrushTool.js';
+import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import { getNewContext } from '../drawing/index.js';
 
 /* Safari and Edge polyfill for createImageBitmap
@@ -45,12 +45,12 @@ if (!('createImageBitmap' in window)) {
   };
 }
 
-
 const { state, getters, setters } = store.modules.brush;
 
 /**
  * Used to redraw the brush label map data per render.
  *
+ * @private
  * @param {Object} evt - The event.
  */
 export default function (evt) {
@@ -194,6 +194,7 @@ function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
 /**
  * Draws the ImageBitmap the canvas.
  *
+ * @private
  * @param  {Object} evt description
  */
 function _drawImageBitmap (evt, imageBitmap, alwaysVisible) {
