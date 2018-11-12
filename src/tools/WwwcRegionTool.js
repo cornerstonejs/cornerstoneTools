@@ -8,12 +8,15 @@ import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
 
 /**
- * @exports WwwcRegionTool
  * @public
+ * @class WwwcRegionTool
+ * @memberof Tools
  * @classdesc Tool for setting wwwc based on a rectangular region.
  * @extends BaseTool
  */
 export default class WwwcRegionTool extends BaseTool {
+
+  /** @inheritdoc */
   constructor (configuration = {}) {
     const defaultConfig = {
       name: 'WwwcRegion',
@@ -28,18 +31,47 @@ export default class WwwcRegionTool extends BaseTool {
 
     this.initialConfiguration = initialConfiguration;
     this._resetHandles();
+
+    //
     // Touch
+    //
+
+    /** @inheritdoc */
     this.postTouchStartCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.touchDragCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.touchEndCallback = this._applyStrategy.bind(this);
-    // Mouse
+
+    //
+    // MOUSE
+    //
+
+    /** @inheritdoc */
     this.postMouseDownCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.mouseClickCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.mouseDragCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.mouseMoveCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.mouseUpCallback = this._applyStrategy.bind(this);
   }
 
+  /**
+   * Render hook: draws the WWWCRegion's "box" when selecting
+   *
+   * @param {Cornerstone.event:cornerstoneimagerendered} evt cornerstoneimagerendered event
+   * @memberof Tools.WwwcRegionTool
+   * @returns {undefined}
+   */
   renderToolData (evt) {
     const eventData = evt.detail;
     const { element } = eventData;
@@ -56,7 +88,8 @@ export default class WwwcRegionTool extends BaseTool {
   /**
    * Sets the start handle point and claims the eventDispatcher event
    *
-   * @param {*} evt
+   * @private
+   * @param {*} evt // mousedown, touchstart, click
    * @returns {Boolean} True
    */
   _startOutliningRegion (evt) {
@@ -64,7 +97,7 @@ export default class WwwcRegionTool extends BaseTool {
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
 
-    if (isEmptyObject(this.handles.start)) {
+    if (_isEmptyObject(this.handles.start)) {
       this.handles.start = image;
     } else {
       this.handles.end = image;
@@ -79,8 +112,10 @@ export default class WwwcRegionTool extends BaseTool {
   /**
    * This function will update the handles and updateImage to force re-draw
    *
-   * @memberof WwwcRegionTool
-   * @param  {} evt
+   * @private
+   * @method _setHandlesAndUpdate
+   * @param {(CornerstoneTools.event:cornerstonetoolstouchdrag|CornerstoneTools.event:cornerstonetoolsmousedrag|CornerstoneTools.event:cornerstonetoolsmousemove)} evt  Interaction event emitted by an enabledElement
+   * @returns {undefined}
    */
   _setHandlesAndUpdate (evt) {
     const element = evt.detail.element;
@@ -91,21 +126,23 @@ export default class WwwcRegionTool extends BaseTool {
   }
 
   /**
-   * Event handler for MOUSE_UP during handle drag event loop.
+   * Event handler for MOUSE_UP/TOUCH_END during handle drag event loop.
    *
    * @private
    * @method _applyStrategy
-   * @memberof WwwcRegionTool
-   * @param {document#event:mousedown} evt - The event.
+   * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
    * @returns {undefined}
    */
   _applyStrategy (evt) {
-    if (isEmptyObject(this.handles.start) || isEmptyObject(this.handles.end)) {
+    if (
+      _isEmptyObject(this.handles.start) ||
+      _isEmptyObject(this.handles.end)
+    ) {
       return;
     }
 
     evt.detail.handles = this.handles;
-    applyWWWCRegion(evt, this.configuration);
+    _applyWWWCRegion(evt, this.configuration);
     this._resetHandles();
   }
 
@@ -114,7 +151,6 @@ export default class WwwcRegionTool extends BaseTool {
    *
    * @private
    * @method _resetHandles
-   * @memberof WwwcRegionTool
    * @returns {undefined}
    */
   _resetHandles () {
@@ -126,20 +162,27 @@ export default class WwwcRegionTool extends BaseTool {
 }
 
 /**
+ * Helper to determine if an object has no keys and is the correct type (is empty)
  *
- *
- * @param {*} obj
+ * @private
+ * @function _isEmptyObject
+ * @param {Object} obj The object to check
+ * @returns {Boolean} true if the object is empty
  */
-const isEmptyObject = (obj) =>
+const _isEmptyObject = (obj) =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
 /**
  * Calculates the minimum and maximum value in the given pixel array
+ * and updates the viewport of the element in the event.
  *
- * @param {*} evt
- * @param {*} config
+ * @private
+ * @method _applyWWWCRegion
+ * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
+ * @param {Object} config The tool's configuration object
+ * @returns {undefined}
  */
-const applyWWWCRegion = (evt, config) => {
+const _applyWWWCRegion = function (evt, config) {
   const eventData = evt.detail;
   const { image, element } = eventData;
   const { start: startPoint, end: endPoint } = evt.detail.handles;

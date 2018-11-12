@@ -155,20 +155,25 @@ export default class BaseTool {
   // Virtual Methods - Have default behavior but may be overriden.
   // ===================================================================
 
+  //
+  // MOUSE
+  //
+
   /**
    * Callback that takes priority if the tool is active, before `MOUSE_DOWN`
    * events are processed. Does nothing by default.
    *
-   * @virtual
-   * @param  {type} evt
+   * @callback BaseTool~preMouseDownCallback
+   * @param  {CornerstoneTools.event:cornerstonetoolsmousedown} evt
    * @returns {boolean} consumedEvent - True if function consumed the event.
    */
   /**
-   * Example implementation:
+   * Callback that takes priority if the tool is active, after `MOUSE_DOWN`
+   * events are processed. Does nothing by default.
    *
-   * preMouseDownCallback(evt) {
-   *    return false;
-   * }
+   * @callback BaseTool~postMouseDownCallback
+   * @param  {CornerstoneTools.event:cornerstonetoolsmousedown} evt
+   * @returns {boolean} consumedEvent - True if function consumed the event.
    */
 
   /**
