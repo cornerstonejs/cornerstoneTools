@@ -1,3 +1,8 @@
+/**
+ * Namespace for native DOM/Document types
+ * @namespace CornerstoneTools.Drawing
+ */
+
 import external from '../externalModules.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import textStyle from '../stateManagement/textStyle.js';
@@ -20,13 +25,13 @@ import textStyle from '../stateManagement/textStyle.js';
 /**
  * Create a new {@link CanvasRenderingContext2D|context} object for the given {@link HTMLCanvasElement|canvas}
  * and set the transform to the {@link https://www.w3.org/TR/2dcontext/#transformations|identity transform}.
- * @export
+ *
  * @public
- * @method
- * @name getNewContext
+ * @function getNewContext
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {HTMLCanvasElement} canvas
- * @returns {CanvasRenderingContext2D}
+ * @returns {CanvasRenderingContext2D} - The context of the canvas
  */
 export function getNewContext (canvas) {
   const context = canvas.getContext('2d');
@@ -40,13 +45,13 @@ export function getNewContext (canvas) {
  * This function manages the {@link https://www.w3.org/TR/2dcontext/#the-canvas-state|save/restore}
  * pattern for working in a new context state stack. The parameter `fn` is passed the `context` and can
  * execute any API calls in a clean stack.
- * @export
  * @public
- * @method
- * @name draw
+ * @method draw
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {ContextFn} fn - A function which performs drawing operations within the given context.
+ * @returns {undefined}
  */
 export function draw (context, fn) {
   context.save();
@@ -57,10 +62,9 @@ export function draw (context, fn) {
 /**
  * This function manages the beginPath/stroke pattern for working with
  * {@link https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas|path objects}.
- * @export
  * @public
- * @method
- * @name path
+ * @method path
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {Object} options
@@ -71,13 +75,17 @@ export function draw (context, fn) {
  * @param {Number[]} options.lineDash - The {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/setLineDash|dash pattern}
  *     to use on the lines.
  * @param {ContextFn} fn - A drawing function to execute with the provided stroke pattern.
+ * @returns {undefined}
  */
 export function path (context, options, fn) {
   const { color, lineWidth, fillStyle, lineDash } = options;
 
   context.beginPath();
   context.strokeStyle = color || context.strokeStyle;
-  context.lineWidth = lineWidth || (lineWidth === undefined && toolStyle.getToolWidth()) || context.lineWidth;
+  context.lineWidth =
+    lineWidth ||
+    (lineWidth === undefined && toolStyle.getToolWidth()) ||
+    context.lineWidth;
   if (lineDash) {
     context.setLineDash(lineDash);
   }
@@ -97,10 +105,9 @@ export function path (context, options, fn) {
 /**
  * Set the {@link https://www.w3.org/TR/2dcontext/#shadows|shadow} properties of the context.
  * Each property is set on the context object if defined, otherwise a default value is set.
- * @export
  * @public
- * @method
- * @name setShadow
+ * @method setShadow
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {Object} options
@@ -108,6 +115,7 @@ export function path (context, options, fn) {
  * @param {String} options.shadowColor - Default value: #000000
  * @param {Number} options.shadowOffsetX - Default value: 1
  * @param {Number} options.shadowOffsetY - Default value: 1
+ * @returns {undefined}
  */
 export function setShadow (context, options) {
   if (options.shadow) {
@@ -119,10 +127,9 @@ export function setShadow (context, options) {
 
 /**
  * Draw a line between `start` and `end`.
- * @export
  * @public
- * @method
- * @name drawLine
+ * @method drawLine
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -132,8 +139,16 @@ export function setShadow (context, options) {
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawLine (context, element, start, end, options, coordSystem = 'pixel') {
+export function drawLine (
+  context,
+  element,
+  start,
+  end,
+  options,
+  coordSystem = 'pixel'
+) {
   path(context, options, (context) => {
     if (coordSystem === 'pixel') {
       const cornerstone = external.cornerstone;
@@ -149,10 +164,9 @@ export function drawLine (context, element, start, end, options, coordSystem = '
 
 /**
  * Draw multiple lines.
- * @export
  * @public
- * @method
- * @name drawLines
+ * @method drawLines
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -162,8 +176,15 @@ export function drawLine (context, element, start, end, options, coordSystem = '
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawLines (context, element, lines, options, coordSystem = 'pixel') {
+export function drawLines (
+  context,
+  element,
+  lines,
+  options,
+  coordSystem = 'pixel'
+) {
   path(context, options, (context) => {
     lines.forEach((line) => {
       let start = line.start;
@@ -184,10 +205,9 @@ export function drawLines (context, element, lines, options, coordSystem = 'pixe
 
 /**
  * Draw a series of joined lines, starting at `start` and then going to each point in `points`.
- * @export
  * @public
- * @method
- * @name drawJoinedLines
+ * @method drawJoinedLines
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -197,8 +217,16 @@ export function drawLines (context, element, lines, options, coordSystem = 'pixe
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawJoinedLines (context, element, start, points, options, coordSystem = 'pixel') {
+export function drawJoinedLines (
+  context,
+  element,
+  start,
+  points,
+  options,
+  coordSystem = 'pixel'
+) {
   path(context, options, (context) => {
     if (coordSystem === 'pixel') {
       const cornerstone = external.cornerstone;
@@ -215,10 +243,9 @@ export function drawJoinedLines (context, element, start, points, options, coord
 
 /**
  * Draw a circle with given `center` and `radius`.
- * @export
  * @public
- * @method
- * @name drawCircle
+ * @method drawCircle
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -228,8 +255,16 @@ export function drawJoinedLines (context, element, start, points, options, coord
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawCircle (context, element, center, radius, options, coordSystem = 'pixel') {
+export function drawCircle (
+  context,
+  element,
+  center,
+  radius,
+  options,
+  coordSystem = 'pixel'
+) {
   if (coordSystem === 'pixel') {
     center = external.cornerstone.pixelToCanvas(element, center);
   }
@@ -241,10 +276,10 @@ export function drawCircle (context, element, center, radius, options, coordSyst
 
 /**
  * Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
- * @export
  * @public
- * @method
- * @name drawEllipse
+ * @method drawEllipse
+ * @memberof CornerstoneTools.Drawing
+ *
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -254,8 +289,16 @@ export function drawCircle (context, element, center, radius, options, coordSyst
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawEllipse (context, element, corner1, corner2, options, coordSystem = 'pixel') {
+export function drawEllipse (
+  context,
+  element,
+  corner1,
+  corner2,
+  options,
+  coordSystem = 'pixel'
+) {
   // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
   if (coordSystem === 'pixel') {
     corner1 = external.cornerstone.pixelToCanvas(element, corner1);
@@ -286,10 +329,9 @@ export function drawEllipse (context, element, corner1, corner2, options, coordS
 
 /**
  * Draw a rectangle defined by `corner1` and `corner2`.
- * @export
  * @public
- * @method
- * @name drawRect
+ * @method drawRect
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -299,8 +341,16 @@ export function drawEllipse (context, element, corner1, corner2, options, coordS
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function drawRect (context, element, corner1, corner2, options, coordSystem = 'pixel') {
+export function drawRect (
+  context,
+  element,
+  corner1,
+  corner2,
+  options,
+  coordSystem = 'pixel'
+) {
   if (coordSystem === 'pixel') {
     const cornerstone = external.cornerstone;
 
@@ -320,10 +370,9 @@ export function drawRect (context, element, corner1, corner2, options, coordSyst
 
 /**
  * Fill the region outside a rectangle defined by `corner1` and `corner2`.
- * @export
  * @public
- * @method
- * @name fillOutsideRect
+ * @method fillOutsideRect
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on
@@ -333,8 +382,16 @@ export function drawRect (context, element, corner1, corner2, options, coordSyst
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
-export function fillOutsideRect (context, element, corner1, corner2, options, coordSystem = 'pixel') {
+export function fillOutsideRect (
+  context,
+  element,
+  corner1,
+  corner2,
+  options,
+  coordSystem = 'pixel'
+) {
   if (coordSystem === 'pixel') {
     const cornerstone = external.cornerstone;
 
@@ -355,38 +412,55 @@ export function fillOutsideRect (context, element, corner1, corner2, options, co
 
 /**
  * Draw a filled rectangle defined by `boundingBox` using the style defined by `fillStyle`.
- * @export
  * @public
- * @method
- * @name fillBox
+ * @method fillBox
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {Object} boundingBox - `{ left, top, width, height }` in canvas coordinates.
  * @param {FillStyle} fillStyle - The fillStyle to apply to the region.
+ * @returns {undefined}
  */
 export function fillBox (context, boundingBox, fillStyle) {
   context.fillStyle = fillStyle;
-  context.fillRect(boundingBox.left, boundingBox.top, boundingBox.width, boundingBox.height);
+  context.fillRect(
+    boundingBox.left,
+    boundingBox.top,
+    boundingBox.width,
+    boundingBox.height
+  );
 }
 
 /**
  * Draw multiple lines of text within a bounding box.
- * @export @public @method
- * @name fillTextLines
+ * @public
+ * @method fillTextLines
+ * @memberof CornerstoneTools.Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {Object} boundingBox - `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
  * @param {String[]} textLines - The text to be displayed.
  * @param {FillStyle} fillStyle - The fillStyle to apply to the text.
  * @param {Number} padding - The amount of padding above/below each line in canvas units. Note this gives an inter-line spacing of `2*padding`.
+ * @returns {undefined}
  */
-export function fillTextLines (context, boundingBox, textLines, fillStyle, padding) {
+export function fillTextLines (
+  context,
+  boundingBox,
+  textLines,
+  fillStyle,
+  padding
+) {
   const fontSize = textStyle.getFontSize();
 
   context.font = textStyle.getFont();
   context.textBaseline = 'top';
   context.fillStyle = fillStyle;
   textLines.forEach(function (text, index) {
-    context.fillText(text, boundingBox.left + padding, boundingBox.top + padding + index * (fontSize + padding));
+    context.fillText(
+      text,
+      boundingBox.left + padding,
+      boundingBox.top + padding + index * (fontSize + padding)
+    );
   });
 }
