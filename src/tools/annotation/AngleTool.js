@@ -29,8 +29,8 @@ import roundToDecimal from './../../util/roundToDecimal.js';
  * @public
  * @class AngleTool
  * @memberof Tools.Annotation
- * @classdesc Create and position an angle by placing
- * three consecutive points.
+ *
+ * @classdesc Create and position an angle by placing three consecutive points.
  * @extends BaseAnnotationTool
  */
 export default class AngleTool extends BaseAnnotationTool {
