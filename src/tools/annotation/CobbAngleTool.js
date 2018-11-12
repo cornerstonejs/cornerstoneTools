@@ -302,8 +302,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   }
 
   onMeasureModified(ev) {
-    const image = external.cornerstone.getEnabledElement(ev.detail.element).
-      image;
+    const image = external.cornerstone.getEnabledElement(ev.detail.element)
+      .image;
 
     if (ev.detail.toolType !== this.name) {
       return;

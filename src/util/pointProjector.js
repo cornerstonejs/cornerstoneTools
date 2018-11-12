@@ -163,9 +163,9 @@ export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
     targetImagePositionPatient
   );
 
-  const referenceNormal = referenceRowCosines.
-    clone().
-    cross(referenceColumnCosines);
+  const referenceNormal = referenceRowCosines
+    .clone()
+    .cross(referenceColumnCosines);
   const referencePlane = new external.cornerstoneMath.Plane();
 
   referencePlane.setFromNormalAndCoplanarPoint(

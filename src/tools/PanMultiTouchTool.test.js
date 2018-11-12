@@ -25,7 +25,7 @@ describe('PanMultiTouchTool.js', () => {
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
-  describe('Interaction\'s behavior', () => {
+  describe("Interaction's behavior", () => {
     let instantiatedTool;
     let goodMockEvt;
 

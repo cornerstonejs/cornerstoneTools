@@ -73,12 +73,12 @@ export default function(context, eventData, targetElement, referenceElement) {
   );
 
   // The image plane normals must be > 30 degrees apart
-  const targetNormal = targetImagePlane.rowCosines.
-    clone().
-    cross(targetImagePlane.columnCosines);
-  const referenceNormal = referenceImagePlane.rowCosines.
-    clone().
-    cross(referenceImagePlane.columnCosines);
+  const targetNormal = targetImagePlane.rowCosines
+    .clone()
+    .cross(targetImagePlane.columnCosines);
+  const referenceNormal = referenceImagePlane.rowCosines
+    .clone()
+    .cross(referenceImagePlane.columnCosines);
   let angleInRadians = targetNormal.angleTo(referenceNormal);
 
   angleInRadians = Math.abs(angleInRadians);

@@ -66,7 +66,7 @@ describe('ProbeTool.js', () => {
       expect(typeof toolMeasurement).toBe(typeof {});
     });
 
-    it('returns a measurement with an end handle at the eventData\'s x and y and an undefined start', () => {
+    it("returns a measurement with an end handle at the eventData's x and y and an undefined start", () => {
       const instantiatedTool = new ProbeTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(

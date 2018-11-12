@@ -46,7 +46,7 @@ function getBrowserInfo() {
   let tem;
 
   if (/trident/i.test(M[1])) {
-    tem = (/\brv[ :]+(\d+)/g).exec(ua) || [];
+    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
 
     return `IE ${tem[1] || ''}`;
   }
@@ -54,10 +54,10 @@ function getBrowserInfo() {
   if (M[1] === 'Chrome') {
     tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
     if (tem !== null) {
-      return tem.
-        slice(1).
-        join(' ').
-        replace('OPR', 'Opera');
+      return tem
+        .slice(1)
+        .join(' ')
+        .replace('OPR', 'Opera');
     }
   }
 

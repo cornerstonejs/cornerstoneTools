@@ -117,7 +117,7 @@ describe('ScaleOverlayTool.js', () => {
 
       expect(console.warn).toHaveBeenCalled();
       expect(console.warn.mock.calls[0][0]).toContain(
-        'unable to define rowPixelSpacing or colPixelSpacing from data on ScaleOverlay\'s renderToolData'
+        "unable to define rowPixelSpacing or colPixelSpacing from data on ScaleOverlay's renderToolData"
       );
     });
   });

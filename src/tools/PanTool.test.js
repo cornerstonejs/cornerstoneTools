@@ -26,7 +26,7 @@ describe('PanTool.js', () => {
     });
   });
 
-  describe('Interaction\'s behavior', () => {
+  describe("Interaction's behavior", () => {
     let instantiatedTool;
     let goodMockEvt;
 

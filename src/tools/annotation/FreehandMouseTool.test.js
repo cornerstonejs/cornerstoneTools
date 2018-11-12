@@ -110,7 +110,7 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if a new handle doesn\'t cross any previous line', function() {
+  it("should return false if a new handle doesn't cross any previous line", function() {
     const candidateHandle = new FreehandHandleData({
       x: 0.5,
       y: 0.5,
@@ -138,14 +138,14 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if the line created by finishing the polygon doesn\'t cross any previous line', function() {
+  it("should return false if the line created by finishing the polygon doesn't cross any previous line", function() {
     const doesIntersect = freehandIntersect.end(dataHandles);
 
     expect(doesIntersect).toBeDefined();
     expect(doesIntersect).toBeFalsy();
   });
 
-  it('should return true if one moves a polygon\'s vertex such that it causes an lines to cross', function() {
+  it("should return true if one moves a polygon's vertex such that it causes an lines to cross", function() {
     // Add the 4th corner of the square first.
     const handle3 = new FreehandHandleData({
       x: 1.0,
@@ -168,7 +168,7 @@ describe('freehandIntersect.js', function() {
     expect(doesIntersect).toBeTruthy();
   });
 
-  it('should return false if one moves a polygon\'s vertex a bit such that no lines cross', function() {
+  it("should return false if one moves a polygon's vertex a bit such that no lines cross", function() {
     // Add the 4th corner of the square first.
     const handle3 = new FreehandHandleData({
       x: 1.0,

@@ -66,7 +66,7 @@ describe('LengthTool.js', () => {
       expect(typeof toolMeasurement).toBe(typeof {});
     });
 
-    it('returns a measurement with a start and end handle at the eventData\'s x and y', () => {
+    it("returns a measurement with a start and end handle at the eventData's x and y", () => {
       const instantiatedTool = new LengthTool('toolName');
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
