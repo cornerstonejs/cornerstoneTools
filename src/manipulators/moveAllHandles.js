@@ -5,7 +5,28 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (e, data, toolData, toolType, options, doneMovingCallback) {
+/**
+ * Manipulator to move all provided handles at the same time
+ * @public
+ * @function moveAllHandles
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} e
+ * @param {*} data
+ * @param {*} toolData
+ * @param {*} toolType
+ * @param {*} options
+ * @param {*} doneMovingCallback
+ * @returns {Boolean} - Always returns true?
+ */
+export default function (
+  e,
+  data,
+  toolData,
+  toolType,
+  options,
+  doneMovingCallback
+) {
   const mouseEventData = e.detail;
   const element = mouseEventData.element;
 
@@ -56,8 +77,10 @@ export default function (e, data, toolData, toolType, options, doneMovingCallbac
     element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
     // If any handle is outside the image, delete the tool data
-    if (options.deleteIfHandleOutsideImage === true &&
-            anyHandlesOutsideImage(eventData, data.handles)) {
+    if (
+      options.deleteIfHandleOutsideImage === true &&
+      anyHandlesOutsideImage(eventData, data.handles)
+    ) {
       removeToolState(element, toolType, data);
     }
 

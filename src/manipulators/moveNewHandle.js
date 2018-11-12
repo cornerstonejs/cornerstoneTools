@@ -3,7 +3,28 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+/**
+ * Move a new handle
+ * @public
+ * @method moveNewHandle
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} mouseEventData
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @param {*} preventHandleOutsideImage
+ * @returns {undefined}
+ */
+export default function (
+  mouseEventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = mouseEventData.element;
 
   function moveCallback (e) {
@@ -58,8 +79,14 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
       element.removeEventListener(EVENTS.MOUSE_DRAG, moveCallback);
       element.removeEventListener(EVENTS.MOUSE_CLICK, moveEndCallback);
       element.removeEventListener(EVENTS.MOUSE_UP, moveEndCallback);
-      element.removeEventListener(EVENTS.MEASUREMENT_REMOVED, measurementRemovedCallback);
-      element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+      element.removeEventListener(
+        EVENTS.MEASUREMENT_REMOVED,
+        measurementRemovedCallback
+      );
+      element.removeEventListener(
+        EVENTS.TOOL_DEACTIVATED,
+        toolDeactivatedCallback
+      );
 
       handle.active = false;
       external.cornerstone.updateImage(element);
@@ -68,7 +95,10 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
   element.addEventListener(EVENTS.MOUSE_DRAG, whichMovement);
   element.addEventListener(EVENTS.MOUSE_MOVE, whichMovement);
-  element.addEventListener(EVENTS.MEASUREMENT_REMOVED, measurementRemovedCallback);
+  element.addEventListener(
+    EVENTS.MEASUREMENT_REMOVED,
+    measurementRemovedCallback
+  );
   element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
   function moveEndCallback () {
@@ -76,8 +106,14 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     element.removeEventListener(EVENTS.MOUSE_DRAG, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, moveEndCallback);
     element.removeEventListener(EVENTS.MOUSE_UP, moveEndCallback);
-    element.removeEventListener(EVENTS.MEASUREMENT_REMOVED, measurementRemovedCallback);
-    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+    element.removeEventListener(
+      EVENTS.MEASUREMENT_REMOVED,
+      measurementRemovedCallback
+    );
+    element.removeEventListener(
+      EVENTS.TOOL_DEACTIVATED,
+      toolDeactivatedCallback
+    );
 
     handle.active = false;
     external.cornerstone.updateImage(element);

@@ -3,7 +3,28 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+/**
+ * Move the provided handle
+ * @public
+ * @method moveHandle
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} mouseEventData
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @param {*} preventHandleOutsideImage
+ * @returns {undefined}
+ */
+export default function (
+  mouseEventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,

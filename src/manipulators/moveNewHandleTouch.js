@@ -3,10 +3,34 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-  // Console.log('moveNewHandleTouch');
+/**
+ * Moves a new handle using touch events
+ * @public
+ * @method moveNewHandleTouch
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} eventData
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @param {*} preventHandleOutsideImage
+ * @returns {undefined}
+ */
+export default function (
+  eventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = eventData.element;
-  const imageCoords = external.cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
+  const imageCoords = external.cornerstone.pageToPixel(
+    element,
+    eventData.currentPoints.page.x,
+    eventData.currentPoints.page.y + 50
+  );
   const distanceFromTouch = {
     x: handle.x - imageCoords.x,
     y: handle.y - imageCoords.y
@@ -45,7 +69,10 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
     element.removeEventListener(EVENTS.TAP, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
-    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+    element.removeEventListener(
+      EVENTS.TOOL_DEACTIVATED,
+      toolDeactivatedCallback
+    );
 
     if (e.type === EVENTS.TOUCH_PINCH || e.type === EVENTS.TOUCH_PRESS) {
       handle.active = false;
@@ -92,7 +119,10 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
     element.removeEventListener(EVENTS.TAP, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
-    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+    element.removeEventListener(
+      EVENTS.TOOL_DEACTIVATED,
+      toolDeactivatedCallback
+    );
 
     handle.active = false;
     data.active = false;

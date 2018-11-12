@@ -1,5 +1,15 @@
 import external from '../externalModules.js';
 
+/**
+ * Determine if a handle is outside the bounds of the rendered image.
+ * @public
+ * @function anyHandlesOutsideImage
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} renderData - Cornerstone Tool's event detail
+ * @param {Object} handles - An object containing named handles
+ * @returns {Boolean} - True if the handle was placed outside the image
+ */
 export default function (renderData, handles) {
   const image = renderData.image;
   const imageRect = {
@@ -18,7 +28,9 @@ export default function (renderData, handles) {
       return;
     }
 
-    if (external.cornerstoneMath.point.insideRect(handle, imageRect) === false) {
+    if (
+      external.cornerstoneMath.point.insideRect(handle, imageRect) === false
+    ) {
       handleOutsideImage = true;
     }
   });

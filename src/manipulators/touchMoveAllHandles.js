@@ -4,7 +4,28 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 
-export default function (event, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
+/**
+ * Move all provided handles, using touch event listeners
+ * @public
+ * @function touchMoveAllHandles
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} event
+ * @param {*} data
+ * @param {*} toolData
+ * @param {*} toolType
+ * @param {*} deleteIfHandleOutsideImage
+ * @param {*} doneMovingCallback
+ * @returns {Boolean} - Alway true?
+ */
+export default function (
+  event,
+  data,
+  toolData,
+  toolType,
+  deleteIfHandleOutsideImage,
+  doneMovingCallback
+) {
   const touchEventData = event.detail;
   const element = touchEventData.element;
 

@@ -18,51 +18,27 @@ const touchEndEvents = [
   EVENTS.TAP
 ];
 
-function animate (lastTime, handle, runAnimation, enabledElement, targetLocation) {
-  // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
-  if (!runAnimation.value) {
-    return;
-  }
-
-  // Update
-  const time = (new Date()).getTime();
-  // Var timeDiff = time - lastTime;
-
-  // Pixels / second
-  const distanceRemaining = Math.abs(handle.y - targetLocation.y);
-  const linearDistEachFrame = distanceRemaining / 10;
-
-  if (distanceRemaining < 1) {
-    handle.y = targetLocation.y;
-    runAnimation.value = false;
-
-    return;
-  }
-
-  if (handle.y > targetLocation.y) {
-    handle.y -= linearDistEachFrame;
-  } else if (handle.y < targetLocation.y) {
-    handle.y += linearDistEachFrame;
-  }
-
-  // Update the image
-  external.cornerstone.updateImage(enabledElement.element);
-
-  // Request a new frame
-  external.cornerstone.requestAnimationFrame(function () {
-    animate(time, handle, runAnimation, enabledElement, targetLocation);
-  });
-}
-
+/**
+ * Move the provided handle using touch events
+ * @public
+ * @method touchMoveHandle
+ * @memberof CornerstoneTools.Manipulators
+ *
+ * @param {*} event
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @returns {undefined}
+ */
 export default function (event, toolType, data, handle, doneMovingCallback) {
-  // Console.log('touchMoveHandle');
   runAnimation.value = true;
 
   const touchEventData = event.detail;
   const element = touchEventData.element;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  const time = (new Date()).getTime();
+  const time = new Date().getTime();
 
   // Average pixel width of index finger is 45-57 pixels
   // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
@@ -73,7 +49,11 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     y: touchEventData.currentPoints.page.y + fingerDistance
   };
 
-  let targetLocation = external.cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+  let targetLocation = external.cornerstone.pageToPixel(
+    element,
+    aboveFinger.x,
+    aboveFinger.y
+  );
 
   function touchDragCallback (e) {
     const eventData = e.detail;
@@ -93,7 +73,11 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
       y: currentPoints.page.y + fingerDistance
     };
 
-    targetLocation = external.cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+    targetLocation = external.cornerstone.pageToPixel(
+      element,
+      aboveFinger.x,
+      aboveFinger.y
+    );
     handle.x = targetLocation.x;
     handle.y = targetLocation.y;
 
@@ -142,4 +126,58 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
   });
 
   animate(time, handle, runAnimation, enabledElement, targetLocation);
+}
+
+/**
+ * Animates the provided handle using `requestAnimationFrame`
+ * @private
+ * @method animate
+ *
+ * @param {*} lastTime
+ * @param {*} handle
+ * @param {*} runAnimation
+ * @param {*} enabledElement
+ * @param {*} targetLocation
+ * @returns {undefined}
+ */
+function animate (
+  lastTime,
+  handle,
+  runAnimation,
+  enabledElement,
+  targetLocation
+) {
+  // See http://www.html5canvastutorials.com/advanced/html5-canvas-start-and-stop-an-animation/
+  if (!runAnimation.value) {
+    return;
+  }
+
+  // Update
+  const time = new Date().getTime();
+  // Var timeDiff = time - lastTime;
+
+  // Pixels / second
+  const distanceRemaining = Math.abs(handle.y - targetLocation.y);
+  const linearDistEachFrame = distanceRemaining / 10;
+
+  if (distanceRemaining < 1) {
+    handle.y = targetLocation.y;
+    runAnimation.value = false;
+
+    return;
+  }
+
+  if (handle.y > targetLocation.y) {
+    handle.y -= linearDistEachFrame;
+  } else if (handle.y < targetLocation.y) {
+    handle.y += linearDistEachFrame;
+  }
+
+  // Update the image
+  external.cornerstone.updateImage(enabledElement.element);
+
+  // Request a new frame
+  external.cornerstone.requestAnimationFrame(function () {
+    animate(time, handle, runAnimation, enabledElement, targetLocation);
+  });
 }

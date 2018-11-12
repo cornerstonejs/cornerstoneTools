@@ -1,5 +1,5 @@
 /**
- * Namespace for native DOM/Document types
+ * Drawing API to assist in consistant annotation creation
  * @namespace CornerstoneTools.Drawing
  */
 
