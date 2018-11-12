@@ -2,7 +2,7 @@
 import { getters, state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 import addNewMeasurement from './addNewMeasurement.js';
-import BaseAnnotationTool from '../../base/BaseAnnotationTool.js';
+import BaseAnnotationTool from './../../tools/base/BaseAnnotationTool.js';
 
 export default function (evt) {
   if (state.isToolLocked) {

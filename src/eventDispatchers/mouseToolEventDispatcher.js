@@ -19,6 +19,7 @@ import {
  * - mouseDrag: update measurement or apply strategy (wwwc)
  * - mouseDoubleClick: usually a one-time apply specialty action
  * - onImageRendered: redraw visible tool data
+ * @private
  * @param {*} element
  */
 const enable = function (element) {

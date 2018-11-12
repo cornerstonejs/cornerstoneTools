@@ -1,5 +1,5 @@
 import customCallbackHandler from './customCallbackHandler.js';
-import { getters, state } from './../../store/index.js';
+import { state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 
 jest.mock('./../../store/index.js', () => ({

@@ -18,6 +18,7 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  *
  * TODO: Handles should handle deleting out of bound data by setting
  *
+ * @private
  * @param {mousedown} evt
  * @listens {mousedown}
  */

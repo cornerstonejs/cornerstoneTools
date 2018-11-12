@@ -24,6 +24,7 @@ import {
  * - doubleTap: usually a one-time apply specialty action
  * - touchPinch:
  * - onImageRendered: redraw visible tool data
+ * @private
  * @param {*} element
  */
 const enable = function (element) {
