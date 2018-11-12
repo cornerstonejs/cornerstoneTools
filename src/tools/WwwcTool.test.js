@@ -1,5 +1,5 @@
 import WwwcTool from './WwwcTool.js';
-import external from '../externalModules.js';
+import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {

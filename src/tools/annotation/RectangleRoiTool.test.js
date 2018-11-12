@@ -1,7 +1,7 @@
 import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 
-jest.mock('./../stateManagement/toolState.js', () => ({
+jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 

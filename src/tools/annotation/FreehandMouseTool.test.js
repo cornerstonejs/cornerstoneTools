@@ -9,7 +9,7 @@ const {
   FreehandHandleData
 } = freehandUtils;
 
-jest.mock('./../stateManagement/toolState.js', () => ({
+jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()
 }));
 
