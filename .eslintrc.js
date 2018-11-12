@@ -18,7 +18,6 @@ module.exports = {
     'array-bracket-spacing': 'warn',
     'array-callback-return': 'warn',
     'arrow-body-style': 'warn',
-    'arrow-parens': 'warn',
     'arrow-spacing': 'warn',
     //'block-scoped-var': 'warn',
     'block-spacing': 'warn',
