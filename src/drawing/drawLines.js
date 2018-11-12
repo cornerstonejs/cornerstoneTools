@@ -1,3 +1,4 @@
+import external from './../externalModules.js';
 import path from './path.js';
 
 /**

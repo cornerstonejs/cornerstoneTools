@@ -39,7 +39,8 @@ import {
 } from './tools/index.js';
 
 export {
-  // Annotation Tools
+  // ~~~ TOOLS
+  // ~ Annotation Tools
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
@@ -50,9 +51,9 @@ export {
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
-  // Brush Tools
+  // ~ Brush Tools
   BrushTool,
-  // Tools
+  // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
   DragProbeTool,

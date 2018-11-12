@@ -1,3 +1,4 @@
+import external from './../externalModules.js';
 import path from './path.js';
 
 /**
@@ -26,10 +27,8 @@ export default function(
 ) {
   path(context, options, context => {
     if (coordSystem === 'pixel') {
-      const cornerstone = external.cornerstone;
-
-      start = cornerstone.pixelToCanvas(element, start);
-      points = points.map(p => cornerstone.pixelToCanvas(element, p));
+      start = external.cornerstone.pixelToCanvas(element, start);
+      points = points.map(p => external.cornerstone.pixelToCanvas(element, p));
     }
     context.moveTo(start.x, start.y);
     points.forEach(({ x, y }) => {
