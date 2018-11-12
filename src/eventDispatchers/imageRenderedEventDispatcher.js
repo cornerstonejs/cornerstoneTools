@@ -1,5 +1,5 @@
 import { state } from './../store/index.js';
-import BaseBrushTool from '../base/BaseBrushTool.js';
+import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
 import external from './../externalModules.js';
 
