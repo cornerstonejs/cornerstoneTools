@@ -1,5 +1,5 @@
 import ProbeTool from './ProbeTool.js';
-import { getToolState } from './../stateManagement/toolState.js';
+import { getToolState } from './../../stateManagement/toolState.js';
 
 jest.mock('./../stateManagement/toolState.js', () => ({
   getToolState: jest.fn()

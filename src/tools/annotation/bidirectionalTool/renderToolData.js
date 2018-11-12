@@ -1,13 +1,18 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from '../../externalModules.js';
-import drawHandles from '../../drawing/drawHandles.js';
+import external from './../../../externalModules.js';
+import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
-import toolStyle from '../../stateManagement/toolStyle.js';
-import toolColors from '../../stateManagement/toolColors.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import { getNewContext, draw, setShadow, drawLine } from '../../drawing/index.js';
-import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
+import toolStyle from './../../../stateManagement/toolStyle.js';
+import toolColors from './../../../stateManagement/toolColors.js';
+import { getToolState } from './../../../stateManagement/toolState.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawLine
+} from './../../../drawing/index.js';
+import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 
 export default function (evt) {
   const eventData = evt.detail;

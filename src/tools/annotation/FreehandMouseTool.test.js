@@ -1,5 +1,5 @@
 import FreehandMouseTool from './FreehandMouseTool.js';
-import freehandUtils from '../util/freehand/index.js';
+import freehandUtils from './../../util/freehand/index.js';
 
 const {
   calculateFreehandStatistics,

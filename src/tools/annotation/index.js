@@ -4,7 +4,7 @@
  * @namespace Tools.Annotation
  */
 
-import AngleTool from './AngleTools.js';
+import AngleTool from './AngleTool.js';
 import ArrowAnnotateTool from './ArrowAnnotateTool.js';
 import BidirectionalTool from './BidirectionalTool.js';
 import CobbAngleTool from './CobbAngleTool.js';

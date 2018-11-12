@@ -1,8 +1,11 @@
-import external from './../../externalModules.js';
-import moveNewHandle from '../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
-import anyHandlesOutsideImage from '../../manipulators/anyHandlesOutsideImage.js';
-import { addToolState, removeToolState } from '../../stateManagement/toolState.js';
+import external from './../../../externalModules.js';
+import moveNewHandle from './../../../manipulators/moveNewHandle.js';
+import moveNewHandleTouch from './../../../manipulators/moveNewHandleTouch.js';
+import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
+import {
+  addToolState,
+  removeToolState
+} from './../../../stateManagement/toolState.js';
 
 export default function (evt, interactionType) {
   const eventData = evt.detail;

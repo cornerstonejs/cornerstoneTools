@@ -1,4 +1,4 @@
-import external from '../../../externalModules.js';
+import external from './../../../../externalModules.js';
 
 // Move perpendicular line start point
 export default function (eventData, data) {

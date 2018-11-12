@@ -1,4 +1,4 @@
-import external from '../../../externalModules.js';
+import external from './../../../../externalModules.js';
 import perpendicularBothFixedLeft from './perpendicularBothFixedLeft.js';
 import perpendicularBothFixedRight from './perpendicularBothFixedRight.js';
 import perpendicularLeftFixedPoint from './perpendicularLeftFixedPoint.js';

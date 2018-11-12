@@ -1,4 +1,4 @@
-import external from '../../../externalModules.js';
+import external from './../../../../externalModules.js';
 
 // Move long-axis end point
 export default function (eventData, data) {

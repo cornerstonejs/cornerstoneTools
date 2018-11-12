@@ -1,4 +1,4 @@
-import external from './../../../externalModules.js';
+import external from './../../../../externalModules.js';
 
 // Return the newPosition for the handle based on the mmStep and handles
 export default function (image, handles, handleKey, mmStep, mmLimit = 1) {

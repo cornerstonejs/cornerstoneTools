@@ -1,5 +1,5 @@
-import external from '../../../externalModules.js';
-import EVENTS from '../../../events.js';
+import external from './../../../../externalModules.js';
+import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 
 export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {

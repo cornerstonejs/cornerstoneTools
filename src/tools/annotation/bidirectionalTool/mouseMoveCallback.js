@@ -1,7 +1,7 @@
-import external from '../../externalModules.js';
-import toolCoordinates from '../../stateManagement/toolCoordinates.js';
-import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import { getToolState } from '../../stateManagement/toolState.js';
+import external from './../../../externalModules.js';
+import toolCoordinates from './../../../stateManagement/toolCoordinates.js';
+import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
+import { getToolState } from './../../../stateManagement/toolState.js';
 
 // Replaces the cornerstoneTools.handleActivator function by skiping the active handle comparison
 const handleActivator = (element, handles, canvasPoint, distanceThreshold = 6) => {

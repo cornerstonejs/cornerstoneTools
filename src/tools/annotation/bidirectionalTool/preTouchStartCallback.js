@@ -1,10 +1,13 @@
 /* jshint -W083 */
-import external from '../../externalModules.js';
-import EVENTS from '../../events.js';
-import { removeToolState, getToolState } from '../../stateManagement/toolState.js';
-import anyHandlesOutsideImage from '../../manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
+import external from './../../../externalModules.js';
+import EVENTS from './../../../events.js';
+import {
+  removeToolState,
+  getToolState
+} from './../../../stateManagement/toolState.js';
+import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
+import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
+import touchMoveAllHandles from './../../../manipulators/touchMoveAllHandles.js';
 import touchMoveHandle from './moveHandle/touchMoveHandle.js';
 
 export default function (evt) {
