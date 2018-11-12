@@ -4,7 +4,7 @@ import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
 // State
 import {
   addToolState,
-  getToolState
+  getToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -29,7 +29,7 @@ const {
   freehandArea,
   calculateFreehandStatistics,
   freehandIntersect,
-  FreehandHandleData
+  FreehandHandleData,
 } = freehandUtils;
 
 /**
@@ -41,11 +41,11 @@ const {
  * @extends BaseAnnotationTool
  */
 export default class FreehandMouseTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse'],
-      configuration: defaultFreehandConfiguration()
+      configuration: defaultFreehandConfiguration(),
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -73,7 +73,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -92,7 +92,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       active: true,
       invalidated: true,
       color: undefined,
-      handles: []
+      handles: [],
     };
 
     measurementData.handles.textBox = {
@@ -101,7 +101,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       movesIndependently: false,
       drawnIndependently: true,
       allowedOutsideImage: true,
-      hasBoundingBox: true
+      hasBoundingBox: true,
     };
 
     return measurementData;
@@ -115,7 +115,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     const validParameters = data && data.handles;
 
     if (!validParameters) {
@@ -141,7 +141,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * closest rendered portion of the annotation. -1 if the distance cannot be
    * calculated.
    */
-  distanceFromPoint (element, data, coords) {
+  distanceFromPoint(element, data, coords) {
     let distance = Infinity;
 
     for (let i = 0; i < data.handles.length; i++) {
@@ -169,7 +169,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * closest rendered portion of the annotation. -1 if the distance cannot be
    * calculated.
    */
-  distanceFromPointCanvas (element, data, coords) {
+  distanceFromPointCanvas(element, data, coords) {
     let distance = Infinity;
 
     const canvasCoords = external.cornerstone.pixelToCanvas(element, coords);
@@ -203,7 +203,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
 
     // If we have no toolState for this element, return immediately as there is nothing to do
@@ -238,7 +238,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         let color = toolColors.getColorIfActive(data);
         let fillColor;
 
@@ -276,7 +276,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         // Draw handles
 
         const options = {
-          fill: fillColor
+          fill: fillColor,
         };
 
         if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
@@ -324,7 +324,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
             left: data.handles[0].x,
             right: data.handles[0].x,
             bottom: data.handles[0].y,
-            top: data.handles[0].x
+            top: data.handles[0].x,
           };
 
           for (let i = 0; i < data.handles.length; i++) {
@@ -338,7 +338,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
             left: bounds.left,
             top: bounds.bottom,
             width: Math.abs(bounds.right - bounds.left),
-            height: Math.abs(bounds.top - bounds.bottom)
+            height: Math.abs(bounds.top - bounds.bottom),
           };
 
           // Store the bounding box information for the text box
@@ -380,7 +380,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
                 stdDev: calculateSUV(
                   image,
                   (meanStdDev.stdDev - image.intercept) / image.slope
-                )
+                ),
               };
             }
 
@@ -439,7 +439,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data) {
+    function textBoxText(data) {
       const { meanStdDev, meanStdDevSUV, area } = data;
       // Define an array to store the rows of text for the textbox
       const textLines = [];
@@ -498,7 +498,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       return textLines;
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       return handles;
     }
   }
@@ -510,7 +510,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  addNewMeasurement (evt, interactionType) {
+  addNewMeasurement(evt, interactionType) {
     const eventData = evt.detail;
     const config = this.configuration;
 
@@ -528,7 +528,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @param {Object} evt - The event.
    */
-  preMouseDownCallback (evt) {
+  preMouseDownCallback(evt) {
     const eventData = evt.detail;
     const nearby = this._pointNearHandleAllTools(eventData);
 
@@ -553,7 +553,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} evt
    * @param  {Object} handle The selected handle.
    */
-  handleSelectedCallback (evt, handle, data) {
+  handleSelectedCallback(evt, handle, data) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
@@ -569,7 +569,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     config.dragOrigin = {
       x: handle.x,
-      y: handle.y
+      y: handle.y,
     };
 
     // Have to do this to get tool index.
@@ -595,7 +595,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseMoveCallback (evt) {
+  _drawingMouseMoveCallback(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
@@ -634,7 +634,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseDragCallback (evt) {
+  _drawingMouseDragCallback(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
@@ -661,7 +661,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseUpCallback (evt) {
+  _drawingMouseUpCallback(evt) {
     if (!this._dragging) {
       return;
     }
@@ -696,7 +696,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseDownCallback (evt) {
+  _drawingMouseDownCallback(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
@@ -727,7 +727,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _editMouseDragCallback (evt) {
+  _editMouseDragCallback(evt) {
     const eventData = evt.detail;
     const toolState = getToolState(eventData.element, this.name);
 
@@ -764,7 +764,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @param {Object} evt - The event.
    */
-  _editMouseUpCallback (evt) {
+  _editMouseUpCallback(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
@@ -787,7 +787,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} toolState - The data associated with the freehand tool.
    * @modifies {toolState}
    */
-  _dropHandle (eventData, toolState) {
+  _dropHandle(eventData, toolState) {
     const config = this.configuration;
     const currentTool = config.currentTool;
 
@@ -823,7 +823,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} eventData - data object associated with an event.
    */
-  _startDrawing (eventData) {
+  _startDrawing(eventData) {
     const measurementData = this.createNewMeasurement(eventData);
     const element = eventData.element;
     const config = this.configuration;
@@ -849,7 +849,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} eventData - data object associated with an event.
    */
-  _addPoint (eventData) {
+  _addPoint(eventData) {
     const toolState = getToolState(eventData.element, this.name);
 
     // Get the toolState from the last-drawn polygon
@@ -888,12 +888,12 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} eventData - Data object associated with an event.
    * @param {Object} dataHandles - Data object associated with the tool.
    */
-  _addPointPencilMode (eventData, dataHandles) {
+  _addPointPencilMode(eventData, dataHandles) {
     const config = this.configuration;
     const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
 
-    const handleFurtherThanMinimumSpacing = (handle) =>
+    const handleFurtherThanMinimumSpacing = handle =>
       this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
 
     if (dataHandles.every(handleFurtherThanMinimumSpacing)) {
@@ -908,7 +908,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The element on which the roi is being drawn.
    * @param {Object} handleNearby - the handle nearest to the mouse cursor.
    */
-  _endDrawing (element, handleNearby) {
+  _endDrawing(element, handleNearby) {
     const toolState = getToolState(element, this.name);
 
     const config = this.configuration;
@@ -951,7 +951,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Number} toolIndex - the ID of the tool
    * @returns {Number|Object|Boolean}
    */
-  _pointNearHandle (element, data, coords) {
+  _pointNearHandle(element, data, coords) {
     const config = this.configuration;
 
     if (data.handles === undefined) {
@@ -991,7 +991,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} eventData - data object associated with an event.
    * @returns {Object}
    */
-  _pointNearHandleAllTools (eventData) {
+  _pointNearHandleAllTools(eventData) {
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
     const toolState = getToolState(element, this.name);
@@ -1011,7 +1011,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       if (handleNearby !== undefined) {
         return {
           handleNearby,
-          toolIndex
+          toolIndex,
         };
       }
     }
@@ -1023,7 +1023,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @private
    * @param {Object} eventData The data assoicated with the event.
    */
-  _getMouseLocation (eventData) {
+  _getMouseLocation(eventData) {
     // Set the mouseLocation handle
     const config = this.configuration;
 
@@ -1040,7 +1040,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} eventData The data assoicated with the event.
    * @returns {Boolean}
    */
-  _checkInvalidHandleLocation (data, eventData) {
+  _checkInvalidHandleLocation(data, eventData) {
     const config = this.configuration;
 
     if (data.handles.length < 2) {
@@ -1061,11 +1061,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    * Returns true if the proposed location of a new handle is invalid (in polygon mode).
    *
+   * @private
+   *
    * @param {Object} data - data object associated with the tool.
    * @param {Object} eventData The data assoicated with the event.
    * @returns {Boolean}
    */
-  _checkHandlesPolygonMode (data, eventData) {
+  _checkHandlesPolygonMode(data, eventData) {
     const config = this.configuration;
     const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
@@ -1101,7 +1103,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} eventData The data associated with the event.
    * @returns {Boolean}
    */
-  _checkHandlesPencilMode (data, eventData) {
+  _checkHandlesPencilMode(data, eventData) {
     const config = this.configuration;
     const mousePoint = config.mouseLocation.handles.start;
     const dataHandles = data.handles;
@@ -1125,7 +1127,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} eventData The data associated with the event.
    * @returns {Boolean}
    */
-  _invalidHandlePencilMode (data, eventData) {
+  _invalidHandlePencilMode(data, eventData) {
     const config = this.configuration;
     const element = eventData.element;
     const mousePoint = config.mouseLocation.handles.start;
@@ -1171,7 +1173,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _isDistanceSmallerThanSpacingCanvas (element, p1, p2) {
+  _isDistanceSmallerThanSpacingCanvas(element, p1, p2) {
     return this._compareDistanceToSpacingCanvas(element, p1, p2, '<');
   }
 
@@ -1185,7 +1187,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _isDistanceLargerThanSpacingCanvas (element, p1, p2) {
+  _isDistanceLargerThanSpacingCanvas(element, p1, p2) {
     return this._compareDistanceToSpacingCanvas(element, p1, p2, '>');
   }
 
@@ -1200,7 +1202,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _compareDistanceToSpacingCanvas (element, p1, p2, comparison = '>') {
+  _compareDistanceToSpacingCanvas(element, p1, p2, comparison = '>') {
     const config = this.configuration;
 
     const p1Canvas = external.cornerstone.pixelToCanvas(element, p1);
@@ -1224,7 +1226,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _activateDraw (element) {
+  _activateDraw(element) {
     // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
@@ -1243,7 +1245,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _deactivateDraw (element) {
+  _deactivateDraw(element) {
     element.removeEventListener(
       EVENTS.MOUSE_DOWN,
       this._drawingMouseDownCallback
@@ -1268,7 +1270,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _activateModify (element) {
+  _activateModify(element) {
     element.addEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
@@ -1283,7 +1285,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _deactivateModify (element) {
+  _deactivateModify(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
@@ -1291,19 +1293,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(element);
   }
 
-  passiveCallback (element) {
+  passiveCallback(element) {
     this._closeToolIfDrawing(element);
   }
 
-  enabledCallback (element) {
+  enabledCallback(element) {
     this._closeToolIfDrawing(element);
   }
 
-  disabledCallback (element) {
+  disabledCallback(element) {
     this._closeToolIfDrawing(element);
   }
 
-  _closeToolIfDrawing (element) {
+  _closeToolIfDrawing(element) {
     if (this._drawing) {
       // Actively drawing but changed mode.
       const config = this.configuration;
@@ -1318,11 +1320,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   // Public Configuration API. .
   // ===================================================================
 
-  get spacing () {
+  get spacing() {
     return this.configuration.spacing;
   }
 
-  set spacing (value) {
+  set spacing(value) {
     if (typeof value !== 'number') {
       throw new Error(
         'Attempting to set freehand spacing to a value other than a number.'
@@ -1333,11 +1335,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(this.element);
   }
 
-  get activeHandleRadius () {
+  get activeHandleRadius() {
     return this.configuration.activeHandleRadius;
   }
 
-  set activeHandleRadius (value) {
+  set activeHandleRadius(value) {
     if (typeof value !== 'number') {
       throw new Error(
         'Attempting to set freehand activeHandleRadius to a value other than a number.'
@@ -1348,11 +1350,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(this.element);
   }
 
-  get completeHandleRadius () {
+  get completeHandleRadius() {
     return this.configuration.completeHandleRadius;
   }
 
-  set completeHandleRadius (value) {
+  set completeHandleRadius(value) {
     if (typeof value !== 'number') {
       throw new Error(
         'Attempting to set freehand completeHandleRadius to a value other than a number.'
@@ -1363,11 +1365,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(this.element);
   }
 
-  get alwaysShowHandles () {
+  get alwaysShowHandles() {
     return this.configuration.alwaysShowHandles;
   }
 
-  set alwaysShowHandles (value) {
+  set alwaysShowHandles(value) {
     if (typeof value !== 'boolean') {
       throw new Error(
         'Attempting to set freehand alwaysShowHandles to a value other than a boolean.'
@@ -1378,12 +1380,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(this.element);
   }
 
-  get invalidColor () {
+  get invalidColor() {
     return this.configuration.invalidColor;
   }
 
-  set invalidColor (value) {
-
+  set invalidColor(value) {
     /*
       It'd be easy to check if the color was e.g. a valid rgba color. However
       it'd be difficult to check if the color was a named CSS color without
@@ -1396,15 +1397,15 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 }
 
-function defaultFreehandConfiguration () {
+function defaultFreehandConfiguration() {
   return {
     mouseLocation: {
       handles: {
         start: {
           highlight: true,
-          active: true
-        }
-      }
+          active: true,
+        },
+      },
     },
     spacing: 5,
     activeHandleRadius: 3,
@@ -1412,11 +1413,11 @@ function defaultFreehandConfiguration () {
     alwaysShowHandles: false,
     invalidColor: 'crimson',
     currentHandle: 0,
-    currentTool: -1
+    currentTool: -1,
   };
 }
 
-function preventPropagation (evt) {
+function preventPropagation(evt) {
   evt.stopImmediatePropagation();
   evt.stopPropagation();
   evt.preventDefault();
