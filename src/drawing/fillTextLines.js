@@ -1,10 +1,12 @@
+import textStyle from './../stateManagement/textStyle.js';
+
 /**
  * Draw multiple lines of text within a bounding box.
  * @public
  * @method fillTextLines
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target context
  * @param {Object} boundingBox - `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
  * @param {String[]} textLines - The text to be displayed.
  * @param {FillStyle} fillStyle - The fillStyle to apply to the text.

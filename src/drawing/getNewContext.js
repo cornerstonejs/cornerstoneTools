@@ -6,8 +6,8 @@
  * @function getNewContext
  * @memberof CornerstoneTools.Drawing
  *
- * @param {HTMLCanvasElement} canvas
- * @returns {CanvasRenderingContext2D} - The context of the canvas
+ * @param {HTMLCanvasElement} canvas - Canvas you would like the context for
+ * @returns {CanvasRenderingContext2D} - The provided canvas's 2d context
  */
 export default function (canvas) {
   const context = canvas.getContext('2d');

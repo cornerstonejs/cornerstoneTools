@@ -4,7 +4,7 @@
  * @method fillBox
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target context
  * @param {Object} boundingBox - `{ left, top, width, height }` in canvas coordinates.
  * @param {FillStyle} fillStyle - The fillStyle to apply to the region.
  * @returns {undefined}
