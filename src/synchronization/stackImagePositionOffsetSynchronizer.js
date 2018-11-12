@@ -21,8 +21,13 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @param {Object} positionDifference - An object with { x, y, z } values that will be
  * added to the source image's coordinates
  */
-export default function (synchronizer, sourceElement, targetElement, eventData, positionDifference) {
-
+export default function(
+  synchronizer,
+  sourceElement,
+  targetElement,
+  eventData,
+  positionDifference
+) {
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
@@ -30,14 +35,23 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
 
   const cornerstone = external.cornerstone;
   const sourceStackData = getToolState(sourceElement, 'stack').data[0];
-  const sourceImageId = sourceStackData.imageIds[sourceStackData.currentImageIdIndex];
-  const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
+  const sourceImageId =
+    sourceStackData.imageIds[sourceStackData.currentImageIdIndex];
+  const sourceImagePlane = cornerstone.metaData.get(
+    'imagePlaneModule',
+    sourceImageId
+  );
 
-  if (sourceImagePlane === undefined || sourceImagePlane.imagePositionPatient === undefined) {
+  if (
+    sourceImagePlane === undefined ||
+    sourceImagePlane.imagePositionPatient === undefined
+  ) {
     return;
   }
 
-  const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
+  const sourceImagePosition = convertToVector3(
+    sourceImagePlane.imagePositionPatient
+  );
 
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];
@@ -51,10 +65,13 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
 
   const finalPosition = sourceImagePosition.clone().add(positionDifference);
 
-  stackData.imageIds.forEach(function (imageId, index) {
+  stackData.imageIds.forEach(function(imageId, index) {
     const imagePlane = cornerstone.metaData.get('imagePlaneModule', imageId);
 
-    if (imagePlane === undefined || imagePlane.imagePositionPatient === undefined) {
+    if (
+      imagePlane === undefined ||
+      imagePlane.imagePositionPatient === undefined
+    ) {
       return;
     }
 
@@ -67,7 +84,10 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
     }
   });
 
-  if (newImageIdIndex === stackData.currentImageIdIndex || newImageIdIndex === -1) {
+  if (
+    newImageIdIndex === stackData.currentImageIdIndex ||
+    newImageIdIndex === -1
+  ) {
     return;
   }
 
@@ -90,22 +110,25 @@ export default function (synchronizer, sourceElement, targetElement, eventData, 
     loader = cornerstone.loadAndCacheImage(newImageId);
   }
 
-  loader.then(function (image) {
-    const viewport = cornerstone.getViewport(targetElement);
+  loader.then(
+    function(image) {
+      const viewport = cornerstone.getViewport(targetElement);
 
-    if (stackData.currentImageIdIndex !== newImageIdIndex) {
-      return;
-    }
+      if (stackData.currentImageIdIndex !== newImageIdIndex) {
+        return;
+      }
 
-    synchronizer.displayImage(targetElement, image, viewport);
-    if (endLoadingHandler) {
-      endLoadingHandler(targetElement, image);
-    }
-  }, function (error) {
-    const imageId = stackData.imageIds[newImageIdIndex];
+      synchronizer.displayImage(targetElement, image, viewport);
+      if (endLoadingHandler) {
+        endLoadingHandler(targetElement, image);
+      }
+    },
+    function(error) {
+      const imageId = stackData.imageIds[newImageIdIndex];
 
-    if (errorLoadingHandler) {
-      errorLoadingHandler(targetElement, imageId, error);
+      if (errorLoadingHandler) {
+        errorLoadingHandler(targetElement, imageId, error);
+      }
     }
-  });
+  );
 }

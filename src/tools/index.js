@@ -46,7 +46,7 @@ export {
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
-  ZoomTouchPinchTool
+  ZoomTouchPinchTool,
 };
 
 // Namespace, default export
@@ -70,5 +70,5 @@ export default {
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
-  ZoomTouchPinchTool
+  ZoomTouchPinchTool,
 };

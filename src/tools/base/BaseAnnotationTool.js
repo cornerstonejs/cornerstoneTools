@@ -3,7 +3,7 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import handleActivator from './../../manipulators/handleActivator.js';
 import {
   moveHandleNearImagePoint,
-  moveAnnotationNearClick
+  moveAnnotationNearClick,
 } from './../../util/findAndMoveHelpers.js';
 
 /**
@@ -15,13 +15,13 @@ import {
  * @extends BaseTool
  */
 export default class BaseAnnotationTool extends BaseTool {
-  constructor ({
+  constructor({
     name,
     strategies,
     defaultStrategy,
     configuration,
     supportedInteractionTypes,
-    mixins
+    mixins,
   }) {
     super({
       name,
@@ -29,7 +29,7 @@ export default class BaseAnnotationTool extends BaseTool {
       defaultStrategy,
       configuration,
       supportedInteractionTypes,
-      mixins
+      mixins,
     });
   }
 
@@ -44,7 +44,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @param  {type} evt description
    * @returns {type}     description
    */
-  createNewMeasurement (evt) {
+  createNewMeasurement(evt) {
     throw new Error(
       `Method createNewMeasurement not implemented for ${this.name}.`
     );
@@ -61,7 +61,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @param {*} coords
    * @returns {boolean} If the point is near the tool
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     throw new Error(`Method pointNearTool not implemented for ${this.name}.`);
   }
 
@@ -76,7 +76,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * closest rendered portion of the annotation. -1 if the distance cannot be
    * calculated.
    */
-  distanceFromPoint (element, data, coords) {
+  distanceFromPoint(element, data, coords) {
     throw new Error(
       `Method distanceFromPoint not implemented for ${this.name}.`
     );
@@ -88,7 +88,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @abstract
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     throw new Error(`renderToolData not implemented for ${this.name}.`);
   }
 
@@ -103,7 +103,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  mouseMoveCallback (evt) {
+  mouseMoveCallback(evt) {
     const { element, currentPoints } = evt.detail;
     const coords = currentPoints.canvas;
     const toolState = getToolState(element, this.name);
@@ -141,7 +141,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @param  {*} evt
    * @param  {*} handle The selected handle.
    */
-  handleSelectedCallback (evt, handle, data) {
+  handleSelectedCallback(evt, handle, data) {
     moveHandleNearImagePoint(evt, handle, data, this.name);
   }
 
@@ -152,7 +152,7 @@ export default class BaseAnnotationTool extends BaseTool {
    * @param  {*} evt
    * @param  {*} tool The selected tool.
    */
-  toolSelectedCallback (evt, data, toolState) {
+  toolSelectedCallback(evt, data, toolState) {
     const tool = this;
 
     moveAnnotationNearClick(evt, toolState, tool, data);

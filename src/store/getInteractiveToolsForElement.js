@@ -9,9 +9,9 @@
  * @param  {object[]} tools      The input tool array.
  * @returns {object[]}            The filtered array.
  */
-export default function (element, tools) {
+export default function(element, tools) {
   return tools.filter(
-    (tool) =>
+    tool =>
       tool.element === element &&
       (tool.mode === 'active' || tool.mode === 'passive')
   );

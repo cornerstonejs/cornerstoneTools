@@ -17,7 +17,7 @@ import { clipToBox } from '../util/clip.js';
  * @param {*} preventHandleOutsideImage
  * @returns {undefined}
  */
-export default function (
+export default function(
   mouseEventData,
   toolType,
   data,
@@ -27,7 +27,7 @@ export default function (
 ) {
   const element = mouseEventData.element;
 
-  function moveCallback (e) {
+  function moveCallback(e) {
     const eventData = e.detail;
 
     handle.active = true;
@@ -44,13 +44,13 @@ export default function (
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  function whichMovement (e) {
+  function whichMovement(e) {
     element.removeEventListener(EVENTS.MOUSE_MOVE, whichMovement);
     element.removeEventListener(EVENTS.MOUSE_DRAG, whichMovement);
 
@@ -63,7 +63,7 @@ export default function (
     }
   }
 
-  function measurementRemovedCallback (e) {
+  function measurementRemovedCallback(e) {
     const eventData = e.detail;
 
     if (eventData.measurementData === data) {
@@ -71,7 +71,7 @@ export default function (
     }
   }
 
-  function toolDeactivatedCallback (e) {
+  function toolDeactivatedCallback(e) {
     const eventData = e.detail;
 
     if (eventData.toolType === toolType) {
@@ -101,7 +101,7 @@ export default function (
   );
   element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
-  function moveEndCallback () {
+  function moveEndCallback() {
     element.removeEventListener(EVENTS.MOUSE_MOVE, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, moveEndCallback);

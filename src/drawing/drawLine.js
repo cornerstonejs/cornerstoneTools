@@ -16,15 +16,15 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export default function (
+export default function(
   context,
   element,
   lines,
   options,
   coordSystem = 'pixel'
 ) {
-  path(context, options, (context) => {
-    lines.forEach((line) => {
+  path(context, options, context => {
+    lines.forEach(line => {
       let start = line.start;
       let end = line.end;
 

@@ -9,7 +9,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawEllipse
+  drawEllipse,
 } from './../../drawing/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
@@ -30,10 +30,10 @@ const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
  * @extends BaseAnnotationTool
  */
 export default class EllipticalRoiTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'EllipticalRoi',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -48,7 +48,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -72,13 +72,13 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
         },
         textBox: {
           active: false,
@@ -86,9 +86,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -100,7 +100,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     // TODO: How should we handle touch? for mouse, distance is 15 for touch its 25
     const distance = 15;
 
@@ -131,14 +131,14 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
       top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
       width: Math.abs(startCanvas.x - endCanvas.x) - distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) - distance
+      height: Math.abs(startCanvas.y - endCanvas.y) - distance,
     };
 
     const majorEllipse = {
       left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
       top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
       width: Math.abs(startCanvas.x - endCanvas.x) + distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) + distance
+      height: Math.abs(startCanvas.y - endCanvas.y) + distance,
     };
 
     const pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
@@ -156,7 +156,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -202,7 +202,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         // Apply any shadow settings defined in the tool configuration
         setShadow(context, config);
 
@@ -211,12 +211,12 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         // Draw the ellipse on the canvas
         drawEllipse(context, element, data.handles.start, data.handles.end, {
-          color
+          color,
         });
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover
+          drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -246,7 +246,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
             ),
             height: Math.round(
               Math.abs(data.handles.start.y - data.handles.end.y)
-            )
+            ),
           };
 
           // First, make sure this is not a color image, since no mean / standard
@@ -280,7 +280,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
                 stdDev: calculateSUV(
                   image,
                   (meanStdDev.stdDev - image.intercept) / image.slope
-                )
+                ),
               };
             }
 
@@ -336,7 +336,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data) {
+    function textBoxText(data) {
       const { meanStdDev, meanStdDevSUV, area } = data;
 
       // Define an array to store the rows of text for the textbox
@@ -396,7 +396,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return textLines;
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       // Retrieve the bounds of the ellipse (left, top, width, and height)
       const left = Math.min(handles.start.x, handles.end.x);
       const top = Math.min(handles.start.y, handles.end.y);
@@ -407,23 +407,23 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         {
           // Top middle point of ellipse
           x: left + width / 2,
-          y: top
+          y: top,
         },
         {
           // Left middle point of ellipse
           x: left,
-          y: top + height / 2
+          y: top + height / 2,
         },
         {
           // Bottom middle point of ellipse
           x: left + width / 2,
-          y: top + height
+          y: top + height,
         },
         {
           // Right middle point of ellipse
           x: left + width,
-          y: top + height / 2
-        }
+          y: top + height / 2,
+        },
       ];
     }
   }

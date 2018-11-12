@@ -9,7 +9,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawRect
+  drawRect,
 } from './../../drawing/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
@@ -26,10 +26,10 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
  * @extends BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'RectangleRoi',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -44,7 +44,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -68,13 +68,13 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
         },
         textBox: {
           active: false,
@@ -82,9 +82,9 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -96,7 +96,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -124,7 +124,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       left: Math.min(startCanvas.x, endCanvas.x),
       top: Math.min(startCanvas.y, endCanvas.y),
       width: Math.abs(startCanvas.x - endCanvas.x),
-      height: Math.abs(startCanvas.y - endCanvas.y)
+      height: Math.abs(startCanvas.y - endCanvas.y),
     };
 
     const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
@@ -140,7 +140,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -186,7 +186,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         // Apply any shadow settings defined in the tool configuration
         setShadow(context, config);
 
@@ -195,12 +195,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         // Draw the rectangle on the canvas
         drawRect(context, element, data.handles.start, data.handles.end, {
-          color
+          color,
         });
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover
+          drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -224,7 +224,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
             left: Math.min(data.handles.start.x, data.handles.end.x),
             top: Math.min(data.handles.start.y, data.handles.end.y),
             width: Math.abs(data.handles.start.x - data.handles.end.x),
-            height: Math.abs(data.handles.start.y - data.handles.end.y)
+            height: Math.abs(data.handles.start.y - data.handles.end.y),
           };
 
           // First, make sure this is not a color image, since no mean / standard
@@ -258,7 +258,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
                 stdDev: calculateSUV(
                   image,
                   (meanStdDev.stdDev - image.intercept) / image.slope
-                )
+                ),
               };
             }
 
@@ -314,7 +314,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data) {
+    function textBoxText(data) {
       const { meanStdDev, meanStdDevSUV, area } = data;
 
       // Define an array to store the rows of text for the textbox
@@ -374,7 +374,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       return textLines;
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       // Retrieve the bounds of the rectangle (left, top, width, and height)
       const left = Math.min(handles.start.x, handles.end.x);
       const top = Math.min(handles.start.y, handles.end.y);
@@ -385,23 +385,23 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         {
           // Top middle point of rectangle
           x: left + width / 2,
-          y: top
+          y: top,
         },
         {
           // Left middle point of rectangle
           x: left,
-          y: top + height / 2
+          y: top + height / 2,
         },
         {
           // Bottom middle point of rectangle
           x: left + width / 2,
-          y: top + height
+          y: top + height,
         },
         {
           // Right middle point of rectangle
           x: left + width,
-          y: top + height / 2
-        }
+          y: top + height / 2,
+        },
       ];
     }
   }
@@ -429,7 +429,7 @@ const calculateMeanStdDev = (sp, rectangle) => {
       count,
       mean: 0.0,
       variance: 0.0,
-      stdDev: 0.0
+      stdDev: 0.0,
     };
   }
 
@@ -440,6 +440,6 @@ const calculateMeanStdDev = (sp, rectangle) => {
     count,
     mean,
     variance,
-    stdDev: Math.sqrt(variance)
+    stdDev: Math.sqrt(variance),
   };
 };

@@ -12,15 +12,15 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @extends BaseTool
  */
 export default class StackScrollMultiTouchTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'StackScrollMultiTouch',
       supportedInteractionTypes: ['MultiTouch'],
       configuration: {
         loop: false,
         allowSkipping: true,
-        touchPointers: 3
-      }
+        touchPointers: 3,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -30,7 +30,7 @@ export default class StackScrollMultiTouchTool extends BaseTool {
     this.multiTouchDragCallback = this._dragCallback.bind(this);
   }
 
-  _dragCallback (evt) {
+  _dragCallback(evt) {
     const eventData = evt.detail;
 
     if (eventData.numPointers === this.configuration.touchPointers) {
@@ -59,14 +59,14 @@ export default class StackScrollMultiTouchTool extends BaseTool {
     }
   }
 
-  _getDeltaY (element, deltaPointsY) {
+  _getDeltaY(element, deltaPointsY) {
     const options = getToolOptions(this.name, element);
     const deltaY = options.deltaY || 0;
 
     return deltaY + deltaPointsY;
   }
 
-  _getPixelPerImage (element) {
+  _getPixelPerImage(element) {
     const toolData = getToolState(element, 'stack');
 
     if (!toolData || !toolData.data || !toolData.data.length) {
@@ -77,6 +77,9 @@ export default class StackScrollMultiTouchTool extends BaseTool {
     const { stackScrollSpeed } = this.configuration;
 
     // The Math.max here makes it easier to mouseDrag-scroll small or really large image stacks
-    return stackScrollSpeed || Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8));
+    return (
+      stackScrollSpeed ||
+      Math.max(2, element.offsetHeight / Math.max(stackData.imageIds.length, 8))
+    );
   }
 }

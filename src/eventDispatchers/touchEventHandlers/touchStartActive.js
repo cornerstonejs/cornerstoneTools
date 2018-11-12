@@ -4,7 +4,7 @@ import getActiveToolsForElement from './../../store/getActiveToolsForElement.js'
 import addNewMeasurement from './addNewMeasurement.js';
 import BaseAnnotationTool from './../../tools/base/BaseAnnotationTool.js';
 
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -12,7 +12,7 @@ export default function (evt) {
   const element = evt.detail.element;
   let tools = getActiveToolsForElement(element, getters.touchTools());
 
-  tools = tools.filter((tool) => tool.options.isTouchActive);
+  tools = tools.filter(tool => tool.options.isTouchActive);
 
   if (tools.length === 0) {
     return;

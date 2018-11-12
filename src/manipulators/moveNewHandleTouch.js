@@ -17,7 +17,7 @@ import { clipToBox } from '../util/clip.js';
  * @param {*} preventHandleOutsideImage
  * @returns {undefined}
  */
-export default function (
+export default function(
   eventData,
   toolType,
   data,
@@ -33,13 +33,13 @@ export default function (
   );
   const distanceFromTouch = {
     x: handle.x - imageCoords.x,
-    y: handle.y - imageCoords.y
+    y: handle.y - imageCoords.y,
   };
 
   handle.active = true;
   data.active = true;
 
-  function moveCallback (e) {
+  function moveCallback(e) {
     const eventData = e.detail;
 
     handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
@@ -55,13 +55,13 @@ export default function (
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  function moveEndCallback (e) {
+  function moveEndCallback(e) {
     const eventData = e.detail;
 
     element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
@@ -98,7 +98,7 @@ export default function (
     }
   }
 
-  function stopImmediatePropagation (e) {
+  function stopImmediatePropagation(e) {
     // Stop the CornerstoneToolsTouchStart event from
     // Become a CornerstoneToolsTouchStartActive event when
     // MoveNewHandleTouch ends
@@ -113,7 +113,7 @@ export default function (
   element.addEventListener(EVENTS.TAP, moveEndCallback);
   element.addEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
 
-  function toolDeactivatedCallback () {
+  function toolDeactivatedCallback() {
     element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
     element.removeEventListener(EVENTS.TOUCH_PINCH, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);

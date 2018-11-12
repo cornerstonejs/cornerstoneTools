@@ -10,9 +10,9 @@ import store from './index.js';
  * @param {HTMLElement} element The element.
  * @param {string} toolName The name of the tool.
  */
-const removeToolForElement = function (element, toolName) {
+const removeToolForElement = function(element, toolName) {
   const toolIndex = store.state.tools.findIndex(
-    (tool) => tool.element === element && tool.name === toolName
+    tool => tool.element === element && tool.name === toolName
   );
 
   if (toolIndex >= 0) {
@@ -29,9 +29,9 @@ const removeToolForElement = function (element, toolName) {
  * @name removeTool
  * @param {string} toolName The name of the tool.
  */
-const removeTool = function (toolName) {
+const removeTool = function(toolName) {
   _removeToolGlobally(toolName);
-  store.state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach(element => {
     removeToolForElement(element, toolName);
   });
 };
@@ -45,7 +45,7 @@ const removeTool = function (toolName) {
  * @name removeToolGlobally
  * @param {string} toolName The name of the tool to remove.
  */
-const _removeToolGlobally = function (toolName) {
+const _removeToolGlobally = function(toolName) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }

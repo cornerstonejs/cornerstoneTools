@@ -17,7 +17,7 @@ import { clipToBox } from '../util/clip.js';
  * @param {*} preventHandleOutsideImage
  * @returns {undefined}
  */
-export default function (
+export default function(
   mouseEventData,
   toolType,
   data,
@@ -28,10 +28,10 @@ export default function (
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
-    y: handle.y - mouseEventData.currentPoints.image.y
+    y: handle.y - mouseEventData.currentPoints.image.y,
   };
 
-  function mouseDragCallback (e) {
+  function mouseDragCallback(e) {
     const eventData = e.detail;
 
     if (handle.hasMoved === false) {
@@ -52,7 +52,7 @@ export default function (
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -60,7 +60,7 @@ export default function (
 
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
-  function mouseUpCallback () {
+  function mouseUpCallback() {
     handle.active = false;
     element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);

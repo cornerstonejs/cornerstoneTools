@@ -10,7 +10,7 @@ import {
   touchEnd,
   touchPress,
   touchPinch,
-  touchRotate
+  touchRotate,
 } from './touchEventHandlers/index.js';
 
 jest.mock('./touchEventHandlers/index.js', () => ({
@@ -23,7 +23,7 @@ jest.mock('./touchEventHandlers/index.js', () => ({
   touchEnd: jest.fn(),
   touchPress: jest.fn(),
   touchPinch: jest.fn(),
-  touchRotate: jest.fn()
+  touchRotate: jest.fn(),
 }));
 
 describe('touchToolEventDispatcher.js', () => {
@@ -55,7 +55,7 @@ describe('touchToolEventDispatcher.js', () => {
       [EVENTS.DOUBLE_TAP, doubleTap],
       [EVENTS.TOUCH_PINCH, touchPinch],
       [EVENTS.TOUCH_ROTATE, touchRotate],
-      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag]
+      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag],
     ]);
   });
 
@@ -79,7 +79,7 @@ describe('touchToolEventDispatcher.js', () => {
       [EVENTS.DOUBLE_TAP, doubleTap],
       [EVENTS.TOUCH_PINCH, touchPinch],
       [EVENTS.TOUCH_ROTATE, touchRotate],
-      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag]
+      [EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag],
     ]);
   });
 });

@@ -6,7 +6,7 @@ import getActiveToolsForElement from './../../store/getActiveToolsForElement.js'
 // TODO: I don't like filtering in drag because it's such
 // A high frequency event. Anything we can do to reduce
 // Repeat math here would be a big help
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -18,11 +18,11 @@ export default function (evt) {
   // Filter out disabled, enabled, and passive
   tools = getActiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter(
-    (tool) =>
+    tool =>
       eventData.buttons === tool.options.mouseButtonMask &&
       tool.options.isMouseActive
   );
-  tools = tools.filter((tool) => typeof tool.mouseDragCallback === 'function');
+  tools = tools.filter(tool => typeof tool.mouseDragCallback === 'function');
 
   if (tools.length === 0) {
     return;

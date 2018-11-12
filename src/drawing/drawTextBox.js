@@ -14,7 +14,7 @@ import fillBox from './fillBox.js';
  * @param {Number} padding - The padding to apply on either end of the text.
  * @returns {Number} computed text box width
  */
-export function textBoxWidth (context, text, padding) {
+export function textBoxWidth(context, text, padding) {
   const font = textStyle.getFont();
   const origFont = context.font;
 
@@ -44,7 +44,7 @@ export function textBoxWidth (context, text, padding) {
  * @param  {object} options     Options for the textBox.
  * @returns {object} {top, left, width, height} - Bounding box; can be used for pointNearTool
  */
-export default function (context, textLines, x, y, color, options) {
+export default function(context, textLines, x, y, color, options) {
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {
     textLines = [textLines];
   }
@@ -56,7 +56,7 @@ export default function (context, textLines, x, y, color, options) {
   // Find the longest text width in the array of text data
   let maxWidth = 0;
 
-  textLines.forEach(function (text) {
+  textLines.forEach(function(text) {
     // Get the text width in the current font
     const width = textBoxWidth(context, text, padding);
 
@@ -67,10 +67,10 @@ export default function (context, textLines, x, y, color, options) {
   // Calculate the bounding box for this text box
   const boundingBox = {
     width: maxWidth,
-    height: padding + textLines.length * (fontSize + padding)
+    height: padding + textLines.length * (fontSize + padding),
   };
 
-  draw(context, (context) => {
+  draw(context, context => {
     context.strokeStyle = color;
 
     // Draw the background box with padding

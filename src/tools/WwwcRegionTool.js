@@ -17,13 +17,13 @@ import toolColors from '../stateManagement/toolColors.js';
 export default class WwwcRegionTool extends BaseTool {
 
   /** @inheritdoc */
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'WwwcRegion',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        minWindowWidth: 10
-      }
+        minWindowWidth: 10,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -72,15 +72,15 @@ export default class WwwcRegionTool extends BaseTool {
    * @memberof Tools.WwwcRegionTool
    * @returns {undefined}
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
     const color = toolColors.getColorIfActive({ active: true });
     const context = getNewContext(eventData.canvasContext.canvas);
 
-    draw(context, (context) => {
+    draw(context, context => {
       drawRect(context, element, this.handles.start, this.handles.end, {
-        color
+        color,
       });
     });
   }
@@ -92,7 +92,7 @@ export default class WwwcRegionTool extends BaseTool {
    * @param {*} evt // mousedown, touchstart, click
    * @returns {Boolean} True
    */
-  _startOutliningRegion (evt) {
+  _startOutliningRegion(evt) {
     const consumeEvent = true;
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
@@ -117,7 +117,7 @@ export default class WwwcRegionTool extends BaseTool {
    * @param {(CornerstoneTools.event:cornerstonetoolstouchdrag|CornerstoneTools.event:cornerstonetoolsmousedrag|CornerstoneTools.event:cornerstonetoolsmousemove)} evt  Interaction event emitted by an enabledElement
    * @returns {undefined}
    */
-  _setHandlesAndUpdate (evt) {
+  _setHandlesAndUpdate(evt) {
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
 
@@ -133,7 +133,7 @@ export default class WwwcRegionTool extends BaseTool {
    * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
    * @returns {undefined}
    */
-  _applyStrategy (evt) {
+  _applyStrategy(evt) {
     if (
       _isEmptyObject(this.handles.start) ||
       _isEmptyObject(this.handles.end)
@@ -153,10 +153,10 @@ export default class WwwcRegionTool extends BaseTool {
    * @method _resetHandles
    * @returns {undefined}
    */
-  _resetHandles () {
+  _resetHandles() {
     this.handles = {
       start: {},
-      end: {}
+      end: {},
     };
   }
 }
@@ -169,7 +169,7 @@ export default class WwwcRegionTool extends BaseTool {
  * @param {Object} obj The object to check
  * @returns {Boolean} true if the object is empty
  */
-const _isEmptyObject = (obj) =>
+const _isEmptyObject = obj =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
 /**
@@ -182,7 +182,7 @@ const _isEmptyObject = (obj) =>
  * @param {Object} config The tool's configuration object
  * @returns {undefined}
  */
-const _applyWWWCRegion = function (evt, config) {
+const _applyWWWCRegion = function(evt, config) {
   const eventData = evt.detail;
   const { image, element } = eventData;
   const { start: startPoint, end: endPoint } = evt.detail.handles;
@@ -236,7 +236,7 @@ const _applyWWWCRegion = function (evt, config) {
  * @param {bumber} globalMax starting "max" value
  * @returns {Object} {min: number, max: number, mean: number }
  */
-const _calculateMinMaxMean = function (pixelLuminance, globalMin, globalMax) {
+const _calculateMinMaxMean = function(pixelLuminance, globalMin, globalMax) {
   const numPixels = pixelLuminance.length;
   let min = globalMax;
   let max = globalMin;
@@ -246,7 +246,7 @@ const _calculateMinMaxMean = function (pixelLuminance, globalMin, globalMax) {
     return {
       min,
       max,
-      mean: (globalMin + globalMax) / 2
+      mean: (globalMin + globalMax) / 2,
     };
   }
 
@@ -261,6 +261,6 @@ const _calculateMinMaxMean = function (pixelLuminance, globalMin, globalMax) {
   return {
     min,
     max,
-    mean: sum / numPixels
+    mean: sum / numPixels,
   };
 };

@@ -18,7 +18,7 @@ import toolStyle from './../stateManagement/toolStyle.js';
  * @param {ContextFn} fn - A drawing function to execute with the provided stroke pattern.
  * @returns {undefined}
  */
-export default function (context, options, fn) {
+export default function(context, options, fn) {
   const { color, lineWidth, fillStyle, lineDash } = options;
 
   context.beginPath();

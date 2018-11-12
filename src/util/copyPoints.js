@@ -8,7 +8,7 @@ import external from '../externalModules.js';
  * @param  {object} points - The object to copy.
  * @returns {object} - The copy.
  */
-export default function (points) {
+export default function(points) {
   const page = external.cornerstoneMath.point.copy(points.page);
   const image = external.cornerstoneMath.point.copy(points.image);
   const client = external.cornerstoneMath.point.copy(points.client);
@@ -18,6 +18,6 @@ export default function (points) {
     page,
     image,
     client,
-    canvas
+    canvas,
   };
 }

@@ -13,14 +13,14 @@ const { changeViewportScale } = zoomUtils;
  * @extends BaseTool
  */
 export default class ZoomMouseWheelTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'ZoomMouseWheel',
       supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         minScale: 0.25,
-        maxScale: 20.0
-      }
+        maxScale: 20.0,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -34,13 +34,13 @@ export default class ZoomMouseWheelTool extends BaseTool {
    *
    * @param {*} evt
    */
-  mouseWheelCallback (evt) {
+  mouseWheelCallback(evt) {
     const { element, viewport, direction } = evt.detail;
     const { invert, maxScale, minScale } = this.configuration;
     const ticks = invert ? direction / 4 : -direction / 4;
     const updatedViewport = changeViewportScale(viewport, ticks, {
       maxScale,
-      minScale
+      minScale,
     });
 
     external.cornerstone.setViewport(element, updatedViewport);

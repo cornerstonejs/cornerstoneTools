@@ -12,7 +12,7 @@ import external from '../externalModules.js';
  * @param {HTMLElement} sourceElement - The source element for the zoom and pan values
  * @param {HTMLElement} targetElement - The target element
  */
-export default function (synchronizer, sourceElement, targetElement) {
+export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
@@ -24,7 +24,11 @@ export default function (synchronizer, sourceElement, targetElement) {
   const targetViewport = cornerstone.getViewport(targetElement);
 
   // Do nothing if the scale and translation are the same
-  if (targetViewport.scale === sourceViewport.scale && targetViewport.translation.x === sourceViewport.translation.x && targetViewport.translation.y === sourceViewport.translation.y) {
+  if (
+    targetViewport.scale === sourceViewport.scale &&
+    targetViewport.translation.x === sourceViewport.translation.x &&
+    targetViewport.translation.y === sourceViewport.translation.y
+  ) {
     return;
   }
 

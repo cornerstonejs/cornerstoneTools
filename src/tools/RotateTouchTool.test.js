@@ -3,12 +3,12 @@ import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
-    setViewport: jest.fn()
-  }
+    setViewport: jest.fn(),
+  },
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvt = {
@@ -16,9 +16,9 @@ const mockEvt = {
     element: {},
     rotation: 50,
     viewport: {
-      rotation: 30
-    }
-  }
+      rotation: 30,
+    },
+  },
 };
 
 describe('RotateTouchTool.js', () => {
@@ -45,7 +45,10 @@ describe('RotateTouchTool.js', () => {
       external.cornerstone.setViewport = jest.fn();
 
       instantiatedTool.touchRotateCallback(mockEvt);
-      expect(external.cornerstone.setViewport).toHaveBeenCalledWith({}, { rotation: 80 });
+      expect(external.cornerstone.setViewport).toHaveBeenCalledWith(
+        {},
+        { rotation: 80 }
+      );
     });
   });
 });

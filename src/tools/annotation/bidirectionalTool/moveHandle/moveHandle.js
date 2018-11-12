@@ -2,14 +2,21 @@ import external from './../../../../externalModules.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 
-export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+export default function(
+  mouseEventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
-    y: handle.y - mouseEventData.currentPoints.image.y
+    y: handle.y - mouseEventData.currentPoints.image.y,
   };
 
-  const _dragCallback = (event) => {
+  const _dragCallback = event => {
     const eventData = event.detail;
 
     handle.active = true;
@@ -35,10 +42,14 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
-    external.cornerstone.triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
+    external.cornerstone.triggerEvent(
+      element,
+      EVENTS.MEASUREMENT_MODIFIED,
+      modifiedEventData
+    );
   };
 
   element.addEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
@@ -55,10 +66,16 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
   };
 
   // Bind the event listener for image rendering
-  element.addEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
+  element.addEventListener(
+    external.cornerstone.EVENTS.IMAGE_RENDERED,
+    imageRenderedHandler
+  );
 
   const interactionEndCallback = () => {
-    element.removeEventListener(external.cornerstone.EVENTS.IMAGE_RENDERED, imageRenderedHandler);
+    element.removeEventListener(
+      external.cornerstone.EVENTS.IMAGE_RENDERED,
+      imageRenderedHandler
+    );
 
     element.removeEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
     element.removeEventListener(EVENTS.MOUSE_UP, interactionEndCallback);

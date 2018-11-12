@@ -1,14 +1,18 @@
-const getHandle = (x, y, index, extraAttributes = {}) => Object.assign({
-  x,
-  y,
-  index,
-  drawnIndependently: false,
-  allowedOutsideImage: false,
-  highlight: true,
-  active: false
-}, extraAttributes);
+const getHandle = (x, y, index, extraAttributes = {}) =>
+  Object.assign(
+    {
+      x,
+      y,
+      index,
+      drawnIndependently: false,
+      allowedOutsideImage: false,
+      highlight: true,
+      active: false,
+    },
+    extraAttributes
+  );
 
-export default function (mouseEventData) {
+export default function(mouseEventData) {
   const { x, y } = mouseEventData.currentPoints.image;
   // Create the measurement data for this tool with the end handle activated
   const measurementData = {
@@ -28,11 +32,11 @@ export default function (mouseEventData) {
         movesIndependently: false,
         drawnIndependently: true,
         allowedOutsideImage: true,
-        hasBoundingBox: true
-      })
+        hasBoundingBox: true,
+      }),
     },
     longestDiameter: 0,
-    shortestDiameter: 0
+    shortestDiameter: 0,
   };
 
   return measurementData;

@@ -12,13 +12,15 @@
  * @param {object} dataHandles data object associated with the tool.
  * @returns {boolean} - Whether the new line intersects with any other lines of the polygon.
  */
-function newHandle (candidateHandle, dataHandles) {
+function newHandle(candidateHandle, dataHandles) {
   // Check if the proposed line will intersect any existent line
   const lastHandleId = dataHandles.length - 1;
   const lastHandle = getCoords(dataHandles[lastHandleId]);
   const newHandle = getCoords(candidateHandle);
 
-  return doesIntersectOtherLines(dataHandles, lastHandle, newHandle, [lastHandleId]);
+  return doesIntersectOtherLines(dataHandles, lastHandle, newHandle, [
+    lastHandleId,
+  ]);
 }
 
 /**
@@ -29,12 +31,15 @@ function newHandle (candidateHandle, dataHandles) {
  * @param {object} dataHandles data object associated with the tool.
  * @returns {boolean} Whether the last line intersects with any other lines of the polygon.
  */
-function end (dataHandles) {
+function end(dataHandles) {
   const lastHandleId = dataHandles.length - 1;
   const lastHandle = getCoords(dataHandles[lastHandleId]);
   const firstHandle = getCoords(dataHandles[0]);
 
-  return doesIntersectOtherLines(dataHandles, lastHandle, firstHandle, [lastHandleId, 0]);
+  return doesIntersectOtherLines(dataHandles, lastHandle, firstHandle, [
+    lastHandleId,
+    0,
+  ]);
 }
 
 /**
@@ -46,7 +51,7 @@ function end (dataHandles) {
  * @param {number} modifiedHandleId The id of the handle being modified.
  * @returns {boolean} Whether the modfication causes any intersections.
  */
-function modify (dataHandles, modifiedHandleId) {
+function modify(dataHandles, modifiedHandleId) {
   // Check if the modifiedHandle's previous and next lines will intersect any other line in the polygon
   const modifiedHandle = getCoords(dataHandles[modifiedHandleId]);
 
@@ -59,7 +64,12 @@ function modify (dataHandles, modifiedHandleId) {
 
   let neighborHandle = getCoords(dataHandles[neighborHandleId]);
 
-  if (doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [modifiedHandleId, neighborHandleId])) {
+  if (
+    doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [
+      modifiedHandleId,
+      neighborHandleId,
+    ])
+  ) {
     return true;
   }
 
@@ -72,7 +82,10 @@ function modify (dataHandles, modifiedHandleId) {
 
   neighborHandle = getCoords(dataHandles[neighborHandleId]);
 
-  return doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [modifiedHandleId, neighborHandleId]);
+  return doesIntersectOtherLines(dataHandles, modifiedHandle, neighborHandle, [
+    modifiedHandleId,
+    neighborHandleId,
+  ]);
 }
 
 /**
@@ -86,12 +99,14 @@ function modify (dataHandles, modifiedHandleId) {
  * @param {object} ignoredHandleIds Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
  * @returns {boolean} Whether the line intersects any of the other lines in the polygon.
  */
-function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
+function doesIntersectOtherLines(dataHandles, p1, q1, ignoredHandleIds) {
   let j = dataHandles.length - 1;
 
   for (let i = 0; i < dataHandles.length; i++) {
-
-    if (ignoredHandleIds.indexOf(i) !== -1 || ignoredHandleIds.indexOf(j) !== -1) {
+    if (
+      ignoredHandleIds.indexOf(i) !== -1 ||
+      ignoredHandleIds.indexOf(j) !== -1
+    ) {
       j = i;
       continue;
     }
@@ -120,14 +135,14 @@ function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
  * @param {object} q2 Coordinates of the end of the line 2.
  * @returns {boolean} Whether lines (p1,q1) and (p2,q2) intersect.
  */
-function doesIntersect (p1, q1, p2, q2) {
+function doesIntersect(p1, q1, p2, q2) {
   let result = false;
 
   const orient = [
     orientation(p1, q1, p2),
     orientation(p1, q1, q2),
     orientation(p2, q2, p1),
-    orientation(p2, q2, q1)
+    orientation(p2, q2, q1),
   ];
 
   // General Case
@@ -136,13 +151,17 @@ function doesIntersect (p1, q1, p2, q2) {
   }
 
   // Special Cases
-  if (orient[0] === 0 && onSegment(p1, p2, q1)) { // If p1, q1 and p2 are colinear and p2 lies on segment p1q1
+  if (orient[0] === 0 && onSegment(p1, p2, q1)) {
+    // If p1, q1 and p2 are colinear and p2 lies on segment p1q1
     result = true;
-  } else if (orient[1] === 0 && onSegment(p1, q2, q1)) { // If p1, q1 and p2 are colinear and q2 lies on segment p1q1
+  } else if (orient[1] === 0 && onSegment(p1, q2, q1)) {
+    // If p1, q1 and p2 are colinear and q2 lies on segment p1q1
     result = true;
-  } else if (orient[2] === 0 && onSegment(p2, p1, q2)) { // If p2, q2 and p1 are colinear and p1 lies on segment p2q2
+  } else if (orient[2] === 0 && onSegment(p2, p1, q2)) {
+    // If p2, q2 and p1 are colinear and p1 lies on segment p2q2
     result = true;
-  } else if (orient[3] === 0 && onSegment(p2, q1, q2)) { // If p2, q2 and q1 are colinear and q1 lies on segment p2q2
+  } else if (orient[3] === 0 && onSegment(p2, q1, q2)) {
+    // If p2, q2 and q1 are colinear and q1 lies on segment p2q2
     result = true;
   }
 
@@ -157,10 +176,10 @@ function doesIntersect (p1, q1, p2, q2) {
  * @param {object} dataHandle Data object associated with a single handle in the freehand tool.
  * @returns {object} An object containing position propeties x and y.
  */
-function getCoords (dataHandle) {
+function getCoords(dataHandle) {
   return {
     x: dataHandle.x,
-    y: dataHandle.y
+    y: dataHandle.y,
   };
 }
 
@@ -174,14 +193,15 @@ function getCoords (dataHandle) {
  * @param {object} r Third point.
  * @returns {number} - 0: Colinear, 1: Clockwise, 2: Anticlockwise
  */
-function orientation (p, q, r) {
-  const orientationValue = (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
+function orientation(p, q, r) {
+  const orientationValue =
+    (q.y - p.y) * (r.x - q.x) - (q.x - p.x) * (r.y - q.y);
 
   if (orientationValue === 0) {
     return 0; // Colinear
   }
 
-  return (orientationValue > 0) ? 1 : 2;
+  return orientationValue > 0 ? 1 : 2;
 }
 
 /**
@@ -194,10 +214,13 @@ function orientation (p, q, r) {
  * @param {object} r Point r.
  * @returns {boolean} - If q lies on line segment (p,r).
  */
-function onSegment (p, q, r) {
-
-  if (q.x <= Math.max(p.x, r.x) && q.x >= Math.min(p.x, r.x) &&
-      q.y <= Math.max(p.y, r.y) && q.y >= Math.min(p.y, r.y)) {
+function onSegment(p, q, r) {
+  if (
+    q.x <= Math.max(p.x, r.x) &&
+    q.x >= Math.min(p.x, r.x) &&
+    q.y <= Math.max(p.y, r.y) &&
+    q.y >= Math.min(p.y, r.y)
+  ) {
     return true;
   }
 
@@ -207,5 +230,5 @@ function onSegment (p, q, r) {
 export default {
   newHandle,
   end,
-  modify
+  modify,
 };

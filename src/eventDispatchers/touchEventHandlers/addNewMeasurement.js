@@ -4,7 +4,7 @@ import { state } from '../../store/index.js';
 import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 
-export default function (evt, tool) {
+export default function(evt, tool) {
   console.log('touch: addNewMeasurement');
   //
   evt.preventDefault();
@@ -50,7 +50,7 @@ export default function (evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    function () {
+    function() {
       console.log('addNewMeasurement: touchUp');
       measurementData.active = false;
       measurementData.invalidated = true;

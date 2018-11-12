@@ -4,14 +4,14 @@ import scroll from '../util/scroll.js';
 jest.mock('../util/scroll.js');
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvent = {
   detail: {
     direction: 1,
-    element: {}
-  }
+    element: {},
+  },
 };
 
 describe('StachScrollMouseWheelTool.js', () => {
@@ -23,8 +23,8 @@ describe('StachScrollMouseWheelTool.js', () => {
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
-    it("can be created with a custom tool name", () => {
-      const customToolName = { name: "customToolName" };
+    it('can be created with a custom tool name', () => {
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new StackScrollMouseWheelTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);

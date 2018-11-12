@@ -1,9 +1,9 @@
-import external from "./../externalModules.js";
-import BaseTool from "./base/BaseTool.js";
+import external from './../externalModules.js';
+import BaseTool from './base/BaseTool.js';
 
-import { getNewContext } from "../drawing/index.js";
-import renderActiveReferenceLine from "./referenceLines/renderActiveReferenceLine.js";
-import { waitForEnabledElementImageToLoad } from "./../util/wait.js";
+import { getNewContext } from '../drawing/index.js';
+import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';
+import { waitForEnabledElementImageToLoad } from './../util/wait.js';
 
 /**
  * When enabled, this tool will display references lines for each source
@@ -19,13 +19,13 @@ import { waitForEnabledElementImageToLoad } from "./../util/wait.js";
  * @extends BaseTool
  */
 export default class ReferenceLinesTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'ReferenceLines',
       mixins: ['enabledOrDisabledBinaryTool'],
       configuration: {
-        renderer: renderActiveReferenceLine
-      }
+        renderer: renderActiveReferenceLine,
+      },
     };
 
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -36,7 +36,7 @@ export default class ReferenceLinesTool extends BaseTool {
     this.synchronizationContext = null;
   }
 
-  async enabledCallback (element, { synchronizationContext } = {}) {
+  async enabledCallback(element, { synchronizationContext } = {}) {
     const renderer = this.configuration.renderer;
     const enabledElement = await waitForEnabledElementImageToLoad(element);
 
@@ -57,11 +57,11 @@ export default class ReferenceLinesTool extends BaseTool {
     this.forceImageUpdate(element);
   }
 
-  disabledCallback (element) {
+  disabledCallback(element) {
     this.forceImageUpdate(element);
   }
 
-  forceImageUpdate (element) {
+  forceImageUpdate(element) {
     const enabledElement = external.cornerstone.getEnabledElement(element);
 
     if (enabledElement.image) {
@@ -69,7 +69,7 @@ export default class ReferenceLinesTool extends BaseTool {
     }
   }
 
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
 
     // No renderer or synch context? Adios
@@ -85,7 +85,7 @@ export default class ReferenceLinesTool extends BaseTool {
       eventData.enabledElement,
       context
     );
-    enabledElements.forEach((referenceEnabledElement) => {
+    enabledElements.forEach(referenceEnabledElement => {
       // Don't draw ourselves
       if (referenceEnabledElement === evt.currentTarget) {
         return;

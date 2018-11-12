@@ -13,7 +13,7 @@
  * @param {Number} [options.shadowOffsetY=1] - Default value: 1
  * @returns {undefined}
  */
-export default function (context, options) {
+export default function(context, options) {
   if (options.shadow) {
     context.shadowColor = options.shadowColor || '#000000';
     context.shadowOffsetX = options.shadowOffsetX || 1;

@@ -12,7 +12,7 @@ import getHandleNearImagePoint from './getHandleNearImagePoint.js';
  * @param {*} distanceThreshold
  * @returns {Boolean} - True if a handle was activated
  */
-export default function (element, handles, canvasPoint, distanceThreshold) {
+export default function(element, handles, canvasPoint, distanceThreshold) {
   if (!distanceThreshold) {
     distanceThreshold = 6;
   }
@@ -47,10 +47,10 @@ export default function (element, handles, canvasPoint, distanceThreshold) {
  * @param {*} handles
  * @returns {Object} - Activated Handle
  */
-function _getActiveHandle (handles) {
+function _getActiveHandle(handles) {
   let activeHandle;
 
-  Object.keys(handles).forEach(function (name) {
+  Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
 
     if (handle.active === true) {

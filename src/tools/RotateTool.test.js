@@ -2,19 +2,19 @@ import RotateTool from './RotateTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
-  cornerstone: {}
+  cornerstone: {},
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvt = {
   detail: {
     viewport: {
-      rotation: 0
-    }
-  }
+      rotation: 0,
+    },
+  },
 };
 
 describe('RotateTool.js', () => {

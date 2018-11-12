@@ -13,10 +13,14 @@ import external from '../externalModules.js';
  * @param fontSize The font size.
  * @returns {Object} {fontSize: number, lineHeight: number, fontScale: number}
  */
-export default function (enabledElement, context, fontSize) {
+export default function(enabledElement, context, fontSize) {
   const fontScale = 0.1;
 
-  external.cornerstone.setToPixelCoordinateSystem(enabledElement, context, fontScale);
+  external.cornerstone.setToPixelCoordinateSystem(
+    enabledElement,
+    context,
+    fontScale
+  );
   // Return the font size to use
   const scaledFontSize = fontSize / enabledElement.viewport.scale / fontScale;
   // TODO: actually calculate this?
@@ -25,6 +29,6 @@ export default function (enabledElement, context, fontSize) {
   return {
     fontSize: scaledFontSize,
     lineHeight,
-    fontScale
+    fontScale,
   };
 }

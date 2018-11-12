@@ -2,11 +2,11 @@ import EllipticalRoiTool from './EllipticalRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
-  getToolState: jest.fn()
+  getToolState: jest.fn(),
 }));
 
 jest.mock('./../../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const badMouseEventData = 'hello world';
@@ -14,9 +14,9 @@ const goodMouseEventData = {
   currentPoints: {
     image: {
       x: 0,
-      y: 0
-    }
-  }
+      y: 0,
+    },
+  },
 };
 
 describe('EllipticalRoiTool.js', () => {
@@ -74,11 +74,11 @@ describe('EllipticalRoiTool.js', () => {
       );
       const startHandle = {
         x: toolMeasurement.handles.start.x,
-        y: toolMeasurement.handles.start.y
+        y: toolMeasurement.handles.start.y,
       };
       const endHandle = {
         x: toolMeasurement.handles.end.x,
-        y: toolMeasurement.handles.end.y
+        y: toolMeasurement.handles.end.y,
       };
 
       expect(startHandle.x).toBe(goodMouseEventData.currentPoints.image.x);
@@ -110,7 +110,7 @@ describe('EllipticalRoiTool.js', () => {
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const noHandlesMeasurementData = {
-        handles: {}
+        handles: {},
       };
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
@@ -135,7 +135,7 @@ describe('EllipticalRoiTool.js', () => {
     it('returns false when measurement data is not visible', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const notVisibleMeasurementData = {
-        visible: false
+        visible: false,
       };
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -153,7 +153,7 @@ describe('EllipticalRoiTool.js', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const mockEvent = {
         detail: undefined,
-        currentTarget: undefined
+        currentTarget: undefined,
       };
 
       getToolState.mockReturnValueOnce(undefined);

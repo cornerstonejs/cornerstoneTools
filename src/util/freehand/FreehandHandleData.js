@@ -11,13 +11,13 @@
  */
 export default class FreehandHandleData {
   /**
-  * Constructs a a single handle for the freehand tool
-  *
-  * @param {object} position - The position of the handle.
-  * @param {boolean} highlight - whether the handle should be rendered as the highlighted color.
-  * @param {boolean} active - whether the handle is active.
-  */
-  constructor (position, highlight = true, active = true) {
+   * Constructs a a single handle for the freehand tool
+   *
+   * @param {object} position - The position of the handle.
+   * @param {boolean} highlight - whether the handle should be rendered as the highlighted color.
+   * @param {boolean} active - whether the handle is active.
+   */
+  constructor(position, highlight = true, active = true) {
     this.x = position.x;
     this.y = position.y;
     this.highlight = highlight;

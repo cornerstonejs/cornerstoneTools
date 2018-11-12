@@ -3,16 +3,16 @@ import external from '../externalModules.js';
 
 jest.mock('../externalModules.js', () => ({
   cornerstone: {
-    fitToWindow: jest.fn()
-  }
+    fitToWindow: jest.fn(),
+  },
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvt = {
-  detail: {}
+  detail: {},
 };
 
 describe('DoubleTapFitToWindowTool.js', () => {

@@ -1,7 +1,7 @@
 import external from './../../../../externalModules.js';
 
 // Move perpendicular line end point
-export default function (eventData, data) {
+export default function(eventData, data) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
 
@@ -10,8 +10,14 @@ export default function (eventData, data) {
   const fixedPoint = perpendicularStart;
   const movedPoint = eventData.currentPoints.image;
 
-  const distanceFromFixed = external.cornerstoneMath.lineSegment.distanceToPoint(data.handles, fixedPoint);
-  const distanceFromMoved = external.cornerstoneMath.lineSegment.distanceToPoint(data.handles, movedPoint);
+  const distanceFromFixed = external.cornerstoneMath.lineSegment.distanceToPoint(
+    data.handles,
+    fixedPoint
+  );
+  const distanceFromMoved = external.cornerstoneMath.lineSegment.distanceToPoint(
+    data.handles,
+    movedPoint
+  );
 
   const distanceBetweenPoints = distance(fixedPoint, movedPoint);
 
@@ -27,11 +33,11 @@ export default function (eventData, data) {
 
   const adjustedLineP1 = {
     x: start.x - fudgeFactor * dx,
-    y: start.y - fudgeFactor * dy
+    y: start.y - fudgeFactor * dy,
   };
   const adjustedLineP2 = {
     x: end.x + fudgeFactor * dx,
-    y: end.y + fudgeFactor * dy
+    y: end.y + fudgeFactor * dy,
   };
 
   perpendicularStart.x = movedPoint.x + total * dy;
@@ -44,26 +50,29 @@ export default function (eventData, data) {
   const longLine = {
     start: {
       x: start.x,
-      y: start.y
+      y: start.y,
     },
     end: {
       x: end.x,
-      y: end.y
-    }
+      y: end.y,
+    },
   };
 
   const perpendicularLine = {
     start: {
       x: perpendicularStart.x,
-      y: perpendicularStart.y
+      y: perpendicularStart.y,
     },
     end: {
       x: perpendicularEnd.x,
-      y: perpendicularEnd.y
-    }
+      y: perpendicularEnd.y,
+    },
   };
 
-  const intersection = external.cornerstoneMath.lineSegment.intersectLine(longLine, perpendicularLine);
+  const intersection = external.cornerstoneMath.lineSegment.intersectLine(
+    longLine,
+    perpendicularLine
+  );
 
   if (!intersection) {
     if (distance(movedPoint, start) > distance(movedPoint, end)) {

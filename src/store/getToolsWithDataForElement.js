@@ -11,8 +11,8 @@ import { getToolState } from './../stateManagement/toolState.js';
  * @param  {object[]} tools      The input tool array.
  * @returns {object[]}            The filtered array.
  */
-export default function (element, tools) {
-  return tools.filter((tool) => {
+export default function(element, tools) {
+  return tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
 
     return toolState && toolState.data.length > 0;

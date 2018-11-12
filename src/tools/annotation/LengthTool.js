@@ -9,7 +9,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawLine
+  drawLine,
 } from './../../drawing/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
@@ -23,10 +23,10 @@ import lineSegDistance from './../../util/lineSegDistance.js';
  * @extends BaseAnnotationTool
  */
 export default class LengthTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Length',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -41,7 +41,7 @@ export default class LengthTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -64,13 +64,13 @@ export default class LengthTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
         },
         textBox: {
           active: false,
@@ -78,9 +78,9 @@ export default class LengthTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -92,7 +92,7 @@ export default class LengthTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -118,7 +118,7 @@ export default class LengthTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -156,7 +156,7 @@ export default class LengthTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         // Configurable shadow
         setShadow(context, config);
 
@@ -164,12 +164,12 @@ export default class LengthTool extends BaseAnnotationTool {
 
         // Draw the measurement line
         drawLine(context, element, data.handles.start, data.handles.end, {
-          color
+          color,
         });
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover
+          drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -188,7 +188,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
         if (!data.handles.textBox.hasMoved) {
           const coords = {
-            x: Math.max(data.handles.start.x, data.handles.end.x)
+            x: Math.max(data.handles.start.x, data.handles.end.x),
           };
 
           // Depending on which handle has the largest x-value,
@@ -224,7 +224,7 @@ export default class LengthTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data, rowPixelSpacing, colPixelSpacing) {
+    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = ' mm';
 
@@ -235,10 +235,10 @@ export default class LengthTool extends BaseAnnotationTool {
       return `${data.length.toFixed(2)}${suffix}`;
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       const midpoint = {
         x: (handles.start.x + handles.end.x) / 2,
-        y: (handles.start.y + handles.end.y) / 2
+        y: (handles.start.y + handles.end.y) / 2,
       };
 
       return [handles.start, midpoint, handles.end];

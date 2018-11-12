@@ -21,10 +21,10 @@ import calculateSUV from './../../util/calculateSUV.js';
  * @extends BaseAnnotationTool
  */
 export default class ProbeTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Probe',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -39,7 +39,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -62,9 +62,9 @@ export default class ProbeTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
-        }
-      }
+          active: true,
+        },
+      },
     };
   }
 
@@ -76,7 +76,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     const hasEndHandle = data && data.handles && data.handles.end;
     const validParameters = hasEndHandle;
 
@@ -103,7 +103,7 @@ export default class ProbeTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -123,7 +123,7 @@ export default class ProbeTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         const color = toolColors.getColorIfActive(data);
 
         // Draw the handles
@@ -166,7 +166,7 @@ export default class ProbeTool extends BaseAnnotationTool {
           const coords = {
             // Translate the x/y away from the cursor
             x: data.handles.end.x + 3,
-            y: data.handles.end.y - 3
+            y: data.handles.end.y - 3,
           };
           const textCoords = external.cornerstone.pixelToCanvas(
             eventData.element,

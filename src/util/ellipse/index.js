@@ -3,5 +3,5 @@ import pointInEllipse from './pointInEllipse.js';
 
 export default {
   calculateEllipseStatistics,
-  pointInEllipse
+  pointInEllipse,
 };

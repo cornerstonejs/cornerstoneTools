@@ -38,5 +38,5 @@ export default {
   LengthTool,
   ProbeTool,
   RectangleRoiTool,
-  TextMarkerTool
+  TextMarkerTool,
 };

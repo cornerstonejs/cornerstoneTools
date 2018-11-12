@@ -32,5 +32,5 @@ export {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel
+  mouseWheel,
 };

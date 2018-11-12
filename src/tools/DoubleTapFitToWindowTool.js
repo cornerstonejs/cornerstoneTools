@@ -11,10 +11,10 @@ import BaseTool from './base/BaseTool.js';
  * @extends BaseTool
  */
 export default class DoubleTapFitToWindowTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'DoubleTapFitToWindow',
-      supportedInteractionTypes: ['DoubleTap']
+      supportedInteractionTypes: ['DoubleTap'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -23,7 +23,7 @@ export default class DoubleTapFitToWindowTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  doubleTapCallback (evt) {
+  doubleTapCallback(evt) {
     const eventData = evt.detail;
 
     external.cornerstone.fitToWindow(eventData.element);

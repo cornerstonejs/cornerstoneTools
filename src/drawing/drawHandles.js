@@ -18,10 +18,10 @@ const defaultHandleRadius = 6;
  * @param {Boolean} [options.drawHandlesIfActive] - Whether the handles should only be drawn if Active (hovered/selected)
  * @returns {undefined}
  */
-export default function (context, renderData, handles, color, options) {
+export default function(context, renderData, handles, color, options) {
   context.strokeStyle = color;
 
-  Object.keys(handles).forEach(function (name) {
+  Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
 
     if (handle.drawnIndependently === true) {
@@ -37,20 +37,29 @@ export default function (context, renderData, handles, color, options) {
       : toolStyle.getToolWidth();
     const fillStyle = options && options.fill;
 
-    path(context, { lineWidth,
-      fillStyle }, (context) => {
-      const handleCanvasCoords = external.cornerstone.pixelToCanvas(renderData.element, handle);
+    path(
+      context,
+      {
+        lineWidth,
+        fillStyle,
+      },
+      context => {
+        const handleCanvasCoords = external.cornerstone.pixelToCanvas(
+          renderData.element,
+          handle
+        );
 
-      const handleRadius = getHandleRadius(options);
+        const handleRadius = getHandleRadius(options);
 
-      context.arc(
-        handleCanvasCoords.x,
-        handleCanvasCoords.y,
-        handleRadius,
-        0,
-        2 * Math.PI
-      );
-    });
+        context.arc(
+          handleCanvasCoords.x,
+          handleCanvasCoords.y,
+          handleRadius,
+          0,
+          2 * Math.PI
+        );
+      }
+    );
   });
 }
 
@@ -63,7 +72,7 @@ export default function (context, renderData, handles, color, options) {
  * @param {Number} [options.handleRadius=6] - Handle radius to use
  * @returns {Number} handleRadius
  */
-function getHandleRadius (options) {
+function getHandleRadius(options) {
   let handleRadius;
 
   if (options && options.handleRadius) {

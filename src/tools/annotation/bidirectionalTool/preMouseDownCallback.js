@@ -3,20 +3,20 @@ import external from './../../../externalModules.js';
 import EVENTS from './../../../events.js';
 import {
   removeToolState,
-  getToolState
+  getToolState,
 } from './../../../stateManagement/toolState.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
 import moveAllHandles from './../../../manipulators/moveAllHandles.js';
 import moveHandle from './moveHandle/moveHandle.js';
 
-export default function (evt) {
+export default function(evt) {
   const eventData = evt.detail;
 
   const { element } = eventData;
   let data;
 
-  const handleDoneMove = (handle) => {
+  const handleDoneMove = handle => {
     data.invalidated = true;
     if (anyHandlesOutsideImage(eventData, data.handles)) {
       // Delete the measurement
@@ -44,7 +44,12 @@ export default function (evt) {
   // Now check to see if there is a handle we can move
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    const handleParams = [element, data.handles, coords, this.configuration.distanceThreshold];
+    const handleParams = [
+      element,
+      data.handles,
+      coords,
+      this.configuration.distanceThreshold,
+    ];
     const handle = getHandleNearImagePoint(...handleParams);
 
     if (handle) {
@@ -55,19 +60,16 @@ export default function (evt) {
 
       unselectAllHandles(data.handles);
       handle.moving = true;
-      moveHandle(
-        eventData,
-        this.name,
-        data,
-        handle,
-        () => handleDoneMove(handle));
+      moveHandle(eventData, this.name, data, handle, () =>
+        handleDoneMove(handle)
+      );
       preventPropagation(evt);
 
       return true;
     }
   }
 
-  const getDoneMovingCallback = (handles) => () => {
+  const getDoneMovingCallback = handles => () => {
     setHandlesMovingState(handles, false);
     handleDoneMove();
   };
@@ -89,9 +91,12 @@ export default function (evt) {
         data,
         toolData,
         this.name,
-        { deleteIfHandleOutsideImage: true,
-          preventHandleOutsideImage: false },
-        doneMovingCallback);
+        {
+          deleteIfHandleOutsideImage: true,
+          preventHandleOutsideImage: false,
+        },
+        doneMovingCallback
+      );
 
       preventPropagation(evt);
 
@@ -101,10 +106,10 @@ export default function (evt) {
 }
 
 // Clear the selected state for the given handles object
-const unselectAllHandles = (handles) => {
+const unselectAllHandles = handles => {
   let imageNeedsUpdate = false;
 
-  Object.keys(handles).forEach((handleKey) => {
+  Object.keys(handles).forEach(handleKey => {
     if (handleKey === 'textBox') {
       return;
     }
@@ -117,7 +122,7 @@ const unselectAllHandles = (handles) => {
 };
 
 const setHandlesMovingState = (handles, state) => {
-  Object.keys(handles).forEach((handleKey) => {
+  Object.keys(handles).forEach(handleKey => {
     if (handleKey === 'textBox') {
       return;
     }
@@ -125,7 +130,7 @@ const setHandlesMovingState = (handles, state) => {
   });
 };
 
-const preventPropagation = (evt) => {
+const preventPropagation = evt => {
   evt.stopImmediatePropagation();
   evt.stopPropagation();
   evt.preventDefault();

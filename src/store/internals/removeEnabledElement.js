@@ -1,13 +1,13 @@
 import {
   mouseEventListeners,
   mouseWheelEventListeners,
-  touchEventListeners
+  touchEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
-  touchToolEventDispatcher
+  touchToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
 
@@ -30,7 +30,7 @@ import store from '../index.js';
  * @param {Cornerstone#ElementDisabled} elementDisabledEvt
  * @listens Cornerstone#ElementDisabled
  */
-export default function (elementDisabledEvt) {
+export default function(elementDisabledEvt) {
   console.info('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
 
@@ -62,11 +62,11 @@ export default function (elementDisabledEvt) {
  * @method
  * @param {HTMLElement} enabledElement
  */
-const _removeAllToolsForElement = function (enabledElement) {
+const _removeAllToolsForElement = function(enabledElement) {
   // Note: We may want to `setToolDisabled` before removing from store
   // Or take other action to remove any lingering eventListeners/state
   store.state.tools = store.state.tools.filter(
-    (tool) => tool.element !== enabledElement
+    tool => tool.element !== enabledElement
   );
 };
 
@@ -76,13 +76,13 @@ const _removeAllToolsForElement = function (enabledElement) {
  * @method
  * @param {HTMLElement} enabledElement
  */
-const _removeEnabledElement = function (enabledElement) {
+const _removeEnabledElement = function(enabledElement) {
   if (store.modules) {
     _cleanModulesOnElement(enabledElement);
   }
 
   const foundElementIndex = store.state.enabledElements.findIndex(
-    (element) => element === enabledElement
+    element => element === enabledElement
   );
 
   if (foundElementIndex > -1) {
@@ -99,10 +99,10 @@ const _removeEnabledElement = function (enabledElement) {
  * @method
  * @param  {Object} enabledElement
  */
-function _cleanModulesOnElement (enabledElement) {
+function _cleanModulesOnElement(enabledElement) {
   const modules = store.modules;
 
-  Object.keys(modules).forEach(function (key) {
+  Object.keys(modules).forEach(function(key) {
     if (typeof modules[key].removeEnabledElementCallback === 'function') {
       modules[key].removeEnabledElementCallback(enabledElement);
     }

@@ -23,5 +23,5 @@ export {
   moveNewHandle,
   moveNewHandleTouch,
   touchMoveAllHandles,
-  touchMoveHandle
+  touchMoveHandle,
 };

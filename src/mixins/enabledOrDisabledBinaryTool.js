@@ -1,6 +1,6 @@
 import {
   setToolDisabledForElement,
-  setToolEnabledForElement
+  setToolEnabledForElement,
 } from '../store/setToolMode.js';
 
 /**
@@ -9,7 +9,7 @@ import {
  * @param {HTMLElement} element The element on which the tool resides.
  * @returns {undefined}
  */
-function passiveCallback (element) {
+function passiveCallback(element) {
   setToolDisabledForElement(element, this.name);
 }
 
@@ -19,7 +19,7 @@ function passiveCallback (element) {
  * @param {HTMLElement} element The element on which the tool resides.
  * @returns {undefined}
  */
-function activeCallback (element) {
+function activeCallback(element) {
   setToolEnabledForElement(element, this.name);
 }
 
@@ -29,5 +29,5 @@ function activeCallback (element) {
  */
 export default {
   passiveCallback,
-  activeCallback
+  activeCallback,
 };

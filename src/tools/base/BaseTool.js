@@ -27,13 +27,13 @@ export default class BaseTool {
    *   }={}]
    * @memberof BaseTool
    */
-  constructor ({
+  constructor({
     name,
     strategies,
     defaultStrategy,
     configuration,
     supportedInteractionTypes,
-    mixins
+    mixins,
   } = {}) {
     this.name = name;
     this.mode = 'disabled';
@@ -69,7 +69,7 @@ export default class BaseTool {
    *
    * @memberof BaseTool
    */
-  get configuration () {
+  get configuration() {
     return this._configuration;
   }
 
@@ -78,7 +78,7 @@ export default class BaseTool {
    *
    * @memberof BaseTool
    */
-  set configuration (configuration) {
+  set configuration(configuration) {
     this._configuration = configuration;
   }
 
@@ -90,7 +90,7 @@ export default class BaseTool {
    * @readonly
    * @memberof BaseTool
    */
-  get options () {
+  get options() {
     return this._options;
   }
 
@@ -102,7 +102,7 @@ export default class BaseTool {
    * @param {Object} options - options object to merge with existing options.
    * @returns {undefined}
    */
-  mergeOptions (options) {
+  mergeOptions(options) {
     this._options = Object.assign({}, this._options, options);
   }
 
@@ -113,7 +113,7 @@ export default class BaseTool {
    * @memberof BaseTool
    * @returns {undefined}
    */
-  clearOptions () {
+  clearOptions() {
     this._options = {};
   }
 
@@ -126,7 +126,7 @@ export default class BaseTool {
    * @param {*} evt The event that triggered the strategies application
    * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
-  applyActiveStrategy (evt) {
+  applyActiveStrategy(evt) {
     return this.strategies[this.activeStrategy](evt, this.configuration);
   }
 
@@ -140,7 +140,7 @@ export default class BaseTool {
    * @param {string[]} mixinsArray An array of mixin identifiers (strings).
    * @returns {undefined}
    */
-  _applyMixins (mixinsArray) {
+  _applyMixins(mixinsArray) {
     for (let i = 0; i < mixinsArray.length; i++) {
       const mixin = mixins[`${mixinsArray[i]}`];
 

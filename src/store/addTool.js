@@ -12,7 +12,7 @@ import getToolForElement from './getToolForElement.js';
  * @param {BaseTool} apiTool The tool to add to the element.
  * @param {Object} [configuration] Override the default tool configuration
  */
-const addToolForElement = function (element, apiTool, configuration) {
+const addToolForElement = function(element, apiTool, configuration) {
   // Instantiating the tool here makes it harder to accidentally add
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
@@ -39,9 +39,9 @@ const addToolForElement = function (element, apiTool, configuration) {
  * @param {BaseTool} apiTool The tool to add to each element.
  * @param {object} [configuration] Override the default tool configuration
  */
-const addTool = function (apiTool, configuration) {
+const addTool = function(apiTool, configuration) {
   _addToolGlobally(apiTool, configuration);
-  store.state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach(element => {
     addToolForElement(element, apiTool, configuration);
   });
 };
@@ -56,7 +56,7 @@ const addTool = function (apiTool, configuration) {
  * @param {BaseTool} apiTool
  * @param {object} [configuration] Override the default tool configuration
  */
-const _addToolGlobally = function (apiTool, configuration) {
+const _addToolGlobally = function(apiTool, configuration) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
@@ -73,7 +73,7 @@ const _addToolGlobally = function (apiTool, configuration) {
 
   store.state.globalTools[tool.name] = {
     tool: apiTool,
-    configuration
+    configuration,
   };
 };
 

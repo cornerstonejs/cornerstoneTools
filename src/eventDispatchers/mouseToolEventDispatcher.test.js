@@ -8,7 +8,7 @@ import {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel
+  mouseWheel,
 } from './mouseEventHandlers/index.js';
 
 jest.mock('./mouseEventHandlers/index.js', () => ({
@@ -19,7 +19,7 @@ jest.mock('./mouseEventHandlers/index.js', () => ({
   mouseDrag: jest.fn(),
   mouseMove: jest.fn(),
   mouseUp: jest.fn(),
-  mouseWheel: jest.fn()
+  mouseWheel: jest.fn(),
 }));
 
 describe('mouseToolEventDispatcher.js', () => {
@@ -49,7 +49,7 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
       [EVENTS.MOUSE_UP, mouseUp],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
     ]);
   });
 
@@ -71,7 +71,7 @@ describe('mouseToolEventDispatcher.js', () => {
       [EVENTS.MOUSE_DRAG, mouseDrag],
       [EVENTS.MOUSE_MOVE, mouseMove],
       [EVENTS.MOUSE_UP, mouseUp],
-      [EVENTS.MOUSE_WHEEL, mouseWheel]
+      [EVENTS.MOUSE_WHEEL, mouseWheel],
     ]);
   });
 });

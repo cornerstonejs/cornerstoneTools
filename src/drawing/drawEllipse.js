@@ -16,7 +16,7 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export default function (
+export default function(
   context,
   element,
   corner1,
@@ -42,7 +42,7 @@ export default function (
     xm = x + w / 2, // X-middle
     ym = y + h / 2; // Y-middle
 
-  path(context, options, (context) => {
+  path(context, options, context => {
     context.moveTo(x, ym);
     context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
     context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);

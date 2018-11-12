@@ -4,7 +4,7 @@ import { addToolState } from '../../stateManagement/toolState.js';
 import moveHandle from '../../manipulators/moveHandle.js';
 import moveNewHandle from '../../manipulators/moveNewHandle.js';
 
-export default function (evt, tool) {
+export default function(evt, tool) {
   //
   evt.preventDefault();
   evt.stopPropagation();
@@ -44,7 +44,7 @@ export default function (evt, tool) {
     measurementData,
     measurementData.handles.end,
     // On mouse up
-    function () {
+    function() {
       console.log('addNewMeasurement: mouseUp');
       measurementData.active = false;
       measurementData.invalidated = true;

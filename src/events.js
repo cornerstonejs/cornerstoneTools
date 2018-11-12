@@ -191,7 +191,7 @@ const EVENTS = {
   /**
    *  @type {String}
    */
-  STACK_SCROLL: 'cornerstonetoolsstackscroll'
+  STACK_SCROLL: 'cornerstonetoolsstackscroll',
 };
 
 export default EVENTS;

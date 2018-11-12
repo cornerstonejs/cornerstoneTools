@@ -2,11 +2,11 @@ import ProbeTool from './ProbeTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
-  getToolState: jest.fn()
+  getToolState: jest.fn(),
 }));
 
 jest.mock('./../../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const badMouseEventData = 'hello world';
@@ -14,9 +14,9 @@ const goodMouseEventData = {
   currentPoints: {
     image: {
       x: 0,
-      y: 0
-    }
-  }
+      y: 0,
+    },
+  },
 };
 
 describe('ProbeTool.js', () => {
@@ -74,7 +74,7 @@ describe('ProbeTool.js', () => {
       );
       const endHandle = {
         x: toolMeasurement.handles.end.x,
-        y: toolMeasurement.handles.end.y
+        y: toolMeasurement.handles.end.y,
       };
 
       expect(toolMeasurement.handles.start).toBeUndefined();
@@ -95,7 +95,7 @@ describe('ProbeTool.js', () => {
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
       const instantiatedTool = new ProbeTool();
       const noHandlesMeasurementData = {
-        handles: {}
+        handles: {},
       };
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
@@ -120,7 +120,7 @@ describe('ProbeTool.js', () => {
     it('returns false when measurement data is not visible', () => {
       const instantiatedTool = new ProbeTool();
       const notVisibleMeasurementData = {
-        visible: false
+        visible: false,
       };
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -138,7 +138,7 @@ describe('ProbeTool.js', () => {
       const instantiatedTool = new ProbeTool();
       const mockEvent = {
         detail: undefined,
-        currentTarget: undefined
+        currentTarget: undefined,
       };
 
       getToolState.mockReturnValueOnce(undefined);

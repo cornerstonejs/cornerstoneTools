@@ -8,7 +8,7 @@ import external from './../externalModules.js';
  * @param {number} ms - number in ms to wait
  * @returns {Promise} - A promise that resolves when setTimeout elapses
  */
-export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
  * A promise that returns an EnabledElement who's image has loaded, or
@@ -20,7 +20,7 @@ export const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * @param {HTMLElement} element - An element that is an EnabledElement
  * @returns {EnabledElement} - The enabled element that has loaded an image
  */
-export function waitForEnabledElementImageToLoad (element) {
+export function waitForEnabledElementImageToLoad(element) {
   try {
     const enabledElement = external.cornerstone.getEnabledElement(element);
 

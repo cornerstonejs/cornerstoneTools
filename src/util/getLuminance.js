@@ -12,7 +12,7 @@ import external from '../externalModules.js';
  * @param  {number} height  The height of the region
  * @returns {number[]}         The luminance.
  */
-export default function (element, x, y, width, height) {
+export default function(element, x, y, width, height) {
   if (!element) {
     throw new Error('getLuminance: parameter element must not be undefined');
   }

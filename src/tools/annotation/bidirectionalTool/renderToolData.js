@@ -10,11 +10,11 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawLine
+  drawLine,
 } from './../../../drawing/index.js';
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 
-export default function (evt) {
+export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
 
@@ -34,8 +34,10 @@ export default function (evt) {
   let colPixelSpacing = image.columnPixelSpacing;
 
   if (imagePlane) {
-    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+    rowPixelSpacing =
+      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing =
+      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
   }
 
   // LT-29 Disable Target Measurements when pixel spacing is not available
@@ -63,11 +65,17 @@ export default function (evt) {
     // Calculate the data measurements
     getMeasurementData(data, rowPixelSpacing, colPixelSpacing);
 
-    draw(context, (context) => {
+    draw(context, context => {
       // Configurable shadow
       setShadow(context, config);
 
-      const { start, end, perpendicularStart, perpendicularEnd, textBox } = data.handles;
+      const {
+        start,
+        end,
+        perpendicularStart,
+        perpendicularEnd,
+        textBox,
+      } = data.handles;
 
       // Draw the measurement line
       drawLine(context, element, start, end, { color });
@@ -76,12 +84,14 @@ export default function (evt) {
       const strokeWidth = lineWidth;
 
       updatePerpendicularLineHandles(eventData, data);
-      drawLine(context, element, perpendicularStart, perpendicularEnd, { color,
-        strokeWidth });
+      drawLine(context, element, perpendicularStart, perpendicularEnd, {
+        color,
+        strokeWidth,
+      });
 
       // Draw the handles
       const handleOptions = {
-        drawHandlesIfActive: config && config.drawHandlesOnHover
+        drawHandlesIfActive: config && config.drawHandlesOnHover,
       };
 
       // Draw the handles
@@ -91,7 +101,12 @@ export default function (evt) {
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
       const xOffset = 10;
-      const textBoxAnchorPoints = (handles) => ([handles.start, handles.end, handles.perpendicularStart, handles.perpendicularEnd]);
+      const textBoxAnchorPoints = handles => [
+        handles.start,
+        handles.end,
+        handles.perpendicularStart,
+        handles.perpendicularEnd,
+      ];
       let textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
       if (data.additionalData && Array.isArray(data.additionalData)) {
@@ -122,8 +137,10 @@ const getMeasurementData = (data, rowPixelSpacing, colPixelSpacing) => {
   let length = Math.sqrt(dx * dx + dy * dy);
 
   // Calculate the short axis length
-  const wx = (perpendicularStart.x - perpendicularEnd.x) * (colPixelSpacing || 1);
-  const wy = (perpendicularStart.y - perpendicularEnd.y) * (rowPixelSpacing || 1);
+  const wx =
+    (perpendicularStart.x - perpendicularEnd.x) * (colPixelSpacing || 1);
+  const wy =
+    (perpendicularStart.y - perpendicularEnd.y) * (rowPixelSpacing || 1);
   let width = Math.sqrt(wx * wx + wy * wy);
 
   if (!width) {
@@ -153,7 +170,6 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
 
   const lengthText = ` L ${data.longestDiameter}${suffix}`;
   const widthText = ` W ${data.shortestDiameter}${suffix}`;
-
 
   return [lengthText, widthText];
 };

@@ -3,22 +3,22 @@ let cornerstoneMath = window.cornerstoneMath;
 let Hammer = window.Hammer;
 
 export default {
-  set cornerstone (cs) {
+  set cornerstone(cs) {
     cornerstone = cs;
   },
-  get cornerstone () {
+  get cornerstone() {
     return cornerstone;
   },
-  set cornerstoneMath (cm) {
+  set cornerstoneMath(cm) {
     cornerstoneMath = cm;
   },
-  get cornerstoneMath () {
+  get cornerstoneMath() {
     return cornerstoneMath;
   },
-  set Hammer (module) {
+  set Hammer(module) {
     Hammer = module;
   },
-  get Hammer () {
+  get Hammer() {
     return Hammer;
-  }
+  },
 };

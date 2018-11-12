@@ -12,10 +12,10 @@ import { state } from '../store/index.js';
  * @extends BaseTool
  */
 export default class EraserTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Eraser',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -27,16 +27,16 @@ export default class EraserTool extends BaseTool {
     this.preTouchStartCallback = this._deleteAllNearbyTools.bind(this);
   }
 
-  _deleteAllNearbyTools (evt) {
+  _deleteAllNearbyTools(evt) {
     const coords = evt.detail.currentPoints.canvas;
     const element = evt.detail.element;
 
-    state.tools.forEach(function (tool) {
+    state.tools.forEach(function(tool) {
       const toolState = getToolState(element, tool.name);
 
       if (toolState) {
         // Modifying in a foreach? Probably not ideal
-        toolState.data.forEach(function (data) {
+        toolState.data.forEach(function(data) {
           if (
             typeof tool.pointNearTool === 'function' &&
             tool.pointNearTool(element, data, coords)

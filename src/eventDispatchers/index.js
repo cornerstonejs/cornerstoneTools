@@ -14,5 +14,5 @@ export {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
-  touchToolEventDispatcher
+  touchToolEventDispatcher,
 };

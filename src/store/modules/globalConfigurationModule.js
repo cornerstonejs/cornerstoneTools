@@ -1,10 +1,10 @@
 const state = {
   mouseEnabled: true,
   touchEnabled: true,
-  globalToolSyncEnabled: false
+  globalToolSyncEnabled: false,
 };
 
 export default {
   state,
-  setters: {}
+  setters: {},
 };

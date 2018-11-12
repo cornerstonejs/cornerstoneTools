@@ -13,7 +13,7 @@ import triggerEvent from '../util/triggerEvent.js';
  * @param  {type} element         The element to scroll through.
  * @param  {type} newImageIdIndex The target image index.
  */
-export default function (element, newImageIdIndex) {
+export default function(element, newImageIdIndex) {
   const toolData = getToolState(element, 'stack');
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -27,7 +27,11 @@ export default function (element, newImageIdIndex) {
   if (toolData.data.length > 1) {
     const stackRendererData = getToolState(element, 'stackRenderer');
 
-    if (stackRendererData && stackRendererData.data && stackRendererData.data.length) {
+    if (
+      stackRendererData &&
+      stackRendererData.data &&
+      stackRendererData.data.length
+    ) {
       stackRenderer = stackRendererData.data[0];
     }
   }
@@ -43,7 +47,7 @@ export default function (element, newImageIdIndex) {
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
-  function doneCallback (image) {
+  function doneCallback(image) {
     if (stackData.currentImageIdIndex !== newImageIdIndex) {
       return;
     }
@@ -53,7 +57,7 @@ export default function (element, newImageIdIndex) {
     try {
       // TODO: Add 'isElementEnabled' to Cornerstone?
       cornerstone.getEnabledElement(element);
-    } catch(error) {
+    } catch (error) {
       return;
     }
 
@@ -69,7 +73,7 @@ export default function (element, newImageIdIndex) {
     }
   }
 
-  function failCallback (error) {
+  function failCallback(error) {
     const imageId = stackData.imageIds[newImageIdIndex];
 
     if (errorLoadingHandler) {
@@ -87,7 +91,7 @@ export default function (element, newImageIdIndex) {
 
   const eventData = {
     newImageIdIndex,
-    direction: newImageIdIndex - stackData.currentImageIdIndex
+    direction: newImageIdIndex - stackData.currentImageIdIndex,
   };
 
   stackData.currentImageIdIndex = newImageIdIndex;

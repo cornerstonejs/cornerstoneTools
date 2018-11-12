@@ -4,10 +4,10 @@ import moveNewHandleTouch from './../../../manipulators/moveNewHandleTouch.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import {
   addToolState,
-  removeToolState
+  removeToolState,
 } from './../../../stateManagement/toolState.js';
 
-export default function (evt, interactionType) {
+export default function(evt, interactionType) {
   const eventData = evt.detail;
   const { element, image } = eventData;
   const config = this.configuration;
@@ -19,7 +19,7 @@ export default function (evt, interactionType) {
   // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
   // All take the same parameters, but register events differentlIy.
   const handleMover =
-      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
+    interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
 
   const measurementData = this.createNewMeasurement(eventData);
 
@@ -35,45 +35,49 @@ export default function (evt, interactionType) {
   const timestamp = new Date().getTime();
   const { end, perpendicularStart } = measurementData.handles;
 
-  handleMover(
-    eventData,
-    this.name,
-    measurementData,
-    end,
-    () => {
-      const { handles, longestDiameter, shortestDiameter } = measurementData;
-      const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
-      const longestDiameterSize = parseFloat(longestDiameter) || 0;
-      const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-      const isTooSmal = (longestDiameterSize < 1) || (shortestDiameterSize < 1);
-      const isTooFast = (new Date().getTime() - timestamp) < 150;
+  handleMover(eventData, this.name, measurementData, end, () => {
+    const { handles, longestDiameter, shortestDiameter } = measurementData;
+    const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
+    const longestDiameterSize = parseFloat(longestDiameter) || 0;
+    const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
+    const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+    const isTooFast = new Date().getTime() - timestamp < 150;
 
-      if (hasHandlesOutside || isTooSmal || isTooFast) {
+    if (hasHandlesOutside || isTooSmal || isTooFast) {
       // Delete the measurement
-        measurementData.cancelled = true;
-        removeToolState(element, this.name, measurementData);
-      } else {
-        // Set lesionMeasurementData Session
-        config.getMeasurementLocationCallback(measurementData, eventData, doneCallback);
-      }
+      measurementData.cancelled = true;
+      removeToolState(element, this.name, measurementData);
+    } else {
+      // Set lesionMeasurementData Session
+      config.getMeasurementLocationCallback(
+        measurementData,
+        eventData,
+        doneCallback
+      );
+    }
 
-      // Perpendicular line is not connected to long-line
-      perpendicularStart.locked = false;
+    // Perpendicular line is not connected to long-line
+    perpendicularStart.locked = false;
 
-      external.cornerstone.updateImage(element);
-    });
+    external.cornerstone.updateImage(element);
+  });
 }
 
-const checkPixelSpacing = (image) => {
-  const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', image.imageId);
+const checkPixelSpacing = image => {
+  const imagePlane = external.cornerstone.metaData.get(
+    'imagePlaneModule',
+    image.imageId
+  );
   let rowPixelSpacing = image.rowPixelSpacing;
   let colPixelSpacing = image.columnPixelSpacing;
 
   if (imagePlane) {
-    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
+    rowPixelSpacing =
+      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
+    colPixelSpacing =
+      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
   }
 
   // LT-29 Disable Target Measurements when pixel spacing is not available
-  return (!rowPixelSpacing || !colPixelSpacing);
+  return !rowPixelSpacing || !colPixelSpacing;
 };

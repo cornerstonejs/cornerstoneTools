@@ -12,8 +12,7 @@ import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
-
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -31,7 +30,7 @@ export default function (evt) {
   // DeactivateAllToolInstances(toolData);
 
   // Find all tools w/ handles that we are near
-  const toolsWithMoveableHandles = tools.filter((tool) => {
+  const toolsWithMoveableHandles = tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -58,7 +57,7 @@ export default function (evt) {
     const firstToolWithMoveableHandles = toolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
     const moveableHandle = toolState.data.find(
-      (d) =>
+      d =>
         getHandleNearImagePoint(
           element,
           d.handles,
@@ -95,11 +94,11 @@ export default function (evt) {
   }
 
   // Find all tools near our point
-  const toolsNearPoint = tools.filter((tool) => {
+  const toolsNearPoint = tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
       tool.pointNearTool &&
-      toolState.data.some((data) => tool.pointNearTool(element, data, coords));
+      toolState.data.some(data => tool.pointNearTool(element, data, coords));
 
     return isNearPoint;
   });
@@ -110,7 +109,7 @@ export default function (evt) {
     // Todo: Ignore: TAP, START, PRESS
     const firstToolNearPoint = toolsNearPoint[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
-    const firstAnnotationNearPoint = toolState.data.find((data) =>
+    const firstAnnotationNearPoint = toolState.data.find(data =>
       firstToolNearPoint.pointNearTool(element, data, coords)
     );
 

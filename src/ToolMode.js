@@ -29,7 +29,7 @@ const ToolMode = {
    *  The default state for a tool. Tools that are disabled cannot be interacted with and are not rendered on the enabled element.
    *  @type {String}
    */
-  DISABLED: 'disabled'
+  DISABLED: 'disabled',
 };
 
 export default ToolMode;

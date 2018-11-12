@@ -11,7 +11,7 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * @private
  * @param {*} evt
  */
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -28,14 +28,14 @@ export default function (evt) {
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
 
   const activeTools = tools.filter(
-    (tool) => tool.mode === 'active' && tool.options.isMouseActive
+    tool => tool.mode === 'active' && tool.options.isMouseActive
   );
 
   let imageNeedsUpdate = false;
 
   // If any tools are active, check if they have a cursor, and if so update image.
   if (activeTools.length > 0) {
-    imageNeedsUpdate = activeTools.some((tool) => tool.hasCursor);
+    imageNeedsUpdate = activeTools.some(tool => tool.hasCursor);
   }
 
   tools = getToolsWithDataForElement(element, tools);

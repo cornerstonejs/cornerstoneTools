@@ -16,7 +16,7 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export default function (
+export default function(
   context,
   element,
   corner1,
@@ -36,7 +36,7 @@ export default function (
   const width = Math.abs(corner1.x - corner2.x);
   const height = Math.abs(corner1.y - corner2.y);
 
-  path(context, options, (context) => {
+  path(context, options, context => {
     context.rect(0, 0, context.canvas.clientWidth, context.canvas.clientHeight);
     context.rect(left + width, top, -width, height);
   });

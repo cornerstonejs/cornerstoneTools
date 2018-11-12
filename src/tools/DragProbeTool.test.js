@@ -3,27 +3,27 @@ import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
-    updateImage: jest.fn()
-  }
+    updateImage: jest.fn(),
+  },
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEventRender = {
   detail: {
-    element: {}
-  }
+    element: {},
+  },
 };
 const mockEventDrag = {
   detail: {
     element: {},
     currentPoints: {
       x: 100,
-      y: 123
-    }
-  }
+      y: 123,
+    },
+  },
 };
 
 describe('DragProbeTool.js', () => {
@@ -68,12 +68,14 @@ describe('DragProbeTool.js', () => {
   });
 
   describe('renderToolData', () => {
-    it('should apply strategy if currentPoint are stored', function () {
+    it('should apply strategy if currentPoint are stored', function() {
       const instantiatedTool = new DragProbeTool();
 
       instantiatedTool.applyActiveStrategy = jest.fn();
-      instantiatedTool.dragEventData.currentPoints = { x: 0,
-        y: 1 };
+      instantiatedTool.dragEventData.currentPoints = {
+        x: 0,
+        y: 1,
+      };
 
       instantiatedTool.renderToolData(mockEventRender);
       expect(instantiatedTool.applyActiveStrategy).toHaveBeenCalled();

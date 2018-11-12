@@ -12,7 +12,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import getInteractiveToolsForElement from '../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.js';
 
-export default function (evt) {
+export default function(evt) {
   console.log('touchStart');
   if (state.isToolLocked) {
     return;
@@ -25,8 +25,8 @@ export default function (evt) {
 
   let tools = getInteractiveToolsForElement(element, getters.touchTools());
 
-  tools = tools.filter((tool) => tool.options.isTouchActive);
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
+  tools = tools.filter(tool => tool.options.isTouchActive);
+  const activeTools = tools.filter(tool => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
@@ -34,7 +34,7 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.preTouchStartCallback === 'function'
+      tool => typeof tool.preTouchStartCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {
@@ -51,7 +51,7 @@ export default function (evt) {
   const annotationTools = getToolsWithDataForElement(element, tools);
 
   // Find all tools w/ handles that we are near
-  const annotationToolsWithMoveableHandles = annotationTools.filter((tool) => {
+  const annotationToolsWithMoveableHandles = annotationTools.filter(tool => {
     const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -78,7 +78,7 @@ export default function (evt) {
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
     const dataWithMoveableHandle = toolState.data.find(
-      (d) =>
+      d =>
         getHandleNearImagePoint(
           element,
           d.handles,
@@ -112,11 +112,11 @@ export default function (evt) {
   }
 
   // Find all tools near our point
-  const annotationToolsWithPointNearTouch = annotationTools.filter((tool) => {
+  const annotationToolsWithPointNearTouch = annotationTools.filter(tool => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
       tool.pointNearTool &&
-      toolState.data.some((data) => tool.pointNearTool(element, data, coords));
+      toolState.data.some(data => tool.pointNearTool(element, data, coords));
 
     return isNearPoint;
   });
@@ -127,7 +127,7 @@ export default function (evt) {
     // Todo: Ignore: TAP, START, PRESS
     const firstToolNearPoint = annotationToolsWithPointNearTouch[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
-    const firstAnnotationNearPoint = toolState.data.find((data) =>
+    const firstAnnotationNearPoint = toolState.data.find(data =>
       firstToolNearPoint.pointNearTool(element, data, coords)
     );
 
@@ -170,7 +170,7 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.postTouchStartCallback === 'function'
+      tool => typeof tool.postTouchStartCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {

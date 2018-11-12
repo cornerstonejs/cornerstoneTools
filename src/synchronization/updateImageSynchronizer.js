@@ -12,7 +12,7 @@ import external from '../externalModules.js';
  * @param {HTMLElement} sourceElement - The source element
  * @param {HTMLElement} targetElement - The target element
  */
-export default function (synchronizer, sourceElement, targetElement) {
+export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;

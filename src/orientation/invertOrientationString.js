@@ -6,7 +6,7 @@
  * @param  {string} orientationString The orientation.
  * @returns {string}  The inverted orientationString.
  */
-export default function (orientationString) {
+export default function(orientationString) {
   let inverted = orientationString.replace('H', 'f');
 
   inverted = inverted.replace('F', 'h');

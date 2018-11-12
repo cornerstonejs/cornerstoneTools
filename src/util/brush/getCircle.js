@@ -10,7 +10,13 @@
  * @param  {number} [yCoord = 0] The y-location of the center of the circle.
  * @returns {number[][]}        Array of pixels contained within the circle.
  */
-export default function getCircle (radius, rows, columns, xCoord = 0, yCoord = 0) {
+export default function getCircle(
+  radius,
+  rows,
+  columns,
+  xCoord = 0,
+  yCoord = 0
+) {
   const x0 = Math.round(xCoord);
   const y0 = Math.round(yCoord);
 
@@ -21,14 +27,14 @@ export default function getCircle (radius, rows, columns, xCoord = 0, yCoord = 0
   const circleArray = [];
   let index = 0;
 
-  for(let y = -radius; y <= radius; y++) {
+  for (let y = -radius; y <= radius; y++) {
     const yCoord = y0 + y;
 
     if (yCoord > rows || yCoord < 0) {
       continue;
     }
 
-    for(let x = -radius; x <= radius; x++) {
+    for (let x = -radius; x <= radius; x++) {
       const xCoord = x0 + x;
 
       if (xCoord > columns || xCoord < 0) {

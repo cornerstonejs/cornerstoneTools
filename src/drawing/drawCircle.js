@@ -16,7 +16,7 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export default function (
+export default function(
   context,
   element,
   center,
@@ -28,7 +28,7 @@ export default function (
     center = external.cornerstone.pixelToCanvas(element, center);
   }
 
-  path(context, options, (context) => {
+  path(context, options, context => {
     context.arc(center.x, center.y, radius, 0, 2 * Math.PI);
   });
 }

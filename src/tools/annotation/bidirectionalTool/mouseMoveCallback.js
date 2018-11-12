@@ -4,12 +4,22 @@ import getHandleNearImagePoint from './../../../manipulators/getHandleNearImageP
 import { getToolState } from './../../../stateManagement/toolState.js';
 
 // Replaces the cornerstoneTools.handleActivator function by skiping the active handle comparison
-const handleActivator = (element, handles, canvasPoint, distanceThreshold = 6) => {
-  const nearbyHandle = getHandleNearImagePoint(element, handles, canvasPoint, distanceThreshold);
+const handleActivator = (
+  element,
+  handles,
+  canvasPoint,
+  distanceThreshold = 6
+) => {
+  const nearbyHandle = getHandleNearImagePoint(
+    element,
+    handles,
+    canvasPoint,
+    distanceThreshold
+  );
 
   let handleActivatorChanged = false;
 
-  Object.keys(handles).forEach((handleKey) => {
+  Object.keys(handles).forEach(handleKey => {
     if (handleKey === 'textBox') {
       return;
     }
@@ -27,7 +37,7 @@ const handleActivator = (element, handles, canvasPoint, distanceThreshold = 6) =
 };
 
 // MouseMoveCallback is used to hide handles when mouse is away
-export default function (event) {
+export default function(event) {
   const eventData = event.detail;
   const { element } = eventData;
 
@@ -48,9 +58,13 @@ export default function (event) {
     const coords = eventData.currentPoints.canvas;
 
     const data = toolData.data[i];
-    const handleActivatorChanged = handleActivator(element, data.handles, coords);
+    const handleActivatorChanged = handleActivator(
+      element,
+      data.handles,
+      coords
+    );
 
-    Object.keys(data.handles).forEach((handleKey) => {
+    Object.keys(data.handles).forEach(handleKey => {
       if (handleKey === 'textBox') {
         return;
       }
@@ -63,8 +77,10 @@ export default function (event) {
       imageNeedsUpdate = true;
     }
 
-    const nearToolAndInactive = this.pointNearTool(element, data, coords) && !data.active;
-    const notNearToolAndActive = !this.pointNearTool(element, data, coords) && data.active;
+    const nearToolAndInactive =
+      this.pointNearTool(element, data, coords) && !data.active;
+    const notNearToolAndActive =
+      !this.pointNearTool(element, data, coords) && data.active;
 
     if (nearToolAndInactive || notNearToolAndActive) {
       data.active = !data.active;

@@ -14,7 +14,7 @@ import external from './../externalModules.js';
  * @param  {type} [loop = false]          Whether to loop the scrolling.
  * @param  {type} [allowSkipping = true]  Whether frames can be skipped.
  */
-export default function (element, images, loop = false, allowSkipping = true) {
+export default function(element, images, loop = false, allowSkipping = true) {
   const toolData = getToolState(element, 'stack');
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -41,7 +41,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
     scrollToIndex(element, newImageIdIndex);
   } else {
     const pendingEvent = {
-      index: newImageIdIndex
+      index: newImageIdIndex,
     };
 
     stackData.pending.push(pendingEvent);
@@ -59,7 +59,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
  * @param  {object} pendingEvent The event to process next.
  * @param  {HTMLElement} element      The element being scrolled through.
  */
-function scrollWithoutSkipping (stackData, pendingEvent, element) {
+function scrollWithoutSkipping(stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {
     if (stackData.currentImageIdIndex === pendingEvent.index) {
       stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
@@ -71,7 +71,7 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       return;
     }
 
-    const newImageHandler = function (event) {
+    const newImageHandler = function(event) {
       const index = stackData.imageIds.indexOf(event.detail.image.imageId);
 
       if (index === pendingEvent.index) {

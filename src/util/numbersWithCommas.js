@@ -1,5 +1,5 @@
 /**
- * converts a number to a string with comma separators.
+ * Converts a number to a string with comma separators.
  * http://stackoverflow.com/questions/2901102/how-to-print-a-number-with-commas-as-thousands-separators-in-javascript
  * @export @public @method
  * @name numbersWithCommas

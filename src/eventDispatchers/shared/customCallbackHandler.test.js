@@ -8,22 +8,22 @@ jest.mock('./../../store/index.js', () => ({
     tools: [
       {
         aDifferentCustomFunctionName: jest.fn(),
-        supportedInteractionTypes: ['Mouse']
+        supportedInteractionTypes: ['Mouse'],
       },
       {
         customFunctionName: jest.fn(),
-        supportedInteractionTypes: ['Mouse', 'Touch']
+        supportedInteractionTypes: ['Mouse', 'Touch'],
       },
       {
         customFunctionName: jest.fn(),
-        supportedInteractionTypes: ['Touch']
-      }
-    ]
+        supportedInteractionTypes: ['Touch'],
+      },
+    ],
   },
   getters: {
     touchTools: jest.fn(),
-    mouseTools: jest.fn()
-  }
+    mouseTools: jest.fn(),
+  },
 }));
 
 jest.mock('./../../store/getActiveToolsForElement.js', () => jest.fn());
@@ -33,8 +33,8 @@ describe('customCallbackHandler.js', () => {
   const customFunction = 'customFunctionName';
   const fakeEvent = {
     detail: {
-      element: {}
-    }
+      element: {},
+    },
   };
 
   beforeEach(() => {

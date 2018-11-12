@@ -11,7 +11,7 @@ import getToolForElement from './getToolForElement.js';
  * @param  {string} name    The name of the tool.
  * @returns {boolean}         True if the tool is active.
  */
-export default function (element, name) {
+export default function(element, name) {
   const tool = getToolForElement(element, name);
 
   return tool.mode === 'active';

@@ -11,7 +11,7 @@ const { setters } = store.modules.brush;
  * @private
  * @param {Object} evt - The event.
  */
-export default function (evt) {
+export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   let toolData = getToolState(

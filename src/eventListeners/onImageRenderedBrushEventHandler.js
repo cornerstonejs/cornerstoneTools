@@ -16,11 +16,11 @@ import { getNewContext } from '../drawing/index.js';
 // Import regeneratorRuntime from "regenerator-runtime";
 
 if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = async function (imageData) {
-    return new Promise((resolve) => {
+  window.createImageBitmap = async function(imageData) {
+    return new Promise(resolve => {
       const img = document.createElement('img');
 
-      img.addEventListener('load', function () {
+      img.addEventListener('load', function() {
         resolve(this);
       });
 
@@ -53,7 +53,7 @@ const { state, getters, setters } = store.modules.brush;
  * @private
  * @param {Object} evt - The event.
  */
-export default function (evt) {
+export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
@@ -89,7 +89,7 @@ export default function (evt) {
       enabledElementUID
     ),
     imageBitmapCache: getters.imageBitmapCacheForElement(enabledElementUID),
-    toolData
+    toolData,
   };
 
   for (let segIndex = 0; segIndex < maxSegmentations; segIndex++) {
@@ -99,7 +99,7 @@ export default function (evt) {
   }
 }
 
-function shouldRenderSegmentation (evt, segIndex, segData) {
+function shouldRenderSegmentation(evt, segIndex, segData) {
   const element = evt.detail.element;
   const toolData = segData.toolData;
   const visibleSegmentations = segData.visibleSegmentations;
@@ -123,7 +123,7 @@ function shouldRenderSegmentation (evt, segIndex, segData) {
 
   // Check that a brush tool is active.
   const activeTools = getActiveToolsForElement(element, store.state.tools);
-  const brushTools = activeTools.filter((tool) => tool instanceof BaseBrushTool);
+  const brushTools = activeTools.filter(tool => tool instanceof BaseBrushTool);
 
   if (brushTools.length > 0) {
     // Active brush tool with same color, render!
@@ -133,7 +133,7 @@ function shouldRenderSegmentation (evt, segIndex, segData) {
   return false;
 }
 
-function renderSegmentation (evt, segIndex, segData) {
+function renderSegmentation(evt, segIndex, segData) {
   const toolData = segData.toolData;
   const imageBitmapCache = segData.imageBitmapCache;
   const visibleSegmentations = segData.visibleSegmentations;
@@ -152,7 +152,7 @@ function renderSegmentation (evt, segIndex, segData) {
   }
 }
 
-function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
+function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const eventData = evt.detail;
   const element = eventData.element;
   const enabledElement = external.cornerstone.getEnabledElement(element);
@@ -170,7 +170,7 @@ function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
   const image = {
     stats: {},
     minPixelValue: 0,
-    getPixelData: () => pixelData
+    getPixelData: () => pixelData,
   };
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
@@ -179,7 +179,7 @@ function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
     imageData.data
   );
 
-  window.createImageBitmap(imageData).then((newImageBitmap) => {
+  window.createImageBitmap(imageData).then(newImageBitmap => {
     setters.imageBitmapCacheForElement(
       enabledElement.uuid,
       segIndex,
@@ -197,19 +197,19 @@ function createNewBitmapAndQueueRenderOfSegmentation (evt, toolData, segIndex) {
  * @private
  * @param  {Object} evt description
  */
-function _drawImageBitmap (evt, imageBitmap, alwaysVisible) {
+function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   const eventData = evt.detail;
   const context = getNewContext(eventData.canvasContext.canvas);
 
   const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
     x: 0,
-    y: 0
+    y: 0,
   });
   const canvasBottomRight = external.cornerstone.pixelToCanvas(
     eventData.element,
     {
       x: eventData.image.width,
-      y: eventData.image.height
+      y: eventData.image.height,
     }
   );
   const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
@@ -227,7 +227,7 @@ function _drawImageBitmap (evt, imageBitmap, alwaysVisible) {
   context.globalAlpha = 1.0;
 }
 
-function getLayerAlpha (alwaysVisible) {
+function getLayerAlpha(alwaysVisible) {
   if (alwaysVisible) {
     return state.alpha;
   }

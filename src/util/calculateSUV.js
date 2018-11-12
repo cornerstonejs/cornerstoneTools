@@ -9,10 +9,16 @@ import external from '../externalModules.js';
  * @param  {number} storedPixelValue The raw pixel value.
  * @returns {number}                  The SUV.
  */
-export default function (image, storedPixelValue) {
+export default function(image, storedPixelValue) {
   const cornerstone = external.cornerstone;
-  const patientStudyModule = cornerstone.metaData.get('patientStudyModule', image.imageId);
-  const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  const patientStudyModule = cornerstone.metaData.get(
+    'patientStudyModule',
+    image.imageId
+  );
+  const seriesModule = cornerstone.metaData.get(
+    'generalSeriesModule',
+    image.imageId
+  );
 
   if (!patientStudyModule || !seriesModule) {
     return;
@@ -33,7 +39,10 @@ export default function (image, storedPixelValue) {
     return;
   }
 
-  const petSequenceModule = cornerstone.metaData.get('petIsotopeModule', image.imageId);
+  const petSequenceModule = cornerstone.metaData.get(
+    'petIsotopeModule',
+    image.imageId
+  );
 
   if (!petSequenceModule) {
     return;
@@ -49,11 +58,21 @@ export default function (image, storedPixelValue) {
     return;
   }
 
-  const acquisitionTimeInSeconds = fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) + seriesAcquisitionTime.seconds + seriesAcquisitionTime.minutes * 60 + seriesAcquisitionTime.hours * 60 * 60;
-  const injectionStartTimeInSeconds = fracToDec(startTime.fractionalSeconds) + startTime.seconds + startTime.minutes * 60 + startTime.hours * 60 * 60;
-  const durationInSeconds = acquisitionTimeInSeconds - injectionStartTimeInSeconds;
-  const correctedDose = totalDose * Math.exp(-durationInSeconds * Math.log(2) / halfLife);
-  const suv = modalityPixelValue * patientWeight / correctedDose * 1000;
+  const acquisitionTimeInSeconds =
+    fracToDec(seriesAcquisitionTime.fractionalSeconds || 0) +
+    seriesAcquisitionTime.seconds +
+    seriesAcquisitionTime.minutes * 60 +
+    seriesAcquisitionTime.hours * 60 * 60;
+  const injectionStartTimeInSeconds =
+    fracToDec(startTime.fractionalSeconds) +
+    startTime.seconds +
+    startTime.minutes * 60 +
+    startTime.hours * 60 * 60;
+  const durationInSeconds =
+    acquisitionTimeInSeconds - injectionStartTimeInSeconds;
+  const correctedDose =
+    totalDose * Math.exp((-durationInSeconds * Math.log(2)) / halfLife);
+  const suv = ((modalityPixelValue * patientWeight) / correctedDose) * 1000;
 
   return suv;
 }
@@ -67,6 +86,6 @@ export default function (image, storedPixelValue) {
  * @param  {number} fractionalValue The value to convert.
  * @returns {number}                 The value converted to decimal.
  */
-function fracToDec (fractionalValue) {
+function fracToDec(fractionalValue) {
   return parseFloat(`.${fractionalValue}`);
 }

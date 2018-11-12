@@ -15,11 +15,11 @@ const { state } = store.modules.brush;
  * @extends BaseBrushTool
  */
 export default class BrushTool extends BaseBrushTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse'],
-      configuration: {}
+      configuration: {},
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -33,7 +33,7 @@ export default class BrushTool extends BaseBrushTool {
    *
    * @param {Object} evt - The event.
    */
-  renderBrush (evt) {
+  renderBrush(evt) {
     const eventData = evt.detail;
 
     let mousePosition;
@@ -72,11 +72,11 @@ export default class BrushTool extends BaseBrushTool {
     const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, mousePosition);
     const canvasTopLeft = cornerstone.pixelToCanvas(element, {
       x: 0,
-      y: 0
+      y: 0,
     });
     const radiusCanvas = cornerstone.pixelToCanvas(element, {
       x: radius,
-      y: 0
+      y: 0,
     });
     const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
 
@@ -100,7 +100,7 @@ export default class BrushTool extends BaseBrushTool {
    * @private
    * @param  {Object} eventData The data object associated with the event.
    */
-  _paint (eventData) {
+  _paint(eventData) {
     const element = eventData.element;
     const { rows, columns } = eventData.image;
     const { x, y } = eventData.currentPoints.image;
@@ -141,7 +141,7 @@ export default class BrushTool extends BaseBrushTool {
     external.cornerstone.updateImage(eventData.element);
   }
 
-  _isCtrlDown (eventData) {
+  _isCtrlDown(eventData) {
     return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
   }
 }

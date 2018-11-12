@@ -6,7 +6,7 @@ import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawTextBox from './../../drawing/drawTextBox.js';
 import {
   removeToolState,
-  getToolState
+  getToolState,
 } from './../../stateManagement/toolState.js';
 
 /**
@@ -17,7 +17,7 @@ import {
  * @extends BaseAnnotationTool
  */
 export default class TextMarkerTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'TextMarker',
       supportedInteractionTypes: ['Mouse', 'Touch'],
@@ -26,8 +26,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         current: '',
         ascending: true,
         loop: false,
-        changeTextCallback
-      }
+        changeTextCallback,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -38,7 +38,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     this.doubleClickCallback = this._changeText.bind(this);
   }
 
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     const config = this.configuration;
 
     if (!config.current) {
@@ -57,9 +57,9 @@ export default class TextMarkerTool extends BaseAnnotationTool {
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
 
     // Create a rectangle representing the image
@@ -67,7 +67,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       left: 0,
       top: 0,
       width: eventData.image.width,
-      height: eventData.image.height
+      height: eventData.image.height,
     };
 
     // Check if the current handle is outside the image,
@@ -99,7 +99,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     return measurementData;
   }
 
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
     }
@@ -117,7 +117,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     return distanceToPoint < 10 || insideBoundingBox;
   }
 
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const config = this.configuration;
 
@@ -140,7 +140,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
 
       const color = toolColors.getColorIfActive(data);
 
-      draw(context, (context) => {
+      draw(context, context => {
         setShadow(context, config);
 
         const textCoords = external.cornerstone.pixelToCanvas(
@@ -151,8 +151,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         const options = {
           centering: {
             x: true,
-            y: true
-          }
+            y: true,
+          },
         };
 
         data.handles.end.boundingBox = drawTextBox(
@@ -167,12 +167,12 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     }
   }
 
-  _changeText (evt) {
+  _changeText(evt) {
     const eventData = evt.detail;
     const { element, currentPoints } = eventData;
     let data;
 
-    function doneChangingTextCallback (data, updatedText, deleteTool) {
+    function doneChangingTextCallback(data, updatedText, deleteTool) {
       if (deleteTool === true) {
         removeToolState(element, this.name, data);
       } else {

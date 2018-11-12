@@ -5,17 +5,17 @@
 
 import {
   newFrameOfReferenceSpecificToolStateManager,
-  globalFrameOfReferenceSpecificToolStateManager
+  globalFrameOfReferenceSpecificToolStateManager,
 } from './frameOfReferenceStateManager.js';
 import {
   newImageIdSpecificToolStateManager,
-  globalImageIdSpecificToolStateManager
+  globalImageIdSpecificToolStateManager,
 } from './imageIdSpecificStateManager.js';
 import loadHandleManager from './loadHandlerManager.js';
 import {
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
-  addStackStateManager
+  addStackStateManager,
 } from './stackSpecificStateManager.js';
 import textStyle from './textStyle.js';
 import toolColors from './toolColors.js';
@@ -26,7 +26,7 @@ import {
   removeToolState,
   clearToolState,
   setElementToolStateManager,
-  getElementToolStateManager
+  getElementToolStateManager,
 } from './toolState.js';
 import toolStyle from './toolStyle.js';
 
@@ -52,5 +52,5 @@ export {
   textStyle,
   toolColors,
   toolCoordinates,
-  toolStyle
+  toolStyle,
 };

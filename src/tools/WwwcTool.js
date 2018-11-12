@@ -10,14 +10,14 @@ import BaseTool from './base/BaseTool.js';
  * @extends BaseTool
  */
 export default class WwwcTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Wwwc',
       strategies: { basicLevelingStrategy },
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        orientation: 0
-      }
+        orientation: 0,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -26,12 +26,12 @@ export default class WwwcTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  mouseDragCallback (evt) {
+  mouseDragCallback(evt) {
     this.applyActiveStrategy(evt);
     external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 
-  touchDragCallback (evt) {
+  touchDragCallback(evt) {
     // Prevent CornerstoneToolsTouchStartActive from killing any press events
     evt.stopImmediatePropagation();
     this.applyActiveStrategy(evt);
@@ -47,7 +47,7 @@ export default class WwwcTool extends BaseTool {
  *
  * @param eventData
  */
-function basicLevelingStrategy (evt, { orientation }) {
+function basicLevelingStrategy(evt, { orientation }) {
   const eventData = evt.detail;
 
   const maxVOI =

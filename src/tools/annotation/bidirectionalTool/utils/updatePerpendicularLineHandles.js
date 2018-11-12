@@ -1,5 +1,5 @@
 // Update the  perpendicular line handles
-export default function (eventData, data) {
+export default function(eventData, data) {
   if (!data.handles.perpendicularStart.locked) {
     return;
   }
@@ -17,7 +17,7 @@ export default function (eventData, data) {
     // Mid point of long-axis line
     const mid = {
       x: (start.x + end.x) / 2,
-      y: (start.y + end.y) / 2
+      y: (start.y + end.y) / 2,
     };
 
     // Length of long-axis

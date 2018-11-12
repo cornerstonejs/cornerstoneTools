@@ -10,18 +10,18 @@ import external from '../externalModules.js';
  * @param {Object} handles - An object containing named handles
  * @returns {Boolean} - True if the handle was placed outside the image
  */
-export default function (renderData, handles) {
+export default function(renderData, handles) {
   const image = renderData.image;
   const imageRect = {
     left: 0,
     top: 0,
     width: image.width,
-    height: image.height
+    height: image.height,
   };
 
   let handleOutsideImage = false;
 
-  Object.keys(handles).forEach(function (name) {
+  Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
 
     if (handle.allowedOutsideImage === true) {

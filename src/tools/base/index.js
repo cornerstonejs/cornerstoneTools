@@ -17,5 +17,5 @@ export { default as BaseTool } from './BaseTool.js';
 export default {
   BaseAnnotationTool,
   BaseBrushTool,
-  BaseTool
+  BaseTool,
 };

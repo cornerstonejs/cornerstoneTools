@@ -7,7 +7,7 @@ import triggerEvent from '../util/triggerEvent.js';
  * so that it can be modified by reference
  */
 const runAnimation = {
-  value: false
+  value: false,
 };
 
 const touchEndEvents = [
@@ -15,7 +15,7 @@ const touchEndEvents = [
   EVENTS.TOUCH_DRAG_END,
   EVENTS.TOUCH_PINCH,
   EVENTS.TOUCH_PRESS,
-  EVENTS.TAP
+  EVENTS.TAP,
 ];
 
 /**
@@ -31,7 +31,7 @@ const touchEndEvents = [
  * @param {*} doneMovingCallback
  * @returns {undefined}
  */
-export default function (event, toolType, data, handle, doneMovingCallback) {
+export default function(event, toolType, data, handle, doneMovingCallback) {
   runAnimation.value = true;
 
   const touchEventData = event.detail;
@@ -46,7 +46,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
 
   const aboveFinger = {
     x: touchEventData.currentPoints.page.x,
-    y: touchEventData.currentPoints.page.y + fingerDistance
+    y: touchEventData.currentPoints.page.y + fingerDistance,
   };
 
   let targetLocation = external.cornerstone.pageToPixel(
@@ -55,7 +55,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     aboveFinger.y
   );
 
-  function touchDragCallback (e) {
+  function touchDragCallback(e) {
     const eventData = e.detail;
 
     // Console.log('touchMoveHandle touchDragCallback: ' + e.type);
@@ -70,7 +70,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     const currentPoints = eventData.currentPoints;
     const aboveFinger = {
       x: currentPoints.page.x,
-      y: currentPoints.page.y + fingerDistance
+      y: currentPoints.page.y + fingerDistance,
     };
 
     targetLocation = external.cornerstone.pageToPixel(
@@ -87,7 +87,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -95,7 +95,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
-  function touchEndCallback (e) {
+  function touchEndCallback(e) {
     const eventData = e.detail;
     // Console.log('touchMoveHandle touchEndCallback: ' + e.type);
 
@@ -103,7 +103,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
 
     handle.active = false;
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
-    touchEndEvents.forEach((eventType) => {
+    touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);
     });
 
@@ -121,7 +121,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
     }
   }
 
-  touchEndEvents.forEach((eventType) => {
+  touchEndEvents.forEach(eventType => {
     element.addEventListener(eventType, touchEndCallback);
   });
 
@@ -140,7 +140,7 @@ export default function (event, toolType, data, handle, doneMovingCallback) {
  * @param {*} targetLocation
  * @returns {undefined}
  */
-function animate (
+function animate(
   lastTime,
   handle,
   runAnimation,
@@ -177,7 +177,7 @@ function animate (
   external.cornerstone.updateImage(enabledElement.element);
 
   // Request a new frame
-  external.cornerstone.requestAnimationFrame(function () {
+  external.cornerstone.requestAnimationFrame(function() {
     animate(time, handle, runAnimation, enabledElement, targetLocation);
   });
 }

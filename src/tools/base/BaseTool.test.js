@@ -3,18 +3,16 @@ import BaseTool from './BaseTool.js';
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     colors: {
-      getColormap: jest.fn().mockImplementation(() => {
-        return {
-          setNumberOfColors: jest.fn(),
-          setColor: jest.fn()
-        }
-      })
-    }
-  }
+      getColormap: jest.fn().mockImplementation(() => ({
+        setNumberOfColors: jest.fn(),
+        setColor: jest.fn(),
+      })),
+    },
+  },
 }));
 
 jest.mock('./../../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 describe('BaseTool.js', () => {
@@ -35,7 +33,7 @@ describe('BaseTool.js', () => {
 
   it('can get set configuration', () => {
     const setConfig = {
-      mouseButtonMask: 1
+      mouseButtonMask: 1,
     };
     const instantiatedTool = new BaseTool();
 

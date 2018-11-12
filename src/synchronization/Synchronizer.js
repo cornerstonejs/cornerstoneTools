@@ -9,8 +9,8 @@ import { clearToolOptionsByElement } from '../toolOptions.js';
  * @param {Array} array - The array to filter
  * @returns {Array}
  */
-function unique (array) {
-  return array.filter(function (value, index, self) {
+function unique(array) {
+  return array.filter(function(value, index, self) {
     return self.indexOf(value) === index;
   });
 }
@@ -23,7 +23,7 @@ function unique (array) {
  * @param {String} event - The event(s) that will trigger synchronization. Separate multiple events by a space
  * @param {Function} handler - The function that will make the necessary changes to the target element in order to synchronize it with the source element
  */
-function Synchronizer (event, handler) {
+function Synchronizer(event, handler) {
   const cornerstone = external.cornerstone;
   const that = this;
   const sourceElements = []; // Source elements fire the events we want to synchronize to
@@ -39,14 +39,14 @@ function Synchronizer (event, handler) {
    * Update the event handler to perform synchronization
    * @param {Function} handler - The event handler function
    */
-  this.setHandler = function (handler) {
+  this.setHandler = function(handler) {
     eventHandler = handler;
   };
 
   /**
    * Return a reference to the event handler function
    */
-  this.getHandler = function () {
+  this.getHandler = function() {
     return eventHandler;
   };
 
@@ -54,7 +54,7 @@ function Synchronizer (event, handler) {
    * Calculate the initial distances between the source image and each
    * of the target images
    */
-  this.getDistances = function () {
+  this.getDistances = function() {
     if (!sourceElements.length || !targetElements.length) {
       return;
     }
@@ -62,10 +62,10 @@ function Synchronizer (event, handler) {
     initialData.distances = {};
     initialData.imageIds = {
       sourceElements: [],
-      targetElements: []
+      targetElements: [],
     };
 
-    sourceElements.forEach(function (sourceElement) {
+    sourceElements.forEach(function(sourceElement) {
       const sourceEnabledElement = cornerstone.getEnabledElement(sourceElement);
 
       if (!sourceEnabledElement || !sourceEnabledElement.image) {
@@ -73,24 +73,30 @@ function Synchronizer (event, handler) {
       }
 
       const sourceImageId = sourceEnabledElement.image.imageId;
-      const sourceImagePlane = cornerstone.metaData.get('imagePlaneModule', sourceImageId);
+      const sourceImagePlane = cornerstone.metaData.get(
+        'imagePlaneModule',
+        sourceImageId
+      );
 
       if (!sourceImagePlane || !sourceImagePlane.imagePositionPatient) {
         return;
       }
 
-      const sourceImagePosition = convertToVector3(sourceImagePlane.imagePositionPatient);
+      const sourceImagePosition = convertToVector3(
+        sourceImagePlane.imagePositionPatient
+      );
 
       if (initialData.hasOwnProperty(sourceEnabledElement)) {
         return;
       }
       initialData.distances[sourceImageId] = {};
 
-
       initialData.imageIds.sourceElements.push(sourceImageId);
 
-      targetElements.forEach(function (targetElement) {
-        const targetEnabledElement = cornerstone.getEnabledElement(targetElement);
+      targetElements.forEach(function(targetElement) {
+        const targetEnabledElement = cornerstone.getEnabledElement(
+          targetElement
+        );
 
         if (!targetEnabledElement || !targetEnabledElement.image) {
           return;
@@ -108,19 +114,28 @@ function Synchronizer (event, handler) {
           return;
         }
 
-        if (initialData.distances[sourceImageId].hasOwnProperty(targetImageId)) {
+        if (
+          initialData.distances[sourceImageId].hasOwnProperty(targetImageId)
+        ) {
           return;
         }
 
-        const targetImagePlane = cornerstone.metaData.get('imagePlaneModule', targetImageId);
+        const targetImagePlane = cornerstone.metaData.get(
+          'imagePlaneModule',
+          targetImageId
+        );
 
         if (!targetImagePlane || !targetImagePlane.imagePositionPatient) {
           return;
         }
 
-        const targetImagePosition = convertToVector3(targetImagePlane.imagePositionPatient);
+        const targetImagePosition = convertToVector3(
+          targetImagePlane.imagePositionPatient
+        );
 
-        initialData.distances[sourceImageId][targetImageId] = targetImagePosition.clone().sub(sourceImagePosition);
+        initialData.distances[sourceImageId][
+          targetImageId
+        ] = targetImagePosition.clone().sub(sourceImagePosition);
       });
 
       if (!Object.keys(initialData.distances[sourceImageId]).length) {
@@ -136,7 +151,7 @@ function Synchronizer (event, handler) {
    * @param {HTMLElement} sourceElement - The source element for the event
    * @param {Object} eventData - The data object for the source event
    */
-  function fireEvent (sourceElement, eventData) {
+  function fireEvent(sourceElement, eventData) {
     const isDisabled = !that.enabled;
     const noElements = !sourceElements.length || !targetElements.length;
 
@@ -145,7 +160,7 @@ function Synchronizer (event, handler) {
     }
 
     ignoreFiredEvents = true;
-    targetElements.forEach(function (targetElement) {
+    targetElements.forEach(function(targetElement) {
       const targetIndex = targetElements.indexOf(targetElement);
 
       if (targetIndex === -1) {
@@ -166,10 +181,17 @@ function Synchronizer (event, handler) {
       if (sourceImageId === targetImageId) {
         positionDifference = 0;
       } else if (initialData.distances[sourceImageId] !== undefined) {
-        positionDifference = initialData.distances[sourceImageId][targetImageId];
+        positionDifference =
+          initialData.distances[sourceImageId][targetImageId];
       }
 
-      eventHandler(that, sourceElement, targetElement, eventData, positionDifference);
+      eventHandler(
+        that,
+        sourceElement,
+        targetElement,
+        eventData,
+        positionDifference
+      );
     });
     ignoreFiredEvents = false;
   }
@@ -180,7 +202,7 @@ function Synchronizer (event, handler) {
    * @private
    * @param {Event} e - The source event object
    */
-  function onEvent (e) {
+  function onEvent(e) {
     const eventData = e.detail;
 
     if (ignoreFiredEvents === true) {
@@ -195,7 +217,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The new source element
    */
-  this.addSource = function (element) {
+  this.addSource = function(element) {
     // Return if this element was previously added
     const index = sourceElements.indexOf(element);
 
@@ -207,7 +229,7 @@ function Synchronizer (event, handler) {
     sourceElements.push(element);
 
     // Subscribe to the event
-    event.split(' ').forEach((oneEvent) => {
+    event.split(' ').forEach(oneEvent => {
       element.addEventListener(oneEvent, onEvent);
     });
 
@@ -222,7 +244,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The new target element to be synchronized
    */
-  this.addTarget = function (element) {
+  this.addTarget = function(element) {
     // Return if this element was previously added
     const index = targetElements.indexOf(element);
 
@@ -247,7 +269,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The new element
    */
-  this.add = function (element) {
+  this.add = function(element) {
     that.addSource(element);
     that.addTarget(element);
   };
@@ -257,7 +279,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The element to be removed
    */
-  this.removeSource = function (element) {
+  this.removeSource = function(element) {
     // Find the index of this element
     const index = sourceElements.indexOf(element);
 
@@ -269,7 +291,7 @@ function Synchronizer (event, handler) {
     sourceElements.splice(index, 1);
 
     // Stop listening for the event
-    event.split(' ').forEach((oneEvent) => {
+    event.split(' ').forEach(oneEvent => {
       element.removeEventListener(oneEvent, onEvent);
     });
 
@@ -286,7 +308,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The element to be removed
    */
-  this.removeTarget = function (element) {
+  this.removeTarget = function(element) {
     // Find the index of this element
     const index = targetElements.indexOf(element);
 
@@ -310,7 +332,7 @@ function Synchronizer (event, handler) {
    *
    * @param {HTMLElement} element - The element to be removed
    */
-  this.remove = function (element) {
+  this.remove = function(element) {
     that.removeTarget(element);
     that.removeSource(element);
   };
@@ -320,7 +342,7 @@ function Synchronizer (event, handler) {
    *
    * @returns {HTMLElement[]}
    */
-  this.getSourceElements = function () {
+  this.getSourceElements = function() {
     return sourceElements;
   };
 
@@ -329,7 +351,7 @@ function Synchronizer (event, handler) {
    *
    * @returns {HTMLElement[]}
    */
-  this.getTargetElements = function () {
+  this.getTargetElements = function() {
     return targetElements;
   };
 
@@ -340,7 +362,7 @@ function Synchronizer (event, handler) {
    * @param {Object} image - The cornerstone image object
    * @param {Object} viewport - The cornerstone viewport object
    */
-  this.displayImage = function (element, image, viewport) {
+  this.displayImage = function(element, image, viewport) {
     ignoreFiredEvents = true;
     cornerstone.displayImage(element, image, viewport);
     ignoreFiredEvents = false;
@@ -352,7 +374,7 @@ function Synchronizer (event, handler) {
    * @param {HTMLElement} element - The target element
    * @param {Object} viewport - The new cornerstone viewport object
    */
-  this.setViewport = function (element, viewport) {
+  this.setViewport = function(element, viewport) {
     ignoreFiredEvents = true;
     cornerstone.setViewport(element, viewport);
     ignoreFiredEvents = false;
@@ -364,7 +386,7 @@ function Synchronizer (event, handler) {
    * @private
    * @param {Event} e - The event whose element will be removed
    */
-  function disableHandler (e) {
+  function disableHandler(e) {
     const element = e.detail.element;
 
     that.remove(element);
@@ -375,10 +397,10 @@ function Synchronizer (event, handler) {
    * Add an event listener to each element that can remove it from the synchronizer
    *
    */
-  this.updateDisableHandlers = function () {
+  this.updateDisableHandlers = function() {
     const elements = unique(sourceElements.concat(targetElements));
 
-    elements.forEach(function (element) {
+    elements.forEach(function(element) {
       element.removeEventListener(
         external.cornerstone.EVENTS.ELEMENT_DISABLED,
         disableHandler
@@ -394,10 +416,10 @@ function Synchronizer (event, handler) {
    * Remove all elements from this synchronizer
    *
    */
-  this.destroy = function () {
+  this.destroy = function() {
     const elements = unique(sourceElements.concat(targetElements));
 
-    elements.forEach(function (element) {
+    elements.forEach(function(element) {
       that.remove(element);
     });
   };

@@ -18,7 +18,7 @@ import triggerEvent from '../util/triggerEvent.js';
  * @param {*} doneMovingCallback
  * @returns {Boolean} - Alway true?
  */
-export default function (
+export default function(
   event,
   data,
   toolData,
@@ -29,12 +29,12 @@ export default function (
   const touchEventData = event.detail;
   const element = touchEventData.element;
 
-  function touchDragCallback (e) {
+  function touchDragCallback(e) {
     const eventData = e.detail;
 
     data.active = true;
 
-    Object.keys(data.handles).forEach(function (name) {
+    Object.keys(data.handles).forEach(function(name) {
       const handle = data.handles[name];
 
       if (handle.movesIndependently === true) {
@@ -50,7 +50,7 @@ export default function (
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -61,7 +61,7 @@ export default function (
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
-  function touchEndCallback (e) {
+  function touchEndCallback(e) {
     const eventData = e.detail;
 
     // Console.log('touchMoveAllHandles touchEndCallback: ' + e.type);

@@ -1,7 +1,7 @@
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import {
   getElementToolStateManager,
-  setElementToolStateManager
+  setElementToolStateManager,
 } from './toolState.js';
 
 /**
@@ -15,26 +15,26 @@ import {
  * @param  {object} oldStateManager The imageIdSpecificStateManager.
  * @returns {object} A stackSpecificToolStateManager instance.
  */
-function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
+function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
   let toolState = {};
 
-  function saveToolState () {
+  function saveToolState() {
     return toolState;
   }
 
-  function restoreToolState (stackToolState) {
+  function restoreToolState(stackToolState) {
     toolState = stackToolState;
   }
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
-  function addStackSpecificToolState (element, toolType, data) {
+  function addStackSpecificToolState(element, toolType, data) {
     // If this is a tool type to apply to the stack, do so
     if (toolTypes.indexOf(toolType) >= 0) {
       // If we don't have tool state for this type of tool, add an empty object
       if (toolState.hasOwnProperty(toolType) === false) {
         toolState[toolType] = {
-          data: []
+          data: [],
         };
       }
 
@@ -50,13 +50,13 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
 
   // Here you can get state - used by tools as well as modules
   // That save state persistently
-  function getStackSpecificToolState (element, toolType) {
+  function getStackSpecificToolState(element, toolType) {
     // If this is a tool type to apply to the stack, do so
     if (toolTypes.indexOf(toolType) >= 0) {
       // If we don't have tool state for this type of tool, add an empty object
       if (toolState.hasOwnProperty(toolType) === false) {
         toolState[toolType] = {
-          data: []
+          data: [],
         };
       }
 
@@ -72,7 +72,7 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
     add: addStackSpecificToolState,
     saveToolState,
     restoreToolState,
-    toolState
+    toolState,
   };
 
   return stackSpecificToolStateManager;
@@ -80,7 +80,7 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
 
 const stackStateManagers = [];
 
-function addStackStateManager (element, otherTools) {
+function addStackStateManager(element, otherTools) {
   let oldStateManager = getElementToolStateManager(element);
 
   if (!oldStateManager) {
@@ -95,14 +95,17 @@ function addStackStateManager (element, otherTools) {
     'slab',
     'referenceLines',
     'crosshairs',
-    'stackRenderer'
+    'stackRenderer',
   ];
 
   if (otherTools) {
     stackTools = stackTools.concat(otherTools);
   }
 
-  const stackSpecificStateManager = newStackSpecificToolStateManager(stackTools, oldStateManager);
+  const stackSpecificStateManager = newStackSpecificToolStateManager(
+    stackTools,
+    oldStateManager
+  );
 
   stackStateManagers.push(stackSpecificStateManager);
   setElementToolStateManager(element, stackSpecificStateManager);
@@ -110,11 +113,11 @@ function addStackStateManager (element, otherTools) {
 
 const stackSpecificStateManager = {
   newStackSpecificToolStateManager,
-  addStackStateManager
+  addStackStateManager,
 };
 
 export {
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
-  addStackStateManager
+  addStackStateManager,
 };

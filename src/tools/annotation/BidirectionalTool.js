@@ -21,7 +21,7 @@ const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
  */
 
 export default class BidirectionalTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const textBoxConfig = '';
     const shadowConfig = '';
 
@@ -35,8 +35,8 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         shadow: shadowConfig,
         drawHandlesOnHover: true,
         additionalData: [],
-        distanceThreshold: 6
-      }
+        distanceThreshold: 6,
+      },
     };
 
     const mergedConfiguration = Object.assign(
@@ -44,7 +44,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       configuration
     );
     const initialConfiguration = Object.assign(defaultConfig, {
-      configuration: mergedConfiguration
+      configuration: mergedConfiguration,
     });
 
     super(initialConfiguration);

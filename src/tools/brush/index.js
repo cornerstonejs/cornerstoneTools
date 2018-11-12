@@ -10,5 +10,5 @@ export { default as BrushTool } from './BrushTool.js';
 
 // Namespace, default export
 export default {
-  BrushTool
+  BrushTool,
 };

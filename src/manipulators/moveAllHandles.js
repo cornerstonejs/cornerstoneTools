@@ -19,7 +19,7 @@ import { clipToBox } from '../util/clip.js';
  * @param {*} doneMovingCallback
  * @returns {Boolean} - Always returns true?
  */
-export default function (
+export default function(
   e,
   data,
   toolData,
@@ -30,12 +30,12 @@ export default function (
   const mouseEventData = e.detail;
   const element = mouseEventData.element;
 
-  function mouseDragCallback (e) {
+  function mouseDragCallback(e) {
     const eventData = e.detail;
 
     data.active = true;
 
-    Object.keys(data.handles).forEach(function (name) {
+    Object.keys(data.handles).forEach(function(name) {
       const handle = data.handles[name];
 
       if (handle.movesIndependently === true) {
@@ -56,7 +56,7 @@ export default function (
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -67,7 +67,7 @@ export default function (
 
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
-  function mouseUpCallback (e) {
+  function mouseUpCallback(e) {
     const eventData = e.detail;
 
     data.invalidated = true;

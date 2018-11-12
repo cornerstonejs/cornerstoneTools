@@ -25,7 +25,7 @@ const pressDelay = 700,
 
 const toolType = 'touchInput';
 
-function onTouch (e) {
+function onTouch(e) {
   const element = e.currentTarget || e.srcEvent.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -62,8 +62,8 @@ function onTouch (e) {
       ),
       client: {
         x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY
-      }
+        y: e.pointers[0].clientY,
+      },
     };
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -78,7 +78,7 @@ function onTouch (e) {
       element,
       currentPoints,
       type: eventType,
-      isTouchEvent: true
+      isTouchEvent: true,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -98,8 +98,8 @@ function onTouch (e) {
       ),
       client: {
         x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY
-      }
+        y: e.pointers[0].clientY,
+      },
     };
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -114,7 +114,7 @@ function onTouch (e) {
       element,
       currentPoints,
       type: eventType,
-      isTouchEvent: true
+      isTouchEvent: true,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -141,7 +141,11 @@ function onTouch (e) {
 
     startPoints = {
       page: e.center,
-      image: external.cornerstone.pageToPixel(element, e.center.x, e.center.y)
+      image: external.cornerstone.pageToPixel(
+        element,
+        e.center.x,
+        e.center.y
+      ),
     };
     startPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -158,7 +162,7 @@ function onTouch (e) {
       direction: e.scale < 1 ? 1 : -1,
       scaleChange,
       type: eventType,
-      isTouchEvent: true
+      isTouchEvent: true,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -172,7 +176,7 @@ function onTouch (e) {
     clearTimeout(pressTimeout);
 
     clearTimeout(touchStartDelay);
-    touchStartDelay = setTimeout(function () {
+    touchStartDelay = setTimeout(function() {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
         image: external.cornerstone.pageToPixel(
@@ -182,8 +186,8 @@ function onTouch (e) {
         ),
         client: {
           x: e.touches[0].clientX,
-          y: e.touches[0].clientY
-        }
+          y: e.touches[0].clientY,
+        },
       };
       startPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
@@ -203,7 +207,7 @@ function onTouch (e) {
         startPoints,
         currentPoints: startPoints,
         type: eventType,
-        isTouchEvent: true
+        isTouchEvent: true,
       };
 
       const eventPropagated = triggerEvent(element, eventType, eventData);
@@ -229,7 +233,7 @@ function onTouch (e) {
 
     isPress = true;
     pageDistanceMoved = 0;
-    pressTimeout = setTimeout(function () {
+    pressTimeout = setTimeout(function() {
       if (!isPress) {
         return;
       }
@@ -243,8 +247,8 @@ function onTouch (e) {
         ),
         client: {
           x: e.touches[0].clientX,
-          y: e.touches[0].clientY
-        }
+          y: e.touches[0].clientY,
+        },
       };
       currentPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
@@ -259,7 +263,7 @@ function onTouch (e) {
         element,
         currentPoints,
         type: eventType,
-        isTouchEvent: true
+        isTouchEvent: true,
       };
 
       triggerEvent(element, eventType, eventData);
@@ -274,7 +278,7 @@ function onTouch (e) {
     isPress = false;
     clearTimeout(pressTimeout);
 
-    setTimeout(function () {
+    setTimeout(function() {
       startPoints = {
         page: external.cornerstoneMath.point.pageToPoint(e.changedTouches[0]),
         image: external.cornerstone.pageToPixel(
@@ -284,8 +288,8 @@ function onTouch (e) {
         ),
         client: {
           x: e.changedTouches[0].clientX,
-          y: e.changedTouches[0].clientY
-        }
+          y: e.changedTouches[0].clientY,
+        },
       };
       startPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
@@ -302,7 +306,7 @@ function onTouch (e) {
         startPoints,
         currentPoints: startPoints,
         type: eventType,
-        isTouchEvent: true
+        isTouchEvent: true,
       };
 
       triggerEvent(element, eventType, eventData);
@@ -316,19 +320,19 @@ function onTouch (e) {
     // So it needs to be converted to a per-event-delta for CornerstoneTools
     delta = {
       x: e.deltaX - lastDelta.x,
-      y: e.deltaY - lastDelta.y
+      y: e.deltaY - lastDelta.y,
     };
 
     lastDelta = {
       x: e.deltaX,
-      y: e.deltaY
+      y: e.deltaY,
     };
 
     // Calculate our current points in page and image coordinates
     currentPoints = {
       page: {
         x: lastPoints.page.x + delta.x,
-        y: lastPoints.page.y + delta.y
+        y: lastPoints.page.y + delta.y,
       },
       image: external.cornerstone.pageToPixel(
         element,
@@ -337,8 +341,8 @@ function onTouch (e) {
       ),
       client: {
         x: lastPoints.client.x + delta.x,
-        y: lastPoints.client.y + delta.y
-      }
+        y: lastPoints.client.y + delta.y,
+      },
     };
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -362,7 +366,7 @@ function onTouch (e) {
       canvas: external.cornerstoneMath.point.subtract(
         currentPoints.canvas,
         lastPoints.canvas
-      )
+      ),
     };
 
     pageDistanceMoved += Math.sqrt(
@@ -391,7 +395,7 @@ function onTouch (e) {
       deltaPoints,
       numPointers: e.pointers.length,
       type: eventType,
-      isTouchEvent: true
+      isTouchEvent: true,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -402,7 +406,7 @@ function onTouch (e) {
   case 'panstart':
     lastDelta = {
       x: e.deltaX,
-      y: e.deltaY
+      y: e.deltaY,
     };
 
     currentPoints = {
@@ -414,8 +418,8 @@ function onTouch (e) {
       ),
       client: {
         x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY
-      }
+        y: e.pointers[0].clientY,
+      },
     };
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -443,8 +447,8 @@ function onTouch (e) {
       ),
       client: {
         x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY
-      }
+        y: e.pointers[0].clientY,
+      },
     };
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
       element,
@@ -468,7 +472,7 @@ function onTouch (e) {
       canvas: external.cornerstoneMath.point.subtract(
         currentPoints.canvas,
         lastPoints.canvas
-      )
+      ),
     };
 
     eventType = EVENTS.TOUCH_DRAG_END;
@@ -483,7 +487,7 @@ function onTouch (e) {
       currentPoints,
       deltaPoints,
       type: eventType,
-      isTouchEvent: true
+      isTouchEvent: true,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -510,7 +514,7 @@ function onTouch (e) {
       image: enabledElement.image,
       element,
       rotation,
-      type: eventType
+      type: eventType,
     };
     triggerEvent(element, eventType, eventData);
     break;
@@ -519,14 +523,14 @@ function onTouch (e) {
   return false;
 }
 
-function enable (element) {
+function enable(element) {
   disable(element);
   const Hammer = external.Hammer;
 
   const hammerOptions = {
     inputClass: Hammer.SUPPORT_POINTER_EVENTS
       ? Hammer.PointerEventInput
-      : Hammer.TouchInput
+      : Hammer.TouchInput,
   };
 
   const mc = new Hammer.Manager(element, hammerOptions);
@@ -534,15 +538,15 @@ function enable (element) {
   const panOptions = {
     pointers: 0,
     direction: Hammer.DIRECTION_ALL,
-    threshold: 0
+    threshold: 0,
   };
 
   const pan = new Hammer.Pan(panOptions);
   const pinch = new Hammer.Pinch({
-    threshold: 0
+    threshold: 0,
   });
   const rotate = new Hammer.Rotate({
-    threshold: 0
+    threshold: 0,
   });
 
   pinch.recognizeWith(pan);
@@ -554,7 +558,7 @@ function enable (element) {
     taps: 2,
     interval: 1500,
     threshold: 50,
-    posThreshold: 50
+    posThreshold: 50,
   });
 
   doubleTap.recognizeWith(pan);
@@ -570,7 +574,7 @@ function enable (element) {
 
   const touchEvents = ['touchstart', 'touchend'];
 
-  touchEvents.forEach((eventType) => {
+  touchEvents.forEach(eventType => {
     element.addEventListener(eventType, onTouch, { passive: false });
   });
 
@@ -581,12 +585,12 @@ function enable (element) {
   setToolOptions(toolType, element, options);
 }
 
-function disable (element) {
+function disable(element) {
   preventGhostClick.disable(element);
 
   const touchEvents = ['touchstart', 'touchend'];
 
-  touchEvents.forEach((eventType) => {
+  touchEvents.forEach(eventType => {
     element.removeEventListener(eventType, onTouch);
   });
 
@@ -604,7 +608,7 @@ function disable (element) {
 // Module exports
 const touchInput = {
   enable,
-  disable
+  disable,
 };
 
 export default touchInput;

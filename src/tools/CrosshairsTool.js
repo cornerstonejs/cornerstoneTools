@@ -5,7 +5,7 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import {
   addToolState,
   getToolState,
-  clearToolState
+  clearToolState,
 } from '../stateManagement/toolState.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
@@ -21,10 +21,10 @@ import { setToolOptions } from '../toolOptions.js';
  * @extends BaseTool
  */
 export default class CrosshairsTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Crosshairs',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -36,7 +36,7 @@ export default class CrosshairsTool extends BaseTool {
     this.touchDragCallback = this._chooseLocation.bind(this);
   }
 
-  _chooseLocation (evt) {
+  _chooseLocation(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
 
@@ -52,9 +52,14 @@ export default class CrosshairsTool extends BaseTool {
 
     // Get current element target information
     const sourceElement = element;
-    const sourceEnabledElement = external.cornerstone.getEnabledElement(sourceElement);
+    const sourceEnabledElement = external.cornerstone.getEnabledElement(
+      sourceElement
+    );
     const sourceImageId = sourceEnabledElement.image.imageId;
-    const sourceImagePlane = external.cornerstone.metaData.get('imagePlaneModule', sourceImageId);
+    const sourceImagePlane = external.cornerstone.metaData.get(
+      'imagePlaneModule',
+      sourceImageId
+    );
 
     if (!sourceImagePlane) {
       return;
@@ -64,14 +69,17 @@ export default class CrosshairsTool extends BaseTool {
     const sourceImagePoint = eventData.currentPoints.image;
 
     // Transfer this to a patientPoint given imagePlane metadata
-    const patientPoint = imagePointToPatientPoint(sourceImagePoint, sourceImagePlane);
+    const patientPoint = imagePointToPatientPoint(
+      sourceImagePoint,
+      sourceImagePlane
+    );
 
     // Get the enabled elements associated with this synchronization context
     const syncContext = toolData.data[0].synchronizationContext;
     const enabledElements = syncContext.getSourceElements();
 
     // Iterate over each synchronized element
-    enabledElements.forEach(function (targetElement) {
+    enabledElements.forEach(function(targetElement) {
       // Don't do anything if the target is the same as the source
       if (targetElement === sourceElement) {
         return;
@@ -89,11 +97,19 @@ export default class CrosshairsTool extends BaseTool {
       const stackData = stackToolDataSource.data[0];
 
       // Find within the element's stack the closest image plane to selected location
-      stackData.imageIds.forEach(function (imageId, index) {
-        const imagePlane = external.cornerstone.metaData.get('imagePlaneModule', imageId);
+      stackData.imageIds.forEach(function(imageId, index) {
+        const imagePlane = external.cornerstone.metaData.get(
+          'imagePlaneModule',
+          imageId
+        );
 
         // Skip if the image plane is not ready
-        if (!imagePlane || !imagePlane.imagePositionPatient || !imagePlane.rowCosines || !imagePlane.columnCosines) {
+        if (
+          !imagePlane ||
+          !imagePlane.imagePositionPatient ||
+          !imagePlane.rowCosines ||
+          !imagePlane.columnCosines
+        ) {
           return;
         }
 
@@ -101,7 +117,9 @@ export default class CrosshairsTool extends BaseTool {
         const row = convertToVector3(imagePlane.rowCosines);
         const column = convertToVector3(imagePlane.columnCosines);
         const normal = column.clone().cross(row.clone());
-        const distance = Math.abs(normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint));
+        const distance = Math.abs(
+          normal.clone().dot(imagePosition) - normal.clone().dot(patientPoint)
+        );
 
         if (distance < minDistance) {
           minDistance = distance;
@@ -114,7 +132,10 @@ export default class CrosshairsTool extends BaseTool {
       }
 
       // Switch the loaded image to the required image
-      if (newImageIdIndex !== -1 && stackData.imageIds[newImageIdIndex] !== undefined) {
+      if (
+        newImageIdIndex !== -1 &&
+        stackData.imageIds[newImageIdIndex] !== undefined
+      ) {
         const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
         const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
         const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
@@ -126,38 +147,45 @@ export default class CrosshairsTool extends BaseTool {
         let loader;
 
         if (stackData.preventCache === true) {
-          loader = external.cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+          loader = external.cornerstone.loadImage(
+            stackData.imageIds[newImageIdIndex]
+          );
         } else {
-          loader = external.cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+          loader = external.cornerstone.loadAndCacheImage(
+            stackData.imageIds[newImageIdIndex]
+          );
         }
 
-        loader.then(function (image) {
-          const viewport = external.cornerstone.getViewport(targetElement);
+        loader.then(
+          function(image) {
+            const viewport = external.cornerstone.getViewport(targetElement);
 
-          stackData.currentImageIdIndex = newImageIdIndex;
-          external.cornerstone.displayImage(targetElement, image, viewport);
-          if (endLoadingHandler) {
-            endLoadingHandler(targetElement, image);
-          }
-        }, function (error) {
-          const imageId = stackData.imageIds[newImageIdIndex];
+            stackData.currentImageIdIndex = newImageIdIndex;
+            external.cornerstone.displayImage(targetElement, image, viewport);
+            if (endLoadingHandler) {
+              endLoadingHandler(targetElement, image);
+            }
+          },
+          function(error) {
+            const imageId = stackData.imageIds[newImageIdIndex];
 
-          if (errorLoadingHandler) {
-            errorLoadingHandler(targetElement, imageId, error);
+            if (errorLoadingHandler) {
+              errorLoadingHandler(targetElement, imageId, error);
+            }
           }
-        });
+        );
       }
     });
   }
 
-  activeCallback (element, { mouseButtonMask, synchronizationContext }) {
+  activeCallback(element, { mouseButtonMask, synchronizationContext }) {
     setToolOptions(this.name, element, { mouseButtonMask });
 
     // Clear any currently existing toolData
     clearToolState(element, this.name);
 
     addToolState(element, this.name, {
-      synchronizationContext
+      synchronizationContext,
     });
   }
 }

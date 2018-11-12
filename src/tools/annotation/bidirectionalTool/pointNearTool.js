@@ -11,32 +11,45 @@ const pointNearPerpendicular = (
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, handles.perpendicularStart),
-    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd)
+    end: cornerstone.pixelToCanvas(element, handles.perpendicularEnd),
   };
 
-  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
+    lineSegment,
+    coords
+  );
 
-  return (distanceToPoint < distanceThreshold);
+  return distanceToPoint < distanceThreshold;
 };
 
-export default function (element, data, coords) {
+export default function(element, data, coords) {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const { handles } = data;
   const lineSegment = {
     start: cornerstone.pixelToCanvas(element, handles.start),
-    end: cornerstone.pixelToCanvas(element, handles.end)
+    end: cornerstone.pixelToCanvas(element, handles.end),
   };
 
-  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(lineSegment, coords);
+  const distanceToPoint = cornerstoneMath.lineSegment.distanceToPoint(
+    lineSegment,
+    coords
+  );
 
   if (pointInsideBoundingBox(handles.textBox, coords)) {
     return true;
   }
 
-  if (pointNearPerpendicular(element, handles, coords, this.configuration.distanceThreshold)) {
+  if (
+    pointNearPerpendicular(
+      element,
+      handles,
+      coords,
+      this.configuration.distanceThreshold
+    )
+  ) {
     return true;
   }
 
-  return (distanceToPoint < this.configuration.distanceThreshold);
+  return distanceToPoint < this.configuration.distanceThreshold;
 }

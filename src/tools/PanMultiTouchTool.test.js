@@ -3,11 +3,11 @@ import PanMultiTouchTool from './PanMultiTouchTool.js';
 import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
-  cornerstone: {}
+  cornerstone: {},
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 describe('PanMultiTouchTool.js', () => {
@@ -40,21 +40,21 @@ describe('PanMultiTouchTool.js', () => {
             scale: 2,
             translation: {
               x: 0,
-              y: 0
-            }
+              y: 0,
+            },
           },
           image: {},
           numPointers: 2,
           deltaPoints: {
             page: {
               x: 512,
-              y: 512
-            }
-          }
-        }
+              y: 512,
+            },
+          },
+        },
       };
     });
-    it('should update viewport once mouse drag event', function () {
+    it('should update viewport once mouse drag event', function() {
       instantiatedTool._getTranslation = jest.fn();
       instantiatedTool._applyTranslation = jest.fn();
       instantiatedTool.multiTouchDragCallback(goodMockEvt);
@@ -63,34 +63,40 @@ describe('PanMultiTouchTool.js', () => {
     it('should set the viewport properly with mock data and column bigger than row pixel spacing', () => {
       goodMockEvt.detail.image = {
         columnPixelSpacing: 10,
-        rowPixelSpacing: 5
+        rowPixelSpacing: 5,
       };
       instantiatedTool.multiTouchDragCallback(goodMockEvt);
       const expectedViewport = {
         scale: 2,
         translation: {
           x: 128,
-          y: 256
-        }
+          y: 256,
+        },
       };
 
-      expect(external.cornerstone.setViewport).toHaveBeenCalledWith({}, expectedViewport);
+      expect(external.cornerstone.setViewport).toHaveBeenCalledWith(
+        {},
+        expectedViewport
+      );
     });
     it('should set the viewport properly with mock data row bigger than column pixel spacing', () => {
       goodMockEvt.detail.image = {
         columnPixelSpacing: 5,
-        rowPixelSpacing: 10
+        rowPixelSpacing: 10,
       };
       instantiatedTool.multiTouchDragCallback(goodMockEvt);
       const expectedViewport = {
         scale: 2,
         translation: {
           x: 256,
-          y: 128
-        }
+          y: 128,
+        },
       };
 
-      expect(external.cornerstone.setViewport).toHaveBeenCalledWith({}, expectedViewport);
+      expect(external.cornerstone.setViewport).toHaveBeenCalledWith(
+        {},
+        expectedViewport
+      );
     });
   });
 });

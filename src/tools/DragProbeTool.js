@@ -9,7 +9,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawCircle
+  drawCircle,
 } from '../drawing/index.js';
 import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
 
@@ -23,16 +23,16 @@ import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
  * @extends BaseTool
  */
 export default class DragProbeTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'DragProbe',
       strategies: {
         default: defaultStrategy,
-        minimal: minimalStrategy
+        minimal: minimalStrategy,
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {}
+      configuration: {},
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -48,7 +48,7 @@ export default class DragProbeTool extends BaseTool {
     this.dragEventData = {};
   }
 
-  _movingEventCallback (evt) {
+  _movingEventCallback(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
 
@@ -56,7 +56,7 @@ export default class DragProbeTool extends BaseTool {
     external.cornerstone.updateImage(element);
   }
 
-  _endMovingEventCallback (evt) {
+  _endMovingEventCallback(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
 
@@ -64,12 +64,16 @@ export default class DragProbeTool extends BaseTool {
     external.cornerstone.updateImage(element);
   }
 
-  renderToolData (evt) {
+  renderToolData(evt) {
     if (!this.dragEventData.currentPoints) {
       return;
     }
 
-    if (evt && evt.detail && Boolean(Object.keys(this.dragEventData.currentPoints).length)) {
+    if (
+      evt &&
+      evt.detail &&
+      Boolean(Object.keys(this.dragEventData.currentPoints).length)
+    ) {
       evt.detail.currentPoints = this.dragEventData.currentPoints;
       this.applyActiveStrategy(evt);
     }
@@ -99,7 +103,7 @@ const defaultStrategy = (evt, config) => {
     return;
   }
 
-  draw(context, (context) => {
+  draw(context, context => {
     setShadow(context, config);
 
     const text = `${x}, ${y}`;
@@ -108,7 +112,9 @@ const defaultStrategy = (evt, config) => {
 
     if (image.color) {
       storedPixels = getRGBPixels(element, x, y, 1, 1);
-      str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]} A: ${storedPixels[3]}`;
+      str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${
+        storedPixels[2]
+      } A: ${storedPixels[3]}`;
     } else {
       storedPixels = cornerstone.getStoredPixels(element, x, y, 1, 1);
       const sp = storedPixels[0];
@@ -125,10 +131,16 @@ const defaultStrategy = (evt, config) => {
     // Draw text 5px away from cursor
     const textCoords = {
       x: currentPoints.canvas.x + 5,
-      y: currentPoints.canvas.y - 5
+      y: currentPoints.canvas.y - 5,
     };
 
-    drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
+    drawTextBox(
+      context,
+      str,
+      textCoords.x,
+      textCoords.y + fontHeight + 5,
+      color
+    );
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
   });
 };
@@ -142,7 +154,13 @@ const defaultStrategy = (evt, config) => {
 const minimalStrategy = (evt, config) => {
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
-  const { element, image, currentPoints, canvasContext, isTouchEvent } = eventData;
+  const {
+    element,
+    image,
+    currentPoints,
+    canvasContext,
+    isTouchEvent,
+  } = eventData;
 
   const context = getNewContext(canvasContext.canvas);
   const color = toolColors.getActiveColor();
@@ -152,17 +170,28 @@ const minimalStrategy = (evt, config) => {
   if (isTouchEvent) {
     pageCoordY = currentPoints.page.y - textStyle.getFontSize() * 4;
   }
-  const toolCoords = cornerstone.pageToPixel(element, currentPoints.page.x, pageCoordY);
+  const toolCoords = cornerstone.pageToPixel(
+    element,
+    currentPoints.page.x,
+    pageCoordY
+  );
 
-  if (toolCoords.x < 0 || toolCoords.y < 0 ||
-    toolCoords.x >= image.columns || toolCoords.y >= image.rows) {
+  if (
+    toolCoords.x < 0 ||
+    toolCoords.y < 0 ||
+    toolCoords.x >= image.columns ||
+    toolCoords.y >= image.rows
+  ) {
     return;
   }
 
-  draw(context, (context) => {
+  draw(context, context => {
     setShadow(context, config);
 
-    const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
+    const seriesModule = cornerstone.metaData.get(
+      'generalSeriesModule',
+      image.imageId
+    );
     const modality = seriesModule && seriesModule.modality;
 
     let storedPixels;
@@ -170,9 +199,17 @@ const minimalStrategy = (evt, config) => {
 
     if (image.color) {
       storedPixels = getRGBPixels(element, toolCoords.x, toolCoords.y, 1, 1);
-      text = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+      text = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${
+        storedPixels[2]
+      }`;
     } else {
-      storedPixels = cornerstone.getStoredPixels(element, toolCoords.x, toolCoords.y, 1, 1);
+      storedPixels = cornerstone.getStoredPixels(
+        element,
+        toolCoords.x,
+        toolCoords.y,
+        1,
+        1
+      );
       const sp = storedPixels[0];
       const mo = sp * image.slope + image.intercept;
 
@@ -198,7 +235,7 @@ const minimalStrategy = (evt, config) => {
     // Translate the x/y away from the cursor
     let translation = {
       x: 12,
-      y: -(textStyle.getFontSize() + 10) / 2
+      y: -(textStyle.getFontSize() + 10) / 2,
     };
 
     const handleRadius = 6;
@@ -208,11 +245,17 @@ const minimalStrategy = (evt, config) => {
     if (isTouchEvent) {
       translation = {
         x: -width / 2,
-        y: -textStyle.getFontSize() - 10 - 2 * handleRadius
+        y: -textStyle.getFontSize() - 10 - 2 * handleRadius,
       };
     }
 
     drawCircle(context, element, textCoords, handleRadius, { color }, 'canvas');
-    drawTextBox(context, text, textCoords.x + translation.x, textCoords.y + translation.y, color);
+    drawTextBox(
+      context,
+      text,
+      textCoords.x + translation.x,
+      textCoords.y + translation.y,
+      color
+    );
   });
 };

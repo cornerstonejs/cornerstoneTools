@@ -13,7 +13,7 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 import {
   addToolState,
   removeToolState,
-  getToolState
+  getToolState,
 } from './../../stateManagement/toolState.js';
 import { state } from './../../store/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
@@ -30,7 +30,7 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
  * @extends BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
@@ -39,8 +39,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         changeTextCallback,
         drawHandles: false,
         drawHandlesOnHover: true,
-        arrowFirst: true
-      }
+        arrowFirst: true,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -56,7 +56,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    * @param {*} evt
    * @returns {Object}
    */
-  createNewMeasurement (evt) {
+  createNewMeasurement(evt) {
     // Create the measurement data for this tool with the end handle activated
     return {
       visible: true,
@@ -67,13 +67,13 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           x: evt.detail.currentPoints.image.x,
           y: evt.detail.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         end: {
           x: evt.detail.currentPoints.image.x,
           y: evt.detail.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         textBox: {
           active: false,
@@ -81,9 +81,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -95,7 +95,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
     }
@@ -111,7 +111,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
@@ -134,7 +134,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         setShadow(context, this.configuration);
 
         const color = toolColors.getColorIfActive(data);
@@ -169,7 +169,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         const handleOptions = {
-          drawHandlesIfActive: this.configuration.drawHandlesOnHover
+          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
         };
 
         if (this.configuration.drawHandles) {
@@ -197,14 +197,14 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             if (this.configuration.arrowFirst) {
               textCoords = {
                 x: handleEndCanvas.x - textWidth / 2 + distance,
-                y: handleEndCanvas.y - textHeight / 2
+                y: handleEndCanvas.y - textHeight / 2,
               };
             } else {
               // If the arrow is at the End position, the text should
               // Be placed near the Start position
               textCoords = {
                 x: handleStartCanvas.x - textWidth / 2 - distance,
-                y: handleStartCanvas.y - textHeight / 2
+                y: handleStartCanvas.y - textHeight / 2,
               };
             }
 
@@ -236,14 +236,14 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data) {
+    function textBoxText(data) {
       return data.text;
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       const midpoint = {
         x: (handles.start.x + handles.end.x) / 2,
-        y: (handles.start.y + handles.end.y) / 2
+        y: (handles.start.y + handles.end.y) / 2,
       };
 
       return [handles.start, midpoint, handles.end];
@@ -256,7 +256,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
    * @param {*} evt
    * @param {*} interactionType
    */
-  addNewMeasurement (evt, interactionType) {
+  addNewMeasurement(evt, interactionType) {
     const element = evt.detail.element;
     const measurementData = this.createNewMeasurement(evt);
 
@@ -282,7 +282,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         if (measurementData.text === undefined) {
-          this.configuration.getTextCallback((text) => {
+          this.configuration.getTextCallback(text => {
             if (text) {
               measurementData.text = text;
             } else {
@@ -300,7 +300,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
-  doubleClickCallback (evt) {
+  doubleClickCallback(evt) {
     if (evt.detail.buttons !== this.options.mouseButtonMask) {
       return;
     }
@@ -308,11 +308,11 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     return this._updateTextForNearbyAnnotation(evt);
   }
 
-  touchPressCallback (evt) {
+  touchPressCallback(evt) {
     return this._updateTextForNearbyAnnotation(evt);
   }
 
-  _updateTextForNearbyAnnotation (evt) {
+  _updateTextForNearbyAnnotation(evt) {
     const element = evt.detail.element;
     const coords = evt.detail.currentPoints.canvas;
     const toolState = getToolState(element, this.name);
@@ -346,7 +346,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  _doneChangingTextCallback (element, data, updatedText, deleteTool) {
+  _doneChangingTextCallback(element, data, updatedText, deleteTool) {
     if (deleteTool === true) {
       removeToolState(element, this.name, data);
     } else {
@@ -358,10 +358,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   }
 }
 
-function getTextCallback (doneChangingTextCallback) {
+function getTextCallback(doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Enter your annotation:'));
 }
 
-function changeTextCallback (data, eventData, doneChangingTextCallback) {
+function changeTextCallback(data, eventData, doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Change your annotation:'));
 }

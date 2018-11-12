@@ -11,7 +11,7 @@ import triggerEvent from '../util/triggerEvent.js';
  * @param  {HTMLElement} element The element.
  * @returns {object} The toolState.
  */
-function getElementToolStateManager (element) {
+function getElementToolStateManager(element) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
   // If the enabledImage has no toolStateManager, create a default one for it
   // NOTE: This makes state management element specific
@@ -34,7 +34,7 @@ function getElementToolStateManager (element) {
  * @param  {object} measurementData The data to store in the state.
  * @returns {undefined}
  */
-function addToolState (element, toolType, measurementData) {
+function addToolState(element, toolType, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
   toolStateManager.add(element, toolType, measurementData);
@@ -43,7 +43,7 @@ function addToolState (element, toolType, measurementData) {
   const eventData = {
     toolType,
     element,
-    measurementData
+    measurementData,
   };
 
   triggerEvent(element, eventType, eventData);
@@ -61,7 +61,7 @@ function addToolState (element, toolType, measurementData) {
  * @param  {string} toolType The toolType of the state.
  * @returns {object}          The element's state for the given toolType.
  */
-function getToolState (element, toolType) {
+function getToolState(element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
 
   return toolStateManager.get(element, toolType);
@@ -77,7 +77,7 @@ function getToolState (element, toolType) {
  * @param  {object} data          The data to remove from the toolStateManager.
  * @returns {undefined}
  */
-function removeToolState (element, toolType, data) {
+function removeToolState(element, toolType, data) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
   // Find this tool data
@@ -96,7 +96,7 @@ function removeToolState (element, toolType, data) {
     const eventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -113,7 +113,7 @@ function removeToolState (element, toolType, data) {
  * @param  {string} toolType      The toolType of the state.
  * @returns {undefined}
  */
-function clearToolState (element, toolType) {
+function clearToolState(element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
 
@@ -132,7 +132,7 @@ function clearToolState (element, toolType) {
  * @param {object} toolStateManager The toolStateManager.
  * @returns {undefined}
  */
-function setElementToolStateManager (element, toolStateManager) {
+function setElementToolStateManager(element, toolStateManager) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   enabledElement.toolStateManager = toolStateManager;
@@ -144,5 +144,5 @@ export {
   removeToolState,
   clearToolState,
   setElementToolStateManager,
-  getElementToolStateManager
+  getElementToolStateManager,
 };

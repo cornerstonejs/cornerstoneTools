@@ -9,7 +9,7 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @param  {Array|cornerstoneMath.Vector3} vector Input array or Vector3
  * @returns {string} The orientation in the patient coordinate system.
  */
-export default function (vector) {
+export default function(vector) {
   const vec3 = convertToVector3(vector);
 
   // Thanks to David Clunie

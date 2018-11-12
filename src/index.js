@@ -12,7 +12,7 @@ import {
   LengthTool,
   ProbeTool,
   RectangleRoiTool,
-  TextMarkerTool
+  TextMarkerTool,
 } from './tools/annotation/index.js';
 import { BrushTool } from './tools/brush/index.js';
 import {
@@ -35,7 +35,7 @@ import {
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
-  ZoomTouchPinchTool
+  ZoomTouchPinchTool,
 } from './tools/index.js';
 
 export {
@@ -72,7 +72,7 @@ export {
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
-  ZoomTouchPinchTool
+  ZoomTouchPinchTool,
 };
 
 export { default as init } from './init.js';
@@ -89,7 +89,7 @@ export { addTool, addToolForElement } from './store/addTool.js';
 export { removeTool, removeToolForElement } from './store/removeTool.js';
 export {
   setToolOptions,
-  setToolOptionsForElement
+  setToolOptionsForElement,
 } from './store/setToolOptions.js';
 export {
   setToolActive,
@@ -99,7 +99,7 @@ export {
   setToolDisabled,
   setToolDisabledForElement,
   setToolPassive,
-  setToolPassiveForElement
+  setToolPassiveForElement,
 } from './store/setToolMode.js';
 export {
   addToolState,
@@ -107,32 +107,32 @@ export {
   removeToolState,
   clearToolState,
   setElementToolStateManager,
-  getElementToolStateManager
+  getElementToolStateManager,
 } from './stateManagement/toolState.js';
 export { default as textStyle } from './stateManagement/textStyle.js';
 export { default as toolStyle } from './stateManagement/toolStyle.js';
 export { default as toolColors } from './stateManagement/toolColors.js';
 export {
-  default as toolCoordinates
+  default as toolCoordinates,
 } from './stateManagement/toolCoordinates.js';
 export {
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
-  addStackStateManager
+  addStackStateManager,
 } from './stateManagement/stackSpecificStateManager.js';
 export {
-  default as loadHandlerManager
+  default as loadHandlerManager,
 } from './stateManagement/loadHandlerManager.js';
 export {
   newImageIdSpecificToolStateManager,
-  globalImageIdSpecificToolStateManager
+  globalImageIdSpecificToolStateManager,
 } from './stateManagement/imageIdSpecificStateManager.js';
 export {
   newFrameOfReferenceSpecificToolStateManager,
-  globalFrameOfReferenceSpecificToolStateManager
+  globalFrameOfReferenceSpecificToolStateManager,
 } from './stateManagement/frameOfReferenceStateManager.js';
 export {
-  forceEnabledElementResize
+  forceEnabledElementResize,
 } from './eventListeners/windowResizeHandler.js';
 
 // ~~~~~~ ORIENTATION  ~~~~~ //
@@ -148,31 +148,31 @@ export { default as registerSome } from './thirdParty/registerSome.js';
 
 // ~~~~~~ SYNCHRONIZERS ~~~~~ //
 export {
-  default as wwwcSynchronizer
+  default as wwwcSynchronizer,
 } from './synchronization/wwwcSynchronizer.js';
 export {
-  default as updateImageSynchronizer
+  default as updateImageSynchronizer,
 } from './synchronization/updateImageSynchronizer.js';
 export { default as Synchronizer } from './synchronization/Synchronizer.js';
 export {
-  default as stackScrollSynchronizer
+  default as stackScrollSynchronizer,
 } from './synchronization/stackScrollSynchronizer.js';
 export {
-  default as stackImagePositionSynchronizer
+  default as stackImagePositionSynchronizer,
 } from './synchronization/stackImagePositionSynchronizer.js';
 export {
-  default as stackImagePositionOffsetSynchronizer
+  default as stackImagePositionOffsetSynchronizer,
 } from './synchronization/stackImagePositionOffsetSynchronizer.js';
 export {
-  default as stackImageIndexSynchronizer
+  default as stackImageIndexSynchronizer,
 } from './synchronization/stackImageIndexSynchronizer.js';
 export {
-  default as panZoomSynchronizer
+  default as panZoomSynchronizer,
 } from './synchronization/panZoomSynchronizer.js';
 
 // ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
 export {
-  default as requestPoolManager
+  default as requestPoolManager,
 } from './requestPool/requestPoolManager.js';
 
 export { default as external } from './externalModules.js';

@@ -7,17 +7,24 @@ const touchEndEvents = [
   EVENTS.TOUCH_DRAG_END,
   EVENTS.TOUCH_PINCH,
   EVENTS.TOUCH_PRESS,
-  EVENTS.TAP
+  EVENTS.TAP,
 ];
 
-export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+export default function(
+  mouseEventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
-    y: handle.y - mouseEventData.currentPoints.image.y
+    y: handle.y - mouseEventData.currentPoints.image.y,
   };
 
-  const touchDragCallback = (event) => {
+  const touchDragCallback = event => {
     const eventData = event.detail;
 
     handle.active = true;
@@ -44,7 +51,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
@@ -54,7 +61,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
   const touchEndCallback = () => {
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
-    touchEndEvents.forEach((eventType) => {
+    touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);
     });
 
@@ -65,8 +72,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     }
   };
 
-  touchEndEvents.forEach((eventType) => {
+  touchEndEvents.forEach(eventType => {
     element.addEventListener(eventType, touchEndCallback);
   });
-
 }

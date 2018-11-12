@@ -5,7 +5,7 @@ import scroll from '../util/scroll.js';
 jest.mock('../util/scroll.js');
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvent = {
@@ -14,10 +14,10 @@ const mockEvent = {
     element: {},
     deltaPoints: {
       page: {
-        y: 5
-      }
-    }
-  }
+        y: 5,
+      },
+    },
+  },
 };
 
 describe('StachScroll.js', () => {

@@ -15,7 +15,7 @@ import drawLine from './drawLine.js';
  * @param  {number} lineWidth        The line width of the link.
  * @returns {undefined}
  */
-export default function (
+export default function(
   linkAnchorPoints,
   refPoint,
   boundingBox,
@@ -38,20 +38,20 @@ export default function (
   const boundingBoxPoints = [
     {
       x: boundingBox.left + boundingBox.width / 2,
-      y: boundingBox.top
+      y: boundingBox.top,
     },
     {
       x: boundingBox.left,
-      y: boundingBox.top + boundingBox.height / 2
+      y: boundingBox.top + boundingBox.height / 2,
     },
     {
       x: boundingBox.left + boundingBox.width / 2,
-      y: boundingBox.top + boundingBox.height
+      y: boundingBox.top + boundingBox.height,
     },
     {
       x: boundingBox.left + boundingBox.width,
-      y: boundingBox.top + boundingBox.height / 2
-    }
+      y: boundingBox.top + boundingBox.height / 2,
+    },
   ];
 
   // Calculate the link endpoint by identifying which midpoint of the bounding box
@@ -65,7 +65,7 @@ export default function (
   const options = {
     color,
     lineWidth,
-    lineDash: [2, 3]
+    lineDash: [2, 3],
   };
 
   drawLine(context, undefined, start, end, options, 'canvas');

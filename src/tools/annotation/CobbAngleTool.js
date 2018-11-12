@@ -5,7 +5,7 @@ import textStyle from './../../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
-  removeToolState
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -18,7 +18,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawLine
+  drawLine,
 } from './../../drawing/index.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
@@ -34,10 +34,10 @@ import EVENTS from './../../events.js';
  * @extends BaseAnnotationTool
  */
 export default class CobbAngleTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'CobbAngle',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -53,7 +53,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     // Create the measurement data for this tool with the end handle activated
     this.hasIncomplete = true;
 
@@ -68,27 +68,27 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
         },
         start2: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true
+          drawnIndependently: true,
         },
         end2: {
           x: eventData.currentPoints.image.x + 1,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-          drawnIndependently: true
+          drawnIndependently: true,
         },
         textBox: {
           active: false,
@@ -96,9 +96,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -110,7 +110,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
     }
@@ -132,7 +132,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
@@ -155,7 +155,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         setShadow(context, config);
 
         // Differentiate the color of activation tool
@@ -167,7 +167,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           data.handles.start,
           data.handles.end,
           {
-            color
+            color,
           }
         );
 
@@ -178,14 +178,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
             data.handles.start2,
             data.handles.end2,
             {
-              color
+              color,
             }
           );
         }
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover
+          drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -198,7 +198,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         if (!data.handles.textBox.hasMoved) {
           const textCoords = {
             x: (data.handles.start.x + data.handles.end.x) / 2,
-            y: (data.handles.start.y + data.handles.end.y) / 2 - 10
+            y: (data.handles.start.y + data.handles.end.y) / 2 - 10,
           };
 
           context.font = font;
@@ -221,12 +221,12 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       return [handles.start, handles.start2, handles.end, handles.end2];
     }
   }
 
-  getIncomplete (target) {
+  getIncomplete(target) {
     const toolData = getToolState(target, this.name);
 
     if (toolData === undefined) {
@@ -240,7 +240,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     }
   }
 
-  addNewMeasurement (evt, interactionType) {
+  addNewMeasurement(evt, interactionType) {
     evt.preventDefault();
     evt.stopPropagation();
 
@@ -261,14 +261,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         y: eventData.currentPoints.image.y,
         drawnIndependently: false,
         highlight: true,
-        active: false
+        active: false,
       };
       measurementData.handles.end2 = {
         x: eventData.currentPoints.image.x,
         y: eventData.currentPoints.image.y,
         drawnIndependently: false,
         highlight: true,
-        active: true
+        active: true,
       };
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
@@ -301,7 +301,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     });
   }
 
-  onMeasureModified (ev) {
+  onMeasureModified(ev) {
     const image = external.cornerstone.getEnabledElement(ev.detail.element).
       image;
 
@@ -312,7 +312,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     data.value = calculateValue(data, image);
 
-    function calculateValue (data, image) {
+    function calculateValue(data, image) {
       // Default to isotropic pixel size, update suffix to reflect this
       const columnPixelSpacing = image.columnPixelSpacing || 1;
       const rowPixelSpacing = image.rowPixelSpacing || 1;
@@ -353,7 +353,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       return '';
     }
 
-    function textBoxText (rAngle, rowPixelSpacing, columnPixelSpacing) {
+    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
       const suffix =
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
@@ -364,7 +364,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     }
   }
 
-  activeCallback (element) {
+  activeCallback(element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(
       EVENTS.MEASUREMENT_MODIFIED,
@@ -372,7 +372,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 
-  passiveCallback (element) {
+  passiveCallback(element) {
     this.onMeasureModified = this.onMeasureModified.bind(this);
     element.addEventListener(
       EVENTS.MEASUREMENT_MODIFIED,
@@ -380,14 +380,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 
-  enabledCallback (element) {
+  enabledCallback(element) {
     element.removeEventListener(
       EVENTS.MEASUREMENT_MODIFIED,
       this.onMeasureModified
     );
   }
 
-  disabledCallback (element) {
+  disabledCallback(element) {
     element.removeEventListener(
       EVENTS.MEASUREMENT_MODIFIED,
       this.onMeasureModified

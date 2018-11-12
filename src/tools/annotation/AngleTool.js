@@ -4,7 +4,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
-  removeToolState
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -17,7 +17,7 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawJoinedLines
+  drawJoinedLines,
 } from './../../drawing/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
@@ -34,10 +34,10 @@ import roundToDecimal from './../../util/roundToDecimal.js';
  * @extends BaseAnnotationTool
  */
 export default class AngleTool extends BaseAnnotationTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Angle',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -53,7 +53,7 @@ export default class AngleTool extends BaseAnnotationTool {
    * @param {*} eventData
    * @returns {Object}
    */
-  createNewMeasurement (eventData) {
+  createNewMeasurement(eventData) {
     // Create the measurement data for this tool with the end handle activated
     return {
       visible: true,
@@ -64,19 +64,19 @@ export default class AngleTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         middle: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true
+          active: true,
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false
+          active: false,
         },
         textBox: {
           active: false,
@@ -84,9 +84,9 @@ export default class AngleTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true
-        }
-      }
+          hasBoundingBox: true,
+        },
+      },
     };
   }
 
@@ -98,7 +98,7 @@ export default class AngleTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool (element, data, coords) {
+  pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
     }
@@ -119,7 +119,7 @@ export default class AngleTool extends BaseAnnotationTool {
    *
    * @param {*} evt
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
     // If we have no toolData for this element, return immediately as there is nothing to do
@@ -142,7 +142,7 @@ export default class AngleTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, (context) => {
+      draw(context, context => {
         setShadow(context, config);
 
         // Differentiate the color of activation tool
@@ -167,7 +167,7 @@ export default class AngleTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover
+          drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, color, handleOptions);
@@ -179,17 +179,17 @@ export default class AngleTool extends BaseAnnotationTool {
         const sideA = {
           x:
             (data.handles.middle.x - data.handles.start.x) * columnPixelSpacing,
-          y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing
+          y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing,
         };
 
         const sideB = {
           x: (data.handles.end.x - data.handles.middle.x) * columnPixelSpacing,
-          y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing
+          y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing,
         };
 
         const sideC = {
           x: (data.handles.end.x - data.handles.start.x) * columnPixelSpacing,
-          y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing
+          y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing,
         };
 
         const sideALength = length(sideA);
@@ -222,7 +222,7 @@ export default class AngleTool extends BaseAnnotationTool {
           if (!data.handles.textBox.hasMoved) {
             textCoords = {
               x: handleMiddleCanvas.x,
-              y: handleMiddleCanvas.y
+              y: handleMiddleCanvas.y,
             };
 
             const padding = 5;
@@ -262,7 +262,7 @@ export default class AngleTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText (data, rowPixelSpacing, columnPixelSpacing) {
+    function textBoxText(data, rowPixelSpacing, columnPixelSpacing) {
       const suffix =
         !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
@@ -272,12 +272,12 @@ export default class AngleTool extends BaseAnnotationTool {
       );
     }
 
-    function textBoxAnchorPoints (handles) {
+    function textBoxAnchorPoints(handles) {
       return [handles.start, handles.middle, handles.end];
     }
   }
 
-  addNewMeasurement (evt, interactionType) {
+  addNewMeasurement(evt, interactionType) {
     if (this.preventNewMeasurement) {
       return;
     }
@@ -339,6 +339,6 @@ export default class AngleTool extends BaseAnnotationTool {
   }
 }
 
-function length (vector) {
+function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 }

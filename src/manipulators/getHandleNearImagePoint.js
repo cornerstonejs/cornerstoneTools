@@ -15,7 +15,7 @@ import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
  * @param {number} distanceThreshold - minimum distance handle needs to be from provided coords
  * @returns {Object} Handle
  */
-const getHandleNearImagePoint = function (
+const getHandleNearImagePoint = function(
   element,
   handles,
   coords,
@@ -79,7 +79,7 @@ const getHandleNearImagePoint = function (
  * @param {*} distanceThreshold
  * @returns {boolean} true if handles is near image point
  */
-const _isHandleNearImagePoint = function (
+const _isHandleNearImagePoint = function(
   handle,
   element,
   coords,

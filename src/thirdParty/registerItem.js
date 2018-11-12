@@ -13,7 +13,7 @@ import { lib } from '../lib.js';
  * @param {boolean} [overwrite=false] Whether an item should be overwritten,
  *                                    should it have the same name.
  */
-export default function (type, name, item, overwrite = false) {
+export default function(type, name, item, overwrite = false) {
   if (isItemNameRegistered(type, name)) {
     console.warn(`${type}/${name} is already registered`);
 
@@ -27,6 +27,6 @@ export default function (type, name, item, overwrite = false) {
   lib[`${type}/${name}`] = item;
 }
 
-function isItemNameRegistered (type, name) {
+function isItemNameRegistered(type, name) {
   return lib[`${type}/${name}`] !== undefined;
 }
