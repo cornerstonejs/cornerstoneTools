@@ -4,8 +4,9 @@ import external from '../externalModules.js';
  * Implements an imageId specific tool state management strategy.  This means that
  * Measurements data is tied to a specific imageId and only visible for enabled elements
  * That are displaying that imageId.
- * @export @public @constructor
- * @name newImageIdSpecificToolStateManager
+ * @public
+ * @constructor newImageIdSpecificToolStateManager
+ * @memberof CornerstoneTools.StateManagement
  *
  * @returns {object} An imageIdSpecificToolStateManager instance.
  */
@@ -74,7 +75,6 @@ function newImageIdSpecificToolStateManager () {
     }
 
     const toolData = imageIdToolState[toolType];
-
 
     return toolData;
   }

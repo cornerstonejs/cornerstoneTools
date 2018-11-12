@@ -2,8 +2,9 @@
  * Implements a frame-of-reference specific tool state management strategy.  This means that
  * Measurement data are tied to a specific frame of reference UID and only visible to objects using
  * That frame-of-reference UID.
- * @export @public @constructor
- * @name newFrameOfReferenceSpecificToolStateManager
+ * @public
+ * @constructor newFrameOfReferenceSpecificToolStateManager
+ * @memberof CornerstoneTools.StateManagement
  *
  * @returns {Object} A frameOfReferenceSpecificToolStateManager instance.
  */
@@ -49,7 +50,6 @@ function newFrameOfReferenceSpecificToolStateManager () {
     }
 
     const toolData = frameOfReferenceToolState[toolType];
-
 
     return toolData;
   }

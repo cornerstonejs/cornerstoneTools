@@ -1,11 +1,15 @@
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
-import { getElementToolStateManager, setElementToolStateManager } from './toolState.js';
+import {
+  getElementToolStateManager,
+  setElementToolStateManager
+} from './toolState.js';
 
 /**
  * Implements an Stack specific tool state management strategy. This means
  * That tool data is shared between all imageIds in a given stack.
- * @export @public @constructor
- * @name newStackSpecificToolStateManager
+ * @public
+ * @constructor newStackSpecificToolStateManager
+ * @memberof CornerstoneTools.StateManagement
  *
  * @param  {string[]} toolTypes       The tool types to apply to the stack.
  * @param  {object} oldStateManager The imageIdSpecificStateManager.
@@ -27,7 +31,6 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
   function addStackSpecificToolState (element, toolType, data) {
     // If this is a tool type to apply to the stack, do so
     if (toolTypes.indexOf(toolType) >= 0) {
-
       // If we don't have tool state for this type of tool, add an empty object
       if (toolState.hasOwnProperty(toolType) === false) {
         toolState[toolType] = {
@@ -62,7 +65,6 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
 
     // Call the imageId specific tool state manager
     return oldStateManager.get(element, toolType);
-
   }
 
   const stackSpecificToolStateManager = {
@@ -72,7 +74,6 @@ function newStackSpecificToolStateManager (toolTypes, oldStateManager) {
     restoreToolState,
     toolState
   };
-
 
   return stackSpecificToolStateManager;
 }
