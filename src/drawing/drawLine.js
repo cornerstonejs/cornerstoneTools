@@ -1,10 +1,12 @@
+import path from './path.js';
+
 /**
  * Draw multiple lines.
  * @public
  * @method drawLines
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on
  * @param {Object[]} lines - `[{ start: {x, y}, end: { x, y }]` An array of `start`, `end` pairs.
  *     Each point is `{ x, y }` in either pixel or canvas coordinates.

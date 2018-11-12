@@ -6,7 +6,7 @@
  * @method draw
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target Canvas
  * @param {ContextFn} fn - A function which performs drawing operations within the given context.
  * @returns {undefined}
  */

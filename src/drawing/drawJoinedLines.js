@@ -1,10 +1,12 @@
+import path from './path.js';
+
 /**
  * Draw a series of joined lines, starting at `start` and then going to each point in `points`.
  * @public
  * @method drawJoinedLines
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on
  * @param {Object} start - `{ x, y }` in either pixel or canvas coordinates.
  * @param {Object[]} points - `[{ x, y }]` An array of points in either pixel or canvas coordinates.

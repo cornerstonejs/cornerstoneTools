@@ -1,10 +1,12 @@
+import path from './path.js';
+
 /**
  * Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
  * @public
  * @method drawEllipse
  * @memberof CornerstoneTools.Drawing
  *
- * @param {CanvasRenderingContext2D} context
+ * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on
  * @param {Object} corner1 - `{ x, y }` in either pixel or canvas coordinates.
  * @param {Object} corner2 - `{ x, y }` in either pixel or canvas coordinates.
