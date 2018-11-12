@@ -16,13 +16,13 @@ const { state, setters } = store.modules.brush;
  * @extends BaseTool
  */
 export default class BaseBrushTool extends BaseTool {
-  constructor ({
+  constructor({
     name,
     strategies,
     defaultStrategy,
     configuration,
     supportedInteractionTypes,
-    mixins
+    mixins,
   }) {
     super({
       name,
@@ -30,7 +30,7 @@ export default class BaseBrushTool extends BaseTool {
       defaultStrategy,
       configuration,
       supportedInteractionTypes,
-      mixins
+      mixins,
     });
 
     this.hasCursor = true;
@@ -50,7 +50,7 @@ export default class BaseBrushTool extends BaseTool {
    * @abstract
    * @param {Object} evt - The event.
    */
-  renderBrush (evt) {
+  renderBrush(evt) {
     throw new Error(`Method renderBrush not implemented for ${this.name}.`);
   }
 
@@ -61,7 +61,7 @@ export default class BaseBrushTool extends BaseTool {
    * @abstract
    * @param  {Object} eventData The data object associated with the event.
    */
-  _paint (eventData) {
+  _paint(eventData) {
     throw new Error(`Method _paint not implemented for ${this.name}.`);
   }
 
@@ -76,7 +76,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  mouseDragCallback (evt) {
+  mouseDragCallback(evt) {
     this._startPainting(evt);
   }
 
@@ -87,7 +87,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  preMouseDownCallback (evt) {
+  preMouseDownCallback(evt) {
     this._startPainting(evt);
 
     return true;
@@ -100,7 +100,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _startPainting (evt) {
+  _startPainting(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
 
@@ -117,7 +117,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  mouseMoveCallback (evt) {
+  mouseMoveCallback(evt) {
     const { currentPoints } = evt.detail;
 
     this._lastImageCoords = currentPoints.image;
@@ -130,7 +130,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  passiveCallback (evt) {
+  passiveCallback(evt) {
     external.cornerstone.updateImage(this.element);
   }
 
@@ -140,7 +140,7 @@ export default class BaseBrushTool extends BaseTool {
    * @override
    * @param {Object} evt - The event.
    */
-  renderToolData (evt) {
+  renderToolData(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
 
@@ -161,7 +161,7 @@ export default class BaseBrushTool extends BaseTool {
    * @protected
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
    */
-  _getBrushColor (drawId) {
+  _getBrushColor(drawId) {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
     const colorArray = colormap.getColor(drawId);
 
@@ -183,7 +183,7 @@ export default class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
-  _drawingMouseUpCallback (evt) {
+  _drawingMouseUpCallback(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
 
@@ -200,7 +200,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _startListeningForMouseUp (element) {
+  _startListeningForMouseUp(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
     element.removeEventListener(
       EVENTS.MOUSE_CLICK,
@@ -220,7 +220,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
    */
-  _stopListeningForMouseUp (element) {
+  _stopListeningForMouseUp(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
     element.removeEventListener(
       EVENTS.MOUSE_CLICK,
@@ -240,7 +240,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  nextSegmentation () {
+  nextSegmentation() {
     const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = state.drawColorId + 1;
@@ -258,7 +258,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  previousSegmentation () {
+  previousSegmentation() {
     const numberOfColors = this.constructor.getNumberOfColors();
 
     let drawId = state.drawColorId - 1;
@@ -276,7 +276,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  increaseBrushSize () {
+  increaseBrushSize() {
     const oldRadius = state.radius;
     let newRadius = Math.floor(oldRadius * 1.2);
 
@@ -295,7 +295,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  decreaseBrushSize () {
+  decreaseBrushSize() {
     const oldRadius = state.radius;
     const newRadius = Math.floor(oldRadius * 0.8);
 
@@ -310,7 +310,7 @@ export default class BaseBrushTool extends BaseTool {
    * @param  {String} enabledElement  The enabledElement on which to display.
    * @param  {Number} segIndex        The index of the segmentation.
    */
-  showSegmentationOnElement (segIndex) {
+  showSegmentationOnElement(segIndex) {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
@@ -326,7 +326,7 @@ export default class BaseBrushTool extends BaseTool {
    * @api
    * @param  {Number} segIndex        The index of the segmentation.
    */
-  hideSegmentationOnElement (segIndex) {
+  hideSegmentationOnElement(segIndex) {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
 
@@ -340,7 +340,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  showAllSegmentationsOnElement () {
+  showAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -359,7 +359,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @api
    */
-  hideAllSegmentationsOnElement () {
+  hideAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -380,35 +380,35 @@ export default class BaseBrushTool extends BaseTool {
    * @api
    * @returns {Number} The number of colors in the color map.
    */
-  static getNumberOfColors () {
+  static getNumberOfColors() {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     return colormap.getNumberOfColors();
   }
 
-  get alpha () {
+  get alpha() {
     state.alpha;
   }
 
-  set alpha (value) {
+  set alpha(value) {
     const enabledElement = this._getEnabledElement();
 
     state.alpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  get hiddenButActiveAlpha () {
+  get hiddenButActiveAlpha() {
     state.hiddenButActiveAlpha;
   }
 
-  set hiddenButActiveAlpha (value) {
+  set hiddenButActiveAlpha(value) {
     const enabledElement = this._getEnabledElement();
 
     state.hiddenButActiveAlpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  _getEnabledElement () {
+  _getEnabledElement() {
     return external.cornerstone.getEnabledElement(this.element);
   }
 
@@ -419,7 +419,7 @@ export default class BaseBrushTool extends BaseTool {
    * @public
    * @returns {String} The number of colors in the color map.
    */
-  static getReferencedToolDataName () {
+  static getReferencedToolDataName() {
     return 'brush';
   }
 }

@@ -762,6 +762,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    * Event handler for MOUSE_UP during handle drag event loop.
    *
+   * @private
    * @param {Object} evt - The event.
    */
   _editMouseUpCallback(evt) {
