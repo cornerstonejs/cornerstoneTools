@@ -16,7 +16,7 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export function drawEllipse (
+export default function (
   context,
   element,
   corner1,
