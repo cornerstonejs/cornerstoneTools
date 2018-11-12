@@ -16,7 +16,7 @@ import path from './path.js';
  *     is used to transform the points from pixel to canvas coordinates.
  * @returns {undefined}
  */
-export default function (
+export default function(
   context,
   element,
   start,
@@ -24,12 +24,12 @@ export default function (
   options,
   coordSystem = 'pixel'
 ) {
-  path(context, options, (context) => {
+  path(context, options, context => {
     if (coordSystem === 'pixel') {
       const cornerstone = external.cornerstone;
 
       start = cornerstone.pixelToCanvas(element, start);
-      points = points.map((p) => cornerstone.pixelToCanvas(element, p));
+      points = points.map(p => cornerstone.pixelToCanvas(element, p));
     }
     context.moveTo(start.x, start.y);
     points.forEach(({ x, y }) => {
