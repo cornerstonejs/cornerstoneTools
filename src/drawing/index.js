@@ -25,6 +25,7 @@ import drawEllipse from './drawEllipse.js';
 import drawHandles from './drawHandles.js';
 import drawJoinedLines from './drawJoinedLines.js';
 import drawLine from './drawLine.js';
+import drawLines from './drawLines.js';
 import drawLink from './drawLink.js';
 import drawLinkedTextBox from './drawLinkedTextBox.js';
 import drawRect from './drawRect.js';
@@ -45,6 +46,7 @@ export {
   drawHandles,
   drawJoinedLines,
   drawLine,
+  drawLines,
   drawLink,
   drawLinkedTextBox,
   drawRect,
@@ -54,5 +56,5 @@ export {
   fillTextLines,
   getNewContext,
   path,
-  setShadow
+  setShadow,
 };

@@ -1,6 +1,6 @@
-import BaseTool from './base/BaseTool.js';
-import BaseAnnotationTool from './base/BaseAnnotationTool.js';
-import BaseBrushTool from './base/BaseBrushTool.js';
+import BaseTool from './tools/base/BaseTool.js';
+import BaseAnnotationTool from './tools/base/BaseAnnotationTool.js';
+import BaseBrushTool from './tools/base/BaseBrushTool.js';
 
 import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
@@ -16,7 +16,7 @@ import {
   moveHandleNearImagePoint,
   findHandleDataNearImagePoint,
   moveAnnotationNearClick,
-  findAnnotationNearClick
+  findAnnotationNearClick,
 } from './util/findAndMoveHelpers.js';
 
 import mixins from './mixins/index.js';
@@ -34,7 +34,7 @@ import {
   drawRect,
   fillOutsideRect,
   fillBox,
-  fillTextLines
+  fillTextLines,
 } from './drawing/index.js';
 import drawTextBox, { textBoxWidth } from './drawing/drawTextBox.js';
 import drawArrow from './drawing/drawArrow.js';
@@ -52,7 +52,7 @@ import roundToDecimal from './util/roundToDecimal.js';
 import {
   projectPatientPointToImagePlane,
   imagePointToPatientPoint,
-  planePlaneIntersection
+  planePlaneIntersection,
 } from './util/pointProjector.js';
 import lineSegDistance from './util/lineSegDistance.js';
 
@@ -63,7 +63,7 @@ import {
   getDefaultSimultaneousRequests,
   getMaxSimultaneousRequests,
   getBrowserInfo,
-  isMobileDevice
+  isMobileDevice,
 } from './util/getMaxSimultaneousRequests.js';
 import angleBetweenPoints from './util/angleBetweenPoints.js';
 import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
@@ -146,5 +146,5 @@ export const lib = {
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
   'util/brushUtils': brushUtils,
-  'util/zoomUtils': zoomUtils
+  'util/zoomUtils': zoomUtils,
 };
