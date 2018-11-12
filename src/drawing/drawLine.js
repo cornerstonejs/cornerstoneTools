@@ -16,7 +16,7 @@ import path from './path.js';
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
  */
-export function drawLine(
+export default function drawLine(
   context,
   element,
   start,
