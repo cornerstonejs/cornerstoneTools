@@ -77,31 +77,12 @@ module.exports = {
     'import/no-unresolved': 'warn',
     'import/no-webpack-loader-syntax': 'warn',
     'key-spacing': 'warn',
-    //'keyword-spacing': [
-    // 'warn',
-    //{
-    //'after': true,
-    //'before': true
-    // }
-    //],
-    //'line-comment-position': 'warn',
     'linebreak-style': ['warn', 'unix'],
-    'lines-around-comment': 'warn',
+    // Conflicts with prettier's rules around condensing object properties
+    // We'll let prettier handle this one to prevent conflicts
+    // 'lines-around-comment': 'warn',
     'lines-around-directive': 'warn',
-    //'max-depth': 'warn',
-    // max-len': ['warn', {
-    // 'code': 100,
-    // 'tabWidth': 2,
-    // 'comments': 80,
-    // 'ignoreComments': false,
-    // ignoreTrailingComments: true,
-    // 'ignoreUrls': true,
-    // 'ignoreTemplateLiterals': false,
-    // 'ignoreRegExpLiterals': true
-    // }],
     'max-nested-callbacks': 'warn',
-    //'max-params': 'warn',
-    //'max-statements': 'warn',
     'max-statements-per-line': 'warn',
     'multiline-ternary': 'off',
     'new-cap': 'warn',

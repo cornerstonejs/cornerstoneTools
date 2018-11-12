@@ -11,7 +11,6 @@ const distanceThreshold = 10;
  * @classdesc Class that finds lines of freehand ROIs based on click proximity.
  */
 export default class FreehandLineFinder {
-
   /**
    * Creates an instance of FreehandLineFinder.
    * @param {*} eventData - Data object associated with the event.

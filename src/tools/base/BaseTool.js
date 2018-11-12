@@ -14,7 +14,6 @@ import mixins from './../../mixins/index.js';
  * @property {Array} supportedInteractionTypes
  */
 export default class BaseTool {
-
   /**
    *Creates an instance of BaseTool.
    * @param {*} [{

@@ -15,7 +15,6 @@ import toolColors from '../stateManagement/toolColors.js';
  * @extends BaseTool
  */
 export default class WwwcRegionTool extends BaseTool {
-
   /** @inheritdoc */
   constructor(configuration = {}) {
     const defaultConfig = {

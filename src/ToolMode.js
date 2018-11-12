@@ -6,7 +6,6 @@
  *  @readonly
  */
 const ToolMode = {
-
   /**
    *  Active tools will render and respond to user input. Active tools are able to create new annotations and/or measurements.
    *  @type {String}

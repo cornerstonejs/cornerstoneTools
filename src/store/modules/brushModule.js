@@ -15,7 +15,6 @@ const state = {
 };
 
 const setters = {
-
   /**
    * Sets the brush radius, account for global min/max radius
    *
