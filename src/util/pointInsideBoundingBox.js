@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
 
-
 /**
  * Returns true if a point is enclosed within a bounding box.
  * @export @public @method
@@ -10,7 +9,7 @@ import external from '../externalModules.js';
  * @param  {object} coords The coordinate to check.
  * @returns {boolean} True if the point is enclosed within the bounding box.
  */
-export default function (handle, coords) {
+export default function(handle, coords) {
   if (!handle.boundingBox) {
     return;
   }

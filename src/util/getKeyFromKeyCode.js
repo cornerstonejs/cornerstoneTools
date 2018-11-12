@@ -7,7 +7,7 @@
  * @param  {number} keyCode The keycode to look up.
  * @returns {string} The corresponding character.
  */
-export default function (keyCode) {
+export default function(keyCode) {
   return KEY_CODES[keyCode];
 }
 
@@ -93,5 +93,5 @@ const KEY_CODES = {
   186: ';',
   188: ',',
   190: '.',
-  199: '/'
+  199: '/',
 };

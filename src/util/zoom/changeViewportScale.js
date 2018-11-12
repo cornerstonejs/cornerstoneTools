@@ -8,8 +8,8 @@
  * @param {object} scaleLimits The limits in scale.
  * @returns {object} The scaled viewport.
  */
-export default function (viewport, ticks, scaleLimits) {
-  const {maxScale, minScale} = scaleLimits;
+export default function(viewport, ticks, scaleLimits) {
+  const { maxScale, minScale } = scaleLimits;
   const pow = 1.7;
   const oldFactor = Math.log(viewport.scale) / Math.log(pow);
   const factor = oldFactor + ticks;

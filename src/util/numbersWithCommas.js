@@ -7,7 +7,7 @@
  * @param  {number} x The number to convert.
  * @returns {string}   The pretty-printed number as a string.
  */
-export default function (x) {
+export default function(x) {
   const parts = x.toString().split('.');
 
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');

@@ -7,8 +7,8 @@
  * @param  {object} viewportOrientation  Object containing information on the viewport orientation.
  * @returns {object}            The corrected shift.
  */
-export default function (shift, viewportOrientation) {
-  const {hflip, vflip, rotation} = viewportOrientation;
+export default function(shift, viewportOrientation) {
+  const { hflip, vflip, rotation } = viewportOrientation;
 
   // Apply Flips
   shift.x *= hflip ? -1 : 1;
