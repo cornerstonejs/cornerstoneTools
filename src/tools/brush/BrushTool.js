@@ -1,10 +1,7 @@
 import external from './../../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-// State
 import { getToolState } from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
-
-// Brush Utils
 import brushUtils from './../../util/brush/index.js';
 
 const { drawBrushPixels, getCircle } = brushUtils;
@@ -13,7 +10,7 @@ const { state } = store.modules.brush;
 /**
  * @public
  * @class BrushTool
- * @memberof #Tools.Brush
+ * @memberof Tools.Brush
  * @classdesc Tool for drawing segmentations on an image.
  * @extends BaseBrushTool
  */

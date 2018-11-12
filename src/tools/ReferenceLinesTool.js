@@ -1,6 +1,6 @@
 /* eslint class-methods-use-this: 0 */
 import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 import { getNewContext } from '../drawing/index.js';
 import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';

@@ -6,7 +6,7 @@ import { state } from '../store/index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 import freehandUtils from '../util/freehand/index.js';
 

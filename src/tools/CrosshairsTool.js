@@ -1,5 +1,5 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import external from './../externalModules.js';
 
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';

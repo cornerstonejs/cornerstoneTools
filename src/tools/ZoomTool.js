@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
 

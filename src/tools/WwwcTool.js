@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 /**
  * @export @public @class

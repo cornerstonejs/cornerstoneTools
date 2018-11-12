@@ -1,12 +1,17 @@
 import external from '../externalModules.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import getRGBPixels from '../util/getRGBPixels.js';
 import calculateSUV from '../util/calculateSUV.js';
-import { getNewContext, draw, setShadow, drawCircle } from '../drawing/index.js';
-import drawTextBox, {textBoxWidth} from '../drawing/drawTextBox.js';
+import {
+  getNewContext,
+  draw,
+  setShadow,
+  drawCircle
+} from '../drawing/index.js';
+import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
 
 /**
  * @export @public @class
@@ -18,7 +23,7 @@ import drawTextBox, {textBoxWidth} from '../drawing/drawTextBox.js';
 export default class DragProbeTool extends BaseTool {
   constructor (configuration = {}) {
     const defaultConfig = {
-      name: "DragProbe",
+      name: 'DragProbe',
       strategies: {
         default: defaultStrategy,
         minimal: minimalStrategy
