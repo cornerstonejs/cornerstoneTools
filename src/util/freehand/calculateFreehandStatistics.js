@@ -69,14 +69,13 @@ function getSum (sp, boundingBox, dataHandles) {
 /**
  * Adds the pixel to the workingSum if it is within the polygon.
  * @private
- * @method
- * @name sumPointIfInFreehand
+ * @method sumPointIfInFreehand
  *
  * @param {object} dataHandles Data object associated with the tool.
  * @param {object} point The pixel coordinates.
  * @param {object} workingSum The working sum, squared sum and pixel count.
- * @param {object} pixelValue The pixel value.
- * @modifies {workingSum}
+ * @param {object} pixelValue The pixel value. // @modifies {workingSum}
+ * @returns {undefined}
  */
 function sumPointIfInFreehand (dataHandles, point, workingSum, pixelValue) {
   if (pointInFreehand(dataHandles, point)) {

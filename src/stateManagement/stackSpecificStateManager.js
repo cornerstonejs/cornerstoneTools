@@ -87,7 +87,16 @@ function addStackStateManager (element, otherTools) {
     oldStateManager = globalImageIdSpecificToolStateManager;
   }
 
-  let stackTools = ['stack', 'stackPrefetch', 'playClip', 'volume', 'slab', 'referenceLines', 'crosshairs', 'stackRenderer'];
+  let stackTools = [
+    'stack',
+    'stackPrefetch',
+    'playClip',
+    'volume',
+    'slab',
+    'referenceLines',
+    'crosshairs',
+    'stackRenderer'
+  ];
 
   if (otherTools) {
     stackTools = stackTools.concat(otherTools);
