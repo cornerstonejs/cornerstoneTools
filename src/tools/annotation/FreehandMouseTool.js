@@ -783,6 +783,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Places a handle of the freehand tool if the new location is valid.
    * If the new location is invalid the handle snaps back to its previous position.
    *
+   * @private
    * @param {Object} eventData - Data object associated with the event.
    * @param {Object} toolState - The data associated with the freehand tool.
    * @modifies {toolState}

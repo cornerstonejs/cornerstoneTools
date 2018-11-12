@@ -99,21 +99,37 @@ export default class MagnifyTool extends BaseTool {
     );
 
     // Shrink magnifier to smallest canvas dimension if smaller than desired magnifier size
-    const magnifySize = Math.min(this.configuration.magnifySize, canvas.width, canvas.height);
+    const magnifySize = Math.min(
+      this.configuration.magnifySize,
+      canvas.width,
+      canvas.height
+    );
     const magnificationLevel = this.configuration.magnificationLevel;
 
     magnifyCanvas.width = magnifySize;
     magnifyCanvas.height = magnifySize;
 
     // Constrain drag movement to zoomed image boundaries
-    canvasLocation.x = Math.max(canvasLocation.x, 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.x = Math.min(canvasLocation.x, canvas.width - 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.y = Math.max(canvasLocation.y, 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.y = Math.min(canvasLocation.y, canvas.height - 0.5 * magnifySize / magnificationLevel);
+    canvasLocation.x = Math.max(
+      canvasLocation.x,
+      (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.x = Math.min(
+      canvasLocation.x,
+      canvas.width - (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.y = Math.max(
+      canvasLocation.y,
+      (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.y = Math.min(
+      canvasLocation.y,
+      canvas.height - (0.5 * magnifySize) / magnificationLevel
+    );
 
     const copyFrom = {
       x: canvasLocation.x * magnificationLevel - 0.5 * magnifySize,
-      y: canvasLocation.y * magnificationLevel - 0.5 * magnifySize
+      y: canvasLocation.y * magnificationLevel - 0.5 * magnifySize,
     };
 
     copyFrom.x = Math.max(copyFrom.x, 0);
@@ -135,15 +151,21 @@ export default class MagnifyTool extends BaseTool {
     const touchOffset = evt.detail.isTouchEvent ? 120 : 0;
     const magnifyPosition = {
       top: Math.max(canvasLocation.y - 0.5 * magnifySize - touchOffset, 0),
-      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0)
+      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0),
     };
 
     // Get full magnifier dimensions with borders
     const magnifierBox = magnifyCanvas.getBoundingClientRect();
 
     // Constrain magnifier to canvas boundaries
-    magnifyPosition.top = Math.min(magnifyPosition.top, canvas.height - magnifierBox.height);
-    magnifyPosition.left = Math.min(magnifyPosition.left, canvas.width - magnifierBox.width);
+    magnifyPosition.top = Math.min(
+      magnifyPosition.top,
+      canvas.height - magnifierBox.height
+    );
+    magnifyPosition.left = Math.min(
+      magnifyPosition.left,
+      canvas.width - magnifierBox.width
+    );
     magnifyCanvas.style.top = `${magnifyPosition.top}px`;
     magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
@@ -156,6 +178,7 @@ export default class MagnifyTool extends BaseTool {
    * Creates a cornerstone enabled element, and renders the target image at the
    * desired magnification level using it.
    *
+   * @private
    * @param {*} evt
    */
   _drawZoomedElement(evt) {
@@ -176,7 +199,9 @@ export default class MagnifyTool extends BaseTool {
     this.zoomElement.height = origCanvas.height * magnificationLevel;
     external.cornerstone.enable(this.zoomElement);
 
-    const zoomEnabledElement = external.cornerstone.getEnabledElement(this.zoomElement);
+    const zoomEnabledElement = external.cornerstone.getEnabledElement(
+      this.zoomElement
+    );
     const viewport = external.cornerstone.getViewport(enabledElement.element);
 
     this.zoomCanvas = zoomEnabledElement.canvas;
