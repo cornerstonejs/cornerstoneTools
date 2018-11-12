@@ -6,7 +6,7 @@ module.exports = {
     mocha: true,
     jest: true,
   },
-  extends: 'eslint:recommended',
+  extends: ['plugin:prettier/recommended', 'eslint:recommended'],
   plugins: ['import'],
   parserOptions: {
     sourceType: 'module',
