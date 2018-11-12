@@ -1,12 +1,12 @@
 /**
-* Orientation algoritm to determine if two lines cross.
-* Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
-*/
+ * Orientation algoritm to determine if two lines cross.
+ * Credit and details: geeksforgeeks.org/check-if-two-given-line-segments-intersect/
+ */
 
 /**
  * Determines whether a new handle causes an intersection of the lines of the polygon.
- * @export @public @method
- * @name newHandle
+ * @public
+ * @function newHandle
  *
  * @param {object} candidateHandle The new handle to check.
  * @param {object} dataHandles data object associated with the tool.
@@ -23,8 +23,8 @@ function newHandle (candidateHandle, dataHandles) {
 
 /**
  * Checks if the last line of a polygon will intersect the other lines of the polgyon.
- * @export @public @method
- * @name end
+ * @public
+ * @function end
  *
  * @param {object} dataHandles data object associated with the tool.
  * @returns {boolean} Whether the last line intersects with any other lines of the polygon.
@@ -39,8 +39,8 @@ function end (dataHandles) {
 
 /**
  * Checks whether the modification of a handle's position causes intersection of the lines of the polygon.
- * @export @public @method
- * @name modify
+ * @public
+ * @method modify
  *
  * @param {object} dataHandles Data object associated with the tool.
  * @param {number} modifiedHandleId The id of the handle being modified.
@@ -78,8 +78,7 @@ function modify (dataHandles, modifiedHandleId) {
 /**
  * Checks whether the line (p1,q1) intersects any of the other lines in the polygon.
  * @private
- * @method
- * @name doesIntersectOtherLines
+ * @function doesIntersectOtherLines
  *
  * @param {object} dataHandles Data object associated with the tool.
  * @param {object} p1 Coordinates of the start of the line.
@@ -108,19 +107,17 @@ function doesIntersectOtherLines (dataHandles, p1, q1, ignoredHandleIds) {
   }
 
   return false;
-
 }
 
 /**
  * Checks whether the line (p1,q1) intersects the line (p2,q2) via an orientation algorithm.
  * @private
- * @method
- * @name doesIntersect
+ * @function doesIntersect
  *
  * @param {object} p1 Coordinates of the start of the line 1.
  * @param {object} q1 Coordinates of the end of the line 1.
- * @param {object} p1 Coordinates of the start of the line 2.
- * @param {object} q1 Coordinates of the end of the line 2.
+ * @param {object} p2 Coordinates of the start of the line 2.
+ * @param {object} q2 Coordinates of the end of the line 2.
  * @returns {boolean} Whether lines (p1,q1) and (p2,q2) intersect.
  */
 function doesIntersect (p1, q1, p2, q2) {
@@ -155,8 +152,7 @@ function doesIntersect (p1, q1, p2, q2) {
 /**
  * Returns an object with two properties, x and y, from a heavier FreehandHandleData object.
  * @private
- * @method
- * @name getCoords
+ * @function getCoords
  *
  * @param {object} dataHandle Data object associated with a single handle in the freehand tool.
  * @returns {object} An object containing position propeties x and y.
@@ -171,8 +167,7 @@ function getCoords (dataHandle) {
 /**
  * Checks the orientation of 3 points.
  * @private
- * @method
- * @name orientation
+ * @function orientation
  *
  * @param {object} p First point.
  * @param {object} q Second point.
@@ -192,8 +187,7 @@ function orientation (p, q, r) {
 /**
  * Checks if point q lines on the segment (p,r).
  * @private
- * @method
- * @name onSegment
+ * @function onSegment
  *
  * @param {object} p Point p.
  * @param {object} q Point q.

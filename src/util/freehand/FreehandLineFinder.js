@@ -6,20 +6,16 @@ const toolType = 'FreehandMouse';
 const distanceThreshold = 10;
 
 /**
- * @export
  * @public
- * @class
- * @name FreehandLineFinder
+ * @class FreehandLineFinder
  * @classdesc Class that finds lines of freehand ROIs based on click proximity.
  */
 export default class FreehandLineFinder {
 
   /**
-   * Constructs a linefinder with the eventdata
-   *
-   * @public
-   * @method
-   * @param {Object} eventData - Data object associated with the event.
+   * Creates an instance of FreehandLineFinder.
+   * @param {*} eventData - Data object associated with the event.
+   * @memberof FreehandLineFinder
    */
   constructor (eventData) {
     this._eventData = eventData;
