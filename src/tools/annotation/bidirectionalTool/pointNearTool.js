@@ -1,6 +1,12 @@
-const pointNearPerpendicular = (element, handles, coords, distanceThreshold) => {
 import external from './../../../externalModules.js';
 import pointInsideBoundingBox from './../../../util/pointInsideBoundingBox.js';
+
+const pointNearPerpendicular = (
+  element,
+  handles,
+  coords,
+  distanceThreshold
+) => {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const lineSegment = {
