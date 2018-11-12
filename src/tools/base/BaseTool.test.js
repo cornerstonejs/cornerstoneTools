@@ -1,6 +1,6 @@
 import BaseTool from './BaseTool.js';
 
-jest.mock('./../externalModules.js', () => ({
+jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     colors: {
       getColormap: jest.fn().mockImplementation(() => {
