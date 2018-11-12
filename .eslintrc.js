@@ -6,7 +6,7 @@ module.exports = {
     mocha: true,
     jest: true,
   },
-  extends: ['plugin:prettier/recommended', 'eslint:recommended'],
+  extends: ['eslint:recommended', 'plugin:prettier/recommended'],
   plugins: ['import'],
   parserOptions: {
     sourceType: 'module',
@@ -63,7 +63,9 @@ module.exports = {
     'id-blacklist': 'warn',
     'id-length': 'off',
     'id-match': 'warn',
-    indent: ['warn', 2],
+    // Prettier has more nuanced rules for indent depending on the scenario.
+    // Remove this rule allows it to apply those nuances without conflict
+    // indent: ['warn', 2],
     //'init-declarations': 'warn',
     'import/default': 'warn',
     'import/export': 'warn',

@@ -29,9 +29,9 @@ export default function(
   const start =
     linkAnchorPoints.length > 0
       ? external.cornerstoneMath.point.findClosestPoint(
-        linkAnchorPoints,
-        refPoint
-      )
+          linkAnchorPoints,
+          refPoint
+        )
       : refPoint;
 
   // Calculate the midpoints of the bounding box

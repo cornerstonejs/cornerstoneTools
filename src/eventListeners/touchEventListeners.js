@@ -48,214 +48,29 @@ function onTouch(e) {
   }
 
   switch (e.type) {
-  case 'tap':
-    isPress = false;
-    clearTimeout(pressTimeout);
+    case 'tap':
+      isPress = false;
+      clearTimeout(pressTimeout);
 
-    // Calculate our current points in page and image coordinates
-    currentPoints = {
-      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: external.cornerstone.pageToPixel(
-        element,
-        e.pointers[0].pageX,
-        e.pointers[0].pageY
-      ),
-      client: {
-        x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY,
-      },
-    };
-    currentPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      currentPoints.image
-    );
-
-    eventType = EVENTS.TAP;
-    eventData = {
-      event: e,
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      currentPoints,
-      type: eventType,
-      isTouchEvent: true,
-    };
-
-    triggerEvent(element, eventType, eventData);
-    break;
-
-  case 'doubletap':
-    isPress = false;
-    clearTimeout(pressTimeout);
-
-    // Calculate our current points in page and image coordinates
-    currentPoints = {
-      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: external.cornerstone.pageToPixel(
-        element,
-        e.pointers[0].pageX,
-        e.pointers[0].pageY
-      ),
-      client: {
-        x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY,
-      },
-    };
-    currentPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      currentPoints.image
-    );
-
-    eventType = EVENTS.DOUBLE_TAP;
-    eventData = {
-      event: e,
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      currentPoints,
-      type: eventType,
-      isTouchEvent: true,
-    };
-
-    triggerEvent(element, eventType, eventData);
-    break;
-
-  case 'pinchstart':
-    isPress = false;
-    clearTimeout(pressTimeout);
-
-    lastScale = 1.0;
-    break;
-
-  case 'pinchmove':
-    isPress = false;
-    clearTimeout(pressTimeout);
-
-    if (preventNextPinch === true) {
-      lastScale = e.scale;
-      preventNextPinch = false;
-      break;
-    }
-
-    scaleChange = (e.scale - lastScale) / lastScale;
-
-    startPoints = {
-      page: e.center,
-      image: external.cornerstone.pageToPixel(
-        element,
-        e.center.x,
-        e.center.y
-      ),
-    };
-    startPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      startPoints.image
-    );
-
-    eventType = EVENTS.TOUCH_PINCH;
-    eventData = {
-      event: e,
-      startPoints,
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      direction: e.scale < 1 ? 1 : -1,
-      scaleChange,
-      type: eventType,
-      isTouchEvent: true,
-    };
-
-    triggerEvent(element, eventType, eventData);
-
-    lastScale = e.scale;
-    break;
-
-  case 'touchstart':
-    lastScale = 1.0;
-
-    clearTimeout(pressTimeout);
-
-    clearTimeout(touchStartDelay);
-    touchStartDelay = setTimeout(function() {
-      startPoints = {
-        page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
-        image: external.cornerstone.pageToPixel(
-          element,
-          e.touches[0].pageX,
-          e.touches[0].pageY
-        ),
-        client: {
-          x: e.touches[0].clientX,
-          y: e.touches[0].clientY,
-        },
-      };
-      startPoints.canvas = external.cornerstone.pixelToCanvas(
-        element,
-        startPoints.image
-      );
-
-      eventType = EVENTS.TOUCH_START;
-      if (e.touches.length > 1) {
-        eventType = EVENTS.MULTI_TOUCH_START;
-      }
-
-      eventData = {
-        event: e,
-        viewport: external.cornerstone.getViewport(element),
-        image: enabledElement.image,
-        element,
-        startPoints,
-        currentPoints: startPoints,
-        type: eventType,
-        isTouchEvent: true,
-      };
-
-      const eventPropagated = triggerEvent(element, eventType, eventData);
-
-      if (eventPropagated === true) {
-        // IsPress = false;
-        // ClearTimeout(pressTimeout);
-
-        // No current tools responded to the drag action.
-        // Create new tool measurement
-        eventType = EVENTS.TOUCH_START_ACTIVE;
-        if (e.touches.length > 1) {
-          eventType = EVENTS.MULTI_TOUCH_START_ACTIVE;
-        }
-
-        eventData.type = eventType;
-        triggerEvent(element, eventType, eventData);
-      }
-
-      // Console.log(eventType);
-      lastPoints = copyPoints(startPoints);
-    }, 50);
-
-    isPress = true;
-    pageDistanceMoved = 0;
-    pressTimeout = setTimeout(function() {
-      if (!isPress) {
-        return;
-      }
-
+      // Calculate our current points in page and image coordinates
       currentPoints = {
-        page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
+        page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
         image: external.cornerstone.pageToPixel(
           element,
-          e.touches[0].pageX,
-          e.touches[0].pageY
+          e.pointers[0].pageX,
+          e.pointers[0].pageY
         ),
         client: {
-          x: e.touches[0].clientX,
-          y: e.touches[0].clientY,
+          x: e.pointers[0].clientX,
+          y: e.pointers[0].clientY,
         },
       };
       currentPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
-        startPoints.image
+        currentPoints.image
       );
 
-      eventType = EVENTS.TOUCH_PRESS;
+      eventType = EVENTS.TAP;
       eventData = {
         event: e,
         viewport: external.cornerstone.getViewport(element),
@@ -267,257 +82,442 @@ function onTouch(e) {
       };
 
       triggerEvent(element, eventType, eventData);
+      break;
 
-      // Console.log(eventType);
-    }, pressDelay);
-    break;
+    case 'doubletap':
+      isPress = false;
+      clearTimeout(pressTimeout);
 
-  case 'touchend':
-    lastScale = 1.0;
-
-    isPress = false;
-    clearTimeout(pressTimeout);
-
-    setTimeout(function() {
-      startPoints = {
-        page: external.cornerstoneMath.point.pageToPoint(e.changedTouches[0]),
+      // Calculate our current points in page and image coordinates
+      currentPoints = {
+        page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
         image: external.cornerstone.pageToPixel(
           element,
-          e.changedTouches[0].pageX,
-          e.changedTouches[0].pageY
+          e.pointers[0].pageX,
+          e.pointers[0].pageY
         ),
         client: {
-          x: e.changedTouches[0].clientX,
-          y: e.changedTouches[0].clientY,
+          x: e.pointers[0].clientX,
+          y: e.pointers[0].clientY,
         },
+      };
+      currentPoints.canvas = external.cornerstone.pixelToCanvas(
+        element,
+        currentPoints.image
+      );
+
+      eventType = EVENTS.DOUBLE_TAP;
+      eventData = {
+        event: e,
+        viewport: external.cornerstone.getViewport(element),
+        image: enabledElement.image,
+        element,
+        currentPoints,
+        type: eventType,
+        isTouchEvent: true,
+      };
+
+      triggerEvent(element, eventType, eventData);
+      break;
+
+    case 'pinchstart':
+      isPress = false;
+      clearTimeout(pressTimeout);
+
+      lastScale = 1.0;
+      break;
+
+    case 'pinchmove':
+      isPress = false;
+      clearTimeout(pressTimeout);
+
+      if (preventNextPinch === true) {
+        lastScale = e.scale;
+        preventNextPinch = false;
+        break;
+      }
+
+      scaleChange = (e.scale - lastScale) / lastScale;
+
+      startPoints = {
+        page: e.center,
+        image: external.cornerstone.pageToPixel(
+          element,
+          e.center.x,
+          e.center.y
+        ),
       };
       startPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
         startPoints.image
       );
 
-      eventType = EVENTS.TOUCH_END;
-
+      eventType = EVENTS.TOUCH_PINCH;
       eventData = {
         event: e,
+        startPoints,
         viewport: external.cornerstone.getViewport(element),
         image: enabledElement.image,
         element,
-        startPoints,
-        currentPoints: startPoints,
+        direction: e.scale < 1 ? 1 : -1,
+        scaleChange,
         type: eventType,
         isTouchEvent: true,
       };
 
       triggerEvent(element, eventType, eventData);
-    }, 50);
-    break;
 
-  case 'panmove':
-    // Using the delta-value of HammerJS, because it takes all pointers into account
-    // This is very important when using panning in combination with pinch-zooming
-    // But HammerJS' delta is relative to the start of the pan event
-    // So it needs to be converted to a per-event-delta for CornerstoneTools
-    delta = {
-      x: e.deltaX - lastDelta.x,
-      y: e.deltaY - lastDelta.y,
-    };
+      lastScale = e.scale;
+      break;
 
-    lastDelta = {
-      x: e.deltaX,
-      y: e.deltaY,
-    };
+    case 'touchstart':
+      lastScale = 1.0;
 
-    // Calculate our current points in page and image coordinates
-    currentPoints = {
-      page: {
-        x: lastPoints.page.x + delta.x,
-        y: lastPoints.page.y + delta.y,
-      },
-      image: external.cornerstone.pageToPixel(
-        element,
-        lastPoints.page.x + delta.x,
-        lastPoints.page.y + delta.y
-      ),
-      client: {
-        x: lastPoints.client.x + delta.x,
-        y: lastPoints.client.y + delta.y,
-      },
-    };
-    currentPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      currentPoints.image
-    );
+      clearTimeout(pressTimeout);
 
-    // Calculate delta values in page and image coordinates
-    deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(
-        currentPoints.page,
-        lastPoints.page
-      ),
-      image: external.cornerstoneMath.point.subtract(
-        currentPoints.image,
-        lastPoints.image
-      ),
-      client: external.cornerstoneMath.point.subtract(
-        currentPoints.client,
-        lastPoints.client
-      ),
-      canvas: external.cornerstoneMath.point.subtract(
-        currentPoints.canvas,
-        lastPoints.canvas
-      ),
-    };
+      clearTimeout(touchStartDelay);
+      touchStartDelay = setTimeout(function() {
+        startPoints = {
+          page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
+          image: external.cornerstone.pageToPixel(
+            element,
+            e.touches[0].pageX,
+            e.touches[0].pageY
+          ),
+          client: {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          },
+        };
+        startPoints.canvas = external.cornerstone.pixelToCanvas(
+          element,
+          startPoints.image
+        );
 
-    pageDistanceMoved += Math.sqrt(
-      deltaPoints.page.x * deltaPoints.page.x +
-          deltaPoints.page.y * deltaPoints.page.y
-    );
-    // Console.log("pageDistanceMoved: " + pageDistanceMoved);
-    if (pageDistanceMoved > pressMaxDistance) {
-      // Console.log('Press event aborted due to movement');
+        eventType = EVENTS.TOUCH_START;
+        if (e.touches.length > 1) {
+          eventType = EVENTS.MULTI_TOUCH_START;
+        }
+
+        eventData = {
+          event: e,
+          viewport: external.cornerstone.getViewport(element),
+          image: enabledElement.image,
+          element,
+          startPoints,
+          currentPoints: startPoints,
+          type: eventType,
+          isTouchEvent: true,
+        };
+
+        const eventPropagated = triggerEvent(element, eventType, eventData);
+
+        if (eventPropagated === true) {
+          // IsPress = false;
+          // ClearTimeout(pressTimeout);
+
+          // No current tools responded to the drag action.
+          // Create new tool measurement
+          eventType = EVENTS.TOUCH_START_ACTIVE;
+          if (e.touches.length > 1) {
+            eventType = EVENTS.MULTI_TOUCH_START_ACTIVE;
+          }
+
+          eventData.type = eventType;
+          triggerEvent(element, eventType, eventData);
+        }
+
+        // Console.log(eventType);
+        lastPoints = copyPoints(startPoints);
+      }, 50);
+
+      isPress = true;
+      pageDistanceMoved = 0;
+      pressTimeout = setTimeout(function() {
+        if (!isPress) {
+          return;
+        }
+
+        currentPoints = {
+          page: external.cornerstoneMath.point.pageToPoint(e.touches[0]),
+          image: external.cornerstone.pageToPixel(
+            element,
+            e.touches[0].pageX,
+            e.touches[0].pageY
+          ),
+          client: {
+            x: e.touches[0].clientX,
+            y: e.touches[0].clientY,
+          },
+        };
+        currentPoints.canvas = external.cornerstone.pixelToCanvas(
+          element,
+          startPoints.image
+        );
+
+        eventType = EVENTS.TOUCH_PRESS;
+        eventData = {
+          event: e,
+          viewport: external.cornerstone.getViewport(element),
+          image: enabledElement.image,
+          element,
+          currentPoints,
+          type: eventType,
+          isTouchEvent: true,
+        };
+
+        triggerEvent(element, eventType, eventData);
+
+        // Console.log(eventType);
+      }, pressDelay);
+      break;
+
+    case 'touchend':
+      lastScale = 1.0;
+
       isPress = false;
       clearTimeout(pressTimeout);
-    }
 
-    eventType = EVENTS.TOUCH_DRAG;
-    if (e.pointers.length > 1) {
-      eventType = EVENTS.MULTI_TOUCH_DRAG;
-    }
+      setTimeout(function() {
+        startPoints = {
+          page: external.cornerstoneMath.point.pageToPoint(e.changedTouches[0]),
+          image: external.cornerstone.pageToPixel(
+            element,
+            e.changedTouches[0].pageX,
+            e.changedTouches[0].pageY
+          ),
+          client: {
+            x: e.changedTouches[0].clientX,
+            y: e.changedTouches[0].clientY,
+          },
+        };
+        startPoints.canvas = external.cornerstone.pixelToCanvas(
+          element,
+          startPoints.image
+        );
 
-    eventData = {
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      startPoints,
-      lastPoints,
-      currentPoints,
-      deltaPoints,
-      numPointers: e.pointers.length,
-      type: eventType,
-      isTouchEvent: true,
-    };
+        eventType = EVENTS.TOUCH_END;
 
-    triggerEvent(element, eventType, eventData);
+        eventData = {
+          event: e,
+          viewport: external.cornerstone.getViewport(element),
+          image: enabledElement.image,
+          element,
+          startPoints,
+          currentPoints: startPoints,
+          type: eventType,
+          isTouchEvent: true,
+        };
 
-    lastPoints = copyPoints(currentPoints);
-    break;
+        triggerEvent(element, eventType, eventData);
+      }, 50);
+      break;
 
-  case 'panstart':
-    lastDelta = {
-      x: e.deltaX,
-      y: e.deltaY,
-    };
+    case 'panmove':
+      // Using the delta-value of HammerJS, because it takes all pointers into account
+      // This is very important when using panning in combination with pinch-zooming
+      // But HammerJS' delta is relative to the start of the pan event
+      // So it needs to be converted to a per-event-delta for CornerstoneTools
+      delta = {
+        x: e.deltaX - lastDelta.x,
+        y: e.deltaY - lastDelta.y,
+      };
 
-    currentPoints = {
-      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: external.cornerstone.pageToPixel(
+      lastDelta = {
+        x: e.deltaX,
+        y: e.deltaY,
+      };
+
+      // Calculate our current points in page and image coordinates
+      currentPoints = {
+        page: {
+          x: lastPoints.page.x + delta.x,
+          y: lastPoints.page.y + delta.y,
+        },
+        image: external.cornerstone.pageToPixel(
+          element,
+          lastPoints.page.x + delta.x,
+          lastPoints.page.y + delta.y
+        ),
+        client: {
+          x: lastPoints.client.x + delta.x,
+          y: lastPoints.client.y + delta.y,
+        },
+      };
+      currentPoints.canvas = external.cornerstone.pixelToCanvas(
         element,
-        e.pointers[0].pageX,
-        e.pointers[0].pageY
-      ),
-      client: {
-        x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY,
-      },
-    };
-    currentPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      currentPoints.image
-    );
-    lastPoints = copyPoints(currentPoints);
-    break;
+        currentPoints.image
+      );
 
-  case 'panend':
-    isPress = false;
-    clearTimeout(pressTimeout);
+      // Calculate delta values in page and image coordinates
+      deltaPoints = {
+        page: external.cornerstoneMath.point.subtract(
+          currentPoints.page,
+          lastPoints.page
+        ),
+        image: external.cornerstoneMath.point.subtract(
+          currentPoints.image,
+          lastPoints.image
+        ),
+        client: external.cornerstoneMath.point.subtract(
+          currentPoints.client,
+          lastPoints.client
+        ),
+        canvas: external.cornerstoneMath.point.subtract(
+          currentPoints.canvas,
+          lastPoints.canvas
+        ),
+      };
 
-    // If lastPoints is not yet set, it means panend fired without panstart or pan,
-    // So we can ignore this event
-    if (!lastPoints) {
-      return false;
-    }
+      pageDistanceMoved += Math.sqrt(
+        deltaPoints.page.x * deltaPoints.page.x +
+          deltaPoints.page.y * deltaPoints.page.y
+      );
+      // Console.log("pageDistanceMoved: " + pageDistanceMoved);
+      if (pageDistanceMoved > pressMaxDistance) {
+        // Console.log('Press event aborted due to movement');
+        isPress = false;
+        clearTimeout(pressTimeout);
+      }
 
-    currentPoints = {
-      page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
-      image: external.cornerstone.pageToPixel(
+      eventType = EVENTS.TOUCH_DRAG;
+      if (e.pointers.length > 1) {
+        eventType = EVENTS.MULTI_TOUCH_DRAG;
+      }
+
+      eventData = {
+        viewport: external.cornerstone.getViewport(element),
+        image: enabledElement.image,
         element,
-        e.pointers[0].pageX,
-        e.pointers[0].pageY
-      ),
-      client: {
-        x: e.pointers[0].clientX,
-        y: e.pointers[0].clientY,
-      },
-    };
-    currentPoints.canvas = external.cornerstone.pixelToCanvas(
-      element,
-      currentPoints.image
-    );
+        startPoints,
+        lastPoints,
+        currentPoints,
+        deltaPoints,
+        numPointers: e.pointers.length,
+        type: eventType,
+        isTouchEvent: true,
+      };
 
-    // Calculate delta values in page and image coordinates
-    deltaPoints = {
-      page: external.cornerstoneMath.point.subtract(
-        currentPoints.page,
-        lastPoints.page
-      ),
-      image: external.cornerstoneMath.point.subtract(
-        currentPoints.image,
-        lastPoints.image
-      ),
-      client: external.cornerstoneMath.point.subtract(
-        currentPoints.client,
-        lastPoints.client
-      ),
-      canvas: external.cornerstoneMath.point.subtract(
-        currentPoints.canvas,
-        lastPoints.canvas
-      ),
-    };
+      triggerEvent(element, eventType, eventData);
 
-    eventType = EVENTS.TOUCH_DRAG_END;
+      lastPoints = copyPoints(currentPoints);
+      break;
 
-    eventData = {
-      event: e.srcEvent,
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      startPoints,
-      lastPoints,
-      currentPoints,
-      deltaPoints,
-      type: eventType,
-      isTouchEvent: true,
-    };
+    case 'panstart':
+      lastDelta = {
+        x: e.deltaX,
+        y: e.deltaY,
+      };
 
-    triggerEvent(element, eventType, eventData);
+      currentPoints = {
+        page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
+        image: external.cornerstone.pageToPixel(
+          element,
+          e.pointers[0].pageX,
+          e.pointers[0].pageY
+        ),
+        client: {
+          x: e.pointers[0].clientX,
+          y: e.pointers[0].clientY,
+        },
+      };
+      currentPoints.canvas = external.cornerstone.pixelToCanvas(
+        element,
+        currentPoints.image
+      );
+      lastPoints = copyPoints(currentPoints);
+      break;
 
-    remainingPointers = e.pointers.length - e.changedPointers.length;
+    case 'panend':
+      isPress = false;
+      clearTimeout(pressTimeout);
 
-    if (remainingPointers === 2) {
-      preventNextPinch = true;
-    }
-    break;
+      // If lastPoints is not yet set, it means panend fired without panstart or pan,
+      // So we can ignore this event
+      if (!lastPoints) {
+        return false;
+      }
 
-  case 'rotatemove':
-    isPress = false;
-    clearTimeout(pressTimeout);
+      currentPoints = {
+        page: external.cornerstoneMath.point.pageToPoint(e.pointers[0]),
+        image: external.cornerstone.pageToPixel(
+          element,
+          e.pointers[0].pageX,
+          e.pointers[0].pageY
+        ),
+        client: {
+          x: e.pointers[0].clientX,
+          y: e.pointers[0].clientY,
+        },
+      };
+      currentPoints.canvas = external.cornerstone.pixelToCanvas(
+        element,
+        currentPoints.image
+      );
 
-    rotation = e.rotation - lastRotation;
+      // Calculate delta values in page and image coordinates
+      deltaPoints = {
+        page: external.cornerstoneMath.point.subtract(
+          currentPoints.page,
+          lastPoints.page
+        ),
+        image: external.cornerstoneMath.point.subtract(
+          currentPoints.image,
+          lastPoints.image
+        ),
+        client: external.cornerstoneMath.point.subtract(
+          currentPoints.client,
+          lastPoints.client
+        ),
+        canvas: external.cornerstoneMath.point.subtract(
+          currentPoints.canvas,
+          lastPoints.canvas
+        ),
+      };
 
-    lastRotation = e.rotation;
+      eventType = EVENTS.TOUCH_DRAG_END;
 
-    eventType = EVENTS.TOUCH_ROTATE;
-    eventData = {
-      event: e.srcEvent,
-      viewport: external.cornerstone.getViewport(element),
-      image: enabledElement.image,
-      element,
-      rotation,
-      type: eventType,
-    };
-    triggerEvent(element, eventType, eventData);
-    break;
+      eventData = {
+        event: e.srcEvent,
+        viewport: external.cornerstone.getViewport(element),
+        image: enabledElement.image,
+        element,
+        startPoints,
+        lastPoints,
+        currentPoints,
+        deltaPoints,
+        type: eventType,
+        isTouchEvent: true,
+      };
+
+      triggerEvent(element, eventType, eventData);
+
+      remainingPointers = e.pointers.length - e.changedPointers.length;
+
+      if (remainingPointers === 2) {
+        preventNextPinch = true;
+      }
+      break;
+
+    case 'rotatemove':
+      isPress = false;
+      clearTimeout(pressTimeout);
+
+      rotation = e.rotation - lastRotation;
+
+      lastRotation = e.rotation;
+
+      eventType = EVENTS.TOUCH_ROTATE;
+      eventData = {
+        event: e.srcEvent,
+        viewport: external.cornerstone.getViewport(element),
+        image: enabledElement.image,
+        element,
+        rotation,
+        type: eventType,
+      };
+      triggerEvent(element, eventType, eventData);
+      break;
   }
 
   return false;

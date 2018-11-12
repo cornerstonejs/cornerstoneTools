@@ -13,18 +13,18 @@ function getEventButtons(event) {
   }
 
   switch (event.which) {
-  // No button
-  case 0:
-    return 0;
+    // No button
+    case 0:
+      return 0;
     // Left
-  case 1:
-    return 1;
+    case 1:
+      return 1;
     // Middle
-  case 2:
-    return 4;
+    case 2:
+      return 4;
     // Right
-  case 3:
-    return 2;
+    case 3:
+      return 2;
   }
 
   return 0;

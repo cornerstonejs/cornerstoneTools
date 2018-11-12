@@ -21,15 +21,15 @@ export default function(type, name, item, overwrite = false) {
   }
 
   switch (type) {
-  case 'module':
-    registerModule(name, item, overwrite);
-    break;
-  case 'mixin':
-    registerMixin(name, item, overwrite);
-    break;
-  default:
-    registerItem(type, name, item, overwrite);
-    console.warn(`unrecognised type ${type}, not registering ${name}`);
+    case 'module':
+      registerModule(name, item, overwrite);
+      break;
+    case 'mixin':
+      registerMixin(name, item, overwrite);
+      break;
+    default:
+      registerItem(type, name, item, overwrite);
+      console.warn(`unrecognised type ${type}, not registering ${name}`);
   }
 }
 
