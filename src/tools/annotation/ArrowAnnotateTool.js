@@ -1,6 +1,4 @@
-/* eslint no-loop-func: 0 */ // --> OFF
-/* eslint class-methods-use-this: 0 */ // --> OFF
-/* eslint no-alert: 0 */ // --> OFF
+/* eslint no-alert: 0 */
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 

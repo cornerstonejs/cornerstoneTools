@@ -1,10 +1,11 @@
-/* eslint class-methods-use-this: 0 */
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 
 /**
- * @export @public @class
- * @name RotateTouchTool
+ * @public
+ * @class RotateTouchTool
+ * @memberof Tools
+ *
  * @classdesc Tool for rotating the image using touch.
  * @extends BaseTool
  */

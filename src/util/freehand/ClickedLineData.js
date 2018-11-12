@@ -1,5 +1,5 @@
 /**
- * @export @public @class
+ * @public
  * @name ClickedLineData
  * @classdesc Creates an object containing information about the clicked line.
  * @property {number} toolIndex ID of the tool that the line corresponds to.

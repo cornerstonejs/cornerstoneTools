@@ -33,7 +33,9 @@ module.exports = {
         ignoreInlineComments: true
       }
     ],
-    "class-methods-use-this": "warn",
+    // New tool classes have callbacks and other interfaces that require implementation
+    // that may not necessarily require/use `this`
+    // "class-methods-use-this": "warn",
     "comma-dangle": "warn",
     "comma-spacing": [
       "warn",
@@ -99,7 +101,6 @@ module.exports = {
         'ignoreTemplateLiterals': false,
         'ignoreRegExpLiterals': true
     }],*/
-    //'max-lines': 'warn',
     "max-nested-callbacks": "warn",
     //'max-params': 'warn',
     //'max-statements': 'warn',
@@ -110,6 +111,8 @@ module.exports = {
     "newline-after-var": "warn",
     "newline-before-return": "warn",
     //'newline-per-chained-call': 'warn',
+    // We have some tools that utilize this when requesting values from the end user (arrowAnnotate)
+    // To disable for a single file, use: /* eslint no-alert: 0 */
     "no-alert": "warn",
     "no-array-constructor": "warn",
     "no-bitwise": "warn",
@@ -117,7 +120,6 @@ module.exports = {
     "no-catch-shadow": "warn",
     "no-confusing-arrow": "warn",
     "no-console": "off",
-    //'no-continue': 'warn',
     "no-div-regex": "warn",
     "no-duplicate-imports": "warn",
     "no-else-return": "warn",
@@ -132,7 +134,6 @@ module.exports = {
     "no-implicit-coercion": "warn",
     "no-implicit-globals": "warn",
     "no-implied-eval": "warn",
-    //'no-inline-comments': 'warn',
     "no-invalid-this": "off",
     "no-iterator": "warn",
     "no-label-var": "warn",
@@ -150,7 +151,6 @@ module.exports = {
     "no-negated-condition": "warn",
     "no-negated-in-lhs": "warn",
     "no-nested-ternary": "warn",
-    //'no-new': 'warn',
     "no-new-func": "warn",
     "no-new-object": "warn",
     "no-new-require": "warn",
@@ -158,7 +158,6 @@ module.exports = {
     "no-octal-escape": "warn",
     //'no-param-reassign': 'warn',
     "no-path-concat": "warn",
-    //'no-plusplus': 'warn',
     "no-process-env": "warn",
     "no-process-exit": "warn",
     "no-proto": "warn",
@@ -186,7 +185,6 @@ module.exports = {
     "no-undef-init": "warn",
     "no-undefined": "off",
     "no-unused-vars": "warn",
-    // "no-underscore-dangle": "warn",
     "no-unmodified-loop-condition": "warn",
     "no-unneeded-ternary": "warn",
     "no-unused-expressions": "warn",
@@ -238,7 +236,7 @@ module.exports = {
     "symbol-description": "warn",
     "template-curly-spacing": "warn",
     "unicode-bom": ["warn", "never"],
-    "valid-jsdoc": "error",
+    "valid-jsdoc": "warn",
     "vars-on-top": "warn",
     "wrap-iife": ["warn", "inside"],
     "wrap-regex": "warn",

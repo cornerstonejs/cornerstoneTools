@@ -1,12 +1,13 @@
-/* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
 /**
- * @export @public @class
- * @name EraserTool
+ * @public
+ * @class EraserTool
+ * @memberof Tools
+ *
  * @classdesc Tool for deleting the data of other Annotation Tools.
  * @extends BaseTool
  */

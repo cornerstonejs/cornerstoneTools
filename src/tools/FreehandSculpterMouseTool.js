@@ -13,8 +13,10 @@ import freehandUtils from '../util/freehand/index.js';
 const { FreehandHandleData } = freehandUtils;
 
 /**
- * @export @public @class
- * @name FreehandSculpterMouseTool
+ * @public
+ * @class FreehandSculpterMouseTool
+ * @memberof Tools
+ *
  * @classdesc Tool for easily sculpting annotations drawn with
  * the FreehandMouseTool.
  * @extends BaseTool

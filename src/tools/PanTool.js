@@ -2,8 +2,10 @@ import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 
 /**
- * @export @public @class
- * @name PanTool
+ * @public
+ * @class PanTool
+ * @memberof Tools
+ *
  * @classdesc Tool for panning the image.
  * @extends BaseTool
  */

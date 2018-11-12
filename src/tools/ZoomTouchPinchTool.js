@@ -4,6 +4,15 @@ import zoomUtils from '../util/zoom/index.js';
 
 const { correctShift } = zoomUtils;
 
+/**
+ *
+ *
+ * @public
+ * @class ZoomTouchPinchTool
+ * @memberof Tools
+ *
+ * @extends {BaseTool}
+ */
 export default class ZoomTouchPinchTool extends BaseTool {
   constructor (configuration = {}) {
     const defaultConfig = {

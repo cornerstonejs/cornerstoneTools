@@ -10,6 +10,7 @@ const { state, setters } = store.modules.brush;
  * @abstract
  * @class BaseBrushTool
  * @memberof Tools.Base
+ *
  * @classdesc Abstract class for tools which manipulate the mask data to be displayed on
  * the cornerstone canvas.
  * @extends BaseTool

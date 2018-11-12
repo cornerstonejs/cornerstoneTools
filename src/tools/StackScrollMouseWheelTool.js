@@ -1,10 +1,11 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import BaseTool from './base/BaseTool.js';
 import scroll from '../util/scroll.js';
 
 /**
- * @export @public @class
- * @name StackScrollMouseWheelTool
+ * @public
+ * @class StackScrollMouseWheelTool
+ * @memberof Tools
+ *
  * @classdesc Tool for scrolling through a series using the mouse wheel.
  * @extends BaseTool
  */

@@ -1,5 +1,5 @@
 /**
- * @export @public @class
+ * @public
  * @name FreehandHandleData
  * @classdesc Creates a single handle for the freehand tool.
  *

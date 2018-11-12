@@ -1,4 +1,3 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import BaseTool from './base/BaseTool.js';
 import external from './../externalModules.js';
 
@@ -13,8 +12,10 @@ import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
 
 /**
- * @export @public @class
- * @name CrosshairsTool
+ * @public
+ * @class CrosshairsTool
+ * @memberof Tools
+ *
  * @classdesc Tool for finding the slice in another element corresponding to the
  * image position in a synchronized image series.
  * @extends BaseTool

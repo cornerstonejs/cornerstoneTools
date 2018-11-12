@@ -1,11 +1,12 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
 
 /**
- * @export @public @class
- * @name RotateTool
+ * @public
+ * @class RotateTool
+ * @memberof Tools
+ *
  * @classdesc Tool for rotating the image.
  * @extends BaseTool
  */

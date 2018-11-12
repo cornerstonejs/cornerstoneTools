@@ -5,8 +5,10 @@ import zoomUtils from '../util/zoom/index.js';
 const { changeViewportScale } = zoomUtils;
 
 /**
- * @export @public @class
- * @name ZoomMouseWheelTool
+ * @public
+ * @class ZoomMouseWheelTool
+ * @memberof Tools
+ *
  * @classdesc Tool for changing magnification with the mouse wheel.
  * @extends BaseTool
  */

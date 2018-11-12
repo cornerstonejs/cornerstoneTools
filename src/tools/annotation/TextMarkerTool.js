@@ -1,4 +1,3 @@
-/* eslint class-methods-use-this: 0 */
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import external from './../../externalModules.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';

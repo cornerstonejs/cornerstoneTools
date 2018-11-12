@@ -1,11 +1,12 @@
-/* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
 
 /**
- * @export @public @class
- * @name MagnifyTool
+ * @public
+ * @class MagnifyTool
+ * @memberof Tools
+ *
  * @classdesc Tool for inspecting a region at increased magnification.
  * @extends BaseTool
  */

@@ -1,4 +1,3 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 // Drawing
@@ -11,6 +10,7 @@ import toolColors from '../stateManagement/toolColors.js';
  * @public
  * @class WwwcRegionTool
  * @memberof Tools
+ *
  * @classdesc Tool for setting wwwc based on a rectangular region.
  * @extends BaseTool
  */

@@ -6,8 +6,10 @@ import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 
 /**
- * @export @public @class
- * @name ScaleOverlayTool
+ * @public
+ * @class ScaleOverlayTool
+ * @memberof Tools
+ *
  * @classdesc Tool for displaying a scale overlay on the image.
  * @extends BaseTool
  */

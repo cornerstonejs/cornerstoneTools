@@ -1,10 +1,9 @@
-/* eslint class-methods-use-this: 0 */
-import external from './../externalModules.js';
-import BaseTool from './base/BaseTool.js';
+import external from "./../externalModules.js";
+import BaseTool from "./base/BaseTool.js";
 
-import { getNewContext } from '../drawing/index.js';
-import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';
-import { waitForEnabledElementImageToLoad } from './../util/wait.js';
+import { getNewContext } from "../drawing/index.js";
+import renderActiveReferenceLine from "./referenceLines/renderActiveReferenceLine.js";
+import { waitForEnabledElementImageToLoad } from "./../util/wait.js";
 
 /**
  * When enabled, this tool will display references lines for each source
