@@ -5,7 +5,7 @@ import path from './path.js';
  * Draw a rectangle defined by `corner1` and `corner2`.
  * @public
  * @method drawRect
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on

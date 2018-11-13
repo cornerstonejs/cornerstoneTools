@@ -1,8 +1,3 @@
-/**
- * Example description
- *
- * @namespace Tools.Brush
- */
 import BrushTool from './BrushTool.js';
 
 // Named Exports

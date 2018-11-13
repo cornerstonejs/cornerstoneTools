@@ -1,7 +1,33 @@
 /**
+ * root
  * @namespace CornerstoneTools
  */
 
+/**
+ * Drawing API to assist in consistant annotation creation
+ * @namespace Drawing
+ */
+
+
+/**
+ * tools
+ * @namespace Tools
+ */
+
+/**
+ * Tools that extend the {@link #Tools.Base.BaseAnnotationTool|`BaseAnnotationTool`}
+ * @namespace Tools.Annotation
+ */
+
+/**
+ * The parent (abstract) classes that all tools derive from.
+ * @namespace Tools.Base
+ */
+
+/**
+ * Brush tools
+ * @namespace Tools.Brush
+ */
 import {
   AngleTool,
   ArrowAnnotateTool,

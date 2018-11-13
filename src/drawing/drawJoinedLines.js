@@ -5,7 +5,7 @@ import path from './path.js';
  * Draw a series of joined lines, starting at `start` and then going to each point in `points`.
  * @public
  * @method drawJoinedLines
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on

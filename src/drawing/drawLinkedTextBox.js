@@ -6,7 +6,7 @@ import drawLink from './drawLink.js';
  * Draw a link between an annotation to a textBox.
  * @public
  * @method drawLinkedTextBox
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {object} context - The canvas context.
  * @param {HTMLElement} element - The element on which to draw the link.

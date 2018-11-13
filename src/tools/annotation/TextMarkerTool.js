@@ -11,8 +11,9 @@ import {
 
 /**
  * @public
- * @class StackScrollTool
+ * @class TextMarkerTool
  * @memberof Tools.Annotation
+ *
  * @classdesc Tool for annotating an image with text markers.
  * @extends BaseAnnotationTool
  */

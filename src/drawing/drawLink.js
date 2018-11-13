@@ -5,7 +5,7 @@ import drawLine from './drawLine.js';
  * Draw a link between an annotation to a box.
  * @public
  * @method drawLink
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param  {object[]} linkAnchorPoints An array of possible anchor points.
  * @param  {object} refPoint         A reference point to select the anchor point.

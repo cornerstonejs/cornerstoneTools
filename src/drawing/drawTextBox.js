@@ -7,7 +7,7 @@ import fillBox from './fillBox.js';
  * Compute the width of the box required to display the given `text` with a given `padding`.
  * @public
  * @function textBoxWidth
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {String} text - The text to find the width of.
@@ -34,7 +34,7 @@ export function textBoxWidth(context, text, padding) {
  * Draws a textBox.
  * @public
  * @function drawTextBox
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param  {CanvasRenderingContext2D} context The canvas context.
  * @param  {string} textLines   The text to display.

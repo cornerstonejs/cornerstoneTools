@@ -5,7 +5,7 @@ import drawJoinedLines from './drawJoinedLines.js';
  * Draw an arrow using the drawing API.
  * @public
  * @method drawArrow
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param  {object} context   The canvas context.
  * @param  {object} start     The start position.

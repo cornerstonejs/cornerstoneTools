@@ -4,7 +4,7 @@
  * execute any API calls in a clean stack.
  * @public
  * @method draw
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target Canvas
  * @param {ContextFn} fn - A function which performs drawing operations within the given context.

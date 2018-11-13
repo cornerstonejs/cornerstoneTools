@@ -6,7 +6,7 @@ import path from './path.js';
  *
  * @public
  * @method drawLine
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context
  * @param {HTMLElement} element - The DOM Element to draw on

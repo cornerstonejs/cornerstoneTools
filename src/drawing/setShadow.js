@@ -3,7 +3,7 @@
  * Each property is set on the context object if defined, otherwise a default value is set.
  * @public
  * @method setShadow
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Context to apply shadow options on
  * @param {Object} options - Options object

@@ -8,7 +8,7 @@ const defaultHandleRadius = 6;
  * Draws proivded handles to the provided context
  * @public
  * @method drawHandles
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {*} renderData - Cornerstone Tool's event detail

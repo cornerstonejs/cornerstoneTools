@@ -7,6 +7,12 @@
     "base": "/api",
     "server": "github"
   },
+  "jsdoc": {
+    "hierarchy": true,
+    "package": true,
+    "private": false,
+    "undescribed": false
+  },
   "template": {
     "path": "zebra",
     "options": {

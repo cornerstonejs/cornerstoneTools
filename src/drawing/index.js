@@ -1,9 +1,4 @@
 /**
- * Drawing API to assist in consistant annotation creation
- * @namespace CornerstoneTools.Drawing
- */
-
-/**
  * A {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle|color, gradient or pattern} to use inside shapes.
  * @typedef {(String|CanvasGradient|CanvasPattern)} FillStyle
  */

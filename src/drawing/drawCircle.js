@@ -5,7 +5,7 @@ import path from './path.js';
  * Draw a circle with given `center` and `radius`.
  * @public
  * @method drawCircle
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on

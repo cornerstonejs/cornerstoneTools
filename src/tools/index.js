@@ -1,9 +1,3 @@
-/**
- * Some description
- *
- * @namespace Tools
- */
-
 import CrosshairsTool from './CrosshairsTool.js';
 import DoubleTapFitToWindowTool from './DoubleTapFitToWindowTool.js';
 import DragProbeTool from './DragProbeTool.js';

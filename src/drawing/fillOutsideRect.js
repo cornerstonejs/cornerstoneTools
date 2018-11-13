@@ -5,7 +5,7 @@ import path from './path.js';
  * Fill the region outside a rectangle defined by `corner1` and `corner2`.
  * @public
  * @method fillOutsideRect
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {HTMLElement} element - The DOM Element to draw on

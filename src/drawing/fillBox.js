@@ -2,7 +2,7 @@
  * Draw a filled rectangle defined by `boundingBox` using the style defined by `fillStyle`.
  * @public
  * @method fillBox
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {Object} boundingBox - `{ left, top, width, height }` in canvas coordinates.

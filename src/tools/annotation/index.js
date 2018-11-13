@@ -1,9 +1,3 @@
-/**
- * Tools that extend the {@link #Tools.Base.BaseAnnotationTool|`BaseAnnotationTool`}
- *
- * @namespace Tools.Annotation
- */
-
 import AngleTool from './AngleTool.js';
 import ArrowAnnotateTool from './ArrowAnnotateTool.js';
 import BidirectionalTool from './BidirectionalTool.js';

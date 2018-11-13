@@ -5,7 +5,7 @@ import toolStyle from './../stateManagement/toolStyle.js';
  * {@link https://www.w3.org/TR/2dcontext/#drawing-paths-to-the-canvas|path objects}.
  * @public
  * @method path
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Context to add path to
  * @param {Object} options - Drawing Options

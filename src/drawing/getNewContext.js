@@ -4,7 +4,7 @@
  *
  * @public
  * @function getNewContext
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {HTMLCanvasElement} canvas - Canvas you would like the context for
  * @returns {CanvasRenderingContext2D} - The provided canvas's 2d context

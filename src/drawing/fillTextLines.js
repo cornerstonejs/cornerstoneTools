@@ -4,7 +4,7 @@ import textStyle from './../stateManagement/textStyle.js';
  * Draw multiple lines of text within a bounding box.
  * @public
  * @method fillTextLines
- * @memberof CornerstoneTools.Drawing
+ * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {Object} boundingBox - `{ left, top }` in canvas coordinates. Only the top-left corner is specified, as the text will take up as much space as it needs.
