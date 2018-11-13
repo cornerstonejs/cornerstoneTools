@@ -67,12 +67,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
   }
 
-  /**
-   * Create the measurement data for this tool
-   *
-   * @param {*} eventData
-   * @returns {Object}
-   */
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;

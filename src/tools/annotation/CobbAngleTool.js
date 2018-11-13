@@ -47,12 +47,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     this.hasIncomplete = false;
   }
 
-  /**
-   * Create the measurement data for this tool with the end handle activated
-   *
-   * @param {*} eventData
-   * @returns {Object}
-   */
   createNewMeasurement(eventData) {
     // Create the measurement data for this tool with the end handle activated
     this.hasIncomplete = true;

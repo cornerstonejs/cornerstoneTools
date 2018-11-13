@@ -47,12 +47,7 @@ export default class AngleTool extends BaseAnnotationTool {
     this.preventNewMeasurement = false;
   }
 
-  /**
-   * Create the measurement data for this tool with the end handle activated
-   *
-   * @param {*} eventData
-   * @returns {Object}
-   */
+  /** @inheritdoc */
   createNewMeasurement(eventData) {
     // Create the measurement data for this tool with the end handle activated
     return {

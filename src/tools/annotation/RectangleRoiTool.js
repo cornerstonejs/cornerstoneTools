@@ -38,12 +38,6 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  /**
-   * Create the measurement data for this tool with the end handle activated
-   *
-   * @param {*} eventData
-   * @returns {Object}
-   */
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
