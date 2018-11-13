@@ -20,28 +20,32 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  *
  * @private
  * @param {mousedown} evt
- * @listens {mousedown}
+ * @listens {CornerstoneTools.event:cornerstonetoolsmousedown}
+ * @returns {undefined}
  */
 export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
 
-  let tools;
   const eventData = evt.detail;
   const element = evt.detail.element;
   const coords = evt.detail.currentPoints.canvas;
 
   // High level filtering
-  tools = getInteractiveToolsForElement(element, getters.mouseTools());
-  tools = tools.filter(
-    tool =>
-      eventData.buttons === tool.options.mouseButtonMask &&
-      tool.options.isMouseActive
+  const activeAndPassiveTools = getInteractiveToolsForElement(
+    element,
+    getters.mouseTools()
   );
 
   // ACTIVE TOOL W/ PRE CALLBACK?
-  const activeTools = tools.filter(tool => tool.mode === 'active');
+  // Note: In theory, this should only ever be a single tool.
+  const activeTools = activeAndPassiveTools.filter(
+    tool =>
+      tool.mode === 'active' &&
+      tool.options.mouseButtonMask === eventData.buttons &&
+      tool.options.isMouseActive
+  );
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
@@ -64,7 +68,10 @@ export default function(evt) {
   }
 
   // Annotation tool specific
-  const annotationTools = getToolsWithDataForElement(element, tools);
+  const annotationTools = getToolsWithDataForElement(
+    element,
+    activeAndPassiveTools
+  );
 
   // NEAR HANDLES?
   const annotationToolsWithMoveableHandles = getToolsWithMoveableHandles(
@@ -91,23 +98,25 @@ export default function(evt) {
   }
 
   // NEAR TOOL?
-  const annotationToolsWithPointNearClick = tools.filter(tool => {
-    const toolState = getToolState(element, tool.name);
+  const annotationToolsWithPointNearClick = activeAndPassiveTools.filter(
+    tool => {
+      const toolState = getToolState(element, tool.name);
 
-    if (!toolState) {
+      if (!toolState) {
+        return false;
+      }
+
+      for (let i = 0; i < toolState.data.length; i++) {
+        const data = toolState.data[i];
+
+        if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
+          return true;
+        }
+      }
+
       return false;
     }
-
-    for (let i = 0; i < toolState.data.length; i++) {
-      const data = toolState.data[i];
-
-      if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
-        return true;
-      }
-    }
-
-    return false;
-  });
+  );
 
   if (annotationToolsWithPointNearClick.length > 0) {
     const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];

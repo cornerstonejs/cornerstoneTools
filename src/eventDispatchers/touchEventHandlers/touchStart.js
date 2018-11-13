@@ -23,10 +23,14 @@ export default function(evt) {
   const element = eventData.element;
   const coords = eventData.startPoints.canvas;
 
-  let tools = getInteractiveToolsForElement(element, getters.touchTools());
+  const activeAndPassiveTools = getInteractiveToolsForElement(
+    element,
+    getters.touchTools()
+  );
 
-  tools = tools.filter(tool => tool.options.isTouchActive);
-  const activeTools = tools.filter(tool => tool.mode === 'active');
+  const activeTools = activeAndPassiveTools.filter(
+    tool => tool.mode === 'active' && tool.options.isTouchActive
+  );
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
@@ -48,7 +52,10 @@ export default function(evt) {
     }
   }
 
-  const annotationTools = getToolsWithDataForElement(element, tools);
+  const annotationTools = getToolsWithDataForElement(
+    element,
+    activeAndPassiveTools
+  );
 
   // Find all tools w/ handles that we are near
   const annotationToolsWithMoveableHandles = annotationTools.filter(tool => {
