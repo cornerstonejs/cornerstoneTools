@@ -206,6 +206,9 @@ module.exports = {
     'sort-imports': 'off',
     'sort-keys': 'off',
     'sort-vars': 'off',
+    // @jamesapetts, can you get this to work?
+    // Having issues auto-fixing this
+    //'space-before-function-paren': ['warn', 'always'],
     'space-before-blocks': 'warn',
     'space-in-parens': ['warn', 'never'],
     'space-infix-ops': 'warn',
