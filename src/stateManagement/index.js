@@ -1,5 +1,5 @@
 /**
- * Legacy state management
+ * State management
  * @namespace CornerstoneTools.StateManagement
  */
 
