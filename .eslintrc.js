@@ -220,7 +220,7 @@ module.exports = {
     'unicode-bom': ['warn', 'never'],
     // Helfpul for spotting issues, but is flaky
     'valid-jsdoc': [
-      'error',
+      'warn',
       {
         prefer: {
           arg: 'param',

@@ -24,6 +24,7 @@ function activeCallback(element) {
 }
 
 /**
+ *
  * @mixin enabledOrDisabledBinaryTool - Redirect active/passive mode changes to enabled/disabled.
  * @memberof Mixins
  */

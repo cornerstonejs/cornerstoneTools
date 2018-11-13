@@ -1,8 +1,3 @@
-/**
- * State management
- * @namespace CornerstoneTools.StateManagement
- */
-
 import {
   newFrameOfReferenceSpecificToolStateManager,
   globalFrameOfReferenceSpecificToolStateManager,

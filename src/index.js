@@ -1,5 +1,5 @@
 /**
- * root
+ * Root
  * @namespace CornerstoneTools
  */
 
@@ -8,9 +8,20 @@
  * @namespace Drawing
  */
 
+/**
+ * Event dispatchers listen for events from `cornerstone` and `enabledElements`. Dispatchers
+ * choose which tool(s) get to handle the event by looking at callbacks, priority, and other factors.
+ * @private
+ * @namespace EventDispatchers
+ */
 
 /**
- * tools
+ * Event listeners normalize events emitted by `cornerstone` and `enabledElements`. The listeners
+ * then re-emit events prefixed with `cornerstonetools`. For example, `mousemove` becomes `cornerstonetoolsmousemove`.
+ * Most of these events are caught by an `eventDispatcher`, and used to shape tool behavior.
+ * @private
+ * @namespace EventListeners
+ */
 
 /**
  * Manipulators describe a tool's `handle` behavior. Leveraging a small set of manipulators
@@ -23,6 +34,24 @@
  * array configuration property
  * @namespace Mixins
  */
+
+/**
+ * StateManagement
+ * @namespace StateManagement
+ */
+
+/**
+ * Sync
+ * @namespace Synchronization
+ */
+
+/**
+ * Third party
+ * @namespace ThirdParty
+ */
+
+/**
+ * Tools
  * @namespace Tools
  */
 
@@ -40,6 +69,12 @@
  * Brush tools
  * @namespace Tools.Brush
  */
+
+/**
+ * Util
+ * @namespace Util
+ */
+
 import {
   AngleTool,
   ArrowAnnotateTool,

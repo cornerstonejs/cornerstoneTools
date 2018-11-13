@@ -7,10 +7,10 @@ import store from './../store/index.js';
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
  * respond to user input, and can create new data.
  *
- * @export
  * @public
- * @method
- * @name setToolActiveForElement
+ * @function setToolActiveForElement
+ * @memberof CornerstoneTools
+ *
  * @example <caption>Setting a tool 'active' for a specific interaction type.</caption>
  * // Sets length tool to Active
  * setToolActiveForElement(element, 'Length', {
@@ -65,10 +65,10 @@ const setToolActiveForElement = function(
 /**
  * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,
  * respond to user input, and can create new data.
- * @export
  * @public
- * @method
- * @name setToolActive
+ * @function setToolActive
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|string[]|number)} options
  * @param {(string[])} interactionTypes
@@ -84,9 +84,10 @@ const setToolActive = function(toolName, options, interactionTypes) {
 /**
  * Sets a tool's state, with the provided toolName and element, to 'disabled'. Disabled tools are not rendered,
  * and do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolDisabledForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -101,9 +102,10 @@ const setToolDisabledForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'disabled'. Disabled tools are not rendered,
  * and do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolDisabled
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -113,9 +115,10 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
 /**
  * Sets a tool's state, with the provided toolName and element, to 'enabled'. Enabled tools are rendered,
  * but do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolEnabledForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -130,9 +133,10 @@ const setToolEnabledForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'enabled'. Enabled tools are rendered,
  * but do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolEnabled
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -142,9 +146,10 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
 /**
  * Sets a tool's state, with the provided toolName and element, to 'passive'. Passive tools are rendered and respond to user input,
  * but do not create new measurements or annotations.
- * @export
  * @public
- * @method
+ * @function setToolPassiveForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -159,9 +164,10 @@ const setToolPassiveForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'passive'. Passive tools are rendered and respond to user input,
  * but do not create new measurements or annotations.
- * @export
  * @public
- * @method
+ * @function setToolPassive
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -176,7 +182,8 @@ const setToolPassive = setToolMode.bind(
  * An internal method that helps make sure we change tool mode in a consistent
  * way
  * @private
- * @method
+ * @function setToolModeForElement
+ *
  * @param {string} mode
  * @param {string} changeEvent
  * @param {HTMLElement} element
@@ -231,7 +238,8 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
  * A helper/quick way to set a tool's mode for all canvases
  *
  * @private
- * @method
+ * @function setToolMode
+ *
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
@@ -250,7 +258,8 @@ function setToolMode(mode, changeEvent, toolName, options) {
  * resolve those conflicts.
  *
  * @private
- * @method
+ * @function _resolveInputConflicts
+ *
  * @param {HTMLElement} element
  * @param {Object} tool
  * @param {(Object|number)} options
@@ -304,7 +313,8 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
 /**
  * Resolves conflicting active tools when activating a tool for mouse interaction
  * @private
- * @method
+ * @function _resolveInputConflicts
+ *
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
@@ -337,8 +347,8 @@ function _resolveMouseInputConflicts(tool, element, options) {
 /**
  * Resolves conflicting active tools when activating a tool for touch interaction
  * @private
+ * @function _resolveTouchInputConflicts
  *
- * @method
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {Object} options
@@ -379,7 +389,8 @@ function _resolveTouchInputConflicts(tool, element, options) {
 /**
  * Resolves conflicting active tools when activating a tool for MultiTouch interaction
  * @private
- * @method
+ * @function _resolveMultiTouchInputConflicts
+ *
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {Object} options
@@ -425,7 +436,8 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
  * and set their isTouchActive to false to avoid conflicts.
  *
  * @private
- * @method
+ * @function _resolveGenericInputConflicts
+ *
  * @param {string} interactionType
  * @param {Object} tool
  * @param {HTMLElement} element

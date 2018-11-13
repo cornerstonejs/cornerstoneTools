@@ -7,14 +7,12 @@ import {
 } from './../../util/findAndMoveHelpers.js';
 
 /**
- * @abstract
- * @class BaseAnnotationTool
  * @memberof Tools.Base
  * @classdesc Abstract class for tools which create and display annotations on the
  * cornerstone canvas.
  * @extends Tools.Base.BaseTool
  */
-export default class BaseAnnotationTool extends BaseTool {
+class BaseAnnotationTool extends BaseTool {
   constructor({
     name,
     strategies,
@@ -56,8 +54,9 @@ export default class BaseAnnotationTool extends BaseTool {
    *
    * Returns true if the given coords are need the tool.
    *
-   * @abstract
-   * @public
+   * @method pointNearTool
+   * @memberof Tools.Base.BaseAnnotationTool
+   *
    * @param {*} element
    * @param {*} data
    * @param {*} coords
@@ -70,11 +69,13 @@ export default class BaseAnnotationTool extends BaseTool {
   /**
    * Returns the distance in px from the given coords to the closest handle of the annotation.
    *
-   * @abstract
+   * @method distanceFromPoint
+   * @memberof Tools.Base.BaseAnnotationTool
+   *
    * @param {*} element
    * @param {*} data
    * @param {*} coords
-   * @returns {number} the distance in px from the provided coordinates to the
+   * @returns {number} -  the distance in px from the provided coordinates to the
    * closest rendered portion of the annotation. -1 if the distance cannot be
    * calculated.
    */
@@ -160,3 +161,5 @@ export default class BaseAnnotationTool extends BaseTool {
     moveAnnotationNearClick(evt, toolState, tool, data);
   }
 }
+
+export default BaseAnnotationTool;

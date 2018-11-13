@@ -29,11 +29,13 @@ import roundToDecimal from './../../util/roundToDecimal.js';
  * @public
  * @class AngleTool
  * @memberof Tools.Annotation
- *
  * @classdesc Create and position an angle by placing three consecutive points.
  * @extends Tools.Base.BaseAnnotationTool
+ * @hideconstructor
+ *
+ * @param {ToolConfiguration} [configuration={}]
  */
-export default class AngleTool extends BaseAnnotationTool {
+class AngleTool extends BaseAnnotationTool {
   constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Angle',
@@ -47,7 +49,6 @@ export default class AngleTool extends BaseAnnotationTool {
     this.preventNewMeasurement = false;
   }
 
-  /** @inheritdoc */
   createNewMeasurement(eventData) {
     // Create the measurement data for this tool with the end handle activated
     return {
@@ -85,14 +86,6 @@ export default class AngleTool extends BaseAnnotationTool {
     };
   }
 
-  /**
-   *
-   *
-   * @param {*} element
-   * @param {*} data
-   * @param {*} coords
-   * @returns {Boolean}
-   */
   pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
@@ -110,10 +103,6 @@ export default class AngleTool extends BaseAnnotationTool {
     );
   }
 
-  /**
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
@@ -337,3 +326,5 @@ export default class AngleTool extends BaseAnnotationTool {
 function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 }
+
+export default AngleTool;

@@ -8,14 +8,12 @@ const { state, setters } = store.modules.brush;
 
 /**
  * @abstract
- * @class BaseBrushTool
  * @memberof Tools.Base
- *
  * @classdesc Abstract class for tools which manipulate the mask data to be displayed on
  * the cornerstone canvas.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
-export default class BaseBrushTool extends BaseTool {
+class BaseBrushTool extends BaseTool {
   constructor({
     name,
     strategies,
@@ -423,3 +421,5 @@ export default class BaseBrushTool extends BaseTool {
     return 'brush';
   }
 }
+
+export default BaseBrushTool;

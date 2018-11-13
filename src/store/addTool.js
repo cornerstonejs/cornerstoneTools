@@ -4,13 +4,14 @@ import getToolForElement from './getToolForElement.js';
 /**
  * Adds a tool to an enabled element.
  *
- * @export
  * @public
- * @method
- * @name addToolForElement
+ * @function addToolForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element The element to add the tool to.
  * @param {BaseTool} apiTool The tool to add to the element.
  * @param {Object} [configuration] Override the default tool configuration
+ * @returns {undefined}
  */
 const addToolForElement = function(element, apiTool, configuration) {
   // Instantiating the tool here makes it harder to accidentally add
@@ -32,12 +33,13 @@ const addToolForElement = function(element, apiTool, configuration) {
 /**
  * Adds a tool to all enabled element.
  *
- * @export
  * @public
- * @method
- * @name addTool
+ * @function addTool
+ * @memberof CornerstoneTools
+ *
  * @param {BaseTool} apiTool The tool to add to each element.
  * @param {Object} [configuration] Override the default tool configuration
+ * @returns {undefined}
  */
 const addTool = function(apiTool, configuration) {
   _addToolGlobally(apiTool, configuration);
@@ -51,10 +53,11 @@ const addTool = function(apiTool, configuration) {
  * Requires `globalToolSyncEnabled` to be set to true
  *
  * @private
- * @method
- * @name addToolGlobally
+ * @function addToolGlobally
+ *
  * @param {BaseTool} apiTool
  * @param {Object} [configuration] Override the default tool configuration
+ * @returns {undefined}
  */
 const _addToolGlobally = function(apiTool, configuration) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {

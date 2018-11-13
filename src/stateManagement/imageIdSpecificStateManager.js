@@ -6,7 +6,7 @@ import external from '../externalModules.js';
  * That are displaying that imageId.
  * @public
  * @constructor newImageIdSpecificToolStateManager
- * @memberof CornerstoneTools.StateManagement
+ * @memberof StateManagement
  *
  * @returns {Object} An imageIdSpecificToolStateManager instance.
  */

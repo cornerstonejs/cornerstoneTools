@@ -4,7 +4,7 @@
  * That frame-of-reference UID.
  * @public
  * @constructor newFrameOfReferenceSpecificToolStateManager
- * @memberof CornerstoneTools.StateManagement
+ * @memberof StateManagement
  *
  * @returns {Object} A frameOfReferenceSpecificToolStateManager instance.
  */

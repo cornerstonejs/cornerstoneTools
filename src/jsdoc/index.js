@@ -1,8 +1,3 @@
-/**
- * Namespace for CornerstoneTools events
- * @namespace CornerstoneTools
- */
-
 //
 // MOUSE
 //

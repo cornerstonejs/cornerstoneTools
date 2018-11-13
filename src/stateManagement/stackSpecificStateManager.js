@@ -9,7 +9,7 @@ import {
  * That tool data is shared between all imageIds in a given stack.
  * @public
  * @constructor newStackSpecificToolStateManager
- * @memberof CornerstoneTools.StateManagement
+ * @memberof StateManagement
  *
  * @param  {string[]} toolTypes       The tool types to apply to the stack.
  * @param  {Object} oldStateManager The imageIdSpecificStateManager.

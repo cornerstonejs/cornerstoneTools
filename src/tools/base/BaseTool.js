@@ -1,30 +1,23 @@
 import mixins from './../../mixins/index.js';
 
 /**
- * @interface
- * @class BaseTool
- * @memberof Tools.Base
- *
- * @classdesc The fundemental abstract class from which all other tools inherit.
- * @property {String} activeStrategy The name of the strategy that should be used
- * @property {String} defaultStrategy The initial `activeStrategy` when the tool was initialized
- * @property {CornerstoneTools.ToolMode} mode 1 of 4 modes that influence the tool's behavior
- * @property {String} name A descriptive, unique tool name
- * @property {Object} strategies An object containing available tool strategies
- * @property {Array} supportedInteractionTypes
+ * @typedef ToolConfiguration
+ * @param {String} name
+ * @param {object} strategies - Named strategy functions
+ * @param {String} defaultStrategy - The name of the strategy to use by default
+ * @param {Object} configuration
+ * @param {String[]} mixins - A list of mixin names to apply to the tool
  */
-export default class BaseTool {
+
+/**
+ * @memberof Tools.Base
+ * @classdesc BaseTool Class description
+ * @property {String[]} supportedInteractionTypes - A string list of ways the tool can interact with the user
+ */
+class BaseTool {
   /**
-   *Creates an instance of BaseTool.
-   * @param {*} [{
-   *     name,
-   *     strategies,
-   *     defaultStrategy,
-   *     configuration,
-   *     supportedInteractionTypes,
-   *     mixins
-   *   }={}]
-   * @memberof BaseTool
+   * Constructor description
+   * @param {ToolConfiguration} [ToolConfiguration={}]
    */
   constructor({
     name,
@@ -34,7 +27,13 @@ export default class BaseTool {
     supportedInteractionTypes,
     mixins,
   } = {}) {
+    /**
+     * A unique, identifying tool name
+     * @type {String}
+     */
     this.name = name;
+
+    /** @type {String} */
     this.mode = 'disabled';
     this.element = undefined;
     this.supportedInteractionTypes = supportedInteractionTypes || [];
@@ -64,22 +63,17 @@ export default class BaseTool {
   //
 
   /**
-   *
-   * Tool specific config
-   *
-   * @property
-   * @memberof Tools.Base.BaseTool
+   * config...
+   * @public
+   * @type {Object}
+   * @instance
    */
+  static get configuration() {}
+
   get configuration() {
     return this._configuration;
   }
 
-  /**
-   * Tool specific config setter
-   *
-   * @property
-   * @memberof Tools.Base.BaseTool
-   */
   set configuration(configuration) {
     this._configuration = configuration;
   }
@@ -89,8 +83,9 @@ export default class BaseTool {
   //
 
   /**
+   * options...
    * @readonly
-   * @memberof BaseTool
+   * @instance
    */
   get options() {
     return this._options;
@@ -100,7 +95,7 @@ export default class BaseTool {
    * Merges provided options with existing options.
    *
    * @public
-   * @memberof BaseTool
+   * @instance
    * @param {Object} options - options object to merge with existing options.
    * @returns {undefined}
    */
@@ -112,7 +107,8 @@ export default class BaseTool {
    * Clears the tools options.
    *
    * @public
-   * @memberof BaseTool
+   * @instance
+   * @memberof Tools.Base.BaseTool
    * @returns {undefined}
    */
   clearOptions() {
@@ -123,8 +119,10 @@ export default class BaseTool {
    * Apply the currently set/active strategy.
    *
    * @public
-   * @memberof BaseTool
+   * @instance
    * @method applyActiveStrategy
+   * @memberof Tools.Base.BaseTool
+   *
    * @param {*} evt The event that triggered the strategies application
    * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
@@ -137,7 +135,6 @@ export default class BaseTool {
    * be merged with this instance.
    *
    * @private
-   * @memberof BaseTool
    * @method _applyMixins
    * @param {string[]} mixinsArray An array of mixin identifiers (strings).
    * @returns {undefined}
@@ -227,3 +224,5 @@ export default class BaseTool {
    * }
    */
 }
+
+export default BaseTool;
