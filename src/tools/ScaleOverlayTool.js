@@ -11,7 +11,7 @@ import toolColors from './../stateManagement/toolColors.js';
  * @memberof Tools
  *
  * @classdesc Tool for displaying a scale overlay on the image.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class ScaleOverlayTool extends BaseTool {
   constructor(configuration = {}) {

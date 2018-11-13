@@ -16,7 +16,7 @@ import { waitForEnabledElementImageToLoad } from './../util/wait.js';
  * @export @public @class
  * @name ReferenceLinesTool
  * @classdesc Tool for displaying reference lines of other enabledElements
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class ReferenceLinesTool extends BaseTool {
   constructor(configuration = {}) {

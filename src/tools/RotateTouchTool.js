@@ -7,7 +7,7 @@ import BaseTool from './base/BaseTool.js';
  * @memberof Tools
  *
  * @classdesc Tool for rotating the image using touch.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class RotateTouchTool extends BaseTool {
   constructor(configuration = {}) {

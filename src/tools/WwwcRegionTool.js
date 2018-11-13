@@ -12,7 +12,7 @@ import toolColors from '../stateManagement/toolColors.js';
  * @memberof Tools
  *
  * @classdesc Tool for setting wwwc based on a rectangular region.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class WwwcRegionTool extends BaseTool {
   /** @inheritdoc */

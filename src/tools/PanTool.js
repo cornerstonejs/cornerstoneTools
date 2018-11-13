@@ -7,7 +7,7 @@ import BaseTool from './base/BaseTool.js';
  * @memberof Tools
  *
  * @classdesc Tool for panning the image.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class PanTool extends BaseTool {
   constructor(configuration = {}) {

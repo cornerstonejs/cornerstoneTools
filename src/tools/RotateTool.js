@@ -8,7 +8,7 @@ import angleBetweenPoints from '../util/angleBetweenPoints.js';
  * @memberof Tools
  *
  * @classdesc Tool for rotating the image.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class RotateTool extends BaseTool {
   constructor(configuration = {}) {

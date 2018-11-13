@@ -7,7 +7,7 @@ import BaseTool from './base/BaseTool.js';
  * @memberof Tools
  *
  * @classdesc Tool for setting wwwc by dragging with mouse/touch.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class WwwcTool extends BaseTool {
   constructor(configuration = {}) {

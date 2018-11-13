@@ -8,7 +8,7 @@ import BaseTool from './base/BaseTool.js';
  * @memberof Tools
  *
  * @classdesc Tool for inspecting a region at increased magnification.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class MagnifyTool extends BaseTool {
   constructor(configuration = {}) {

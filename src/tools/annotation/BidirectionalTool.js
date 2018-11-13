@@ -17,7 +17,7 @@ const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
  * @memberof Tools.Annotation
  * @classdesc Create and position an annotation that measures the
  * length and width of a region.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 
 export default class BidirectionalTool extends BaseAnnotationTool {

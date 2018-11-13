@@ -7,7 +7,7 @@ import scroll from '../util/scroll.js';
  * @memberof Tools
  *
  * @classdesc Tool for scrolling through a series using the mouse wheel.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class StackScrollMouseWheelTool extends BaseTool {
   constructor(configuration = {}) {

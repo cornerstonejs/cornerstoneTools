@@ -9,7 +9,7 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @memberof Tools
  *
  * @classdesc Tool for scrolling through a series using multi-touch.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class StackScrollMultiTouchTool extends BaseTool {
   constructor(configuration = {}) {

@@ -27,7 +27,7 @@ const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing elliptical regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class EllipticalRoiTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

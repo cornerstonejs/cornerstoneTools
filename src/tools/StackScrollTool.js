@@ -9,7 +9,7 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @memberof Tools
  *
  * @classdesc Tool for scrolling through a series.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class StackScrollTool extends BaseTool {
   constructor(configuration = {}) {

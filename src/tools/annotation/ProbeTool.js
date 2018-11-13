@@ -18,7 +18,7 @@ import calculateSUV from './../../util/calculateSUV.js';
  * @memberof Tools.Annotation
  * @classdesc Tool which provides a probe of the image data at the
  * desired position.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ProbeTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

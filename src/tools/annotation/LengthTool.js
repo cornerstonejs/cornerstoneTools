@@ -20,7 +20,7 @@ import lineSegDistance from './../../util/lineSegDistance.js';
  * @class LengthTool
  * @memberof Tools.Annotation
  * @classdesc Tool for measuring distances.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class LengthTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

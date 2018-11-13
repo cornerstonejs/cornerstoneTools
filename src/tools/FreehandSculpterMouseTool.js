@@ -19,7 +19,7 @@ const { FreehandHandleData } = freehandUtils;
  *
  * @classdesc Tool for easily sculpting annotations drawn with
  * the FreehandMouseTool.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class FreehandSculpterMouseTool extends BaseTool {
   constructor(configuration = {}) {

@@ -15,7 +15,7 @@ import {
  * @memberof Tools.Annotation
  *
  * @classdesc Tool for annotating an image with text markers.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class TextMarkerTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

@@ -10,7 +10,7 @@ const { changeViewportScale } = zoomUtils;
  * @memberof Tools
  *
  * @classdesc Tool for changing magnification with the mouse wheel.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class ZoomMouseWheelTool extends BaseTool {
   constructor(configuration = {}) {

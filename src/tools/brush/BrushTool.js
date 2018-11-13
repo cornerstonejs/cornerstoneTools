@@ -12,7 +12,7 @@ const { state } = store.modules.brush;
  * @class BrushTool
  * @memberof Tools.Brush
  * @classdesc Tool for drawing segmentations on an image.
- * @extends BaseBrushTool
+ * @extends Tools.Base.BaseBrushTool
  */
 export default class BrushTool extends BaseBrushTool {
   constructor(configuration = {}) {

@@ -27,7 +27,7 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
  * @class ArrowAnnotateTool
  * @memberof Tools.Annotation
  * @classdesc Create and position an arrow and label
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

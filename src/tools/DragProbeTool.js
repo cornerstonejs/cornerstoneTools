@@ -20,7 +20,7 @@ import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
  *
  * @classdesc Tool which provides a probe of the image data at the
  * input position on drag.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class DragProbeTool extends BaseTool {
   constructor(configuration = {}) {

@@ -8,7 +8,7 @@ import BaseTool from './base/BaseTool.js';
  *
  * @classdesc Tool which calls the external cornerstone.fitToWindow() function
  * on double tap.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class DoubleTapFitToWindowTool extends BaseTool {
   constructor(configuration = {}) {

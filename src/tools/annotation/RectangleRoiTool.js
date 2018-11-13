@@ -23,7 +23,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing rectangular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

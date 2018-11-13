@@ -31,7 +31,7 @@ import EVENTS from './../../events.js';
  * @class CobbAngleTool
  * @memberof Tools.Annotation
  * @classdesc Tool for measuring the angle between two straight lines.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class CobbAngleTool extends BaseAnnotationTool {
   constructor(configuration = {}) {

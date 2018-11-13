@@ -18,7 +18,7 @@ import { setToolOptions } from '../toolOptions.js';
  *
  * @classdesc Tool for finding the slice in another element corresponding to the
  * image position in a synchronized image series.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class CrosshairsTool extends BaseTool {
   constructor(configuration = {}) {

@@ -11,7 +11,7 @@ const { correctShift, changeViewportScale } = zoomUtils;
  * @memberof Tools
  *
  * @classdesc Tool for changing magnification.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class ZoomTool extends BaseTool {
   constructor(configuration = {}) {

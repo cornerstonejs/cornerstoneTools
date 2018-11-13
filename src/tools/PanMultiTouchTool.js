@@ -7,7 +7,7 @@ import BaseTool from './base/BaseTool.js';
  * @memberof Tools
  *
  * @classdesc Tool for panning the image using multi-touch.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class PanMultiTouchTool extends BaseTool {
   constructor(configuration = {}) {

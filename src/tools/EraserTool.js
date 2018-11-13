@@ -9,7 +9,7 @@ import { state } from '../store/index.js';
  * @memberof Tools
  *
  * @classdesc Tool for deleting the data of other Annotation Tools.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class EraserTool extends BaseTool {
   constructor(configuration = {}) {

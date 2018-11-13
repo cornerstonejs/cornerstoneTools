@@ -38,7 +38,7 @@ const {
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing arbitrary polygonal regions of interest, and
  * measuring the statistics of the enclosed pixels.
- * @extends BaseAnnotationTool
+ * @extends Tools.Base.BaseAnnotationTool
  */
 export default class FreehandMouseTool extends BaseAnnotationTool {
   constructor(configuration = {}) {
