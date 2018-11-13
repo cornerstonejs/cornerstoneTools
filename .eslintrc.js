@@ -232,7 +232,9 @@ module.exports = {
           object: 'Object', // Uppercase
         },
         requireReturn: true,
-        matchDescription: '.+', // Require description
+        // Require description, or a pattern in description
+        // Issue here if we only want to provide a `@classdesc`
+        // matchDescription: '.+',
         requireParamDescription: false,
         requireReturnDescription: false,
       },

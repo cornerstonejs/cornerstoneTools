@@ -11,6 +11,18 @@
 
 /**
  * tools
+
+/**
+ * Manipulators describe a tool's `handle` behavior. Leveraging a small set of manipulators
+ * allows us to create a consistent experience when interacting with tools via their handles.
+ * @namespace Manipulators
+ */
+
+/**
+ * Mixins are "tool beahviors" that can be added to a tool via its mixin
+ * array configuration property
+ * @namespace Mixins
+ */
  * @namespace Tools
  */
 

@@ -8,7 +8,7 @@ import triggerEvent from '../util/triggerEvent.js';
  * Move all provided handles, using touch event listeners
  * @public
  * @function touchMoveAllHandles
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} event
  * @param {*} data

@@ -9,7 +9,7 @@ import { clipToBox } from '../util/clip.js';
  * Manipulator to move all provided handles at the same time
  * @public
  * @function moveAllHandles
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} e
  * @param {*} data

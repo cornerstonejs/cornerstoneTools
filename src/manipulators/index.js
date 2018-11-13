@@ -1,9 +1,3 @@
-/**
- * Manipulators describe a tool's `handle` behavior. Leveraging a small set of manipulators
- * allows us to create a consistent experience when interacting with tools via their handles.
- * @namespace CornerstoneTools.Manipulators
- */
-
 import anyHandleOutsideImage from './anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './getHandleNearImagePoint.js';
 import handleActivator from './handleActivator.js';

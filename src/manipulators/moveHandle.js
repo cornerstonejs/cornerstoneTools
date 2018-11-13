@@ -7,7 +7,7 @@ import { clipToBox } from '../util/clip.js';
  * Move the provided handle
  * @public
  * @method moveHandle
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} mouseEventData
  * @param {*} toolType

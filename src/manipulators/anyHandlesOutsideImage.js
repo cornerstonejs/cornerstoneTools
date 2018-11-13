@@ -4,7 +4,7 @@ import external from '../externalModules.js';
  * Determine if a handle is outside the bounds of the rendered image.
  * @public
  * @function anyHandlesOutsideImage
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} renderData - Cornerstone Tool's event detail
  * @param {Object} handles - An object containing named handles

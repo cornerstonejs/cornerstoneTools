@@ -4,7 +4,7 @@ import getHandleNearImagePoint from './getHandleNearImagePoint.js';
  * Update the active handle
  * @public
  * @function handleActivator
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} element
  * @param {*} handles

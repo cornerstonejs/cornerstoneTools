@@ -7,7 +7,7 @@ import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
  *
  * @public
  * @function getHandleNearImagePoint
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} element - Target enabledElement
  * @param {(Array|Object)} handles - An arry of handles, object with named handles, or object with named handles AND named arrays of handles

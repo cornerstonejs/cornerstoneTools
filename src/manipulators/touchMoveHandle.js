@@ -22,7 +22,7 @@ const touchEndEvents = [
  * Move the provided handle using touch events
  * @public
  * @method touchMoveHandle
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} event
  * @param {*} toolType

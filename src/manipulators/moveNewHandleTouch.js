@@ -7,7 +7,7 @@ import { clipToBox } from '../util/clip.js';
  * Moves a new handle using touch events
  * @public
  * @method moveNewHandleTouch
- * @memberof CornerstoneTools.Manipulators
+ * @memberof Manipulators
  *
  * @param {*} eventData
  * @param {*} toolType

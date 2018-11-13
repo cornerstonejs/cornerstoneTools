@@ -6,7 +6,8 @@
   "keywords": [
     "DICOM",
     "medical",
-    "imaging"
+    "imaging",
+    "cornerstone"
   ],
   "author": "Chris Hafey, Prasath",
   "homepage": "https://github.com/cornerstonejs/cornerstoneTools",

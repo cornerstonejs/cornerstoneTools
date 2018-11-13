@@ -25,7 +25,7 @@ function enabledCallback(element) {
 
 /**
  * @mixin activeOrDisabledBinaryTool - Redirect enabled/passive mode changes to active/disabled.
- * @memberof CornerstoneTools.Mixins
+ * @memberof Mixins
  */
 export default {
   passiveCallback,
