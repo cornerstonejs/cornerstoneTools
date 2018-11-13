@@ -6,8 +6,8 @@ import pointInEllipse from './pointInEllipse.js';
  * @name calculateEllipseStatistics
  *
  * @param  {number[]} sp    Array of the image data's pixel values.
- * @param  {object} ellipse An object describing the ellipse.
- * @returns {object}         The statistics of the ellipse.
+ * @param  {Object} ellipse An object describing the ellipse.
+ * @returns {Object}         The statistics of the ellipse.
  */
 export default function(sp, ellipse) {
   // TODO: Get a real statistics library here that supports large counts

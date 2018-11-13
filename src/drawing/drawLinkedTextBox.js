@@ -8,12 +8,12 @@ import drawLink from './drawLink.js';
  * @method drawLinkedTextBox
  * @memberof Drawing
  *
- * @param {object} context - The canvas context.
+ * @param {Object} context - The canvas context.
  * @param {HTMLElement} element - The element on which to draw the link.
- * @param {object} textBox - The textBox to link.
- * @param {object} text - The text to display in the textbox.
- * @param {object[]} handles - The handles of the annotation.
- * @param {object[]} textBoxAnchorPoints - An array of possible anchor points on the textBox.
+ * @param {Object} textBox - The textBox to link.
+ * @param {Object} text - The text to display in the textbox.
+ * @param {Object[]} handles - The handles of the annotation.
+ * @param {Object[]} textBoxAnchorPoints - An array of possible anchor points on the textBox.
  * @param {string} color - The link color.
  * @param {number} lineWidth - The line width of the link.
  * @param {number} xOffset - The x offset of the textbox.

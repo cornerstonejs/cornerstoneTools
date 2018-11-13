@@ -10,8 +10,8 @@ const toolType = 'FreehandMouse';
  * @export @public @method
  * @name insertOrDelete
  *
- * @param {object} e The event.
- * @param {object} nearby Object containing information about a nearby handle.
+ * @param {Object} e The event.
+ * @param {Object} nearby Object containing information about a nearby handle.
  */
 export default function(evt, nearby) {
   const eventData = evt.detail;
@@ -38,8 +38,8 @@ export default function(evt, nearby) {
  * @private
  * @method
  *
- * @param {object} eventData The data object associated with the event.
- * @param {object} deleteInfo Object containing information about which point to delete.
+ * @param {Object} eventData The data object associated with the event.
+ * @param {Object} deleteInfo Object containing information about which point to delete.
  */
 function deletePoint(eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, toolType);

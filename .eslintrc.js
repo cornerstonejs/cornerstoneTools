@@ -216,7 +216,24 @@ module.exports = {
     'template-curly-spacing': 'warn',
     'unicode-bom': ['warn', 'never'],
     // Helfpul for spotting issues, but is flaky
-    // 'valid-jsdoc': 'warn',
+    'valid-jsdoc': [
+      'error',
+      {
+        prefer: {
+          arg: 'param',
+          argument: 'param',
+          return: 'returns',
+          virtual: 'abstract',
+        },
+        preferType: {
+          object: 'Object', // Uppercase
+        },
+        requireReturn: true,
+        matchDescription: '.+', // Require description
+        requireParamDescription: false,
+        requireReturnDescription: false,
+      },
+    ],
     'vars-on-top': 'warn',
     'wrap-iife': ['warn', 'inside'],
     'yield-star-spacing': 'warn',

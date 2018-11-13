@@ -65,17 +65,20 @@ export default class BaseTool {
 
   /**
    *
+   * Tool specific config
    *
-   * @memberof BaseTool
+   * @property
+   * @memberof Tools.Base.BaseTool
    */
   get configuration() {
     return this._configuration;
   }
 
   /**
+   * Tool specific config setter
    *
-   *
-   * @memberof BaseTool
+   * @property
+   * @memberof Tools.Base.BaseTool
    */
   set configuration(configuration) {
     this._configuration = configuration;

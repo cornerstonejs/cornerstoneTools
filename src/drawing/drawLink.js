@@ -7,10 +7,10 @@ import drawLine from './drawLine.js';
  * @method drawLink
  * @memberof Drawing
  *
- * @param  {object[]} linkAnchorPoints An array of possible anchor points.
- * @param  {object} refPoint         A reference point to select the anchor point.
- * @param  {object} boundingBox    The bounding box to link.
- * @param  {object} context          The canvas context.
+ * @param  {Object[]} linkAnchorPoints An array of possible anchor points.
+ * @param  {Object} refPoint         A reference point to select the anchor point.
+ * @param  {Object} boundingBox    The bounding box to link.
+ * @param  {Object} context          The canvas context.
  * @param  {string} color            The link color.
  * @param  {number} lineWidth        The line width of the link.
  * @returns {undefined}

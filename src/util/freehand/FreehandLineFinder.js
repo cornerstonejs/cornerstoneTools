@@ -75,7 +75,7 @@ export default class FreehandLineFinder {
    * Finds the nearest handle to the mouse cursor for all tools.
    * @private
    * @method
-   * @returns {object} The handle closest to the point.
+   * @returns {Object} The handle closest to the point.
    */
   _nearestHandleToPointAllTools() {
     const toolData = this._toolData;
@@ -107,7 +107,7 @@ export default class FreehandLineFinder {
    * @method
    *
    * @param {number} toolIndex The index of the particular freehand tool.
-   * @returns {object} An object containing information about the closest handle.
+   * @returns {Object} An object containing information about the closest handle.
    */
   _nearestHandleToPoint(toolIndex) {
     const eventData = this._eventData;
@@ -154,7 +154,7 @@ export default class FreehandLineFinder {
    * @method
    *
    * @param {number} toolIndex The index of the particular freehand tool.
-   * @returns {object} An array of lines close to the mouse point.
+   * @returns {Object} An array of lines close to the mouse point.
    */
   _getCloseLinesInTool(toolIndex) {
     const toolData = this._toolData;
@@ -186,7 +186,7 @@ export default class FreehandLineFinder {
    * @method
    *
    * @param {number} toolIndex The index of the particular freehand tool.
-   * @param {object} closeLines An array of lines close to the mouse point.
+   * @param {Object} closeLines An array of lines close to the mouse point.
    * @returns {ClickedLineData|null} An instance of ClickedLineData containing information about the line, or null if no line is correct.
    */
   _findCorrectLine(toolIndex, closeLines) {
@@ -207,7 +207,7 @@ export default class FreehandLineFinder {
    * @method
    *
    * @param {number} toolIndex The index of the particular freehand tool.
-   * @param {object} handleIndexArray An array of indicies corresponding to the line segment.
+   * @param {Object} handleIndexArray An array of indicies corresponding to the line segment.
    * @returns {boolean} True if the mouse point projects onto the line segment
    */
   _pointProjectsToLineSegment(toolIndex, handleIndexArray) {
@@ -253,8 +253,8 @@ export default class FreehandLineFinder {
    * @method
    * @param {FreehandHandleData} handle1 The first handle.
    * @param {FreehandHandleData} handle2 The second handle.
-   * @param {object} element The element on which the handles reside.
-   * @returns {object} An array contsining the handle positions in canvas coordinates.
+   * @param {Object} element The element on which the handles reside.
+   * @returns {Object} An array contsining the handle positions in canvas coordinates.
    */
   static getCanvasPointsFromHandles(handle1, handle2, element) {
     const p = [];
@@ -277,8 +277,8 @@ export default class FreehandLineFinder {
    * @static
    * @public
    * @method
-   * @param {object} p An array of two points respresenting the line segment.
-   * @returns {object} An array containing the x and y components of the vector, as well as a magnitude property.
+   * @param {Object} p An array of two points respresenting the line segment.
+   * @returns {Object} An array containing the x and y components of the vector, as well as a magnitude property.
    */
   static getLineAsVector(p) {
     const r = [p[1].x - p[0].x, p[1].y - p[0].y];
@@ -293,8 +293,8 @@ export default class FreehandLineFinder {
    * @private
    * @method
    *
-   * @param {object} p An array of two points respresenting the line segment.
-   * @returns {object} An array containing the x and y components of the vector.
+   * @param {Object} p An array of two points respresenting the line segment.
+   * @returns {Object} An array containing the x and y components of the vector.
    */
   _getLineOriginToMouseAsVector(p) {
     const m = [this._mousePoint.x - p[0].x, this._mousePoint.y - p[0].y];

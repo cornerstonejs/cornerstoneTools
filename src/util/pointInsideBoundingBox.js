@@ -5,8 +5,8 @@ import external from '../externalModules.js';
  * @export @public @method
  * @name pointInsideBoundingBox
  *
- * @param  {object} handle The handle containing the boundingBox.
- * @param  {object} coords The coordinate to check.
+ * @param  {Object} handle The handle containing the boundingBox.
+ * @param  {Object} coords The coordinate to check.
  * @returns {boolean} True if the point is enclosed within the bounding box.
  */
 export default function(handle, coords) {

@@ -6,9 +6,9 @@
  * @name getActiveToolsForElement
  *
  * @param  {HTMLElement} element The element.
- * @param  {object[]} tools      The input tool array.
+ * @param  {Object[]} tools      The input tool array.
  * @param  {string} handlerType  The input type being queried.
- * @returns {object[]}            The filtered array.
+ * @returns {Object[]}            The filtered array.
  */
 export default function(element, tools, handlerType) {
   return tools.filter(

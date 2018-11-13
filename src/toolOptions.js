@@ -10,7 +10,7 @@ const elementToolOptions = {};
  * @param {string} toolType Tool type identifier of the target options object
  * @param {HTMLElement} element Element of the target options object
  *
- * @returns {object} Target options object (empty if not yet set)
+ * @returns {Object} Target options object (empty if not yet set)
  */
 function getToolOptions(toolType, element) {
   if (!elementToolOptions[toolType]) {

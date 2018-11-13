@@ -8,7 +8,7 @@ import external from '../externalModules.js';
  * @constructor newImageIdSpecificToolStateManager
  * @memberof CornerstoneTools.StateManagement
  *
- * @returns {object} An imageIdSpecificToolStateManager instance.
+ * @returns {Object} An imageIdSpecificToolStateManager instance.
  */
 function newImageIdSpecificToolStateManager() {
   let toolState = {};

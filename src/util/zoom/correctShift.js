@@ -3,9 +3,9 @@
  * @export @public @method
  * @name correctShift
  *
- * @param  {object} shift      The shift to correct.
- * @param  {object} viewportOrientation  Object containing information on the viewport orientation.
- * @returns {object}            The corrected shift.
+ * @param  {Object} shift      The shift to correct.
+ * @param  {Object} viewportOrientation  Object containing information on the viewport orientation.
+ * @returns {Object}            The corrected shift.
  */
 export default function(shift, viewportOrientation) {
   const { hflip, vflip, rotation } = viewportOrientation;

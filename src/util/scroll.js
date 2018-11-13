@@ -56,7 +56,7 @@ export default function(element, images, loop = false, allowSkipping = true) {
  * @name scrollWithoutSkipping
  *
  * @param  {type} stackData    Data object containing information about the stack.
- * @param  {object} pendingEvent The event to process next.
+ * @param  {Object} pendingEvent The event to process next.
  * @param  {HTMLElement} element      The element being scrolled through.
  */
 function scrollWithoutSkipping(stackData, pendingEvent, element) {

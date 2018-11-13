@@ -43,7 +43,7 @@ export default function(type, name, item, overwrite = false) {
  * @param {string} type The type of the item/module.
  * @param {string} name The name of the item/module.
  * @param {Object|function} item The item/module itself.
- * @return {boolean}    Whether the input is valid.
+ * @returns {boolean}    Whether the input is valid.
  */
 function isValidInput(type, name, item) {
   if (!type) {

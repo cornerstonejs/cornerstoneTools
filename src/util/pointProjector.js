@@ -6,9 +6,9 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @export @public @method
  * @name projectPatientPointToImagePlane
  *
- * @param  {object} patientPoint The patient point.
- * @param  {object} imagePlane   The image plane used for projection.
- * @returns {object}              The projected coordinates.
+ * @param  {Object} patientPoint The patient point.
+ * @param  {Object} imagePlane   The image plane used for projection.
+ * @returns {Object}              The projected coordinates.
  */
 export function projectPatientPointToImagePlane(patientPoint, imagePlane) {
   const rowCosines = convertToVector3(imagePlane.rowCosines);
@@ -32,9 +32,9 @@ export function projectPatientPointToImagePlane(patientPoint, imagePlane) {
  * @export @public @method
  * @name imagePointToPatientPoint
  *
- * @param  {object} imagePoint   The image point.
- * @param  {object} imagePlane   The image plane used for projection.
- * @returns {object}              The projected coordinates.
+ * @param  {Object} imagePoint   The image point.
+ * @param  {Object} imagePlane   The image plane used for projection.
+ * @returns {Object}              The projected coordinates.
  */
 export function imagePointToPatientPoint(imagePoint, imagePlane) {
   const rowCosines = convertToVector3(imagePlane.rowCosines);
@@ -61,8 +61,8 @@ export function imagePointToPatientPoint(imagePoint, imagePlane) {
  * @export @public @method
  * @name getRectangleFromImagePlane
  *
- * @param  {object} imagePlane The imagePlane.
- * @returns {object} The rect.
+ * @param  {Object} imagePlane The imagePlane.
+ * @returns {Object} The rect.
  */
 function getRectangleFromImagePlane(imagePlane) {
   // Get the points
@@ -112,9 +112,9 @@ function getRectangleFromImagePlane(imagePlane) {
  * @method
  * @name lineRectangleIntersection
  *
- * @param  {object} line The line to check.
- * @param  {object} rect The rect being intersected.
- * @returns {object[]} An array of the intersections.
+ * @param  {Object} line The line to check.
+ * @param  {Object} rect The rect being intersected.
+ * @returns {Object[]} An array of the intersections.
  */
 function lineRectangleIntersection(line, rect) {
   const intersections = [];
@@ -136,9 +136,9 @@ function lineRectangleIntersection(line, rect) {
  * @export @public @method
  * @name planePlaneIntersection
  *
- * @param  {object} targetImagePlane    The target plane.
- * @param  {object} referenceImagePlane The reference plane
- * @returns {object}                   The intersections.
+ * @param  {Object} targetImagePlane    The target plane.
+ * @param  {Object} referenceImagePlane The reference plane
+ * @returns {Object}                   The intersections.
  */
 export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
   const targetRowCosines = convertToVector3(targetImagePlane.rowCosines);

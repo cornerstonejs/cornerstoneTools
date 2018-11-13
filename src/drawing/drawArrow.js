@@ -7,9 +7,9 @@ import drawJoinedLines from './drawJoinedLines.js';
  * @method drawArrow
  * @memberof Drawing
  *
- * @param  {object} context   The canvas context.
- * @param  {object} start     The start position.
- * @param  {object} end       The end position.
+ * @param  {Object} context   The canvas context.
+ * @param  {Object} start     The start position.
+ * @param  {Object} end       The end position.
  * @param  {string} color     The color of the arrow.
  * @param  {number} lineWidth The width of the arrow line.
  * @returns {undefined}

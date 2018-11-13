@@ -5,10 +5,10 @@ import pointInFreehand from './pointInFreehand.js';
  * @export @public @method
  * @name calculateFreehandStatistics
  *
- * @param {object} sp An array of the pixel data.
- * @param {object} boundingBox Rectangular box enclosing the polygon.
- * @param {object} dataHandles Data object associated with the tool.
- * @returns {object} Object containing the derived statistics.
+ * @param {Object} sp An array of the pixel data.
+ * @param {Object} boundingBox Rectangular box enclosing the polygon.
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @returns {Object} Object containing the derived statistics.
  */
 export default function(sp, boundingBox, dataHandles) {
   const statisticsObj = {
@@ -39,10 +39,10 @@ export default function(sp, boundingBox, dataHandles) {
  * @method
  * @name getSum
  *
- * @param {object} sp An array of the pixel data.
- * @param {object} boundingBox Rectangular box enclosing the polygon.
- * @param {object} dataHandles Data object associated with the tool.
- * @returns {object} Object containing the sum, squared sum and pixel count.
+ * @param {Object} sp An array of the pixel data.
+ * @param {Object} boundingBox Rectangular box enclosing the polygon.
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @returns {Object} Object containing the sum, squared sum and pixel count.
  */
 function getSum(sp, boundingBox, dataHandles) {
   const sum = {
@@ -76,10 +76,10 @@ function getSum(sp, boundingBox, dataHandles) {
  * @private
  * @method sumPointIfInFreehand
  *
- * @param {object} dataHandles Data object associated with the tool.
- * @param {object} point The pixel coordinates.
- * @param {object} workingSum The working sum, squared sum and pixel count.
- * @param {object} pixelValue The pixel value. // @modifies {workingSum}
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @param {Object} point The pixel coordinates.
+ * @param {Object} workingSum The working sum, squared sum and pixel count.
+ * @param {Object} pixelValue The pixel value. // @modifies {workingSum}
  * @returns {undefined}
  */
 function sumPointIfInFreehand(dataHandles, point, workingSum, pixelValue) {

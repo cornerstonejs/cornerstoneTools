@@ -6,8 +6,8 @@
  * @name getInteractiveToolsForElement
  *
  * @param  {HTMLElement} element The element.
- * @param  {object[]} tools      The input tool array.
- * @returns {object[]}            The filtered array.
+ * @param  {Object[]} tools      The input tool array.
+ * @returns {Object[]}            The filtered array.
  */
 export default function(element, tools) {
   return tools.filter(

@@ -17,9 +17,9 @@ export default function clip(val, low, high) {
  * @export @public @method
  * @name clipToBox
  *
- * @param  {object} point The point to clip
- * @param  {object} box   The bounding box to clip to.
- * @returns {object}       The clipped point.
+ * @param  {Object} point The point to clip
+ * @param  {Object} box   The bounding box to clip to.
+ * @returns {Object}       The clipped point.
  */
 export function clipToBox(point, box) {
   // Clip an {x, y} point to a box of size {width, height}

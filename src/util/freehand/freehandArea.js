@@ -3,8 +3,8 @@
  * @export @public @method
  * @name freehandArea
  *
- * @param {object} dataHandles Data object associated with the tool.
- * @param {object} scaling Area scaling of image.
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @param {Object} scaling Area scaling of image.
  * @returns {number} The area of the polygon.
  */
 export default function(dataHandles, scaling) {

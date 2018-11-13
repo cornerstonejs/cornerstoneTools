@@ -12,7 +12,7 @@ import {
  * @memberof Tools.Base
  * @classdesc Abstract class for tools which create and display annotations on the
  * cornerstone canvas.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class BaseAnnotationTool extends BaseTool {
   constructor({
@@ -40,7 +40,9 @@ export default class BaseAnnotationTool extends BaseTool {
   /**
    * Creates a new annotation.
    *
-   * @abstract
+   * @method createNewMeasurement
+   * @memberof Tools.Base.BaseAnnotationTool
+   *
    * @param  {type} evt description
    * @returns {type}     description
    */
@@ -99,7 +101,7 @@ export default class BaseAnnotationTool extends BaseTool {
   /**
    * Event handler for MOUSE_MOVE event.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -137,7 +139,7 @@ export default class BaseAnnotationTool extends BaseTool {
   /**
    * Custom callback for when a handle is selected.
    *
-   * @virtual
+   * @abstract
    * @param  {*} evt
    * @param  {*} handle The selected handle.
    */
@@ -148,7 +150,7 @@ export default class BaseAnnotationTool extends BaseTool {
   /**
    * Custom callback for when a tool is selected.
    *
-   * @virtual
+   * @abstract
    * @param  {*} evt
    * @param  {*} tool The selected tool.
    */

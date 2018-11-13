@@ -235,7 +235,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
- * @param {(object|number)} options
+ * @param {(Object|number)} options
  * @returns {undefined}
  */
 function setToolMode(mode, changeEvent, toolName, options) {

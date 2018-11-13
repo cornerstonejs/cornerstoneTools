@@ -12,9 +12,9 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
  * @name getToolsWithMoveableHandles
  *
  * @param  {HTMLElement} element The element
- * @param  {object[]}    tools   The input tool array.
- * @param  {object}      coords  The coordinates of the mouse position.
- * @returns {object[]}            The filtered array.
+ * @param  {Object[]}    tools   The input tool array.
+ * @param  {Object}      coords  The coordinates of the mouse position.
+ * @returns {Object[]}            The filtered array.
  */
 export default function(element, tools, coords) {
   return tools.filter(tool => {

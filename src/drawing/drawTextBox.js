@@ -41,8 +41,8 @@ export function textBoxWidth(context, text, padding) {
  * @param  {number} x           The x position of the textBox.
  * @param  {number} y           The y position of the textBox.
  * @param  {string} color       The color of the textBox.
- * @param  {object} options     Options for the textBox.
- * @returns {object} {top, left, width, height} - Bounding box; can be used for pointNearTool
+ * @param  {Object} options     Options for the textBox.
+ * @returns {Object} {top, left, width, height} - Bounding box; can be used for pointNearTool
  */
 export default function(context, textLines, x, y, color, options) {
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {

@@ -37,7 +37,7 @@ const addToolForElement = function(element, apiTool, configuration) {
  * @method
  * @name addTool
  * @param {BaseTool} apiTool The tool to add to each element.
- * @param {object} [configuration] Override the default tool configuration
+ * @param {Object} [configuration] Override the default tool configuration
  */
 const addTool = function(apiTool, configuration) {
   _addToolGlobally(apiTool, configuration);
@@ -54,7 +54,7 @@ const addTool = function(apiTool, configuration) {
  * @method
  * @name addToolGlobally
  * @param {BaseTool} apiTool
- * @param {object} [configuration] Override the default tool configuration
+ * @param {Object} [configuration] Override the default tool configuration
  */
 const _addToolGlobally = function(apiTool, configuration) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {

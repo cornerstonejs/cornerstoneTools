@@ -9,8 +9,8 @@ import { draw, drawLine } from './../../drawing/index.js';
  *
  * @export @public @method
  * @name renderActiveReferenceLine
- * @param  {object} context        The canvas context.
- * @param  {object} eventData      The data associated with the event.
+ * @param  {Object} context        The canvas context.
+ * @param  {Object} eventData      The data associated with the event.
  * @param  {HTMLElement} targetElement    The element on which to render the reference line.
  * @param  {HTMLElement} referenceElement The element referenced by the line.
  */

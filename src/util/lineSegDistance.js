@@ -6,9 +6,9 @@ import external from '../externalModules.js';
  * @name lineSegDistance
  *
  * @param  {HTMLElement} element The element.
- * @param  {object} start   The starting position of the line.
- * @param  {object} end     The end position of the line.
- * @param  {object} coords  The coordinates of the point.
+ * @param  {Object} start   The starting position of the line.
+ * @param  {Object} end     The end position of the line.
+ * @param  {Object} coords  The coordinates of the point.
  * @returns {name}         The distance between the line and the point.
  */
 export default function(element, start, end, coords) {

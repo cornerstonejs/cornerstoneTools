@@ -5,7 +5,7 @@ import external from '../externalModules.js';
  * @export @public @method
  * @name calculateSUV
  *
- * @param  {object} image            The image.
+ * @param  {Object} image            The image.
  * @param  {number} storedPixelValue The raw pixel value.
  * @returns {number}                  The SUV.
  */

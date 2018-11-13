@@ -3,8 +3,8 @@
  * @export @public @method
  * @name pointInEllipse
  *
- * @param  {object} ellipse  Object defining the ellipse.
- * @param  {object} location The location of the point.
+ * @param  {Object} ellipse  Object defining the ellipse.
+ * @param  {Object} location The location of the point.
  * @returns {boolean} True if the point is within the ellipse.
  */
 export default function(ellipse, location) {

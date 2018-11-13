@@ -12,8 +12,8 @@ import {
  * @memberof CornerstoneTools.StateManagement
  *
  * @param  {string[]} toolTypes       The tool types to apply to the stack.
- * @param  {object} oldStateManager The imageIdSpecificStateManager.
- * @returns {object} A stackSpecificToolStateManager instance.
+ * @param  {Object} oldStateManager The imageIdSpecificStateManager.
+ * @returns {Object} A stackSpecificToolStateManager instance.
  */
 function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
   let toolState = {};

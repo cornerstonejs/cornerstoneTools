@@ -1,12 +1,13 @@
 /**
  * Calculates the (interior) angle in degrees from the initial mouse location
  * to the current mouse location in relation to the center point.
- * @export @public @method
- * @name angleBetweenPoints
+ * @public
+ * @function angleBetweenPoints
  *
- * @param  {object} p0  The center point.
- * @param  {object} p1  The initial point.
- * @param  {object} p2  The final point.
+ * @param  {Object} p0  The center point.
+ * @param  {Object} p1  The initial point.
+ * @param  {Object} p2  The final point.
+ * @returns {Object} { angle, direction }
  */
 export default (p0, p1, p2) => {
   const p12 = Math.sqrt(Math.pow(p0.x - p1.x, 2) + Math.pow(p0.y - p1.y, 2));

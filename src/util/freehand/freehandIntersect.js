@@ -8,8 +8,8 @@
  * @public
  * @function newHandle
  *
- * @param {object} candidateHandle The new handle to check.
- * @param {object} dataHandles data object associated with the tool.
+ * @param {Object} candidateHandle The new handle to check.
+ * @param {Object} dataHandles data object associated with the tool.
  * @returns {boolean} - Whether the new line intersects with any other lines of the polygon.
  */
 function newHandle(candidateHandle, dataHandles) {
@@ -28,7 +28,7 @@ function newHandle(candidateHandle, dataHandles) {
  * @public
  * @function end
  *
- * @param {object} dataHandles data object associated with the tool.
+ * @param {Object} dataHandles data object associated with the tool.
  * @returns {boolean} Whether the last line intersects with any other lines of the polygon.
  */
 function end(dataHandles) {
@@ -47,7 +47,7 @@ function end(dataHandles) {
  * @public
  * @method modify
  *
- * @param {object} dataHandles Data object associated with the tool.
+ * @param {Object} dataHandles Data object associated with the tool.
  * @param {number} modifiedHandleId The id of the handle being modified.
  * @returns {boolean} Whether the modfication causes any intersections.
  */
@@ -93,10 +93,10 @@ function modify(dataHandles, modifiedHandleId) {
  * @private
  * @function doesIntersectOtherLines
  *
- * @param {object} dataHandles Data object associated with the tool.
- * @param {object} p1 Coordinates of the start of the line.
- * @param {object} q1 Coordinates of the end of the line.
- * @param {object} ignoredHandleIds Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @param {Object} p1 Coordinates of the start of the line.
+ * @param {Object} q1 Coordinates of the end of the line.
+ * @param {Object} ignoredHandleIds Ids of handles to ignore (i.e. lines that share a vertex with the line being tested).
  * @returns {boolean} Whether the line intersects any of the other lines in the polygon.
  */
 function doesIntersectOtherLines(dataHandles, p1, q1, ignoredHandleIds) {
@@ -129,10 +129,10 @@ function doesIntersectOtherLines(dataHandles, p1, q1, ignoredHandleIds) {
  * @private
  * @function doesIntersect
  *
- * @param {object} p1 Coordinates of the start of the line 1.
- * @param {object} q1 Coordinates of the end of the line 1.
- * @param {object} p2 Coordinates of the start of the line 2.
- * @param {object} q2 Coordinates of the end of the line 2.
+ * @param {Object} p1 Coordinates of the start of the line 1.
+ * @param {Object} q1 Coordinates of the end of the line 1.
+ * @param {Object} p2 Coordinates of the start of the line 2.
+ * @param {Object} q2 Coordinates of the end of the line 2.
  * @returns {boolean} Whether lines (p1,q1) and (p2,q2) intersect.
  */
 function doesIntersect(p1, q1, p2, q2) {
@@ -173,8 +173,8 @@ function doesIntersect(p1, q1, p2, q2) {
  * @private
  * @function getCoords
  *
- * @param {object} dataHandle Data object associated with a single handle in the freehand tool.
- * @returns {object} An object containing position propeties x and y.
+ * @param {Object} dataHandle Data object associated with a single handle in the freehand tool.
+ * @returns {Object} An object containing position propeties x and y.
  */
 function getCoords(dataHandle) {
   return {
@@ -188,9 +188,9 @@ function getCoords(dataHandle) {
  * @private
  * @function orientation
  *
- * @param {object} p First point.
- * @param {object} q Second point.
- * @param {object} r Third point.
+ * @param {Object} p First point.
+ * @param {Object} q Second point.
+ * @param {Object} r Third point.
  * @returns {number} - 0: Colinear, 1: Clockwise, 2: Anticlockwise
  */
 function orientation(p, q, r) {
@@ -209,9 +209,9 @@ function orientation(p, q, r) {
  * @private
  * @function onSegment
  *
- * @param {object} p Point p.
- * @param {object} q Point q.
- * @param {object} r Point r.
+ * @param {Object} p Point p.
+ * @param {Object} q Point q.
+ * @param {Object} r Point r.
  * @returns {boolean} - If q lies on line segment (p,r).
  */
 function onSegment(p, q, r) {
