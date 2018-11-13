@@ -1,16 +1,16 @@
 let coordsData;
 
-function setCoords (eventData) {
+function setCoords(eventData) {
   coordsData = eventData.currentPoints.canvas;
 }
 
-function getCoords () {
+function getCoords() {
   return coordsData;
 }
 
 const toolCoordinates = {
   setCoords,
-  getCoords
+  getCoords,
 };
 
 export default toolCoordinates;

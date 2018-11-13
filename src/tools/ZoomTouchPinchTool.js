@@ -1,19 +1,28 @@
 import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import zoomUtils from '../util/zoom/index.js';
 
-const { correctShift, changeViewportScale } = zoomUtils;
+const { correctShift } = zoomUtils;
 
+/**
+ *
+ *
+ * @public
+ * @class ZoomTouchPinchTool
+ * @memberof Tools
+ *
+ * @extends {BaseTool}
+ */
 export default class ZoomTouchPinchTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'ZoomTouchPinch',
       // TODO: Do we need a better way to specify touchPinch?
       supportedInteractionTypes: ['TouchPinch'],
       configuration: {
         minScale: 0.25,
-        maxScale: 20.0
-      }
+        maxScale: 20.0,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -27,13 +36,13 @@ export default class ZoomTouchPinchTool extends BaseTool {
    *
    * @param {*} evt
    */
-  touchPinchCallback (evt) {
+  touchPinchCallback(evt) {
     const { element, viewport, scaleChange } = evt.detail;
     const [pageStartX, pageStartY, imageStartX, imageStartY] = [
       evt.detail.startPoints.page.x,
       evt.detail.startPoints.page.y,
       evt.detail.startPoints.image.x,
-      evt.detail.startPoints.image.y
+      evt.detail.startPoints.image.y,
     ];
     const { maxScale, minScale } = this.configuration;
 
@@ -56,7 +65,7 @@ export default class ZoomTouchPinchTool extends BaseTool {
     );
     let shift = {
       x: imageStartX - newCoords.x,
-      y: imageStartY - newCoords.y
+      y: imageStartY - newCoords.y,
     };
 
     shift = correctShift(shift, viewport);

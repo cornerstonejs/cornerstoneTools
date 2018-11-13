@@ -13,7 +13,7 @@ import mixins from '../mixins/index.js';
  * @param {boolean} [overwrite=false] Whether an mixin should be overwritten,
  *                                    should it have the same name.
  */
-export default function (name, mixin, overwrite = false) {
+export default function(name, mixin, overwrite = false) {
   if (isMixinRegistered(name)) {
     console.warn(`mixins/${name} is already registered`);
 
@@ -31,6 +31,6 @@ export default function (name, mixin, overwrite = false) {
   lib[`mixins/${name}`] = mixins[name];
 }
 
-function isMixinRegistered (name) {
+function isMixinRegistered(name) {
   return mixins[name] !== undefined;
 }

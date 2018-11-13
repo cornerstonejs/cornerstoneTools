@@ -1,22 +1,23 @@
-/* eslint no-loop-func: 0 */ // --> OFF
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import scroll from '../util/scroll.js';
 
 /**
- * @export @public @class
- * @name StackScrollMouseWheelTool
+ * @public
+ * @class StackScrollMouseWheelTool
+ * @memberof Tools
+ *
  * @classdesc Tool for scrolling through a series using the mouse wheel.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class StackScrollMouseWheelTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'StackScrollMouseWheel',
       supportedInteractionTypes: ['MouseWheel'],
       configuration: {
         loop: false,
-        allowSkipping: true
-      }
+        allowSkipping: true,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -25,7 +26,7 @@ export default class StackScrollMouseWheelTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  mouseWheelCallback (evt) {
+  mouseWheelCallback(evt) {
     const { direction: images, element } = evt.detail;
     const { loop, allowSkipping } = this.configuration;
 

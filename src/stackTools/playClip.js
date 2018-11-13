@@ -14,7 +14,7 @@ const toolType = 'playClip';
  * @param {Number} speed A speed factor which will be applied to each element of the resulting array.
  * @returns {Array} An array with timeouts for each animation frame.
  */
-function getPlayClipTimeouts (vector, speed) {
+function getPlayClipTimeouts(vector, speed) {
   let i;
   let sample;
   let delay;
@@ -33,7 +33,8 @@ function getPlayClipTimeouts (vector, speed) {
   for (i = 1; i < limit; i++) {
     delay = (Number(vector[i]) / speed) | 0; // Integral part only
     timeouts.push(delay);
-    if (i === 1) { // Use first item as a sample for comparison
+    if (i === 1) {
+      // Use first item as a sample for comparison
       sample = delay;
     } else if (delay !== sample) {
       timeouts.isTimeVarying = true;
@@ -60,7 +61,7 @@ function getPlayClipTimeouts (vector, speed) {
  * [private] Performs the heavy lifting of stopping an ongoing animation.
  * @param {Object} playClipData The data from playClip that needs to be stopped.
  */
-function stopClipWithData (playClipData) {
+function stopClipWithData(playClipData) {
   const id = playClipData.intervalId;
 
   if (typeof id !== 'undefined') {
@@ -77,9 +78,9 @@ function stopClipWithData (playClipData) {
  * [private] Trigger playClip tool stop event.
  * @param element
  */
-function triggerStopEvent (element) {
+function triggerStopEvent(element) {
   const eventDetail = {
-    element
+    element,
   };
 
   triggerEvent(element, EVENTS.CLIP_STOPPED, eventDetail);
@@ -92,7 +93,7 @@ function triggerStopEvent (element) {
  * @param element
  * @param framesPerSecond
  */
-function playClip (element, framesPerSecond) {
+function playClip(element, framesPerSecond) {
   let playClipData;
   let playClipTimeouts;
 
@@ -113,7 +114,11 @@ function playClip (element, framesPerSecond) {
   if (stackToolData.data.length > 1) {
     const stackRendererData = getToolState(element, 'stackRenderer');
 
-    if (stackRendererData && stackRendererData.data && stackRendererData.data.length) {
+    if (
+      stackRendererData &&
+      stackRendererData.data &&
+      stackRendererData.data.length
+    ) {
       stackRenderer = stackRendererData.data[0];
     }
   }
@@ -122,7 +127,11 @@ function playClip (element, framesPerSecond) {
 
   const playClipToolData = getToolState(element, toolType);
 
-  if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
+  if (
+    !playClipToolData ||
+    !playClipToolData.data ||
+    !playClipToolData.data.length
+  ) {
     playClipData = {
       intervalId: undefined,
       framesPerSecond: 30,
@@ -133,7 +142,7 @@ function playClip (element, framesPerSecond) {
       usingFrameTimeVector: false,
       speed: 1,
       reverse: false,
-      loop: true
+      loop: true,
     };
     addToolState(element, toolType, playClipData);
   } else {
@@ -153,15 +162,17 @@ function playClip (element, framesPerSecond) {
   // Determine if frame time vector should be used instead of a fixed frame rate...
   if (
     playClipData.ignoreFrameTimeVector !== true &&
-        playClipData.frameTimeVector &&
-        playClipData.frameTimeVector.length === stackData.imageIds.length
+    playClipData.frameTimeVector &&
+    playClipData.frameTimeVector.length === stackData.imageIds.length
   ) {
-    playClipTimeouts = getPlayClipTimeouts(playClipData.frameTimeVector, playClipData.speed);
+    playClipTimeouts = getPlayClipTimeouts(
+      playClipData.frameTimeVector,
+      playClipData.speed
+    );
   }
 
   // This function encapsulates the frame rendering logic...
   const playClipAction = () => {
-
     // Hoisting of context variables
     let loader,
       startLoadingHandler,
@@ -177,7 +188,10 @@ function playClip (element, framesPerSecond) {
       newImageIdIndex++;
     }
 
-    if (!playClipData.loop && (newImageIdIndex < 0 || newImageIdIndex >= imageCount)) {
+    if (
+      !playClipData.loop &&
+      (newImageIdIndex < 0 || newImageIdIndex >= imageCount)
+    ) {
       stopClipWithData(playClipData);
       triggerStopEvent(element);
 
@@ -205,69 +219,80 @@ function playClip (element, framesPerSecond) {
       if (stackData.preventCache === true) {
         loader = cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
       } else {
-        loader = cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+        loader = cornerstone.loadAndCacheImage(
+          stackData.imageIds[newImageIdIndex]
+        );
       }
 
-      loader.then(function (image) {
-        try {
-          stackData.currentImageIdIndex = newImageIdIndex;
-          if (stackRenderer) {
-            stackRenderer.currentImageIdIndex = newImageIdIndex;
-            stackRenderer.render(element, stackToolData.data);
-          } else {
-            cornerstone.displayImage(element, image);
+      loader.then(
+        function(image) {
+          try {
+            stackData.currentImageIdIndex = newImageIdIndex;
+            if (stackRenderer) {
+              stackRenderer.currentImageIdIndex = newImageIdIndex;
+              stackRenderer.render(element, stackToolData.data);
+            } else {
+              cornerstone.displayImage(element, image);
+            }
+            if (endLoadingHandler) {
+              endLoadingHandler(element, image);
+            }
+          } catch (error) {
+            return;
           }
-          if (endLoadingHandler) {
-            endLoadingHandler(element, image);
+        },
+        function(error) {
+          const imageId = stackData.imageIds[newImageIdIndex];
+
+          if (errorLoadingHandler) {
+            errorLoadingHandler(element, imageId, error);
           }
-        } catch (error) {
-          return;
         }
-      }, function (error) {
-        const imageId = stackData.imageIds[newImageIdIndex];
-
-        if (errorLoadingHandler) {
-          errorLoadingHandler(element, imageId, error);
-        }
-      });
-
+      );
     }
-
   };
 
-    // If playClipTimeouts array is available, not empty and its elements are NOT uniform ...
-    // ... (at least one timeout is different from the others), use alternate setTimeout implementation
-  if (playClipTimeouts && playClipTimeouts.length > 0 && playClipTimeouts.isTimeVarying) {
+  // If playClipTimeouts array is available, not empty and its elements are NOT uniform ...
+  // ... (at least one timeout is different from the others), use alternate setTimeout implementation
+  if (
+    playClipTimeouts &&
+    playClipTimeouts.length > 0 &&
+    playClipTimeouts.isTimeVarying
+  ) {
     playClipData.usingFrameTimeVector = true;
-    playClipData.intervalId = setTimeout(function playClipTimeoutHandler () {
-      playClipData.intervalId = setTimeout(playClipTimeoutHandler, playClipTimeouts[stackData.currentImageIdIndex]);
+    playClipData.intervalId = setTimeout(function playClipTimeoutHandler() {
+      playClipData.intervalId = setTimeout(
+        playClipTimeoutHandler,
+        playClipTimeouts[stackData.currentImageIdIndex]
+      );
       playClipAction();
     }, 0);
   } else {
     // ... otherwise user setInterval implementation which is much more efficient.
     playClipData.usingFrameTimeVector = false;
-    playClipData.intervalId = setInterval(playClipAction, 1000 / Math.abs(playClipData.framesPerSecond));
+    playClipData.intervalId = setInterval(
+      playClipAction,
+      1000 / Math.abs(playClipData.framesPerSecond)
+    );
   }
-
 }
 
 /**
  * Stops an already playing clip.
  * * @param element
  */
-function stopClip (element) {
-
+function stopClip(element) {
   const playClipToolData = getToolState(element, toolType);
 
-  if (!playClipToolData || !playClipToolData.data || !playClipToolData.data.length) {
+  if (
+    !playClipToolData ||
+    !playClipToolData.data ||
+    !playClipToolData.data.length
+  ) {
     return;
   }
 
   stopClipWithData(playClipToolData.data[0]);
-
 }
 
-export {
-  playClip,
-  stopClip
-};
+export { playClip, stopClip };

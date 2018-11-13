@@ -1,14 +1,14 @@
 import WwwcTool from './WwwcTool.js';
-import external from '../externalModules.js';
+import external from './../externalModules.js';
 
 jest.mock('./../externalModules.js', () => ({
   cornerstone: {
-    setViewport: jest.fn()
-  }
+    setViewport: jest.fn(),
+  },
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
@@ -45,8 +45,8 @@ describe('WwwcTool.js', () => {
     const mockEvt = {
       detail: {
         element: jest.fn(),
-        viewport: jest.fn()
-      }
+        viewport: jest.fn(),
+      },
     };
     const instantiatedTool = new WwwcTool();
 
@@ -60,8 +60,8 @@ describe('WwwcTool.js', () => {
     const mockEvt = {
       detail: {
         element: jest.fn(),
-        viewport: jest.fn()
-      }
+        viewport: jest.fn(),
+      },
     };
     const instantiatedTool = new WwwcTool();
 
@@ -79,8 +79,8 @@ describe('WwwcTool.js', () => {
       stopImmediatePropagation: jest.fn(),
       detail: {
         element: jest.fn(),
-        viewport: jest.fn()
-      }
+        viewport: jest.fn(),
+      },
     };
     const instantiatedTool = new WwwcTool();
 
@@ -95,8 +95,8 @@ describe('WwwcTool.js', () => {
       stopImmediatePropagation: jest.fn(),
       detail: {
         element: jest.fn(),
-        viewport: jest.fn()
-      }
+        viewport: jest.fn(),
+      },
     };
     const instantiatedTool = new WwwcTool();
 

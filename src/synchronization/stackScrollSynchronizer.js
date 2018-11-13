@@ -16,7 +16,7 @@ import clip from '../util/clip.js';
  * @param {HTMLElement} targetElement - The target element
  * @param {Object} eventData - The data object from the triggering event
  */
-export default function (synchronizer, sourceElement, targetElement, eventData) {
+export default function(synchronizer, sourceElement, targetElement, eventData) {
   // If the target and source are the same, stop
   if (sourceElement === targetElement) {
     return;
@@ -62,22 +62,25 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
     loader = cornerstone.loadAndCacheImage(newImageId);
   }
 
-  loader.then(function (image) {
-    const viewport = cornerstone.getViewport(targetElement);
+  loader.then(
+    function(image) {
+      const viewport = cornerstone.getViewport(targetElement);
 
-    if (stackData.currentImageIdIndex !== newImageIdIndex) {
-      return;
-    }
+      if (stackData.currentImageIdIndex !== newImageIdIndex) {
+        return;
+      }
 
-    synchronizer.displayImage(targetElement, image, viewport);
-    if (endLoadingHandler) {
-      endLoadingHandler(targetElement, image);
-    }
-  }, function (error) {
-    const imageId = stackData.imageIds[newImageIdIndex];
+      synchronizer.displayImage(targetElement, image, viewport);
+      if (endLoadingHandler) {
+        endLoadingHandler(targetElement, image);
+      }
+    },
+    function(error) {
+      const imageId = stackData.imageIds[newImageIdIndex];
 
-    if (errorLoadingHandler) {
-      errorLoadingHandler(targetElement, imageId, error);
+      if (errorLoadingHandler) {
+        errorLoadingHandler(targetElement, imageId, error);
+      }
     }
-  });
+  );
 }

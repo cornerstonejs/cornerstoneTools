@@ -1,6 +1,6 @@
 import store from '../store/index.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
-import BaseBrushTool from '../base/BaseBrushTool.js';
+import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import external from '../externalModules.js';
 
 const { setters } = store.modules.brush;
@@ -8,10 +8,10 @@ const { setters } = store.modules.brush;
 /**
  * Clears the brush imageBitmapCache,
  * invaldates the data and calls for a re-render.
- * @event
+ * @private
  * @param {Object} evt - The event.
  */
-export default function (evt) {
+export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   let toolData = getToolState(

@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import clip from './clip.js';
+import external from './../externalModules.js';
 
 /**
  * Scrolls through the stack.
@@ -13,7 +14,7 @@ import clip from './clip.js';
  * @param  {type} [loop = false]          Whether to loop the scrolling.
  * @param  {type} [allowSkipping = true]  Whether frames can be skipped.
  */
-export default function (element, images, loop = false, allowSkipping = true) {
+export default function(element, images, loop = false, allowSkipping = true) {
   const toolData = getToolState(element, 'stack');
 
   if (!toolData || !toolData.data || !toolData.data.length) {
@@ -40,7 +41,7 @@ export default function (element, images, loop = false, allowSkipping = true) {
     scrollToIndex(element, newImageIdIndex);
   } else {
     const pendingEvent = {
-      index: newImageIdIndex
+      index: newImageIdIndex,
     };
 
     stackData.pending.push(pendingEvent);
@@ -55,10 +56,10 @@ export default function (element, images, loop = false, allowSkipping = true) {
  * @name scrollWithoutSkipping
  *
  * @param  {type} stackData    Data object containing information about the stack.
- * @param  {object} pendingEvent The event to process next.
+ * @param  {Object} pendingEvent The event to process next.
  * @param  {HTMLElement} element      The element being scrolled through.
  */
-function scrollWithoutSkipping (stackData, pendingEvent, element) {
+function scrollWithoutSkipping(stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {
     if (stackData.currentImageIdIndex === pendingEvent.index) {
       stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
@@ -70,12 +71,15 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       return;
     }
 
-    const newImageHandler = function (event) {
+    const newImageHandler = function(event) {
       const index = stackData.imageIds.indexOf(event.detail.image.imageId);
 
       if (index === pendingEvent.index) {
         stackData.pending.splice(stackData.pending.indexOf(pendingEvent), 1);
-        element.removeEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+        element.removeEventListener(
+          external.cornerstone.EVENTS.NEW_IMAGE,
+          newImageHandler
+        );
 
         if (stackData.pending.length > 0) {
           scrollWithoutSkipping(stackData, stackData.pending[0], element);
@@ -83,7 +87,10 @@ function scrollWithoutSkipping (stackData, pendingEvent, element) {
       }
     };
 
-    element.addEventListener(EVENTS.NEW_IMAGE, newImageHandler);
+    element.addEventListener(
+      external.cornerstone.EVENTS.NEW_IMAGE,
+      newImageHandler
+    );
 
     scrollToIndex(element, pendingEvent.index);
   }

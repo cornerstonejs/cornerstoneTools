@@ -12,7 +12,7 @@ import getToolForElement from './getToolForElement.js';
  * @param {string} toolName The name of the tool.
  * @param {Object} options The options to set.
  */
-const setToolOptionsForElement = function (element, toolName, options) {
+const setToolOptionsForElement = function(element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (tool) {
@@ -30,8 +30,8 @@ const setToolOptionsForElement = function (element, toolName, options) {
  * @param {string} toolName
  * @param {Object} options
  */
-const setToolOptions = function (toolName, options) {
-  state.enabledElements.forEach((element) => {
+const setToolOptions = function(toolName, options) {
+  state.enabledElements.forEach(element => {
     setToolOptionsForElement(element, options);
   });
 };

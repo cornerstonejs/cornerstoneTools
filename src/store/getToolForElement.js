@@ -9,10 +9,10 @@ import { state } from './index.js';
  *
  * @param  {HTMLElement} element The element.
  * @param  {string}      name The tool's name.
- * @returns {object}      The tool instance.
+ * @returns {Object}      The tool instance.
  */
-export default function (element, name) {
+export default function(element, name) {
   return state.tools.find(
-    (tool) => tool.element === element && tool.name === name
+    tool => tool.element === element && tool.name === name
   );
 }

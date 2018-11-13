@@ -7,7 +7,7 @@ import {
   mouseDrag,
   mouseMove,
   mouseUp,
-  mouseWheel
+  mouseWheel,
 } from './mouseEventHandlers/index.js';
 
 /**
@@ -19,9 +19,10 @@ import {
  * - mouseDrag: update measurement or apply strategy (wwwc)
  * - mouseDoubleClick: usually a one-time apply specialty action
  * - onImageRendered: redraw visible tool data
+ * @private
  * @param {*} element
  */
-const enable = function (element) {
+const enable = function(element) {
   element.addEventListener(EVENTS.MOUSE_CLICK, mouseClick);
   element.addEventListener(EVENTS.MOUSE_DOWN, mouseDown);
   element.addEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
@@ -32,7 +33,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MOUSE_WHEEL, mouseWheel);
 };
 
-const disable = function (element) {
+const disable = function(element) {
   element.removeEventListener(EVENTS.MOUSE_CLICK, mouseClick);
   element.removeEventListener(EVENTS.MOUSE_DOWN, mouseDown);
   element.removeEventListener(EVENTS.MOUSE_DOWN_ACTIVATE, mouseDownActivate);
@@ -45,5 +46,5 @@ const disable = function (element) {
 
 export default {
   enable,
-  disable
+  disable,
 };

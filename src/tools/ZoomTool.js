@@ -1,24 +1,26 @@
 import external from '../externalModules.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
 
 const { correctShift, changeViewportScale } = zoomUtils;
 
 /**
- * @export @public @class
- * @name ZoomMouseWheelTool
+ * @public
+ * @class ZoomTool
+ * @memberof Tools
+ *
  * @classdesc Tool for changing magnification.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class ZoomTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Zoom',
       strategies: {
         default: defaultStrategy,
         translate: translateStrategy,
-        zoomToCenter: zoomToCenterStrategy
+        zoomToCenter: zoomToCenterStrategy,
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
@@ -26,8 +28,8 @@ export default class ZoomTool extends BaseTool {
         invert: false,
         preventZoomOutsideImage: false,
         minScale: 0.25,
-        maxScale: 20.0
-      }
+        maxScale: 20.0,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -36,16 +38,16 @@ export default class ZoomTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  touchDragCallback (evt) {
+  touchDragCallback(evt) {
     dragCallback.call(this, evt);
   }
 
-  mouseDragCallback (evt) {
+  mouseDragCallback(evt) {
     dragCallback.call(this, evt);
   }
 }
 
-const dragCallback = function (evt) {
+const dragCallback = function(evt) {
   const deltaY = evt.detail.deltaPoints.page.y;
 
   if (!deltaY) {
@@ -63,7 +65,7 @@ const dragCallback = function (evt) {
  * @param {*} evt
  * @param {*} { invert, maxScale, minScale }
  */
-function defaultStrategy (evt, { invert, maxScale, minScale }) {
+function defaultStrategy(evt, { invert, maxScale, minScale }) {
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const { element, viewport } = evt.detail;
@@ -71,13 +73,13 @@ function defaultStrategy (evt, { invert, maxScale, minScale }) {
     evt.detail.startPoints.page.x,
     evt.detail.startPoints.page.y,
     evt.detail.startPoints.image.x,
-    evt.detail.startPoints.image.y
+    evt.detail.startPoints.image.y,
   ];
 
   // Calculate the new scale factor based on how far the mouse has changed
   const updatedViewport = changeViewportScale(viewport, ticks, {
     maxScale,
-    minScale
+    minScale,
   });
 
   external.cornerstone.setViewport(element, updatedViewport);
@@ -91,7 +93,7 @@ function defaultStrategy (evt, { invert, maxScale, minScale }) {
   // This shift is in image coordinates, and is designed to keep the target location fixed on the page.
   let shift = {
     x: imageX - newCoords.x,
-    y: imageY - newCoords.y
+    y: imageY - newCoords.y,
   };
 
   // Correct the required shift using the viewport rotation and flip parameters
@@ -102,7 +104,7 @@ function defaultStrategy (evt, { invert, maxScale, minScale }) {
   viewport.translation.y -= shift.y;
 }
 
-function translateStrategy (
+function translateStrategy(
   evt,
   { invert, preventZoomOutsideImage, maxScale, minScale }
 ) {
@@ -112,7 +114,7 @@ function translateStrategy (
   const viewport = evt.detail.viewport;
   const [startX, startY] = [
     evt.detail.startPoints.image.x,
-    evt.detail.startPoints.image.y
+    evt.detail.startPoints.image.y,
   ];
 
   // Calculate the new scale factor based on how far the mouse has changed
@@ -121,13 +123,13 @@ function translateStrategy (
   // The page
   const updatedViewport = changeViewportScale(viewport, ticks, {
     maxScale,
-    minScale
+    minScale,
   });
 
   // Define the default shift to take place during this zoom step
   const shift = {
     x: 0,
-    y: 0
+    y: 0,
   };
 
   // Define the parameters for the translate strategy
@@ -168,7 +170,7 @@ function translateStrategy (
     // Of the viewport
     let desiredTranslation = {
       x: image.width / 2 - startX,
-      y: image.height / 2 - startY
+      y: image.height / 2 - startY,
     };
 
     // Correct the target location using the viewport rotation and flip parameters
@@ -178,7 +180,7 @@ function translateStrategy (
     // Final desired translation values
     const distanceToDesired = {
       x: updatedViewport.translation.x - desiredTranslation.x,
-      y: updatedViewport.translation.y - desiredTranslation.y
+      y: updatedViewport.translation.y - desiredTranslation.y,
     };
 
     // If the current translation is smaller than the minimum desired translation,
@@ -205,7 +207,7 @@ function translateStrategy (
   updatedViewport.translation.y -= shift.y;
 }
 
-function zoomToCenterStrategy (evt, { invert, maxScale, minScale }) {
+function zoomToCenterStrategy(evt, { invert, maxScale, minScale }) {
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const viewport = evt.detail.viewport;
@@ -213,6 +215,6 @@ function zoomToCenterStrategy (evt, { invert, maxScale, minScale }) {
   // Calculate the new scale factor based on how far the mouse has changed
   changeViewportScale(viewport, ticks, {
     maxScale,
-    minScale
+    minScale,
   });
 }

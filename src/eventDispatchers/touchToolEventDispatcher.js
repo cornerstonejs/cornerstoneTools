@@ -9,7 +9,7 @@ import {
   touchDrag,
   touchEnd,
   touchPress,
-  touchPinch
+  touchPinch,
 } from './touchEventHandlers/index.js';
 
 /**
@@ -24,9 +24,10 @@ import {
  * - doubleTap: usually a one-time apply specialty action
  * - touchPinch:
  * - onImageRendered: redraw visible tool data
+ * @private
  * @param {*} element
  */
-const enable = function (element) {
+const enable = function(element) {
   element.addEventListener(EVENTS.TAP, tap);
   element.addEventListener(EVENTS.TOUCH_START, touchStart, { passive: false });
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDrag, { passive: false });
@@ -41,7 +42,7 @@ const enable = function (element) {
   element.addEventListener(EVENTS.MULTI_TOUCH_DRAG, multiTouchDrag);
 };
 
-const disable = function (element) {
+const disable = function(element) {
   element.removeEventListener(EVENTS.TAP, tap);
   element.removeEventListener(EVENTS.TOUCH_START, touchStart);
   element.removeEventListener(EVENTS.TOUCH_DRAG, touchDrag);
@@ -58,5 +59,5 @@ const disable = function (element) {
 
 export default {
   enable,
-  disable
+  disable,
 };

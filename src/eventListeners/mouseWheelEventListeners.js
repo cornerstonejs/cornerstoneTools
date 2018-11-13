@@ -2,7 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 
-function mouseWheel (e) {
+function mouseWheel(e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -64,7 +64,7 @@ function mouseWheel (e) {
     pageX: x,
     pageY: y,
     imageX: startingCoords.x,
-    imageY: startingCoords.y
+    imageY: startingCoords.y,
   };
 
   triggerEvent(element, EVENTS.MOUSE_WHEEL, mouseWheelData);
@@ -72,22 +72,22 @@ function mouseWheel (e) {
 
 const mouseWheelEvents = ['mousewheel', 'DOMMouseScroll'];
 
-function enable (element) {
+function enable(element) {
   // Prevent handlers from being attached multiple times
   disable(element);
 
-  mouseWheelEvents.forEach((eventType) => {
+  mouseWheelEvents.forEach(eventType => {
     element.addEventListener(eventType, mouseWheel, { passive: false });
   });
 }
 
-function disable (element) {
-  mouseWheelEvents.forEach((eventType) => {
+function disable(element) {
+  mouseWheelEvents.forEach(eventType => {
     element.removeEventListener(eventType, mouseWheel);
   });
 }
 
 export default {
   enable,
-  disable
+  disable,
 };

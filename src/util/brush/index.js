@@ -4,5 +4,5 @@ import getCircle from './getCircle.js';
 export default {
   drawBrushPixels,
   drawBrushOnCanvas,
-  getCircle
+  getCircle,
 };

@@ -3,14 +3,13 @@ import convertToVector3 from '../util/convertToVector3.js';
 
 /**
  * Returns the orientation of the vector in the patient coordinate system.
- * @export
  * @public
- * @method
- * @name getOrientationString
+ * @function getOrientationString
+ *
  * @param  {Array|cornerstoneMath.Vector3} vector Input array or Vector3
  * @returns {string} The orientation in the patient coordinate system.
  */
-export default function (vector) {
+export default function(vector) {
   const vec3 = convertToVector3(vector);
 
   // Thanks to David Clunie
@@ -22,7 +21,11 @@ export default function (vector) {
   const orientationZ = vec3.z < 0 ? 'F' : 'H';
 
   // Should probably make this a function vector3.abs
-  const abs = new external.cornerstoneMath.Vector3(Math.abs(vec3.x), Math.abs(vec3.y), Math.abs(vec3.z));
+  const abs = new external.cornerstoneMath.Vector3(
+    Math.abs(vec3.x),
+    Math.abs(vec3.y),
+    Math.abs(vec3.z)
+  );
 
   for (let i = 0; i < 3; i++) {
     if (abs.x > 0.0001 && abs.x > abs.y && abs.x > abs.z) {

@@ -12,10 +12,10 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @method
  * @name init
  *
- * @param {object} configuration
+ * @param {Object} configuration
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
-export default function (configuration) {
+export default function(configuration) {
   _addCornerstoneEventListeners();
   _initModules();
   windowResizeHandler.enable();
@@ -34,7 +34,7 @@ export default function (configuration) {
  * @private
  * @method
  */
-function _addCornerstoneEventListeners () {
+function _addCornerstoneEventListeners() {
   // Clear any listeners that may already be set
   _removeCornerstoneEventListeners();
 
@@ -55,12 +55,15 @@ function _addCornerstoneEventListeners () {
  * @private
  * @method
  */
-function _removeCornerstoneEventListeners () {
+function _removeCornerstoneEventListeners() {
   const cornerstone = external.cornerstone;
   const elementEnabledEvent = cornerstone.EVENTS.ELEMENT_ENABLED;
   const elementDisabledEvent = cornerstone.EVENTS.ELEMENT_DISABLED;
 
-  cornerstone.events.removeEventListener(elementEnabledEvent, addEnabledElement);
+  cornerstone.events.removeEventListener(
+    elementEnabledEvent,
+    addEnabledElement
+  );
   cornerstone.events.removeEventListener(
     elementDisabledEvent,
     removeEnabledElement
@@ -81,10 +84,10 @@ function _removeCornerstoneEventListeners () {
  * @private
  * @method
  */
-function _initModules () {
+function _initModules() {
   const modules = store.modules;
 
-  Object.keys(modules).forEach(function (key) {
+  Object.keys(modules).forEach(function(key) {
     if (typeof modules[key].onRegisterCallback === 'function') {
       modules[key].onRegisterCallback();
     }

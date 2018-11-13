@@ -5,7 +5,7 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
 import {
   findHandleDataNearImagePoint,
-  findAnnotationNearClick
+  findAnnotationNearClick,
 } from '../../util/findAndMoveHelpers.js';
 // Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
@@ -18,10 +18,11 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  *
  * TODO: Handles should handle deleting out of bound data by setting
  *
+ * @private
  * @param {mousedown} evt
  * @listens {mousedown}
  */
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -34,13 +35,13 @@ export default function (evt) {
   // High level filtering
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter(
-    (tool) =>
+    tool =>
       eventData.buttons === tool.options.mouseButtonMask &&
       tool.options.isMouseActive
   );
 
   // ACTIVE TOOL W/ PRE CALLBACK?
-  const activeTools = tools.filter((tool) => tool.mode === 'active');
+  const activeTools = tools.filter(tool => tool.mode === 'active');
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
@@ -48,7 +49,7 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.preMouseDownCallback === 'function'
+      tool => typeof tool.preMouseDownCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {
@@ -90,7 +91,7 @@ export default function (evt) {
   }
 
   // NEAR TOOL?
-  const annotationToolsWithPointNearClick = tools.filter((tool) => {
+  const annotationToolsWithPointNearClick = tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
 
     if (!toolState) {
@@ -132,7 +133,7 @@ export default function (evt) {
     // TODO: But because we're locking this to 'active' tools, that should rarely be an issue
     // Super-Meta-TODO: ^ I think we should just take the approach of one active tool per mouse button?
     const firstActiveToolWithCallback = activeTools.find(
-      (tool) => typeof tool.postMouseDownCallback === 'function'
+      tool => typeof tool.postMouseDownCallback === 'function'
     );
 
     if (firstActiveToolWithCallback) {

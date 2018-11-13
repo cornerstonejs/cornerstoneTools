@@ -7,10 +7,10 @@ import store from './../store/index.js';
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
  * respond to user input, and can create new data.
  *
- * @export
  * @public
- * @method
- * @name setToolActiveForElement
+ * @function setToolActiveForElement
+ * @memberof CornerstoneTools
+ *
  * @example <caption>Setting a tool 'active' for a specific interaction type.</caption>
  * // Sets length tool to Active
  * setToolActiveForElement(element, 'Length', {
@@ -27,7 +27,7 @@ import store from './../store/index.js';
  * @param {(string[])} interactionTypes
  * @returns {undefined}
  */
-const setToolActiveForElement = function (
+const setToolActiveForElement = function(
   element,
   toolName,
   options,
@@ -46,7 +46,7 @@ const setToolActiveForElement = function (
 
     // Iterate over specific interaction types and set active
     // This is used as a secondary check on active tools to find the active "parts" of the tool
-    tool.supportedInteractionTypes.forEach((interactionType) => {
+    tool.supportedInteractionTypes.forEach(interactionType => {
       if (
         interactionTypes === undefined ||
         interactionTypes.includes(interactionType)
@@ -65,18 +65,18 @@ const setToolActiveForElement = function (
 /**
  * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,
  * respond to user input, and can create new data.
- * @export
  * @public
- * @method
- * @name setToolActive
+ * @function setToolActive
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|string[]|number)} options
  * @param {(string[])} interactionTypes
  * @returns {undefined}
  */
-const setToolActive = function (toolName, options, interactionTypes) {
+const setToolActive = function(toolName, options, interactionTypes) {
   _trackGlobalToolModeChange('active', toolName, options, interactionTypes);
-  store.state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach(element => {
     setToolActiveForElement(element, toolName, options, interactionTypes);
   });
 };
@@ -84,9 +84,10 @@ const setToolActive = function (toolName, options, interactionTypes) {
 /**
  * Sets a tool's state, with the provided toolName and element, to 'disabled'. Disabled tools are not rendered,
  * and do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolDisabledForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -101,9 +102,10 @@ const setToolDisabledForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'disabled'. Disabled tools are not rendered,
  * and do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolDisabled
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -113,9 +115,10 @@ const setToolDisabled = setToolMode.bind(null, 'disabled', null);
 /**
  * Sets a tool's state, with the provided toolName and element, to 'enabled'. Enabled tools are rendered,
  * but do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolEnabledForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -130,9 +133,10 @@ const setToolEnabledForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'enabled'. Enabled tools are rendered,
  * but do not respond to user input
- * @export
  * @public
- * @method
+ * @function setToolEnabled
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -142,9 +146,10 @@ const setToolEnabled = setToolMode.bind(null, 'enabled', null);
 /**
  * Sets a tool's state, with the provided toolName and element, to 'passive'. Passive tools are rendered and respond to user input,
  * but do not create new measurements or annotations.
- * @export
  * @public
- * @method
+ * @function setToolPassiveForElement
+ * @memberof CornerstoneTools
+ *
  * @param {HTMLElement} element
  * @param {string} toolName
  * @param {(Object|number)} options
@@ -159,9 +164,10 @@ const setToolPassiveForElement = setToolModeForElement.bind(
 /**
  * Sets all tool's state, with the provided toolName, to 'passive'. Passive tools are rendered and respond to user input,
  * but do not create new measurements or annotations.
- * @export
  * @public
- * @method
+ * @function setToolPassive
+ * @memberof CornerstoneTools
+ *
  * @param {string} toolName
  * @param {(Object|number)} options
  * @returns {undefined}
@@ -176,7 +182,8 @@ const setToolPassive = setToolMode.bind(
  * An internal method that helps make sure we change tool mode in a consistent
  * way
  * @private
- * @method
+ * @function setToolModeForElement
+ *
  * @param {string} mode
  * @param {string} changeEvent
  * @param {HTMLElement} element
@@ -184,7 +191,7 @@ const setToolPassive = setToolMode.bind(
  * @param {(Object|number)} options
  * @returns {undefined}
  */
-function setToolModeForElement (mode, changeEvent, element, toolName, options) {
+function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
@@ -196,7 +203,7 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
   // MouseButtonMask
   if (typeof options === 'number') {
     options = {
-      mouseButtonMask: options
+      mouseButtonMask: options,
     };
   } else {
     options = options || {};
@@ -216,7 +223,7 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
     const statusChangeEventData = {
       options,
       toolName,
-      type: changeEvent
+      type: changeEvent,
     };
 
     triggerEvent(element, changeEvent, statusChangeEventData);
@@ -231,16 +238,17 @@ function setToolModeForElement (mode, changeEvent, element, toolName, options) {
  * A helper/quick way to set a tool's mode for all canvases
  *
  * @private
- * @method
+ * @function setToolMode
+ *
  * @param {string} mode
  * @param {string} changeEvent
  * @param {string} toolName
- * @param {(object|number)} options
+ * @param {(Object|number)} options
  * @returns {undefined}
  */
-function setToolMode (mode, changeEvent, toolName, options) {
+function setToolMode(mode, changeEvent, toolName, options) {
   _trackGlobalToolModeChange(mode, toolName, options);
-  store.state.enabledElements.forEach((element) => {
+  store.state.enabledElements.forEach(element => {
     setToolModeForElement(mode, changeEvent, element, toolName, options);
   });
 }
@@ -250,18 +258,19 @@ function setToolMode (mode, changeEvent, toolName, options) {
  * resolve those conflicts.
  *
  * @private
- * @method
+ * @function _resolveInputConflicts
+ *
  * @param {HTMLElement} element
  * @param {Object} tool
  * @param {(Object|number)} options
  * @param {(Array)} interactionTypes
  * @returns {undefined}
  */
-function _resolveInputConflicts (element, tool, options, interactionTypes) {
+function _resolveInputConflicts(element, tool, options, interactionTypes) {
   // Iterate over the interaction types our tool supports.
   // For each one we intend to activate, check for potential conflicts
   // And resolve them
-  tool.supportedInteractionTypes.forEach((interactionType) => {
+  tool.supportedInteractionTypes.forEach(interactionType => {
     if (
       interactionTypes === undefined ||
       interactionTypes.includes(interactionType)
@@ -279,16 +288,16 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
   });
 
   const activeToolsForElement = store.state.tools.filter(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.supportedInteractionTypes.length > 0
   );
 
-  activeToolsForElement.forEach((t) => {
+  activeToolsForElement.forEach(t => {
     let toolHasAnyActiveInteractionType = false;
 
-    t.supportedInteractionTypes.forEach((interactionType) => {
+    t.supportedInteractionTypes.forEach(interactionType => {
       if (t.options[`is${interactionType}Active`]) {
         toolHasAnyActiveInteractionType = true;
       }
@@ -304,20 +313,21 @@ function _resolveInputConflicts (element, tool, options, interactionTypes) {
 /**
  * Resolves conflicting active tools when activating a tool for mouse interaction
  * @private
- * @method
+ * @function _resolveInputConflicts
+ *
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
  * @returns {undefined}
  */
-function _resolveMouseInputConflicts (tool, element, options) {
+function _resolveMouseInputConflicts(tool, element, options) {
   const mouseButtonMask =
     typeof options === 'number' ? options : options.mouseButtonMask;
   const hasMouseButtonMask =
     mouseButtonMask !== undefined && mouseButtonMask > 0;
 
   const activeToolWithMatchingMouseButtonMask = store.state.tools.find(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isMouseActive === true &&
@@ -337,23 +347,23 @@ function _resolveMouseInputConflicts (tool, element, options) {
 /**
  * Resolves conflicting active tools when activating a tool for touch interaction
  * @private
+ * @function _resolveTouchInputConflicts
  *
- * @method
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {Object} options
  * @returns {undefined}
  */
-function _resolveTouchInputConflicts (tool, element, options) {
+function _resolveTouchInputConflicts(tool, element, options) {
   const activeTouchTool = store.state.tools.find(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isTouchActive === true
   );
 
   const activeMultiTouchToolWithOneTouchPointer = store.state.tools.find(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isMultiTouchActive === true &&
@@ -379,15 +389,16 @@ function _resolveTouchInputConflicts (tool, element, options) {
 /**
  * Resolves conflicting active tools when activating a tool for MultiTouch interaction
  * @private
- * @method
+ * @function _resolveMultiTouchInputConflicts
+ *
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {Object} options
  * @returns {undefined}
  */
-function _resolveMultiTouchInputConflicts (tool, element, options) {
+function _resolveMultiTouchInputConflicts(tool, element, options) {
   const activeMultiTouchTool = store.state.tools.find(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isMultiTouchActive === true &&
@@ -398,7 +409,7 @@ function _resolveMultiTouchInputConflicts (tool, element, options) {
 
   if (tool.configuration.touchPointers === 1) {
     activeTouchTool = store.state.tools.find(
-      (t) =>
+      t =>
         t.element === element &&
         t.mode === 'active' &&
         t.options.isTouchActive === true
@@ -425,21 +436,22 @@ function _resolveMultiTouchInputConflicts (tool, element, options) {
  * and set their isTouchActive to false to avoid conflicts.
  *
  * @private
- * @method
+ * @function _resolveGenericInputConflicts
+ *
  * @param {string} interactionType
  * @param {Object} tool
  * @param {HTMLElement} element
  * @param {(Object|number)} options
  * @returns {undefined}
  */
-function _resolveGenericInputConflicts (
+function _resolveGenericInputConflicts(
   interactionType,
   tool,
   element,
   options
 ) {
   const activeToolWithActiveInteractionType = store.state.tools.find(
-    (t) =>
+    t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options[`is${interactionType}Active`] === true
@@ -457,14 +469,14 @@ function _resolveGenericInputConflicts (
   }
 }
 
-function _trackGlobalToolModeChange (mode, toolName, options, interactionTypes) {
+function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
 
   const historyEvent = {
     mode,
-    args: [toolName, options]
+    args: [toolName, options],
   };
 
   if (interactionTypes) {
@@ -489,7 +501,7 @@ const _inputResolvers = {
   TouchPinch: _resolveGenericInputConflicts.bind(this, 'TouchPinch'),
   TouchRotate: _resolveGenericInputConflicts.bind(this, 'TouchRotate'),
   DoubleTap: _resolveGenericInputConflicts.bind(this, 'DoubleTap'),
-  MultiTouch: _resolveMultiTouchInputConflicts
+  MultiTouch: _resolveMultiTouchInputConflicts,
 };
 
 export {
@@ -500,5 +512,5 @@ export {
   setToolEnabled,
   setToolEnabledForElement,
   setToolPassive,
-  setToolPassiveForElement
+  setToolPassiveForElement,
 };

@@ -2,27 +2,27 @@ let defaultFontSize = 15,
   defaultFont = `${defaultFontSize}px Arial`,
   defaultBackgroundColor = 'transparent';
 
-function setFont (font) {
+function setFont(font) {
   defaultFont = font;
 }
 
-function getFont () {
+function getFont() {
   return defaultFont;
 }
 
-function setFontSize (fontSize) {
+function setFontSize(fontSize) {
   defaultFontSize = fontSize;
 }
 
-function getFontSize () {
+function getFontSize() {
   return defaultFontSize;
 }
 
-function setBackgroundColor (backgroundColor) {
+function setBackgroundColor(backgroundColor) {
   defaultBackgroundColor = backgroundColor;
 }
 
-function getBackgroundColor () {
+function getBackgroundColor() {
   return defaultBackgroundColor;
 }
 
@@ -32,7 +32,7 @@ const textStyle = {
   setFontSize,
   getFontSize,
   setBackgroundColor,
-  getBackgroundColor
+  getBackgroundColor,
 };
 
 export default textStyle;

@@ -3,14 +3,35 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (mouseEventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
+/**
+ * Move the provided handle
+ * @public
+ * @method moveHandle
+ * @memberof Manipulators
+ *
+ * @param {*} mouseEventData
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @param {*} preventHandleOutsideImage
+ * @returns {undefined}
+ */
+export default function(
+  mouseEventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = mouseEventData.element;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
-    y: handle.y - mouseEventData.currentPoints.image.y
+    y: handle.y - mouseEventData.currentPoints.image.y,
   };
 
-  function mouseDragCallback (e) {
+  function mouseDragCallback(e) {
     const eventData = e.detail;
 
     if (handle.hasMoved === false) {
@@ -31,7 +52,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -39,7 +60,7 @@ export default function (mouseEventData, toolType, data, handle, doneMovingCallb
 
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
-  function mouseUpCallback () {
+  function mouseUpCallback() {
     handle.active = false;
     element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);

@@ -1,6 +1,5 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import external from '../externalModules.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 // Drawing
 import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
@@ -8,19 +7,22 @@ import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
 
 /**
- * @export @public @class
- * @name wwwcRegionTool
+ * @public
+ * @class WwwcRegionTool
+ * @memberof Tools
+ *
  * @classdesc Tool for setting wwwc based on a rectangular region.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
-export default class wwwcRegionTool extends BaseTool {
-  constructor (configuration = {}) {
+export default class WwwcRegionTool extends BaseTool {
+  /** @inheritdoc */
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'WwwcRegion',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        minWindowWidth: 10
-      }
+        minWindowWidth: 10,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -28,27 +30,56 @@ export default class wwwcRegionTool extends BaseTool {
 
     this.initialConfiguration = initialConfiguration;
     this._resetHandles();
+
+    //
     // Touch
+    //
+
+    /** @inheritdoc */
     this.postTouchStartCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.touchDragCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.touchEndCallback = this._applyStrategy.bind(this);
-    // Mouse
+
+    //
+    // MOUSE
+    //
+
+    /** @inheritdoc */
     this.postMouseDownCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.mouseClickCallback = this._startOutliningRegion.bind(this);
+
+    /** @inheritdoc */
     this.mouseDragCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.mouseMoveCallback = this._setHandlesAndUpdate.bind(this);
+
+    /** @inheritdoc */
     this.mouseUpCallback = this._applyStrategy.bind(this);
   }
 
-  renderToolData (evt) {
+  /**
+   * Render hook: draws the WWWCRegion's "box" when selecting
+   *
+   * @param {Cornerstone.event:cornerstoneimagerendered} evt cornerstoneimagerendered event
+   * @memberof Tools.WwwcRegionTool
+   * @returns {undefined}
+   */
+  renderToolData(evt) {
     const eventData = evt.detail;
     const { element } = eventData;
     const color = toolColors.getColorIfActive({ active: true });
     const context = getNewContext(eventData.canvasContext.canvas);
 
-    draw(context, (context) => {
+    draw(context, context => {
       drawRect(context, element, this.handles.start, this.handles.end, {
-        color
+        color,
       });
     });
   }
@@ -56,15 +87,16 @@ export default class wwwcRegionTool extends BaseTool {
   /**
    * Sets the start handle point and claims the eventDispatcher event
    *
-   * @param {*} evt
+   * @private
+   * @param {*} evt // mousedown, touchstart, click
    * @returns {Boolean} True
    */
-  _startOutliningRegion (evt) {
+  _startOutliningRegion(evt) {
     const consumeEvent = true;
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
 
-    if (isEmptyObject(this.handles.start)) {
+    if (_isEmptyObject(this.handles.start)) {
       this.handles.start = image;
     } else {
       this.handles.end = image;
@@ -79,9 +111,12 @@ export default class wwwcRegionTool extends BaseTool {
   /**
    * This function will update the handles and updateImage to force re-draw
    *
-   * @param  {} evt
+   * @private
+   * @method _setHandlesAndUpdate
+   * @param {(CornerstoneTools.event:cornerstonetoolstouchdrag|CornerstoneTools.event:cornerstonetoolsmousedrag|CornerstoneTools.event:cornerstonetoolsmousemove)} evt  Interaction event emitted by an enabledElement
+   * @returns {undefined}
    */
-  _setHandlesAndUpdate (evt) {
+  _setHandlesAndUpdate(evt) {
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
 
@@ -90,47 +125,63 @@ export default class wwwcRegionTool extends BaseTool {
   }
 
   /**
-   * Event handler for MOUSE_UP during handle drag event loop.
+   * Event handler for MOUSE_UP/TOUCH_END during handle drag event loop.
    *
-   * @param {Object} evt - The event.
+   * @private
+   * @method _applyStrategy
+   * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
+   * @returns {undefined}
    */
-  _applyStrategy (evt) {
-    if (isEmptyObject(this.handles.start) || isEmptyObject(this.handles.end)) {
+  _applyStrategy(evt) {
+    if (
+      _isEmptyObject(this.handles.start) ||
+      _isEmptyObject(this.handles.end)
+    ) {
       return;
     }
 
     evt.detail.handles = this.handles;
-    applyWWWCRegion(evt, this.configuration);
+    _applyWWWCRegion(evt, this.configuration);
     this._resetHandles();
   }
 
   /**
    * Sets the start and end handle points to empty objects
    *
+   * @private
+   * @method _resetHandles
+   * @returns {undefined}
    */
-  _resetHandles () {
+  _resetHandles() {
     this.handles = {
       start: {},
-      end: {}
+      end: {},
     };
   }
 }
 
 /**
+ * Helper to determine if an object has no keys and is the correct type (is empty)
  *
- *
- * @param {*} obj
+ * @private
+ * @function _isEmptyObject
+ * @param {Object} obj The object to check
+ * @returns {Boolean} true if the object is empty
  */
-const isEmptyObject = (obj) =>
+const _isEmptyObject = obj =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
 /**
  * Calculates the minimum and maximum value in the given pixel array
+ * and updates the viewport of the element in the event.
  *
- * @param {*} evt
- * @param {*} config
+ * @private
+ * @method _applyWWWCRegion
+ * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
+ * @param {Object} config The tool's configuration object
+ * @returns {undefined}
  */
-const applyWWWCRegion = (evt, config) => {
+const _applyWWWCRegion = function(evt, config) {
   const eventData = evt.detail;
   const { image, element } = eventData;
   const { start: startPoint, end: endPoint } = evt.detail.handles;
@@ -151,7 +202,7 @@ const applyWWWCRegion = (evt, config) => {
   const pixelLuminanceData = getLuminance(element, left, top, width, height);
 
   // Calculate the minimum and maximum pixel values
-  const minMaxMean = calculateMinMaxMean(
+  const minMaxMean = _calculateMinMaxMean(
     pixelLuminanceData,
     image.minPixelValue,
     image.maxPixelValue
@@ -177,17 +228,15 @@ const applyWWWCRegion = (evt, config) => {
 /**
  * Calculates the minimum, maximum, and mean value in the given pixel array
  *
- * @param {*} storedPixelLuminanceData
- * @param {*} globalMin
- * @param {*} globalMax
- * @returns {Object}
+ * @private
+ * @method _calculateMinMaxMean
+ * @param {number[]} pixelLuminance array of pixel luminance values
+ * @param {number} globalMin starting "min" valie
+ * @param {bumber} globalMax starting "max" value
+ * @returns {Object} {min: number, max: number, mean: number }
  */
-const calculateMinMaxMean = (
-  storedPixelLuminanceData,
-  globalMin,
-  globalMax
-) => {
-  const numPixels = storedPixelLuminanceData.length;
+const _calculateMinMaxMean = function(pixelLuminance, globalMin, globalMax) {
+  const numPixels = pixelLuminance.length;
   let min = globalMax;
   let max = globalMin;
   let sum = 0;
@@ -196,12 +245,12 @@ const calculateMinMaxMean = (
     return {
       min,
       max,
-      mean: (globalMin + globalMax) / 2
+      mean: (globalMin + globalMax) / 2,
     };
   }
 
   for (let index = 0; index < numPixels; index++) {
-    const spv = storedPixelLuminanceData[index];
+    const spv = pixelLuminance[index];
 
     min = Math.min(min, spv);
     max = Math.max(max, spv);
@@ -211,6 +260,6 @@ const calculateMinMaxMean = (
   return {
     min,
     max,
-    mean: sum / numPixels
+    mean: sum / numPixels,
   };
 };

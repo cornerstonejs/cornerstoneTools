@@ -5,7 +5,7 @@ import scroll from '../util/scroll.js';
 jest.mock('../util/scroll.js');
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 const mockEvent = {
@@ -15,10 +15,10 @@ const mockEvent = {
     numPointers: 3,
     deltaPoints: {
       page: {
-        y: 5
-      }
-    }
-  }
+        y: 5,
+      },
+    },
+  },
 };
 
 describe('stackScrollMultiTouchTool.js', () => {

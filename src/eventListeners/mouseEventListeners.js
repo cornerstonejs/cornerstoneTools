@@ -7,34 +7,34 @@ let isClickEvent = true;
 let preventClickTimeout;
 const clickDelay = 200;
 
-function getEventButtons (event) {
+function getEventButtons(event) {
   if (typeof event.buttons === 'number') {
     return event.buttons;
   }
 
   switch (event.which) {
-  // No button
-  case 0:
-    return 0;
+    // No button
+    case 0:
+      return 0;
     // Left
-  case 1:
-    return 1;
+    case 1:
+      return 1;
     // Middle
-  case 2:
-    return 4;
+    case 2:
+      return 4;
     // Right
-  case 3:
-    return 2;
+    case 3:
+      return 2;
   }
 
   return 0;
 }
 
-function preventClickHandler () {
+function preventClickHandler() {
   isClickEvent = false;
 }
 
-function mouseDoubleClick (e) {
+function mouseDoubleClick(e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -49,8 +49,8 @@ function mouseDoubleClick (e) {
     image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
-      y: e.clientY
-    }
+      y: e.clientY,
+    },
   };
 
   startPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -72,15 +72,15 @@ function mouseDoubleClick (e) {
     currentPoints: startPoints,
     deltaPoints: {
       x: 0,
-      y: 0
+      y: 0,
     },
-    type: eventType
+    type: eventType,
   };
 
   triggerEvent(element, eventType, eventData);
 }
 
-function mouseDown (e) {
+function mouseDown(e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -100,8 +100,8 @@ function mouseDown (e) {
     image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
-      y: e.clientY
-    }
+      y: e.clientY,
+    },
   };
 
   startPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -123,9 +123,9 @@ function mouseDown (e) {
     currentPoints: startPoints,
     deltaPoints: {
       x: 0,
-      y: 0
+      y: 0,
     },
-    type: eventType
+    type: eventType,
   };
 
   const eventPropagated = triggerEvent(eventData.element, eventType, eventData);
@@ -136,7 +136,7 @@ function mouseDown (e) {
     triggerEvent(eventData.element, EVENTS.MOUSE_DOWN_ACTIVATE, eventData);
   }
 
-  function onMouseMove (e) {
+  function onMouseMove(e) {
     // Calculate our current points in page and image coordinates
     const eventType = EVENTS.MOUSE_DRAG;
     const currentPoints = {
@@ -144,8 +144,8 @@ function mouseDown (e) {
       image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
       client: {
         x: e.clientX,
-        y: e.clientY
-      }
+        y: e.clientY,
+      },
     };
 
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -170,7 +170,7 @@ function mouseDown (e) {
       canvas: external.cornerstoneMath.point.subtract(
         currentPoints.canvas,
         lastPoints.canvas
-      )
+      ),
     };
 
     console.log(`mousemove ${getEventButtons(e)}`);
@@ -186,7 +186,7 @@ function mouseDown (e) {
       type: eventType,
       ctrlKey: e.ctrlKey,
       metaKey: e.metaKey,
-      shiftKey: e.shiftKey
+      shiftKey: e.shiftKey,
     };
 
     triggerEvent(eventData.element, eventType, eventData);
@@ -197,7 +197,7 @@ function mouseDown (e) {
 
   // Hook mouseup so we can unbind our event listeners
   // When they stop dragging
-  function onMouseUp (e) {
+  function onMouseUp(e) {
     // Cancel the timeout preventing the click event from triggering
     clearTimeout(preventClickTimeout);
 
@@ -213,8 +213,8 @@ function mouseDown (e) {
       image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
       client: {
         x: e.clientX,
-        y: e.clientY
-      }
+        y: e.clientY,
+      },
     };
 
     currentPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -239,7 +239,7 @@ function mouseDown (e) {
       canvas: external.cornerstoneMath.point.subtract(
         currentPoints.canvas,
         lastPoints.canvas
-      )
+      ),
     };
 
     console.log(`mouseup: ${getEventButtons(e)}`);
@@ -253,7 +253,7 @@ function mouseDown (e) {
       lastPoints,
       currentPoints,
       deltaPoints,
-      type: eventType
+      type: eventType,
     };
 
     triggerEvent(eventData.element, eventType, eventData);
@@ -270,7 +270,7 @@ function mouseDown (e) {
   document.addEventListener('mouseup', onMouseUp);
 }
 
-function mouseMove (e) {
+function mouseMove(e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
@@ -285,8 +285,8 @@ function mouseMove (e) {
     image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
-      y: e.clientY
-    }
+      y: e.clientY,
+    },
   };
 
   startPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -302,8 +302,8 @@ function mouseMove (e) {
     image: external.cornerstone.pageToPixel(element, e.pageX, e.pageY),
     client: {
       x: e.clientX,
-      y: e.clientY
-    }
+      y: e.clientY,
+    },
   };
 
   currentPoints.canvas = external.cornerstone.pixelToCanvas(
@@ -328,7 +328,7 @@ function mouseMove (e) {
     canvas: external.cornerstoneMath.point.subtract(
       currentPoints.canvas,
       lastPoints.canvas
-    )
+    ),
   };
 
   const eventData = {
@@ -339,7 +339,7 @@ function mouseMove (e) {
     lastPoints,
     currentPoints,
     deltaPoints,
-    type: eventType
+    type: eventType,
   };
 
   triggerEvent(element, eventType, eventData);
@@ -348,13 +348,13 @@ function mouseMove (e) {
   lastPoints = copyPoints(currentPoints);
 }
 
-function disable (element) {
+function disable(element) {
   element.removeEventListener('mousedown', mouseDown);
   element.removeEventListener('mousemove', mouseMove);
   element.removeEventListener('dblclick', mouseDoubleClick);
 }
 
-function enable (element) {
+function enable(element) {
   // Prevent handlers from being attached multiple times
   disable(element);
 
@@ -365,5 +365,5 @@ function enable (element) {
 
 export default {
   enable,
-  disable
+  disable,
 };

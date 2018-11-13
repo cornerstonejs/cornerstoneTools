@@ -10,6 +10,6 @@ import { lib } from './lib.js';
  * @param  {string} uri the import path for the entity to import.
  * @returns {Class|Object|Function} The entity requested.
  */
-export default function (uri) {
+export default function(uri) {
   return lib[uri];
 }

@@ -5,11 +5,11 @@
  * @export @public @method
  * @name pointInFreehand
  *
- * @param {object} dataHandles Data object associated with the tool.
- * @param {object} location The coordinates being queried.
+ * @param {Object} dataHandles Data object associated with the tool.
+ * @param {Object} location The coordinates being queried.
  * @returns {boolean} True if the location is inside the polygon defined by dataHandles.
  */
-export default function (dataHandles, location) {
+export default function(dataHandles, location) {
   let inROI = false;
 
   // Cycle round pairs of points
@@ -37,7 +37,7 @@ export default function (dataHandles, location) {
  * @param {number} y2 The y position of point 2.
  * @returns {boolean} True if the y-position yp is enclosed within y-positions y1 and y2.
  */
-function isEnclosedY (yp, y1, y2) {
+function isEnclosedY(yp, y1, y2) {
   if ((y1 < yp && yp < y2) || (y2 < yp && yp < y1)) {
     return true;
   }
@@ -51,12 +51,12 @@ function isEnclosedY (yp, y1, y2) {
  * @method
  * @name isLineRightOfPoint
  *
- * @param {object} point The point being queried.
- * @param {object} lp1 The first point of the line segment.
- * @param {object} lp2 The second point of the line segment.
+ * @param {Object} point The point being queried.
+ * @param {Object} lp1 The first point of the line segment.
+ * @param {Object} lp2 The second point of the line segment.
  * @returns {boolean} True if the line is to the right of the point.
  */
-function isLineRightOfPoint (point, lp1, lp2) {
+function isLineRightOfPoint(point, lp1, lp2) {
   // If both right of point return true
   if (lp1.x > point.x && lp2.x > point.x) {
     return true;
@@ -64,7 +64,7 @@ function isLineRightOfPoint (point, lp1, lp2) {
 
   // Catch when line is vertical.
   if (lp1.x === lp2.x) {
-    return (point.x < lp1.x);
+    return point.x < lp1.x;
   }
 
   // Put leftmost point in lp1
@@ -91,16 +91,16 @@ function isLineRightOfPoint (point, lp1, lp2) {
  * @method
  * @name lineSegmentAtPoint
  *
- * @param {object} point The point being queried.
- * @param {object} lp1 The first point of the line segment.
- * @param {object} lp2 The second point of the line segment.
- * @returns {object} An object containing the y value as well as the gradient of the line segment.
+ * @param {Object} point The point being queried.
+ * @param {Object} lp1 The first point of the line segment.
+ * @param {Object} lp2 The second point of the line segment.
+ * @returns {Object} An object containing the y value as well as the gradient of the line segment.
  */
-function lineSegmentAtPoint (point, lp1, lp2) {
+function lineSegmentAtPoint(point, lp1, lp2) {
   const dydx = (lp2.y - lp1.y) / (lp2.x - lp1.x);
   const fx = {
     value: lp1.x + dydx * (point.x - lp1.x),
-    gradient: dydx
+    gradient: dydx,
   };
 
   return fx;
@@ -112,14 +112,16 @@ function lineSegmentAtPoint (point, lp1, lp2) {
  * @method
  * @name rayFromPointCrosssesLine
  *
- * @param {object} point The point being queried.
- * @param {object} handleI The first handle of the line segment.
- * @param {object} handleJ The second handle of the line segment.
+ * @param {Object} point The point being queried.
+ * @param {Object} handleI The first handle of the line segment.
+ * @param {Object} handleJ The second handle of the line segment.
  * @returns {boolean} True if a rightwards ray originating from the point crosses the line defined by handleI and handleJ.
  */
-function rayFromPointCrosssesLine (point, handleI, handleJ) {
-  if (isEnclosedY(point.y, handleI.y, handleJ.y) && isLineRightOfPoint(point, handleI, handleJ)) {
-
+function rayFromPointCrosssesLine(point, handleI, handleJ) {
+  if (
+    isEnclosedY(point.y, handleI.y, handleJ.y) &&
+    isLineRightOfPoint(point, handleI, handleJ)
+  ) {
     return true;
   }
 

@@ -1,6 +1,6 @@
 import {
   planePlaneIntersection,
-  projectPatientPointToImagePlane
+  projectPatientPointToImagePlane,
 } from './../../util/pointProjector.js';
 
 /**
@@ -16,7 +16,7 @@ import {
  * @param  {Object} referenceImagePlane The imagePlane being referenced.
  * @returns {Object}  The start and end points of the line to be drawn.
  */
-export default function (targetImagePlane, referenceImagePlane) {
+export default function(targetImagePlane, referenceImagePlane) {
   const points = planePlaneIntersection(targetImagePlane, referenceImagePlane);
 
   if (!points) {
@@ -25,6 +25,6 @@ export default function (targetImagePlane, referenceImagePlane) {
 
   return {
     start: projectPatientPointToImagePlane(points.start, targetImagePlane),
-    end: projectPatientPointToImagePlane(points.end, targetImagePlane)
+    end: projectPatientPointToImagePlane(points.end, targetImagePlane),
   };
 }

@@ -15,21 +15,21 @@ import registerItem from './registerItem.js';
  * @param {boolean} [overwrite=false] Whether an item/module should be
  *                                    overwritten, should it have the same name.
  */
-export default function (type, name, item, overwrite = false) {
+export default function(type, name, item, overwrite = false) {
   if (!isValidInput(type, name, item)) {
     return;
   }
 
   switch (type) {
-  case 'module':
-    registerModule(name, item, overwrite);
-    break;
-  case 'mixin':
-    registerMixin(name, item, overwrite);
-    break;
-  default:
-    registerItem(type, name, item, overwrite);
-    console.warn(`unrecognised type ${type}, not registering ${name}`);
+    case 'module':
+      registerModule(name, item, overwrite);
+      break;
+    case 'mixin':
+      registerMixin(name, item, overwrite);
+      break;
+    default:
+      registerItem(type, name, item, overwrite);
+      console.warn(`unrecognised type ${type}, not registering ${name}`);
   }
 }
 
@@ -43,9 +43,9 @@ export default function (type, name, item, overwrite = false) {
  * @param {string} type The type of the item/module.
  * @param {string} name The name of the item/module.
  * @param {Object|function} item The item/module itself.
- * @return {boolean}    Whether the input is valid.
+ * @returns {boolean}    Whether the input is valid.
  */
-function isValidInput (type, name, item) {
+function isValidInput(type, name, item) {
   if (!type) {
     console.warn('The type must be given in order to register.');
 
@@ -62,8 +62,8 @@ function isValidInput (type, name, item) {
     console.warn(
       `The ${item} is a ${typeof item}, it should be an Object or a function.`
     );
-    
-return false;
+
+    return false;
   }
 
   return true;

@@ -5,12 +5,12 @@
 const antiGhostDelay = 2000,
   pointerType = {
     mouse: 0,
-    touch: 1
+    touch: 1,
   };
 
 let lastInteractionType, lastInteractionTime;
 
-function handleTap (type, e) {
+function handleTap(type, e) {
   const now = Date.now();
 
   if (type !== lastInteractionType) {
@@ -34,18 +34,18 @@ function handleTap (type, e) {
 const handleTapMouse = handleTap.bind(null, pointerType.mouse);
 const handleTapTouch = handleTap.bind(null, pointerType.touch);
 
-function attachEvents (element, eventList, interactionType) {
+function attachEvents(element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
-  eventList.forEach(function (eventName) {
+  eventList.forEach(function(eventName) {
     element.addEventListener(eventName, tapHandler, { passive: false });
   });
 }
 
-function removeEvents (element, eventList, interactionType) {
+function removeEvents(element, eventList, interactionType) {
   const tapHandler = interactionType ? handleTapMouse : handleTapTouch;
 
-  eventList.forEach(function (eventName) {
+  eventList.forEach(function(eventName) {
     element.removeEventListener(eventName, tapHandler);
   });
 }
@@ -53,12 +53,12 @@ function removeEvents (element, eventList, interactionType) {
 const mouseEvents = ['mousedown', 'mouseup'];
 const touchEvents = ['touchstart', 'touchend'];
 
-function disable (element) {
+function disable(element) {
   removeEvents(element, mouseEvents, pointerType.mouse);
   removeEvents(element, touchEvents, pointerType.touch);
 }
 
-function enable (element) {
+function enable(element) {
   disable(element);
   attachEvents(element, mouseEvents, pointerType.mouse);
   attachEvents(element, touchEvents, pointerType.touch);
@@ -66,5 +66,5 @@ function enable (element) {
 
 export default {
   enable,
-  disable
+  disable,
 };

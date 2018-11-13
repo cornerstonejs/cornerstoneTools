@@ -2,16 +2,18 @@ import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
 
 export default class FusionRenderer {
-  constructor () {
+  constructor() {
     this.currentImageIdIndex = 0;
     this.layerIds = [];
     this.findImageFn = undefined;
   }
 
-  render (element, imageStacks) {
+  render(element, imageStacks) {
     // Move this to base Renderer class
     if (!Number.isInteger(this.currentImageIdIndex)) {
-      throw new Error('FusionRenderer: render - Image ID Index is not an integer');
+      throw new Error(
+        'FusionRenderer: render - Image ID Index is not an integer'
+      );
     }
 
     if (!this.findImageFn) {
@@ -32,7 +34,7 @@ export default class FusionRenderer {
     const currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];
     const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
 
-    cornerstone.loadAndCacheImage(currentImageId).then((baseImage) => {
+    cornerstone.loadAndCacheImage(currentImageId).then(baseImage => {
       let baseLayerId = this.layerIds[0];
 
       // Get the base layer if one exists
@@ -40,7 +42,11 @@ export default class FusionRenderer {
         cornerstone.setLayerImage(element, baseImage, baseLayerId);
       } else {
         // Otherwise, create a new layer with the base layer's image
-        baseLayerId = cornerstone.addLayer(element, baseImage, baseImageObject.options);
+        baseLayerId = cornerstone.addLayer(
+          element,
+          baseImage,
+          baseImageObject.options
+        );
         this.layerIds.push(baseLayerId);
       }
 
@@ -57,7 +63,11 @@ export default class FusionRenderer {
         // One and add it to the layerIds property for this instance
         // Of the fusion renderer.
         if (!currentLayerId) {
-          currentLayerId = cornerstone.addLayer(element, undefined, imgObj.options);
+          currentLayerId = cornerstone.addLayer(
+            element,
+            undefined,
+            imgObj.options
+          );
           this.layerIds.push(currentLayerId);
         }
 
@@ -65,7 +75,7 @@ export default class FusionRenderer {
           // If an imageId was returned from the findImage function,
           // Load it, make sure it's visible and update the layer
           // With the new image object.
-          cornerstone.loadAndCacheImage(imageId).then((image) => {
+          cornerstone.loadAndCacheImage(imageId).then(image => {
             cornerstone.setLayerImage(element, image, currentLayerId);
             cornerstone.updateImage(element);
           });

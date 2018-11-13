@@ -12,7 +12,7 @@ import { state, modules } from '../store/index.js';
  * @param {boolean} [overwrite] Whether a module should be overwritten,
  *                              should it have the same name.
  */
-export default function (name, newModule, overwrite = false) {
+export default function(name, newModule, overwrite = false) {
   if (isModuleNameRegistered(name)) {
     console.warn(`A module with the name ${name} is already registered`);
 
@@ -26,8 +26,6 @@ export default function (name, newModule, overwrite = false) {
   modules[name] = newModule;
 }
 
-function isModuleNameRegistered (name) {
-  return Object.keys(modules).some((key) => {
-    return key === name;
-  });
+function isModuleNameRegistered(name) {
+  return Object.keys(modules).some(key => key === name);
 }

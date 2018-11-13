@@ -1,1 +1,9 @@
-config/**
+.circleci/**/*
+.github/**/*
+.vscode/**/*
+build/**/*
+config/**/*
+demo/**/*
+docs/**/*
+examples/**/*
+node_modules/**/*

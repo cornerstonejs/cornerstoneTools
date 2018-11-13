@@ -3,5 +3,5 @@ import correctShift from './correctShift.js';
 
 export default {
   changeViewportScale,
-  correctShift
+  correctShift,
 };

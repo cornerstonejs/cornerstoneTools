@@ -1,4 +1,4 @@
-export default function (toolData) {
+export default function(toolData) {
   if (!toolData) {
     return;
   }
@@ -15,8 +15,8 @@ export default function (toolData) {
   }
 }
 
-function deactivateAllHandles (handles) {
-  Object.keys(handles).forEach(function (name) {
+function deactivateAllHandles(handles) {
+  Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
 
     handle.active = false;

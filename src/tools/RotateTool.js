@@ -1,25 +1,26 @@
-/* eslint no-loop-func: 0 */ // --> OFF
 import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
 
 /**
- * @export @public @class
- * @name RotateTool
+ * @public
+ * @class RotateTool
+ * @memberof Tools
+ *
  * @classdesc Tool for rotating the image.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class RotateTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Rotate',
       strategies: {
         default: defaultStrategy,
         horizontal: horizontalStrategy,
-        vertical: verticalStrategy
+        vertical: verticalStrategy,
       },
       defaultStrategy: 'default',
-      supportedInteractionTypes: ['Mouse', 'Touch']
+      supportedInteractionTypes: ['Mouse', 'Touch'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -28,26 +29,26 @@ export default class RotateTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  touchDragCallback (evt) {
+  touchDragCallback(evt) {
     this.dragCallback(evt);
   }
 
-  mouseDragCallback (evt) {
+  mouseDragCallback(evt) {
     this.dragCallback(evt);
   }
 
-  postMouseDownCallback (evt) {
+  postMouseDownCallback(evt) {
     this.initialRotation = evt.detail.viewport.rotation;
   }
 
-  dragCallback (evt) {
+  dragCallback(evt) {
     evt.detail.viewport.initialRotation = this.initialRotation;
     this.applyActiveStrategy(evt, this.configuration);
     external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }
 
-const defaultStrategy = (evt) => {
+const defaultStrategy = evt => {
   const eventData = evt.detail;
   const { element, viewport } = eventData;
   const initialRotation = viewport.initialRotation;
@@ -58,17 +59,17 @@ const defaultStrategy = (evt) => {
 
   const initialPoints = {
     x: eventData.startPoints.client.x,
-    y: eventData.startPoints.client.y
+    y: eventData.startPoints.client.y,
   };
   const { scale, translation } = viewport;
   const centerPoints = {
     x: rect.left + width / 2 + translation.x * scale,
-    y: rect.top + height / 2 + translation.y * scale
+    y: rect.top + height / 2 + translation.y * scale,
   };
 
   const currentPoints = {
     x: eventData.currentPoints.client.x,
-    y: eventData.currentPoints.client.y
+    y: eventData.currentPoints.client.y,
   };
 
   const angleInfo = angleBetweenPoints(
@@ -84,14 +85,14 @@ const defaultStrategy = (evt) => {
   viewport.rotation = initialRotation + angleInfo.angle;
 };
 
-const horizontalStrategy = (evt) => {
+const horizontalStrategy = evt => {
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
   viewport.rotation += deltaPoints.page.x / viewport.scale;
 };
 
-const verticalStrategy = (evt) => {
+const verticalStrategy = evt => {
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 

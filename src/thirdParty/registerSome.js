@@ -11,7 +11,7 @@ import register from './register.js';
  * @param {boolean} [overwrite=false] Whether an item/module should be
  *                                    overwritten, should it have the same name.
  */
-export default function (items, overwrite = false) {
+export default function(items, overwrite = false) {
   for (let i = 0; i < items.length; i++) {
     const { type, name, item } = items[i];
 

@@ -8,9 +8,10 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * This is mostly used to update the [un]hover state
  * of a tool.
  *
+ * @private
  * @param {*} evt
  */
-export default function (evt) {
+export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
@@ -27,16 +28,14 @@ export default function (evt) {
   tools = getInteractiveToolsForElement(element, getters.mouseTools());
 
   const activeTools = tools.filter(
-    (tool) =>
-      tool.mode === 'active' &&
-      tool.options.isMouseActive
+    tool => tool.mode === 'active' && tool.options.isMouseActive
   );
 
   let imageNeedsUpdate = false;
 
   // If any tools are active, check if they have a cursor, and if so update image.
   if (activeTools.length > 0) {
-    imageNeedsUpdate = activeTools.some((tool) => tool.hasCursor);
+    imageNeedsUpdate = activeTools.some(tool => tool.hasCursor);
   }
 
   tools = getToolsWithDataForElement(element, tools);
@@ -44,7 +43,6 @@ export default function (evt) {
   // Iterate over each tool, and each tool's data
   // Activate any handles we're hovering over, or whole tools if we're near the tool
   // If we've changed the state of anything, redrawn the image
-
 
   for (let t = 0; t < tools.length; t++) {
     const tool = tools[t];

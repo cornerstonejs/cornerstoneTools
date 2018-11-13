@@ -2,27 +2,27 @@ let defaultStartLoadHandler;
 let defaultEndLoadHandler;
 let defaultErrorLoadingHandler;
 
-function setStartLoadHandler (handler) {
+function setStartLoadHandler(handler) {
   defaultStartLoadHandler = handler;
 }
 
-function getStartLoadHandler () {
+function getStartLoadHandler() {
   return defaultStartLoadHandler;
 }
 
-function setEndLoadHandler (handler) {
+function setEndLoadHandler(handler) {
   defaultEndLoadHandler = handler;
 }
 
-function getEndLoadHandler () {
+function getEndLoadHandler() {
   return defaultEndLoadHandler;
 }
 
-function setErrorLoadingHandler (handler) {
+function setErrorLoadingHandler(handler) {
   defaultErrorLoadingHandler = handler;
 }
 
-function getErrorLoadingHandler () {
+function getErrorLoadingHandler() {
   return defaultErrorLoadingHandler;
 }
 
@@ -32,7 +32,7 @@ const loadHandlerManager = {
   setEndLoadHandler,
   getEndLoadHandler,
   setErrorLoadingHandler,
-  getErrorLoadingHandler
+  getErrorLoadingHandler,
 };
 
 export default loadHandlerManager;

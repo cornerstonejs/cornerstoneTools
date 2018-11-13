@@ -11,17 +11,16 @@ const state = {
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {},
   imageBitmapCache: {},
-  segmentationMetadata: {}
+  segmentationMetadata: {},
 };
 
 const setters = {
-
   /**
    * Sets the brush radius, account for global min/max radius
    *
    * @param {*} radius
    */
-  radius: (radius) => {
+  radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
   },
 
@@ -31,7 +30,7 @@ const setters = {
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
    */
-  brushColorMap: (colors) => {
+  brushColorMap: colors => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
     colormap.setNumberOfColors(colors.length);
@@ -40,7 +39,7 @@ const setters = {
       colormap.setColor(i, colors[i]);
     }
   },
-  elementVisible: (enabledElement) => {
+  elementVisible: enabledElement => {
     if (!external.cornerstone) {
       return;
     }
@@ -59,11 +58,7 @@ const setters = {
       state.visibleSegmentations[enabledElementUID].push(true);
     }
   },
-  brushVisibilityForElement: (
-    enabledElementUID,
-    segIndex,
-    visible = true
-  ) => {
+  brushVisibilityForElement: (enabledElementUID, segIndex, visible = true) => {
     if (!state.visibleSegmentations[enabledElementUID]) {
       state.imageBitmapCache[enabledElementUID] = [];
     }
@@ -77,7 +72,7 @@ const setters = {
 
     state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
   },
-  clearImageBitmapCacheForElement: (enabledElementUID) => {
+  clearImageBitmapCacheForElement: enabledElementUID => {
     state.imageBitmapCache[enabledElementUID] = [];
   },
   metadata: (seriesInstanceUid, segIndex, metadata) => {
@@ -86,18 +81,18 @@ const setters = {
     }
 
     state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
-  }
+  },
 };
 
 const getters = {
-  imageBitmapCacheForElement: (enabledElementUID) => {
+  imageBitmapCacheForElement: enabledElementUID => {
     if (!state.imageBitmapCache[enabledElementUID]) {
       return null;
     }
 
     return state.imageBitmapCache[enabledElementUID];
   },
-  visibleSegmentationsForElement: (enabledElementUID) => {
+  visibleSegmentationsForElement: enabledElementUID => {
     if (!state.visibleSegmentations[enabledElementUID]) {
       return null;
     }
@@ -110,27 +105,25 @@ const getters = {
     }
 
     return state.segmentationMetadata[seriesInstanceUid][segIndex];
-  }
+  },
 };
 
-
 /**
- * enabledElementCallback - Element specific initilisation.
+ * EnabledElementCallback - Element specific initilisation.
  * @public
  * @param  {Object} enabledElement  The element on which the module is
  *                                  being initialised.
  */
-function enabledElementCallback (enabledElement) {
+function enabledElementCallback(enabledElement) {
   setters.elementVisible(enabledElement);
 }
 
-
 /**
- * removeEnabledElementCallback - Element specific memory cleanup.
+ * RemoveEnabledElementCallback - Element specific memory cleanup.
  * @public
  * @param  {Object} enabledElement  The element being removed.
  */
-function removeEnabledElementCallback (enabledElement) {
+function removeEnabledElementCallback(enabledElement) {
   if (!external.cornerstone) {
     return;
   }
@@ -149,10 +142,10 @@ function removeEnabledElementCallback (enabledElement) {
 }
 
 /**
- * onRegisterCallback - Initialise the module when a new element is added.
+ * OnRegisterCallback - Initialise the module when a new element is added.
  * @public
  */
-function onRegisterCallback () {
+function onRegisterCallback() {
   _initDefaultColorMap();
 }
 
@@ -161,7 +154,7 @@ export default {
   onRegisterCallback,
   enabledElementCallback,
   getters,
-  setters
+  setters,
 };
 
 const distinctColors = [
@@ -183,7 +176,7 @@ const distinctColors = [
   [170, 255, 195, 255],
   [128, 128, 0, 255],
   [255, 215, 180, 255],
-  [0, 0, 128, 255]
+  [0, 0, 128, 255],
 ];
 
 let colorPairIndex = 0;
@@ -217,7 +210,7 @@ function _initDefaultColorMap() {
  *
  * @returns {type}  description
  */
-function _generateInterpolatedColor () {
+function _generateInterpolatedColor() {
   const randIndicies = _getNextColorPair();
   const fraction = Math.random();
   const interpolatedColor = [];
@@ -234,8 +227,6 @@ function _generateInterpolatedColor () {
   return interpolatedColor;
 }
 
-
-
 /**
  * _getNextColorPair - returns the next pair of indicies to interpolate between.
  *
@@ -244,16 +235,14 @@ function _generateInterpolatedColor () {
  * @returns {Array} An array containing the two indicies.
  */
 function _getNextColorPair() {
-  const indexPair = [
-    colorPairIndex,
-  ];
+  const indexPair = [colorPairIndex];
 
   if (colorPairIndex < distinctColors.length - 1) {
     colorPairIndex++;
     indexPair.push(colorPairIndex);
   } else {
     colorPairIndex = 0;
-    indexPair.push(colorPairIndex)
+    indexPair.push(colorPairIndex);
   }
 
   return indexPair;

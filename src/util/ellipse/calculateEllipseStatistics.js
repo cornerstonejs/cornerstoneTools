@@ -6,10 +6,10 @@ import pointInEllipse from './pointInEllipse.js';
  * @name calculateEllipseStatistics
  *
  * @param  {number[]} sp    Array of the image data's pixel values.
- * @param  {object} ellipse An object describing the ellipse.
- * @returns {object}         The statistics of the ellipse.
+ * @param  {Object} ellipse An object describing the ellipse.
+ * @returns {Object}         The statistics of the ellipse.
  */
-export default function (sp, ellipse) {
+export default function(sp, ellipse) {
   // TODO: Get a real statistics library here that supports large counts
 
   let sum = 0;
@@ -21,7 +21,7 @@ export default function (sp, ellipse) {
     for (let x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
       const point = {
         x,
-        y
+        y,
       };
 
       if (pointInEllipse(ellipse, point)) {
@@ -39,7 +39,7 @@ export default function (sp, ellipse) {
       count,
       mean: 0.0,
       variance: 0.0,
-      stdDev: 0.0
+      stdDev: 0.0,
     };
   }
 
@@ -50,6 +50,6 @@ export default function (sp, ellipse) {
     count,
     mean,
     variance,
-    stdDev: Math.sqrt(variance)
+    stdDev: Math.sqrt(variance),
   };
 }

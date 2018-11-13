@@ -1,18 +1,19 @@
-/* eslint class-methods-use-this: 0 */
 import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 /**
- * @export @public @class
- * @name RotateTouchTool
+ * @public
+ * @class RotateTouchTool
+ * @memberof Tools
+ *
  * @classdesc Tool for rotating the image using touch.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class RotateTouchTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'RotateTouch',
-      supportedInteractionTypes: ['TouchRotate']
+      supportedInteractionTypes: ['TouchRotate'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -21,7 +22,7 @@ export default class RotateTouchTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  touchRotateCallback (evt) {
+  touchRotateCallback(evt) {
     const eventData = evt.detail;
     const { element, viewport, rotation } = eventData;
 

@@ -33,7 +33,23 @@ export default (element, filename, mimetype = 'image/png') => {
   if (document.createEvent) {
     const e = document.createEvent('MouseEvents');
 
-    e.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    e.initMouseEvent(
+      'click',
+      true,
+      true,
+      window,
+      0,
+      0,
+      0,
+      0,
+      0,
+      false,
+      false,
+      false,
+      false,
+      0,
+      null
+    );
 
     lnk.dispatchEvent(e);
   } else if (lnk.fireEvent) {

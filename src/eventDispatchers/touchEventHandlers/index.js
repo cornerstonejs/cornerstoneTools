@@ -48,5 +48,5 @@ export {
   touchPress,
   touchRotate,
   touchStart,
-  touchStartActive
+  touchStartActive,
 };

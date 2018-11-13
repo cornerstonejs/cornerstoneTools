@@ -4,16 +4,37 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 
-export default function (event, data, toolData, toolType, deleteIfHandleOutsideImage, doneMovingCallback) {
+/**
+ * Move all provided handles, using touch event listeners
+ * @public
+ * @function touchMoveAllHandles
+ * @memberof Manipulators
+ *
+ * @param {*} event
+ * @param {*} data
+ * @param {*} toolData
+ * @param {*} toolType
+ * @param {*} deleteIfHandleOutsideImage
+ * @param {*} doneMovingCallback
+ * @returns {Boolean} - Alway true?
+ */
+export default function(
+  event,
+  data,
+  toolData,
+  toolType,
+  deleteIfHandleOutsideImage,
+  doneMovingCallback
+) {
   const touchEventData = event.detail;
   const element = touchEventData.element;
 
-  function touchDragCallback (e) {
+  function touchDragCallback(e) {
     const eventData = e.detail;
 
     data.active = true;
 
-    Object.keys(data.handles).forEach(function (name) {
+    Object.keys(data.handles).forEach(function(name) {
       const handle = data.handles[name];
 
       if (handle.movesIndependently === true) {
@@ -29,7 +50,7 @@ export default function (event, data, toolData, toolType, deleteIfHandleOutsideI
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -40,7 +61,7 @@ export default function (event, data, toolData, toolType, deleteIfHandleOutsideI
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
-  function touchEndCallback (e) {
+  function touchEndCallback(e) {
     const eventData = e.detail;
 
     // Console.log('touchMoveAllHandles touchEndCallback: ' + e.type);

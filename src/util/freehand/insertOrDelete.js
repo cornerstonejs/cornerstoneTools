@@ -10,16 +10,16 @@ const toolType = 'FreehandMouse';
  * @export @public @method
  * @name insertOrDelete
  *
- * @param {object} e The event.
- * @param {object} nearby Object containing information about a nearby handle.
+ * @param {Object} e The event.
+ * @param {Object} nearby Object containing information about a nearby handle.
  */
-export default function (evt, nearby) {
+export default function(evt, nearby) {
   const eventData = evt.detail;
 
   if (nearby && nearby.handleNearby !== null) {
     const deleteInfo = {
       toolIndex: nearby.toolIndex,
-      handleIndex: nearby.handleNearby
+      handleIndex: nearby.handleNearby,
     };
 
     deletePoint(eventData, deleteInfo);
@@ -38,10 +38,10 @@ export default function (evt, nearby) {
  * @private
  * @method
  *
- * @param {object} eventData The data object associated with the event.
- * @param {object} deleteInfo Object containing information about which point to delete.
+ * @param {Object} eventData The data object associated with the event.
+ * @param {Object} deleteInfo Object containing information about which point to delete.
  */
-function deletePoint (eventData, deleteInfo) {
+function deletePoint(eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
   if (toolData === undefined) {
@@ -65,7 +65,9 @@ function deletePoint (eventData, deleteInfo) {
     data.handles[deleteHandle - 1].lines.push(data.handles[0]);
   } else if (deleteHandle === 0) {
     data.handles[data.handles.length - 1].lines.pop();
-    data.handles[data.handles.length - 1].lines.push(data.handles[deleteHandle + 1]);
+    data.handles[data.handles.length - 1].lines.push(
+      data.handles[deleteHandle + 1]
+    );
   } else {
     data.handles[deleteHandle - 1].lines.pop();
     data.handles[deleteHandle - 1].lines.push(data.handles[deleteHandle + 1]);
@@ -90,7 +92,7 @@ function deletePoint (eventData, deleteInfo) {
  * @param {Object} eventData - The data object associated with the event.
  * @param {Object} insertInfo - Object containing information about where to insert the point.
  */
-function _insertPoint (eventData, insertInfo) {
+function _insertPoint(eventData, insertInfo) {
   const toolData = getToolState(eventData.element, toolType);
 
   if (toolData === undefined) {
@@ -137,7 +139,7 @@ function _insertPoint (eventData, insertInfo) {
  *
  * @param {Object} insertInfo - Object containing information about where to insert the point.
  */
-function _getInsertionIndex (insertInfo) {
+function _getInsertionIndex(insertInfo) {
   // Get lowest index that isn't zero
   const handleIndexArray = insertInfo.handleIndexArray;
   let insertIndex = Infinity;

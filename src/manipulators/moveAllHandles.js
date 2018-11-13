@@ -5,16 +5,37 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (e, data, toolData, toolType, options, doneMovingCallback) {
+/**
+ * Manipulator to move all provided handles at the same time
+ * @public
+ * @function moveAllHandles
+ * @memberof Manipulators
+ *
+ * @param {*} e
+ * @param {*} data
+ * @param {*} toolData
+ * @param {*} toolType
+ * @param {*} options
+ * @param {*} doneMovingCallback
+ * @returns {Boolean} - Always returns true?
+ */
+export default function(
+  e,
+  data,
+  toolData,
+  toolType,
+  options,
+  doneMovingCallback
+) {
   const mouseEventData = e.detail;
   const element = mouseEventData.element;
 
-  function mouseDragCallback (e) {
+  function mouseDragCallback(e) {
     const eventData = e.detail;
 
     data.active = true;
 
-    Object.keys(data.handles).forEach(function (name) {
+    Object.keys(data.handles).forEach(function(name) {
       const handle = data.handles[name];
 
       if (handle.movesIndependently === true) {
@@ -35,7 +56,7 @@ export default function (e, data, toolData, toolType, options, doneMovingCallbac
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
@@ -46,7 +67,7 @@ export default function (e, data, toolData, toolType, options, doneMovingCallbac
 
   element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
 
-  function mouseUpCallback (e) {
+  function mouseUpCallback(e) {
     const eventData = e.detail;
 
     data.invalidated = true;
@@ -56,8 +77,10 @@ export default function (e, data, toolData, toolType, options, doneMovingCallbac
     element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
 
     // If any handle is outside the image, delete the tool data
-    if (options.deleteIfHandleOutsideImage === true &&
-            anyHandlesOutsideImage(eventData, data.handles)) {
+    if (
+      options.deleteIfHandleOutsideImage === true &&
+      anyHandlesOutsideImage(eventData, data.handles)
+    ) {
       removeToolState(element, toolType, data);
     }
 

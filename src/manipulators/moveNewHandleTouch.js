@@ -3,19 +3,43 @@ import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
-export default function (eventData, toolType, data, handle, doneMovingCallback, preventHandleOutsideImage) {
-  // Console.log('moveNewHandleTouch');
+/**
+ * Moves a new handle using touch events
+ * @public
+ * @method moveNewHandleTouch
+ * @memberof Manipulators
+ *
+ * @param {*} eventData
+ * @param {*} toolType
+ * @param {*} data
+ * @param {*} handle
+ * @param {*} doneMovingCallback
+ * @param {*} preventHandleOutsideImage
+ * @returns {undefined}
+ */
+export default function(
+  eventData,
+  toolType,
+  data,
+  handle,
+  doneMovingCallback,
+  preventHandleOutsideImage
+) {
   const element = eventData.element;
-  const imageCoords = external.cornerstone.pageToPixel(element, eventData.currentPoints.page.x, eventData.currentPoints.page.y + 50);
+  const imageCoords = external.cornerstone.pageToPixel(
+    element,
+    eventData.currentPoints.page.x,
+    eventData.currentPoints.page.y + 50
+  );
   const distanceFromTouch = {
     x: handle.x - imageCoords.x,
-    y: handle.y - imageCoords.y
+    y: handle.y - imageCoords.y,
   };
 
   handle.active = true;
   data.active = true;
 
-  function moveCallback (e) {
+  function moveCallback(e) {
     const eventData = e.detail;
 
     handle.x = eventData.currentPoints.image.x + distanceFromTouch.x;
@@ -31,13 +55,13 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     const modifiedEventData = {
       toolType,
       element,
-      measurementData: data
+      measurementData: data,
     };
 
     triggerEvent(element, eventType, modifiedEventData);
   }
 
-  function moveEndCallback (e) {
+  function moveEndCallback(e) {
     const eventData = e.detail;
 
     element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
@@ -45,7 +69,10 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
     element.removeEventListener(EVENTS.TAP, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
-    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+    element.removeEventListener(
+      EVENTS.TOOL_DEACTIVATED,
+      toolDeactivatedCallback
+    );
 
     if (e.type === EVENTS.TOUCH_PINCH || e.type === EVENTS.TOUCH_PRESS) {
       handle.active = false;
@@ -71,7 +98,7 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
     }
   }
 
-  function stopImmediatePropagation (e) {
+  function stopImmediatePropagation(e) {
     // Stop the CornerstoneToolsTouchStart event from
     // Become a CornerstoneToolsTouchStartActive event when
     // MoveNewHandleTouch ends
@@ -86,13 +113,16 @@ export default function (eventData, toolType, data, handle, doneMovingCallback, 
   element.addEventListener(EVENTS.TAP, moveEndCallback);
   element.addEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
 
-  function toolDeactivatedCallback () {
+  function toolDeactivatedCallback() {
     element.removeEventListener(EVENTS.TOUCH_DRAG, moveCallback);
     element.removeEventListener(EVENTS.TOUCH_PINCH, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_END, moveEndCallback);
     element.removeEventListener(EVENTS.TAP, moveEndCallback);
     element.removeEventListener(EVENTS.TOUCH_START, stopImmediatePropagation);
-    element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
+    element.removeEventListener(
+      EVENTS.TOOL_DEACTIVATED,
+      toolDeactivatedCallback
+    );
 
     handle.active = false;
     data.active = false;

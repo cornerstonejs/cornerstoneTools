@@ -1,23 +1,24 @@
-/* eslint class-methods-use-this: 0 */
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
-import BaseTool from '../base/BaseTool.js';
+import BaseTool from './base/BaseTool.js';
 
 /**
- * @export @public @class
- * @name MagnifyTool
+ * @public
+ * @class MagnifyTool
+ * @memberof Tools
+ *
  * @classdesc Tool for inspecting a region at increased magnification.
- * @extends BaseTool
+ * @extends Tools.Base.BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor (configuration = {}) {
+  constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         magnifySize: 300,
-        magnificationLevel: 2
-      }
+        magnificationLevel: 2,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -47,7 +48,7 @@ export default class MagnifyTool extends BaseTool {
     this.newImageCallback = this._drawMagnificationTool.bind(this);
   }
 
-  _addMagnifyingGlass (evt) {
+  _addMagnifyingGlass(evt) {
     // Ignore until next event
     this._removeZoomElement();
     this._drawZoomedElement(evt);
@@ -58,14 +59,14 @@ export default class MagnifyTool extends BaseTool {
     evt.stopPropagation();
   }
 
-  _updateMagnifyingGlass (evt) {
+  _updateMagnifyingGlass(evt) {
     this._drawMagnificationTool(evt);
 
     evt.preventDefault();
     evt.stopPropagation();
   }
 
-  _removeMagnifyingGlass (evt) {
+  _removeMagnifyingGlass(evt) {
     const element = evt.detail.element;
 
     element.querySelector('.magnifyTool').style.display = 'none';
@@ -74,7 +75,7 @@ export default class MagnifyTool extends BaseTool {
     this._removeZoomElement();
   }
 
-  _drawMagnificationTool (evt) {
+  _drawMagnificationTool(evt) {
     const element = evt.detail.element;
     const magnifyCanvas = element.querySelector('.magnifyTool');
 
@@ -98,21 +99,37 @@ export default class MagnifyTool extends BaseTool {
     );
 
     // Shrink magnifier to smallest canvas dimension if smaller than desired magnifier size
-    const magnifySize = Math.min(this.configuration.magnifySize, canvas.width, canvas.height);
+    const magnifySize = Math.min(
+      this.configuration.magnifySize,
+      canvas.width,
+      canvas.height
+    );
     const magnificationLevel = this.configuration.magnificationLevel;
 
     magnifyCanvas.width = magnifySize;
     magnifyCanvas.height = magnifySize;
 
     // Constrain drag movement to zoomed image boundaries
-    canvasLocation.x = Math.max(canvasLocation.x, 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.x = Math.min(canvasLocation.x, canvas.width - 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.y = Math.max(canvasLocation.y, 0.5 * magnifySize / magnificationLevel);
-    canvasLocation.y = Math.min(canvasLocation.y, canvas.height - 0.5 * magnifySize / magnificationLevel);
+    canvasLocation.x = Math.max(
+      canvasLocation.x,
+      (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.x = Math.min(
+      canvasLocation.x,
+      canvas.width - (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.y = Math.max(
+      canvasLocation.y,
+      (0.5 * magnifySize) / magnificationLevel
+    );
+    canvasLocation.y = Math.min(
+      canvasLocation.y,
+      canvas.height - (0.5 * magnifySize) / magnificationLevel
+    );
 
     const copyFrom = {
       x: canvasLocation.x * magnificationLevel - 0.5 * magnifySize,
-      y: canvasLocation.y * magnificationLevel - 0.5 * magnifySize
+      y: canvasLocation.y * magnificationLevel - 0.5 * magnifySize,
     };
 
     copyFrom.x = Math.max(copyFrom.x, 0);
@@ -134,15 +151,21 @@ export default class MagnifyTool extends BaseTool {
     const touchOffset = evt.detail.isTouchEvent ? 120 : 0;
     const magnifyPosition = {
       top: Math.max(canvasLocation.y - 0.5 * magnifySize - touchOffset, 0),
-      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0)
+      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0),
     };
 
     // Get full magnifier dimensions with borders
     const magnifierBox = magnifyCanvas.getBoundingClientRect();
 
     // Constrain magnifier to canvas boundaries
-    magnifyPosition.top = Math.min(magnifyPosition.top, canvas.height - magnifierBox.height);
-    magnifyPosition.left = Math.min(magnifyPosition.left, canvas.width - magnifierBox.width);
+    magnifyPosition.top = Math.min(
+      magnifyPosition.top,
+      canvas.height - magnifierBox.height
+    );
+    magnifyPosition.left = Math.min(
+      magnifyPosition.left,
+      canvas.width - magnifierBox.width
+    );
     magnifyCanvas.style.top = `${magnifyPosition.top}px`;
     magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
@@ -155,9 +178,10 @@ export default class MagnifyTool extends BaseTool {
    * Creates a cornerstone enabled element, and renders the target image at the
    * desired magnification level using it.
    *
+   * @private
    * @param {*} evt
    */
-  _drawZoomedElement (evt) {
+  _drawZoomedElement(evt) {
     const element = evt.detail.element;
     let enabledElement = evt.detail.enabledElement;
 
@@ -175,7 +199,9 @@ export default class MagnifyTool extends BaseTool {
     this.zoomElement.height = origCanvas.height * magnificationLevel;
     external.cornerstone.enable(this.zoomElement);
 
-    const zoomEnabledElement = external.cornerstone.getEnabledElement(this.zoomElement);
+    const zoomEnabledElement = external.cornerstone.getEnabledElement(
+      this.zoomElement
+    );
     const viewport = external.cornerstone.getViewport(enabledElement.element);
 
     this.zoomCanvas = zoomEnabledElement.canvas;
@@ -195,7 +221,7 @@ export default class MagnifyTool extends BaseTool {
    * used to render the zoomed image.
    *
    */
-  _removeZoomElement () {
+  _removeZoomElement() {
     if (this.zoomElement !== undefined) {
       external.cornerstone.disable(this.zoomCanvas);
       this.zoomElement = undefined;
@@ -207,9 +233,11 @@ export default class MagnifyTool extends BaseTool {
    * The canvas used to render the zoomed image.
    * It will be displayed and clipped inside the magnifying glass frame/element.
    *
+   * @private
+   *
    * @param {*} element
    */
-  _createMagnificationCanvas (element) {
+  _createMagnificationCanvas(element) {
     // If the magnifying glass canvas doesn't already exist
     if (element.querySelector('.magnifyTool') === null) {
       // Create a canvas and append it as a child to the element
@@ -231,7 +259,7 @@ export default class MagnifyTool extends BaseTool {
    *
    * @param {*} evt
    */
-  _destroyMagnificationCanvas (evt) {
+  _destroyMagnificationCanvas(evt) {
     const element = evt.detail.element;
     const magnifyCanvas = element.querySelector('.magnifyTool');
 

@@ -7,17 +7,17 @@ jest.mock('./../externalModules.js', () => ({
     getEnabledElement: jest.fn(),
     updateImage: jest.fn(),
     metaData: {
-      get: jest.fn()
-    }
-  }
+      get: jest.fn(),
+    },
+  },
 }));
 
 jest.mock('../drawing/index.js', () => ({
-  getNewContext: jest.fn()
+  getNewContext: jest.fn(),
 }));
 
 jest.mock('../import.js', () => ({
-  default: jest.fn()
+  default: jest.fn(),
 }));
 
 // TODO: Not sure if this is the best place to test the tool's strategies?
@@ -67,7 +67,9 @@ describe('ScaleOverlayTool.js', () => {
     });
 
     it('should NOT call updateImage is image does not exists', () => {
-      external.cornerstone.getEnabledElement.mockReturnValue({ image: undefined });
+      external.cornerstone.getEnabledElement.mockReturnValue({
+        image: undefined,
+      });
       external.cornerstone.updateImage = jest.fn();
 
       const instantiatedTool = new ScaleOverlayTool();
@@ -102,8 +104,8 @@ describe('ScaleOverlayTool.js', () => {
       const mockEvt = {
         detail: {
           canvasContext: {},
-          image: {}
-        }
+          image: {},
+        },
       };
       const instantiatedTool = new ScaleOverlayTool();
 
@@ -114,7 +116,9 @@ describe('ScaleOverlayTool.js', () => {
       instantiatedTool.renderToolData(mockEvt);
 
       expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('unable to define rowPixelSpacing or colPixelSpacing from data on ScaleOverlay\'s renderToolData');
+      expect(console.warn.mock.calls[0][0]).toContain(
+        "unable to define rowPixelSpacing or colPixelSpacing from data on ScaleOverlay's renderToolData"
+      );
     });
   });
 });

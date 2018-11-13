@@ -10,15 +10,17 @@ const elementToolOptions = {};
  * @param {string} toolType Tool type identifier of the target options object
  * @param {HTMLElement} element Element of the target options object
  *
- * @returns {object} Target options object (empty if not yet set)
+ * @returns {Object} Target options object (empty if not yet set)
  */
-function getToolOptions (toolType, element) {
+function getToolOptions(toolType, element) {
   if (!elementToolOptions[toolType]) {
     return {};
   }
 
   const toolOptions = elementToolOptions[toolType];
-  const optionsObject = toolOptions.find((toolOptionObject) => toolOptionObject.element === element);
+  const optionsObject = toolOptions.find(
+    toolOptionObject => toolOptionObject.element === element
+  );
 
   if (!optionsObject) {
     return {};
@@ -38,28 +40,35 @@ function getToolOptions (toolType, element) {
  * @param {HTMLElement} element Element of the target options object.
  * @param {Object} options Options object to store at target.
  */
-function setToolOptions (toolType, element, options) {
+function setToolOptions(toolType, element, options) {
   if (!elementToolOptions[toolType]) {
-    elementToolOptions[toolType] = [{
-      element,
-      options
-    }];
+    elementToolOptions[toolType] = [
+      {
+        element,
+        options,
+      },
+    ];
 
     return;
   }
 
   const toolOptions = elementToolOptions[toolType];
-  const index = toolOptions.findIndex((toolOptionObject) => toolOptionObject.element === element);
+  const index = toolOptions.findIndex(
+    toolOptionObject => toolOptionObject.element === element
+  );
 
   if (index === -1) {
     elementToolOptions[toolType].push({
       element,
-      options
+      options,
     });
   } else {
     const elementOptions = elementToolOptions[toolType][index].options || {};
 
-    elementToolOptions[toolType][index].options = Object.assign(elementOptions, options);
+    elementToolOptions[toolType][index].options = Object.assign(
+      elementOptions,
+      options
+    );
   }
 }
 
@@ -73,12 +82,12 @@ function setToolOptions (toolType, element, options) {
  * @param {string} toolType Tool type identifier of the target options object.
  * @param {HTMLElement} element Element of the target options object.
  */
-function clearToolOptions (toolType, element) {
+function clearToolOptions(toolType, element) {
   const toolOptions = elementToolOptions[toolType];
 
   if (toolOptions) {
     elementToolOptions[toolType] = toolOptions.filter(
-      (toolOptionObject) => toolOptionObject.element !== element
+      toolOptionObject => toolOptionObject.element !== element
     );
   }
 }
@@ -92,7 +101,7 @@ function clearToolOptions (toolType, element) {
  *
  * @param {string} toolType Tool type identifier of the target options objects.
  */
-function clearToolOptionsByToolType (toolType) {
+function clearToolOptionsByToolType(toolType) {
   delete elementToolOptions[toolType];
 }
 
@@ -105,10 +114,10 @@ function clearToolOptionsByToolType (toolType) {
  *
  * @param {HTMLElement} element Element of the target options objects.
  */
-function clearToolOptionsByElement (element) {
+function clearToolOptionsByElement(element) {
   for (const toolType in elementToolOptions) {
     elementToolOptions[toolType] = elementToolOptions[toolType].filter(
-      (toolOptionObject) => toolOptionObject.element !== element
+      toolOptionObject => toolOptionObject.element !== element
     );
   }
 }
@@ -118,5 +127,5 @@ export {
   setToolOptions,
   clearToolOptions,
   clearToolOptionsByToolType,
-  clearToolOptionsByElement
+  clearToolOptionsByElement,
 };
