@@ -7,7 +7,7 @@ const { correctShift, changeViewportScale } = zoomUtils;
 
 /**
  * @public
- * @class ZoomMouseWheelTool
+ * @class ZoomTool
  * @memberof Tools
  *
  * @classdesc Tool for changing magnification.
