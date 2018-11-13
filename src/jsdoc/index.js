@@ -1,5 +1,5 @@
 /**
- *  Namespace for native DOM/Document types
+ * Namespace for CornerstoneTools events
  * @namespace CornerstoneTools
  */
 
