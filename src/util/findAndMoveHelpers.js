@@ -149,33 +149,3 @@ export {
   findHandleDataNearImagePoint,
   moveAnnotation,
 };
-
-// TouchMoveAllHandles(
-//   Evt,
-//   FirstAnnotationNearPoint,
-//   ToolState,
-//   FirstToolNearPoint.name,
-//   True,
-//   (lastEvent, lastEventData) => {
-//     FirstAnnotationNearPoint.active = false;
-//     FirstAnnotationNearPoint.invalidated = true;
-//     //   If (anyHandlesOutsideImage(eventData, data.handles)) {
-//     //     // Delete the measurement
-//     //     RemoveToolState(
-//     //       EventData.element,
-//     //       TouchToolInterface.toolType,
-//     //       Data
-//     //     );
-//     //   }
-
-//     External.cornerstone.updateImage(element);
-//     // Todo: LISTEN: TAP, START, PRESS
-
-//     If (lastEvent && lastEvent.type === EVENTS.TOUCH_PRESS) {
-//       TriggerEvent(element, lastEvent.type, lastEventData);
-//     }
-//   }
-// );
-// Evt.stopImmediatePropagation();
-// Evt.preventDefault();
-// Evt.stopPropagation();
