@@ -90,13 +90,16 @@ const findHandleDataNearImagePoint = function(
 
 /**
  * Moves an entire annotation near the click.
- * @export @public @method
- * @name moveAnnotationNearClick
+ *
+ * @public
+ * @function moveAnnotationNearClick
+ * @memberof Util
  *
  * @param  {Event}  evt           The event.
  * @param  {Object} toolState     The state of the tool.
  * @param  {Object} tool The tool that the annotation belongs to.
  * @param  {Object} data The toolData that corresponds to the annotation.
+ * @returns {undefined}
  */
 const moveAnnotationNearClick = function(evt, toolState, tool, data) {
   const opt = tool.options || {
@@ -123,14 +126,16 @@ const moveAnnotationNearClick = function(evt, toolState, tool, data) {
 
 /**
  * Finds the annotation near the image point.
- * @export @public @method
- * @name findAnnotationNearClick
+ * @public
+ * @function findAnnotationNearClick
+ * @memberof Util
  *
  * @param  {HTMLElement} element  The elment.
  * @param  {Event}  evt           The event.
  * @param  {Object} toolState     The state of the tool.
  * @param  {string} tool The tool that the annotation belongs to.
  * @param  {Object} coords The coordinates that need to be checked.
+ * @returns {undefined}
  */
 const findAnnotationNearClick = function(
   element,

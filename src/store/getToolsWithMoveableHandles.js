@@ -6,10 +6,8 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
  * Filters an array of tools, returning only tools with moveable handles at the
  * mouse location.
  *
- * @export
  * @public
- * @method
- * @name getToolsWithMoveableHandles
+ * @function getToolsWithMoveableHandles
  *
  * @param  {HTMLElement} element The element
  * @param  {Object[]}    tools   The input tool array.
