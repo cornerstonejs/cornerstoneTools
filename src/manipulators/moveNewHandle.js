@@ -68,19 +68,20 @@ export default function(
     options,
     interactionType
   );
-  const moveEndHandler = _moveEndHandler.bind(
-    this,
-    toolData,
-    handle,
-    options,
-    interactionType,
-    {
-      moveHandler,
-      moveEndHandler,
-      // MeasurementRemovedHandler,
-      // ToolDeactivatedHandler,
-    }
-  );
+  // So we don't need to inline the entire `moveEndEventHandler` function
+  const moveEndHandler = evt => {
+    _moveEndHandler(
+      toolData,
+      handle,
+      options,
+      interactionType,
+      {
+        moveHandler,
+        moveEndHandler,
+      },
+      evt
+    );
+  };
 
   // Add event listeners
   _moveEvents[interactionType].forEach(eventType => {
@@ -140,12 +141,7 @@ function _moveEndHandler(
   handle,
   options,
   interactionType,
-  {
-    moveHandler,
-    moveEndHandler,
-    // MeasurementRemovedHandler,
-    // ToolDeactivatedHandler,
-  },
+  { moveHandler, moveEndHandler },
   evt
 ) {
   console.log(evt, interactionType);
