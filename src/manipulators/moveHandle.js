@@ -47,19 +47,13 @@ export default function(
   options = {},
   interactionType = 'mouse'
 ) {
-  console.log('moveHandle');
-  const { element, currentPoints } = evtDetail;
-  // Const distanceFromTool = {
-  //   X: handle.x - currentPoints.image.x,
-  //   Y: handle.y - currentPoints.image.y,
-  // };
+  const element = evtDetail.element;
 
   const dragHandler = _dragHandler.bind(
     this,
     toolName,
     toolData,
     handle,
-    // DistanceFromTool,
     options,
     interactionType
   );
@@ -114,14 +108,12 @@ function _dragHandler(
   toolName,
   toolData,
   handle,
-  // DistanceFromTool,
   options,
   interactionType,
   evt
 ) {
   const { image, currentPoints, element } = evt.detail;
   const page = currentPoints.page;
-  // Const { image, page } = currentPoints;
 
   if (handle.hasMoved === false) {
     handle.hasMoved = true;
@@ -139,10 +131,6 @@ function _dragHandler(
 
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
-
-  // Are these set on touch?? Yes. To Target Location
-  // Handle.x = x + distanceFromTool.x;
-  // Handle.y = y + distanceFromTool.y;
 
   if (options.preventHandleOutsideImage) {
     clipToBox(handle, image);
@@ -169,7 +157,6 @@ function _upOrEndHandler(
   { dragHandler, upOrEndHandler },
   evt
 ) {
-  console.log('moveHandle: upOrEndHandler');
   const element = evt.detail.element;
 
   handle.active = false;
