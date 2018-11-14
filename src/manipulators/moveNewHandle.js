@@ -1,3 +1,8 @@
+// If (anyHandlesOutsideImage(evt.detail, measurementData.handles)) {
+//   // Delete the measurement
+//   RemoveToolState(element, this.name, measurementData);
+// }
+
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
@@ -10,13 +15,7 @@ const _moveEvents = {
 
 const _moveEndEvents = {
   mouse: [EVENTS.MOUSE_UP, EVENTS.MOUSE_CLICK],
-  touch: [
-    EVENTS.TOUCH_END,
-    EVENTS.TOUCH_DRAG_END,
-    EVENTS.TOUCH_PINCH,
-    EVENTS.TOUCH_PRESS,
-    EVENTS.TAP,
-  ],
+  touch: [EVENTS.TOUCH_END, EVENTS.TOUCH_PINCH, EVENTS.TAP],
 };
 
 /**
@@ -25,7 +24,7 @@ const _moveEndEvents = {
  * @method moveNewHandle
  * @memberof Manipulators
  *
- * @param {*} eventDetail
+ * @param {*} evtDetail
  * @param {*} toolName
  * @param {*} toolData
  * @param {*} handle
@@ -36,7 +35,7 @@ const _moveEndEvents = {
  * @returns {undefined}
  */
 export default function(
-  eventDetail,
+  evtDetail,
   toolName,
   toolData,
   handle,
@@ -44,18 +43,23 @@ export default function(
   interactionType = 'mouse'
 ) {
   console.log('moveNewHandle');
-  const element = eventDetail.element;
+  const element = evtDetail.element;
 
-  const toolDeactivatedHandler = _toolDeactivatedHandler.bind(
-    this,
-    toolName,
-    moveEndHandler
-  );
-  const measurementRemovedHandler = _measurementRemovedHandler.bind(
-    this,
-    toolData,
-    moveEndHandler
-  );
+  handle.active = true;
+  toolData.active = true;
+
+  // I'm not sure we need either of these.
+  // The other manipulators don't handle for these edge cases?
+  // Const toolDeactivatedHandler = _toolDeactivatedHandler.bind(
+  //   This,
+  //   ToolName,
+  //   MoveEndHandler
+  // );
+  // Const measurementRemovedHandler = _measurementRemovedHandler.bind(
+  //   This,
+  //   ToolData,
+  //   MoveEndHandler
+  // );
   const moveHandler = _moveHandler.bind(
     this,
     toolName,
@@ -63,16 +67,17 @@ export default function(
     handle,
     options
   );
-  const moveEndHandler = _moveEndEHandler.bind(
+  const moveEndHandler = _moveEndHandler.bind(
     this,
+    toolData,
     handle,
     options,
     interactionType,
     {
       moveHandler,
       moveEndHandler,
-      measurementRemovedHandler,
-      toolDeactivatedHandler,
+      // MeasurementRemovedHandler,
+      // ToolDeactivatedHandler,
     }
   );
 
@@ -83,20 +88,34 @@ export default function(
   _moveEndEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveEndHandler);
   });
-  element.addEventListener(
-    EVENTS.MEASUREMENT_REMOVED,
-    measurementRemovedHandler
-  );
-  element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
+  // Element.addEventListener(
+  //   EVENTS.MEASUREMENT_REMOVED,
+  //   MeasurementRemovedHandler
+  // );
+  // Element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
+  element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 }
 
-function _moveHandler(toolName, toolData, handle, options, evt) {
+function _moveHandler(
+  toolName,
+  toolData,
+  handle,
+  options,
+  interactionType,
+  evt
+) {
   const { currentPoints, image, element } = evt.detail;
-  const { x, y } = currentPoints.image;
+  const page = currentPoints.page;
+  const fingerOffset = -57;
+  const targetLocation = external.cornerstone.pageToPixel(
+    element,
+    interactionType === 'touch' ? page.x + fingerOffset : page.x,
+    interactionType === 'touch' ? page.y + fingerOffset : page.y
+  );
 
   handle.active = true;
-  handle.x = x;
-  handle.y = y;
+  handle.x = targetLocation.x;
+  handle.y = targetLocation.y;
 
   if (options && options.preventHandleOutsideImage) {
     clipToBox(handle, image);
@@ -114,20 +133,28 @@ function _moveHandler(toolName, toolData, handle, options, evt) {
   triggerEvent(element, eventType, modifiedEventData);
 }
 
-function _moveEndEHandler(
+function _moveEndHandler(
+  toolData,
   handle,
   options,
   interactionType,
   {
     moveHandler,
     moveEndHandler,
-    measurementRemovedHandler,
-    toolDeactivatedHandler,
+    // MeasurementRemovedHandler,
+    // ToolDeactivatedHandler,
   },
   evt
 ) {
   console.log('moveNewHandle: moveEndHandler');
-  const element = evt.detail.element;
+  const { element, currentPoints } = evt.detail;
+  const page = currentPoints.page;
+  const fingerOffset = -57;
+  const targetLocation = external.cornerstone.pageToPixel(
+    element,
+    interactionType === 'touch' ? page.x + fingerOffset : page.x,
+    interactionType === 'touch' ? page.y + fingerOffset : page.y
+  );
 
   // Remove event listeners
   _moveEvents[interactionType].forEach(eventType => {
@@ -136,14 +163,34 @@ function _moveEndEHandler(
   _moveEndEvents[interactionType].forEach(eventType => {
     element.removeEventListener(eventType, moveEndHandler);
   });
-  element.removeEventListener(
-    EVENTS.MEASUREMENT_REMOVED,
-    measurementRemovedHandler
-  );
-  element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
+  // Element.removeEventListener(
+  //   EVENTS.MEASUREMENT_REMOVED,
+  //   MeasurementRemovedHandler
+  // );
+  // Element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
+  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  // TODO: WHY?
+  if (evt.type === EVENTS.TOUCH_PINCH || evt.type === EVENTS.TOUCH_PRESS) {
+    handle.active = false;
+    external.cornerstone.updateImage(element);
+    if (typeof options.doneMovingCallback === 'function') {
+      options.doneMovingCallback();
+    }
+
+    return;
+  }
 
   // "Release" the handle
   handle.active = false;
+  toolData.active = false;
+  handle.x = targetLocation.x;
+  handle.y = targetLocation.y;
+
+  if (options.preventHandleOutsideImage) {
+    clipToBox(handle, evt.detail.image);
+  }
+
   if (typeof options.doneMovingCallback === 'function') {
     options.doneMovingCallback();
   }
@@ -163,11 +210,11 @@ function _moveEndEHandler(
  * @param {*} evt
  * @returns {undefined}
  */
-function _measurementRemovedHandler(toolData, moveEndHandler, evt) {
-  if (evt.detail.measurementData === toolData) {
-    moveEndHandler(evt);
-  }
-}
+// Function _measurementRemovedHandler(toolData, moveEndHandler, evt) {
+//   If (evt.detail.measurementData === toolData) {
+//     MoveEndHandler(evt);
+//   }
+// }
 
 /**
  * If the tool is deactivated while we're moving it's handle,
@@ -181,8 +228,25 @@ function _measurementRemovedHandler(toolData, moveEndHandler, evt) {
  * @param {*} evt
  * @returns {undefined}
  */
-function _toolDeactivatedHandler(toolName, moveEndHandler, evt) {
-  if (evt.detail.toolType === toolName) {
-    moveEndHandler(evt);
-  }
+// Function _toolDeactivatedHandler(toolName, moveEndHandler, evt) {
+//   If (evt.detail.toolType === toolName) {
+//     MoveEndHandler(evt);
+//   }
+// }
+
+/**
+ * Stop the CornerstoneToolsTouchStart event from
+ * Becoming a CornerstoneToolsTouchStartActive event when
+ * MoveNewHandle ends
+ *
+ * @private
+ * @function _stopImmediatePropagation
+ *
+ * @param {*} evt
+ * @returns {Boolean} false
+ */
+function _stopImmediatePropagation(evt) {
+  evt.stopImmediatePropagation();
+
+  return false;
 }

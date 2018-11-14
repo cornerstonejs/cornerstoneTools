@@ -114,14 +114,6 @@ function _dragHandler(
 ) {
   const { image, currentPoints, element } = evt.detail;
   const page = currentPoints.page;
-
-  if (handle.hasMoved === false) {
-    handle.hasMoved = true;
-  }
-
-  runAnimation.value = false;
-  handle.active = true;
-
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
@@ -129,6 +121,12 @@ function _dragHandler(
     interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
 
+  if (handle.hasMoved === false) {
+    handle.hasMoved = true;
+  }
+
+  runAnimation.value = false;
+  handle.active = true;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 

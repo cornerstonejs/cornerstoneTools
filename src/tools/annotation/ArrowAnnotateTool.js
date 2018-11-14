@@ -5,8 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
-import moveNewHandle from './../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import { moveNewHandle } from './../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
@@ -50,12 +49,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     this.preventNewMeasurement = false;
   }
 
-  /**
-   * Create the measurement data for this tool with the end handle activated
-   *
-   * @param {*} evt
-   * @returns {Object}
-   */
   createNewMeasurement(evt) {
     // Create the measurement data for this tool with the end handle activated
     return {
@@ -87,14 +80,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     };
   }
 
-  /**
-   *
-   *
-   * @param {*} element
-   * @param {*} data
-   * @param {*} coords
-   * @returns {Boolean}
-   */
   pointNearTool(element, data, coords) {
     if (data.visible === false) {
       return false;
@@ -106,11 +91,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
 
@@ -250,12 +230,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   * @param {*} interactionType
-   */
   addNewMeasurement(evt, interactionType) {
     const element = evt.detail.element;
     const measurementData = this.createNewMeasurement(evt);
@@ -264,39 +238,32 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    // Since we are dragging to another place to drop the end point, we can just activate
-    // The end point and let the moveHandle move it for us.
-    const handleMover =
-      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
-
     state.isToolLocked = true;
-    handleMover(
+    moveNewHandle(
       evt.detail,
       this.name,
       measurementData,
       measurementData.handles.end,
-      () => {
-        if (anyHandlesOutsideImage(evt.detail, measurementData.handles)) {
-          // Delete the measurement
-          removeToolState(element, this.name, measurementData);
-        }
+      {
+        doneMovingCallback: () => {
+          if (measurementData.text === undefined) {
+            this.configuration.getTextCallback(text => {
+              if (text) {
+                measurementData.text = text;
+              } else {
+                removeToolState(element, this.name, measurementData);
+              }
 
-        if (measurementData.text === undefined) {
-          this.configuration.getTextCallback(text => {
-            if (text) {
-              measurementData.text = text;
-            } else {
-              removeToolState(element, this.name, measurementData);
-            }
+              measurementData.active = false;
+              external.cornerstone.updateImage(element);
+            });
+          }
 
-            measurementData.active = false;
-            external.cornerstone.updateImage(element);
-          });
-        }
-
-        state.isToolLocked = false;
-        external.cornerstone.updateImage(element);
-      }
+          state.isToolLocked = false;
+          external.cornerstone.updateImage(element);
+        },
+      },
+      interactionType
     );
   }
 
