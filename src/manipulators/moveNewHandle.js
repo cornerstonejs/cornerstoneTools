@@ -25,6 +25,7 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
+  console.log('moveNewHandle');
   const element = mouseEventData.element;
 
   function moveCallback(e) {
@@ -102,6 +103,7 @@ export default function(
   element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedCallback);
 
   function moveEndCallback() {
+    console.log('moveNewHandle: mouseMoveEndCallback');
     element.removeEventListener(EVENTS.MOUSE_MOVE, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, moveCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, moveEndCallback);

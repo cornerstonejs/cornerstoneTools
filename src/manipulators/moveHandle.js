@@ -47,6 +47,7 @@ export default function(
   options = {},
   interactionType = 'mouse'
 ) {
+  console.log('moveHandle');
   const { element, currentPoints } = evtDetail;
   // Const distanceFromTool = {
   //   X: handle.x - currentPoints.image.x,
@@ -168,6 +169,7 @@ function _upOrEndHandler(
   { dragHandler, upOrEndHandler },
   evt
 ) {
+  console.log('moveHandle: upOrEndHandler');
   const element = evt.detail.element;
 
   handle.active = false;
