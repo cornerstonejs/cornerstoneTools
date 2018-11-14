@@ -39,7 +39,7 @@ export default function(evt) {
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool.addNewMeasurement) {
-    activeTool.addNewMeasurement(evt, 'Mouse');
+    activeTool.addNewMeasurement(evt, 'mouse');
   } else if (activeTool instanceof BaseAnnotationTool) {
     addNewMeasurement(evt, activeTool);
   }
