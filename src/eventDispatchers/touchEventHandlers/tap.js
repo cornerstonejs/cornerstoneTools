@@ -97,6 +97,8 @@ export default function(evt) {
   const toolsNearPoint = tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
+      toolState &&
+      toolState.data &&
       tool.pointNearTool &&
       toolState.data.some(data => tool.pointNearTool(element, data, coords));
 
