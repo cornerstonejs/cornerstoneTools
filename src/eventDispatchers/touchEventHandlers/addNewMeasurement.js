@@ -63,6 +63,5 @@ export default function(evt, tool) {
   );
 }
 
-
 // TODO: addNewMeasurement, lowercase `interactionType`???
 // SEE AngleTool
