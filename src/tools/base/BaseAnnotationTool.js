@@ -3,7 +3,7 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import handleActivator from './../../manipulators/handleActivator.js';
 import {
   moveHandleNearImagePoint,
-  moveAnnotationNearClick,
+  moveAnnotation,
 } from './../../util/findAndMoveHelpers.js';
 
 /**
@@ -60,9 +60,10 @@ class BaseAnnotationTool extends BaseTool {
    * @param {*} element
    * @param {*} data
    * @param {*} coords
+   * @param {string} [interactionType=mouse]
    * @returns {boolean} If the point is near the tool
    */
-  pointNearTool(element, data, coords) {
+  pointNearTool(element, data, coords, interactionType = 'mouse') {
     throw new Error(`Method pointNearTool not implemented for ${this.name}.`);
   }
 
@@ -139,7 +140,7 @@ class BaseAnnotationTool extends BaseTool {
 
   /**
    * Custom callback for when a handle is selected.
-   * @method
+   * @method handleSelectedCallback
    * @memberof Tools.Base.BaseAnnotationTool
    *
    * @param  {*} evt    -
@@ -155,14 +156,16 @@ class BaseAnnotationTool extends BaseTool {
   /**
    * Custom callback for when a tool is selected.
    *
-   * @abstract
+   * @method toolSelectedCallback
+   * @memberof Tools.Base.BaseAnnotationTool
+   *
    * @param  {*} evt
-   * @param  {*} tool The selected tool.
+   * @param  {*} annotation
+   * @param  {string} [interactionType=mouse]
+   * @returns {undefined}
    */
-  toolSelectedCallback(evt, data, toolState) {
-    const tool = this;
-
-    moveAnnotationNearClick(evt, toolState, tool, data);
+  toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
+    moveAnnotation(evt, this, annotation, interactionType);
   }
 }
 

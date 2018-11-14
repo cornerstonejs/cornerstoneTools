@@ -87,15 +87,15 @@ export default function(evt) {
       const doneMovingCallback = getDoneMovingCallback(data.handles);
 
       moveAllHandles(
-        evt,
-        data,
-        toolData,
+        element,
         this.name,
+        data,
         {
           deleteIfHandleOutsideImage: true,
           preventHandleOutsideImage: false,
         },
-        doneMovingCallback
+        doneMovingCallback,
+        'mouse'
       );
 
       preventPropagation(evt);

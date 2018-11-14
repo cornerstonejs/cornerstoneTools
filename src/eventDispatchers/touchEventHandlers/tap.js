@@ -8,7 +8,7 @@ import { getToolState } from '../../stateManagement/toolState.js';
 //
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
 import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
-import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
+import moveAllHandles from '../../manipulators/moveAllHandles.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
@@ -117,12 +117,11 @@ export default function(evt) {
     firstAnnotationNearPoint.active = true;
     external.cornerstone.updateImage(element);
 
-    touchMoveAllHandles(
-      evt,
-      firstAnnotationNearPoint,
-      toolState,
+    moveAllHandles(
+      element,
       firstToolNearPoint.name,
-      true,
+      firstAnnotationNearPoint,
+      {}, // Options
       () => {
         deactivateAllToolInstances(toolState);
         // If (anyHandlesOutsideImage(eventData, data.handles)) {
@@ -132,7 +131,8 @@ export default function(evt) {
 
         external.cornerstone.updateImage(element);
         // TODO: LISTEN: TAP + TOUCH_START
-      }
+      },
+      'touch'
     );
     evt.stopImmediatePropagation();
     evt.preventDefault();

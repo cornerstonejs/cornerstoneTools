@@ -3,11 +3,7 @@ import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 // Util
 import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
-import {
-  findHandleDataNearImagePoint,
-  findAnnotationNearClick,
-} from '../../util/findAndMoveHelpers.js';
-// Todo: Where should these live?
+import { findHandleDataNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
@@ -106,36 +102,28 @@ export default function(evt) {
   const annotationToolsWithPointNearClick = activeAndPassiveTools.filter(
     tool => {
       const toolState = getToolState(element, tool.name);
+      const isNearPoint =
+        tool.pointNearTool &&
+        toolState.data.some(data =>
+          tool.pointNearTool(element, data, coords, 'mouse')
+        );
 
-      if (!toolState) {
-        return false;
-      }
-
-      for (let i = 0; i < toolState.data.length; i++) {
-        const data = toolState.data[i];
-
-        if (tool.pointNearTool && tool.pointNearTool(element, data, coords)) {
-          return true;
-        }
-      }
-
-      return false;
+      return isNearPoint;
     }
   );
 
   if (annotationToolsWithPointNearClick.length > 0) {
-    const firstToolWithPointNearClick = annotationToolsWithPointNearClick[0];
-    const toolState = getToolState(element, firstToolWithPointNearClick.name);
-
-    const toolData = findAnnotationNearClick(
-      element,
-      evt,
-      toolState,
-      firstToolWithPointNearClick,
-      coords
+    const firstToolNearPoint = annotationToolsWithPointNearClick[0];
+    const toolState = getToolState(element, firstToolNearPoint.name);
+    const firstAnnotationNearPoint = toolState.data.find(data =>
+      firstToolNearPoint.pointNearTool(element, data, coords)
     );
 
-    firstToolWithPointNearClick.toolSelectedCallback(evt, toolData, toolState);
+    firstToolNearPoint.toolSelectedCallback(
+      evt,
+      firstAnnotationNearPoint,
+      'mouse'
+    );
 
     return;
   }

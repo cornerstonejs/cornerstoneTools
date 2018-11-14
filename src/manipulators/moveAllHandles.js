@@ -11,88 +11,121 @@ import { clipToBox } from '../util/clip.js';
  * @function moveAllHandles
  * @memberof Manipulators
  *
- * @param {*} e
- * @param {*} data
- * @param {*} toolData
- * @param {*} toolType
- * @param {*} options
- * @param {*} doneMovingCallback
- * @returns {Boolean} - Always returns true?
+ * @param {*} element
+ * @param {String} toolName
+ * @param {*} annotation
+ * @param {Object}  [options={}]
+ * @param {Boolean} [options.preventHandleOutsideImage]
+ * @param {Boolean} [options.deleteIfHandleOutsideImage]
+ * @param {function} [doneMovingCallback]
+ * @param {string} [interactionType=mouse]
+ * @returns {undefined}
  */
 export default function(
-  e,
-  data,
-  toolData,
-  toolType,
-  options,
-  doneMovingCallback
+  element,
+  toolName,
+  annotation,
+  options = {},
+  doneMovingCallback,
+  interactionType = 'mouse'
 ) {
-  const mouseEventData = e.detail;
-  const element = mouseEventData.element;
+  const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
+  const upOrEndHandler = _upOrEndHandler.bind(
+    this,
+    toolName,
+    annotation,
+    options,
+    doneMovingCallback
+  );
 
-  function mouseDragCallback(e) {
-    const eventData = e.detail;
-
-    data.active = true;
-
-    Object.keys(data.handles).forEach(function(name) {
-      const handle = data.handles[name];
-
-      if (handle.movesIndependently === true) {
-        return;
-      }
-
-      handle.x += eventData.deltaPoints.image.x;
-      handle.y += eventData.deltaPoints.image.y;
-
-      if (options.preventHandleOutsideImage) {
-        clipToBox(handle, eventData.image);
-      }
-    });
-
-    external.cornerstone.updateImage(element);
-
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
-    const modifiedEventData = {
-      toolType,
-      element,
-      measurementData: data,
-    };
-
-    triggerEvent(element, eventType, modifiedEventData);
-
-    e.preventDefault();
-    e.stopPropagation();
+  if (interactionType === 'mouse') {
+    element.addEventListener(EVENTS.MOUSE_DRAG, dragHandler);
+    element.addEventListener(EVENTS.MOUSE_UP, upOrEndHandler);
+    element.addEventListener(EVENTS.MOUSE_CLICK, upOrEndHandler);
+  } else {
+    element.addEventListener(EVENTS.TOUCH_DRAG, dragHandler);
+    element.addEventListener(EVENTS.TOUCH_PINCH, upOrEndHandler);
+    element.addEventListener(EVENTS.TOUCH_PRESS, upOrEndHandler);
+    element.addEventListener(EVENTS.TOUCH_END, upOrEndHandler);
+    element.addEventListener(EVENTS.TOUCH_DRAG_END, upOrEndHandler);
+    element.addEventListener(EVENTS.TAP, upOrEndHandler);
   }
+}
 
-  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+function _dragHandler(toolName, annotation, options = {}, evt) {
+  const { element, image } = evt.detail.element;
+  const { x, y } = evt.detail.deltaPoints.image;
 
-  function mouseUpCallback(e) {
-    const eventData = e.detail;
+  annotation.active = true;
 
-    data.invalidated = true;
+  Object.keys(annotation.handles).forEach(function(name) {
+    const handle = annotation.handles[name];
 
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-
-    // If any handle is outside the image, delete the tool data
-    if (
-      options.deleteIfHandleOutsideImage === true &&
-      anyHandlesOutsideImage(eventData, data.handles)
-    ) {
-      removeToolState(element, toolType, data);
+    if (handle.movesIndependently === true) {
+      return;
     }
 
-    external.cornerstone.updateImage(element);
+    handle.x += x;
+    handle.y += y;
 
-    if (typeof doneMovingCallback === 'function') {
-      doneMovingCallback();
+    if (options.preventHandleOutsideImage) {
+      clipToBox(handle, image);
     }
+  });
+
+  external.cornerstone.updateImage(element);
+
+  const eventType = EVENTS.MEASUREMENT_MODIFIED;
+  const modifiedEventData = {
+    toolName,
+    element,
+    measurementData: annotation,
+  };
+
+  triggerEvent(element, eventType, modifiedEventData);
+
+  evt.preventDefault();
+  evt.stopPropagation();
+}
+
+function _upOrEndHandler(
+  toolName,
+  annotation,
+  options = {},
+  doneMovingCallback,
+  evt
+) {
+  console.log('mouseUp-this:', this);
+  const eventData = evt.detail;
+  const element = evt.detail.element;
+
+  annotation.active = false;
+  annotation.invalidated = true;
+
+  if (this.interactionType === 'mouse') {
+    element.removeEventListener(EVENTS.MOUSE_DRAG, this.dragHandler);
+    element.removeEventListener(EVENTS.MOUSE_UP, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, this.upOrEndHandler);
+  } else {
+    element.removeEventListener(EVENTS.TOUCH_DRAG, this.dragHandler);
+    element.removeEventListener(EVENTS.TOUCH_PINCH, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_PRESS, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_END, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_DRAG_END, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.TAP, this.upOrEndHandler);
   }
 
-  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  // If any handle is outside the image, delete the tool data
+  if (
+    options.deleteIfHandleOutsideImage === true &&
+    anyHandlesOutsideImage(eventData, annotation.handles)
+  ) {
+    removeToolState(this.element, toolName, annotation);
+  }
 
-  return true;
+  external.cornerstone.updateImage(this.element);
+
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
+  }
 }

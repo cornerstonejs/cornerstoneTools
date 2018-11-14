@@ -1,5 +1,6 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
+
 import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
 import touchMoveHandle from '../manipulators/touchMoveHandle.js';
@@ -92,30 +93,45 @@ const findHandleDataNearImagePoint = function(
  * Moves an entire annotation near the click.
  *
  * @public
- * @function moveAnnotationNearClick
+ * @function moveAnnotation
  * @memberof Util
  *
- * @param  {Event}  evt           The event.
- * @param  {Object} toolState     The state of the tool.
- * @param  {Object} tool The tool that the annotation belongs to.
- * @param  {Object} data The toolData that corresponds to the annotation.
+ * @param  {Event}   evt           The event.
+ * @param  {Object}  tool The tool that the annotation belongs to.
+ * @param  {string}  tool.name
+ * @param  {Object}  [tool.options={}]
+ * @param  {Boolean} [tool.options.preventHandleOutsideImage]
+ * @param  {Boolean} [tool.options.deleteIfHandleOutsideImage]
+ * @param  {Object}  annotation The toolData that corresponds to the annotation.
+ * @param  {String}  [interactionType=mouse]
  * @returns {undefined}
  */
-const moveAnnotationNearClick = function(evt, toolState, tool, data) {
+const moveAnnotation = function(
+  evt,
+  tool,
+  annotation,
+  interactionType = 'mouse'
+) {
+  const element = evt.detail.element;
   const opt = tool.options || {
     deleteIfHandleOutsideImage: true,
     preventHandleOutsideImage: false,
   };
 
-  data.active = true;
+  annotation.active = true;
   state.isToolLocked = true;
-  // TODO: Ignore MOUSE_MOVE for a bit
-  // TODO: Why do this and `moveHandle` expose this in different
-  // TODO: ways? PreventHandleOutsideImage
-  moveAllHandles(evt, data, toolState, tool.name, opt, () => {
-    data.active = false;
-    state.isToolLocked = false;
-  });
+
+  moveAllHandles(
+    element,
+    tool.name,
+    annotation,
+    opt,
+    () => {
+      annotation.active = false;
+      state.isToolLocked = false;
+    },
+    interactionType
+  );
 
   evt.stopImmediatePropagation();
   evt.stopPropagation();
@@ -124,39 +140,38 @@ const moveAnnotationNearClick = function(evt, toolState, tool, data) {
   return;
 };
 
-/**
- * Finds the annotation near the image point.
- * @public
- * @function findAnnotationNearClick
- * @memberof Util
- *
- * @param  {HTMLElement} element  The elment.
- * @param  {Event}  evt           The event.
- * @param  {Object} toolState     The state of the tool.
- * @param  {string} tool The tool that the annotation belongs to.
- * @param  {Object} coords The coordinates that need to be checked.
- * @returns {undefined}
- */
-const findAnnotationNearClick = function(
-  element,
-  evt,
-  toolState,
-  tool,
-  coords
-) {
-  for (let i = 0; i < toolState.data.length; i++) {
-    const data = toolState.data[i];
-    const isNearPoint = tool.pointNearTool(element, data, coords);
-
-    if (isNearPoint) {
-      return data;
-    }
-  }
-};
-
 export {
   moveHandleNearImagePoint,
   findHandleDataNearImagePoint,
-  moveAnnotationNearClick,
-  findAnnotationNearClick,
+  moveAnnotation,
 };
+
+// TouchMoveAllHandles(
+//   Evt,
+//   FirstAnnotationNearPoint,
+//   ToolState,
+//   FirstToolNearPoint.name,
+//   True,
+//   (lastEvent, lastEventData) => {
+//     FirstAnnotationNearPoint.active = false;
+//     FirstAnnotationNearPoint.invalidated = true;
+//     //   If (anyHandlesOutsideImage(eventData, data.handles)) {
+//     //     // Delete the measurement
+//     //     RemoveToolState(
+//     //       EventData.element,
+//     //       TouchToolInterface.toolType,
+//     //       Data
+//     //     );
+//     //   }
+
+//     External.cornerstone.updateImage(element);
+//     // Todo: LISTEN: TAP, START, PRESS
+
+//     If (lastEvent && lastEvent.type === EVENTS.TOUCH_PRESS) {
+//       TriggerEvent(element, lastEvent.type, lastEventData);
+//     }
+//   }
+// );
+// Evt.stopImmediatePropagation();
+// Evt.preventDefault();
+// Evt.stopPropagation();

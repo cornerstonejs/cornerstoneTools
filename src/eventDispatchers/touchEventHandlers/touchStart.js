@@ -1,17 +1,9 @@
-import EVENTS from '../../events.js';
-import external from '../../externalModules.js';
 // State
 import { getters, state } from '../../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import {
-  findHandleDataNearImagePoint,
-  findAnnotationNearClick,
-} from '../../util/findAndMoveHelpers.js';
+import { findHandleDataNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
-import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
 import { getToolState } from './../../stateManagement/toolState.js';
-import triggerEvent from './../../util/triggerEvent.js';
-// Todo: Where should these live?
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
@@ -21,7 +13,6 @@ export default function(evt) {
     return;
   }
 
-  const distanceFromHandle = 28;
   const eventData = evt.detail;
   const element = eventData.element;
   const coords = eventData.startPoints.canvas;
@@ -93,12 +84,14 @@ export default function(evt) {
     return;
   }
 
-  // Find all tools near our point
+  // NEAR POINT?
   const annotationToolsWithPointNearTouch = annotationTools.filter(tool => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
       tool.pointNearTool &&
-      toolState.data.some(data => tool.pointNearTool(element, data, coords));
+      toolState.data.some(data =>
+        tool.pointNearTool(element, data, coords, 'touch')
+      );
 
     return isNearPoint;
   });
@@ -113,35 +106,11 @@ export default function(evt) {
       firstToolNearPoint.pointNearTool(element, data, coords)
     );
 
-    touchMoveAllHandles(
+    firstToolNearPoint.toolSelectedCallback(
       evt,
       firstAnnotationNearPoint,
-      toolState,
-      firstToolNearPoint.name,
-      true,
-      (lastEvent, lastEventData) => {
-        firstAnnotationNearPoint.active = false;
-        firstAnnotationNearPoint.invalidated = true;
-        //   If (anyHandlesOutsideImage(eventData, data.handles)) {
-        //     // Delete the measurement
-        //     RemoveToolState(
-        //       EventData.element,
-        //       TouchToolInterface.toolType,
-        //       Data
-        //     );
-        //   }
-
-        external.cornerstone.updateImage(element);
-        // Todo: LISTEN: TAP, START, PRESS
-
-        if (lastEvent && lastEvent.type === EVENTS.TOUCH_PRESS) {
-          triggerEvent(element, lastEvent.type, lastEventData);
-        }
-      }
+      'touch'
     );
-    evt.stopImmediatePropagation();
-    evt.preventDefault();
-    evt.stopPropagation();
 
     return;
   }

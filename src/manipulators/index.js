@@ -5,7 +5,6 @@ import moveAllHandles from './moveAllHandles.js';
 import moveHandle from './moveHandle.js';
 import moveNewHandle from './moveNewHandle.js';
 import moveNewHandleTouch from './moveNewHandleTouch.js';
-import touchMoveAllHandles from './touchMoveAllHandles.js';
 import touchMoveHandle from './touchMoveHandle.js';
 
 export {
@@ -16,6 +15,5 @@ export {
   moveHandle,
   moveNewHandle,
   moveNewHandleTouch,
-  touchMoveAllHandles,
   touchMoveHandle,
 };
