@@ -84,25 +84,28 @@ export default function(
 
   // ==========================
   // ========  TOUCH ==========
-  runAnimation.value = true;
-  const enabledElement = external.cornerstone.getEnabledElement(element);
+  // ==========================
+  if (interactionType === 'touch') {
+    runAnimation.value = true;
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  // Average pixel width of index finger is 45-57 pixels
-  // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-  const fingerDistance = -57;
+    // Average pixel width of index finger is 45-57 pixels
+    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
+    const fingerDistance = -57;
 
-  const aboveFinger = {
-    x: evtDetail.currentPoints.page.x,
-    y: evtDetail.currentPoints.page.y + fingerDistance,
-  };
+    const aboveFinger = {
+      x: evtDetail.currentPoints.page.x,
+      y: evtDetail.currentPoints.page.y + fingerDistance,
+    };
 
-  const targetLocation = external.cornerstone.pageToPixel(
-    element,
-    aboveFinger.x,
-    aboveFinger.y
-  );
+    const targetLocation = external.cornerstone.pageToPixel(
+      element,
+      aboveFinger.x,
+      aboveFinger.y
+    );
 
-  _animate(handle, runAnimation, enabledElement, targetLocation);
+    _animate(handle, runAnimation, enabledElement, targetLocation);
+  }
 }
 
 function _dragHandler(
