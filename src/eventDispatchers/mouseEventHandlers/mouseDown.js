@@ -77,7 +77,8 @@ export default function(evt) {
   const annotationToolsWithMoveableHandles = getToolsWithMoveableHandles(
     element,
     annotationTools,
-    coords
+    coords,
+    'mouse'
   );
 
   if (annotationToolsWithMoveableHandles.length > 0) {
@@ -86,13 +87,17 @@ export default function(evt) {
 
     const { handle, data } = findHandleDataNearImagePoint(
       element,
-      evt,
       toolState,
       firstToolWithMoveableHandles.name,
       coords
     );
 
-    firstToolWithMoveableHandles.handleSelectedCallback(evt, handle, data);
+    firstToolWithMoveableHandles.handleSelectedCallback(
+      evt,
+      handle,
+      data,
+      'mouse'
+    );
 
     return;
   }

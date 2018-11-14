@@ -139,13 +139,17 @@ class BaseAnnotationTool extends BaseTool {
 
   /**
    * Custom callback for when a handle is selected.
+   * @method
+   * @memberof Tools.Base.BaseAnnotationTool
    *
-   * @abstract
-   * @param  {*} evt
-   * @param  {*} handle The selected handle.
+   * @param  {*} evt    -
+   * @param  {*} handle - The selected handle.
+   * @param  {*} data   -
+   * @param  {String} interactionType -
+   * @returns {undefined}
    */
-  handleSelectedCallback(evt, handle, data) {
-    moveHandleNearImagePoint(evt, handle, data, this.name);
+  handleSelectedCallback(evt, handle, data, interactionType = 'mouse') {
+    moveHandleNearImagePoint(evt, handle, data, this.name, interactionType);
   }
 
   /**

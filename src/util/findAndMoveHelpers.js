@@ -2,24 +2,37 @@ import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
+import touchMoveHandle from '../manipulators/touchMoveHandle.js';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 
 /**
  * Moves a handle near the image point.
- * @export @public @method
- * @name moveHandleNearImagePoint
+ * @public
+ * @function moveHandleNearImagePoint
+ * @memberof Util
  *
  * @param  {Event} evt      The event.
  * @param  {Object} handle  The handle to be moved.
  * @param  {Object} data     The toolData that corresponds to the handle.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
+ * @param  {string} interactionType
+ * @returns {undefined}
  */
-const moveHandleNearImagePoint = function(evt, handle, data, toolName) {
+const moveHandleNearImagePoint = function(
+  evt,
+  handle,
+  data,
+  toolName,
+  interactionType
+) {
   data.active = true;
   state.isToolLocked = true;
 
-  moveHandle(
+  const handleMover =
+    interactionType === 'mouse' ? moveHandle : touchMoveHandle;
+
+  handleMover(
     evt.detail,
     toolName,
     data,
@@ -40,18 +53,19 @@ const moveHandleNearImagePoint = function(evt, handle, data, toolName) {
 
 /**
  * Finds the handle near the image point and its corresponding data.
- * @export @public @method
- * @name findHandleDataNearImagePoint
+ *
+ * @public
+ * @function findHandleDataNearImagePoint
+ * @memberof Util
  *
  * @param  {HTMLElement} element  The elment.
- * @param  {Event}  evt           The event.
  * @param  {Object} toolState     The state of the tool.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
  * @param  {Object} coords The coordinates that need to be checked.
+ * @returns {*}
  */
 const findHandleDataNearImagePoint = function(
   element,
-  evt,
   toolState,
   toolName,
   coords

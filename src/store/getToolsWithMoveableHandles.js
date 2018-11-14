@@ -14,9 +14,13 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
  * @param  {HTMLElement} element The element
  * @param  {Object[]}    tools   The input tool array.
  * @param  {Object}      coords  The coordinates of the mouse position.
+ * @param  {string}      [interactionType=mouse]
  * @returns {Object[]}            The filtered array.
  */
-export default function(element, tools, coords) {
+export default function(element, tools, coords, interactionType = 'mouse') {
+  const proximity =
+    interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
+
   return tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
 
@@ -26,7 +30,7 @@ export default function(element, tools, coords) {
           element,
           toolState.data[i].handles,
           coords,
-          state.clickProximity
+          proximity
         ) !== undefined
       ) {
         return true;

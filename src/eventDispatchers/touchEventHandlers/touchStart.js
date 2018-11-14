@@ -3,14 +3,17 @@ import external from '../../externalModules.js';
 // State
 import { getters, state } from '../../store/index.js';
 // Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
-import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import triggerEvent from '../../util/triggerEvent.js';
+import {
+  findHandleDataNearImagePoint,
+  findAnnotationNearClick,
+} from '../../util/findAndMoveHelpers.js';
+import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
+import touchMoveAllHandles from './../../manipulators/touchMoveAllHandles.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import triggerEvent from './../../util/triggerEvent.js';
 // Todo: Where should these live?
-import getInteractiveToolsForElement from '../../store/getInteractiveToolsForElement.js';
-import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.js';
+import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
+import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
 export default function(evt) {
   console.log('touchStart');
@@ -57,25 +60,13 @@ export default function(evt) {
     activeAndPassiveTools
   );
 
-  // Find all tools w/ handles that we are near
-  const annotationToolsWithMoveableHandles = annotationTools.filter(tool => {
-    const toolState = getToolState(element, tool.name);
-
-    for (let i = 0; i < toolState.data.length; i++) {
-      if (
-        getHandleNearImagePoint(
-          eventData.element,
-          toolState.data[i].handles,
-          coords,
-          distanceFromHandle
-        ) !== undefined
-      ) {
-        return true;
-      }
-    }
-
-    return false;
-  });
+  // NEAR HANDLES?
+  const annotationToolsWithMoveableHandles = getToolsWithMoveableHandles(
+    element,
+    annotationTools,
+    coords,
+    'touch'
+  );
 
   // TODO: More than one? Which one was moved most recently?
   // We'll just grab the first one we encounter for now
@@ -84,36 +75,20 @@ export default function(evt) {
 
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
     const toolState = getToolState(element, firstToolWithMoveableHandles.name);
-    const dataWithMoveableHandle = toolState.data.find(
-      d =>
-        getHandleNearImagePoint(
-          element,
-          d.handles,
-          coords,
-          distanceFromHandle
-        ) !== undefined
-    );
-    const moveableHandle = getHandleNearImagePoint(
+
+    const { handle, data } = findHandleDataNearImagePoint(
       element,
-      dataWithMoveableHandle.handles,
-      coords,
-      distanceFromHandle
-    );
-
-    dataWithMoveableHandle.active = true;
-    touchMoveHandle(
-      evt,
+      toolState,
       firstToolWithMoveableHandles.name,
-      dataWithMoveableHandle,
-      moveableHandle,
-      () => {
-        console.log('touchMoveHandle: DONE');
-      } // HandleDoneMove
+      coords
     );
 
-    evt.stopImmediatePropagation();
-    evt.preventDefault();
-    evt.stopPropagation();
+    firstToolWithMoveableHandles.handleSelectedCallback(
+      evt,
+      handle,
+      data,
+      'touch'
+    );
 
     return;
   }
