@@ -65,7 +65,8 @@ export default function(
     toolName,
     toolData,
     handle,
-    options
+    options,
+    interactionType
   );
   const moveEndHandler = _moveEndHandler.bind(
     this,

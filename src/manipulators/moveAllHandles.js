@@ -5,6 +5,22 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 
+const _dragEvents = {
+  mouse: [EVENTS.MOUSE_DRAG],
+  touch: [EVENTS.TOUCH_DRAG],
+};
+
+const _upOrEndEvents = {
+  mouse: [EVENTS.MOUSE_UP, EVENTS.MOUSE_CLICK],
+  touch: [
+    EVENTS.TOUCH_END,
+    EVENTS.TOUCH_DRAG_END,
+    EVENTS.TOUCH_PINCH,
+    EVENTS.TOUCH_PRESS,
+    EVENTS.TAP,
+  ],
+};
+
 /**
  * Manipulator to move all provided handles at the same time
  * @public
@@ -44,18 +60,13 @@ export default function(
     }
   );
 
-  if (interactionType === 'mouse') {
-    element.addEventListener(EVENTS.MOUSE_DRAG, dragHandler);
-    element.addEventListener(EVENTS.MOUSE_UP, upOrEndHandler);
-    element.addEventListener(EVENTS.MOUSE_CLICK, upOrEndHandler);
-  } else {
-    element.addEventListener(EVENTS.TOUCH_DRAG, dragHandler);
-    element.addEventListener(EVENTS.TOUCH_PINCH, upOrEndHandler);
-    element.addEventListener(EVENTS.TOUCH_PRESS, upOrEndHandler);
-    element.addEventListener(EVENTS.TOUCH_END, upOrEndHandler);
-    element.addEventListener(EVENTS.TOUCH_DRAG_END, upOrEndHandler);
-    element.addEventListener(EVENTS.TAP, upOrEndHandler);
-  }
+  // Add Event Listeners
+  _dragEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, dragHandler);
+  });
+  _upOrEndEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, upOrEndHandler);
+  });
 }
 
 function _dragHandler(toolName, annotation, options = {}, evt) {
@@ -108,18 +119,13 @@ function _upOrEndHandler(
   annotation.active = false;
   annotation.invalidated = true;
 
-  if (interactionType === 'mouse') {
-    element.removeEventListener(EVENTS.MOUSE_DRAG, dragHandler);
-    element.removeEventListener(EVENTS.MOUSE_UP, upOrEndHandler);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, upOrEndHandler);
-  } else {
-    element.removeEventListener(EVENTS.TOUCH_DRAG, dragHandler);
-    element.removeEventListener(EVENTS.TOUCH_PINCH, upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_PRESS, upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_END, upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_DRAG_END, upOrEndHandler);
-    element.removeEventListener(EVENTS.TAP, upOrEndHandler);
-  }
+  // Remove Event Listeners
+  _dragEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, dragHandler);
+  });
+  _upOrEndEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, upOrEndHandler);
+  });
 
   // If any handle is outside the image, delete the tool data
   if (
