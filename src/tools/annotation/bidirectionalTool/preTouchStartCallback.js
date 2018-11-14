@@ -83,14 +83,15 @@ export default function(evt) {
       const doneMovingCallback = getDoneMovingCallback(data.handles);
 
       moveAllHandles(
-        element,
+        eventData,
         this.name,
         data,
+        null,
         {
           deleteIfHandleOutsideImage: true,
           preventHandleOutsideImage: false,
+          doneMovingCallback,
         },
-        doneMovingCallback,
         'touch'
       );
 

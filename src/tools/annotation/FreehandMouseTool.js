@@ -547,14 +547,21 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} evt
    * @param  {Object} handle The selected handle.
    */
-  handleSelectedCallback(evt, handle, data) {
+  handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
     const eventData = evt.detail;
     const element = eventData.element;
+    // TODO: Can we remove this?
     const toolState = getToolState(eventData.element, this.name);
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
-      moveHandleNearImagePoint(evt, handle, data, this.name);
+      moveHandleNearImagePoint(
+        evt,
+        this.name,
+        toolData,
+        handle,
+        interactionType
+      );
 
       return;
     }

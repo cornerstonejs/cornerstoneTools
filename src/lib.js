@@ -9,7 +9,6 @@ import moveAllHandles from './manipulators/moveAllHandles.js';
 import moveHandle from './manipulators/moveHandle.js';
 import moveNewHandle from './manipulators/moveNewHandle.js';
 import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
-import touchMoveHandle from './manipulators/touchMoveHandle.js';
 
 import {
   moveHandleNearImagePoint,
@@ -86,7 +85,6 @@ export const lib = {
   'manipulators/moveHandle': moveHandle,
   'manipulators/moveNewHandle': moveNewHandle,
   'manipulators/moveNewHandleTouch': moveNewHandleTouch,
-  'manipulators/touchMoveHandle': touchMoveHandle,
   'manipulators/moveHandleNearImagePoint': moveHandleNearImagePoint,
   'manipulators/findHandleDataNearImagePoint': findHandleDataNearImagePoint,
   'manipulators/moveAnnotation': moveAnnotation,

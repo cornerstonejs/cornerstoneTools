@@ -76,8 +76,8 @@ export default function(evt) {
 
     firstToolWithMoveableHandles.handleSelectedCallback(
       evt,
-      handle,
       data,
+      handle,
       'touch'
     );
 

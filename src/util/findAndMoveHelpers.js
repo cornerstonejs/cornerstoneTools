@@ -3,7 +3,6 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
 
 import moveAllHandles from '../manipulators/moveAllHandles.js';
 import moveHandle from '../manipulators/moveHandle.js';
-import touchMoveHandle from '../manipulators/touchMoveHandle.js';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 
@@ -14,35 +13,36 @@ import touchMoveHandle from '../manipulators/touchMoveHandle.js';
  * @memberof Util
  *
  * @param  {Event} evt      The event.
- * @param  {Object} handle  The handle to be moved.
- * @param  {Object} data     The toolData that corresponds to the handle.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
+ * @param  {Object} toolData     The toolData that corresponds to the handle.
+ * @param  {Object} handle  The handle to be moved.
  * @param  {string} interactionType
  * @returns {undefined}
  */
 const moveHandleNearImagePoint = function(
   evt,
-  handle,
-  data,
   toolName,
+  toolData,
+  handle,
   interactionType
 ) {
-  data.active = true;
+  toolData.active = true;
   state.isToolLocked = true;
 
-  const handleMover =
-    interactionType === 'mouse' ? moveHandle : touchMoveHandle;
-
-  handleMover(
+  moveHandle(
     evt.detail,
     toolName,
-    data,
+    toolData,
     handle,
-    () => {
-      data.active = false;
-      state.isToolLocked = false;
+    // TODO: Options that aren't static / can't be overridden
+    {
+      preventHandleOutsideImage: true,
+      doneMovingCallback: () => {
+        toolData.active = false;
+        state.isToolLocked = false;
+      },
     },
-    true // PreventHandleOutsideImage
+    interactionType
   );
 
   evt.stopImmediatePropagation();
@@ -112,24 +112,28 @@ const moveAnnotation = function(
   annotation,
   interactionType = 'mouse'
 ) {
-  const element = evt.detail.element;
-  const opt = tool.options || {
-    deleteIfHandleOutsideImage: true,
-    preventHandleOutsideImage: false,
-  };
+  const options = Object.assign(
+    {},
+    {
+      deleteIfHandleOutsideImage: true,
+      preventHandleOutsideImage: false,
+      doneMovingCallback: () => {
+        annotation.active = false;
+        state.isToolLocked = false;
+      },
+    },
+    tool.options
+  );
 
   annotation.active = true;
   state.isToolLocked = true;
 
   moveAllHandles(
-    element,
+    evt.detail,
     tool.name,
     annotation,
-    opt,
-    () => {
-      annotation.active = false;
-      state.isToolLocked = false;
-    },
+    null,
+    options,
     interactionType
   );
 

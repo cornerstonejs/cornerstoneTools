@@ -272,7 +272,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       toMoveHandle = measurementData.handles.end;
     }
 
-    // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
+    // MoveHandle, moveNewHandle, and moveNewHandleTouch
     // All take the same parameters, but register events differentlIy.
     const handleMover =
       interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;

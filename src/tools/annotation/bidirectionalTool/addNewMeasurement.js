@@ -16,7 +16,7 @@ export default function(evt, interactionType) {
     return;
   }
 
-  // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
+  // MoveHandle, moveNewHandle, and moveNewHandleTouch
   // All take the same parameters, but register events differentlIy.
   const handleMover =
     interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;

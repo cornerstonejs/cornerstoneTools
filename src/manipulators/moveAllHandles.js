@@ -11,22 +11,24 @@ import { clipToBox } from '../util/clip.js';
  * @function moveAllHandles
  * @memberof Manipulators
  *
- * @param {*} element
- * @param {String} toolName
- * @param {*} annotation
- * @param {Object}  [options={}]
- * @param {Boolean} [options.preventHandleOutsideImage]
- * @param {Boolean} [options.deleteIfHandleOutsideImage]
- * @param {function} [doneMovingCallback]
- * @param {string} [interactionType=mouse]
+ * @param {*}        evtDetail
+ * @param {*}        evtDetail.element
+ * @param {String}   toolName
+ * @param {*}        annotation
+ * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
+ * @param {Object}   [options={}]
+ * @param {Boolean}  [options.preventHandleOutsideImage]
+ * @param {Boolean}  [options.deleteIfHandleOutsideImage]
+ * @param {function} [options.doneMovingCallback]
+ * @param {string}   [interactionType=mouse]
  * @returns {undefined}
  */
 export default function(
-  element,
+  { element },
   toolName,
   annotation,
+  handle,
   options = {},
-  doneMovingCallback,
   interactionType = 'mouse'
 ) {
   const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
@@ -35,7 +37,6 @@ export default function(
     toolName,
     annotation,
     options,
-    doneMovingCallback,
     interactionType,
     {
       dragHandler,
@@ -97,7 +98,6 @@ function _upOrEndHandler(
   toolName,
   annotation,
   options = {},
-  doneMovingCallback,
   interactionType,
   { dragHandler, upOrEndHandler },
   evt
@@ -131,7 +131,7 @@ function _upOrEndHandler(
 
   external.cornerstone.updateImage(element);
 
-  if (typeof doneMovingCallback === 'function') {
-    doneMovingCallback();
+  if (typeof options.doneMovingCallback === 'function') {
+    options.doneMovingCallback();
   }
 }

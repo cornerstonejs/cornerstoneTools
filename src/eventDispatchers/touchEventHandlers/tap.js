@@ -7,7 +7,7 @@ import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.j
 import { getToolState } from '../../stateManagement/toolState.js';
 //
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
+import moveHandle from '../../manipulators/moveHandle.js';
 import moveAllHandles from '../../manipulators/moveAllHandles.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
@@ -16,7 +16,6 @@ export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
-  console.log('tap');
 
   let tools;
   const distanceFromHandle = 28;
@@ -70,21 +69,17 @@ export default function(evt) {
     moveableHandle.active = true; // Why here, but not touchStart?
     external.cornerstone.updateImage(element);
 
-    touchMoveHandle(
-      evt,
+    moveHandle(
+      evt.detail,
       firstToolWithMoveableHandles.name,
       toolState.data,
       moveableHandle,
-      () => {
-        deactivateAllToolInstances(toolState);
-        // If (anyHandlesOutsideImage(eventData, data.handles)) {
-        //   // Delete the measurement
-        //   RemoveToolState(element, touchToolInterface.toolType, data);
-        // }
-
-        external.cornerstone.updateImage(element);
-        // TODO: LISTEN: TAP + TOUCH_START
-      }
+      {
+        doneMovingCallback: () => {
+          deactivateAllToolInstances(toolState);
+        },
+      },
+      'touch'
     );
     evt.stopImmediatePropagation();
     evt.preventDefault();
@@ -120,25 +115,21 @@ export default function(evt) {
     external.cornerstone.updateImage(element);
 
     moveAllHandles(
-      element,
+      evt.detail,
       firstToolNearPoint.name,
       firstAnnotationNearPoint,
-      {}, // Options
-      () => {
-        deactivateAllToolInstances(toolState);
-        // If (anyHandlesOutsideImage(eventData, data.handles)) {
-        //   // Delete the measurement
-        //   RemoveToolState(element, touchToolInterface.toolType, data);
-        // }
-
-        external.cornerstone.updateImage(element);
-        // TODO: LISTEN: TAP + TOUCH_START
+      null,
+      {
+        doneMovingCallback: () => {
+          deactivateAllToolInstances(toolState);
+        },
       },
       'touch'
     );
+
     evt.stopImmediatePropagation();
     evt.preventDefault();
-    // Why no stop propagation?
+    // TODO: Why no stop propagation?
 
     return;
   }
