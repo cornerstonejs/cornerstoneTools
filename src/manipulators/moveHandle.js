@@ -59,7 +59,8 @@ export default function(
     toolData,
     handle,
     // DistanceFromTool,
-    options
+    options,
+    interactionType
   );
   const upOrEndHandler = _upOrEndHandler.bind(
     this,
@@ -114,6 +115,7 @@ function _dragHandler(
   handle,
   // DistanceFromTool,
   options,
+  interactionType,
   evt
 ) {
   const { image, currentPoints, element } = evt.detail;
@@ -131,7 +133,7 @@ function _dragHandler(
   const targetLocation = external.cornerstone.pageToPixel(
     element,
     page.x,
-    page.y + fingerOffset
+    interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
 
   handle.x = targetLocation.x;
