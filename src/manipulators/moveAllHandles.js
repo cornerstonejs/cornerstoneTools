@@ -35,7 +35,12 @@ export default function(
     toolName,
     annotation,
     options,
-    doneMovingCallback
+    doneMovingCallback,
+    interactionType,
+    {
+      dragHandler,
+      upOrEndHandler,
+    }
   );
 
   if (interactionType === 'mouse') {
@@ -93,26 +98,27 @@ function _upOrEndHandler(
   annotation,
   options = {},
   doneMovingCallback,
+  interactionType,
+  { dragHandler, upOrEndHandler },
   evt
 ) {
-  console.log('mouseUp-this:', this);
   const eventData = evt.detail;
   const element = evt.detail.element;
 
   annotation.active = false;
   annotation.invalidated = true;
 
-  if (this.interactionType === 'mouse') {
-    element.removeEventListener(EVENTS.MOUSE_DRAG, this.dragHandler);
-    element.removeEventListener(EVENTS.MOUSE_UP, this.upOrEndHandler);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, this.upOrEndHandler);
+  if (interactionType === 'mouse') {
+    element.removeEventListener(EVENTS.MOUSE_DRAG, dragHandler);
+    element.removeEventListener(EVENTS.MOUSE_UP, upOrEndHandler);
+    element.removeEventListener(EVENTS.MOUSE_CLICK, upOrEndHandler);
   } else {
-    element.removeEventListener(EVENTS.TOUCH_DRAG, this.dragHandler);
-    element.removeEventListener(EVENTS.TOUCH_PINCH, this.upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_PRESS, this.upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_END, this.upOrEndHandler);
-    element.removeEventListener(EVENTS.TOUCH_DRAG_END, this.upOrEndHandler);
-    element.removeEventListener(EVENTS.TAP, this.upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_DRAG, dragHandler);
+    element.removeEventListener(EVENTS.TOUCH_PINCH, upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_PRESS, upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_END, upOrEndHandler);
+    element.removeEventListener(EVENTS.TOUCH_DRAG_END, upOrEndHandler);
+    element.removeEventListener(EVENTS.TAP, upOrEndHandler);
   }
 
   // If any handle is outside the image, delete the tool data
@@ -120,10 +126,10 @@ function _upOrEndHandler(
     options.deleteIfHandleOutsideImage === true &&
     anyHandlesOutsideImage(eventData, annotation.handles)
   ) {
-    removeToolState(this.element, toolName, annotation);
+    removeToolState(element, toolName, annotation);
   }
 
-  external.cornerstone.updateImage(this.element);
+  external.cornerstone.updateImage(element);
 
   if (typeof doneMovingCallback === 'function') {
     doneMovingCallback();
