@@ -121,11 +121,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
     // If we have no toolData for this element, return immediately as there is nothing to do
