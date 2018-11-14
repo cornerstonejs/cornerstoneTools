@@ -57,18 +57,21 @@ export default function(
     options,
     interactionType
   );
-  const upOrEndHandler = _upOrEndHandler.bind(
-    this,
-    evtDetail,
-    toolData,
-    handle,
-    options,
-    interactionType,
-    {
-      dragHandler,
-      upOrEndHandler,
-    }
-  );
+  // So we don't need to inline the entire `upOrEndHandler` function
+  const upOrEndHandler = evt => {
+    _upOrEndHandler(
+      evtDetail,
+      toolData,
+      handle,
+      options,
+      interactionType,
+      {
+        dragHandler,
+        upOrEndHandler,
+      },
+      evt
+    );
+  };
 
   // Add Event Listeners
   _dragEvents[interactionType].forEach(eventType => {

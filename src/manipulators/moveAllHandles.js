@@ -48,17 +48,20 @@ export default function(
   interactionType = 'mouse'
 ) {
   const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
-  const upOrEndHandler = _upOrEndHandler.bind(
-    this,
-    toolName,
-    annotation,
-    options,
-    interactionType,
-    {
-      dragHandler,
-      upOrEndHandler,
-    }
-  );
+  // So we don't need to inline the entire `upOrEndHandler` function
+  const upOrEndHandler = evt => {
+    _upOrEndHandler.bind(
+      toolName,
+      annotation,
+      options,
+      interactionType,
+      {
+        dragHandler,
+        upOrEndHandler,
+      },
+      evt
+    );
+  };
 
   // Add Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
