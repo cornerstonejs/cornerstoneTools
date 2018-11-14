@@ -1,8 +1,6 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
-
-import moveAllHandles from '../manipulators/moveAllHandles.js';
-import moveHandle from '../manipulators/moveHandle.js';
+import { moveHandle, moveAllHandles } from './../manipulators/index.js';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 

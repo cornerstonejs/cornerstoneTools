@@ -7,8 +7,7 @@ import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.j
 import { getToolState } from '../../stateManagement/toolState.js';
 //
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import moveHandle from '../../manipulators/moveHandle.js';
-import moveAllHandles from '../../manipulators/moveAllHandles.js';
+import { moveHandle, moveAllHandles } from '../../manipulators/index.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 

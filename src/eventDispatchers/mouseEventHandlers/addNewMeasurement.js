@@ -1,7 +1,7 @@
 import external from '../../externalModules.js';
 import { state } from '../../store/index.js';
 import { addToolState } from '../../stateManagement/toolState.js';
-import moveHandle from '../../manipulators/moveHandle.js';
+import { moveHandle } from '../../manipulators/index.js';
 import moveNewHandle from '../../manipulators/moveNewHandle.js';
 
 export default function(evt, tool) {

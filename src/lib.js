@@ -5,8 +5,7 @@ import BaseBrushTool from './tools/base/BaseBrushTool.js';
 import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
 import handleActivator from './manipulators/handleActivator.js';
-import moveAllHandles from './manipulators/moveAllHandles.js';
-import moveHandle from './manipulators/moveHandle.js';
+import { moveHandle, moveAllHandles } from './manipulators/index.js';
 import moveNewHandle from './manipulators/moveNewHandle.js';
 import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
 

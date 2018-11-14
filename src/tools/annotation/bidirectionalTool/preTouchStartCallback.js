@@ -7,7 +7,7 @@ import {
 } from './../../../stateManagement/toolState.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
-import moveAllHandles from './../../../manipulators/moveAllHandles.js';
+import { moveAllHandles } from './../../../manipulators/index.js';
 import touchMoveHandle from './moveHandle/touchMoveHandle.js';
 
 export default function(evt) {
