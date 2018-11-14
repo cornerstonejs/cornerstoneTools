@@ -10,8 +10,7 @@ import {
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
-import moveNewHandle from './../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import { moveNewHandle } from './../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
@@ -121,11 +120,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
     // If we have no toolData for this element, return immediately as there is nothing to do
@@ -272,27 +266,17 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       toMoveHandle = measurementData.handles.end;
     }
 
-    // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
-    // All take the same parameters, but register events differentlIy.
-    const handleMover =
-      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
-
     // Associate this data with this imageId so we can render it and manipulate it
     external.cornerstone.updateImage(element);
 
-    handleMover(eventData, this.name, measurementData, toMoveHandle, () => {
-      measurementData.active = false;
-      measurementData.handles.end.active = true;
-
-      // TODO: `anyHandlesOutsideImage` deletion should be a config setting
-      // TODO: Maybe globally? Mayber per tool?
-      // If any handle is outside image, delete and abort
-      if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-        // Delete the measurement
-        removeToolState(element, this.name, measurementData);
-      }
-      external.cornerstone.updateImage(element);
-    });
+    moveNewHandle(
+      eventData,
+      this.name,
+      measurementData,
+      toMoveHandle,
+      {},
+      interactionType
+    );
   }
 
   onMeasureModified(ev) {

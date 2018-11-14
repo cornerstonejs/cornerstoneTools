@@ -7,8 +7,7 @@ import getToolsWithDataForElement from '../../store/getToolsWithDataForElement.j
 import { getToolState } from '../../stateManagement/toolState.js';
 //
 import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint.js';
-import touchMoveHandle from '../../manipulators/touchMoveHandle.js';
-import touchMoveAllHandles from '../../manipulators/touchMoveAllHandles.js';
+import { moveHandle, moveAllHandles } from '../../manipulators/index.js';
 //
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
@@ -16,7 +15,6 @@ export default function(evt) {
   if (state.isToolLocked) {
     return;
   }
-  console.log('tap');
 
   let tools;
   const distanceFromHandle = 28;
@@ -70,21 +68,17 @@ export default function(evt) {
     moveableHandle.active = true; // Why here, but not touchStart?
     external.cornerstone.updateImage(element);
 
-    touchMoveHandle(
-      evt,
+    moveHandle(
+      evt.detail,
       firstToolWithMoveableHandles.name,
       toolState.data,
       moveableHandle,
-      () => {
-        deactivateAllToolInstances(toolState);
-        // If (anyHandlesOutsideImage(eventData, data.handles)) {
-        //   // Delete the measurement
-        //   RemoveToolState(element, touchToolInterface.toolType, data);
-        // }
-
-        external.cornerstone.updateImage(element);
-        // TODO: LISTEN: TAP + TOUCH_START
-      }
+      {
+        doneMovingCallback: () => {
+          deactivateAllToolInstances(toolState);
+        },
+      },
+      'touch'
     );
     evt.stopImmediatePropagation();
     evt.preventDefault();
@@ -97,6 +91,8 @@ export default function(evt) {
   const toolsNearPoint = tools.filter(tool => {
     const toolState = getToolState(element, tool.name);
     const isNearPoint =
+      toolState &&
+      toolState.data &&
       tool.pointNearTool &&
       toolState.data.some(data => tool.pointNearTool(element, data, coords));
 
@@ -117,26 +113,22 @@ export default function(evt) {
     firstAnnotationNearPoint.active = true;
     external.cornerstone.updateImage(element);
 
-    touchMoveAllHandles(
-      evt,
-      firstAnnotationNearPoint,
-      toolState,
+    moveAllHandles(
+      evt.detail,
       firstToolNearPoint.name,
-      true,
-      () => {
-        deactivateAllToolInstances(toolState);
-        // If (anyHandlesOutsideImage(eventData, data.handles)) {
-        //   // Delete the measurement
-        //   RemoveToolState(element, touchToolInterface.toolType, data);
-        // }
-
-        external.cornerstone.updateImage(element);
-        // TODO: LISTEN: TAP + TOUCH_START
-      }
+      firstAnnotationNearPoint,
+      null,
+      {
+        doneMovingCallback: () => {
+          deactivateAllToolInstances(toolState);
+        },
+      },
+      'touch'
     );
+
     evt.stopImmediatePropagation();
     evt.preventDefault();
-    // Why no stop propagation?
+    // TODO: Why no stop propagation?
 
     return;
   }

@@ -497,13 +497,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     }
   }
 
-  /**
-   * Event handler for called by the mouseDownActivate event, if tool is active and
-   * the event is not caught by mouseDownCallback.
-   *
-   * @event
-   * @param {Object} evt - The event.
-   */
   addNewMeasurement(evt, interactionType) {
     const eventData = evt.detail;
     const config = this.configuration;
@@ -516,12 +509,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     preventPropagation(evt);
   }
 
-  /**
-   * Active mouse down callback that takes priority if the user is attempting
-   * to insert or delete a handle with ctrl + click.
-   *
-   * @param {Object} evt - The event.
-   */
   preMouseDownCallback(evt) {
     const eventData = evt.detail;
     const nearby = this._pointNearHandleAllTools(eventData);
@@ -541,20 +528,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     return false;
   }
 
-  /**
-   * Custom callback for when a handle is selected.
-   *
-   * @param  {Object} evt
-   * @param  {Object} handle The selected handle.
-   */
-  handleSelectedCallback(evt, handle, data) {
+  handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
     const eventData = evt.detail;
     const element = eventData.element;
-    const toolState = getToolState(eventData.element, this.name);
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
-      moveHandleNearImagePoint(evt, handle, data, this.name);
+      moveHandleNearImagePoint(
+        evt,
+        this.name,
+        toolData,
+        handle,
+        interactionType
+      );
 
       return;
     }

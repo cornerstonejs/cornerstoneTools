@@ -1,34 +1,46 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
-import moveAllHandles from '../manipulators/moveAllHandles.js';
-import moveHandle from '../manipulators/moveHandle.js';
+import { moveHandle, moveAllHandles } from './../manipulators/index.js';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 
 /**
  * Moves a handle near the image point.
- * @export @public @method
- * @name moveHandleNearImagePoint
+ * @public
+ * @function moveHandleNearImagePoint
+ * @memberof Util
  *
  * @param  {Event} evt      The event.
- * @param  {Object} handle  The handle to be moved.
- * @param  {Object} data     The toolData that corresponds to the handle.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
+ * @param  {Object} toolData     The toolData that corresponds to the handle.
+ * @param  {Object} handle  The handle to be moved.
+ * @param  {string} interactionType
+ * @returns {undefined}
  */
-const moveHandleNearImagePoint = function(evt, handle, data, toolName) {
-  data.active = true;
+const moveHandleNearImagePoint = function(
+  evt,
+  toolName,
+  toolData,
+  handle,
+  interactionType
+) {
+  toolData.active = true;
   state.isToolLocked = true;
 
   moveHandle(
     evt.detail,
     toolName,
-    data,
+    toolData,
     handle,
-    () => {
-      data.active = false;
-      state.isToolLocked = false;
+    // TODO: Options that aren't static / can't be overridden
+    {
+      preventHandleOutsideImage: true,
+      doneMovingCallback: () => {
+        toolData.active = false;
+        state.isToolLocked = false;
+      },
     },
-    true // PreventHandleOutsideImage
+    interactionType
   );
 
   evt.stopImmediatePropagation();
@@ -40,21 +52,24 @@ const moveHandleNearImagePoint = function(evt, handle, data, toolName) {
 
 /**
  * Finds the handle near the image point and its corresponding data.
- * @export @public @method
- * @name findHandleDataNearImagePoint
+ *
+ * @public
+ * @function findHandleDataNearImagePoint
+ * @memberof Util
  *
  * @param  {HTMLElement} element  The elment.
- * @param  {Event}  evt           The event.
  * @param  {Object} toolState     The state of the tool.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
  * @param  {Object} coords The coordinates that need to be checked.
+ * @param  {String} [interactionType=mouse]
+ * @returns {*}
  */
 const findHandleDataNearImagePoint = function(
   element,
-  evt,
   toolState,
   toolName,
-  coords
+  coords,
+  interactionType = 'mouse'
 ) {
   for (let i = 0; i < toolState.data.length; i++) {
     const data = toolState.data[i];
@@ -62,7 +77,7 @@ const findHandleDataNearImagePoint = function(
       element,
       data.handles,
       coords,
-      state.clickProximity
+      interactionType === 'mouse' ? state.clickProximity : state.touchProximity
     );
 
     if (handle) {
@@ -76,29 +91,51 @@ const findHandleDataNearImagePoint = function(
 
 /**
  * Moves an entire annotation near the click.
- * @export @public @method
- * @name moveAnnotationNearClick
  *
- * @param  {Event}  evt           The event.
- * @param  {Object} toolState     The state of the tool.
- * @param  {Object} tool The tool that the annotation belongs to.
- * @param  {Object} data The toolData that corresponds to the annotation.
+ * @public
+ * @function moveAnnotation
+ * @memberof Util
+ *
+ * @param  {Event}   evt           The event.
+ * @param  {Object}  tool The tool that the annotation belongs to.
+ * @param  {string}  tool.name
+ * @param  {Object}  [tool.options={}]
+ * @param  {Boolean} [tool.options.preventHandleOutsideImage]
+ * @param  {Boolean} [tool.options.deleteIfHandleOutsideImage]
+ * @param  {Object}  annotation The toolData that corresponds to the annotation.
+ * @param  {String}  [interactionType=mouse]
+ * @returns {undefined}
  */
-const moveAnnotationNearClick = function(evt, toolState, tool, data) {
-  const opt = tool.options || {
-    deleteIfHandleOutsideImage: true,
-    preventHandleOutsideImage: false,
-  };
+const moveAnnotation = function(
+  evt,
+  tool,
+  annotation,
+  interactionType = 'mouse'
+) {
+  const options = Object.assign(
+    {},
+    {
+      deleteIfHandleOutsideImage: true,
+      preventHandleOutsideImage: false,
+      doneMovingCallback: () => {
+        annotation.active = false;
+        state.isToolLocked = false;
+      },
+    },
+    tool.options
+  );
 
-  data.active = true;
+  annotation.active = true;
   state.isToolLocked = true;
-  // TODO: Ignore MOUSE_MOVE for a bit
-  // TODO: Why do this and `moveHandle` expose this in different
-  // TODO: ways? PreventHandleOutsideImage
-  moveAllHandles(evt, data, toolState, tool.name, opt, () => {
-    data.active = false;
-    state.isToolLocked = false;
-  });
+
+  moveAllHandles(
+    evt.detail,
+    tool.name,
+    annotation,
+    null,
+    options,
+    interactionType
+  );
 
   evt.stopImmediatePropagation();
   evt.stopPropagation();
@@ -107,37 +144,8 @@ const moveAnnotationNearClick = function(evt, toolState, tool, data) {
   return;
 };
 
-/**
- * Finds the annotation near the image point.
- * @export @public @method
- * @name findAnnotationNearClick
- *
- * @param  {HTMLElement} element  The elment.
- * @param  {Event}  evt           The event.
- * @param  {Object} toolState     The state of the tool.
- * @param  {string} tool The tool that the annotation belongs to.
- * @param  {Object} coords The coordinates that need to be checked.
- */
-const findAnnotationNearClick = function(
-  element,
-  evt,
-  toolState,
-  tool,
-  coords
-) {
-  for (let i = 0; i < toolState.data.length; i++) {
-    const data = toolState.data[i];
-    const isNearPoint = tool.pointNearTool(element, data, coords);
-
-    if (isNearPoint) {
-      return data;
-    }
-  }
-};
-
 export {
   moveHandleNearImagePoint,
   findHandleDataNearImagePoint,
-  moveAnnotationNearClick,
-  findAnnotationNearClick,
+  moveAnnotation,
 };

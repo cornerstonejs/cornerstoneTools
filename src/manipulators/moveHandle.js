@@ -2,6 +2,27 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
+import { state } from './../store/index.js';
+
+const runAnimation = {
+  value: false,
+};
+
+const _dragEvents = {
+  mouse: [EVENTS.MOUSE_DRAG],
+  touch: [EVENTS.TOUCH_DRAG],
+};
+
+const _upOrEndEvents = {
+  mouse: [EVENTS.MOUSE_UP, EVENTS.MOUSE_CLICK],
+  touch: [
+    EVENTS.TOUCH_END,
+    EVENTS.TOUCH_DRAG_END,
+    EVENTS.TOUCH_PINCH,
+    EVENTS.TOUCH_PRESS,
+    EVENTS.TAP,
+  ],
+};
 
 /**
  * Move the provided handle
@@ -9,74 +30,209 @@ import { clipToBox } from '../util/clip.js';
  * @method moveHandle
  * @memberof Manipulators
  *
- * @param {*} mouseEventData
- * @param {*} toolType
- * @param {*} data
+ * @param {*} evtDetail
+ * @param {*} toolName
+ * @param {*} toolData
  * @param {*} handle
- * @param {*} doneMovingCallback
- * @param {*} preventHandleOutsideImage
+ * @param {*} [options={}]
+ * @param {*} [options.preventHandleOutsideImage]
+ * @param {*} [options.doneMovingCallback]
+ * @param {*} [interactionType=mouse]
  * @returns {undefined}
  */
 export default function(
-  mouseEventData,
-  toolType,
-  data,
+  evtDetail,
+  toolName,
+  toolData,
   handle,
-  doneMovingCallback,
-  preventHandleOutsideImage
+  options = {},
+  interactionType = 'mouse'
 ) {
-  const element = mouseEventData.element;
-  const distanceFromTool = {
-    x: handle.x - mouseEventData.currentPoints.image.x,
-    y: handle.y - mouseEventData.currentPoints.image.y,
+  const element = evtDetail.element;
+  const dragHandler = _dragHandler.bind(
+    this,
+    toolName,
+    toolData,
+    handle,
+    options,
+    interactionType
+  );
+  // So we don't need to inline the entire `upOrEndHandler` function
+  const upOrEndHandler = evt => {
+    _upOrEndHandler(
+      evtDetail,
+      toolData,
+      handle,
+      options,
+      interactionType,
+      {
+        dragHandler,
+        upOrEndHandler,
+      },
+      evt
+    );
   };
 
-  function mouseDragCallback(e) {
-    const eventData = e.detail;
+  handle.active = true;
+  toolData.active = true;
+  state.isToolLocked = true;
 
-    if (handle.hasMoved === false) {
-      handle.hasMoved = true;
-    }
+  // Add Event Listeners
+  _dragEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, dragHandler);
+  });
+  _upOrEndEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, upOrEndHandler);
+  });
 
-    handle.active = true;
-    handle.x = eventData.currentPoints.image.x + distanceFromTool.x;
-    handle.y = eventData.currentPoints.image.y + distanceFromTool.y;
+  // ==========================
+  // ========  TOUCH ==========
+  // ==========================
+  if (interactionType === 'touch') {
+    runAnimation.value = true;
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (preventHandleOutsideImage) {
-      clipToBox(handle, eventData.image);
-    }
+    // Average pixel width of index finger is 45-57 pixels
+    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
+    const fingerDistance = -57;
 
-    external.cornerstone.updateImage(element);
-
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
-    const modifiedEventData = {
-      toolType,
-      element,
-      measurementData: data,
+    const aboveFinger = {
+      x: evtDetail.currentPoints.page.x,
+      y: evtDetail.currentPoints.page.y + fingerDistance,
     };
 
-    triggerEvent(element, eventType, modifiedEventData);
+    const targetLocation = external.cornerstone.pageToPixel(
+      element,
+      aboveFinger.x,
+      aboveFinger.y
+    );
+
+    _animate(handle, runAnimation, enabledElement, targetLocation);
+  }
+}
+
+function _dragHandler(
+  toolName,
+  toolData,
+  handle,
+  options,
+  interactionType,
+  evt
+) {
+  const { image, currentPoints, element } = evt.detail;
+  const page = currentPoints.page;
+  const fingerOffset = -57;
+  const targetLocation = external.cornerstone.pageToPixel(
+    element,
+    page.x,
+    interactionType === 'touch' ? page.y + fingerOffset : page.y
+  );
+
+  if (handle.hasMoved === false) {
+    handle.hasMoved = true;
   }
 
-  element.addEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
+  runAnimation.value = false;
+  handle.active = true;
+  handle.x = targetLocation.x;
+  handle.y = targetLocation.y;
 
-  function mouseUpCallback() {
-    handle.active = false;
-    element.removeEventListener(EVENTS.MOUSE_DRAG, mouseDragCallback);
-    element.removeEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-    element.removeEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
-
-    if (data.invalidated !== undefined) {
-      data.invalidated = true;
-    }
-
-    external.cornerstone.updateImage(element);
-
-    if (typeof doneMovingCallback === 'function') {
-      doneMovingCallback();
-    }
+  if (options.preventHandleOutsideImage) {
+    clipToBox(handle, image);
   }
 
-  element.addEventListener(EVENTS.MOUSE_UP, mouseUpCallback);
-  element.addEventListener(EVENTS.MOUSE_CLICK, mouseUpCallback);
+  external.cornerstone.updateImage(element);
+
+  const eventType = EVENTS.MEASUREMENT_MODIFIED;
+  const modifiedEventData = {
+    toolName,
+    element,
+    measurementData: toolData,
+  };
+
+  triggerEvent(element, eventType, modifiedEventData);
+}
+
+function _upOrEndHandler(
+  originalEventDetail,
+  toolData,
+  handle,
+  options,
+  interactionType,
+  { dragHandler, upOrEndHandler },
+  evt
+) {
+  const element = evt.detail.element;
+
+  handle.active = false;
+  toolData.active = false;
+  state.isToolLocked = false;
+  runAnimation.value = false;
+
+  // Remove Event Listeners
+  _dragEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, dragHandler);
+  });
+  _upOrEndEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, upOrEndHandler);
+  });
+
+  if (toolData.invalidated !== undefined) {
+    toolData.invalidated = true;
+  }
+
+  external.cornerstone.updateImage(element);
+
+  // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
+  if (evt.type === EVENTS.TOUCH_PRESS) {
+    evt.detail.handlePressed = toolData;
+    handle.x = originalEventDetail.currentPoints.image.x; // Original Event
+    handle.y = originalEventDetail.currentPoints.image.y;
+  }
+
+  if (typeof options.doneMovingCallback === 'function') {
+    options.doneMovingCallback();
+  }
+}
+
+/**
+ * Animates the provided handle using `requestAnimationFrame`
+ * @private
+ * @method _animate
+ *
+ * @param {*} handle
+ * @param {*} runAnimation
+ * @param {*} enabledElement
+ * @param {*} targetLocation
+ * @returns {undefined}
+ */
+function _animate(handle, runAnimation, enabledElement, targetLocation) {
+  if (!runAnimation.value) {
+    return;
+  }
+
+  // Pixels / second
+  const distanceRemaining = Math.abs(handle.y - targetLocation.y);
+  const linearDistEachFrame = distanceRemaining / 10;
+
+  if (distanceRemaining < 1) {
+    handle.y = targetLocation.y;
+    runAnimation.value = false;
+
+    return;
+  }
+
+  if (handle.y > targetLocation.y) {
+    handle.y -= linearDistEachFrame;
+  } else if (handle.y < targetLocation.y) {
+    handle.y += linearDistEachFrame;
+  }
+
+  // Update the image
+  external.cornerstone.updateImage(enabledElement.element);
+
+  // Request a new frame
+  external.cornerstone.requestAnimationFrame(function() {
+    _animate(handle, runAnimation, enabledElement, targetLocation);
+  });
 }

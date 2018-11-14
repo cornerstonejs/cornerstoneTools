@@ -1,6 +1,5 @@
 import external from './../../../externalModules.js';
-import moveNewHandle from './../../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './../../../manipulators/moveNewHandleTouch.js';
+import { moveNewHandle } from './../../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import {
   addToolState,
@@ -16,11 +15,6 @@ export default function(evt, interactionType) {
     return;
   }
 
-  // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
-  // All take the same parameters, but register events differentlIy.
-  const handleMover =
-    interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
-
   const measurementData = this.createNewMeasurement(eventData);
 
   const doneCallback = () => {
@@ -35,32 +29,41 @@ export default function(evt, interactionType) {
   const timestamp = new Date().getTime();
   const { end, perpendicularStart } = measurementData.handles;
 
-  handleMover(eventData, this.name, measurementData, end, () => {
-    const { handles, longestDiameter, shortestDiameter } = measurementData;
-    const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
-    const longestDiameterSize = parseFloat(longestDiameter) || 0;
-    const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-    const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
-    const isTooFast = new Date().getTime() - timestamp < 150;
+  moveNewHandle(
+    eventData,
+    this.name,
+    measurementData,
+    end,
+    {
+      doneMovingCallback: () => {
+        const { handles, longestDiameter, shortestDiameter } = measurementData;
+        const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
+        const longestDiameterSize = parseFloat(longestDiameter) || 0;
+        const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
+        const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+        const isTooFast = new Date().getTime() - timestamp < 150;
 
-    if (hasHandlesOutside || isTooSmal || isTooFast) {
-      // Delete the measurement
-      measurementData.cancelled = true;
-      removeToolState(element, this.name, measurementData);
-    } else {
-      // Set lesionMeasurementData Session
-      config.getMeasurementLocationCallback(
-        measurementData,
-        eventData,
-        doneCallback
-      );
-    }
+        if (hasHandlesOutside || isTooSmal || isTooFast) {
+          // Delete the measurement
+          measurementData.cancelled = true;
+          removeToolState(element, this.name, measurementData);
+        } else {
+          // Set lesionMeasurementData Session
+          config.getMeasurementLocationCallback(
+            measurementData,
+            eventData,
+            doneCallback
+          );
+        }
 
-    // Perpendicular line is not connected to long-line
-    perpendicularStart.locked = false;
+        // Perpendicular line is not connected to long-line
+        perpendicularStart.locked = false;
 
-    external.cornerstone.updateImage(element);
-  });
+        external.cornerstone.updateImage(element);
+      },
+    },
+    interactionType
+  );
 }
 
 const checkPixelSpacing = image => {

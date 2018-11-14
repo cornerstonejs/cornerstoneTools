@@ -8,6 +8,7 @@ export const state = {
   globalToolChangeHistory: [],
   tools: [],
   clickProximity: 6,
+  touchProximity: 10,
   mousePositionImage: {},
   enabledElements: [],
 };

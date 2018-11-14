@@ -1,7 +1,7 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
 import { state } from '../../store/index.js';
-import moveNewHandleTouch from '../../manipulators/moveNewHandleTouch.js';
+import { moveNewHandle } from '../../manipulators/index.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 
 export default function(evt, tool) {
@@ -42,25 +42,14 @@ export default function(evt, tool) {
     return;
   }
 
-  state.isToolLocked = true;
   external.cornerstone.updateImage(element);
 
-  moveNewHandleTouch(
+  moveNewHandle(
     touchEventData,
     tool.name,
     measurementData,
     measurementData.handles.end,
-    function() {
-      console.log('addNewMeasurement: touchUp');
-      measurementData.active = false;
-      measurementData.invalidated = true;
-      //   If (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
-      //     // Delete the measurement
-      //     RemoveToolState(element, touchToolInterface.toolType, measurementData);
-      //   }
-
-      state.isToolLocked = false;
-      external.cornerstone.updateImage(element);
-    }
+    {},
+    'touch'
   );
 }

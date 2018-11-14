@@ -2,21 +2,19 @@ import BaseTool from './tools/base/BaseTool.js';
 import BaseAnnotationTool from './tools/base/BaseAnnotationTool.js';
 import BaseBrushTool from './tools/base/BaseBrushTool.js';
 
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
-import handleActivator from './manipulators/handleActivator.js';
-import moveAllHandles from './manipulators/moveAllHandles.js';
-import moveHandle from './manipulators/moveHandle.js';
-import moveNewHandle from './manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
-import touchMoveAllHandles from './manipulators/touchMoveAllHandles.js';
-import touchMoveHandle from './manipulators/touchMoveHandle.js';
+import {
+  anyHandlesOutsideImage,
+  getHandleNearImagePoint,
+  handleActivator,
+  moveHandle,
+  moveAllHandles,
+  moveNewHandle,
+} from './manipulators/index.js';
 
 import {
   moveHandleNearImagePoint,
   findHandleDataNearImagePoint,
-  moveAnnotationNearClick,
-  findAnnotationNearClick,
+  moveAnnotation,
 } from './util/findAndMoveHelpers.js';
 
 import mixins from './mixins/index.js';
@@ -87,13 +85,9 @@ export const lib = {
   'manipulators/moveAllHandles': moveAllHandles,
   'manipulators/moveHandle': moveHandle,
   'manipulators/moveNewHandle': moveNewHandle,
-  'manipulators/moveNewHandleTouch': moveNewHandleTouch,
-  'manipulators/touchMoveAllHandles': touchMoveAllHandles,
-  'manipulators/touchMoveHandle': touchMoveHandle,
   'manipulators/moveHandleNearImagePoint': moveHandleNearImagePoint,
   'manipulators/findHandleDataNearImagePoint': findHandleDataNearImagePoint,
-  'manipulators/moveAnnotationNearClick': moveAnnotationNearClick,
-  'manipulators/findAnnotationNearClick': findAnnotationNearClick,
+  'manipulators/moveAnnotation': moveAnnotation,
 
   'mixins/activeOrDisabledBinaryTool': mixins.activeOrDisabledBinaryTool,
   'mixins/enabledOrDisabledBinaryTool': mixins.enabledOrDisabledBinaryTool,

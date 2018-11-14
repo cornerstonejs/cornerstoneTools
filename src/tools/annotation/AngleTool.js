@@ -9,8 +9,7 @@ import {
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
-import moveNewHandle from './../../manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './../../manipulators/moveNewHandleTouch.js';
+import { moveNewHandle } from './../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
@@ -273,52 +272,42 @@ class AngleTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const measurementData = this.createNewMeasurement(eventData);
     const element = evt.detail.element;
-    // MoveHandle, moveNewHandle, moveHandleTouch, and moveNewHandleTouch
-    // All take the same parameters, but register events differentlIy.
-    const handleMover =
-      interactionType === 'Mouse' ? moveNewHandle : moveNewHandleTouch;
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
     // Step 1, create start and second middle
-    handleMover(
+    moveNewHandle(
       eventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
-      () => {
-        measurementData.active = false;
-        measurementData.handles.end.active = true;
+      {
+        doneMovingCallback: () => {
+          measurementData.active = false;
+          measurementData.handles.end.active = true;
 
-        // TODO: `anyHandlesOutsideImage` deletion should be a config setting
-        // TODO: Maybe globally? Mayber per tool?
-        // If any handle is outside image, delete and abort
-        if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-          // Delete the measurement
-          removeToolState(element, this.name, measurementData);
-          this.preventNewMeasurement = false;
-        }
+          external.cornerstone.updateImage(element);
 
-        external.cornerstone.updateImage(element);
-        // Step 2, place middle handle and drag end handle
-        handleMover(
-          eventData,
-          this.name,
-          measurementData,
-          measurementData.handles.end,
-          () => {
-            measurementData.active = false;
-            if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
-              // Delete the measurement
-              removeToolState(element, this.name, measurementData);
-            }
-            this.preventNewMeasurement = false;
-            external.cornerstone.updateImage(element);
-          }
-        );
-      }
+          // Step 2, place middle handle and drag end handle
+          moveNewHandle(
+            eventData,
+            this.name,
+            measurementData,
+            measurementData.handles.end,
+            {
+              doneMovingCallback: () => {
+                measurementData.active = false;
+                this.preventNewMeasurement = false;
+                external.cornerstone.updateImage(element);
+              },
+            },
+            interactionType
+          );
+        },
+      },
+      interactionType
     );
   }
 }

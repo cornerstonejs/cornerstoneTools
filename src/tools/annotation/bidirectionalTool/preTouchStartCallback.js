@@ -7,7 +7,7 @@ import {
 } from './../../../stateManagement/toolState.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
-import touchMoveAllHandles from './../../../manipulators/touchMoveAllHandles.js';
+import { moveAllHandles } from './../../../manipulators/index.js';
 import touchMoveHandle from './moveHandle/touchMoveHandle.js';
 
 export default function(evt) {
@@ -82,16 +82,17 @@ export default function(evt) {
 
       const doneMovingCallback = getDoneMovingCallback(data.handles);
 
-      touchMoveAllHandles(
-        evt,
-        data,
-        toolData,
+      moveAllHandles(
+        eventData,
         this.name,
+        data,
+        null,
         {
           deleteIfHandleOutsideImage: true,
           preventHandleOutsideImage: false,
+          doneMovingCallback,
         },
-        doneMovingCallback
+        'touch'
       );
 
       preventPropagation(evt);
