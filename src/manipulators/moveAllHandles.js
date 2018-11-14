@@ -50,7 +50,7 @@ export default function(
   const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
-    _upOrEndHandler.bind(
+    _upOrEndHandler(
       toolName,
       annotation,
       options,
