@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
+import { state } from './../store/index.js';
 
 const runAnimation = {
   value: false,
@@ -48,7 +49,6 @@ export default function(
   interactionType = 'mouse'
 ) {
   const element = evtDetail.element;
-
   const dragHandler = _dragHandler.bind(
     this,
     toolName,
@@ -72,6 +72,10 @@ export default function(
       evt
     );
   };
+
+  handle.active = true;
+  toolData.active = true;
+  state.isToolLocked = true;
 
   // Add Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
@@ -161,6 +165,8 @@ function _upOrEndHandler(
   const element = evt.detail.element;
 
   handle.active = false;
+  toolData.active = false;
+  state.isToolLocked = false;
   runAnimation.value = false;
 
   // Remove Event Listeners

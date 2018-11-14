@@ -238,7 +238,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    state.isToolLocked = true;
     moveNewHandle(
       evt.detail,
       this.name,
@@ -259,7 +258,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             });
           }
 
-          state.isToolLocked = false;
           external.cornerstone.updateImage(element);
         },
       },

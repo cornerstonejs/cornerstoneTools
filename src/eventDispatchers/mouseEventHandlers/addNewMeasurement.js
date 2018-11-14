@@ -1,5 +1,4 @@
 import external from '../../externalModules.js';
-import { state } from '../../store/index.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
 
@@ -18,7 +17,6 @@ export default function(evt, tool) {
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, tool.name, measurementData);
 
-  state.isToolLocked = true;
   external.cornerstone.updateImage(element);
 
   const handleMover =
@@ -39,6 +37,9 @@ export default function(evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    preventHandleOutsideImage
+    {
+      preventHandleOutsideImage,
+    },
+    'mouse'
   );
 }

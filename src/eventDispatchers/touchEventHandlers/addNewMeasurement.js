@@ -42,7 +42,6 @@ export default function(evt, tool) {
     return;
   }
 
-  state.isToolLocked = true;
   external.cornerstone.updateImage(element);
 
   moveNewHandle(
@@ -50,15 +49,7 @@ export default function(evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    {
-      doneMovingCallback() {
-        console.log('addNewMeasurement: touchUp');
-        measurementData.active = false;
-        measurementData.invalidated = true;
-        state.isToolLocked = false;
-        external.cornerstone.updateImage(element);
-      },
-    },
+    {},
     'touch'
   );
 }

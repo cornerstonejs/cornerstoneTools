@@ -8,7 +8,6 @@ import getInteractiveToolsForElement from './../../store/getInteractiveToolsForE
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 
 export default function(evt) {
-  console.log('touchStart');
   if (state.isToolLocked) {
     return;
   }

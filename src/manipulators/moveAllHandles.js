@@ -4,6 +4,7 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
+import { state } from './../store/index.js';
 
 const _dragEvents = {
   mouse: [EVENTS.MOUSE_DRAG],
@@ -43,7 +44,7 @@ export default function(
   { element },
   toolName,
   annotation,
-  handle,
+  handle = null,
   options = {},
   interactionType = 'mouse'
 ) {
@@ -62,6 +63,9 @@ export default function(
       evt
     );
   };
+
+  annotation.active = true;
+  state.isToolLocked = true;
 
   // Add Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
@@ -121,6 +125,7 @@ function _upOrEndHandler(
 
   annotation.active = false;
   annotation.invalidated = true;
+  state.isToolLocked = false;
 
   // Remove Event Listeners
   _dragEvents[interactionType].forEach(eventType => {

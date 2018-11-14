@@ -7,6 +7,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
+import { state } from './../store/index.js';
 
 const _moveEvents = {
   mouse: [EVENTS.MOUSE_MOVE, EVENTS.MOUSE_DRAG],
@@ -44,6 +45,7 @@ export default function(
 ) {
   const element = evtDetail.element;
 
+  state.isToolLocked = true;
   handle.active = true;
   toolData.active = true;
 
@@ -179,6 +181,7 @@ function _moveEndHandler(
   // "Release" the handle
   handle.active = false;
   toolData.active = false;
+  state.isToolLocked = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
