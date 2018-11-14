@@ -53,7 +53,7 @@ export default function(
 }
 
 function _dragHandler(toolName, annotation, options = {}, evt) {
-  const { element, image } = evt.detail.element;
+  const { element, image } = evt.detail;
   const { x, y } = evt.detail.deltaPoints.image;
 
   annotation.active = true;
