@@ -105,6 +105,7 @@ function _moveHandler(
   interactionType,
   evt
 ) {
+  console.log('moveNewHandle: moveHandler');
   const { currentPoints, image, element } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
@@ -147,7 +148,8 @@ function _moveEndHandler(
   },
   evt
 ) {
-  console.log('moveNewHandle: moveEndHandler');
+  console.log(evt, interactionType);
+  console.log('moveNewHandle: moveEndHandler', moveHandler, moveEndHandler);
   const { element, currentPoints } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
