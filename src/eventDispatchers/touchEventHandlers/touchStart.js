@@ -71,7 +71,8 @@ export default function(evt) {
       element,
       toolState,
       firstToolWithMoveableHandles.name,
-      coords
+      coords,
+      'touch'
     );
 
     firstToolWithMoveableHandles.handleSelectedCallback(

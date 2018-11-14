@@ -61,13 +61,15 @@ const moveHandleNearImagePoint = function(
  * @param  {Object} toolState     The state of the tool.
  * @param  {string} toolName The name of the tool the handle corrosponds to.
  * @param  {Object} coords The coordinates that need to be checked.
+ * @param  {String} [interactionType=mouse]
  * @returns {*}
  */
 const findHandleDataNearImagePoint = function(
   element,
   toolState,
   toolName,
-  coords
+  coords,
+  interactionType = 'mouse'
 ) {
   for (let i = 0; i < toolState.data.length; i++) {
     const data = toolState.data[i];
@@ -75,7 +77,7 @@ const findHandleDataNearImagePoint = function(
       element,
       data.handles,
       coords,
-      state.clickProximity
+      interactionType === 'mouse' ? state.clickProximity : state.touchProximity
     );
 
     if (handle) {
