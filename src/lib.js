@@ -2,12 +2,14 @@ import BaseTool from './tools/base/BaseTool.js';
 import BaseAnnotationTool from './tools/base/BaseAnnotationTool.js';
 import BaseBrushTool from './tools/base/BaseBrushTool.js';
 
-import anyHandlesOutsideImage from './manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './manipulators/getHandleNearImagePoint.js';
-import handleActivator from './manipulators/handleActivator.js';
-import { moveHandle, moveAllHandles } from './manipulators/index.js';
-import moveNewHandle from './manipulators/moveNewHandle.js';
-import moveNewHandleTouch from './manipulators/moveNewHandleTouch.js';
+import {
+  anyHandlesOutsideImage,
+  getHandleNearImagePoint,
+  handleActivator,
+  moveHandle,
+  moveAllHandles,
+  moveNewHandle,
+} from './manipulators/index.js';
 
 import {
   moveHandleNearImagePoint,
@@ -83,7 +85,6 @@ export const lib = {
   'manipulators/moveAllHandles': moveAllHandles,
   'manipulators/moveHandle': moveHandle,
   'manipulators/moveNewHandle': moveNewHandle,
-  'manipulators/moveNewHandleTouch': moveNewHandleTouch,
   'manipulators/moveHandleNearImagePoint': moveHandleNearImagePoint,
   'manipulators/findHandleDataNearImagePoint': findHandleDataNearImagePoint,
   'manipulators/moveAnnotation': moveAnnotation,
