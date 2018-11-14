@@ -53,7 +53,7 @@ export default function(
   //   Y: handle.y - currentPoints.image.y,
   // };
 
-  const dragCallback = _dragCallback.bind(
+  const dragHandler = _dragHandler.bind(
     this,
     toolName,
     toolData,
@@ -61,7 +61,7 @@ export default function(
     // DistanceFromTool,
     options
   );
-  const upOrEndCallback = _upOrEndCallback.bind(
+  const upOrEndHandler = _upOrEndHandler.bind(
     this,
     evtDetail,
     toolData,
@@ -69,17 +69,17 @@ export default function(
     options,
     interactionType,
     {
-      dragCallback,
-      upOrEndCallback,
+      dragHandler,
+      upOrEndHandler,
     }
   );
 
   // Add Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
-    element.addEventListener(eventType, dragCallback);
+    element.addEventListener(eventType, dragHandler);
   });
   _upOrEndEvents[interactionType].forEach(eventType => {
-    element.addEventListener(eventType, upOrEndCallback);
+    element.addEventListener(eventType, upOrEndHandler);
   });
 
   // ==========================
@@ -105,7 +105,7 @@ export default function(
   _animate(handle, runAnimation, enabledElement, targetLocation);
 }
 
-function _dragCallback(
+function _dragHandler(
   toolName,
   toolData,
   handle,
@@ -154,13 +154,13 @@ function _dragCallback(
   triggerEvent(element, eventType, modifiedEventData);
 }
 
-function _upOrEndCallback(
+function _upOrEndHandler(
   originalEventDetail,
   toolData,
   handle,
   options,
   interactionType,
-  { dragCallback, upOrEndCallback },
+  { dragHandler, upOrEndHandler },
   evt
 ) {
   const element = evt.detail.element;
@@ -170,10 +170,10 @@ function _upOrEndCallback(
 
   // Remove Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, dragCallback);
+    element.removeEventListener(eventType, dragHandler);
   });
   _upOrEndEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, upOrEndCallback);
+    element.removeEventListener(eventType, upOrEndHandler);
   });
 
   if (toolData.invalidated !== undefined) {
