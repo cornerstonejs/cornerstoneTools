@@ -3,10 +3,10 @@ import brush from './modules/brushModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 
 export const state = {
-  isToolLocked: false,
   globalTools: {},
   globalToolChangeHistory: [],
   tools: [],
+  isToolLocked: false,
   clickProximity: 6,
   touchProximity: 10,
   mousePositionImage: {},

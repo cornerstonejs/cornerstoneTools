@@ -313,7 +313,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
 /**
  * Resolves conflicting active tools when activating a tool for mouse interaction
  * @private
- * @function _resolveInputConflicts
+ * @function _resolveMouseInputConflicts
  *
  * @param {Object} tool
  * @param {HTMLElement} element
@@ -474,6 +474,7 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
     return;
   }
 
+  // Update Tool History
   const historyEvent = {
     mode,
     args: [toolName, options],
@@ -492,6 +493,67 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
   ) {
     store.state.globalToolChangeHistory.shift();
   }
+
+  // Update ActiveBindings Array
+  const globalTool = store.state.globalTools[toolName];
+
+  if (mode === 'active') {
+    const stringBindings = _determineStringBindings(
+      toolName,
+      options,
+      interactionTypes
+    );
+
+    Object.keys(store.state.globalTools).forEach(key => {
+      const tool = store.state.globalTools[key];
+
+      tool.activeBindings = tool.activeBindings.filter(
+        binding => !stringBindings.includes(binding)
+      );
+    });
+
+    globalTool.activeBindings = globalTool.activeBindings.concat(
+      stringBindings
+    );
+  } else {
+    globalTool.activeBindings = [];
+  }
+}
+
+function _determineStringBindings(toolName, options, interactionTypes) {
+  if (interactionTypes === undefined && Array.isArray(options)) {
+    interactionTypes = options;
+    options = null;
+  }
+
+  const stringBindings = [];
+  const globalTool = store.state.globalTools[toolName];
+
+  if (globalTool) {
+    const tool = new globalTool.tool(globalTool.configuration);
+
+    tool.supportedInteractionTypes.forEach(interactionType => {
+      if (
+        interactionTypes === undefined ||
+        interactionTypes.includes(interactionType)
+      ) {
+        if (interactionType === 'Mouse') {
+          stringBindings.push(
+            `${interactionType}-${options.mouseButtonMask ||
+              tool.options.mouseButtonMask}`
+          );
+        } else if (interactionType === 'MultiTouch') {
+          stringBindings.push(
+            `${interactionType}-${tool.configuration.touchPointers}`
+          );
+        } else {
+          stringBindings.push(interactionType);
+        }
+      }
+    });
+  }
+
+  return stringBindings;
 }
 
 const _inputResolvers = {
