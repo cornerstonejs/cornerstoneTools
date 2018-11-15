@@ -77,6 +77,7 @@ const _addToolGlobally = function(apiTool, configuration) {
   store.state.globalTools[tool.name] = {
     tool: apiTool,
     configuration,
+    activeBindings: [],
   };
 };
 
