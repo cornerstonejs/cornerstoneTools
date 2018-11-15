@@ -512,7 +512,9 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
       );
     });
 
-    globalTool.activeBindings.concat(stringBindings);
+    globalTool.activeBindings = globalTool.activeBindings.concat(
+      stringBindings
+    );
   } else {
     globalTool.activeBindings = [];
   }
