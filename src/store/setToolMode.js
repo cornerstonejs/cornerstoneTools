@@ -515,7 +515,7 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
 
     // Remove all mouse bindings from our current tool, if we have an incoming mouse binding
     // Because a tool can only be bound to one mouse option
-    if (interactionTypes && interactionTypes.includes('Mouse')) {
+    if (stringBindings.some(binding => binding.includes('Mouse'))) {
       globalTool.activeBindings = globalTool.activeBindings.filter(
         binding => !binding.includes('Mouse')
       );
