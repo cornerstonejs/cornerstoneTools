@@ -18,7 +18,7 @@ const setters = {
   /**
    * Sets the brush radius, account for global min/max radius
    *
-   * @param {*} radius
+   * @param {number} radius
    */
   radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
@@ -99,12 +99,27 @@ const getters = {
 
     return state.visibleSegmentations[enabledElementUID];
   },
+
+  /**
+   * Filters an array of tools, returning only tools which are active or passive.
+   * @public
+   * @function getInteractiveToolsForElement
+   * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
+   * @param {number} [segIndex] - The segmentation index.
+   *
+   * @returns {object[]|object} An array of segmentation metadata, or specifc
+   *                            segmentation data if segIndex is defined.
+   */
   metadata: (seriesInstanceUid, segIndex) => {
     if (!state.segmentationMetadata[seriesInstanceUid]) {
       return;
     }
 
-    return state.segmentationMetadata[seriesInstanceUid][segIndex];
+    if (segIndex !== undefined) {
+      return state.segmentationMetadata[seriesInstanceUid][segIndex];
+    }
+
+    return state.segmentationMetadata[seriesInstanceUid];
   },
 };
 
