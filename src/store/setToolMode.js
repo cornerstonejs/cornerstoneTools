@@ -504,6 +504,7 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
       interactionTypes
     );
 
+    // Remove the incoming bindings from all global tools
     Object.keys(store.state.globalTools).forEach(key => {
       const tool = store.state.globalTools[key];
 
@@ -511,6 +512,14 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
         binding => !stringBindings.includes(binding)
       );
     });
+
+    // Remove all mouse bindings from our current tool, if we have an incoming mouse binding
+    // Because a tool can only be bound to one mouse option
+    if (interactionTypes.includes('Mouse')) {
+      globalTool.activeBindings = globalTool.activeBindings.filter(
+        binding => !binding.includes('Mouse')
+      );
+    }
 
     globalTool.activeBindings = globalTool.activeBindings.concat(
       stringBindings

@@ -49,20 +49,22 @@ export default class LengthTool extends BaseAnnotationTool {
       return;
     }
 
+    const { x, y } = eventData.currentPoints.image;
+
     return {
       visible: true,
       active: true,
       color: undefined,
       handles: {
         start: {
-          x: eventData.currentPoints.image.x,
-          y: eventData.currentPoints.image.y,
+          x,
+          y,
           highlight: true,
           active: false,
         },
         end: {
-          x: eventData.currentPoints.image.x,
-          y: eventData.currentPoints.image.y,
+          x,
+          y,
           highlight: true,
           active: true,
         },
@@ -107,11 +109,6 @@ export default class LengthTool extends BaseAnnotationTool {
     );
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
