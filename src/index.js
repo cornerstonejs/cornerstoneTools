@@ -66,7 +66,7 @@
  */
 
 /**
- * Brush tools
+ * Tools that extend the {@link #Tools.Base.BaseBrushTool|`BaseBrushTool`}
  * @namespace Tools.Brush
  */
 
