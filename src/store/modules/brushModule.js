@@ -101,9 +101,9 @@ const getters = {
   },
 
   /**
-   * Filters an array of tools, returning only tools which are active or passive.
+   * Retrieves series-specific brush segmentation metadata.
    * @public
-   * @function getInteractiveToolsForElement
+   * @function metadata
    * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
    * @param {number} [segIndex] - The segmentation index.
    *
