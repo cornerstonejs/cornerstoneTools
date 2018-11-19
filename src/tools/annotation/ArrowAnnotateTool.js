@@ -266,7 +266,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   }
 
   doubleClickCallback(evt) {
-    if (evt.detail.buttons !== this.options.mouseButtonMask) {
+    if (
+      !Array.isArray(this.options.mouseButtonMask) ||
+      !this.options.mouseButtonMask.includes(evt.detail.buttons)
+    ) {
       return;
     }
 

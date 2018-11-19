@@ -19,7 +19,8 @@ export default function(evt) {
   // Filter out tools that do not match mouseButtonMask
   tools = tools.filter(
     tool =>
-      eventData.buttons === tool.options.mouseButtonMask &&
+      Array.isArray(tool.options.mouseButtonMask) &&
+      tool.options.mouseButtonMask.includes(eventData.buttons) &&
       tool.options.isMouseActive
   );
 

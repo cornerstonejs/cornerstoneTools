@@ -188,7 +188,7 @@ const setToolPassive = setToolMode.bind(
  * @param {string} changeEvent
  * @param {HTMLElement} element
  * @param {string} toolName
- * @param {(Object|number)} options
+ * @param {(Object|number[]|number)} options
  * @returns {undefined}
  */
 function setToolModeForElement(mode, changeEvent, element, toolName, options) {
@@ -200,13 +200,19 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
     return;
   }
 
-  // MouseButtonMask
-  if (typeof options === 'number') {
-    options = {
-      mouseButtonMask: options,
-    };
-  } else {
-    options = options || {};
+  options = _getNormalizedOptions(options);
+
+  // Keep the same if not an array (undefined)
+  // Reset if empty array
+  // Merge if array contains any bindings
+  if (
+    Array.isArray(options.mouseButtonMask) &&
+    options.mouseButtonMask.length !== 0 &&
+    Array.isArray(tool.options.mouseButtonMask)
+  ) {
+    options.mouseButtonMask = options.mouseButtonMask.concat(
+      tool.options.mouseButtonMask
+    );
   }
 
   // Set mode & options
@@ -321,26 +327,35 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
  * @returns {undefined}
  */
 function _resolveMouseInputConflicts(tool, element, options) {
-  const mouseButtonMask =
-    typeof options === 'number' ? options : options.mouseButtonMask;
+  const mouseButtonMask = _getNormalizedOptions(options).mouseButtonMask;
   const hasMouseButtonMask =
-    mouseButtonMask !== undefined && mouseButtonMask > 0;
+    Array.isArray(mouseButtonMask) && mouseButtonMask.length > 0;
+
+  if (!hasMouseButtonMask) {
+    return;
+  }
 
   const activeToolWithMatchingMouseButtonMask = store.state.tools.find(
     t =>
       t.element === element &&
       t.mode === 'active' &&
       t.options.isMouseActive === true &&
-      t.options.mouseButtonMask === mouseButtonMask
+      Array.isArray(t.options.mouseButtonMask) &&
+      t.options.mouseButtonMask.some(v => mouseButtonMask.includes(v))
   );
 
-  if (hasMouseButtonMask && activeToolWithMatchingMouseButtonMask) {
-    console.info(
-      `Setting tool ${
-        activeToolWithMatchingMouseButtonMask.name
-      }'s isMouseActive to false`
+  if (activeToolWithMatchingMouseButtonMask) {
+    // Remove collissions
+    activeToolWithMatchingMouseButtonMask.options.mouseButtonMask = activeToolWithMatchingMouseButtonMask.options.mouseButtonMask.filter(
+      mask => !mouseButtonMask.includes(mask)
     );
-    activeToolWithMatchingMouseButtonMask.options.isMouseActive = false;
+
+    // If no remaining bindings, set inactive
+    if (
+      activeToolWithMatchingMouseButtonMask.options.mouseButtonMask.length === 0
+    ) {
+      activeToolWithMatchingMouseButtonMask.options.isMouseActive = false;
+    }
   }
 }
 
@@ -498,7 +513,7 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
   const globalTool = store.state.globalTools[toolName];
 
   if (mode === 'active') {
-    const stringBindings = _determineStringBindings(
+    let stringBindings = _determineStringBindings(
       toolName,
       options,
       interactionTypes
@@ -513,10 +528,12 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
       );
     });
 
-    // Remove all mouse bindings from our current tool, if we have an incoming mouse binding
-    // Because a tool can only be bound to one mouse option
-    if (stringBindings.some(binding => binding.includes('Mouse'))) {
+    // @HACK: Clear mouse bindings
+    if (stringBindings.some(binding => binding.includes('Mouse-DELETE'))) {
       globalTool.activeBindings = globalTool.activeBindings.filter(
+        binding => !binding.includes('Mouse')
+      );
+      stringBindings = stringBindings.filter(
         binding => !binding.includes('Mouse')
       );
     }
@@ -547,10 +564,20 @@ function _determineStringBindings(toolName, options, interactionTypes) {
         interactionTypes.includes(interactionType)
       ) {
         if (interactionType === 'Mouse') {
-          stringBindings.push(
-            `${interactionType}-${options.mouseButtonMask ||
-              tool.options.mouseButtonMask}`
-          );
+          const mouseButtonMasks = _getNormalizedOptions(options)
+            .mouseButtonMask;
+
+          // Add or delete
+          if (Array.isArray(mouseButtonMasks) && mouseButtonMasks.length > 0) {
+            mouseButtonMasks.forEach(mask =>
+              stringBindings.push(`${interactionType}-${mask}`)
+            );
+          } else if (
+            Array.isArray(mouseButtonMasks) &&
+            mouseButtonMasks.length === 0
+          ) {
+            stringBindings.push(`${interactionType}-DELETE`);
+          }
         } else if (interactionType === 'MultiTouch') {
           stringBindings.push(
             `${interactionType}-${tool.configuration.touchPointers}`
@@ -585,3 +612,33 @@ export {
   setToolPassive,
   setToolPassiveForElement,
 };
+
+function _getNormalizedOptions(options) {
+  // Is an object, but not an Array
+  if (options === Object(options) && !Array.isArray(options)) {
+    if (options.mouseButtonMask === 0 || options.mouseButtonMask === null) {
+      options.mouseButtonMask = [];
+    } else if (typeof options.mouseButtonMask === 'number') {
+      const tempArray = [];
+
+      tempArray.push(options.mouseButtonMask);
+      options.mouseButtonMask = tempArray;
+    }
+  } else if (typeof options === 'number') {
+    const tempArray = [];
+
+    tempArray.push(options);
+    options = {
+      mouseButtonMask: options === 0 ? [] : tempArray,
+    };
+  } else if (options === null) {
+    options = {
+      mouseButtonMask: [],
+    };
+  } else {
+    console.info(`No options provided when changing tool mode`);
+    options = {};
+  }
+
+  return options;
+}
