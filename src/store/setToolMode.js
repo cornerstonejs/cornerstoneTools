@@ -207,11 +207,10 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   // Merge if array contains any bindings
   if (
     Array.isArray(options.mouseButtonMask) &&
-    options.mouseButtonMask.length !== 0
+    options.mouseButtonMask.length !== 0 &&
+    Array.isArray(tool.mouseButtonMask)
   ) {
-    options.mouseButtonMask = Array.isArray(tool.mouseButtonMask)
-      ? tool.mouseButtonMask.concat(options.mouseButtonMask)
-      : options.mouseButtonMask;
+    options.mouseButtonMask.concat(tool.mouseButtonMask);
   }
 
   // Set mode & options
