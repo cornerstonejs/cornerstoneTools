@@ -618,11 +618,17 @@ function _getNormalizedOptions(options) {
     if (options.mouseButtonMask === 0 || options.mouseButtonMask === null) {
       options.mouseButtonMask = [];
     } else if (typeof options.mouseButtonMask === 'number') {
-      options.mouseButtonMask = [].push(options.mouseButtonMask);
+      const tempArray = [];
+
+      tempArray.push(options.mouseButtonMask);
+      options.mouseButtonMask = tempArray;
     }
   } else if (typeof options === 'number') {
+    const tempArray = [];
+
+    tempArray.push(options);
     options = {
-      mouseButtonMask: options === 0 ? [] : [].push(options),
+      mouseButtonMask: options === 0 ? [] : tempArray,
     };
   } else if (options === null) {
     options = {
