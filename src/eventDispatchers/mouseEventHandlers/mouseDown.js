@@ -39,7 +39,8 @@ export default function(evt) {
   const activeTools = activeAndPassiveTools.filter(
     tool =>
       tool.mode === 'active' &&
-      tool.options.mouseButtonMask === eventData.buttons &&
+      Array.isArray(tool.options.mouseButtonMask) &&
+      tool.options.mouseButtonMask.includes(eventData.buttons) &&
       tool.options.isMouseActive
   );
 
