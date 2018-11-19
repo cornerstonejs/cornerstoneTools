@@ -208,9 +208,9 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   if (
     Array.isArray(options.mouseButtonMask) &&
     options.mouseButtonMask.length !== 0 &&
-    Array.isArray(tool.mouseButtonMask)
+    Array.isArray(tool.options.mouseButtonMask)
   ) {
-    options.mouseButtonMask.concat(tool.mouseButtonMask);
+    options.mouseButtonMask.concat(tool.options.mouseButtonMask);
   }
 
   // Set mode & options
