@@ -27,8 +27,9 @@ const _moveEndEvents = {
  * @param {*} toolData
  * @param {*} handle
  * @param {*} [options={}]
- * @param {*} [options.doneMovingCallback]
- * @param {*} [options.preventHandleOutsideImage]
+ * @param {Boolean}  [options.deleteIfHandleOutsideImage]
+ * @param {function} [options.doneMovingCallback]
+ * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
  * @returns {undefined}
  */
