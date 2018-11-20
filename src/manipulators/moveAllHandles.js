@@ -97,7 +97,13 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
     const key = handleKeys[i];
     const handle = annotation.handles[key];
 
-    if (handle.movesIndependently === true) {
+    if (
+      // Don't move this part of the annotation
+      handle.movesIndependently === true ||
+      // Not a true handle
+      !handle.hasOwnProperty('x') ||
+      !handle.hasOwnProperty('y')
+    ) {
       return;
     }
 
