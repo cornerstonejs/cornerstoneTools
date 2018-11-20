@@ -32,9 +32,7 @@ const moveHandleNearImagePoint = function(
     toolName,
     toolData,
     handle,
-    // TODO: Options that aren't static / can't be overridden
     {
-      preventHandleOutsideImage: true,
       doneMovingCallback: () => {
         toolData.active = false;
         state.isToolLocked = false;
@@ -115,8 +113,6 @@ const moveAnnotation = function(
   const options = Object.assign(
     {},
     {
-      deleteIfHandleOutsideImage: true,
-      preventHandleOutsideImage: false,
       doneMovingCallback: () => {
         annotation.active = false;
         state.isToolLocked = false;

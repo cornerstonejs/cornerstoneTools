@@ -41,6 +41,15 @@ export default function(
   options,
   interactionType = 'mouse'
 ) {
+  // Use global defaults, unless overidden by provided options
+  options = Object.assign(
+    {
+      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
+      preventHandleOutsideImage: state.preventHandleOutsideImage,
+    },
+    options
+  );
+
   const element = evtDetail.element;
 
   state.isToolLocked = true;

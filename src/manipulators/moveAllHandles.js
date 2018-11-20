@@ -48,6 +48,15 @@ export default function(
   options = {},
   interactionType = 'mouse'
 ) {
+  // Use global defaults, unless overidden by provided options
+  options = Object.assign(
+    {
+      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
+      preventHandleOutsideImage: state.preventHandleOutsideImage,
+    },
+    options
+  );
+
   const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
