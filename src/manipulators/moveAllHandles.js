@@ -91,8 +91,11 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
 
   annotation.active = true;
 
-  Object.keys(annotation.handles).forEach(function(name) {
-    const handle = annotation.handles[name];
+  const handleKeys = Object.keys(annotation.handles);
+
+  for (let i = 0; i < handleKeys.length; i++) {
+    const key = handleKeys[i];
+    const handle = annotation.handles[key];
 
     if (handle.movesIndependently === true) {
       return;
@@ -104,7 +107,7 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
     if (options.preventHandleOutsideImage) {
       clipToBox(handle, image);
     }
-  });
+  }
 
   external.cornerstone.updateImage(element);
 
