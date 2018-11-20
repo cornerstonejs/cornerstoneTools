@@ -104,7 +104,7 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
       !handle.hasOwnProperty('x') ||
       !handle.hasOwnProperty('y')
     ) {
-      return;
+      continue;
     }
 
     handle.x += x;
