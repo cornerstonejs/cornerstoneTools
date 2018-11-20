@@ -24,22 +24,12 @@ export default function(evt, tool) {
       ? moveHandle
       : moveNewHandle;
 
-  let preventHandleOutsideImage;
-
-  if (tool.options && tool.options.preventHandleOutsideImage !== undefined) {
-    preventHandleOutsideImage = tool.options.preventHandleOutsideImage;
-  } else {
-    preventHandleOutsideImage = false;
-  }
-
   handleMover(
     eventData,
     tool.name,
     measurementData,
     measurementData.handles.end,
-    {
-      preventHandleOutsideImage,
-    },
+    tool.options,
     'mouse'
   );
 }

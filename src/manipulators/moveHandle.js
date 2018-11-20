@@ -1,5 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
+import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
+import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
@@ -35,8 +37,9 @@ const _upOrEndEvents = {
  * @param {*} toolData
  * @param {*} handle
  * @param {*} [options={}]
- * @param {*} [options.preventHandleOutsideImage]
- * @param {*} [options.doneMovingCallback]
+ * @param {Boolean}  [options.deleteIfHandleOutsideImage]
+ * @param {function} [options.doneMovingCallback]
+ * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
  * @returns {undefined}
  */
@@ -48,6 +51,15 @@ export default function(
   options = {},
   interactionType = 'mouse'
 ) {
+  // Use global defaults, unless overidden by provided options
+  options = Object.assign(
+    {
+      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
+      preventHandleOutsideImage: state.preventHandleOutsideImage,
+    },
+    options
+  );
+
   const element = evtDetail.element;
   const dragHandler = _dragHandler.bind(
     this,
@@ -60,6 +72,7 @@ export default function(
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
     _upOrEndHandler(
+      toolName,
       evtDetail,
       toolData,
       handle,
@@ -154,18 +167,21 @@ function _dragHandler(
 }
 
 function _upOrEndHandler(
-  originalEventDetail,
-  toolData,
+  toolName,
+  evtDetail,
+  annotation,
   handle,
-  options,
+  options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
   evt
 ) {
+  const image = evtDetail.currentPoints.image;
   const element = evt.detail.element;
 
   handle.active = false;
-  toolData.active = false;
+  annotation.active = false;
+  annotation.invalidated = true;
   state.isToolLocked = false;
   runAnimation.value = false;
 
@@ -177,22 +193,26 @@ function _upOrEndHandler(
     element.removeEventListener(eventType, upOrEndHandler);
   });
 
-  if (toolData.invalidated !== undefined) {
-    toolData.invalidated = true;
+  // If any handle is outside the image, delete the tool data
+  if (
+    options.deleteIfHandleOutsideImage &&
+    anyHandlesOutsideImage(evtDetail, annotation.handles)
+  ) {
+    removeToolState(element, toolName, annotation);
   }
-
-  external.cornerstone.updateImage(element);
 
   // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
   if (evt.type === EVENTS.TOUCH_PRESS) {
-    evt.detail.handlePressed = toolData;
-    handle.x = originalEventDetail.currentPoints.image.x; // Original Event
-    handle.y = originalEventDetail.currentPoints.image.y;
+    evt.detail.handlePressed = annotation;
+    handle.x = image.x; // Original Event
+    handle.y = image.y;
   }
 
   if (typeof options.doneMovingCallback === 'function') {
     options.doneMovingCallback();
   }
+
+  external.cornerstone.updateImage(element);
 }
 
 /**

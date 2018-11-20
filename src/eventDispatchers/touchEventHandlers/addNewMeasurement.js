@@ -1,8 +1,12 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
 import { state } from '../../store/index.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 import { moveNewHandle } from '../../manipulators/index.js';
-import { addToolState } from '../../stateManagement/toolState.js';
+import {
+  addToolState,
+  removeToolState,
+} from '../../stateManagement/toolState.js';
 
 export default function(evt, tool) {
   console.log('touch: addNewMeasurement');
@@ -31,11 +35,17 @@ export default function(evt, tool) {
     measurementData.handles.end.highlight = false;
     measurementData.invalidated = true;
 
-    // TODO: IFF the tool supports this feature
-    // If (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
-    //   // Delete the measurement
-    //   RemoveToolState(element, tool.name, measurementData);
-    // }
+    const deleteIfHandleOutsideImage =
+      state.deleteIfHandleOutsideImage ||
+      tool.options.deleteIfHandleOutsideImage;
+
+    if (
+      deleteIfHandleOutsideImage &&
+      anyHandlesOutsideImage(touchEventData, measurementData.handles)
+    ) {
+      // Delete the measurement
+      removeToolState(element, tool.name, measurementData);
+    }
 
     external.cornerstone.updateImage(element);
 
@@ -49,7 +59,7 @@ export default function(evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    {},
+    tool.options,
     'touch'
   );
 }

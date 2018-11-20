@@ -6,7 +6,6 @@ import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import {
@@ -14,7 +13,6 @@ import {
   removeToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
-import { state } from './../../store/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
@@ -238,11 +236,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    moveNewHandle(
-      evt.detail,
-      this.name,
-      measurementData,
-      measurementData.handles.end,
+    const toolOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           if (measurementData.text === undefined) {
@@ -261,6 +256,15 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           external.cornerstone.updateImage(element);
         },
       },
+      this.options
+    );
+
+    moveNewHandle(
+      evt.detail,
+      this.name,
+      measurementData,
+      measurementData.handles.end,
+      toolOptions,
       interactionType
     );
   }

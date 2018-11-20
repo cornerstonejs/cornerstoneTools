@@ -68,16 +68,22 @@ export default function(evt) {
     moveableHandle.active = true; // Why here, but not touchStart?
     external.cornerstone.updateImage(element);
 
-    moveHandle(
-      evt.detail,
-      firstToolWithMoveableHandles.name,
-      toolState.data,
-      moveableHandle,
+    const toolOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           deactivateAllToolInstances(toolState);
         },
       },
+      firstToolWithMoveableHandles.options
+    );
+
+    moveHandle(
+      evt.detail,
+      firstToolWithMoveableHandles.name,
+      toolState.data,
+      moveableHandle,
+      toolOptions,
       'touch'
     );
     evt.stopImmediatePropagation();
@@ -113,16 +119,22 @@ export default function(evt) {
     firstAnnotationNearPoint.active = true;
     external.cornerstone.updateImage(element);
 
-    moveAllHandles(
-      evt.detail,
-      firstToolNearPoint.name,
-      firstAnnotationNearPoint,
-      null,
+    const toolOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           deactivateAllToolInstances(toolState);
         },
       },
+      firstToolNearPoint.options
+    );
+
+    moveAllHandles(
+      evt.detail,
+      firstToolNearPoint.name,
+      firstAnnotationNearPoint,
+      null,
+      toolOptions,
       'touch'
     );
 

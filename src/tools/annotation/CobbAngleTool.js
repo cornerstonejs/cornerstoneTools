@@ -5,13 +5,11 @@ import textStyle from './../../stateManagement/textStyle.js';
 import {
   addToolState,
   getToolState,
-  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
 import { moveNewHandle } from './../../manipulators/index.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
@@ -274,7 +272,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.name,
       measurementData,
       toMoveHandle,
-      {},
+      this.options,
       interactionType
     );
   }
