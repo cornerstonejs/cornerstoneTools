@@ -59,7 +59,7 @@ export default function(evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    {},
+    tool.options,
     'touch'
   );
 }

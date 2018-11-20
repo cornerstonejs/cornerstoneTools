@@ -534,13 +534,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
-      moveHandleNearImagePoint(
-        evt,
-        this.name,
-        toolData,
-        handle,
-        interactionType
-      );
+      moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
 
       return;
     }

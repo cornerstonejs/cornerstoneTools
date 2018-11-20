@@ -275,12 +275,20 @@ class AngleTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    // Step 1, create start and second middle
-    moveNewHandle(
-      eventData,
-      this.name,
-      measurementData,
-      measurementData.handles.middle,
+    const doneMovingEndHandleOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          measurementData.active = false;
+          this.preventNewMeasurement = false;
+          external.cornerstone.updateImage(element);
+        },
+      },
+      this.options
+    );
+
+    const doneMovingMiddleHandleOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           measurementData.active = false;
@@ -288,23 +296,26 @@ class AngleTool extends BaseAnnotationTool {
 
           external.cornerstone.updateImage(element);
 
-          // Step 2, place middle handle and drag end handle
           moveNewHandle(
             eventData,
             this.name,
             measurementData,
             measurementData.handles.end,
-            {
-              doneMovingCallback: () => {
-                measurementData.active = false;
-                this.preventNewMeasurement = false;
-                external.cornerstone.updateImage(element);
-              },
-            },
+            doneMovingEndHandleOptions,
             interactionType
           );
         },
       },
+      this.options
+    );
+
+    // Step 1, create start and second middle
+    moveNewHandle(
+      eventData,
+      this.name,
+      measurementData,
+      measurementData.handles.middle,
+      doneMovingMiddleHandleOptions,
       interactionType
     );
   }

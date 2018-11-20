@@ -236,11 +236,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    moveNewHandle(
-      evt.detail,
-      this.name,
-      measurementData,
-      measurementData.handles.end,
+    const toolOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           if (measurementData.text === undefined) {
@@ -259,6 +256,15 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           external.cornerstone.updateImage(element);
         },
       },
+      this.options
+    );
+
+    moveNewHandle(
+      evt.detail,
+      this.name,
+      measurementData,
+      measurementData.handles.end,
+      toolOptions,
       interactionType
     );
   }

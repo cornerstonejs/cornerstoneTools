@@ -11,7 +11,7 @@ import { moveHandle, moveAllHandles } from './../manipulators/index.js';
  * @memberof Util
  *
  * @param  {Event} evt      The event.
- * @param  {string} toolName The name of the tool the handle corrosponds to.
+ * @param  {*} tool The tool
  * @param  {Object} toolData     The toolData that corresponds to the handle.
  * @param  {Object} handle  The handle to be moved.
  * @param  {string} interactionType
@@ -19,7 +19,7 @@ import { moveHandle, moveAllHandles } from './../manipulators/index.js';
  */
 const moveHandleNearImagePoint = function(
   evt,
-  toolName,
+  tool,
   toolData,
   handle,
   interactionType
@@ -29,15 +29,10 @@ const moveHandleNearImagePoint = function(
 
   moveHandle(
     evt.detail,
-    toolName,
+    tool.name,
     toolData,
     handle,
-    {
-      doneMovingCallback: () => {
-        toolData.active = false;
-        state.isToolLocked = false;
-      },
-    },
+    tool.options,
     interactionType
   );
 
@@ -110,7 +105,7 @@ const moveAnnotation = function(
   annotation,
   interactionType = 'mouse'
 ) {
-  const options = Object.assign(
+  const toolOptions = Object.assign(
     {},
     {
       doneMovingCallback: () => {
@@ -129,7 +124,7 @@ const moveAnnotation = function(
     tool.name,
     annotation,
     null,
-    options,
+    toolOptions,
     interactionType
   );
 

@@ -272,7 +272,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.name,
       measurementData,
       toMoveHandle,
-      {},
+      this.options,
       interactionType
     );
   }
