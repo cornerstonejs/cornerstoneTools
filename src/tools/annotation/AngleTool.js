@@ -4,13 +4,11 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
-  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
 import { moveNewHandle } from './../../manipulators/index.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,

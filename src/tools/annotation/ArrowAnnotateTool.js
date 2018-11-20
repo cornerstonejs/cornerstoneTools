@@ -6,7 +6,6 @@ import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import {
@@ -14,7 +13,6 @@ import {
   removeToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
-import { state } from './../../store/index.js';
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
