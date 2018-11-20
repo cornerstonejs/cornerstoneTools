@@ -28,8 +28,19 @@ const getHandleNearImagePoint = function(
   }
 
   if (Array.isArray(handles)) {
-    for (let i = 0; i < handles.length; i++) {
-      const handle = handles[i];
+    const handleKeys = Object.keys(handles);
+
+    for (let i = 0; i < handleKeys.length; i++) {
+      const key = handleKeys[i];
+      const handle = handles[key];
+
+      if (
+        // Not a true handle
+        !handle.hasOwnProperty('x') ||
+        !handle.hasOwnProperty('y')
+      ) {
+        continue;
+      }
 
       if (_isHandleNearImagePoint(handle, element, coords, distanceThreshold)) {
         nearbyHandle = handle;
