@@ -34,9 +34,9 @@ const _upOrEndEvents = {
  * @param {*}        annotation
  * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
  * @param {Object}   [options={}]
- * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
  * @param {function} [options.doneMovingCallback]
+ * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {string}   [interactionType=mouse]
  * @returns {undefined}
  */
@@ -137,15 +137,15 @@ function _upOrEndHandler(
 
   // If any handle is outside the image, delete the tool data
   if (
-    options.deleteIfHandleOutsideImage === true &&
+    options.deleteIfHandleOutsideImage &&
     anyHandlesOutsideImage(eventData, annotation.handles)
   ) {
     removeToolState(element, toolName, annotation);
   }
 
-  external.cornerstone.updateImage(element);
-
   if (typeof options.doneMovingCallback === 'function') {
     options.doneMovingCallback();
   }
+
+  external.cornerstone.updateImage(element);
 }
