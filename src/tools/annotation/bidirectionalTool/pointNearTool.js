@@ -1,3 +1,4 @@
+import { state } from '../../../store/index.js';
 import external from './../../../externalModules.js';
 import pointInsideBoundingBox from './../../../util/pointInsideBoundingBox.js';
 
@@ -22,7 +23,7 @@ const pointNearPerpendicular = (
   return distanceToPoint < distanceThreshold;
 };
 
-export default function(element, data, coords) {
+export default function(element, data, coords, interactionType = 'mouse') {
   const cornerstone = external.cornerstone;
   const cornerstoneMath = external.cornerstoneMath;
   const { handles } = data;
@@ -40,16 +41,12 @@ export default function(element, data, coords) {
     return true;
   }
 
-  if (
-    pointNearPerpendicular(
-      element,
-      handles,
-      coords,
-      this.configuration.distanceThreshold
-    )
-  ) {
+  const distanceThreshold =
+    interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
+
+  if (pointNearPerpendicular(element, handles, coords, distanceThreshold)) {
     return true;
   }
 
-  return distanceToPoint < this.configuration.distanceThreshold;
+  return distanceToPoint < distanceThreshold;
 }
