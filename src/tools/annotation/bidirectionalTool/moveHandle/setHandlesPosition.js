@@ -5,7 +5,7 @@ import perpendicularLeftFixedPoint from './perpendicularLeftFixedPoint.js';
 import perpendicularRightFixedPoint from './perpendicularRightFixedPoint.js';
 
 // Sets position of handles(start, end, perpendicularStart, perpendicularEnd)
-export default function(handle, eventData, data) {
+export default function(handle, eventData, data, distanceFromTool) {
   let movedPoint;
   let outOfBounds;
   let result;
@@ -15,23 +15,27 @@ export default function(handle, eventData, data) {
 
   const longLine = {};
   const perpendicularLine = {};
+  const proposedPoint = {
+    x: eventData.currentPoints.image.x + distanceFromTool.x,
+    y: eventData.currentPoints.image.y + distanceFromTool.y,
+  };
 
   if (handle.index === 0) {
     // If long-axis start point is moved
-    result = perpendicularBothFixedLeft(eventData, data);
+    result = perpendicularBothFixedLeft(proposedPoint, data);
     if (result) {
-      handle.x = eventData.currentPoints.image.x;
-      handle.y = eventData.currentPoints.image.y;
+      handle.x = proposedPoint.x;
+      handle.y = proposedPoint.y;
     } else {
       eventData.currentPoints.image.x = handle.x;
       eventData.currentPoints.image.y = handle.y;
     }
   } else if (handle.index === 1) {
     // If long-axis end point is moved
-    result = perpendicularBothFixedRight(eventData, data);
+    result = perpendicularBothFixedRight(proposedPoint, data);
     if (result) {
-      handle.x = eventData.currentPoints.image.x;
-      handle.y = eventData.currentPoints.image.y;
+      handle.x = proposedPoint.x;
+      handle.y = proposedPoint.y;
     } else {
       eventData.currentPoints.image.x = handle.x;
       eventData.currentPoints.image.y = handle.y;
@@ -53,8 +57,8 @@ export default function(handle, eventData, data) {
       y: data.handles.perpendicularEnd.y,
     };
     perpendicularLine.end = {
-      x: eventData.currentPoints.image.x,
-      y: eventData.currentPoints.image.y,
+      x: proposedPoint.x,
+      y: proposedPoint.y,
     };
 
     intersection = external.cornerstoneMath.lineSegment.intersectLine(
@@ -89,7 +93,7 @@ export default function(handle, eventData, data) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularLeftFixedPoint(eventData, data);
+      movedPoint = perpendicularLeftFixedPoint(proposedPoint, data);
 
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularStart.x;
@@ -114,8 +118,8 @@ export default function(handle, eventData, data) {
       y: data.handles.perpendicularStart.y,
     };
     perpendicularLine.end = {
-      x: eventData.currentPoints.image.x,
-      y: eventData.currentPoints.image.y,
+      x: proposedPoint.x,
+      y: proposedPoint.y,
     };
 
     intersection = external.cornerstoneMath.lineSegment.intersectLine(
@@ -150,7 +154,7 @@ export default function(handle, eventData, data) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularRightFixedPoint(eventData, data);
+      movedPoint = perpendicularRightFixedPoint(proposedPoint, data);
 
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;
