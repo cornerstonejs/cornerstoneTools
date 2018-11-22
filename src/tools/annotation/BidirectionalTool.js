@@ -35,7 +35,6 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         shadow: shadowConfig,
         drawHandlesOnHover: true,
         additionalData: [],
-        distanceThreshold: 6,
       },
     };
 
