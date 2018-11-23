@@ -10,6 +10,7 @@ import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideIma
 import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
 import { moveAllHandles } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
+import invertHandles from './invertHandles.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -32,6 +33,8 @@ export default function(evt) {
       handle.selected = true;
     }
 
+    element.style.cursor = '';
+
     external.cornerstone.updateImage(element);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
     element.addEventListener(EVENTS.TOUCH_START, this._moveCallback);
@@ -48,7 +51,7 @@ export default function(evt) {
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
     const handleParams = [element, data.handles, coords, distanceThreshold];
-    const handle = getHandleNearImagePoint(...handleParams);
+    let handle = getHandleNearImagePoint(...handleParams);
 
     if (handle) {
       element.removeEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
@@ -58,9 +61,19 @@ export default function(evt) {
 
       unselectAllHandles(data.handles);
       handle.moving = true;
+
+      // Invert handles if needed
+      handle = invertHandles(eventData, data, handle);
+
+      /* Hide the cursor to improve precision while resizing the line or set to move
+         if dragging text box
+      */
+      element.style.cursor = handle.hasBoundingBox ? 'move' : 'none';
+
       moveHandle(eventData, this.name, data, handle, () =>
         handleDoneMove(handle)
       );
+
       preventPropagation(evt);
 
       return true;
