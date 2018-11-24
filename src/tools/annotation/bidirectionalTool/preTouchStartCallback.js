@@ -1,5 +1,6 @@
 /* jshint -W083 */
 import external from './../../../externalModules.js';
+import { state } from '../../../store/index.js';
 import EVENTS from './../../../events.js';
 import {
   removeToolState,
@@ -14,6 +15,8 @@ export default function(evt) {
   const eventData = evt.detail;
   const { element } = eventData;
   let data;
+
+  const distanceThreshold = state.touchProximity;
 
   const handleDoneMove = handle => {
     data.invalidated = true;
@@ -42,12 +45,7 @@ export default function(evt) {
   // Now check to see if there is a handle we can move
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    const handleParams = [
-      element,
-      data.handles,
-      coords,
-      this.configuration.distanceThreshold,
-    ];
+    const handleParams = [element, data.handles, coords, distanceThreshold];
     const handle = getHandleNearImagePoint(...handleParams);
 
     if (handle) {
@@ -73,7 +71,7 @@ export default function(evt) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (this.pointNearTool(element, data, coords)) {
+    if (this.pointNearTool(element, data, coords, 'touch')) {
       element.removeEventListener(EVENTS.TOUCH_DRAG, this._moveCallback);
       data.active = true;
 
