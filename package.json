@@ -46,7 +46,7 @@
     "cornerstone-core": "^2.2.4",
     "coveralls": "^3.0.2",
     "docdash": "^0.4.0",
-    "docma": "^2.1.0",
+    "docma": "^3.0.0",
     "eslint": "^4.19.1",
     "eslint-config-prettier": "^3.3.0",
     "eslint-loader": "^2.0.0",
