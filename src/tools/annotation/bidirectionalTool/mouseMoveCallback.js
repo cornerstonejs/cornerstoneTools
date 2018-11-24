@@ -77,10 +77,9 @@ export default function(event) {
       imageNeedsUpdate = true;
     }
 
-    const nearToolAndInactive =
-      this.pointNearTool(element, data, coords) && !data.active;
-    const notNearToolAndActive =
-      !this.pointNearTool(element, data, coords) && data.active;
+    const nearTool = this.pointNearTool(element, data, coords, 'mouse');
+    const nearToolAndInactive = nearTool && !data.active;
+    const notNearToolAndActive = !nearTool && data.active;
 
     if (nearToolAndInactive || notNearToolAndActive) {
       data.active = !data.active;

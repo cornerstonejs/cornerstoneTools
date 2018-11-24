@@ -1,10 +1,9 @@
 import external from './../../../../externalModules.js';
 
 // Move long-axis start point
-export default function(eventData, data) {
+export default function(proposedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
-  const { image } = eventData.currentPoints;
 
   const longLine = {
     start: {
@@ -40,20 +39,20 @@ export default function(eventData, data) {
   const distanceFromPerpendicularP2 = distance(perpendicularEnd, intersection);
 
   const distanceToLineP2 = distance(end, intersection);
-  const newLineLength = distance(end, image);
+  const newLineLength = distance(end, proposedPoint);
 
   if (newLineLength <= distanceToLineP2) {
     return false;
   }
 
-  const dx = (end.x - image.x) / newLineLength;
-  const dy = (end.y - image.y) / newLineLength;
+  const dx = (end.x - proposedPoint.x) / newLineLength;
+  const dy = (end.y - proposedPoint.y) / newLineLength;
 
   const k = distanceToLineP2 / newLineLength;
 
   const newIntersection = {
-    x: end.x + (image.x - end.x) * k,
-    y: end.y + (image.y - end.y) * k,
+    x: end.x + (proposedPoint.x - end.x) * k,
+    y: end.y + (proposedPoint.y - end.y) * k,
   };
 
   perpendicularStart.x = newIntersection.x - distanceFromPerpendicularP1 * dy;
