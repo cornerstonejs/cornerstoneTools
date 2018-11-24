@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
-import { toolStyle, textStyle } from '../index.js';
 import { getDefault } from './getDefault.js'
+import { default as toolStyle } from '../stateManagement/toolStyle.js';
+import { default as textStyle } from '../stateManagement/textStyle.js';
 
 /**
  * A {@link https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/fillStyle|color, gradient or pattern} to use inside shapes.
