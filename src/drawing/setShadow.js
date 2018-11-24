@@ -3,6 +3,7 @@ import getDefault from './../util/getDefault.js';
 /**
  * Set the {@link https://www.w3.org/TR/2dcontext/#shadows|shadow} properties of the context.
  * Each property is set on the context object if defined, otherwise a default value is set.
+ *
  * @public
  * @method setShadow
  * @memberof Drawing
@@ -16,7 +17,7 @@ import getDefault from './../util/getDefault.js';
  * @param {Number} [options.shadowOffsetY=1] - Default value: 1
  * @returns {undefined}
  */
-export default function(context, options) {
+export default function(context, options = {}) {
   if (options.shadow) {
     context.shadowColor = getDefault(options.shadowColor, '#000000');
     context.shadowBlur = getDefault(options.shadowBlur, 0);
