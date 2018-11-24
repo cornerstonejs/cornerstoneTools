@@ -1,4 +1,5 @@
 import external from '../externalModules.js';
+import { getDefault } from './getDefault.js'
 import { default as toolStyle } from '../stateManagement/toolStyle.js';
 import { default as textStyle } from '../stateManagement/textStyle.js';
 
@@ -91,14 +92,16 @@ export function path (context, options, fn) {
  * @param {Object} options
  * @param {Boolean} options.shadow - Whether to set any shadow options
  * @param {String} options.shadowColor - Default value: #000000
+ * @param {Number} options.shadowBlur - Default Value: 0
  * @param {Number} options.shadowOffsetX - Default value: 1
  * @param {Number} options.shadowOffsetY - Default value: 1
  */
 export function setShadow (context, options) {
   if (options.shadow) {
-    context.shadowColor = options.shadowColor || '#000000';
-    context.shadowOffsetX = options.shadowOffsetX || 1;
-    context.shadowOffsetY = options.shadowOffsetY || 1;
+    context.shadowColor = getDefault(options.shadowColor, '#000000');
+    context.shadowBlur = getDefault(options.shadowBlur, 0);
+    context.shadowOffsetX = getDefault(options.shadowOffsetX, 1);
+    context.shadowOffsetY = getDefault(options.shadowOffsetY, 1);
   }
 }
 
