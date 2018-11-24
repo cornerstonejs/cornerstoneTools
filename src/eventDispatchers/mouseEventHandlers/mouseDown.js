@@ -12,8 +12,6 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * finds an existing tool to interact with, it can prevent the
  * event from bubbling to MouseDownActivate.
  *
- * TODO: Handles should handle deleting out of bound data by setting
- *
  * @private
  * @param {mousedown} evt
  * @listens {CornerstoneTools.event:cornerstonetoolsmousedown}

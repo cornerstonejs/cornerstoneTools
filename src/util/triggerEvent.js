@@ -1,7 +1,7 @@
 /**
  * Triggers a CustomEvent.
- * @export @public @method
- * @name triggerEvent
+ * @public
+ * @method triggerEvent
  *
  * @param {EventTarget} el The element or EventTarget to trigger the event upon.
  * @param {String} type    The event type name.
