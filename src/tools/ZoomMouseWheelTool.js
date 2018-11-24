@@ -20,6 +20,7 @@ export default class ZoomMouseWheelTool extends BaseTool {
       configuration: {
         minScale: 0.25,
         maxScale: 20.0,
+        invert: false,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -29,11 +30,6 @@ export default class ZoomMouseWheelTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   mouseWheelCallback(evt) {
     const { element, viewport, direction } = evt.detail;
     const { invert, maxScale, minScale } = this.configuration;

@@ -31,11 +31,6 @@ export default class ZoomTouchPinchTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   touchPinchCallback(evt) {
     const { element, viewport, scaleChange } = evt.detail;
     const [pageStartX, pageStartY, imageStartX, imageStartY] = [
