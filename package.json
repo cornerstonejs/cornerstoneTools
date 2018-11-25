@@ -42,6 +42,7 @@
     "babel-core": "^7.0.0-bridge.0",
     "babel-jest": "23.6.0",
     "babel-loader": "8.0.4",
+    "canvas": "^2.1.0",
     "chai": "^4.1.2",
     "cornerstone-core": "^2.2.4",
     "coveralls": "^3.0.2",
