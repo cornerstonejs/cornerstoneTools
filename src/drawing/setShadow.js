@@ -9,12 +9,12 @@ import getDefault from './../util/getDefault.js';
  * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Context to apply shadow options on
- * @param {Object} options - Options object
- * @param {Boolean} options.shadow - Whether to set any shadow options
- * @param {String} [options.shadowColor=#000000] - Default value: #000000
- * @param {Number} [options.shadowBlur=0] - Default Value: 0
- * @param {Number} [options.shadowOffsetX=1] - Default value: 1
- * @param {Number} [options.shadowOffsetY=1] - Default value: 1
+ * @param {Object}  [options={}] - Options object
+ * @param {Boolean} [options.shadow=undefined] - Whether to set any shadow options
+ * @param {String}  [options.shadowColor=#000000] - Default value: #000000
+ * @param {Number}  [options.shadowBlur=0] - Default Value: 0
+ * @param {Number}  [options.shadowOffsetX=1] - Default value: 1
+ * @param {Number}  [options.shadowOffsetY=1] - Default value: 1
  * @returns {undefined}
  */
 export default function(context, options = {}) {
