@@ -3,14 +3,18 @@ import brush from './modules/brushModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 
 export const state = {
+  // Global
   globalTools: {},
   globalToolChangeHistory: [],
+  // Tracking
+  enabledElements: [],
   tools: [],
   isToolLocked: false,
+  mousePositionImage: {},
+  // Settings
   clickProximity: 6,
   touchProximity: 10,
-  mousePositionImage: {},
-  enabledElements: [],
+  handleRadius: 6,
   deleteIfHandleOutsideImage: true,
   preventHandleOutsideImage: false,
 };

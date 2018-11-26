@@ -2,6 +2,7 @@ import external from './../externalModules.js';
 import toolStyle from './../stateManagement/toolStyle.js';
 import toolColors from './../stateManagement/toolColors.js';
 import path from './path.js';
+import { state } from './../store/index.js';
 
 /**
  * Draws proivded handles to the provided context
@@ -54,8 +55,7 @@ export default function(context, evtDetail, annotation, handles, options = {}) {
           handle
         );
 
-        const defaultHandleRadius = 6;
-        const handleRadius = options.handleRadius || defaultHandleRadius;
+        const handleRadius = options.handleRadius || state.handleRadius;
 
         context.arc(
           handleCanvasCoords.x,
