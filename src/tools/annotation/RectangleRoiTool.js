@@ -136,6 +136,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
    */
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -147,7 +148,6 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = this.configuration;
     const seriesModule = external.cornerstone.metaData.get(
       'generalSeriesModule',
       image.imageId
@@ -182,7 +182,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
       draw(context, context => {
         // Apply any shadow settings defined in the tool configuration
-        setShadow(context, config);
+        setShadow(context, this.configuration);
 
         // Check which color the rendered tool should be
         const color = toolColors.getColorIfActive(data);
@@ -194,10 +194,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover,
+          color,
+          handleRadius,
+          drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Define variables for the area and mean/standard deviation
         let area, meanStdDev, meanStdDevSUV;

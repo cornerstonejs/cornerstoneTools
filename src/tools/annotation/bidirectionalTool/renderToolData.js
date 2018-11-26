@@ -17,6 +17,7 @@ import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
+  const { handleRadius, drawHandlesOnHover } = this.configuration;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -51,7 +52,6 @@ export default function(evt) {
   let color;
   const activeColor = toolColors.getActiveColor();
   const lineWidth = toolStyle.getToolWidth();
-  const config = this.configuration;
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -67,7 +67,7 @@ export default function(evt) {
 
     draw(context, context => {
       // Configurable shadow
-      setShadow(context, config);
+      setShadow(context, this.configuration);
 
       const {
         start,
@@ -91,11 +91,13 @@ export default function(evt) {
 
       // Draw the handles
       const handleOptions = {
-        drawHandlesIfActive: config && config.drawHandlesOnHover,
+        color,
+        handleRadius,
+        drawHandlesIfActive: drawHandlesOnHover,
       };
 
       // Draw the handles
-      drawHandles(context, eventData, data.handles, color, handleOptions);
+      drawHandles(context, eventData, data.handles, handleOptions);
 
       // Draw the textbox
       // Move the textbox slightly to the right and upwards

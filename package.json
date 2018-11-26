@@ -31,7 +31,7 @@
     "lint": "eslint -c .eslintrc.js --fix src",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
-    "test:unit": "jest \\.test\\.js$",
+    "test:unit": "jest --clearCache && jest \\.test\\.js$",
     "test:ci": "npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },

@@ -111,6 +111,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -122,7 +123,6 @@ export default class LengthTool extends BaseAnnotationTool {
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = this.configuration;
     const imagePlane = external.cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
@@ -149,7 +149,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
       draw(context, context => {
         // Configurable shadow
-        setShadow(context, config);
+        setShadow(context, this.configuration);
 
         const color = toolColors.getColorIfActive(data);
 
@@ -160,10 +160,12 @@ export default class LengthTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
-          drawHandlesIfActive: config && config.drawHandlesOnHover,
+          color,
+          handleRadius,
+          drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
         const dx =

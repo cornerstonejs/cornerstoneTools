@@ -270,19 +270,20 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         // Draw handles
 
         const options = {
+          color,
           fill: fillColor,
         };
 
         if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
           // Render all handles
           options.handleRadius = config.activeHandleRadius;
-          drawHandles(context, eventData, data.handles, color, options);
+          drawHandles(context, eventData, data.handles, options);
         }
 
         if (data.canComplete) {
           // Draw large handle at the origin if can complete drawing
           options.handleRadius = config.completeHandleRadius;
-          drawHandles(context, eventData, [data.handles[0]], color, options);
+          drawHandles(context, eventData, [data.handles[0]], options);
         }
 
         if (data.active && !data.polyBoundingBox) {
@@ -292,10 +293,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
             context,
             eventData,
             config.mouseLocation.handles,
-            color,
             options
           );
-          drawHandles(context, eventData, [data.handles[0]], color, options);
+          drawHandles(context, eventData, [data.handles[0]], options);
         }
 
         // Define variables for the area and mean/standard deviation

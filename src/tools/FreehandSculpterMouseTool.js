@@ -45,23 +45,17 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     this.activeMouseDragCallback = this.activeMouseDragCallback.bind(this);
   }
 
-  /**
-   * Event handler for IMAGE_RENDERED event.
-   *
-   * @event
-   * @param {Object} evt - The event.
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
-    const config = this.configuration;
 
-    if (config.currentTool === null) {
+    if (this.configuration.currentTool === null) {
       return false;
     }
 
     if (this._active) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
+        color: this.configuration.dragColor,
         fill: null,
         handleRadius: this._toolSizeCanvas,
       };
@@ -69,11 +63,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       drawHandles(
         context,
         eventData,
-        config.mouseLocation.handles,
-        config.dragColor,
+        this.configuration.mouseLocation.handles,
         options
       );
-    } else if (config.showCursorOnHover) {
+    } else if (this.configuration.showCursorOnHover) {
       this._renderHoverCursor(evt);
     }
   }
@@ -174,17 +167,16 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   _renderHoverCursor(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
-    const config = this.configuration;
     const context = eventData.canvasContext.canvas.getContext('2d');
 
     const toolState = getToolState(element, this.referencedToolName);
-    const data = toolState.data[config.currentTool];
+    const data = toolState.data[this.configuration.currentTool];
 
     let coords;
 
-    if (config.mouseUpRender) {
-      coords = config.mouseLocation.handles.start;
-      config.mouseUpRender = false;
+    if (this.configuration.mouseUpRender) {
+      coords = this.configuration.mouseLocation.handles.start;
+      this.configuration.mouseUpRender = false;
     } else {
       coords = state.mousePositionImage;
     }
@@ -199,34 +191,37 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       coords
     );
 
-    config.mouseLocation.handles.start.x = coords.x;
-    config.mouseLocation.handles.start.y = coords.y;
+    this.configuration.mouseLocation.handles.start.x = coords.x;
+    this.configuration.mouseLocation.handles.start.y = coords.y;
 
-    if (config.limitRadiusOutsideRegion) {
+    if (this.configuration.limitRadiusOutsideRegion) {
       const unlimitedRadius = radiusCanvas;
 
       radiusCanvas = this._limitCursorRadiusCanvas(eventData, radiusCanvas);
 
       // Fade if distant
-      if (unlimitedRadius > config.hoverCursorFadeDistance * radiusCanvas) {
-        context.globalAlpha = config.hoverCursorFadeAlpha;
+      if (
+        unlimitedRadius >
+        this.configuration.hoverCursorFadeDistance * radiusCanvas
+      ) {
+        context.globalAlpha = this.configuration.hoverCursorFadeAlpha;
       }
     }
 
     const options = {
       fill: null,
+      color: this.configuration.hoverColor,
       handleRadius: radiusCanvas,
     };
 
     drawHandles(
       context,
       eventData,
-      config.mouseLocation.handles,
-      config.hoverColor,
+      this.configuration.mouseLocation.handles,
       options
     );
 
-    if (config.limitRadiusOutsideRegion) {
+    if (this.configuration.limitRadiusOutsideRegion) {
       context.globalAlpha = 1.0; // Reset drawing alpha for other draw calls.
     }
   }

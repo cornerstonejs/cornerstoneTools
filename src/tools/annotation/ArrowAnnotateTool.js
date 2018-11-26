@@ -91,6 +91,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(element, this.name);
@@ -147,11 +148,13 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         const handleOptions = {
-          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
+          color,
+          handleRadius,
+          drawHandlesIfActive: drawHandlesOnHover,
         };
 
         if (this.configuration.drawHandles) {
-          drawHandles(context, evt.detail, data.handles, color, handleOptions);
+          drawHandles(context, evt.detail, data.handles, handleOptions);
         }
 
         const text = textBoxText(data);
