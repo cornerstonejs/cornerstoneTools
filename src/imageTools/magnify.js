@@ -218,7 +218,7 @@ function drawZoomedElement (eventData) {
 
   zoomElement.width = origCanvas.width * magnificationLevel;
   zoomElement.height = origCanvas.height * magnificationLevel;
-  external.cornerstone.enable(zoomElement);
+  external.cornerstone.enable(zoomElement, enabledElement.options);
 
   const zoomEnabledElement = external.cornerstone.getEnabledElement(zoomElement);
   const viewport = external.cornerstone.getViewport(enabledElement.element);
