@@ -54,7 +54,9 @@ export default function(context, evtDetail, handles, options = {}) {
           handle
         );
 
-        const handleRadius = options.handleRadius || state.handleRadius;
+        // Handle's radisu, then tool's radius, then default radius
+        const handleRadius =
+          handle.radius || options.handleRadius || state.handleRadius;
 
         context.arc(
           handleCanvasCoords.x,
