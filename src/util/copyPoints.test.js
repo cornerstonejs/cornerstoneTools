@@ -27,42 +27,38 @@ describe('#copyPoints', function() {
   it('should not return the same object as a copy', function() {
     const pointsCopy = copyPoints(points);
 
-    expect(pointsCopy).to.not.be.equal(points);
+    expect(pointsCopy).not.toBe(points);
   });
 
   it('should return an object containing a copy of `page` point', function() {
     const pointsCopy = copyPoints(points);
 
-    expect(pointsCopy.page).to.not.be.undefined;
-    expect(pointsCopy.page).to.not.be.equal(points.page);
-    expect(pointsCopy.page.x).to.be.equal(points.page.x);
-    expect(pointsCopy.page.y).to.be.equal(points.page.y);
+    expect(pointsCopy.page).not.toBe(points.page);
+    expect(pointsCopy.page.x).toEqual(points.page.x);
+    expect(pointsCopy.page.y).toEqual(points.page.y);
   });
 
   it('should return an object containing a copy of `image` point', function() {
     const pointsCopy = copyPoints(points);
 
-    expect(pointsCopy.image).to.not.be.undefined;
-    expect(pointsCopy.image).to.not.be.equal(points.image);
-    expect(pointsCopy.image.x).to.be.equal(points.image.x);
-    expect(pointsCopy.image.y).to.be.equal(points.image.y);
+    expect(pointsCopy.image).not.toBe(points.image);
+    expect(pointsCopy.image.x).toEqual(points.image.x);
+    expect(pointsCopy.image.y).toEqual(points.image.y);
   });
 
   it('should return an object containing a copy of `client` point', function() {
     const pointsCopy = copyPoints(points);
 
-    expect(pointsCopy.client).to.not.be.undefined;
-    expect(pointsCopy.client).to.not.be.equal(points.client);
-    expect(pointsCopy.client.x).to.be.equal(points.client.x);
-    expect(pointsCopy.client.y).to.be.equal(points.client.y);
+    expect(pointsCopy.client).not.toBe(points.client);
+    expect(pointsCopy.client.x).toEqual(points.client.x);
+    expect(pointsCopy.client.y).toEqual(points.client.y);
   });
 
   it('should return an object containing a copy of `canvas` point', function() {
     const pointsCopy = copyPoints(points);
 
-    expect(pointsCopy.canvas).to.not.be.undefined;
-    expect(pointsCopy.canvas).to.not.be.equal(points.canvas);
-    expect(pointsCopy.canvas.x).to.be.equal(points.canvas.x);
-    expect(pointsCopy.canvas.y).to.be.equal(points.canvas.y);
+    expect(pointsCopy.canvas).not.toBe(points.canvas);
+    expect(pointsCopy.canvas.x).toEqual(points.canvas.x);
+    expect(pointsCopy.canvas.y).toEqual(points.canvas.y);
   });
 });
