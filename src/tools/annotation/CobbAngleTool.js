@@ -120,6 +120,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -171,8 +172,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           color,
-          handleRadius: this.configuration.handleRadius,
-          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
+          handleRadius,
+          drawHandlesIfActive: drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);

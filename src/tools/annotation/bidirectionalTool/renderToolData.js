@@ -17,6 +17,7 @@ import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
+  const { handleRadius, drawHandlesOnHover } = this.configuration;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -91,8 +92,8 @@ export default function(evt) {
       // Draw the handles
       const handleOptions = {
         color,
-        handleRadius: this.configuration.handleRadius,
-        drawHandlesIfActive: this.configuration.drawHandlesOnHover,
+        handleRadius,
+        drawHandlesIfActive: drawHandlesOnHover,
       };
 
       // Draw the handles

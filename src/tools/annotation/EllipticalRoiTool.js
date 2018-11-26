@@ -145,13 +145,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     return false;
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -210,8 +206,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           color,
-          handleRadius: this.configuration.handleRadius,
-          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
+          handleRadius,
+          drawHandlesIfActive: drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);

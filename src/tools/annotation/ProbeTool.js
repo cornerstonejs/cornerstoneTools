@@ -94,6 +94,7 @@ export default class ProbeTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { handleRadius } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -117,7 +118,7 @@ export default class ProbeTool extends BaseAnnotationTool {
 
         // Draw the handles
         drawHandles(context, eventData, data.handles, {
-          handleRadius: this.configuration.handleRadius,
+          handleRadius,
           color,
         });
 
