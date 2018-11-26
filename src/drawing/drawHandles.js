@@ -26,15 +26,18 @@ export default function(context, evtDetail, handles, options = {}) {
 
   context.strokeStyle = options.color || defaultColor;
 
-  Object.keys(handles).forEach(function(name) {
-    const handle = handles[name];
+  const handleKeys = Object.keys(handles);
+
+  for (let i = 0; i < handleKeys.length; i++) {
+    const handleKey = handleKeys[i];
+    const handle = handles[handleKey];
 
     if (handle.drawnIndependently === true) {
-      return;
+      continue;
     }
 
     if (options.drawHandlesIfActive === true && !handle.active) {
-      return;
+      continue;
     }
 
     const lineWidth = handle.active
@@ -67,5 +70,5 @@ export default function(context, evtDetail, handles, options = {}) {
         );
       }
     );
-  });
+  }
 }
