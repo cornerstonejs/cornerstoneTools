@@ -1,4 +1,5 @@
 import customCallbackHandler from './../shared/customCallbackHandler.js';
+import multiTouchDrag from './multiTouchDrag.js';
 import tap from './tap.js';
 import touchStart from './touchStart.js';
 import touchStartActive from './touchStartActive.js';
@@ -26,11 +27,6 @@ const touchPress = customCallbackHandler.bind(
   null,
   'Touch',
   'touchPressCallback'
-);
-const multiTouchDrag = customCallbackHandler.bind(
-  null,
-  'MultiTouch',
-  'multiTouchDragCallback'
 );
 const touchRotate = customCallbackHandler.bind(
   null,

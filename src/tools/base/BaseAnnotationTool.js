@@ -150,7 +150,7 @@ class BaseAnnotationTool extends BaseTool {
    * @returns {undefined}
    */
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-    moveHandleNearImagePoint(evt, this.name, toolData, handle, interactionType);
+    moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
   }
 
   /**

@@ -34,9 +34,9 @@ const _upOrEndEvents = {
  * @param {*}        annotation
  * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
  * @param {Object}   [options={}]
- * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
  * @param {function} [options.doneMovingCallback]
+ * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {string}   [interactionType=mouse]
  * @returns {undefined}
  */
@@ -48,6 +48,15 @@ export default function(
   options = {},
   interactionType = 'mouse'
 ) {
+  // Use global defaults, unless overidden by provided options
+  options = Object.assign(
+    {
+      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
+      preventHandleOutsideImage: state.preventHandleOutsideImage,
+    },
+    options
+  );
+
   const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
@@ -82,11 +91,20 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
 
   annotation.active = true;
 
-  Object.keys(annotation.handles).forEach(function(name) {
-    const handle = annotation.handles[name];
+  const handleKeys = Object.keys(annotation.handles);
 
-    if (handle.movesIndependently === true) {
-      return;
+  for (let i = 0; i < handleKeys.length; i++) {
+    const key = handleKeys[i];
+    const handle = annotation.handles[key];
+
+    if (
+      // Don't move this part of the annotation
+      handle.movesIndependently === true ||
+      // Not a true handle
+      !handle.hasOwnProperty('x') ||
+      !handle.hasOwnProperty('y')
+    ) {
+      continue;
     }
 
     handle.x += x;
@@ -95,7 +113,7 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
     if (options.preventHandleOutsideImage) {
       clipToBox(handle, image);
     }
-  });
+  }
 
   external.cornerstone.updateImage(element);
 
@@ -137,15 +155,15 @@ function _upOrEndHandler(
 
   // If any handle is outside the image, delete the tool data
   if (
-    options.deleteIfHandleOutsideImage === true &&
+    options.deleteIfHandleOutsideImage &&
     anyHandlesOutsideImage(eventData, annotation.handles)
   ) {
     removeToolState(element, toolName, annotation);
   }
 
-  external.cornerstone.updateImage(element);
-
   if (typeof options.doneMovingCallback === 'function') {
     options.doneMovingCallback();
   }
+
+  external.cornerstone.updateImage(element);
 }

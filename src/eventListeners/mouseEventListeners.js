@@ -90,8 +90,6 @@ function mouseDown(e) {
 
   preventClickTimeout = setTimeout(preventClickHandler, clickDelay);
 
-  const eventType = EVENTS.MOUSE_DOWN;
-
   // Prevent CornerstoneToolsMouseMove while mouse is down
   element.removeEventListener('mousemove', mouseMove);
 
@@ -111,7 +109,6 @@ function mouseDown(e) {
 
   let lastPoints = copyPoints(startPoints);
 
-  console.log(`mousedown: ${getEventButtons(e)}`);
   const eventData = {
     event: e,
     buttons: getEventButtons(e),
@@ -125,10 +122,14 @@ function mouseDown(e) {
       x: 0,
       y: 0,
     },
-    type: eventType,
+    type: EVENTS.MOUSE_DOWN,
   };
 
-  const eventPropagated = triggerEvent(eventData.element, eventType, eventData);
+  const eventPropagated = triggerEvent(
+    eventData.element,
+    EVENTS.MOUSE_DOWN,
+    eventData
+  );
 
   if (eventPropagated) {
     // No tools responded to this event, create a new tool

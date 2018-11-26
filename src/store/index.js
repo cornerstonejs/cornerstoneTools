@@ -11,6 +11,8 @@ export const state = {
   touchProximity: 10,
   mousePositionImage: {},
   enabledElements: [],
+  deleteIfHandleOutsideImage: true,
+  preventHandleOutsideImage: false,
 };
 
 export const getters = {

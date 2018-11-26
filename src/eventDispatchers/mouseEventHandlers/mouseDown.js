@@ -12,8 +12,6 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * finds an existing tool to interact with, it can prevent the
  * event from bubbling to MouseDownActivate.
  *
- * TODO: Handles should handle deleting out of bound data by setting
- *
  * @private
  * @param {mousedown} evt
  * @listens {CornerstoneTools.event:cornerstonetoolsmousedown}
@@ -39,7 +37,8 @@ export default function(evt) {
   const activeTools = activeAndPassiveTools.filter(
     tool =>
       tool.mode === 'active' &&
-      tool.options.mouseButtonMask === eventData.buttons &&
+      Array.isArray(tool.options.mouseButtonMask) &&
+      tool.options.mouseButtonMask.includes(eventData.buttons) &&
       tool.options.isMouseActive
   );
 

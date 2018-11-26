@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from './../externalModules.js';
 import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -352,7 +351,7 @@ function disable(element) {
   const promiseRemovedHandler = getPromiseRemovedHandler(element);
 
   external.cornerstone.events.removeEventListener(
-    EVENTS.IMAGE_CACHE_PROMISE_REMOVED,
+    external.cornerstone.EVENTS.IMAGE_CACHE_PROMISE_REMOVED,
     promiseRemovedHandler
   );
 

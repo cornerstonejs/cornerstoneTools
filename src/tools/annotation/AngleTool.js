@@ -4,13 +4,11 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
-  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 // Manipulators
 import { moveNewHandle } from './../../manipulators/index.js';
-import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
 // Drawing
 import {
   getNewContext,
@@ -277,12 +275,20 @@ class AngleTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    // Step 1, create start and second middle
-    moveNewHandle(
-      eventData,
-      this.name,
-      measurementData,
-      measurementData.handles.middle,
+    const doneMovingEndHandleOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          measurementData.active = false;
+          this.preventNewMeasurement = false;
+          external.cornerstone.updateImage(element);
+        },
+      },
+      this.options
+    );
+
+    const doneMovingMiddleHandleOptions = Object.assign(
+      {},
       {
         doneMovingCallback: () => {
           measurementData.active = false;
@@ -290,23 +296,26 @@ class AngleTool extends BaseAnnotationTool {
 
           external.cornerstone.updateImage(element);
 
-          // Step 2, place middle handle and drag end handle
           moveNewHandle(
             eventData,
             this.name,
             measurementData,
             measurementData.handles.end,
-            {
-              doneMovingCallback: () => {
-                measurementData.active = false;
-                this.preventNewMeasurement = false;
-                external.cornerstone.updateImage(element);
-              },
-            },
+            doneMovingEndHandleOptions,
             interactionType
           );
         },
       },
+      this.options
+    );
+
+    // Step 1, create start and second middle
+    moveNewHandle(
+      eventData,
+      this.name,
+      measurementData,
+      measurementData.handles.middle,
+      doneMovingMiddleHandleOptions,
       interactionType
     );
   }

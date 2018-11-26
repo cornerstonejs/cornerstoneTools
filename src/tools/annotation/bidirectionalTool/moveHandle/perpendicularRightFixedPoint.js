@@ -1,14 +1,13 @@
 import external from './../../../../externalModules.js';
 
 // Move perpendicular line end point
-export default function(eventData, data) {
+export default function(movedPoint, data) {
   const { distance } = external.cornerstoneMath.point;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
 
   const fudgeFactor = 1;
 
   const fixedPoint = perpendicularStart;
-  const movedPoint = eventData.currentPoints.image;
 
   const distanceFromFixed = external.cornerstoneMath.lineSegment.distanceToPoint(
     data.handles,

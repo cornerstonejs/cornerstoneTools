@@ -16,6 +16,7 @@ import path from './path.js';
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @returns {undefined}
  */
 export default function drawLine(
   context,
@@ -27,10 +28,8 @@ export default function drawLine(
 ) {
   path(context, options, context => {
     if (coordSystem === 'pixel') {
-      const cornerstone = external.cornerstone;
-
-      start = cornerstone.pixelToCanvas(element, start);
-      end = cornerstone.pixelToCanvas(element, end);
+      start = external.cornerstone.pixelToCanvas(element, start);
+      end = external.cornerstone.pixelToCanvas(element, end);
     }
 
     context.moveTo(start.x, start.y);

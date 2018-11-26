@@ -1,5 +1,6 @@
 /* jshint -W083 */
 import external from './../../../externalModules.js';
+import { state } from '../../../store/index.js';
 import EVENTS from './../../../events.js';
 import {
   removeToolState,
@@ -9,12 +10,15 @@ import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideIma
 import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
 import { moveAllHandles } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
+import invertHandles from './invertHandles.js';
 
 export default function(evt) {
   const eventData = evt.detail;
 
   const { element } = eventData;
   let data;
+
+  const distanceThreshold = state.clickProximity;
 
   const handleDoneMove = handle => {
     data.invalidated = true;
@@ -28,6 +32,8 @@ export default function(evt) {
       handle.moving = false;
       handle.selected = true;
     }
+
+    element.style.cursor = '';
 
     external.cornerstone.updateImage(element);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
@@ -44,13 +50,8 @@ export default function(evt) {
   // Now check to see if there is a handle we can move
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    const handleParams = [
-      element,
-      data.handles,
-      coords,
-      this.configuration.distanceThreshold,
-    ];
-    const handle = getHandleNearImagePoint(...handleParams);
+    const handleParams = [element, data.handles, coords, distanceThreshold];
+    let handle = getHandleNearImagePoint(...handleParams);
 
     if (handle) {
       element.removeEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
@@ -60,9 +61,19 @@ export default function(evt) {
 
       unselectAllHandles(data.handles);
       handle.moving = true;
+
+      // Invert handles if needed
+      handle = invertHandles(eventData, data, handle);
+
+      /* Hide the cursor to improve precision while resizing the line or set to move
+         if dragging text box
+      */
+      element.style.cursor = handle.hasBoundingBox ? 'move' : 'none';
+
       moveHandle(eventData, this.name, data, handle, () =>
         handleDoneMove(handle)
       );
+
       preventPropagation(evt);
 
       return true;
@@ -76,7 +87,7 @@ export default function(evt) {
 
   for (let i = 0; i < toolData.data.length; i++) {
     data = toolData.data[i];
-    if (this.pointNearTool(element, data, coords)) {
+    if (this.pointNearTool(element, data, coords, 'mouse')) {
       element.removeEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
       element.removeEventListener(EVENTS.TOUCH_START, this._moveCallback);
       data.active = true;

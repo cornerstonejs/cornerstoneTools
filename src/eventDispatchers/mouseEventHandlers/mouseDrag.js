@@ -19,7 +19,8 @@ export default function(evt) {
   tools = getActiveToolsForElement(element, getters.mouseTools());
   tools = tools.filter(
     tool =>
-      eventData.buttons === tool.options.mouseButtonMask &&
+      Array.isArray(tool.options.mouseButtonMask) &&
+      tool.options.mouseButtonMask.includes(eventData.buttons) &&
       tool.options.isMouseActive
   );
   tools = tools.filter(tool => typeof tool.mouseDragCallback === 'function');

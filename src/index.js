@@ -111,6 +111,7 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
+// Named Exports
 export {
   // ~~~ TOOLS
   // ~ Annotation Tools
