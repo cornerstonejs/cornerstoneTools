@@ -1,37 +1,36 @@
-import { expect } from 'chai';
-import copyPoints from '../../src/util/copyPoints.js';
+import copyPoints from './copyPoints.js';
 
-describe('#copyPoints', function () {
+describe('#copyPoints', function() {
   let points;
 
   beforeEach(() => {
     points = {
       page: {
         x: 1.2,
-        y: 2.3
+        y: 2.3,
       },
       image: {
         x: 3.4,
-        y: 4.5
+        y: 4.5,
       },
       client: {
         x: 5.6,
-        y: 6.7
+        y: 6.7,
       },
       canvas: {
         x: 7.8,
-        y: 8.9
-      }
-    }
+        y: 8.9,
+      },
+    };
   });
 
-  it('should not return the same object as a copy', function () {
+  it('should not return the same object as a copy', function() {
     const pointsCopy = copyPoints(points);
 
     expect(pointsCopy).to.not.be.equal(points);
   });
 
-  it('should return an object containing a copy of `page` point', function () {
+  it('should return an object containing a copy of `page` point', function() {
     const pointsCopy = copyPoints(points);
 
     expect(pointsCopy.page).to.not.be.undefined;
@@ -40,7 +39,7 @@ describe('#copyPoints', function () {
     expect(pointsCopy.page.y).to.be.equal(points.page.y);
   });
 
-  it('should return an object containing a copy of `image` point', function () {
+  it('should return an object containing a copy of `image` point', function() {
     const pointsCopy = copyPoints(points);
 
     expect(pointsCopy.image).to.not.be.undefined;
@@ -49,7 +48,7 @@ describe('#copyPoints', function () {
     expect(pointsCopy.image.y).to.be.equal(points.image.y);
   });
 
-  it('should return an object containing a copy of `client` point', function () {
+  it('should return an object containing a copy of `client` point', function() {
     const pointsCopy = copyPoints(points);
 
     expect(pointsCopy.client).to.not.be.undefined;
@@ -58,7 +57,7 @@ describe('#copyPoints', function () {
     expect(pointsCopy.client.y).to.be.equal(points.client.y);
   });
 
-  it('should return an object containing a copy of `canvas` point', function () {
+  it('should return an object containing a copy of `canvas` point', function() {
     const pointsCopy = copyPoints(points);
 
     expect(pointsCopy.canvas).to.not.be.undefined;
@@ -66,5 +65,4 @@ describe('#copyPoints', function () {
     expect(pointsCopy.canvas.x).to.be.equal(points.canvas.x);
     expect(pointsCopy.canvas.y).to.be.equal(points.canvas.y);
   });
-
 });
