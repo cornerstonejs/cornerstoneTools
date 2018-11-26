@@ -1,7 +1,7 @@
 // SUT
 import setShadow from './setShadow.js';
 
-describe('drawing: setShadow.js', () => {
+describe('drawing/setShadow.js', () => {
   beforeEach(() => {});
 
   it("does not set context's shadow options if options are undefined", () => {

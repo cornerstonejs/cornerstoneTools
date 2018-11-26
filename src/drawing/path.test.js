@@ -4,7 +4,7 @@ import getNewContext from './getNewContext.js';
 
 const { createCanvas } = require('canvas');
 
-describe('drawing: path.js', () => {
+describe('drawing/path.js', () => {
   let canvas, context;
 
   beforeEach(() => {
