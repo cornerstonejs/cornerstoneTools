@@ -30,7 +30,7 @@ class toolOptionsModel {
   check() {
     for (let toolType = 0; toolType < 10; toolType++) {
       for (let element = 0; element < 10; element++) {
-        expect(this.options[this.ixOf(toolType, element)]).to.deep.equal(
+        expect(this.options[this.ixOf(toolType, element)]).toEqual(
           toolOptions.getToolOptions(
             this.toolTypeName(toolType),
             this.elements[element]
@@ -43,7 +43,7 @@ class toolOptionsModel {
   getToolOptions(toolType, element) {
     const ret = this.options[this.ixOf(toolType, element)];
 
-    expect(ret).to.deep.equal(
+    expect(ret).toEqual(
       toolOptions.getToolOptions(
         this.toolTypeName(toolType),
         this.elements[element]
@@ -119,9 +119,9 @@ describe('toolOptions manipulation', function() {
 
     options.abc = 'xyz';
     model.setToolOptions(1, 2, options);
-    expect(model.getToolOptions(1, 2).abc).to.equal('xyz');
+    expect(model.getToolOptions(1, 2).abc).toEqual('xyz');
     model.clearToolOptions(1, 2);
-    expect(model.getToolOptions(1, 2)).to.deep.equal({});
+    expect(model.getToolOptions(1, 2)).toEqual({});
     model.clearToolOptionsByElement(2);
     model.clearToolOptionsByToolType(1);
     model.getToolOptions(1, 6);
