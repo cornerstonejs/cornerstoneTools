@@ -58,6 +58,7 @@
     "jest-junit": "5.1.0",
     "lodash": "4.17.10",
     "nodemon": "1.18.6",
+    "shx": "^0.3.2",
     "uglifyjs-webpack-plugin": "1.2.5",
     "webpack": "4.9.1",
     "webpack-cli": "2.1.4",
