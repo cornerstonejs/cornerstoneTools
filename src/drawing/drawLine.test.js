@@ -1,62 +1,82 @@
 // SUT
 import drawLine from './drawLine.js';
 
+/* ~ Setup
+ * In order to mock properly, Jest needs jest.mock('moduleName') to be in the
+ * same scope as the require/import statement.
+ */
+import getNewContext from './getNewContext.js';
+import external from './../externalModules.js';
+
+jest.mock('./../externalModules.js');
+
+const { createCanvas } = require('canvas');
+
 describe('drawing/drawLine.js', () => {
-  beforeEach(() => {});
+  let canvas, context;
 
-  it("does not set context's shadow options if options are undefined", () => {
-    const context = {};
+  beforeEach(() => {
+    jest.resetAllMocks();
+    canvas = createCanvas(200, 200);
+    context = getNewContext(canvas);
+
+    context.moveTo = jest.fn();
+    context.lineTo = jest.fn();
+  });
+
+  it('uses transformed start/end values when coordSystem is "pixel"', () => {
+    // Setup
     const options = undefined;
+    const start = {
+      x: 0,
+      y: 0,
+    };
+    const end = {
+      x: 5,
+      y: 5,
+    };
+    const transformedCoords = {
+      x: 10,
+      y: 10,
+    };
+    const coordSystem = 'pixel';
 
-    setShadow(context, options);
+    external.cornerstone.pixelToCanvas.mockReturnValue(transformedCoords);
 
-    expect(context.shadowColor).toEqual(undefined);
+    // Call
+    drawLine(context, undefined, start, end, options, coordSystem);
+
+    // Assert
+    expect(external.cornerstone.pixelToCanvas).toHaveBeenCalledTimes(2);
+    expect(context.moveTo).toHaveBeenCalledWith(
+      transformedCoords.x,
+      transformedCoords.y
+    );
+    expect(context.lineTo).toHaveBeenCalledWith(
+      transformedCoords.x,
+      transformedCoords.y
+    );
   });
 
-  it("does not set context's shadow options if options.shadow is false", () => {
-    const context = {};
-    const options = { shadow: false };
-
-    setShadow(context, options);
-
-    expect(context.shadowColor).toEqual(undefined);
-  });
-
-  it('sets default shadow values when options.shadow is true, but no other shadow options are provided', () => {
-    const context = {};
-    const options = { shadow: true };
-
-    setShadow(context, options);
-
-    const expectedContext = {
-      shadowColor: '#000000',
-      shadowBlur: 0,
-      shadowOffsetX: 1,
-      shadowOffsetY: 1,
+  it('uses provided start/end values when coordSystem is "canvas"', () => {
+    // Setup
+    const options = undefined;
+    const start = {
+      x: 0,
+      y: 0,
     };
-
-    expect(expectedContext).toEqual(context);
-  });
-
-  it('sets passed in shadow options for the provided context', () => {
-    const context = {};
-    const options = {
-      shadow: true,
-      shadowColor: 'red',
-      shadowBlur: 100,
-      shadowOffsetX: 0,
-      shadowOffsetY: 1000,
+    const end = {
+      x: 5,
+      y: 5,
     };
+    const coordSystem = 'canvas';
 
-    setShadow(context, options);
+    // Call
+    drawLine(context, undefined, start, end, options, coordSystem);
 
-    const expectedContext = {
-      shadowColor: 'red',
-      shadowBlur: 100,
-      shadowOffsetX: 0,
-      shadowOffsetY: 1000,
-    };
-
-    expect(expectedContext).toEqual(context);
+    // Assert
+    expect(external.cornerstone.pixelToCanvas).toHaveBeenCalledTimes(0);
+    expect(context.moveTo).toHaveBeenCalledWith(start.x, start.y);
+    expect(context.lineTo).toHaveBeenCalledWith(end.x, end.y);
   });
 });

@@ -28,10 +28,8 @@ export default function drawLine(
 ) {
   path(context, options, context => {
     if (coordSystem === 'pixel') {
-      const cornerstone = external.cornerstone;
-
-      start = cornerstone.pixelToCanvas(element, start);
-      end = cornerstone.pixelToCanvas(element, end);
+      start = external.cornerstone.pixelToCanvas(element, start);
+      end = external.cornerstone.pixelToCanvas(element, end);
     }
 
     context.moveTo(start.x, start.y);
