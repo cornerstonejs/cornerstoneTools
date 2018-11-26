@@ -147,11 +147,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         const handleOptions = {
+          color,
           drawHandlesIfActive: this.configuration.drawHandlesOnHover,
         };
 
         if (this.configuration.drawHandles) {
-          drawHandles(context, evt.detail, data.handles, color, handleOptions);
+          drawHandles(context, evt.detail, data.handles, handleOptions);
         }
 
         const text = textBoxText(data);

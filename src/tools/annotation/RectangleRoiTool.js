@@ -194,10 +194,11 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
+          color,
           drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Define variables for the area and mean/standard deviation
         let area, meanStdDev, meanStdDevSUV;

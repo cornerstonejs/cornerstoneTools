@@ -1,5 +1,6 @@
-import external from '../externalModules.js';
-import toolStyle from '../stateManagement/toolStyle.js';
+import external from './../externalModules.js';
+import toolStyle from './../stateManagement/toolStyle.js';
+import toolColors from './../stateManagement/toolColors.js';
 import path from './path.js';
 
 /**
@@ -9,16 +10,21 @@ import path from './path.js';
  * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - Target context
- * @param {*} renderData - Cornerstone Tool's event detail
- * @param {Object[]} handles - An array of handle objects
- * @param {string} color - Handle color
+ * @param {*} evtDetail - Cornerstone's 'cornerstoneimagerendered' event's `detail`
+ * @param {Object} annotation
+ * @param {Object[]|Object} handles - An array of handle objects, or an object w/ named handle objects
  * @param {Object} [options={}] - Options object
+ * @param {string} [options.color]
  * @param {Boolean} [options.drawHandlesIfActive=false] - Whether the handles should only be drawn if Active (hovered/selected)
+ * @param {string} [options.fill]
  * @param {Number} [options.handleRadius=6]
  * @returns {undefined}
  */
-export default function(context, renderData, handles, color, options = {}) {
-  context.strokeStyle = color;
+export default function(context, evtDetail, annotation, handles, options = {}) {
+  const element = evtDetail.element;
+  const defaultColor = toolColors.getToolColor();
+
+  context.strokeStyle = options.color || defaultColor;
 
   Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
@@ -44,7 +50,7 @@ export default function(context, renderData, handles, color, options = {}) {
       },
       context => {
         const handleCanvasCoords = external.cornerstone.pixelToCanvas(
-          renderData.element,
+          element,
           handle
         );
 

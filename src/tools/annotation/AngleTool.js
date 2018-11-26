@@ -148,10 +148,11 @@ class AngleTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
+          color,
           drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data, data.handles, handleOptions);
 
         // Default to isotropic pixel size, update suffix to reflect this
         const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;

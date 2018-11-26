@@ -121,7 +121,7 @@ export default class ProbeTool extends BaseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
 
         // Draw the handles
-        drawHandles(context, eventData, data.handles, color);
+        drawHandles(context, eventData, data.handles, { color });
 
         const x = Math.round(data.handles.end.x);
         const y = Math.round(data.handles.end.y);

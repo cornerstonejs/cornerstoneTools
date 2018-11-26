@@ -62,17 +62,12 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     if (this._active) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
+        color: config.dragColor,
         fill: null,
         handleRadius: this._toolSizeCanvas,
       };
 
-      drawHandles(
-        context,
-        eventData,
-        config.mouseLocation.handles,
-        config.dragColor,
-        options
-      );
+      drawHandles(context, eventData, config.mouseLocation.handles, options);
     } else if (config.showCursorOnHover) {
       this._renderHoverCursor(evt);
     }
@@ -215,16 +210,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     const options = {
       fill: null,
+      color: config.hoverColor,
       handleRadius: radiusCanvas,
     };
 
-    drawHandles(
-      context,
-      eventData,
-      config.mouseLocation.handles,
-      config.hoverColor,
-      options
-    );
+    drawHandles(context, eventData, config.mouseLocation.handles, options);
 
     if (config.limitRadiusOutsideRegion) {
       context.globalAlpha = 1.0; // Reset drawing alpha for other draw calls.

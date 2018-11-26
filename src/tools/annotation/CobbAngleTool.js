@@ -171,10 +171,11 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
         // Draw the handles
         const handleOptions = {
+          color,
           drawHandlesIfActive: config && config.drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, color, handleOptions);
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Draw the text
         context.fillStyle = color;
