@@ -26,7 +26,7 @@ jest.mock('./touchEventHandlers/index.js', () => ({
   touchRotate: jest.fn(),
 }));
 
-describe('touchToolEventDispatcher.js', () => {
+describe('eventDispatchers/touchToolEventDispatcher.js', () => {
   let element;
 
   beforeEach(() => {

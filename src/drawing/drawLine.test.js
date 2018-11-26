@@ -1,7 +1,7 @@
 // SUT
 import drawLine from './drawLine.js';
 
-describe('drawing: drawLine.js', () => {
+describe('drawing/drawLine.js', () => {
   beforeEach(() => {});
 
   it("does not set context's shadow options if options are undefined", () => {

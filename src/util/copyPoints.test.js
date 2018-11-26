@@ -1,6 +1,6 @@
 import copyPoints from './copyPoints.js';
 
-describe('#copyPoints', function() {
+describe('util/copyPoints.js', function() {
   let points;
 
   beforeEach(() => {

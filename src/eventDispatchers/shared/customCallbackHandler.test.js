@@ -28,7 +28,7 @@ jest.mock('./../../store/index.js', () => ({
 
 jest.mock('./../../store/getActiveToolsForElement.js', () => jest.fn());
 
-describe('customCallbackHandler.js', () => {
+describe('eventDispatchers/customCallbackHandler.js', () => {
   const firstToolWithCustomFunction = state.tools[1];
   const customFunction = 'customFunctionName';
   const fakeEvent = {

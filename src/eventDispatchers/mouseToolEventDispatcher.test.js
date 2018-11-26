@@ -22,7 +22,7 @@ jest.mock('./mouseEventHandlers/index.js', () => ({
   mouseWheel: jest.fn(),
 }));
 
-describe('mouseToolEventDispatcher.js', () => {
+describe('eventDispatchers/mouseToolEventDispatcher.js', () => {
   let element;
 
   beforeEach(() => {
