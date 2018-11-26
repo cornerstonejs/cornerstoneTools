@@ -55,102 +55,98 @@ describe('drawing/drawHandles.js', () => {
     expect(context.arc).toHaveBeenCalledTimes(numberOfHandles);
   });
 
-  it('uses the default handle radius if one is not specified by the handle or tool', () => {
-    // Setup
-    const expectedHandleRadius = 10;
-    const handles = [
-      {
+  describe('handleRadius priority', () => {
+    it('uses the default handle radius if one is not specified by the handle or tool', () => {
+      // Setup
+      const expectedHandleRadius = 10;
+      const handles = [
+        {
+          x: 0,
+          y: 0,
+        },
+      ];
+
+      state.handleRadius = expectedHandleRadius;
+      external.cornerstone.pixelToCanvas.mockReturnValue({
         x: 0,
         y: 0,
-      },
-    ];
+      });
 
-    state.handleRadius = expectedHandleRadius;
-    external.cornerstone.pixelToCanvas.mockReturnValue({
-      x: 0,
-      y: 0,
+      // Call
+      drawHandles(context, {}, handles);
+
+      // Assert
+      expect(context.arc).toBeCalledWith(
+        0,
+        0,
+        expectedHandleRadius,
+        0,
+        2 * Math.PI
+      );
     });
 
-    // Call
-    drawHandles(context, {}, handles);
+    it('uses options.handleRadius if one is not specified on the handle', () => {
+      // Setup
+      const expectedHandleRadius = 10;
+      const handles = [
+        {
+          x: 0,
+          y: 0,
+        },
+      ];
 
-    // Assert
-    expect(context.arc).toBeCalledWith(
-      0,
-      0,
-      expectedHandleRadius,
-      0,
-      2 * Math.PI
-    );
-  });
-
-  it('uses options.handleRadius if one is not specified on the handle', () => {
-    // Setup
-    const expectedHandleRadius = 10;
-    const handles = [
-      {
+      external.cornerstone.pixelToCanvas.mockReturnValue({
         x: 0,
         y: 0,
-      },
-    ];
+      });
 
-    external.cornerstone.pixelToCanvas.mockReturnValue({
-      x: 0,
-      y: 0,
+      // Call
+      drawHandles(context, {}, handles, { handleRadius: expectedHandleRadius });
+
+      // Assert
+      expect(context.arc).toBeCalledWith(
+        0,
+        0,
+        expectedHandleRadius,
+        0,
+        2 * Math.PI
+      );
     });
 
-    // Call
-    drawHandles(context, {}, handles, { handleRadius: expectedHandleRadius });
+    it('uses the radius on the handle, if one is specified', () => {
+      // Setup
+      const expectedHandleRadius = 10;
+      const handles = [
+        {
+          x: 0,
+          y: 0,
+          radius: expectedHandleRadius,
+        },
+        {
+          x: 0,
+          y: 0,
+        },
+      ];
 
-    // Assert
-    expect(context.arc).toBeCalledWith(
-      0,
-      0,
-      expectedHandleRadius,
-      0,
-      2 * Math.PI
-    );
-  });
-
-  it('uses the radius on the handle, if one is specified', () => {
-    // Setup
-    const expectedHandleRadius = 10;
-    const handles = [
-      {
+      state.handleRadius = 20;
+      external.cornerstone.pixelToCanvas.mockReturnValue({
         x: 0,
         y: 0,
-        radius: expectedHandleRadius,
-      },
-      {
-        x: 0,
-        y: 0,
-      },
-    ];
+      });
 
-    state.handleRadius = 20;
-    external.cornerstone.pixelToCanvas.mockReturnValue({
-      x: 0,
-      y: 0,
+      // Call
+      drawHandles(context, {}, handles);
+
+      // Assert
+      expect(context.arc).toHaveBeenCalledTimes(2);
+      expect(context.arc).toHaveBeenNthCalledWith(
+        1,
+        ...[0, 0, expectedHandleRadius, 0, 2 * Math.PI]
+      );
+      expect(context.arc).not.toHaveBeenNthCalledWith(
+        2,
+        ...[0, 0, expectedHandleRadius, 0, 2 * Math.PI]
+      );
     });
-
-    // Call
-    drawHandles(context, {}, handles);
-
-    // Assert
-    expect(context.arc).toHaveBeenCalledTimes(2);
-    // Expect(context.arc).toHaveBeenNthCalledWith(0, [
-    //   0,
-    //   0,
-    //   ExpectedHandleRadius,
-    //   0,
-    //   2 * Math.PI,
-    // ]);
-    // Expect(context.arc).not.toHaveBeenNthCalledWith(1, [
-    //   0,
-    //   0,
-    //   ExpectedHandleRadius,
-    //   0,
-    //   2 * Math.PI,
-    // ]);
   });
 });
