@@ -163,7 +163,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = this.configuration;
     const seriesModule = external.cornerstone.metaData.get(
       'generalSeriesModule',
       image.imageId
@@ -198,7 +197,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
       draw(context, context => {
         // Apply any shadow settings defined in the tool configuration
-        setShadow(context, config);
+        setShadow(context, this.configuration);
 
         // Check which color the rendered tool should be
         const color = toolColors.getColorIfActive(data);
@@ -211,7 +210,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           color,
-          drawHandlesIfActive: config && config.drawHandlesOnHover,
+          handleRadius: this.configuration.handleRadius,
+          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);

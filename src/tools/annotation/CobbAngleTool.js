@@ -132,7 +132,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     const lineWidth = toolStyle.getToolWidth();
     const font = textStyle.getFont();
-    const config = this.configuration;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -142,7 +141,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
-        setShadow(context, config);
+        setShadow(context, this.configuration);
 
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
@@ -172,7 +171,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           color,
-          drawHandlesIfActive: config && config.drawHandlesOnHover,
+          handleRadius: this.configuration.handleRadius,
+          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);

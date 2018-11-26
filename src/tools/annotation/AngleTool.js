@@ -114,7 +114,6 @@ class AngleTool extends BaseAnnotationTool {
     const context = getNewContext(eventData.canvasContext.canvas);
 
     const lineWidth = toolStyle.getToolWidth();
-    const config = this.configuration;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -124,7 +123,7 @@ class AngleTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
-        setShadow(context, config);
+        setShadow(context, this.configuration);
 
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
@@ -149,10 +148,11 @@ class AngleTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           color,
-          drawHandlesIfActive: config && config.drawHandlesOnHover,
+          handleRadius: this.configuration.handleRadius,
+          drawHandlesIfActive: this.configuration.drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data, data.handles, handleOptions);
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Default to isotropic pixel size, update suffix to reflect this
         const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;

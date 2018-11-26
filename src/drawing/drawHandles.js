@@ -12,7 +12,6 @@ import { state } from './../store/index.js';
  *
  * @param {CanvasRenderingContext2D} context - Target context
  * @param {*} evtDetail - Cornerstone's 'cornerstoneimagerendered' event's `detail`
- * @param {Object} annotation
  * @param {Object[]|Object} handles - An array of handle objects, or an object w/ named handle objects
  * @param {Object} [options={}] - Options object
  * @param {string} [options.color]
@@ -21,7 +20,7 @@ import { state } from './../store/index.js';
  * @param {Number} [options.handleRadius=6]
  * @returns {undefined}
  */
-export default function(context, evtDetail, annotation, handles, options = {}) {
+export default function(context, evtDetail, handles, options = {}) {
   const element = evtDetail.element;
   const defaultColor = toolColors.getToolColor();
 

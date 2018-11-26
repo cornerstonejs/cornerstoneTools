@@ -51,7 +51,6 @@ export default function(evt) {
   let color;
   const activeColor = toolColors.getActiveColor();
   const lineWidth = toolStyle.getToolWidth();
-  const config = this.configuration;
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -67,7 +66,7 @@ export default function(evt) {
 
     draw(context, context => {
       // Configurable shadow
-      setShadow(context, config);
+      setShadow(context, this.configuration);
 
       const {
         start,
@@ -92,7 +91,8 @@ export default function(evt) {
       // Draw the handles
       const handleOptions = {
         color,
-        drawHandlesIfActive: config && config.drawHandlesOnHover,
+        handleRadius: this.configuration.handleRadius,
+        drawHandlesIfActive: this.configuration.drawHandlesOnHover,
       };
 
       // Draw the handles

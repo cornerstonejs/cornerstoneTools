@@ -92,11 +92,6 @@ export default class ProbeTool extends BaseAnnotationTool {
     return external.cornerstoneMath.point.distance(probeCoords, coords) < 5;
   }
 
-  /**
-   *
-   *
-   * @param {*} evt
-   */
   renderToolData(evt) {
     const eventData = evt.detail;
     const toolData = getToolState(evt.currentTarget, this.name);
@@ -121,7 +116,10 @@ export default class ProbeTool extends BaseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
 
         // Draw the handles
-        drawHandles(context, eventData, data.handles, { color });
+        drawHandles(context, eventData, data.handles, {
+          handleRadius: this.configuration.handleRadius,
+          color,
+        });
 
         const x = Math.round(data.handles.end.x);
         const y = Math.round(data.handles.end.y);
