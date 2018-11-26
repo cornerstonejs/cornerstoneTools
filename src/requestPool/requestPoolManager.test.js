@@ -1,4 +1,10 @@
+// SUT
 import requestPoolManager from './requestPoolManager.js';
+
+// Setup
+import external from './../externalModules.js';
+
+jest.mock('./../externalModules.js');
 
 describe('clearRequestStack with an invalid type', function() {
   it('should throw an error when attempting to clear the request stack with an invalid type', () => {
