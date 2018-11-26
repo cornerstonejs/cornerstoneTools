@@ -59,16 +59,10 @@
     "gitbook-plugin-github": "^3.0.0",
     "gitbook-plugin-sitemap": "^1.2.0",
     "hammerjs": "^2.0.8",
-    "istanbul": "^0.4.5",
     "istanbul-instrumenter-loader": "^3.0.1",
     "jest": "23.4.0",
     "jest-junit": "^5.1.0",
-    "karma": "^2.0.2",
-    "karma-chrome-launcher": "^2.2.0",
-    "karma-coverage": "^1.1.2",
-    "karma-firefox-launcher": "^1.1.0",
     "karma-mocha": "^1.3.0",
-    "karma-webpack": "^3.0.0",
     "lodash": "^4.17.10",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.6",
@@ -78,7 +72,7 @@
     "uglifyjs-webpack-plugin": "^1.2.5",
     "webpack": "4.9.1",
     "webpack-cli": "2.1.4",
-    "webpack-dev-server": "3.1.4"
+    "webpack-dev-server": "3.1.10"
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
