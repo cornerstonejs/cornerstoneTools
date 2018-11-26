@@ -197,7 +197,7 @@ export default class MagnifyTool extends BaseTool {
     this.zoomElement = document.createElement('div');
     this.zoomElement.width = origCanvas.width * magnificationLevel;
     this.zoomElement.height = origCanvas.height * magnificationLevel;
-    external.cornerstone.enable(this.zoomElement);
+    external.cornerstone.enable(this.zoomElement, enabledElement.options);
 
     const zoomEnabledElement = external.cornerstone.getEnabledElement(
       this.zoomElement
