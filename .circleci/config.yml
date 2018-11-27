@@ -6,11 +6,15 @@ defaults: &defaults
     - image: circleci/node:latest
 
 jobs:
-  # Run on successful merge/commit to vNext
-  test-merge:
+  ##################
+  #
+  ##################
+  checkout_code:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/repo
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package.json" }}
@@ -20,69 +24,60 @@ jobs:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Install codecov globally
-          command: npm install --save-dev codecov
-      - run:
-          name: Jest Tests && Coveralls Report
-          environment:
-            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-            COVERALLS_SERVICE_NAME: circleci
-            # COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-          command: npm run test:ci
-      # Store our test results + Output
-      - store_test_results:
-          path: reports/junit
-      - store_artifacts:
-          path: reports/junit
-      # Allows deploy to pickup where this job leaves off
       - persist_to_workspace:
           root: ~/repo
           paths: .
 
-  # Note: We do not expose project environment variables
-  # to pull requests from forks (security reasons). This
-  # job should never rely on such an environment variable.
-  test-pr:
-    <<: *defaults
-    steps:
-      - checkout
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
-      - run:
-          name: Install codecov globally
-          command: npm install --save-dev codecov
-      - run:
-          name: Jest Tests && Coveralls Report
-          environment:
-            JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-            COVERALLS_SERVICE_NAME: circleci
-            # COVERALLS_SERVICE_JOB_ID: $CIRCLE_BUILD_NUM
-          command: npm run test:ci
-      # - run:
-      #     name: Jest Tests && Coverage Report
-      #     environment:
-      #       JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-      #     command: npm run test:unit -- --coverage --coverageReporters=text-lcov
-      # Store our test results + Output
-      - store_test_results:
-          path: reports/junit
-      - store_artifacts:
-          path: reports/junit
-
-  # Used to publish latest under @next tag
-  deploy:
+  ##################
+  #
+  ##################
+  test_and_report:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
+      - run: npm install
+      - run:
+        name: Install codecov
+        command: npm install --save-dev codecov
+      - run:
+          name: Jest Tests && Codecov Report
+          command: npm run test:ci
+      - store_artifacts:
+          path: ./coverage/
+          prefix: tests
+      - store_artifacts:
+          path: coverage
+          prefix: coverage
+      - store_test_results:
+          path: ./coverage/
+
+  ##################
+  #
+  ##################
+  build:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: npm install
+      - run:
+          name: Build our app
+          command: npm run build
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+
+  ##################
+  #
+  ##################
+  deployment:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: npm install
       - run:
           name: Write NPM Token to ~/.npmrc
           command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
@@ -93,24 +88,47 @@ jobs:
           name: Publish package
           command: npm publish --tag next
 
+
 workflows:
   version: 2
 
+  ###
   # Pull Requests
-  build-test:
+  test_build:
     jobs:
-      - test-pr:
+      - checkout_code
           filters:
             branches:
               ignore: vNext
+      - test_and_report:
+          requires:
+            - checkout_code
+      - build:
+          requires:
+            - checkout_code
 
+  ###
   # Merges to vNext
-  build-test-deploy:
+  test_build_deploy:
     jobs:
-      - test-merge:
+      - checkout_code
           filters:
             branches:
               only: vNext
-      - deploy:
+      - test_and_report:
           requires:
-            - test-merge
+            - checkout_code
+      - build:
+          requires:
+            - checkout_code
+      - deployment:
+          requires:
+            - checkout_code
+            - test_and_report
+            - build
+          # filters:
+          #   branches:
+          #     only:
+          #       - development
+          #       - master
+          #       - production
