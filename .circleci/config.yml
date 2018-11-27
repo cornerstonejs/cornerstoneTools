@@ -54,13 +54,10 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
-          name: Install JUnit coverage reporter
-          command: npm install --save-dev jest-junit
-      - run:
           name: Jest Tests && Coverage Report
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
-          command: npm run test:unit -- --ci --reporters=default --reporters=jest-junit
+          command: npm run test:unit -- --coverage --coverageReporters=text-lcov
       # Store our test results + Output
       - store_test_results:
           path: reports/junit
