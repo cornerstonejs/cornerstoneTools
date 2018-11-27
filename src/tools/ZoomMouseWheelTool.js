@@ -1,8 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import zoomUtils from '../util/zoom/index.js';
-
-const { changeViewportScale } = zoomUtils;
+import { changeViewportScale } from '../util/zoom/index.js';
 
 /**
  * @public
@@ -31,9 +29,10 @@ export default class ZoomMouseWheelTool extends BaseTool {
   }
 
   mouseWheelCallback(evt) {
-    const { element, viewport, direction } = evt.detail;
+    const { element, viewport, spinY } = evt.detail;
     const { invert, maxScale, minScale } = this.configuration;
-    const ticks = invert ? direction / 4 : -direction / 4;
+    const ticks = invert ? spinY / 4 : -spinY / 4;
+
     const updatedViewport = changeViewportScale(viewport, ticks, {
       maxScale,
       minScale,

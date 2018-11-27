@@ -6,7 +6,6 @@ defaults: &defaults
     - image: circleci/node:latest
 
 jobs:
-
   # Run on successful merge/commit to vNext
   test-merge:
     <<: *defaults
@@ -14,8 +13,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:
@@ -37,7 +36,7 @@ jobs:
       - persist_to_workspace:
           root: ~/repo
           paths: .
-  
+
   # Note: We do not expose project environment variables
   # to pull requests from forks (security reasons). This
   # job should never rely on such an environment variable.
@@ -47,8 +46,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
       - run: npm install
       - save_cache:
           paths:

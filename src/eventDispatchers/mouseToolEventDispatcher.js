@@ -21,6 +21,7 @@ import {
  * - onImageRendered: redraw visible tool data
  * @private
  * @param {*} element
+ * @returns {undefined}
  */
 const enable = function(element) {
   element.addEventListener(EVENTS.MOUSE_CLICK, mouseClick);

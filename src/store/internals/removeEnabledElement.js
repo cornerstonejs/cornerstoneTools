@@ -1,6 +1,6 @@
 import {
   mouseEventListeners,
-  mouseWheelEventListeners,
+  wheelEventListener,
   touchEventListeners,
 } from '../../eventListeners/index.js';
 import {
@@ -41,7 +41,7 @@ export default function(elementDisabledEvt) {
   // Mouse
   if (store.modules.globalConfiguration.state.mouseEnabled) {
     mouseEventListeners.disable(enabledElement);
-    mouseWheelEventListeners.disable(enabledElement);
+    wheelEventListener.disable(enabledElement);
     mouseToolEventDispatcher.disable(enabledElement);
   }
 

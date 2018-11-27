@@ -1,7 +1,8 @@
 /**
  * Changes the scale of the viewport.
- * @export @public @method
- * @name changeViewportScale
+ *
+ * @private
+ * @function changeViewportScale
  *
  * @param {Object} viewport The viewport to scale.
  * @param {number} ticks The change in magnifcation factor.
