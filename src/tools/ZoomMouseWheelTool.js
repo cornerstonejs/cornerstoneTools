@@ -31,11 +31,14 @@ export default class ZoomMouseWheelTool extends BaseTool {
   }
 
   mouseWheelCallback(evt) {
-    const { element, viewport, direction } = evt.detail;
+    const { element, viewport, direction, spinY } = evt.detail;
     const { invert, maxScale, minScale } = this.configuration;
-    const ticks = (invert ? direction / 4 : -direction / 4) * evt.spinY;
+    const ticks = invert ? direction / 4 : -direction / 4;
 
-    const updatedViewport = changeViewportScale(viewport, ticks, {
+    console.log(ticks);
+    console.log(spinY);
+
+    const updatedViewport = changeViewportScale(viewport, ticks * spinY, {
       maxScale,
       minScale,
     });
