@@ -4,7 +4,8 @@ const LINE_HEIGHT = 40;
 const PAGE_HEIGHT = 800;
 
 /**
- *
+ * Normalizes wheel events and provides properties that are more
+ * consistent and helpful across different browsers
  *
  * @private
  * @function normalizeWheel
