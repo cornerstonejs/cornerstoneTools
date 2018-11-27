@@ -32,7 +32,7 @@
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
     "test:unit": "jest --clearCache && jest \\.test\\.js$",
-    "test:ci": "npm run test:unit -- --coverage --coverageReporters=text-lcov | coveralls",
+    "test:ci": "npm run test:unit && codecov",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },
   "devDependencies": {
@@ -86,6 +86,8 @@
       "default",
       "jest-junit"
     ],
+    "collectCoverage": true,
+    "coverageDirectory": "./coverage/",
     "collectCoverageFrom": [
       "src/*.js",
       "src/**/*.js",
