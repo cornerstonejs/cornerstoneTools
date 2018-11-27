@@ -22,7 +22,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Install codecov globally
-          command: npm install -g codecov
+          command: npm install --save-dev codecov
       - run:
           name: Jest Tests && Coveralls Report
           environment:
@@ -58,7 +58,7 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
           name: Install codecov globally
-          command: npm install -g codecov
+          command: npm install --save-dev codecov
       - run:
           name: Jest Tests && Coveralls Report
           environment:
