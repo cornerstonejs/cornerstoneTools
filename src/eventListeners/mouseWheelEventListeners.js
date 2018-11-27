@@ -1,10 +1,16 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import triggerEvent from '../util/triggerEvent.js';
+import nm from './internals/normalizeWheel.js';
 
 function mouseWheel(e) {
   const element = e.currentTarget;
   const enabledElement = external.cornerstone.getEnabledElement(element);
+
+  console.debug(`mouseWheel`);
+  const NORMALIZED = nm.normalizeWheel(e);
+
+  console.debug(NORMALIZED);
 
   if (!enabledElement.image) {
     return;
@@ -15,13 +21,13 @@ function mouseWheel(e) {
   // Mac os x mavericks system when middle mouse button dragging.
   // I couldn't find any info about this so this might break other systems
   // Webkit hack
-  if (e.type === 'mousewheel' && e.wheelDeltaY === 0) {
-    return;
-  }
-  // Firefox hack
-  if (e.type === 'DOMMouseScroll' && e.axis === 1) {
-    return;
-  }
+  // If (e.type === 'mousewheel' && e.wheelDeltaY === 0) {
+  //   Return;
+  // }
+  // // Firefox hack
+  // If (e.type === 'DOMMouseScroll' && e.axis === 1) {
+  //   Return;
+  // }
 
   e.preventDefault();
 
@@ -70,21 +76,13 @@ function mouseWheel(e) {
   triggerEvent(element, EVENTS.MOUSE_WHEEL, mouseWheelData);
 }
 
-const mouseWheelEvents = ['mousewheel', 'DOMMouseScroll'];
-
 function enable(element) {
-  // Prevent handlers from being attached multiple times
   disable(element);
-
-  mouseWheelEvents.forEach(eventType => {
-    element.addEventListener(eventType, mouseWheel, { passive: false });
-  });
+  element.addEventListener('wheel', mouseWheel, { passive: false });
 }
 
 function disable(element) {
-  mouseWheelEvents.forEach(eventType => {
-    element.removeEventListener(eventType, mouseWheel);
-  });
+  element.removeEventListener('wheel', mouseWheel, { passive: false });
 }
 
 export default {
