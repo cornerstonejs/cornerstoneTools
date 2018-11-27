@@ -3,6 +3,14 @@ const PIXEL_STEP = 10;
 const LINE_HEIGHT = 40;
 const PAGE_HEIGHT = 800;
 
+/**
+ *
+ *
+ * @private
+ * @function normalizeWheel
+ * @param {WheelEvent} event
+ * @returns {Object} { spinX, spinY, pixlX, pixelY }
+ */
 export default function(event) {
   let spinX = 0,
     spinY = 0,
