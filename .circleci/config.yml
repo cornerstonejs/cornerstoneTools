@@ -38,8 +38,8 @@ jobs:
           at: ~/repo
       - run: npm install
       - run:
-        name: Install codecov
-        command: npm install --save-dev codecov
+          name: Install codecov
+          command: npm install --save-dev codecov
       - run:
           name: Jest Tests && Codecov Report
           command: npm run test:ci
