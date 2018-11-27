@@ -8,6 +8,7 @@ function mouseWheel(e) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   console.debug(`mouseWheel`);
+  console.log(e);
   const NORMALIZED = nm.normalizeWheel(e);
 
   console.debug(NORMALIZED);
