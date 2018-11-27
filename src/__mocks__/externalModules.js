@@ -12,5 +12,6 @@ export default {
       y: 0,
     })),
     pixelToCanvas: jest.fn(),
+    setViewport: jest.fn(),
   },
 };
