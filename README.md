@@ -1,6 +1,6 @@
 # cornerstone-tools@next
 
-[![CircleCI](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg)](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext) [![Coverage Status](https://s3.amazonaws.com/assets.coveralls.io/badges/coveralls_9.svg)](https://coveralls.io/github/cornerstonejs/cornerstoneTools?branch=vNext)
+[![CircleCI](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg)](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext) [![Coverage Status](https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg)](https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext)
 
 <!-- Get Latest Coverage info for vNext:
      https://coveralls.io/github/cornerstonejs/cornerstoneTools.json?branch=vNext
