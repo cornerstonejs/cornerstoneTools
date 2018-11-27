@@ -21,6 +21,9 @@ jobs:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
       - run:
+          name: Install codecov globally
+          command: npm install -g codecov
+      - run:
           name: Jest Tests && Coveralls Report
           environment:
             JEST_JUNIT_OUTPUT: reports/junit/js-test-results.xml
