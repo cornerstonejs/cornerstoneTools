@@ -61,6 +61,7 @@ function onImageRendered (e) {
   const context = getNewContext(eventData.canvasContext.canvas);
 
   const fontHeight = textStyle.getFontSize();
+  const config = probe.getConfiguration();
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -75,6 +76,8 @@ function onImageRendered (e) {
 
       // Draw the handles
       drawHandles(context, eventData, data.handles, color);
+
+      if (config && config.disableTextBox) return;
 
       const x = Math.round(data.handles.end.x);
       const y = Math.round(data.handles.end.y);
