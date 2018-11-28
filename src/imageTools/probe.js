@@ -77,7 +77,7 @@ function onImageRendered (e) {
       // Draw the handles
       drawHandles(context, eventData, data.handles, color);
 
-      if (config.disableTextBox) return;
+      if (config && config.disableTextBox) return;
 
       const x = Math.round(data.handles.end.x);
       const y = Math.round(data.handles.end.y);
