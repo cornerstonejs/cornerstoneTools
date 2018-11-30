@@ -51,7 +51,7 @@ describe('StachScrollMouseWheelTool.js', () => {
 
       instantiatedTool.mouseWheelCallback(mockEvent);
       expect(scroll).toHaveBeenCalled();
-      expect(scroll).toHaveBeenCalledWith({}, 1, false, true);
+      expect(scroll).toHaveBeenCalledWith({}, -1, false, true);
     });
   });
 });

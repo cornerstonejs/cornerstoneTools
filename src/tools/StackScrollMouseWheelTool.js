@@ -30,7 +30,7 @@ export default class StackScrollMouseWheelTool extends BaseTool {
   mouseWheelCallback(evt) {
     const { direction: images, element } = evt.detail;
     const { loop, allowSkipping, invert } = this.configuration;
-    const direction = invert ? -images : images;
+    const direction = invert ? images : -images;
 
     scroll(element, direction, loop, allowSkipping);
   }
