@@ -16,26 +16,9 @@ const { state, setters } = store.modules.brush;
  * @extends Tools.Base.BaseTool
  */
 class BaseBrushTool extends BaseTool {
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  }) {
-    configuration.referencedToolData = 'brush';
-
-    super({
-      name,
-      strategies,
-      defaultStrategy,
-      configuration,
-      supportedInteractionTypes,
-      mixins,
-      svgCursor,
-    });
+  constructor(...args) {
+    args.configuration.referencedToolData = 'brush';
+    super(args);
 
     this.updateOnMouseMove = true;
     this.hideDefaultCursor = true;

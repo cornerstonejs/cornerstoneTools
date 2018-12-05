@@ -1,7 +1,12 @@
+<<<<<<< HEAD
 import mixins from '../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:base:BaseTool');
+=======
+import mixins from './../../mixins/index.js';
+import lodash from 'lodash';
+>>>>>>> 8199bb4... fix(issue#738): Remove merge from tool and move it to baseTool
 
 /**
  * @typedef ToolConfiguration
@@ -20,17 +25,25 @@ const logger = getLogger('tools:base:BaseTool');
 class BaseTool {
   /**
    * Constructor description
-   * @param {ToolConfiguration} [ToolConfiguration={}]
+   * @param {props} [defaultProps={}]
+   * @param {props} [props={}]
    */
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  } = {}) {
+  constructor(defaultProps, props) {
+    /**
+     * Merge default props with custom props
+     */
+    const mergedProps = lodash.merge(defaultProps, props);
+
+    const {
+      name,
+      strategies,
+      defaultStrategy,
+      configuration,
+      supportedInteractionTypes,
+      mixins,
+      svgCursor
+    } = mergedProps;
+
     /**
      * A unique, identifying tool name
      * @type {String}
