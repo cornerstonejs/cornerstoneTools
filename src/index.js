@@ -4,7 +4,7 @@
  */
 
 /**
- * Drawing API to assist in consistant annotation creation
+ * Drawing API to assist in consistent annotation creation
  * @namespace Drawing
  */
 
@@ -111,6 +111,184 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
+import { default as imp } from './import.js';
+
+import { default as init } from './init.js';
+
+// ~~~~~~ STACK TOOLS ~~~~~ //
+import { default as stackPrefetch } from './stackTools/stackPrefetch.js';
+import { default as stackRenderers } from './stackTools/stackRenderers.js';
+import { playClip, stopClip } from './stackTools/playClip.js';
+
+// ~~~~~~ STATE MANAGEMENT ~~~~~ //
+import { default as store } from './store/index.js';
+import { default as getToolForElement } from './store/getToolForElement.js';
+import { addTool, addToolForElement } from './store/addTool.js';
+import { removeTool, removeToolForElement } from './store/removeTool.js';
+import {
+  setToolOptions,
+  setToolOptionsForElement,
+} from './store/setToolOptions.js';
+import {
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+} from './store/setToolMode.js';
+import {
+  addToolState,
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager,
+} from './stateManagement/toolState.js';
+import { default as textStyle } from './stateManagement/textStyle.js';
+import { default as toolStyle } from './stateManagement/toolStyle.js';
+import { default as toolColors } from './stateManagement/toolColors.js';
+import { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
+import {
+  stackSpecificStateManager,
+  newStackSpecificToolStateManager,
+  addStackStateManager,
+} from './stateManagement/stackSpecificStateManager.js';
+import { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
+import {
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager,
+} from './stateManagement/imageIdSpecificStateManager.js';
+import {
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager,
+} from './stateManagement/frameOfReferenceStateManager.js';
+import { forceEnabledElementResize } from './eventListeners/windowResizeHandler.js';
+
+// ~~~~~~ ORIENTATION  ~~~~~ //
+import { default as orientation } from './orientation/index.js';
+
+// ~~~~~~ CANVAS EXPORT  ~~~~~ //
+import { default as SaveAs } from './util/SaveAs.js';
+
+// ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
+import { default as register } from './thirdParty/register.js';
+import { default as registerSome } from './thirdParty/registerSome.js';
+
+// ~~~~~~ SYNCHRONIZERS ~~~~~ //
+import { default as wwwcSynchronizer } from './synchronization/wwwcSynchronizer.js';
+import { default as updateImageSynchronizer } from './synchronization/updateImageSynchronizer.js';
+import { default as Synchronizer } from './synchronization/Synchronizer.js';
+import { default as stackScrollSynchronizer } from './synchronization/stackScrollSynchronizer.js';
+import { default as stackImagePositionSynchronizer } from './synchronization/stackImagePositionSynchronizer.js';
+import { default as stackImagePositionOffsetSynchronizer } from './synchronization/stackImagePositionOffsetSynchronizer.js';
+import { default as stackImageIndexSynchronizer } from './synchronization/stackImageIndexSynchronizer.js';
+import { default as panZoomSynchronizer } from './synchronization/panZoomSynchronizer.js';
+
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
+import { default as requestPoolManager } from './requestPool/requestPoolManager.js';
+
+import { default as external } from './externalModules.js';
+import { default as EVENTS } from './events.js';
+import { default as version } from './version.js';
+
+const cornerstoneTools = {
+  // ~~~ TOOLS
+  // ~ Annotation Tools
+  AngleTool,
+  ArrowAnnotateTool,
+  BidirectionalTool,
+  CobbAngleTool,
+  EllipticalRoiTool,
+  FreehandMouseTool,
+  LengthTool,
+  ProbeTool,
+  RectangleRoiTool,
+  TextMarkerTool,
+  // ~ Brush Tools
+  BrushTool,
+  // ~ Tools
+  CrosshairsTool,
+  DoubleTapFitToWindowTool,
+  DragProbeTool,
+  EraserTool,
+  FreehandSculpterMouseTool,
+  MagnifyTool,
+  PanMultiTouchTool,
+  PanTool,
+  ReferenceLinesTool,
+  RotateTool,
+  RotateTouchTool,
+  ScaleOverlayTool,
+  StackScrollMouseWheelTool,
+  StackScrollMultiTouchTool,
+  StackScrollTool,
+  WwwcRegionTool,
+  WwwcTool,
+  ZoomMouseWheelTool,
+  ZoomTool,
+  ZoomTouchPinchTool,
+  init,
+  stackPrefetch,
+  stackRenderers,
+  playClip,
+  stopClip,
+  store,
+  getToolForElement,
+  addTool,
+  addToolForElement,
+  removeTool,
+  removeToolForElement,
+  setToolOptions,
+  setToolOptionsForElement,
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+  addToolState,
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager,
+  textStyle,
+  toolStyle,
+  toolColors,
+  toolCoordinates,
+  stackSpecificStateManager,
+  newStackSpecificToolStateManager,
+  addStackStateManager,
+  loadHandlerManager,
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager,
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager,
+  forceEnabledElementResize,
+  orientation,
+  SaveAs,
+  import: imp,
+  register,
+  registerSome,
+  wwwcSynchronizer,
+  updateImageSynchronizer,
+  Synchronizer,
+  stackScrollSynchronizer,
+  stackImagePositionSynchronizer,
+  stackImagePositionOffsetSynchronizer,
+  stackImageIndexSynchronizer,
+  panZoomSynchronizer,
+  requestPoolManager,
+  external,
+  EVENTS,
+  version,
+};
+
 // Named Exports
 export {
   // ~~~ TOOLS
@@ -148,25 +326,19 @@ export {
   ZoomMouseWheelTool,
   ZoomTool,
   ZoomTouchPinchTool,
-};
-
-export { default as init } from './init.js';
-
-// ~~~~~~ STACK TOOLS ~~~~~ //
-export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
-export { default as stackRenderers } from './stackTools/stackRenderers.js';
-export { playClip, stopClip } from './stackTools/playClip.js';
-
-// ~~~~~~ STATE MANAGEMENT ~~~~~ //
-export { default as store } from './store/index.js';
-export { default as getToolForElement } from './store/getToolForElement.js';
-export { addTool, addToolForElement } from './store/addTool.js';
-export { removeTool, removeToolForElement } from './store/removeTool.js';
-export {
+  init,
+  stackPrefetch,
+  stackRenderers,
+  playClip,
+  stopClip,
+  store,
+  getToolForElement,
+  addTool,
+  addToolForElement,
+  removeTool,
+  removeToolForElement,
   setToolOptions,
   setToolOptionsForElement,
-} from './store/setToolOptions.js';
-export {
   setToolActive,
   setToolActiveForElement,
   setToolEnabled,
@@ -175,81 +347,44 @@ export {
   setToolDisabledForElement,
   setToolPassive,
   setToolPassiveForElement,
-} from './store/setToolMode.js';
-export {
   addToolState,
   getToolState,
   removeToolState,
   clearToolState,
   setElementToolStateManager,
   getElementToolStateManager,
-} from './stateManagement/toolState.js';
-export { default as textStyle } from './stateManagement/textStyle.js';
-export { default as toolStyle } from './stateManagement/toolStyle.js';
-export { default as toolColors } from './stateManagement/toolColors.js';
-export {
-  default as toolCoordinates,
-} from './stateManagement/toolCoordinates.js';
-export {
+  textStyle,
+  toolStyle,
+  toolColors,
+  toolCoordinates,
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
   addStackStateManager,
-} from './stateManagement/stackSpecificStateManager.js';
-export {
-  default as loadHandlerManager,
-} from './stateManagement/loadHandlerManager.js';
-export {
+  loadHandlerManager,
   newImageIdSpecificToolStateManager,
   globalImageIdSpecificToolStateManager,
-} from './stateManagement/imageIdSpecificStateManager.js';
-export {
   newFrameOfReferenceSpecificToolStateManager,
   globalFrameOfReferenceSpecificToolStateManager,
-} from './stateManagement/frameOfReferenceStateManager.js';
-export {
   forceEnabledElementResize,
-} from './eventListeners/windowResizeHandler.js';
+  orientation,
+  SaveAs,
+  register,
+  registerSome,
+  wwwcSynchronizer,
+  updateImageSynchronizer,
+  Synchronizer,
+  stackScrollSynchronizer,
+  stackImagePositionSynchronizer,
+  stackImagePositionOffsetSynchronizer,
+  stackImageIndexSynchronizer,
+  panZoomSynchronizer,
+  requestPoolManager,
+  external,
+  EVENTS,
+  version,
+};
 
-// ~~~~~~ ORIENTATION  ~~~~~ //
-export { default as orientation } from './orientation/index.js';
-
-// ~~~~~~ CANVAS EXPORT  ~~~~~ //
-export { default as SaveAs } from './util/SaveAs.js';
-
-// ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
+// This has a weird name, so we can't just import it as 'import';
 export { default as import } from './import.js';
-export { default as register } from './thirdParty/register.js';
-export { default as registerSome } from './thirdParty/registerSome.js';
 
-// ~~~~~~ SYNCHRONIZERS ~~~~~ //
-export {
-  default as wwwcSynchronizer,
-} from './synchronization/wwwcSynchronizer.js';
-export {
-  default as updateImageSynchronizer,
-} from './synchronization/updateImageSynchronizer.js';
-export { default as Synchronizer } from './synchronization/Synchronizer.js';
-export {
-  default as stackScrollSynchronizer,
-} from './synchronization/stackScrollSynchronizer.js';
-export {
-  default as stackImagePositionSynchronizer,
-} from './synchronization/stackImagePositionSynchronizer.js';
-export {
-  default as stackImagePositionOffsetSynchronizer,
-} from './synchronization/stackImagePositionOffsetSynchronizer.js';
-export {
-  default as stackImageIndexSynchronizer,
-} from './synchronization/stackImageIndexSynchronizer.js';
-export {
-  default as panZoomSynchronizer,
-} from './synchronization/panZoomSynchronizer.js';
-
-// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
-export {
-  default as requestPoolManager,
-} from './requestPool/requestPoolManager.js';
-
-export { default as external } from './externalModules.js';
-export { default as EVENTS } from './events.js';
-export { default as version } from './version.js';
+export default cornerstoneTools;

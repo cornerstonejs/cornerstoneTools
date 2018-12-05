@@ -107,7 +107,7 @@ const getters = {
    * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
    * @param {number} [segIndex] - The segmentation index.
    *
-   * @returns {object[]|object} An array of segmentation metadata, or specifc
+   * @returns {Object[]|Object} An array of segmentation metadata, or specifc
    *                            segmentation data if segIndex is defined.
    */
   metadata: (seriesInstanceUid, segIndex) => {
