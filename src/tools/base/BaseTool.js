@@ -63,7 +63,7 @@ class BaseTool {
   //
 
   /**
-   * config...
+   * Config...
    * @public
    * @type {Object}
    * @instance
@@ -83,7 +83,7 @@ class BaseTool {
   //
 
   /**
-   * options...
+   * Options...
    * @readonly
    * @instance
    */

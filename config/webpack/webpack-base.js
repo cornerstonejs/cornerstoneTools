@@ -8,12 +8,16 @@ module.exports = {
 	mode: "development",
 	context: context,
 	entry: {
-		cornerstoneTools: './index.js'
+		cornerstoneTools: path.join(context, 'index.js')
 	},
 	target: 'web',
 	output: {
 		filename: '[name].js',
-		library: '[name]',
+		library: {
+			commonjs: "cornerstone-tools",
+			amd: "cornerstone-tools",
+			root: 'cornerstoneTools'
+		},
 		libraryTarget: 'umd',
 		path: outputPath,
 		umdNamedDefine: true
