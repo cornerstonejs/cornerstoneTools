@@ -1,8 +1,9 @@
 import * as cornerstoneTools from '../index.js';
 import external from '../externalModules.js';
 import EVENTS from '../events.js';
-import { setToolOptions } from '../toolOptions.js';
+import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import simpleTouchTool from './simpleTouchTool.js';
+import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 
 const toolType = 'eraser';
 let configuration = {
@@ -23,8 +24,14 @@ function populateSupportedTools () {
 function deleteNearbyMeasurement (mouseEventData) {
   const coords = mouseEventData.detail.currentPoints.canvas;
   const element = mouseEventData.detail.element;
+  const { mouseButtonMask } = getToolOptions(toolType, element);
+  const { which: buttonClicked } = mouseEventData.detail;
   let foundDataToDelete = false;
   let imageNeedsUpdate = false;
+
+  if (!isMouseButtonEnabled(buttonClicked, mouseButtonMask)) {
+    return;
+  }
 
   Object.entries(configuration.supportedTools).forEach(function ([toolName, tool]) {
     const toolState = cornerstoneTools.getToolState(element, toolName);
