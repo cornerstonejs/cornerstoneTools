@@ -19,6 +19,11 @@ export default class BrushTool extends BaseBrushTool {
     const defaultConfig = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse'],
+      strategies: {
+        overlapping: _overlappingStrategy,
+        nonOverlapping: _nonOverlappingStrategy,
+      },
+      defaultStrategy: 'nonOverlapping',
       configuration: {},
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -100,48 +105,109 @@ export default class BrushTool extends BaseBrushTool {
    * @private
    * @param  {Object} eventData The data object associated with the event.
    */
-  _paint(eventData) {
-    const element = eventData.element;
-    const { rows, columns } = eventData.image;
-    const { x, y } = eventData.currentPoints.image;
-    const toolData = getToolState(element, this.referencedToolData);
+  _paint(evt) {
+    this.applyActiveStrategy(evt, this.configuration);
 
-    let shouldErase = false;
+    external.cornerstone.updateImage(evt.detail.element);
+  }
+}
 
-    // Check for key, could be a mouseDown or mouseDrag event.
-    if (this._isCtrlDown(eventData)) {
-      console.log('ctrlDown');
-      shouldErase = true;
-    }
+function _overlappingStrategy(evt, configuration) {
+  const eventData = evt.detail;
+  const element = eventData.element;
+  const { rows, columns } = eventData.image;
+  const { x, y } = eventData.currentPoints.image;
+  const toolData = getToolState(element, configuration.referencedToolData);
 
-    const segmentationIndex = state.drawColorId;
+  let shouldErase = false;
 
-    if (!toolData.data[segmentationIndex].pixelData) {
-      const newPixelData = new Uint8ClampedArray(
-        eventData.image.width * eventData.image.height
-      );
-
-      toolData.data[segmentationIndex].pixelData = newPixelData;
-    }
-
-    const pixelData = toolData.data[segmentationIndex].pixelData;
-
-    const radius = state.radius;
-
-    if (x < 0 || x > columns || y < 0 || y > rows) {
-      return;
-    }
-
-    const pointerArray = getCircle(radius, rows, columns, x, y);
-
-    drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
-
-    toolData.data[segmentationIndex].invalidated = true;
-
-    external.cornerstone.updateImage(eventData.element);
+  // Check for key, could be a mouseDown or mouseDrag event.
+  if (_isCtrlDown(eventData)) {
+    console.log('ctrlDown');
+    shouldErase = true;
   }
 
-  _isCtrlDown(eventData) {
-    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
+  const segmentationIndex = state.drawColorId;
+
+  if (!toolData.data[segmentationIndex].pixelData) {
+    const newPixelData = new Uint8ClampedArray(
+      eventData.image.width * eventData.image.height
+    );
+
+    toolData.data[segmentationIndex].pixelData = newPixelData;
   }
+
+  const pixelData = toolData.data[segmentationIndex].pixelData;
+
+  const radius = state.radius;
+
+  if (x < 0 || x > columns || y < 0 || y > rows) {
+    return;
+  }
+
+  const pointerArray = getCircle(radius, rows, columns, x, y);
+
+  drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
+
+  toolData.data[segmentationIndex].invalidated = true;
+}
+
+function _nonOverlappingStrategy(evt, configuration) {
+  const eventData = evt.detail;
+  const element = eventData.element;
+  const { rows, columns } = eventData.image;
+  const { x, y } = eventData.currentPoints.image;
+  const toolState = getToolState(element, configuration.referencedToolData);
+  const toolData = toolState.data;
+
+  let shouldErase = false;
+
+  // Check for key, could be a mouseDown or mouseDrag event.
+  if (_isCtrlDown(eventData)) {
+    console.log('ctrlDown');
+    shouldErase = true;
+  }
+
+  const activeSegmentationIndex = state.drawColorId;
+
+  if (!toolData[activeSegmentationIndex].pixelData) {
+    const newPixelData = new Uint8ClampedArray(
+      eventData.image.width * eventData.image.height
+    );
+
+    toolData[activeSegmentationIndex].pixelData = newPixelData;
+  }
+
+  const pixelData = toolData[activeSegmentationIndex].pixelData;
+
+  const radius = state.radius;
+
+  if (x < 0 || x > columns || y < 0 || y > rows) {
+    return;
+  }
+
+  const pointerArray = getCircle(radius, rows, columns, x, y);
+
+  // Draw / Erase the active color.
+  drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
+
+  toolData[activeSegmentationIndex].invalidated = true;
+
+  const numberOfColors = BaseBrushTool.getNumberOfColors();
+
+  // If there is brush data in this region for other colors, delete it.
+  for (let i = 0; i < numberOfColors; i++) {
+    if (i === activeSegmentationIndex) {
+      continue;
+    }
+
+    if (toolData[i] && toolData[i].pixelData) {
+      drawBrushPixels(pointerArray, toolData[i].pixelData, columns, true);
+      toolData[i].invalidated = true;
+    }
+  }
+}
+
+function _isCtrlDown(eventData) {
+  return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
 }

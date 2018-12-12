@@ -22,6 +22,8 @@ class BaseBrushTool extends BaseTool {
     supportedInteractionTypes,
     mixins,
   }) {
+    configuration.referencedToolData = 'brush';
+
     super({
       name,
       strategies,
@@ -32,7 +34,6 @@ class BaseBrushTool extends BaseTool {
     });
 
     this.hasCursor = true;
-    this.referencedToolData = 'brush';
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
@@ -57,9 +58,9 @@ class BaseBrushTool extends BaseTool {
    *
    * @protected
    * @abstract
-   * @param  {Object} eventData The data object associated with the event.
+   * @param  {Object} evt The event.
    */
-  _paint(eventData) {
+  _paint(evt) {
     throw new Error(`Method _paint not implemented for ${this.name}.`);
   }
 
@@ -102,7 +103,7 @@ class BaseBrushTool extends BaseTool {
     const eventData = evt.detail;
     const element = eventData.element;
 
-    this._paint(eventData);
+    this._paint(evt);
     this._drawing = true;
     this._startListeningForMouseUp(element);
     this._lastImageCoords = eventData.currentPoints.image;
