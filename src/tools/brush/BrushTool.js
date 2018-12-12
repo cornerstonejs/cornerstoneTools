@@ -23,7 +23,7 @@ export default class BrushTool extends BaseBrushTool {
         overlapping: _overlappingStrategy,
         nonOverlapping: _nonOverlappingStrategy,
       },
-      defaultStrategy: 'nonOverlapping',
+      defaultStrategy: 'overlapping',
       configuration: {},
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
