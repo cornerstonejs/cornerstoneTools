@@ -42,9 +42,6 @@ export default function(evt) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  // Clear the element's cache
-  setters.clearImageBitmapCacheForElement(enabledElement.uuid);
-
   // Invalidate the segmentation bitmap such that it gets redrawn.
   for (let i = 0; i < maxSegmentations; i++) {
     toolData.data[i].invalidated = true;
