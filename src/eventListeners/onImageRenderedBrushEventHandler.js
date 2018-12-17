@@ -245,8 +245,6 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
     y: viewport.translation.y * viewport.scale,
   };
 
-  console.log(viewport);
-
   context.drawImage(
     imageBitmap,
     canvas.width / 2 - cornerstoneCanvasWidth / 2 + canvasViewportTranslation.x,

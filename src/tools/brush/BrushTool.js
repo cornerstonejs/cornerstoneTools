@@ -40,6 +40,7 @@ export default class BrushTool extends BaseBrushTool {
    */
   renderBrush(evt) {
     const eventData = evt.detail;
+    const viewport = eventData.viewport;
 
     let mousePosition;
 
@@ -74,16 +75,9 @@ export default class BrushTool extends BaseBrushTool {
     context.setTransform(1, 0, 0, 1, 0, 0);
 
     const { cornerstone } = external;
+
+    const circleRadius = radius * viewport.scale;
     const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, mousePosition);
-    const canvasTopLeft = cornerstone.pixelToCanvas(element, {
-      x: 0,
-      y: 0,
-    });
-    const radiusCanvas = cornerstone.pixelToCanvas(element, {
-      x: radius,
-      y: 0,
-    });
-    const circleRadius = Math.abs(radiusCanvas.x - canvasTopLeft.x);
 
     context.beginPath();
     context.strokeStyle = color;
