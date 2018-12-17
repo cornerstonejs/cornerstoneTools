@@ -31,6 +31,8 @@ import fillTextLines from './fillTextLines.js';
 import getNewContext from './getNewContext.js';
 import path from './path.js';
 import setShadow from './setShadow.js';
+import transformCanvasContext from './transformCanvasContext.js';
+import resetCanvasContextTransform from './resetCanvasContextTransform.js';
 
 // Named exports
 export {
@@ -52,4 +54,6 @@ export {
   getNewContext,
   path,
   setShadow,
+  transformCanvasContext,
+  resetCanvasContextTransform,
 };
