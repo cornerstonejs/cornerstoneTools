@@ -156,6 +156,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
+
     const { image, element } = eventData;
 
     const lineWidth = toolStyle.getToolWidth();

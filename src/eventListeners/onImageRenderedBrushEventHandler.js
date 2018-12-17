@@ -4,6 +4,10 @@ import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
 import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import { getNewContext } from '../drawing/index.js';
+import {
+  resetCanvasContextTransform,
+  transformCanvasContext,
+} from '../drawing/index.js';
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
@@ -205,6 +209,12 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
     x: 0,
     y: 0,
   });
+
+  const canvasTopRight = external.cornerstone.pixelToCanvas(eventData.element, {
+    x: eventData.image.width,
+    y: 0,
+  });
+
   const canvasBottomRight = external.cornerstone.pixelToCanvas(
     eventData.element,
     {
@@ -212,19 +222,42 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
       y: eventData.image.height,
     }
   );
-  const canvasWidth = canvasBottomRight.x - canvasTopLeft.x;
-  const canvasHeight = canvasBottomRight.y - canvasTopLeft.y;
+
+  const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
+    canvasTopLeft,
+    canvasTopRight
+  );
+  const cornerstoneCanvasHeight = external.cornerstoneMath.point.distance(
+    canvasTopRight,
+    canvasBottomRight
+  );
+
+  const canvas = eventData.canvasContext.canvas;
+  const viewport = eventData.viewport;
 
   context.imageSmoothingEnabled = false;
   context.globalAlpha = getLayerAlpha(alwaysVisible);
+
+  transformCanvasContext(context, canvas, viewport);
+
+  const canvasViewportTranslation = {
+    x: viewport.translation.x * viewport.scale,
+    y: viewport.translation.y * viewport.scale,
+  };
+
   context.drawImage(
     imageBitmap,
-    canvasTopLeft.x,
-    canvasTopLeft.y,
-    canvasWidth,
-    canvasHeight
+    canvas.width / 2 - cornerstoneCanvasWidth / 2 + canvasViewportTranslation.x,
+    canvas.height / 2 -
+      cornerstoneCanvasHeight / 2 +
+      canvasViewportTranslation.y,
+    cornerstoneCanvasWidth,
+    cornerstoneCanvasHeight
   );
+
   context.globalAlpha = 1.0;
+
+  resetCanvasContextTransform(context);
 }
 
 function getLayerAlpha(alwaysVisible) {
