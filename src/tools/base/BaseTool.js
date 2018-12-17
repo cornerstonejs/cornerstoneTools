@@ -1,5 +1,5 @@
 import mixins from './../../mixins/index.js';
-import lodash from 'lodash';
+import merge from 'lodash.merge';
 
 const logger = getLogger('tools:base:BaseTool');
 
@@ -27,7 +27,7 @@ class BaseTool {
     /**
      * Merge default props with custom props
      */
-    props = lodash.merge({}, defaultProps, props);
+    props = merge({}, defaultProps, props);
 
     const {
       name,

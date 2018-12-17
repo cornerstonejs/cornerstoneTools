@@ -14,7 +14,7 @@ import {
  */
 class BaseAnnotationTool extends BaseTool {
   constructor(...args) {
-    super(args);
+    super(...args);
   }
 
   // ===================================================================
