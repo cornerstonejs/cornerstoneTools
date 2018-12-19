@@ -56,6 +56,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     super(props, defaultProps);
 
+    this.isMultiPartTool = true;
+
     this._drawing = false;
     this._dragging = false;
     this._modifying = false;

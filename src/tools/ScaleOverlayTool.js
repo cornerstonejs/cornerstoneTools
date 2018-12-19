@@ -17,8 +17,8 @@ const logger = getLogger('tools:ScaleOverlayTool');
  * @extends Tools.Base.BaseTool
  */
 export default class ScaleOverlayTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ScaleOverlay',
       configuration: {
         minorTickLength: 12.5,
@@ -26,11 +26,8 @@ export default class ScaleOverlayTool extends BaseTool {
       },
       mixins: ['enabledOrDisabledBinaryTool'],
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   enabledCallback(element) {

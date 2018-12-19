@@ -11,8 +11,8 @@ import { changeViewportScale } from '../util/zoom/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class ZoomMouseWheelTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ZoomMouseWheel',
       supportedInteractionTypes: ['MouseWheel'],
       configuration: {
@@ -21,11 +21,8 @@ export default class ZoomMouseWheelTool extends BaseTool {
         invert: false,
       },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   mouseWheelCallback(evt) {

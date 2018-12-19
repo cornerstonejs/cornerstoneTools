@@ -32,9 +32,9 @@ export default class BrushTool extends BaseBrushTool {
       configuration: {},
     };
 
-    this.touchDragCallback = this._paint.bind(this);
-
     super(props, defaultProps);
+
+    this.touchDragCallback = this._paint.bind(this);
   }
 
   /**

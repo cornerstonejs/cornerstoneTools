@@ -22,8 +22,8 @@ const logger = getLogger('tools:ReferenceLinesTool');
  * @extends Tools.Base.BaseTool
  */
 export default class ReferenceLinesTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ReferenceLines',
       mixins: ['enabledOrDisabledBinaryTool'],
       configuration: {
@@ -31,10 +31,8 @@ export default class ReferenceLinesTool extends BaseTool {
       },
     };
 
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
+    super(props, defaultProps);
 
-    super(initialConfiguration);
-    this.initialConfiguration = initialConfiguration;
     this.renderer = null;
     this.synchronizationContext = null;
   }
