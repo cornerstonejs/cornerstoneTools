@@ -49,8 +49,8 @@ let configuration = {
   movingTextBox: false,
   currentHandle: 0,
   currentTool: -1,
-  defaultPencil: true,
-  alwaysClose: false
+  defaultPencil: false,
+  alwaysClose: true
 };
 
 /**
