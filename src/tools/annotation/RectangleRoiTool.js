@@ -34,8 +34,8 @@ const logger = getLogger('tools:annotation:RectangleRoiTool');
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -44,10 +44,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       },
       svgCursor: rectangleRoiCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   createNewMeasurement(eventData) {

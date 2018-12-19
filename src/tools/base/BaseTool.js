@@ -27,7 +27,7 @@ class BaseTool {
     /**
      * Merge default props with custom props
      */
-    props = deepmerge(props, defaultProps);
+    props = deepmerge(defaultProps, props);
 
     const {
       name,
