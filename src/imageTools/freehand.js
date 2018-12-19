@@ -48,7 +48,9 @@ let configuration = {
   modifying: false,
   movingTextBox: false,
   currentHandle: 0,
-  currentTool: -1
+  currentTool: -1,
+  defaultPencil: true,
+  alwaysClose: false
 };
 
 /**
@@ -178,7 +180,9 @@ function mouseDownActivateCallback (e) {
     return;
   }
 
-  if (eventData.event.shiftKey) {
+  if (config.defaultPencil && !eventData.event.shiftKey) {
+    config.activePencilMode = true;
+  } else if (!config.defaultPencil && eventData.event.shiftKey) {
     config.activePencilMode = true;
   }
 
@@ -303,7 +307,7 @@ function endDrawing (eventData, handleNearby) {
   data.handles.invalidHandlePlacement = false;
 
   // Connect the end handle to the origin handle
-  if (handleNearby !== undefined) {
+  if (handleNearby !== undefined && config.alwaysClose) {
     data.handles[config.currentHandle - 1].lines.push(data.handles[0]);
   }
 
@@ -336,12 +340,18 @@ function mouseDownActive (e, toolData, currentTool) {
   const coords = eventData.currentPoints.canvas;
   const handleNearby = pointNearHandle(element, data, coords);
 
-  if (!freeHandIntersect.end(data.handles) && data.canComplete) {
-    const lastHandlePlaced = config.currentHandle;
-
-    endDrawing(eventData, lastHandlePlaced);
-  } else if (handleNearby === null) {
+  if(!config.alwaysClose) {
     addPoint(eventData);
+    const lastHandlePlaced = freehand.getConfiguration().currentHandle;
+    endDrawing(eventData, lastHandlePlaced);
+  } else {
+    if (!freeHandIntersect.end(data.handles) && data.canComplete) {
+      const lastHandlePlaced = config.currentHandle;
+
+      endDrawing(eventData, lastHandlePlaced);
+    } else if (handleNearby === null) {
+      addPoint(eventData);
+    }
   }
 
   e.preventDefault();
