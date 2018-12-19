@@ -16,9 +16,12 @@ const { state, setters } = store.modules.brush;
  * @extends Tools.Base.BaseTool
  */
 class BaseBrushTool extends BaseTool {
-  constructor(...args) {
-    args.configuration.referencedToolData = 'brush';
-    super(...args);
+  constructor(props, defaultProps = {}) {
+    if (!defaultProps.configuration) {
+      defaultProps.configuration = {};
+    }
+    defaultProps.configuration.referencedToolData = 'brush';
+    super(props, defaultProps);
 
     this.updateOnMouseMove = true;
     this.hideDefaultCursor = true;
