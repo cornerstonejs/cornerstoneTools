@@ -4,7 +4,6 @@ build/
 config/
 docs/
 examples/
-src/
 test/
 
 ## Root Files
