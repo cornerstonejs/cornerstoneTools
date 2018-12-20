@@ -12,8 +12,7 @@ By convention the class name should be in PascalCase, and suffixed with:
 For example, our example is going to support mouse, so we shall call it the `HelloWorldMouseTool`:
 
 ```js
-import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import { BaseTool } from 'cornerstoneTools/src/lib/base';
 
 export default class HelloWorldMouseTool extends BaseTool {
   constructor (name = 'HelloWorldMouse') {
