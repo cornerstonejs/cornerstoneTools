@@ -111,7 +111,7 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
-import { default as imp } from './import.js';
+import * as lib from './lib.js';
 
 import { default as init } from './init.js';
 
@@ -272,7 +272,7 @@ const cornerstoneTools = {
   forceEnabledElementResize,
   orientation,
   SaveAs,
-  import: imp,
+  lib: lib,
   register,
   registerSome,
   wwwcSynchronizer,
@@ -381,10 +381,8 @@ export {
   requestPoolManager,
   external,
   EVENTS,
+  lib,
   version,
 };
-
-// This has a weird name, so we can't just import it as 'import';
-export { default as import } from './import.js';
 
 export default cornerstoneTools;

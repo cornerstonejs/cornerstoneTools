@@ -1,4 +1,4 @@
-import { lib } from '../lib.js';
+import * as lib from '../lib.js';
 import mixins from '../mixins/index.js';
 
 /**
@@ -28,7 +28,7 @@ export default function(name, mixin, overwrite = false) {
   mixins[name] = mixin;
 
   // Reference the mixin from the library so it can be exported externally.
-  lib[`mixins/${name}`] = mixins[name];
+  lib.mixins[name] = mixins[name];
 }
 
 function isMixinRegistered(name) {

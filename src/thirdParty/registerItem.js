@@ -1,4 +1,4 @@
-import { lib } from '../lib.js';
+import * as lib from '../lib.js';
 
 /**
  * Register an item to cornerstoneTools.
@@ -24,9 +24,9 @@ export default function(type, name, item, overwrite = false) {
     }
   }
 
-  lib[`${type}/${name}`] = item;
+  lib[type][name] = item;
 }
 
 function isItemNameRegistered(type, name) {
-  return lib[`${type}/${name}`] !== undefined;
+  return lib[type][name] !== undefined;
 }
