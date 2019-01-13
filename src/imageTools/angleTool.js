@@ -7,7 +7,7 @@ import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
-import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
+import { getNewContext, draw, setShadow, drawLines } from '../util/drawing.js';
 
 const toolType = 'angle';
 
@@ -90,7 +90,8 @@ function onImageRendered (e) {
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);
 
-      drawJoinedLines(context, eventData.element, data.handles.end, [data.handles.start, data.handles.end2], { color });
+      let lines = [ { start: data.handles.start, end: data.handles.end } , { start: data.handles.start2, end: data.handles.end2 } ];
+      drawLines(context, eventData.element, lines , { color });
 
       // Draw the handles
       drawHandles(context, eventData, data.handles);
