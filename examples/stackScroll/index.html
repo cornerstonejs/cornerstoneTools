@@ -79,14 +79,16 @@
     // Select the element to run the Viewer in
     var element = document.getElementById('dicomImage');
 
-    
+    // Add the updated Information in the corners of the image after the image rendered
     function onImageRendered(e) {
+        console.log('onImageRendered');
         var eventData = e.detail;
         var viewport = eventData.viewport;
         document.getElementById('mrbottomleft').textContent = "WW/WC: " + Math.round(viewport.voi.windowWidth) + "/" + Math.round(viewport.voi.windowCenter);
         document.getElementById('zoomText').textContent = "Zoom: " + viewport.scale.toFixed(2);
-    };
+    }
 
+    // Add function above to eventlistener
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
 
     function onNewImage(e) {
@@ -113,6 +115,7 @@
     }
     element.addEventListener('cornerstonenewimage', onNewImage);
 
+    // event and function for the Loop Checkbox
     var loopCheckbox = document.getElementById('loop');
     loopCheckbox.addEventListener('change', function() {
         var playClipToolData = cornerstoneTools.getToolState(element, 'playClip');
@@ -158,6 +161,8 @@
     // Set current value
     range.value = stack.currentImageIdIndex;
 
+
+    // Event for the slider input to select new Image
     function selectImage(event){
         var targetElement = document.getElementById("dicomImage");
 
@@ -188,6 +193,7 @@
     cornerstone.enable(element);
     cornerstoneTools.mouseInput.enable(element);
     cornerstoneTools.mouseWheelInput.enable(element);
+
     cornerstone.loadImage(imageIds[0]).then(function(image) {
         // Display the image
         cornerstone.displayImage(element, image);
