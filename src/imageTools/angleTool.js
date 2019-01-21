@@ -90,8 +90,15 @@ function onImageRendered (e) {
       // Differentiate the color of activation tool
       const color = toolColors.getColorIfActive(data);
 
-      const lines = [ { start: data.handles.start, end: data.handles.end } , { start: data.handles.start2, end: data.handles.end2 } ];
-      drawLines(context, eventData.element, lines , { color });
+      const lines = [{
+        start: data.handles.start,
+        end: data.handles.end
+      }, {
+        start: data.handles.start2,
+        end: data.handles.end2
+      }];
+
+      drawLines(context, eventData.element, lines, { color });
 
       // Draw the handles
       drawHandles(context, eventData, data.handles);
