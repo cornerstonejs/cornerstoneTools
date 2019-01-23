@@ -20,6 +20,7 @@ function getElementToolStateManager (element) {
 function addToolState (element, toolType, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
+  if (!measurementData.initial) measurementData.initial = JSON.parse(JSON.stringify(measurementData));
   toolStateManager.add(element, toolType, measurementData);
 
   const eventType = EVENTS.MEASUREMENT_ADDED;
