@@ -32,8 +32,9 @@ export default class FusionRenderer {
     const currentImageId = baseImageObject.imageIds[this.currentImageIdIndex];
     const overlayImageStacks = imageStacks.slice(1, imageStacks.length);
 
-    cornerstone.loadAndCacheImage(currentImageId).then((baseImage) => {
+    return cornerstone.loadAndCacheImage(currentImageId).then((baseImage) => {
       let baseLayerId = this.layerIds[0];
+      let promises = [];
 
       // Get the base layer if one exists
       if (baseLayerId) {
@@ -65,10 +66,11 @@ export default class FusionRenderer {
           // If an imageId was returned from the findImage function,
           // Load it, make sure it's visible and update the layer
           // With the new image object.
-          cornerstone.loadAndCacheImage(imageId).then((image) => {
+          const promise = cornerstone.loadAndCacheImage(imageId).then((image) => {
             cornerstone.setLayerImage(element, image, currentLayerId);
             cornerstone.updateImage(element);
           });
+          promises.push(promise);
         } else {
           // If no imageId was returned from the findImage function.
           // This means that there is no relevant image to display.
@@ -77,6 +79,7 @@ export default class FusionRenderer {
           cornerstone.updateImage(element);
         }
       });
+      return Promise.all(promises);
     });
   }
 }
