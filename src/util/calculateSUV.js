@@ -7,9 +7,10 @@ import external from '../externalModules.js';
  *
  * @param  {Object} image            The image.
  * @param  {number} storedPixelValue The raw pixel value.
+ * @param  {bool} [skipRescale=fale]
  * @returns {number}                  The SUV.
  */
-export default function(image, storedPixelValue) {
+export default function(image, storedPixelValue, skipRescale = false) {
   const cornerstone = external.cornerstone;
   const patientStudyModule = cornerstone.metaData.get(
     'patientStudyModule',
@@ -31,7 +32,9 @@ export default function(image, storedPixelValue) {
     return;
   }
 
-  const modalityPixelValue = storedPixelValue * image.slope + image.intercept;
+  const modalityPixelValue = skipRescale
+    ? storedPixelValue
+    : storedPixelValue * image.slope + image.intercept;
 
   const patientWeight = patientStudyModule.patientWeight; // In kg
 
