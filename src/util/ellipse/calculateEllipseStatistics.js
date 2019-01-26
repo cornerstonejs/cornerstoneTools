@@ -15,8 +15,8 @@ export default function(sp, ellipse) {
   let sumSquared = 0;
   let count = 0;
   let index = 0;
-  let min = sp.length ? sp[0] : 0;
-  let max = sp.length ? sp[0] : 0;
+  let min = null;
+  let max = null;
 
   for (let y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
     for (let x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
@@ -26,6 +26,11 @@ export default function(sp, ellipse) {
       };
 
       if (pointInEllipse(ellipse, point)) {
+        if (min === null) {
+          min = sp[index];
+          max = sp[index];
+        }
+
         sum += sp[index];
         sumSquared += sp[index] * sp[index];
         min = Math.min(min, sp[index]);
