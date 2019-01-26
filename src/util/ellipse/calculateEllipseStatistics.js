@@ -2,20 +2,21 @@ import pointInEllipse from './pointInEllipse.js';
 
 /**
  * Calculates the statistics of an elliptical region of interest.
- * @export @public @method
- * @name calculateEllipseStatistics
  *
- * @param  {number[]} sp    Array of the image data's pixel values.
- * @param  {Object} ellipse An object describing the ellipse.
- * @returns {Object}         The statistics of the ellipse.
+ * @private
+ * @function calculateEllipseStatistics
+ *
+ * @param {number[]} sp - Array of the image data's pixel values.
+ * @param {Object} ellipse - An object describing the ellipse.
+ * @returns {Object} { count, mean, variance, stdDev, min, max }
  */
 export default function(sp, ellipse) {
-  // TODO: Get a real statistics library here that supports large counts
-
   let sum = 0;
   let sumSquared = 0;
   let count = 0;
   let index = 0;
+  let min = sp.length ? sp[0] : 0;
+  let max = sp.length ? sp[0] : 0;
 
   for (let y = ellipse.top; y < ellipse.top + ellipse.height; y++) {
     for (let x = ellipse.left; x < ellipse.left + ellipse.width; x++) {
@@ -27,6 +28,8 @@ export default function(sp, ellipse) {
       if (pointInEllipse(ellipse, point)) {
         sum += sp[index];
         sumSquared += sp[index] * sp[index];
+        min = Math.min(min, sp[index]);
+        max = Math.max(max, sp[index]);
         count++;
       }
 
@@ -40,6 +43,8 @@ export default function(sp, ellipse) {
       mean: 0.0,
       variance: 0.0,
       stdDev: 0.0,
+      min,
+      max,
     };
   }
 
@@ -51,5 +56,7 @@ export default function(sp, ellipse) {
     mean,
     variance,
     stdDev: Math.sqrt(variance),
+    min,
+    max,
   };
 }
