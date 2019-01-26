@@ -7,7 +7,7 @@ import pointInEllipse from './pointInEllipse.js';
  * @function calculateEllipseStatistics
  *
  * @param {number[]} sp - Array of the image data's pixel values.
- * @param {Object} ellipse - An object describing the ellipse.
+ * @param {Object} ellipse - { top, left, height, width } - An object describing the ellipse.
  * @returns {Object} { count, mean, variance, stdDev, min, max }
  */
 export default function(sp, ellipse) {
