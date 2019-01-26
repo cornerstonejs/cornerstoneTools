@@ -39,9 +39,6 @@ describe('calculateEllipseStatistics.js', () => {
     const fakePixels = [100, 100, 100,
                         100, 4, 5,
                         100, 3, 6];
-    // x, x, x
-    // x, o, o
-    // x, o, o
 
     const result = calculateEllipseStatistics(fakePixels, fakeEllipseBounds);
 
