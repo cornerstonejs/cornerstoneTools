@@ -4,6 +4,7 @@ import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
 import { getToolState } from '../../stateManagement/toolState.js';
+import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 
 const { state, setters } = store.modules.brush;
 
@@ -41,6 +42,7 @@ class BaseBrushTool extends BaseTool {
 
     //TEMP
     console.log(this.constructor.invalidateBrushOnEnabledElement);
+    console.log(this.constructor.getDataAsVolume);
     // TEMP
   }
 
@@ -433,15 +435,15 @@ class BaseBrushTool extends BaseTool {
    * @returns {null}
    */
   static invalidateBrushOnEnabledElement(enabledElementUID) {
-    console.log('test');
+    console.log('invalidateBrushOnEnabledElement... GO!');
 
-    console.log(store.state.enabledElements);
+    //console.log(store.state.enabledElements);
 
-    const enabledElement = store.getters.enabledElementByUID(enabledElementUID);
+    const element = store.getters.enabledElementByUID(enabledElementUID);
 
-    console.log(enabledElement);
+    console.log(element);
 
-    const stackToolState = getToolState(enabledElement, 'stack');
+    const stackToolState = getToolState(element, 'stack');
 
     console.log(stackToolState);
 
@@ -451,9 +453,44 @@ class BaseBrushTool extends BaseTool {
 
     const imageIds = stackToolState.data[0].imageIds;
 
-    const z = imageIds.length;
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    //for (let i = 0; i < imageIds.length; i++) {}
+    const image = enabledElement.image;
+
+    const dim = {
+      xy: image.columns * image.rows,
+      z: image.rows,
+      xyz: image.columns * image.rows * imageIds.length,
+    };
+
+    console.log(dim);
+
+    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+    // TODO -> Put this elsewhere
+    /*
+    const buffer = new ArrayBuffer(dim.xyz);
+
+    const unit8View = new Uint8Array(buffer);
+
+    console.log(unit8View.length);
+    */
+
+    for (let i = 0; i < imageIds.length; i++) {
+      const imageId = imageIds[i];
+
+      if (toolState[imageId] && toolState[imageId].brush) {
+        const brushData = toolState[imageId].brush.data;
+
+        for (let j = 0; j < brushData.length; j++) {
+          if (brushData[j].pixelData) {
+            brushData[j].invalidated = true;
+          }
+        }
+      }
+    }
+
+    external.cornerstone.updateImage(element);
   }
 
   /**
@@ -461,11 +498,57 @@ class BaseBrushTool extends BaseTool {
    *
    * @return {type}  description
    */
-  static getDataAsVolume(cornerstoneEnabledElement) {
-    // TODO -- grab imageID of the viewport
-    // TODO - grab all slices.
-    // TODO - aggregate data to a single Uint8ClampedArray of size x * y * z
-    // TODO Return!
+  static getDataAsVolume(enabledElementUID) {
+    console.log('invalidateBrushOnEnabledElement... GO!');
+
+    //console.log(store.state.enabledElements);
+
+    const element = store.getters.enabledElementByUID(enabledElementUID);
+
+    console.log(element);
+
+    const stackToolState = getToolState(element, 'stack');
+
+    console.log(stackToolState);
+
+    if (!stackToolState) {
+      return;
+    }
+
+    const imageIds = stackToolState.data[0].imageIds;
+
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    const image = enabledElement.image;
+
+    const dim = {
+      xy: image.columns * image.rows,
+      z: image.rows,
+      xyz: image.columns * image.rows * imageIds.length,
+    };
+
+    console.log(dim);
+
+    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+    const buffer = new ArrayBuffer(dim.xyz);
+
+    const uint8View = new Uint8Array(buffer);
+
+    console.log(uint8View);
+
+    for (let i = 0; i < imageIds.length; i++) {
+      const imageId = imageIds[i];
+
+      // TODO -> Workout HTF we will do this for multiple colors etc.
+      if (
+        toolState[imageId] &&
+        toolState[imageId].brush &&
+        toolState[imageId].brush.data[0].pixelData
+      ) {
+        // ADD brush data to the location of that slice.
+      }
+    }
   }
 }
 
