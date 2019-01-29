@@ -38,6 +38,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // showMinMax: false,
+        // showHounsfieldUnits: true,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -237,10 +241,12 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           return _findTextBoxAnchorPoints(handles.start, handles.end);
         };
         const textBoxContent = _createTextBoxContent(
+          context,
           image.color,
           data.cachedStats,
           modality,
-          hasPixelSpacing
+          hasPixelSpacing,
+          this.configuration
         );
 
         drawLinkedTextBox(
@@ -319,6 +325,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
 /**
  *
  *
+ * @param {*} context
  * @param {*} isColorImage
  * @param {*} [{ area, mean, stdDev, min, max, meanStdDevSUV }={}]
  * @param {*} modality
@@ -327,6 +334,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  * @returns
  */
 function _createTextBoxContent(
+  context,
   isColorImage,
   { area, mean, stdDev, min, max, meanStdDevSUV } = {},
   modality,
@@ -338,40 +346,58 @@ function _createTextBoxContent(
   const textLines = [];
 
   // Don't display mean/standardDev for color images
+  let otherLines = [];
   if (!isColorImage) {
+    const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
+
     // If the modality is CT, add HU to denote Hounsfield Units
-    let suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
+    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
-    let stdDevString = `Std Dev: ${numbersWithCommas(
+    const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
     )}${suffix}`;
 
     // If this image has SUV values to display, concatenate them to the text line
-    if (meanStdDevSUV && meanStdDevSUV.mean !== 0) {
+    if (hasStandardUptakeValues) {
       const SUVtext = ' SUV: ';
 
-      meanString += SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
-      stdDevString +=
-        SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
+      const meanSuvString = `${SUVtext}${numbersWithCommas(
+        meanStdDevSUV.mean.toFixed(2)
+      )}`;
+      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
+        meanStdDevSUV.stdDev.toFixed(2)
+      )}`;
+
+      const targetStringLength = Math.floor(
+        context.measureText(`${stdDevString}     `).width
+      );
+      while (context.measureText(meanString).width < targetStringLength) {
+        meanString += ' ';
+      }
+
+      otherLines.push(`${meanString}${meanSuvString}`);
+      otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
+    } else {
+      otherLines.push(`${meanString}     ${stdDevString}`);
     }
 
     if (showMinMax) {
-      const meanStdDevString = `${meanString}      ${stdDevString}`;
-      const minMaxStringLength = `Min: ${min}Max: ${max}`.length;
-      const stringLengthDifference =
-        meanStdDevString.length - (minMaxStringLength + 1);
+      let minString = `Min: ${min}${suffix}`;
+      const maxString = `Max: ${max}${suffix}`;
+      const targetStringLength = hasStandardUptakeValues
+        ? Math.floor(context.measureText(`${stdDevString}     `).width)
+        : Math.floor(context.measureText(`${meanString}     `).width);
 
-      let stringPadding = '';
-      for (let i = 0; i < stringLengthDifference; i++) {
-        stringPadding += ' ';
+      while (context.measureText(minString).width < targetStringLength) {
+        minString += ' ';
       }
 
-      textLines.push(meanStdDevString);
-      textLines.push(`Min: ${min}${stringPadding}Max: ${max}`);
+      otherLines.push(`${minString}${maxString}`);
     }
   }
 
   textLines.push(_formatArea(area, hasPixelSpacing));
+  otherLines.forEach(x => textLines.push(x));
 
   return textLines;
 }
