@@ -187,6 +187,7 @@
 
     // Enable & Setup all of our elements
     const elements = document.querySelectorAll('.cornerstone-element');
+
     Array.from(elements).forEach(element => {
       cornerstone.enable(element);
 
@@ -209,6 +210,10 @@
         cornerstoneTools.SaveAs(element, 'viewportImage.png');
       });
     });
+
+    // TEMP
+    console.log(cornerstone.getEnabledElement(elements[0]).uuid);
+    // TEMP
 
     // Iterate over all tool-category links
     const toolCategoryLinks = document.querySelectorAll(

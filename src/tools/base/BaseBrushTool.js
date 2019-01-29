@@ -3,6 +3,7 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
+import { getToolState } from '../../stateManagement/toolState.js';
 
 const { state, setters } = store.modules.brush;
 
@@ -37,6 +38,10 @@ class BaseBrushTool extends BaseTool {
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
+
+    //TEMP
+    console.log(this.constructor.invalidateBrushOnEnabledElement);
+    // TEMP
   }
 
   // ===================================================================
@@ -420,6 +425,47 @@ class BaseBrushTool extends BaseTool {
    */
   static getReferencedToolDataName() {
     return 'brush';
+  }
+
+  /**
+   * @static invalidateBrushOnEnabledElement - invalidate all the brush data.
+   *
+   * @returns {null}
+   */
+  static invalidateBrushOnEnabledElement(enabledElementUID) {
+    console.log('test');
+
+    console.log(store.state.enabledElements);
+
+    const enabledElement = store.getters.enabledElementByUID(enabledElementUID);
+
+    console.log(enabledElement);
+
+    const stackToolState = getToolState(enabledElement, 'stack');
+
+    console.log(stackToolState);
+
+    if (!stackToolState) {
+      return;
+    }
+
+    const imageIds = stackToolState.data[0].imageIds;
+
+    const z = imageIds.length;
+
+    //for (let i = 0; i < imageIds.length; i++) {}
+  }
+
+  /**
+   * @static getDataAsVolume - Returns a datacube for the segmentation.
+   *
+   * @return {type}  description
+   */
+  static getDataAsVolume(cornerstoneEnabledElement) {
+    // TODO -- grab imageID of the viewport
+    // TODO - grab all slices.
+    // TODO - aggregate data to a single Uint8ClampedArray of size x * y * z
+    // TODO Return!
   }
 }
 
