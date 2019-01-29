@@ -4,22 +4,25 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawEllipse,
+  drawHandles,
+  drawLinkedTextBox,
 } from './../../drawing/index.js';
-import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
+
+// Util
 import calculateSUV from './../../util/calculateSUV.js';
-//
+import {
+  pointInEllipse,
+  calculateEllipseStatistics,
+} from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
-
-import ellipseUtils from './../../util/ellipse/index.js';
-
-const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
+import throttle from './../../util/throttle.js';
 
 /**
  * @public
