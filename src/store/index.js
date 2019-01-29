@@ -1,6 +1,7 @@
 // Modules
 import brush from './modules/brushModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
+import external from '../externalModules.js';
 
 export const state = {
   // Global
@@ -29,8 +30,10 @@ export const getters = {
       tool.supportedInteractionTypes.includes('Touch')
     ),
   enabledElementByUID: enabledElementUID =>
-    state.enabledElements.filter(
-      enabledElement => enabledElement.uuid === enabledElementUID
+    state.enabledElements.find(
+      element =>
+        external.cornerstone.getEnabledElement(element).uuid ===
+        enabledElementUID
     ),
 };
 
