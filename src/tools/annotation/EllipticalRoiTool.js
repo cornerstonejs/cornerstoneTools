@@ -1,5 +1,6 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
@@ -97,10 +98,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool(element, data, coords) {
-    // TODO: How should we handle touch? for mouse, distance is 15 for touch its 25
-    const distance = 15;
-
+  pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -115,6 +113,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
+    const distance = interactionType === 'mouse' ? 15 : 25;
     const startCanvas = external.cornerstone.pixelToCanvas(
       element,
       data.handles.start
