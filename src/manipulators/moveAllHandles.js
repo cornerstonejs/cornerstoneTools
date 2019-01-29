@@ -90,6 +90,7 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
   const { x, y } = evt.detail.deltaPoints.image;
 
   annotation.active = true;
+  annotation.invalidated = true;
 
   const handleKeys = Object.keys(annotation.handles);
 
