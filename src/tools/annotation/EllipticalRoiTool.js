@@ -162,10 +162,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const context = getNewContext(eventData.canvasContext.canvas);
 
     // Meta
-    const seriesModule = external.cornerstone.metaData.get(
-      'generalSeriesModule',
-      image.imageId
-    );
+    const seriesModule =
+      external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
+      {};
     let imagePlane = external.cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
@@ -222,11 +221,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           }
         }
 
-        // If the data has been invalidated, we need to calculate it again
-
-        // Set the invalidated flag to false so that this data won't automatically be recalculated
-        data.invalidated = false;
-
         // If the textbox has not been moved by the user, it should be displayed
         // on the right-most side of the tool.
         if (!data.handles.textBox.hasMoved) {
@@ -240,7 +234,11 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
             (data.handles.start.y + data.handles.end.y) / 2;
         }
 
-        const text = _createTextBoxContent(
+        const textBoxAnchorPoints = handles => {
+          return _findTextBoxAnchorPoints(handles.start, handles.end);
+        };
+        const textBoxContent = _createTextBoxContent(
+          image.color,
           data.cachedStats,
           modality,
           hasPixelSpacing
@@ -250,7 +248,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           context,
           element,
           data.handles.textBox,
-          text,
+          textBoxContent,
           data.handles,
           textBoxAnchorPoints,
           color,
@@ -260,37 +258,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         );
       }
     });
-
-    function textBoxAnchorPoints(handles) {
-      // Retrieve the bounds of the ellipse (left, top, width, and height)
-      const left = Math.min(handles.start.x, handles.end.x);
-      const top = Math.min(handles.start.y, handles.end.y);
-      const width = Math.abs(handles.start.x - handles.end.x);
-      const height = Math.abs(handles.start.y - handles.end.y);
-
-      return [
-        {
-          // Top middle point of ellipse
-          x: left + width / 2,
-          y: top,
-        },
-        {
-          // Left middle point of ellipse
-          x: left,
-          y: top + height / 2,
-        },
-        {
-          // Bottom middle point of ellipse
-          x: left + width / 2,
-          y: top + height,
-        },
-        {
-          // Right middle point of ellipse
-          x: left + width,
-          y: top + height / 2,
-        },
-      ];
-    }
   }
 }
 
@@ -317,9 +284,41 @@ function _updateCachedStats(image, element, data, modality, pixelSpacing) {
     pixelSpacing
   );
   data.cachedStats = stats;
+  data.invalidated = false;
+}
+
+function _findTextBoxAnchorPoints(startHandle, endHandle) {
+  const { left, top, width, height } = _getEllipseImageCoordinates(
+    startHandle,
+    endHandle
+  );
+
+  return [
+    {
+      // Top middle point of ellipse
+      x: left + width / 2,
+      y: top,
+    },
+    {
+      // Left middle point of ellipse
+      x: left,
+      y: top + height / 2,
+    },
+    {
+      // Bottom middle point of ellipse
+      x: left + width / 2,
+      y: top + height,
+    },
+    {
+      // Right middle point of ellipse
+      x: left + width,
+      y: top + height / 2,
+    },
+  ];
 }
 
 function _createTextBoxContent(
+  isColorImage,
   { area, mean, stdDev, min, max, meanStdDevSUV } = {},
   modality,
   hasPixelSpacing
@@ -328,8 +327,7 @@ function _createTextBoxContent(
   const textLines = [];
 
   // Don't display mean/standardDev for color images
-  const isColor = image.color;
-  if (!isColor) {
+  if (!isColorImage) {
     // If the modality is CT, add HU to denote Hounsfield Units
     const suffix = modality === 'CT' ? ' HU' : '';
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
@@ -392,10 +390,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ellipseCoordinates
   );
 
-  let meanStdDevSUV = {
-    mean: undefined,
-    stdDev: undefined,
-  };
+  let meanStdDevSUV;
   if (modality === 'PT') {
     meanStdDevSUV = {
       mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
@@ -406,11 +401,10 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Calculate the image area from the ellipse dimensions and pixel spacing
   const area =
     Math.PI *
-    ((ellipse.width * (pixelSpacing.columnPixelSpacing || 1)) / 2) *
-    ((ellipse.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
+    ((ellipseCoordinates.width * (pixelSpacing.columnPixelSpacing || 1)) / 2) *
+    ((ellipseCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
 
   return {
-    radius: radius || 0,
     area: area || 0,
     count: ellipseMeanStdDev.count || 0,
     mean: ellipseMeanStdDev.mean || 0,
