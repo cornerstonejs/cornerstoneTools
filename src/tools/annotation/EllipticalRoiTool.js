@@ -316,21 +316,33 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
+/**
+ *
+ *
+ * @param {*} isColorImage
+ * @param {*} [{ area, mean, stdDev, min, max, meanStdDevSUV }={}]
+ * @param {*} modality
+ * @param {*} hasPixelSpacing
+ * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
+ * @returns
+ */
 function _createTextBoxContent(
   isColorImage,
   { area, mean, stdDev, min, max, meanStdDevSUV } = {},
   modality,
-  hasPixelSpacing
+  hasPixelSpacing,
+  options = {}
 ) {
-  // Define an array to store the rows of text for the textbox
+  const showMinMax = options.showMinMax || false;
+  const showHounsfieldUnits = options.showHounsfieldUnits || true;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
   if (!isColorImage) {
     // If the modality is CT, add HU to denote Hounsfield Units
-    const suffix = modality === 'CT' ? ' HU' : '';
+    let suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
-    let stdDevString = `StdDev: ${numbersWithCommas(
+    let stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
     )}${suffix}`;
 
@@ -343,18 +355,41 @@ function _createTextBoxContent(
         SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
     }
 
-    textLines.push(meanString);
-    textLines.push(stdDevString);
+    if (showMinMax) {
+      const meanStdDevString = `${meanString}      ${stdDevString}`;
+      const minMaxStringLength = `Min: ${min}Max: ${max}`.length;
+      const stringLengthDifference =
+        meanStdDevString.length - (minMaxStringLength + 1);
+
+      let stringPadding = '';
+      for (let i = 0; i < stringLengthDifference; i++) {
+        stringPadding += ' ';
+      }
+
+      textLines.push(meanStdDevString);
+      textLines.push(`Min: ${min}${stringPadding}Max: ${max}`);
+    }
   }
 
-  // This uses Char code 178 for a superscript 2
-  let suffix = hasPixelSpacing
-    ? ` mm${String.fromCharCode(178)}`
-    : ` pixels${String.fromCharCode(178)}`;
-
-  textLines.push(`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`);
+  textLines.push(_formatArea(area, hasPixelSpacing));
 
   return textLines;
+}
+
+/**
+ *
+ *
+ * @param {*} area
+ * @param {*} hasPixelSpacing
+ * @returns
+ */
+function _formatArea(area, hasPixelSpacing) {
+  // This uses Char code 178 for a superscript 2
+  const suffix = hasPixelSpacing
+    ? ` mm${String.fromCharCode(178)}`
+    : ` px${String.fromCharCode(178)}`;
+
+  return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
 /**
