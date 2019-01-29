@@ -292,6 +292,13 @@ function _updateCachedStats(image, element, data, modality, pixelSpacing) {
   data.invalidated = false;
 }
 
+/**
+ *
+ *
+ * @param {*} startHandle
+ * @param {*} endHandle
+ * @returns
+ */
 function _findTextBoxAnchorPoints(startHandle, endHandle) {
   const { left, top, width, height } = _getEllipseImageCoordinates(
     startHandle,
