@@ -46,7 +46,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
-
     this.initialConfiguration = initialConfiguration;
   }
 
@@ -94,14 +93,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     };
   }
 
-  /**
-   *
-   *
-   * @param {*} element
-   * @param {*} data
-   * @param {*} coords
-   * @returns {Boolean}
-   */
   pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
@@ -177,8 +168,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const modality = seriesModule.modality;
     const hasPixelSpacing =
       imagePlane && imagePlane.rowPixelSpacing && imagePlane.columnPixelSpacing;
-    imagePlane = imagePlane || {};
 
+    imagePlane = imagePlane || {};
     const pixelSpacing = {
       rowPixelSpacing: imagePlane.rowPixelSpacing || 1,
       columnPixelSpacing: imagePlane.columnPixelSpacing || 1,
@@ -224,11 +215,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           }
         }
 
-        // If the textbox has not been moved by the user, it should be displayed
-        // on the right-most side of the tool.
+        // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-          // Note that this calculates it in image coordinates
           data.handles.textBox.x = Math.max(
             data.handles.start.x,
             data.handles.end.x
