@@ -48,8 +48,8 @@ export default function(sp, ellipse) {
       mean: 0.0,
       variance: 0.0,
       stdDev: 0.0,
-      min,
-      max,
+      min: 0.0,
+      max: 0.0,
     };
   }
 

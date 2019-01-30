@@ -337,16 +337,16 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits = options.showHounsfieldUnits || true;
+  const showHounsfieldUnits =
+    options.showHounsfieldUnits === false ? false : true;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
   let otherLines = [];
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-
-    // If the modality is CT, add HU to denote Hounsfield Units
     const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
+
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)

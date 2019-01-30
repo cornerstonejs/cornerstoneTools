@@ -463,7 +463,8 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits = options.showHounsfieldUnits || true;
+  const showHounsfieldUnits =
+    options.showHounsfieldUnits === false ? false : true;
   const textLines = [];
 
   let otherLines = [];
