@@ -39,11 +39,6 @@ class BaseBrushTool extends BaseTool {
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
-
-    //TEMP
-    console.log(this.constructor.invalidateBrushOnEnabledElement);
-    console.log(this.constructor.getDataAsVolume);
-    // TEMP
   }
 
   // ===================================================================
@@ -435,17 +430,9 @@ class BaseBrushTool extends BaseTool {
    * @returns {null}
    */
   static invalidateBrushOnEnabledElement(enabledElementUID) {
-    console.log('invalidateBrushOnEnabledElement... GO!');
-
-    //console.log(store.state.enabledElements);
-
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
-    console.log(element);
-
     const stackToolState = getToolState(element, 'stack');
-
-    console.log(stackToolState);
 
     if (!stackToolState) {
       return;
@@ -462,8 +449,6 @@ class BaseBrushTool extends BaseTool {
       z: image.rows,
       xyz: image.columns * image.rows * imageIds.length,
     };
-
-    console.log(dim);
 
     const toolState = globalImageIdSpecificToolStateManager.saveToolState();
 
@@ -490,7 +475,7 @@ class BaseBrushTool extends BaseTool {
       }
     }
 
-    external.cornerstone.updateImage(element);
+    external.cornerstone.updateImage(element, true);
   }
 
   /**
@@ -499,17 +484,9 @@ class BaseBrushTool extends BaseTool {
    * @return {type}  description
    */
   static getDataAsVolume(enabledElementUID) {
-    console.log('invalidateBrushOnEnabledElement... GO!');
-
-    //console.log(store.state.enabledElements);
-
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
-    console.log(element);
-
     const stackToolState = getToolState(element, 'stack');
-
-    console.log(stackToolState);
 
     if (!stackToolState) {
       return;
@@ -527,15 +504,11 @@ class BaseBrushTool extends BaseTool {
       xyz: image.columns * image.rows * imageIds.length,
     };
 
-    console.log(dim);
-
     const toolState = globalImageIdSpecificToolStateManager.saveToolState();
 
     const buffer = new ArrayBuffer(dim.xyz);
 
     const uint8View = new Uint8Array(buffer);
-
-    console.log(uint8View);
 
     for (let i = 0; i < imageIds.length; i++) {
       const imageId = imageIds[i];

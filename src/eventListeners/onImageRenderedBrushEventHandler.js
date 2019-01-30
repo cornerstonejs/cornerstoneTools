@@ -108,7 +108,7 @@ function shouldRenderSegmentation(evt, segIndex, segData) {
   const toolData = segData.toolData;
   const visibleSegmentations = segData.visibleSegmentations;
 
-  if (!toolData.data[segIndex].pixelData) {
+  if (!toolData.data[segIndex] || !toolData.data[segIndex].pixelData) {
     // No data, no render.
     return false;
   }
