@@ -96,7 +96,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
    * @param {*} coords
    * @returns {Boolean}
    */
-  pointNearTool(element, data, coords) {
+  pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -111,6 +111,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       return false;
     }
 
+    const distance = interactionType === 'mouse' ? 15 : 25;
     const startCanvas = external.cornerstone.pixelToCanvas(
       element,
       data.handles.start
@@ -132,7 +133,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       coords
     );
 
-    return distanceToPoint < 5;
+    return distanceToPoint < distance;
   }
 
   /**
