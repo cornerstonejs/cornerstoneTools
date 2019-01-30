@@ -333,8 +333,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     mean: roiMeanStdDev.mean || 0,
     variance: roiMeanStdDev.variance || 0,
     stdDev: roiMeanStdDev.stdDev || 0,
-    // min: ellipseMeanStdDev.min || 0,
-    // max: ellipseMeanStdDev.max || 0,
+    min: roiMeanStdDev.min || 0,
+    max: roiMeanStdDev.max || 0,
     meanStdDevSUV,
   };
 }
@@ -351,12 +351,16 @@ function _calculateRectangleStats(sp, rectangle) {
   let sumSquared = 0;
   let count = 0;
   let index = 0;
+  let min = sp ? sp[0] : null;
+  let max = sp ? sp[0] : null;
 
   for (let y = rectangle.top; y < rectangle.top + rectangle.height; y++) {
     for (let x = rectangle.left; x < rectangle.left + rectangle.width; x++) {
       sum += sp[index];
       sumSquared += sp[index] * sp[index];
-      count++;
+      min = Math.min(min, sp[index]);
+      max = Math.max(max, sp[index]);
+      count++; // TODO: Wouldn't this just be sp.length?
       index++;
     }
   }
@@ -367,6 +371,8 @@ function _calculateRectangleStats(sp, rectangle) {
       mean: 0.0,
       variance: 0.0,
       stdDev: 0.0,
+      min: 0.0,
+      max: 0.0,
     };
   }
 
@@ -378,6 +384,8 @@ function _calculateRectangleStats(sp, rectangle) {
     mean,
     variance,
     stdDev: Math.sqrt(variance),
+    min,
+    max,
   };
 }
 
