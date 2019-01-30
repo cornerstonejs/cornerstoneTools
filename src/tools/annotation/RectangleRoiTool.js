@@ -1,20 +1,23 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Drawing
 import {
   getNewContext,
   draw,
-  setShadow,
+  drawHandles,
   drawRect,
+  drawLinkedTextBox,
+  setShadow,
 } from './../../drawing/index.js';
-import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
+
+// Util
 import calculateSUV from './../../util/calculateSUV.js';
-//
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 
 /**
