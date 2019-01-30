@@ -295,13 +295,13 @@ function _getRectangleImageCoordinates(startHandle, endHandle) {
  * @returns
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
-  // Retrieve the bounds of the ellipse in image coordinates
+  // Retrieve the bounds of the rectangle in image coordinates
   const roiCoordinates = _getRectangleImageCoordinates(
     handles.start,
     handles.end
   );
 
-  // Retrieve the array of pixels that the ellipse bounds cover
+  // Retrieve the array of pixels that the rectangle bounds cover
   const pixels = external.cornerstone.getPixels(
     element,
     roiCoordinates.left,
@@ -310,7 +310,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     roiCoordinates.height
   );
 
-  // Calculate the mean & standard deviation from the pixels and the ellipse details
+  // Calculate the mean & standard deviation from the pixels and the rectangle details
   const roiMeanStdDev = _calculateRectangleStats(pixels, roiCoordinates);
 
   let meanStdDevSUV;
@@ -321,7 +321,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     };
   }
 
-  // Calculate the image area from the ellipse dimensions and pixel spacing
+  // Calculate the image area from the rectangle dimensions and pixel spacing
   const area =
     roiCoordinates.width *
     (pixelSpacing.columnPixelSpacing || 1) *
