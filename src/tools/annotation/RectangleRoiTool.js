@@ -146,7 +146,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
-    const imagePlane = external.cornerstone.metaData.get(
+    let imagePlane = external.cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
     );
@@ -324,8 +324,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Calculate the image area from the ellipse dimensions and pixel spacing
   const area =
     roiCoordinates.width *
-    (colPixelSpacing || 1) *
-    (roiCoordinates.height * (rowPixelSpacing || 1));
+    (pixelSpacing.columnPixelSpacing || 1) *
+    (roiCoordinates.height * (pixelSpacing.rowPixelSpacing || 1));
 
   return {
     area: area || 0,
@@ -416,6 +416,22 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
       y: top + height / 2,
     },
   ];
+}
+
+/**
+ *
+ *
+ * @param {*} area
+ * @param {*} hasPixelSpacing
+ * @returns
+ */
+function _formatArea(area, hasPixelSpacing) {
+  // This uses Char code 178 for a superscript 2
+  const suffix = hasPixelSpacing
+    ? ` mm${String.fromCharCode(178)}`
+    : ` px${String.fromCharCode(178)}`;
+
+  return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
 /**
