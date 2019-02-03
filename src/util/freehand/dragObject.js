@@ -41,17 +41,25 @@ function dragTextBox (currentHandle) {
 * @param {Object} data - The data associated with the freehand tool being modified.
 * @modifies {data}
 */
-function dragHandle (currentHandle, data) {
+function dragHandle(currentHandle, data) {
   const config = freehand.getConfiguration();
+  let handleIndex = -1;
 
   data.handles.invalidHandlePlacement = freeHandIntersect.modify(data.handles, currentHandle);
   data.active = true;
   data.highlight = true;
   data.handles[currentHandle].x = config.mouseLocation.handles.start.x;
   data.handles[currentHandle].y = config.mouseLocation.handles.start.y;
-  if (currentHandle) {
-    const lastLineIndex = data.handles[currentHandle - 1].lines.length - 1;
-    const lastLine = data.handles[currentHandle - 1].lines[lastLineIndex];
+
+  if (currentHandle === 0) {
+    handleIndex = data.handles.length - 1;
+  } else {
+    handleIndex = currentHandle - 1;
+  }
+
+  if (currentHandle >= 0) {
+    const lastLineIndex = data.handles[handleIndex].lines.length - 1;
+    const lastLine = data.handles[handleIndex].lines[lastLineIndex];
 
     lastLine.x = config.mouseLocation.handles.start.x;
     lastLine.y = config.mouseLocation.handles.start.y;
