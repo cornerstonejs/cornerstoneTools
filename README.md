@@ -1,35 +1,42 @@
-# cornerstone-tools@next
+<div align="center">
+<h1>cornerstone-tools</h1>
 
-[![CircleCI](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg)](https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext) [![Coverage Status](https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg)](https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext)
+<p>Provides a simple, extensible framework for creating tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a>. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.</p>
 
-<!-- Get Latest Coverage info for vNext:
-     https://coveralls.io/github/cornerstonejs/cornerstoneTools.json?branch=vNext
--->
+[**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-The `cornerstone-tools` vNext branch is a preview branch for upcoming major API changes. When new changes are merged, if all tests are passing, a new version is cut and published to NPM under the `next` tag. When enough progress has been made, a more formal deprecation and adoption strategy will be announced as this API replaces v2.
+</div>
 
-You can track [this version's progress here](https://github.com/cornerstonejs/cornerstoneTools/projects/1). Any/all help in determining our API target, completing issues, finding bugs, etc. is appreciated.
+<hr />
 
-## Getting Started
+<!-- prettier-ignore-start -->
+[![Build Status][build-badge]][build]
+[![Coverage Status][coverage-badge]][coverage]
 
-### Install
+[![NPM version][npm-version-image]][npm-url]
+[![NPM downloads][npm-downloads-image]][npm-url]
+[![MIT License][license-image]][license-url]
+<!-- prettier-ignore-end -->
 
-**Via NPM:** (preferred)
+## The problem
 
-_Latest stable release:_
 
-- `npm install --save cornerstone-tools`
+You want to build tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/).
+As part of this goal, you don't want to re-invent the wheel. You want easy to read
 
-_Pre-release, unstable, mostly for contributors:_
+## This solution
 
-- `npm install --save cornerstone-tools@next`
+`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js.
+It's only dependencies are libraries within the Cornerstone family. Instead of trying to
+"do everything" it aims to be extensible and pluggable to aid in the rapid development
+of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared,
+allowing for the creation of a broader ecosystem.
 
-### Usage
+## Example
 
-See the [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/cornerstonejs/cornerstoneTools/wiki) for documentation (Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)) on how to use this library
+TODO: This need refined
 
 **A common setup when using modules:**
-
 ```javascript
 // Load NPM packages
 import Hammer from "hammerjs"; // npm install --save hammerjs
@@ -41,43 +48,92 @@ cornerstoneTools.external.cornerstone = cornerstone;
 cornerstoneTools.external.Hammer = Hammer;
 ```
 
-## Contributing
+## Installation
 
-**How To Contribute:**
+This module is distributed via [npm][npm] which is bundled with [node][node] and
+should be installed as one of your project's `devDependencies`:
 
-1.  Fork this repository
-2.  Clone the forked repository
-3.  Before committing code, create a branch-per-feature, or branch-per-bug
-4.  Create pull requests against `cornerstonejs/cornerstoneTools/master`
+```
+npm install --save-dev react-testing-library
+```
 
-## Build System
+This library has a `peerDependencies` listing for:
 
-This project uses webpack to build the software.
+- `cornerstone-core`
 
-**Requirements:**
+> [**Docs**](https://tools.cornerstonejs.org/installation.html)
 
-- [NodeJs](http://nodejs.org).
 
-**Common Tasks:**
+## Examples
 
-Update dependencies (after each pull):
+...
 
-> npm install
+## Other Solutions
 
-Running the build:
+- OHIF Viewer: [Source][ohif-source] | [Demo][ohif-demo]
 
-> npm start
+## Contributors
 
-Automatically running the build and unit tests after each source change:
+Thanks goes to these people ([emoji key][emojis]):
 
-> npm run watch
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
+This project follows the [all-contributors][all-contributors] specification.
+Contributions of any kind welcome!
+
+## Issues
+
+_Looking to contribute? Look for the [Good First Issue][good-first-issue]
+label._
+
+### 🐛 Bugs
+
+Please file an issue for bugs, missing documentation, or unexpected behavior.
+
+[**See Bugs**][bugs]
+
+### 💡 Feature Requests
+
+Please file an issue to suggest new features. Vote on feature requests by adding
+a 👍. This helps maintainers prioritize what to work on.
+
+[**See Feature Requests**][requests]
+
+### ❓ Questions
+
+For questions related to using the library, please visit our support community,
+or file an issue on GitHub.
+
+- [Google Group][google-group]
+
+## LICENSE
+
+MIT
+
+<!--
+Links:
+-->
+
+<!-- prettier-ignore-start -->
+[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg
+[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext
+[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg
+[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext
+[npm-url]: https://npmjs.org/package/cornerstone-tools
+[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
+[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
-[npm-url]: https://npmjs.org/package/cornerstone-tools
-[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
-[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
-[travis-url]: http://travis-ci.org/cornerstonejs/cornerstoneTools
-[travis-image]: https://travis-ci.org/cornerstonejs/cornerstoneTools.svg?branch=master
-[coverage-url]: https://coveralls.io/github/cornerstonejs/cornerstoneTools?branch=master
-[coverage-image]: https://coveralls.io/repos/github/cornerstonejs/cornerstoneTools/badge.svg?branch=master
+[node]: https://nodejs.org
+[ohif-demo]: https://viewer.ohif.org/demo-signin
+[ohif-source]: https://github.com/OHIF/Viewers
+[emojis]: https://github.com/kentcdodds/all-contributors#emoji-key
+[all-contributors]: https://github.com/kentcdodds/all-contributors
+[bugs]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acreated-desc
+[requests]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3Aenhancement+is%3Aopen
+[good-first-issue]: https://github.com/cornerstonejs/cornerstone-tools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"good+first+issue"+
+[google-group]: https://groups.google.com/forum/#!forum/cornerstone-platform
+<!-- prettier-ignore-end -->
