@@ -9,7 +9,7 @@ import calculateSUV from '../util/calculateSUV.js';
 import triggerEvent from '../util/triggerEvent.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
-import { addToolState, getToolState } from '../stateManagement/toolState.js';
+import { addToolState, getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
 
@@ -297,8 +297,12 @@ function endDrawing (eventData, handleNearby) {
   }
 
   const config = freehand.getConfiguration();
-
   const data = toolData.data[config.currentTool];
+  let deleteData = false;
+
+  if (!data) {
+    return;
+  }
 
   data.active = false;
   data.highlight = false;
@@ -306,7 +310,11 @@ function endDrawing (eventData, handleNearby) {
 
   // Connect the end handle to the origin handle
   if (handleNearby !== undefined) {
-    data.handles[config.currentHandle - 1].lines.push(data.handles[0]);
+    if (data.handles.length > 2) {
+      data.handles[config.currentHandle - 1].lines.push(data.handles[0]);
+    } else {
+      deleteData = true;
+    }
   }
 
   if (config.modifying) {
@@ -320,18 +328,22 @@ function endDrawing (eventData, handleNearby) {
   config.activePencilMode = false;
   data.canComplete = false;
 
-  const seriesModule = external.cornerstone.metaData.get('generalSeriesModule', eventData.image.imageId);
-  let modality;
+  if (deleteData) {
+    removeToolState(eventData.element, toolType, data);
+  } else {
+    const seriesModule = external.cornerstone.metaData.get('generalSeriesModule', eventData.image.imageId);
+    let modality;
 
-  if (seriesModule) {
-    modality = seriesModule.modality;
+    if (seriesModule) {
+      modality = seriesModule.modality;
+    }
+
+    calculateStatistics(data, eventData.element, eventData.image, modality);
+
+    fireModifiedEvent(eventData.element, data);
   }
 
-  calculateStatistics(data, eventData.element, eventData.image, modality);
-
   external.cornerstone.updateImage(eventData.element);
-
-  fireModifiedEvent(eventData.element, data);
 }
 
 /**
@@ -1147,8 +1159,12 @@ function closeToolIfDrawing(element) {
   if (config.currentTool >= 0) {
     // Actively drawing but changed mode.
     const lastHandlePlaced = config.currentHandle;
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    endDrawing(element, lastHandlePlaced);
+    endDrawing({
+      element,
+      image: enabledElement.image
+    }, lastHandlePlaced);
   }
 }
 

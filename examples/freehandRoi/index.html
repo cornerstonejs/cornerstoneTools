@@ -100,7 +100,8 @@
     const keyCodes = {
         SHIFT: 16,
         CTRL: 17,
-        ALT: 18
+        ALT: 18,
+        ESC: 27
     };
 
     const config = {
@@ -113,7 +114,11 @@
       const data = e.detail;
       const keyCode = data.keyCode;
 
-      if (keyCode === keyCodes.CTRL) {
+      if (keyCode === keyCodes.ESC) {
+        cornerstoneTools.freehand.deactivate(element, 1);
+        cornerstoneTools.freehand.activate(element, 1);
+      }
+      else if (keyCode === keyCodes.CTRL) {
         config.ctrl = true;
       } else if (keyCode === keyCodes.SHIFT) {
         config.shift = true;
