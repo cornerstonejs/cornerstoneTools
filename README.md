@@ -20,7 +20,6 @@
 
 ## The problem
 
-
 You want to build tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/).
 As part of this goal, you don't want to re-invent the wheel. You want easy to read
 
@@ -34,39 +33,79 @@ allowing for the creation of a broader ecosystem.
 
 ## Example
 
-TODO: This need refined
+Below is a simplified example of creating a tool by extending `cornerstone-tool`'s `BaseTool` class. 
 
-**A common setup when using modules:**
 ```javascript
-// Load NPM packages
-import Hammer from "hammerjs"; // npm install --save hammerjs
-import * as cornerstone from "cornerstone-core"; // npm install --save cornerstone-core
-import * as cornerstoneTools from "cornerstone-tools";
+import cornerstone from 'cornerstone-core';
+import { BaseTool } from 'cornerstone-tools';
+import basicLevelingStrategy from '...';
 
-// Specify external dependencies
-cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.Hammer = Hammer;
+export default class WwwcTool extends BaseTool {
+  constructor(configuration = {}) {
+    const defaultConfig = {
+      name: 'Wwwc',
+      strategies: { basicLevelingStrategy },
+      supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        orientation: 0,
+      },
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+  }
+
+  mouseDragCallback(evt) {
+    this.applyActiveStrategy(evt);
+    
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+
+  touchDragCallback(evt) {
+    evt.stopImmediatePropagation();
+    this.applyActiveStrategy(evt);
+    
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+}
 ```
 
 ## Installation
 
 This module is distributed via [npm][npm] which is bundled with [node][node] and
-should be installed as one of your project's `devDependencies`:
+should be installed as one of your project's `dependencies`:
 
 ```
-npm install --save-dev react-testing-library
+npm install --save cornerstone-tools
 ```
 
-This library has a `peerDependencies` listing for:
+This library has `peerDependencies` listings for:
 
-- `cornerstone-core`
+- `hammerjs` - Better touch support
+- `cornerstone-core` 
+- `cornerstone-math` - Simplifies and provides shared complex tool math logic
+- Any Cornerstone "Image Loader"
+    - `cornerstone-web-image-loader` - JPEG/PNG images
+    - `cornerstone-wado-image-loader` - DICOM images; also parses tags for tool use
+
+If you need to support the `IE11` Browser, you will need to provide polyfills as needed.
+
+**Setting up and configuring `cornerstone-tools`'s depency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.**
 
 > [**Docs**](https://tools.cornerstonejs.org/installation.html)
 
 
 ## Examples
 
+> The latest major version has just been published. We are still flushing out our examples. If you have anything you would like to see documented, or you want a specific example from [version 2][version-2] ported, either create an issue or make a pull request ^_^
+
+#### Tools
+
 ...
+
+#### 3rd Party Tool Plugins
+
+- Image Statistics: [Source](https://github.com/QSolutionsLLC/cornerstone-tool-image-statistics) | [Demo](https://qsolutionsllc.github.io/cornerstone-tool-image-statistics/)
 
 ## Other Solutions
 
@@ -127,6 +166,7 @@ Links:
 [npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
+[version-2]: https://github.com/cornerstonejs/cornerstoneTools/tree/v2.4.x
 [node]: https://nodejs.org
 [ohif-demo]: https://viewer.ohif.org/demo-signin
 [ohif-source]: https://github.com/OHIF/Viewers
