@@ -163,6 +163,10 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
 
   const pixelData = toolData.data[segIndex].pixelData;
 
+  if (!pixelData) {
+    return;
+  }
+
   const colormapId = state.colorMapId;
   const colormap = external.cornerstone.colors.getColormap(colormapId);
   const colorLutTable = [[0, 0, 0, 0], colormap.getColor(segIndex)];
