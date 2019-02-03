@@ -163,11 +163,16 @@
       document.getElementById('keyPressed').textContent = "Holding:" + keyName;
     }
 
+    function onModified(e) {
+        console.log(e.detail.measurementData);
+    }
+
     element.tabIndex = 0;
     element.focus();
 
     element.addEventListener("cornerstonetoolskeydown", onKeyDown);
     element.addEventListener("cornerstonetoolskeyup", onKeyUp);
+    element.addEventListener("cornerstonetoolsmeasurementmodified", onModified);
 
     cornerstoneTools.toolStyle.setToolWidth(3);
     cornerstoneTools.toolColors.setToolColor("#ffcc33");
