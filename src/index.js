@@ -156,6 +156,7 @@ export { zoom,
   zoomWheel,
   zoomTouchPinch,
   zoomTouchDrag } from './imageTools/zoom.js';
+export { default as overlays } from './imageTools/overlays.js';
 export { brush } from './paintingTools/brush.js';
 export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
 export { default as version } from './version.js';
