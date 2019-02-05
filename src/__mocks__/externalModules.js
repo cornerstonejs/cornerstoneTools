@@ -7,6 +7,9 @@ export default {
     imageCache: {
       getImageLoadObject: jest.fn(),
     },
+    metaData: {
+      get: jest.fn(),
+    },
     pageToPixel: jest.fn().mockImplementation(() => ({
       x: 0,
       y: 0,

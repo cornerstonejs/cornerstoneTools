@@ -24,7 +24,7 @@ const _moveEndEvents = {
  *
  * @param {*} evtDetail
  * @param {*} toolName
- * @param {*} toolData
+ * @param {*} annotation
  * @param {*} handle
  * @param {*} [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
@@ -36,7 +36,7 @@ const _moveEndEvents = {
 export default function(
   evtDetail,
   toolName,
-  toolData,
+  annotation,
   handle,
   options,
   interactionType = 'mouse'
@@ -52,26 +52,14 @@ export default function(
 
   const element = evtDetail.element;
 
-  state.isToolLocked = true;
+  annotation.active = true;
   handle.active = true;
-  toolData.active = true;
+  state.isToolLocked = true;
 
-  // I'm not sure we need either of these.
-  // The other manipulators don't handle for these edge cases?
-  // Const toolDeactivatedHandler = _toolDeactivatedHandler.bind(
-  //   This,
-  //   ToolName,
-  //   MoveEndHandler
-  // );
-  // Const measurementRemovedHandler = _measurementRemovedHandler.bind(
-  //   This,
-  //   ToolData,
-  //   MoveEndHandler
-  // );
   const moveHandler = _moveHandler.bind(
     this,
     toolName,
-    toolData,
+    annotation,
     handle,
     options,
     interactionType
@@ -80,7 +68,7 @@ export default function(
   const moveEndHandler = evt => {
     _moveEndHandler(
       toolName,
-      toolData,
+      annotation,
       handle,
       options,
       interactionType,
@@ -99,17 +87,12 @@ export default function(
   _moveEndEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveEndHandler);
   });
-  // Element.addEventListener(
-  //   EVENTS.MEASUREMENT_REMOVED,
-  //   MeasurementRemovedHandler
-  // );
-  // Element.addEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 }
 
 function _moveHandler(
   toolName,
-  toolData,
+  annotation,
   handle,
   options,
   interactionType,
@@ -124,6 +107,7 @@ function _moveHandler(
     interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
 
+  annotation.invalidated = true;
   handle.active = true;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
@@ -138,7 +122,7 @@ function _moveHandler(
   const modifiedEventData = {
     toolName,
     element,
-    measurementData: toolData,
+    measurementData: annotation,
   };
 
   triggerEvent(element, eventType, modifiedEventData);
@@ -163,11 +147,12 @@ function _moveEndHandler(
   );
 
   // "Release" the handle
-  handle.active = false;
   annotation.active = false;
-  state.isToolLocked = false;
+  annotation.invalidated = true;
+  handle.active = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
+  state.isToolLocked = false;
 
   // Remove event listeners
   _moveEvents[interactionType].forEach(eventType => {
@@ -176,11 +161,6 @@ function _moveEndHandler(
   _moveEndEvents[interactionType].forEach(eventType => {
     element.removeEventListener(eventType, moveEndHandler);
   });
-  // Element.removeEventListener(
-  //   EVENTS.MEASUREMENT_REMOVED,
-  //   MeasurementRemovedHandler
-  // );
-  // Element.removeEventListener(EVENTS.TOOL_DEACTIVATED, toolDeactivatedHandler);
   element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 
   // TODO: WHY?
@@ -214,41 +194,6 @@ function _moveEndHandler(
   // Update Image
   external.cornerstone.updateImage(element);
 }
-
-/**
- * If our measurement was removed, we want to end "handling" it's data.
- *
- * @private
- * @function _measurementRemovedHandler
- *
- * @param {*} toolData
- * @param {*} moveEndHandler
- * @param {*} evt
- * @returns {undefined}
- */
-// Function _measurementRemovedHandler(toolData, moveEndHandler, evt) {
-//   If (evt.detail.measurementData === toolData) {
-//     MoveEndHandler(evt);
-//   }
-// }
-
-/**
- * If the tool is deactivated while we're moving it's handle,
- * we'll want to stop moving it and kill events.
- *
- * @private
- * @function _toolDeactivatedHandler
- *
- * @param {string} toolName
- * @param {*} moveEndHandler
- * @param {*} evt
- * @returns {undefined}
- */
-// Function _toolDeactivatedHandler(toolName, moveEndHandler, evt) {
-//   If (evt.detail.toolType === toolName) {
-//     MoveEndHandler(evt);
-//   }
-// }
 
 /**
  * Stop the CornerstoneToolsTouchStart event from
