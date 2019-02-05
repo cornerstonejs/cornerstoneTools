@@ -22,7 +22,7 @@ export default function(evt, nearby) {
 
     _deletePoint.call(this, eventData, deleteInfo);
   } else {
-    const freehandLineFinder = new FreehandLineFinder(eventData);
+    const freehandLineFinder = new FreehandLineFinder(eventData, this.name);
     const insertInfo = freehandLineFinder.findLine();
 
     if (insertInfo) {
