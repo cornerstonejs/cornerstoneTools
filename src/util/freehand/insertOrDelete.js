@@ -3,8 +3,6 @@ import FreehandHandleData from './FreehandHandleData.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 
-const toolType = 'FreehandMouse';
-
 /**
  * Inserts or deletes a point from a freehand tool.
  * @export @public @method
@@ -22,13 +20,13 @@ export default function(evt, nearby) {
       handleIndex: nearby.handleNearby,
     };
 
-    deletePoint(eventData, deleteInfo);
+    _deletePoint.call(this, eventData, deleteInfo);
   } else {
     const freehandLineFinder = new FreehandLineFinder(eventData);
     const insertInfo = freehandLineFinder.findLine();
 
     if (insertInfo) {
-      _insertPoint(eventData, insertInfo);
+      _insertPoint.call(this, eventData, insertInfo);
     }
   }
 }
@@ -41,8 +39,8 @@ export default function(evt, nearby) {
  * @param {Object} eventData The data object associated with the event.
  * @param {Object} deleteInfo Object containing information about which point to delete.
  */
-function deletePoint(eventData, deleteInfo) {
-  const toolData = getToolState(eventData.element, toolType);
+function _deletePoint(eventData, deleteInfo) {
+  const toolData = getToolState(eventData.element, this.name);
 
   if (toolData === undefined) {
     return;
@@ -93,7 +91,7 @@ function deletePoint(eventData, deleteInfo) {
  * @param {Object} insertInfo - Object containing information about where to insert the point.
  */
 function _insertPoint(eventData, insertInfo) {
-  const toolData = getToolState(eventData.element, toolType);
+  const toolData = getToolState(eventData.element, this.name);
 
   if (toolData === undefined) {
     return;
