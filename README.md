@@ -116,7 +116,7 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") |
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") |
 | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 Thanks goes to these people ([emoji key][emojis]):
