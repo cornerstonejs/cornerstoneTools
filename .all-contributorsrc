@@ -28,7 +28,12 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/607793?v=4",
       "profile": "https://github.com/swederik",
       "contributions": [
-        "review"
+        "review",
+        "maintenance",
+        "infra",
+        "ideas",
+        "code",
+        "question"
       ]
     }
   ],
