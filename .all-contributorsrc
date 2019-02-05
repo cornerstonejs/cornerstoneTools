@@ -1,0 +1,23 @@
+{
+  "projectName": "cornerstoneTools",
+  "projectOwner": "Cornerstone.js",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "chafey",
+      "name": "Chris Hafey",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1268698?v=4",
+      "profile": "https://www.linkedin.com/in/chafey",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

@@ -1,4 +1,5 @@
 <div align="center">
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 <h1>cornerstone-tools</h1>
 
 <p>Provides a simple, extensible framework for creating tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a>. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.</p>
@@ -113,6 +114,11 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 ## Contributors
 
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") |
+| :---: |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 Thanks goes to these people ([emoji key][emojis]):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
