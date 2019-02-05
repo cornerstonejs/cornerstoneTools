@@ -72,6 +72,15 @@
         "question",
         "tool"
       ]
+    },
+    {
+      "login": "rodrigolabs",
+      "name": "Rodrigo Antinarelli",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1905961?v=4",
+      "profile": "https://rodrigoea.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
