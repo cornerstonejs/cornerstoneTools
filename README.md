@@ -12,6 +12,7 @@
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
 [![Coverage Status][coverage-badge]][coverage]
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -20,20 +21,23 @@
 
 ## The problem
 
-You want to build tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/).
-As part of this goal, you don't want to re-invent the wheel. You want easy to read
+Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
+
+- Tools should behave and be configurable in a consistant way
+- Managing tools across multiple cornerstone `enabled element`s
+- Tools that need knowledge of a fellow tool's state
+- The ability to "drop-in" others' tools, and they "just work"
+- and many others
+
+This library attempts to solve these problems, and in a highly pluggable and extensible way.
 
 ## This solution
 
-`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js.
-It's only dependencies are libraries within the Cornerstone family. Instead of trying to
-"do everything" it aims to be extensible and pluggable to aid in the rapid development
-of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared,
-allowing for the creation of a broader ecosystem.
+`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js. It's only dependencies are libraries within the Cornerstone family. Instead of trying to "do everything" it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared, allowing for the creation of a broader ecosystem.
 
 ## Example
 
-Below is a simplified example of creating a tool by extending `cornerstone-tool`'s `BaseTool` class. 
+Below is a simplified example of creating a tool by extending `cornerstone-tool`'s `BaseTool` class.
 
 ```javascript
 import cornerstone from 'cornerstone-core';
@@ -57,14 +61,14 @@ export default class WwwcTool extends BaseTool {
 
   mouseDragCallback(evt) {
     this.applyActiveStrategy(evt);
-    
+
     cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 
   touchDragCallback(evt) {
     evt.stopImmediatePropagation();
     this.applyActiveStrategy(evt);
-    
+
     cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }
@@ -82,11 +86,11 @@ npm install --save cornerstone-tools
 This library has `peerDependencies` listings for:
 
 - `hammerjs` - Better touch support
-- `cornerstone-core` 
+- `cornerstone-core`
 - `cornerstone-math` - Simplifies and provides shared complex tool math logic
 - Any Cornerstone "Image Loader"
-    - `cornerstone-web-image-loader` - JPEG/PNG images
-    - `cornerstone-wado-image-loader` - DICOM images; also parses tags for tool use
+  - `cornerstone-web-image-loader` - JPEG/PNG images
+  - `cornerstone-wado-image-loader` - DICOM images; also parses tags for tool use
 
 If you need to support the `IE11` Browser, you will need to provide polyfills as needed.
 
@@ -94,10 +98,9 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 > [**Docs**](https://tools.cornerstonejs.org/installation.html)
 
-
 ## Examples
 
-> The latest major version has just been published. We are still flushing out our examples. If you have anything you would like to see documented, or you want a specific example from [version 2][version-2] ported, either create an issue or make a pull request ^_^
+> The latest major version has just been published. We are still flushing out our examples. If you have anything you would like to see documented, or you want a specific example from [version 2][version-2] ported, either create an issue or make a pull request ^\_^
 
 #### Tools
 
@@ -112,6 +115,13 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 - OHIF Viewer: [Source][ohif-source] | [Demo][ohif-demo]
 
 ## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Documentation") [👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [💬](#question-swederik "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/><br /><sub><b>Danny Brown</b></sub>](http://dannyrb.com/)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Documentation") [👀](#review-dannyrb "Reviewed Pull Requests") [🚧](#maintenance-dannyrb "Maintenance") [🚇](#infra-dannyrb "Infrastructure (Hosting, Build-Tools, etc)") [🔌](#plugin-dannyrb "Plugin/utility libraries") [💬](#question-dannyrb "Answering Questions") | [<img src="https://avatars0.githubusercontent.com/u/25818497?v=4" width="100px;" alt="James Petts"/><br /><sub><b>James Petts</b></sub>](https://github.com/JamesAPetts)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=JamesAPetts "Code") [👀](#review-JamesAPetts "Reviewed Pull Requests") [🔌](#plugin-JamesAPetts "Plugin/utility libraries") |
+| :---: | :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
 Thanks goes to these people ([emoji key][emojis]):
 
