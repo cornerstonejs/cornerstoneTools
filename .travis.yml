@@ -1,15 +1,4 @@
 language: node_js
 branches:
-  except:
-    - vNext
-node_js:
-  - "lts/*"
-addons:
-  chrome: stable
-cache:
-  yarn: true
-  directories:
-    - node_modules
-
-after_success:
-  cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  only:
+    - master

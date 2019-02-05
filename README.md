@@ -1,313 +1,189 @@
-[![NPM version][npm-version-image]][npm-url] [![NPM downloads][npm-downloads-image]][npm-url] [![MIT License][license-image]][license-url] [![Build Status][travis-image]][travis-url]
-[![Coverage Status][coverage-image]][coverage-url]
+<div align="center">
+<h1>cornerstone-tools</h1>
 
-cornerstoneTools
-================
+<p>Provides a simple, extensible framework for creating tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a>. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.</p>
 
-`cornerstoneTools` is a library built on top of [cornerstone](https://github.com/cornerstonejs/cornerstone) that provides
-a set of common tools needed in medical imaging to work with images and stacks of images.
+[**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-* View [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/master/examples/index.html) of individual tools
-* Take a peek at a [simple image viewer](http://chafey.github.io/cornerstoneDemo/) built on cornerstone
-* Check out a [more fully featured solution](http://viewer.ohif.org/) maintained by [OHIF](http://ohif.org/)
+</div>
 
+<hr />
 
-Features
---------
+<!-- prettier-ignore-start -->
+[![Build Status][build-badge]][build]
+[![Coverage Status][coverage-badge]][coverage]
+[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
 
-<!-- 5 columns looks great on desktop, but 4 column table supports mobile better -->
-<table>
-  <!-- Image Row -->
-  <tr>
-    <td>
-      <img alt="WW/WC Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/b5f1595d5ecbb021efcdb6640efc5d49751e3a08/examples/00-tool-images/wwwc.gif" />
-    </td>
-    <td>
-      <img alt="Zoom Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/zoom.gif" />
-    </td>
-    <td>
-      <img alt="Pan Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/pan.gif" />
-    </td>
-    <td>
-      <img alt="Length Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/length.gif" />
-    </td>
-  <tr>
-  <!-- Name Row -->
-  <tr>
-    <td>WW/WC</td>
-    <td>Zoom</td>
-    <td>Pan</td>
-    <td>Length</td>
-  </tr>
-  <!-- External Links Row -->
-  <tr>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/dannyrb/cornerstoneTools/blob/074c012323786744e45415f82a21582f65689923/src/imageTools/wwwc.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/zoom.js">Source</a>
-    </td>
-    <td>
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/zoom.js">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/pan.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/length.js">Source</a>
-    </td>
-  </tr>
-  <!-- Buffer Row -->
-  <tr>
-    <td colspan="4">&nbsp;</td>
-  </tr>
-   <!-- Image Row -->
-  <tr>
-    <td>
-      <img alt="Rectangle ROI Tool Example" src="https://github.com/dannyrb/cornerstoneTools/raw/e0a85b1dfad09cae76f47dc7629e3eb03c70135c/examples/00-tool-images/rectangle-roi.gif" />
-    </td>
-    <td>
-      <img alt="Elliptical ROI Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/elliptical-roi.gif" />
-    </td>
-    <td>
-      <img alt="Pixel Probe Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/probe.gif" />
-    </td>
-    <td>
-      <img alt="Angle Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/angle.gif" />
-    </td>
-  <tr>
-  <!-- Name Row -->
-  <tr>
-    <td>Rectangle ROI</td>
-    <td>Elliptical ROI</td>
-    <td>Pixel Probe</td>
-    <td>Angle</td>
-  </tr>
-  <!-- External Links Row -->
-  <tr>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/rectangleRoi.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/ellipticalRoi.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/probe.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/allImageTools/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/angleTool.js">Source</a>
-    </td>
-  </tr>
-  <!-- Buffer Row -->
-  <tr>
-    <td colspan="4">&nbsp;</td>
-  </tr>
-  <!-- Image Row -->
-  <tr>
-    <td>
-      <img alt="Scroll Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/stack-scroll.gif" />
-    </td>
-    <td>
-      <img alt="Cross reference lines Tool Example" src="https://raw.githubusercontent.com/dannyrb/cornerstoneTools/3dc0bfc543b6b9a383d8724ce98859b568b9827e/examples/00-tool-images/reference-lines.gif" />
-    </td>
-    <td colspan="2"><!-- Empty Column --></td>
-  <tr>
-  <!-- Name Row -->
-  <tr>
-    <td>Scroll</td>
-    <td>Reference Lines</td>
-    <td colspan="2">Many More!</td>
-  </tr>
-  <!-- External Links Row -->
-  <tr>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/stackScroll/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/stackTools/stackScroll.js">Source</a>
-    </td>
-    <td>
-      <a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/referenceLineTool/index.html">Example</a> /
-      <a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/referenceLines/referenceLinesTool.js">Source</a>
-    </td>
-    <td colspan="2"><a href="https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/index.html">Click Here to See a Full List</a></td>
-  </tr>
-</table>
+[![NPM version][npm-version-image]][npm-url]
+[![NPM downloads][npm-downloads-image]][npm-url]
+[![MIT License][license-image]][license-url]
+<!-- prettier-ignore-end -->
 
+## The problem
 
-**Other Features:**
+Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
 
-* Time Series Tools
-  * Play
-  * Scroll
-  * Probe
-* Synchronization Tools
-  * By image index
-  * By image position
-  * By zoom and pan
-  * By ww/wc and inversion
-* Measurement Manager
-* Support for binding each tool to different mouse inputs:
-  * Left mouse button
-  * Middle mouse button
-  * Right mouse button
-  * Mouse Wheel
-* Support for touch based gestures
-  * Drag
-  * Pinch
-* Tool framework that can be used to simplify development of new tools that work in a consistent manner with the included
-  tools
-* Provides API to access measurement data for serialization purposes (e.g. save measurements to database)
+- Tools should behave and be configurable in a consistant way
+- Managing tools across multiple cornerstone `enabled element`s
+- Tools that need knowledge of a fellow tool's state
+- The ability to "drop-in" others' tools, and they "just work"
+- and many others
 
+This library attempts to solve these problems, and in a highly pluggable and extensible way.
 
-Getting Started
----------------
+## This solution
 
-### Install
+`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js. It's only dependencies are libraries within the Cornerstone family. Instead of trying to "do everything" it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared, allowing for the creation of a broader ecosystem.
 
-**Via NPM:** (preferred)
+## Example
 
-_Latest stable release:_
-- `npm install --save cornerstone-tools`
+Below is a simplified example of creating a tool by extending `cornerstone-tool`'s `BaseTool` class.
 
-_Pre-release, unstable, mostly for contributors:_
-- `npm install --save cornerstone-tools@next`
+```javascript
+import cornerstone from 'cornerstone-core';
+import { BaseTool } from 'cornerstone-tools';
+import basicLevelingStrategy from '...';
 
-**Get a packaged source file:**
+export default class WwwcTool extends BaseTool {
+  constructor(configuration = {}) {
+    const defaultConfig = {
+      name: 'Wwwc',
+      strategies: { basicLevelingStrategy },
+      supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        orientation: 0,
+      },
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-[UNPKG](https://unpkg.com/#/) offers a quick/neat solution for grabbing versioned copies of the source. For example:
+    super(initialConfiguration);
+  }
 
-`https://unpkg.com/<package-name>@<package-version>/path/to/desired-file.js`
+  mouseDragCallback(evt) {
+    this.applyActiveStrategy(evt);
 
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
 
-* For development, to get the latest minified source:
-    * `<script src="https://unpkg.com/cornerstone-tools"></script>`
-* For production, specify a package version:
-    * `<script src="https://unpkg.com/cornerstone-tools@0.9.0"></script>`
+  touchDragCallback(evt) {
+    evt.stopImmediatePropagation();
+    this.applyActiveStrategy(evt);
 
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+}
+```
 
-### Usage
+## Installation
 
-See the [live examples](https://rawgithub.com/cornerstonejs/cornerstoneTools/master/examples/index.html) and [wiki](https://github.com/cornerstonejs/cornerstoneTools/wiki) for documentation (Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)) on how to use this library
+This module is distributed via [npm][npm] which is bundled with [node][node] and
+should be installed as one of your project's `dependencies`:
 
+```
+npm install --save cornerstone-tools
+```
 
-**A common setup when using modules:**
+This library has `peerDependencies` listings for:
 
-````javascript
-// Load NPM packages
-import Hammer from 'hammerjs';                    // npm install --save hammerjs
-import * as cornerstone from 'cornerstone-core';  // npm install --save cornerstone-core
-import * as cornerstoneTools from 'cornerstone-tools';
+- `hammerjs` - Better touch support
+- `cornerstone-core`
+- `cornerstone-math` - Simplifies and provides shared complex tool math logic
+- Any Cornerstone "Image Loader"
+  - `cornerstone-web-image-loader` - JPEG/PNG images
+  - `cornerstone-wado-image-loader` - DICOM images; also parses tags for tool use
 
-// Specify external dependencies
-cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.Hammer = Hammer;
-````
+If you need to support the `IE11` Browser, you will need to provide polyfills as needed.
 
-*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+**Setting up and configuring `cornerstone-tools`'s depency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.**
 
+> [**Docs**](https://tools.cornerstonejs.org/installation.html)
 
-**A common setup when using package source files:**
+## Examples
 
-````javascript
-// Load Packaged Sources
-<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
-<script src="https://unpkg.com/cornerstone-core@2.0.0/dist/cornerstone.min.js"></script>
-<script src="https://unpkg.com/cornerstone-tools@2.0.0/dist/cornerstoneTools.min.js"></script>
+> The latest major version has just been published. We are still flushing out our examples. If you have anything you would like to see documented, or you want a specific example from [version 2][version-2] ported, either create an issue or make a pull request ^\_^
 
-// Specify external dependencies
-cornerstoneTools.external.cornerstone = cornerstone;
-cornerstoneTools.external.Hammer = Hammer;
-````
+#### Tools
 
-*Note: `cornerstoneTools.external`'s only need to be specified in `cornerstone-tools` versions 1.0.0+
+...
 
+#### 3rd Party Tool Plugins
 
-Contributing
-------------
+- Image Statistics: [Source](https://github.com/QSolutionsLLC/cornerstone-tool-image-statistics) | [Demo](https://qsolutionsllc.github.io/cornerstone-tool-image-statistics/)
 
-We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/cornerstonejs/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
+## Other Solutions
 
-**How To Contribute:**
+- OHIF Viewer: [Source][ohif-source] | [Demo][ohif-demo]
 
-1. Fork this repository
-2. Clone the forked repository
-3. Before committing code, create a branch-per-feature, or branch-per-bug
-4. Create pull requests against `cornerstonejs/cornerstoneTools/master`
+## Contributors
 
-**What To Contribute:**
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Documentation") [👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [💬](#question-swederik "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/><br /><sub><b>Danny Brown</b></sub>](http://dannyrb.com/)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Documentation") [👀](#review-dannyrb "Reviewed Pull Requests") [🚧](#maintenance-dannyrb "Maintenance") [🚇](#infra-dannyrb "Infrastructure (Hosting, Build-Tools, etc)") [🔌](#plugin-dannyrb "Plugin/utility libraries") [💬](#question-dannyrb "Answering Questions") | [<img src="https://avatars0.githubusercontent.com/u/25818497?v=4" width="100px;" alt="James Petts"/><br /><sub><b>James Petts</b></sub>](https://github.com/JamesAPetts)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=JamesAPetts "Code") [👀](#review-JamesAPetts "Reviewed Pull Requests") [🔌](#plugin-JamesAPetts "Plugin/utility libraries") |
+| :---: | :---: | :---: | :---: |
 
-If you're looking to get your feet wet, start by:
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
-- Read existing [wiki documentation](https://github.com/cornerstonejs/cornerstoneTools/wiki) as you implement your solution. Notice any holes? Fill them in.
-  - Soon to be replaced by [tools.cornerstonejs.org](http://tools.cornerstonejs.org/)
-- Can't find an [example of a tool](https://rawgit.com/cornerstonejs/cornerstoneTools/master/examples/index.html)? Or think an example can be improved? Improve it.
-- Creating your first tool and learned some lessons along the way? Add documentation to help others.
+Thanks goes to these people ([emoji key][emojis]):
 
-Can't think of anything? Weigh in on and claim an [outstanding issue in the backlog](https://github.com/cornerstonejs/cornerstoneTools/issues).
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
 
+This project follows the [all-contributors][all-contributors] specification.
+Contributions of any kind welcome!
 
-Versioning
-----------
+## Issues
 
-cornerstoneTools will be maintained under the [Semantic Versioning Guidelines](http://semver.org) as much as possible. Releases will be numbered with the following format:
+_Looking to contribute? Look for the [Good First Issue][good-first-issue]
+label._
 
-`<major>.<minor>.<patch>`
+### 🐛 Bugs
 
-And constructed with the following guidelines:
+Please file an issue for bugs, missing documentation, or unexpected behavior.
 
-* Breaking backward compatibility bumps the major (and resets the minor and patch)
-  - Information on how to navigate breaking changes will be included in our [Change Log](https://github.com/cornerstonejs/cornerstoneTools/blob/master/changelog.md)
-* New additions, including new icons, without breaking backward compatibility bumps the minor (and resets the patch)
-* Bug fixes, changes to brand logos, and misc changes bumps the patch
+[**See Bugs**][bugs]
 
+### 💡 Feature Requests
 
-Build System
-------------
+Please file an issue to suggest new features. Vote on feature requests by adding
+a 👍. This helps maintainers prioritize what to work on.
 
-This project uses webpack to build the software.
+[**See Feature Requests**][requests]
 
-**Requirements:**
+### ❓ Questions
 
-* [NodeJs](http://nodejs.org).
+For questions related to using the library, please visit our support community,
+or file an issue on GitHub.
 
-**Common Tasks:**
+- [Google Group][google-group]
 
+## LICENSE
 
-Update dependencies (after each pull):
-> npm install
+MIT
 
-Running the build:
-> npm start
+<!--
+Links:
+-->
 
-Automatically running the build and unit tests after each source change:
-> npm run watch
-
-Backlog
-------------
-
-* Updating related handles while resizing (e.g. resize top left handle of a rect and update the bottom left and top right as it changes)
-* measurement calibration tool
-* Config object that allows tool appearance to be customized (e.g. line color, text color, handle size, shape, etc)
-* automatically disabling tools when the enabled element is disabled
-* reconsider the state management api, it is a bit clunky
-* add support for pointer events as an input source
-* Reference line renderer for first/last/active
-* key press input source - so user can interact with tools via keyboard (e.g. scroll stack image using arrow keys)
-
-
+<!-- prettier-ignore-start -->
+[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg
+[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext
+[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg
+[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext
+[npm-url]: https://npmjs.org/package/cornerstone-tools
+[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
+[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
 [license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
 [license-url]: LICENSE
-
-[npm-url]: https://npmjs.org/package/cornerstone-tools
-[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
-[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
-
-[travis-url]: http://travis-ci.org/cornerstonejs/cornerstoneTools
-[travis-image]: https://travis-ci.org/cornerstonejs/cornerstoneTools.svg?branch=master
-
-[coverage-url]: https://coveralls.io/github/cornerstonejs/cornerstoneTools?branch=master
-[coverage-image]: https://coveralls.io/repos/github/cornerstonejs/cornerstoneTools/badge.svg?branch=master
+[version-2]: https://github.com/cornerstonejs/cornerstoneTools/tree/v2.4.x
+[node]: https://nodejs.org
+[ohif-demo]: https://viewer.ohif.org/demo-signin
+[ohif-source]: https://github.com/OHIF/Viewers
+[emojis]: https://github.com/kentcdodds/all-contributors#emoji-key
+[all-contributors]: https://github.com/kentcdodds/all-contributors
+[bugs]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acreated-desc
+[requests]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3Aenhancement+is%3Aopen
+[good-first-issue]: https://github.com/cornerstonejs/cornerstone-tools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"good+first+issue"+
+[google-group]: https://groups.google.com/forum/#!forum/cornerstone-platform
+<!-- prettier-ignore-end -->

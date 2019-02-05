@@ -7,34 +7,46 @@ const maxSimultaneousRequests = {
   IE: {
     9: 6,
     10: 8,
-    default: 8
+    default: 8,
   },
   Firefox: {
-    default: 6
+    default: 6,
   },
   Opera: {
     10: 8,
     11: 6,
     12: 6,
-    default: 6
+    default: 6,
   },
   Chrome: {
-    default: 6
+    default: 6,
   },
   Safari: {
-    default: 6
-  }
+    default: 6,
+  },
 };
 
 // Browser name / version detection
-// http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
-function getBrowserInfo () {
+//
+//
+
+/**
+ * Browser name / version detection
+ * http://stackoverflow.com/questions/2400935/browser-detection-in-javascript
+ * @export @public @method
+ * @name getBrowserInfo
+ *
+ * @returns {string} The name and version of the browser.
+ */
+function getBrowserInfo() {
   const ua = navigator.userAgent;
-  let M = ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+  let M =
+    ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) ||
+    [];
   let tem;
 
   if (/trident/i.test(M[1])) {
-    tem = (/\brv[ :]+(\d+)/g).exec(ua) || [];
+    tem = /\brv[ :]+(\d+)/g.exec(ua) || [];
 
     return `IE ${tem[1] || ''}`;
   }
@@ -42,7 +54,10 @@ function getBrowserInfo () {
   if (M[1] === 'Chrome') {
     tem = ua.match(/\b(OPR|Edge)\/(\d+)/);
     if (tem !== null) {
-      return tem.slice(1).join(' ').replace('OPR', 'Opera');
+      return tem
+        .slice(1)
+        .join(' ')
+        .replace('OPR', 'Opera');
     }
   }
 
@@ -54,11 +69,25 @@ function getBrowserInfo () {
   return M.join(' ');
 }
 
-function setMaxSimultaneousRequests (newMaxSimultaneousRequests) {
+/**
+ * Sets the maximum number of simultaneous requests.
+ * @export @public @method
+ * @name setMaxSimultaneousRequests
+ *
+ * @param  {number} newMaxSimultaneousRequests The value.
+ */
+function setMaxSimultaneousRequests(newMaxSimultaneousRequests) {
   configMaxSimultaneousRequests = newMaxSimultaneousRequests;
 }
 
-function getMaxSimultaneousRequests () {
+/**
+ * Returns the maximum number of simultaneous requests.
+ * @export @public @method
+ * @name getMaxSimultaneousRequests
+ *
+ * @returns {number} The maximum number of simultaneous requests
+ */
+function getMaxSimultaneousRequests() {
   if (configMaxSimultaneousRequests) {
     return configMaxSimultaneousRequests;
   }
@@ -66,7 +95,14 @@ function getMaxSimultaneousRequests () {
   return getDefaultSimultaneousRequests();
 }
 
-function getDefaultSimultaneousRequests () {
+/**
+ * Returns the default number of simultaneous requests.
+ * @export @public @method
+ * @name getDefaultSimultaneousRequests
+ *
+ * @returns {number} The default number of simultaneous requests.
+ */
+function getDefaultSimultaneousRequests() {
   const infoString = getBrowserInfo();
   const info = infoString.split(' ');
   const browserName = info[0];
@@ -84,9 +120,17 @@ function getDefaultSimultaneousRequests () {
   return browserData[browserVersion];
 }
 
-function isMobileDevice () {
-  const pattern = new RegExp('Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini');
-
+/**
+ * Checks if cornerstoneTools is operating on a mobile device.
+ * @export @public @method
+ * @name isMobileDevice
+ *
+ * @returns {boolean} True if running on a mobile device.
+ */
+function isMobileDevice() {
+  const pattern = new RegExp(
+    'Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini'
+  );
 
   return pattern.test(navigator.userAgent);
 }
@@ -96,5 +140,5 @@ export {
   getMaxSimultaneousRequests,
   setMaxSimultaneousRequests,
   getBrowserInfo,
-  isMobileDevice
+  isMobileDevice,
 };

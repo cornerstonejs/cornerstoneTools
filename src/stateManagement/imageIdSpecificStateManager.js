@@ -1,38 +1,47 @@
 import external from '../externalModules.js';
 
-// This implements an imageId specific tool state management strategy.  This means that
-// Measurements data is tied to a specific imageId and only visible for enabled elements
-// That are displaying that imageId.
-
-function newImageIdSpecificToolStateManager () {
+/**
+ * Implements an imageId specific tool state management strategy.  This means that
+ * Measurements data is tied to a specific imageId and only visible for enabled elements
+ * That are displaying that imageId.
+ * @public
+ * @constructor newImageIdSpecificToolStateManager
+ * @memberof StateManagement
+ *
+ * @returns {Object} An imageIdSpecificToolStateManager instance.
+ */
+function newImageIdSpecificToolStateManager() {
   let toolState = {};
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
 
-  function saveImageIdToolState (imageId) {
+  function saveImageIdToolState(imageId) {
     return toolState[imageId];
   }
 
-  function restoreImageIdToolState (imageId, imageIdToolState) {
+  function restoreImageIdToolState(imageId, imageIdToolState) {
     toolState[imageId] = imageIdToolState;
   }
 
-  function saveToolState () {
+  function saveToolState() {
     return toolState;
   }
 
-  function restoreToolState (savedToolState) {
+  function restoreToolState(savedToolState) {
     toolState = savedToolState;
   }
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
-  function addImageIdSpecificToolState (element, toolType, data) {
+  function addImageIdSpecificToolState(element, toolType, data) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
     // If we don't have any tool state for this imageId, add an empty object
 
-    if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+    if (
+      !enabledImage.image ||
+      toolState.hasOwnProperty(enabledImage.image.imageId) === false
+    ) {
       toolState[enabledImage.image.imageId] = {};
     }
 
@@ -41,7 +50,7 @@ function newImageIdSpecificToolStateManager () {
     // If we don't have tool state for this type of tool, add an empty object
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       imageIdToolState[toolType] = {
-        data: []
+        data: [],
       };
     }
 
@@ -53,11 +62,14 @@ function newImageIdSpecificToolStateManager () {
 
   // Here you can get state - used by tools as well as modules
   // That save state persistently
-  function getImageIdSpecificToolState (element, toolType) {
+  function getImageIdSpecificToolState(element, toolType) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
     // If we don't have any tool state for this imageId, return undefined
 
-    if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+    if (
+      !enabledImage.image ||
+      toolState.hasOwnProperty(enabledImage.image.imageId) === false
+    ) {
       return;
     }
 
@@ -70,15 +82,17 @@ function newImageIdSpecificToolStateManager () {
 
     const toolData = imageIdToolState[toolType];
 
-
     return toolData;
   }
 
   // Clears all tool data from this toolStateManager.
-  function clearImageIdSpecificToolStateManager (element) {
+  function clearImageIdSpecificToolStateManager(element) {
     const enabledImage = external.cornerstone.getEnabledElement(element);
 
-    if (!enabledImage.image || toolState.hasOwnProperty(enabledImage.image.imageId) === false) {
+    if (
+      !enabledImage.image ||
+      toolState.hasOwnProperty(enabledImage.image.imageId) === false
+    ) {
       return;
     }
 
@@ -93,7 +107,7 @@ function newImageIdSpecificToolStateManager () {
     restoreImageIdToolState,
     saveToolState,
     restoreToolState,
-    toolState
+    toolState,
   };
 }
 
@@ -103,5 +117,5 @@ const globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager
 
 export {
   newImageIdSpecificToolStateManager,
-  globalImageIdSpecificToolStateManager
+  globalImageIdSpecificToolStateManager,
 };

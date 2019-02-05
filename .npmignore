@@ -15,4 +15,3 @@ test/
 .npmignore
 .travis.yml
 changelog.md
-karma.conf.js

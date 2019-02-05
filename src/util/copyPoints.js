@@ -1,15 +1,36 @@
-import external from '../externalModules.js';
-
-export default function (points) {
-  const page = external.cornerstoneMath.point.copy(points.page);
-  const image = external.cornerstoneMath.point.copy(points.image);
-  const client = external.cornerstoneMath.point.copy(points.client);
-  const canvas = external.cornerstoneMath.point.copy(points.canvas);
+/**
+ * Returns a copy of the points object.
+ * @public
+ * @function copyPoints
+ *
+ * @param  {Object} points - The object to copy.
+ * @returns {Object} - The copy.
+ */
+export default function(points) {
+  const page = _copy(points.page);
+  const image = _copy(points.image);
+  const client = _copy(points.client);
+  const canvas = _copy(points.canvas);
 
   return {
     page,
     image,
     client,
-    canvas
+    canvas,
+  };
+}
+
+/**
+ *
+ * @private
+ * @function _copy
+ *
+ * @param {Object} point - { x, y }
+ * @returns {Object} { x, y }
+ */
+function _copy({ x, y } = {}) {
+  return {
+    x,
+    y,
   };
 }

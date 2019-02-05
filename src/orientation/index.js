@@ -3,7 +3,7 @@ import invertOrientationString from './invertOrientationString.js';
 
 const orientation = {
   getOrientationString,
-  invertOrientationString
+  invertOrientationString,
 };
 
 export default orientation;

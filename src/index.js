@@ -1,163 +1,390 @@
-import * as drawing from './util/drawing.js';
+/**
+ * Root
+ * @namespace CornerstoneTools
+ */
 
-export { drawing };
+/**
+ * Drawing API to assist in consistent annotation creation
+ * @namespace Drawing
+ */
 
-export { default as external } from './externalModules.js';
-export { default as EVENTS } from './events.js';
+/**
+ * Event dispatchers listen for events from `cornerstone` and `enabledElements`. Dispatchers
+ * choose which tool(s) get to handle the event by looking at callbacks, priority, and other factors.
+ * @private
+ * @namespace EventDispatchers
+ */
 
-export { default as referenceLines } from './referenceLines/index.js';
-export { default as orientation } from './orientation/index.js';
+/**
+ * Event listeners normalize events emitted by `cornerstone` and `enabledElements`. The listeners
+ * then re-emit events prefixed with `cornerstonetools`. For example, `mousemove` becomes `cornerstonetoolsmousemove`.
+ * Most of these events are caught by an `eventDispatcher`, and used to shape tool behavior.
+ * @private
+ * @namespace EventListeners
+ */
 
-export { default as requestPoolManager } from './requestPool/requestPoolManager.js';
+/**
+ * Manipulators describe a tool's `handle` behavior. Leveraging a small set of manipulators
+ * allows us to create a consistent experience when interacting with tools via their handles.
+ * @namespace Manipulators
+ */
 
-export { default as setContextToDisplayFontSize } from './util/setContextToDisplayFontSize.js';
-export { default as scrollToIndex } from './util/scrollToIndex.js';
-export { default as scroll } from './util/scroll.js';
-export { default as roundToDecimal } from './util/roundToDecimal.js';
-export { projectPatientPointToImagePlane,
-  imagePointToPatientPoint,
-  planePlaneIntersection } from './util/pointProjector.js';
+/**
+ * Mixins are "tool beahviors" that can be added to a tool via its mixin
+ * array configuration property
+ * @namespace Mixins
+ */
 
-export { default as pointInsideBoundingBox } from './util/pointInsideBoundingBox.js';
-export { default as pointInEllipse } from './util/pointInEllipse.js';
-export { default as makeUnselectable } from './util/makeUnselectable.js';
-export { default as isMouseButtonEnabled } from './util/isMouseButtonEnabled.js';
-export { default as getRGBPixels } from './util/getRGBPixels.js';
-export { getDefaultSimultaneousRequests,
-  getMaxSimultaneousRequests,
-  getBrowserInfo,
-  isMobileDevice } from './util/getMaxSimultaneousRequests.js';
+/**
+ * StateManagement
+ * @namespace StateManagement
+ */
 
-export { default as getLuminance } from './util/getLuminance.js';
-export { default as drawTextBox } from './util/drawTextBox.js';
-export { default as drawEllipse } from './util/drawEllipse.js';
-export { default as drawCircle } from './util/drawCircle.js';
-export { default as drawArrow } from './util/drawArrow.js';
-export { default as copyPoints } from './util/copyPoints.js';
-export { default as calculateSUV } from './util/calculateSUV.js';
-export { default as calculateEllipseStatistics } from './util/calculateEllipseStatistics.js';
+/**
+ * Sync
+ * @namespace Synchronization
+ */
 
-export { default as probeTool4D } from './timeSeriesTools/probeTool4D.js';
-export { default as incrementTimePoint } from './timeSeriesTools/incrementTimePoint.js';
-export { default as timeSeriesPlayer } from './timeSeriesTools/timeSeriesPlayer.js';
-export { timeSeriesScroll,
-  timeSeriesScrollWheel,
-  timeSeriesScrollTouchDrag } from './timeSeriesTools/timeSeriesScroll.js';
+/**
+ * Third party
+ * @namespace ThirdParty
+ */
 
-export { default as wwwcSynchronizer } from './synchronization/wwwcSynchronizer.js';
-export { default as updateImageSynchronizer } from './synchronization/updateImageSynchronizer.js';
-export { default as Synchronizer } from './synchronization/Synchronizer.js';
-export { default as stackScrollSynchronizer } from './synchronization/stackScrollSynchronizer.js';
-export { default as stackImagePositionSynchronizer } from './synchronization/stackImagePositionSynchronizer.js';
-export { default as stackImagePositionOffsetSynchronizer } from './synchronization/stackImagePositionOffsetSynchronizer.js';
-export { default as stackImageIndexSynchronizer } from './synchronization/stackImageIndexSynchronizer.js';
-export { default as panZoomSynchronizer } from './synchronization/panZoomSynchronizer.js';
+/**
+ * Tools
+ * @namespace Tools
+ */
 
-export { default as toolStyle } from './stateManagement/toolStyle.js';
-export { addToolState,
+/**
+ * Tools that extend the {@link #Tools.Base.BaseAnnotationTool|`BaseAnnotationTool`}
+ * @namespace Tools.Annotation
+ */
+
+/**
+ * The parent (abstract) classes that all tools derive from.
+ * @namespace Tools.Base
+ */
+
+/**
+ * Tools that extend the {@link #Tools.Base.BaseBrushTool|`BaseBrushTool`}
+ * @namespace Tools.Brush
+ */
+
+/**
+ * Util
+ * @namespace Util
+ */
+
+import {
+  AngleTool,
+  ArrowAnnotateTool,
+  BidirectionalTool,
+  CobbAngleTool,
+  EllipticalRoiTool,
+  FreehandMouseTool,
+  LengthTool,
+  ProbeTool,
+  RectangleRoiTool,
+  TextMarkerTool,
+} from './tools/annotation/index.js';
+import { BrushTool } from './tools/brush/index.js';
+import {
+  CrosshairsTool,
+  DoubleTapFitToWindowTool,
+  DragProbeTool,
+  EraserTool,
+  FreehandSculpterMouseTool,
+  MagnifyTool,
+  PanMultiTouchTool,
+  PanTool,
+  ReferenceLinesTool,
+  RotateTool,
+  RotateTouchTool,
+  ScaleOverlayTool,
+  StackScrollMouseWheelTool,
+  StackScrollMultiTouchTool,
+  StackScrollTool,
+  WwwcRegionTool,
+  WwwcTool,
+  ZoomMouseWheelTool,
+  ZoomTool,
+  ZoomTouchPinchTool,
+} from './tools/index.js';
+
+import { default as imp } from './import.js';
+
+import { default as init } from './init.js';
+
+// ~~~~~~ STACK TOOLS ~~~~~ //
+import { default as stackPrefetch } from './stackTools/stackPrefetch.js';
+import { default as stackRenderers } from './stackTools/stackRenderers.js';
+import { playClip, stopClip } from './stackTools/playClip.js';
+
+// ~~~~~~ STATE MANAGEMENT ~~~~~ //
+import { default as store } from './store/index.js';
+import { default as getToolForElement } from './store/getToolForElement.js';
+import { addTool, addToolForElement } from './store/addTool.js';
+import { removeTool, removeToolForElement } from './store/removeTool.js';
+import {
+  setToolOptions,
+  setToolOptionsForElement,
+} from './store/setToolOptions.js';
+import {
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+} from './store/setToolMode.js';
+import {
+  addToolState,
   getToolState,
   removeToolState,
   clearToolState,
   setElementToolStateManager,
-  getElementToolStateManager } from './stateManagement/toolState.js';
-export { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
-export { default as toolColors } from './stateManagement/toolColors.js';
-export { addTimeSeriesStateManager,
-  newTimeSeriesSpecificToolStateManager } from './stateManagement/timeSeriesSpecificStateManager.js';
-export { default as textStyle } from './stateManagement/textStyle.js';
-
-export { stackSpecificStateManager,
+  getElementToolStateManager,
+} from './stateManagement/toolState.js';
+import { default as textStyle } from './stateManagement/textStyle.js';
+import { default as toolStyle } from './stateManagement/toolStyle.js';
+import { default as toolColors } from './stateManagement/toolColors.js';
+import { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
+import {
+  stackSpecificStateManager,
   newStackSpecificToolStateManager,
-  addStackStateManager } from './stateManagement/stackSpecificStateManager.js';
+  addStackStateManager,
+} from './stateManagement/stackSpecificStateManager.js';
+import { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
+import {
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager,
+} from './stateManagement/imageIdSpecificStateManager.js';
+import {
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager,
+} from './stateManagement/frameOfReferenceStateManager.js';
+import { forceEnabledElementResize } from './eventListeners/windowResizeHandler.js';
 
-export { default as loadHandlerManager } from './stateManagement/loadHandlerManager.js';
+// ~~~~~~ ORIENTATION  ~~~~~ //
+import { default as orientation } from './orientation/index.js';
 
-export { newImageIdSpecificToolStateManager,
-  globalImageIdSpecificToolStateManager } from './stateManagement/imageIdSpecificStateManager.js';
+// ~~~~~~ CANVAS EXPORT  ~~~~~ //
+import { default as SaveAs } from './util/SaveAs.js';
 
-export { newFrameOfReferenceSpecificToolStateManager,
-  globalFrameOfReferenceSpecificToolStateManager } from './stateManagement/frameOfReferenceStateManager.js';
+// ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
+import { default as register } from './thirdParty/register.js';
+import { default as registerSome } from './thirdParty/registerSome.js';
 
-export { default as appState } from './stateManagement/appState.js';
+// ~~~~~~ SYNCHRONIZERS ~~~~~ //
+import { default as wwwcSynchronizer } from './synchronization/wwwcSynchronizer.js';
+import { default as updateImageSynchronizer } from './synchronization/updateImageSynchronizer.js';
+import { default as Synchronizer } from './synchronization/Synchronizer.js';
+import { default as stackScrollSynchronizer } from './synchronization/stackScrollSynchronizer.js';
+import { default as stackImagePositionSynchronizer } from './synchronization/stackImagePositionSynchronizer.js';
+import { default as stackImagePositionOffsetSynchronizer } from './synchronization/stackImagePositionOffsetSynchronizer.js';
+import { default as stackImageIndexSynchronizer } from './synchronization/stackImageIndexSynchronizer.js';
+import { default as panZoomSynchronizer } from './synchronization/panZoomSynchronizer.js';
 
-export { default as stackScrollKeyboard } from './stackTools/stackScrollKeyboard.js';
+// ~~~~~~ REQUEST POOL MANAGER  ~~~~~ //
+import { default as requestPoolManager } from './requestPool/requestPoolManager.js';
 
-export { stackScroll,
-  stackScrollWheel,
-  stackScrollTouchDrag,
-  stackScrollMultiTouch } from './stackTools/stackScroll.js';
+import { default as external } from './externalModules.js';
+import { default as EVENTS } from './events.js';
+import { default as version } from './version.js';
 
-export { default as stackPrefetch } from './stackTools/stackPrefetch.js';
-export { default as scrollIndicator } from './stackTools/scrollIndicator.js';
-export { default as stackRenderers } from './stackTools/stackRenderers.js';
-export { playClip, stopClip } from './stackTools/playClip.js';
+const cornerstoneTools = {
+  // ~~~ TOOLS
+  // ~ Annotation Tools
+  AngleTool,
+  ArrowAnnotateTool,
+  BidirectionalTool,
+  CobbAngleTool,
+  EllipticalRoiTool,
+  FreehandMouseTool,
+  LengthTool,
+  ProbeTool,
+  RectangleRoiTool,
+  TextMarkerTool,
+  // ~ Brush Tools
+  BrushTool,
+  // ~ Tools
+  CrosshairsTool,
+  DoubleTapFitToWindowTool,
+  DragProbeTool,
+  EraserTool,
+  FreehandSculpterMouseTool,
+  MagnifyTool,
+  PanMultiTouchTool,
+  PanTool,
+  ReferenceLinesTool,
+  RotateTool,
+  RotateTouchTool,
+  ScaleOverlayTool,
+  StackScrollMouseWheelTool,
+  StackScrollMultiTouchTool,
+  StackScrollTool,
+  WwwcRegionTool,
+  WwwcTool,
+  ZoomMouseWheelTool,
+  ZoomTool,
+  ZoomTouchPinchTool,
+  init,
+  stackPrefetch,
+  stackRenderers,
+  playClip,
+  stopClip,
+  store,
+  getToolForElement,
+  addTool,
+  addToolForElement,
+  removeTool,
+  removeToolForElement,
+  setToolOptions,
+  setToolOptionsForElement,
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+  addToolState,
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager,
+  textStyle,
+  toolStyle,
+  toolColors,
+  toolCoordinates,
+  stackSpecificStateManager,
+  newStackSpecificToolStateManager,
+  addStackStateManager,
+  loadHandlerManager,
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager,
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager,
+  forceEnabledElementResize,
+  orientation,
+  SaveAs,
+  import: imp,
+  register,
+  registerSome,
+  wwwcSynchronizer,
+  updateImageSynchronizer,
+  Synchronizer,
+  stackScrollSynchronizer,
+  stackImagePositionSynchronizer,
+  stackImagePositionOffsetSynchronizer,
+  stackImageIndexSynchronizer,
+  panZoomSynchronizer,
+  requestPoolManager,
+  external,
+  EVENTS,
+  version,
+};
 
-export { default as anyHandlesOutsideImage } from './manipulators/anyHandlesOutsideImage.js';
-export { default as drawHandles } from './manipulators/drawHandles.js';
-export { default as getHandleNearImagePoint } from './manipulators/getHandleNearImagePoint.js';
-export { default as handleActivator } from './manipulators/handleActivator.js';
-export { default as moveAllHandles } from './manipulators/moveAllHandles.js';
-export { default as moveHandle } from './manipulators/moveHandle.js';
-export { default as moveNewHandle } from './manipulators/moveNewHandle.js';
-export { default as moveNewHandleTouch } from './manipulators/moveNewHandleTouch.js';
-export { default as touchMoveAllHandles } from './manipulators/touchMoveAllHandles.js';
-export { default as touchMoveHandle } from './manipulators/touchMoveHandle.js';
+// Named Exports
+export {
+  // ~~~ TOOLS
+  // ~ Annotation Tools
+  AngleTool,
+  ArrowAnnotateTool,
+  BidirectionalTool,
+  CobbAngleTool,
+  EllipticalRoiTool,
+  FreehandMouseTool,
+  LengthTool,
+  ProbeTool,
+  RectangleRoiTool,
+  TextMarkerTool,
+  // ~ Brush Tools
+  BrushTool,
+  // ~ Tools
+  CrosshairsTool,
+  DoubleTapFitToWindowTool,
+  DragProbeTool,
+  EraserTool,
+  FreehandSculpterMouseTool,
+  MagnifyTool,
+  PanMultiTouchTool,
+  PanTool,
+  ReferenceLinesTool,
+  RotateTool,
+  RotateTouchTool,
+  ScaleOverlayTool,
+  StackScrollMouseWheelTool,
+  StackScrollMultiTouchTool,
+  StackScrollTool,
+  WwwcRegionTool,
+  WwwcTool,
+  ZoomMouseWheelTool,
+  ZoomTool,
+  ZoomTouchPinchTool,
+  init,
+  stackPrefetch,
+  stackRenderers,
+  playClip,
+  stopClip,
+  store,
+  getToolForElement,
+  addTool,
+  addToolForElement,
+  removeTool,
+  removeToolForElement,
+  setToolOptions,
+  setToolOptionsForElement,
+  setToolActive,
+  setToolActiveForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+  addToolState,
+  getToolState,
+  removeToolState,
+  clearToolState,
+  setElementToolStateManager,
+  getElementToolStateManager,
+  textStyle,
+  toolStyle,
+  toolColors,
+  toolCoordinates,
+  stackSpecificStateManager,
+  newStackSpecificToolStateManager,
+  addStackStateManager,
+  loadHandlerManager,
+  newImageIdSpecificToolStateManager,
+  globalImageIdSpecificToolStateManager,
+  newFrameOfReferenceSpecificToolStateManager,
+  globalFrameOfReferenceSpecificToolStateManager,
+  forceEnabledElementResize,
+  orientation,
+  SaveAs,
+  register,
+  registerSome,
+  wwwcSynchronizer,
+  updateImageSynchronizer,
+  Synchronizer,
+  stackScrollSynchronizer,
+  stackImagePositionSynchronizer,
+  stackImagePositionOffsetSynchronizer,
+  stackImageIndexSynchronizer,
+  panZoomSynchronizer,
+  requestPoolManager,
+  external,
+  EVENTS,
+  version,
+};
 
-export { default as keyboardInput } from './inputSources/keyboardInput.js';
-export { default as mouseInput } from './inputSources/mouseInput.js';
-export { default as mouseWheelInput } from './inputSources/mouseWheelInput.js';
-export { default as preventGhostClick } from './inputSources/preventGhostClick.js';
-export { default as touchInput } from './inputSources/touchInput.js';
+// This has a weird name, so we can't just import it as 'import';
+export { default as import } from './import.js';
 
-
-export { angle, angleTouch } from './imageTools/angleTool.js';
-export { arrowAnnotate, arrowAnnotateTouch } from './imageTools/arrowAnnotate.js';
-export { crosshairs, crosshairsTouch } from './imageTools/crosshairs.js';
-export { default as displayTool } from './imageTools/displayTool.js';
-export { default as doubleTapTool } from './imageTools/doubleTapTool.js';
-export { default as doubleTapZoom } from './imageTools/doubleTapZoom.js';
-export { dragProbe, dragProbeTouch } from './imageTools/dragProbe.js';
-
-export { ellipticalRoi, ellipticalRoiTouch } from './imageTools/ellipticalRoi.js';
-export { eraser, eraserTouch } from './imageTools/eraser.js';
-export { freehand } from './imageTools/freehand.js';
-export { freehandSculpter } from './imageTools/freehandSculpter.js';
-
-export { highlight, highlightTouch } from './imageTools/highlight.js';
-export { default as imageStats } from './imageTools/imageStats.js';
-export { default as keyboardTool } from './imageTools/keyboardTool.js';
-export { length, lengthTouch } from './imageTools/length.js';
-export { magnify, magnifyTouchDrag } from './imageTools/magnify.js';
-export { default as mouseButtonRectangleTool } from './imageTools/mouseButtonRectangleTool.js';
-export { default as mouseButtonTool } from './imageTools/mouseButtonTool.js';
-export { default as mouseWheelTool } from './imageTools/mouseWheelTool.js';
-export { default as multiTouchDragTool } from './imageTools/multiTouchDragTool.js';
-export { default as orientationMarkers } from './imageTools/orientationMarkers.js';
-
-export { pan, panTouchDrag } from './imageTools/pan.js';
-export { default as panMultiTouch } from './imageTools/panMultiTouch.js';
-export { probe, probeTouch } from './imageTools/probe.js';
-export { rectangleRoi, rectangleRoiTouch } from './imageTools/rectangleRoi.js';
-export { rotate, rotateTouchDrag } from './imageTools/rotate.js';
-export { default as rotateTouch } from './imageTools/rotateTouch.js';
-export { default as saveAs } from './imageTools/saveAs.js';
-export { default as scaleOverlayTool } from './imageTools/scaleOverlayTool.js';
-export { seedAnnotate, seedAnnotateTouch } from './imageTools/seedAnnotate.js';
-export { simpleAngle, simpleAngleTouch } from './imageTools/simpleAngle.js';
-export { default as simpleMouseButtonTool } from './imageTools/simpleMouseButtonTool.js';
-export { textMarker, textMarkerTouch } from './imageTools/textMarker.js';
-
-export { default as touchDragTool } from './imageTools/touchDragTool.js';
-export { default as touchPinchTool } from './imageTools/touchPinchTool.js';
-export { default as touchTool } from './imageTools/touchTool.js';
-export { wwwc, wwwcTouchDrag } from './imageTools/wwwc.js';
-export { wwwcRegion, wwwcRegionTouch } from './imageTools/wwwcRegion.js';
-export { zoom,
-  zoomWheel,
-  zoomTouchPinch,
-  zoomTouchDrag } from './imageTools/zoom.js';
-export { brush } from './paintingTools/brush.js';
-export { adaptiveBrush } from './paintingTools/adaptiveBrush.js';
-export { default as version } from './version.js';
-
-export { setToolOptions, getToolOptions } from './toolOptions.js';
+export default cornerstoneTools;

@@ -1,0 +1,48 @@
+{
+  "title": "cornerstone-tools",
+  "gitbook": ">3.0.0",
+  "plugins": [
+    "edit-link",
+    "theme-cornerstone",
+    "-fontsettings",
+    "github",
+    "ga",
+    "sitemap",
+    "versions"
+  ],
+  "pluginsConfig": {
+    "edit-link": {
+      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs",
+      "label": "Edit This Page"
+    },
+    "github": {
+      "url": "https://github.com/cornerstonejs/cornerstoneTools"
+    },
+    "ga": {
+      "token": "UA-110573590-1"
+    },
+    "sitemap": {
+      "hostname": "https://tools.cornerstonejs.org"
+    },
+    "versions": {
+      "gitbookConfigURL": "https://raw.githubusercontent.com/cornerstonejs/cornerstoneTools/master/docs/book.json",
+      "options": [
+        {
+          "value": "https://tools.cornerstonejs.org/history/v2/",
+          "text": "Version 2.x"
+        },
+        {
+          "value": "https://tools.cornerstonejs.org/",
+          "text": "Version 3.x",
+          "selected": true
+        }
+      ]
+    }
+  },
+  "links": {
+    "sharing": {
+      "facebook": false,
+      "twitter": false
+    }
+  }
+}

@@ -1,11 +1,15 @@
-## Directorties
+## Directories
 node_modules
-coverage/
-dist/
-docs/_book/
+_book/
 
 ## Files
-docs/api.md
+.npmrc
 
 ## File Types
 .idea
+
+## Output
+coverage/
+docs/latest/api
+dist/
+junit.xml

@@ -1,8 +1,18 @@
 import external from '../externalModules.js';
 
-// This function synchronizes the target zoom and pan to match the source
-export default function (synchronizer, sourceElement, targetElement) {
-
+/**
+ * Synchronize the target zoom and pan to match the source
+ * @export
+ * @public
+ * @method
+ * @name panZoomSynchronizer
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the zoom and pan values
+ * @param {HTMLElement} targetElement - The target element
+ */
+export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
@@ -14,7 +24,11 @@ export default function (synchronizer, sourceElement, targetElement) {
   const targetViewport = cornerstone.getViewport(targetElement);
 
   // Do nothing if the scale and translation are the same
-  if (targetViewport.scale === sourceViewport.scale && targetViewport.translation.x === sourceViewport.translation.x && targetViewport.translation.y === sourceViewport.translation.y) {
+  if (
+    targetViewport.scale === sourceViewport.scale &&
+    targetViewport.translation.x === sourceViewport.translation.x &&
+    targetViewport.translation.y === sourceViewport.translation.y
+  ) {
     return;
   }
 

@@ -3,10 +3,19 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import clip from '../util/clip.js';
 
-// This function causes the image in the target stack to be set to the one closest
-// To the image in the source stack by image position
-export default function (synchronizer, sourceElement, targetElement) {
-
+/**
+ * Synchronize the target stack to the index closest to the source stack's index
+ * @export
+ * @public
+ * @method
+ * @name stackImageIndexSynchronizer
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the index value
+ * @param {HTMLElement} targetElement - The target element
+ */
+export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element
   if (targetElement === sourceElement) {
     return;
@@ -21,7 +30,11 @@ export default function (synchronizer, sourceElement, targetElement) {
   let newImageIdIndex = sourceStackData.currentImageIdIndex;
 
   // Clamp the index
-  newImageIdIndex = clip(newImageIdIndex, 0, targetStackData.imageIds.length - 1);
+  newImageIdIndex = clip(
+    newImageIdIndex,
+    0,
+    targetStackData.imageIds.length - 1
+  );
 
   // Do nothing if the index has not changed
   if (newImageIdIndex === targetStackData.currentImageIdIndex) {
@@ -41,22 +54,27 @@ export default function (synchronizer, sourceElement, targetElement) {
   if (targetStackData.preventCache === true) {
     loader = cornerstone.loadImage(targetStackData.imageIds[newImageIdIndex]);
   } else {
-    loader = cornerstone.loadAndCacheImage(targetStackData.imageIds[newImageIdIndex]);
+    loader = cornerstone.loadAndCacheImage(
+      targetStackData.imageIds[newImageIdIndex]
+    );
   }
 
-  loader.then(function (image) {
-    const viewport = cornerstone.getViewport(targetElement);
+  loader.then(
+    function(image) {
+      const viewport = cornerstone.getViewport(targetElement);
 
-    targetStackData.currentImageIdIndex = newImageIdIndex;
-    synchronizer.displayImage(targetElement, image, viewport);
-    if (endLoadingHandler) {
-      endLoadingHandler(targetElement, image);
-    }
-  }, function (error) {
-    const imageId = targetStackData.imageIds[newImageIdIndex];
+      targetStackData.currentImageIdIndex = newImageIdIndex;
+      synchronizer.displayImage(targetElement, image, viewport);
+      if (endLoadingHandler) {
+        endLoadingHandler(targetElement, image);
+      }
+    },
+    function(error) {
+      const imageId = targetStackData.imageIds[newImageIdIndex];
 
-    if (errorLoadingHandler) {
-      errorLoadingHandler(targetElement, imageId, error);
+      if (errorLoadingHandler) {
+        errorLoadingHandler(targetElement, imageId, error);
+      }
     }
-  });
+  );
 }

@@ -1,9 +1,10 @@
 /**
  * Returns the first argument if defined, otherwise returns the second
  *
- * @param {any} value
- * @param {any} defaultValue
+ * @param {*} value
+ * @param {*} defaultValue
+ * @returns {*}
  */
-export function getDefault (value, defaultValue) {
-    return value !== undefined ? value : defaultValue;
+export default function(value, defaultValue) {
+  return value === undefined ? defaultValue : value;
 }

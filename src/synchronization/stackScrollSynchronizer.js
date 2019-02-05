@@ -3,9 +3,20 @@ import { getToolState } from '../stateManagement/toolState.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import clip from '../util/clip.js';
 
-// This function causes any scrolling actions within the stack to propagate to
-// All of the other viewports that are synced
-export default function (synchronizer, sourceElement, targetElement, eventData) {
+/**
+ * Propogate scrolling actions from the source element to the target element.
+ * @export
+ * @public
+ * @method
+ * @name stackScrollSynchronizer
+ *
+ * @param {Object} synchronizer - The Synchronizer instance that attaches this
+ * handler to an event
+ * @param {HTMLElement} sourceElement - The source element for the scroll event
+ * @param {HTMLElement} targetElement - The target element
+ * @param {Object} eventData - The data object from the triggering event
+ */
+export default function(synchronizer, sourceElement, targetElement, eventData) {
   // If the target and source are the same, stop
   if (sourceElement === targetElement) {
     return;
@@ -51,22 +62,25 @@ export default function (synchronizer, sourceElement, targetElement, eventData) 
     loader = cornerstone.loadAndCacheImage(newImageId);
   }
 
-  loader.then(function (image) {
-    const viewport = cornerstone.getViewport(targetElement);
+  loader.then(
+    function(image) {
+      const viewport = cornerstone.getViewport(targetElement);
 
-    if (stackData.currentImageIdIndex !== newImageIdIndex) {
-      return;
-    }
+      if (stackData.currentImageIdIndex !== newImageIdIndex) {
+        return;
+      }
 
-    synchronizer.displayImage(targetElement, image, viewport);
-    if (endLoadingHandler) {
-      endLoadingHandler(targetElement, image);
-    }
-  }, function (error) {
-    const imageId = stackData.imageIds[newImageIdIndex];
+      synchronizer.displayImage(targetElement, image, viewport);
+      if (endLoadingHandler) {
+        endLoadingHandler(targetElement, image);
+      }
+    },
+    function(error) {
+      const imageId = stackData.imageIds[newImageIdIndex];
 
-    if (errorLoadingHandler) {
-      errorLoadingHandler(targetElement, imageId, error);
+      if (errorLoadingHandler) {
+        errorLoadingHandler(targetElement, imageId, error);
+      }
     }
-  });
+  );
 }

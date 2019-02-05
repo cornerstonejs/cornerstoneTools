@@ -1,11 +1,13 @@
 /**
  * A helper function to make an element (and its content) being non selectable.
- * @param element {HTMLElement} The element to make unselectable
- * @param ignorePointerEvents {Boolean} true to make this element also ignore events
- * (e.g. mouse click), false otherwise
- * @returns {void}
+ * @export @public @method
+ * @name makeUnselectable
+ *
+ * @param {HTMLElement} element The element to make unselectable
+ * @param {Boolean} ignorePointerEvents  true to make this element also
+ * ignore events (e.g. mouse click), false otherwise.
  */
-export default function (element, ignorePointerEvents) {
+export default function(element, ignorePointerEvents) {
   element.style.webkitUserSelect = 'none';
   element.style.webkitTouchCallout = 'none';
   element.style.mozUserSelect = 'none';
@@ -15,7 +17,7 @@ export default function (element, ignorePointerEvents) {
   element.style.userSelect = 'none';
 
   element.unselectable = 'on';
-  element.oncontextmenu = () => (false);
+  element.oncontextmenu = () => false;
 
   if (ignorePointerEvents === true) {
     element.style.pointerEvents = 'none';
