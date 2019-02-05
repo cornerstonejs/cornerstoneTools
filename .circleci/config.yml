@@ -79,7 +79,7 @@ jobs:
       - run: npm install
       - run:
           name: Publish using Semantic Release
-          command: npx semantic-release
+          command: npx semantic-release --dry-run
 
   ##################
   #
