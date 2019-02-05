@@ -1,5 +1,5 @@
 <div align="center">
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors)
 <h1>cornerstone-tools</h1>
 
 <p>Provides a simple, extensible framework for creating tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a>. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.</p>
@@ -116,8 +116,8 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") [💡](#example-chafey "Examples") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [🤔](#ideas-swederik "Ideas, Planning, & Feedback") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Code") [💬](#question-swederik "Answering Questions") |
-| :---: | :---: |
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") [💡](#example-chafey "Examples") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [🤔](#ideas-swederik "Ideas, Planning, & Feedback") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Code") [💬](#question-swederik "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/><br /><sub><b>Danny Brown</b></sub>](http://dannyrb.com/)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Documentation") [🚧](#maintenance-dannyrb "Maintenance") [🚇](#infra-dannyrb "Infrastructure (Hosting, Build-Tools, etc)") [🔌](#plugin-dannyrb "Plugin/utility libraries") [🤔](#ideas-dannyrb "Ideas, Planning, & Feedback") [💡](#example-dannyrb "Examples") [💬](#question-dannyrb "Answering Questions") |
+| :---: | :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 Thanks goes to these people ([emoji key][emojis]):
 
