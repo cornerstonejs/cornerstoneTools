@@ -21,16 +21,19 @@
 
 ## The problem
 
-You want to build tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/).
-As part of this goal, you don't want to re-invent the wheel. You want easy to read
+Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
+
+- Tools should behave and be configurable in a consistant way
+- Managing tools across multiple cornerstone `enabled element`s
+- Tools that need knowledge of a fellow tool's state
+- The ability to "drop-in" others' tools, and they "just work"
+- and many others
+
+This library attempts to solve these problems, and in a highly pluggable and extensible way.
 
 ## This solution
 
-`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js.
-It's only dependencies are libraries within the Cornerstone family. Instead of trying to
-"do everything" it aims to be extensible and pluggable to aid in the rapid development
-of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared,
-allowing for the creation of a broader ecosystem.
+`cornerstone-tools` is a light-weight solution for building Tools on top of Cornerstone.js. It's only dependencies are libraries within the Cornerstone family. Instead of trying to "do everything" it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using `cornerstone-tools` can be easily shared, allowing for the creation of a broader ecosystem.
 
 ## Example
 
