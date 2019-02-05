@@ -58,7 +58,9 @@
       "contributions": [
         "code",
         "review",
-        "plugin"
+        "plugin",
+        "doc",
+        "question"
       ]
     },
     {
