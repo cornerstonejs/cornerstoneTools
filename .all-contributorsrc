@@ -18,7 +18,8 @@
         "doc",
         "code",
         "blog",
-        "talk"
+        "talk",
+        "example"
       ]
     }
   ],
