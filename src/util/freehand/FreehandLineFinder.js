@@ -2,7 +2,6 @@ import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
 import ClickedLineData from './ClickedLineData.js';
 
-const toolType = 'FreehandMouse';
 const distanceThreshold = 10;
 
 /**
@@ -16,8 +15,9 @@ export default class FreehandLineFinder {
    * @param {*} eventData - Data object associated with the event.
    * @memberof FreehandLineFinder
    */
-  constructor(eventData) {
+  constructor(eventData, toolName) {
     this._eventData = eventData;
+    this._toolName = toolName;
   }
 
   /**
@@ -59,7 +59,7 @@ export default class FreehandLineFinder {
    * @returns {ClickedLineData} Data object corresponding to the clicked line.
    */
   findTool() {
-    this._toolData = getToolState(this._eventData.element, toolType);
+    this._toolData = getToolState(this._eventData.element, this._toolName);
     this._mousePoint = this._eventData.currentPoints.canvas;
 
     if (!this._toolData) {
