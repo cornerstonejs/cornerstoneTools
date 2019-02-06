@@ -57,9 +57,10 @@ function throttle(func, wait, options) {
     throw new TypeError('Expected a function');
   }
   if (isObject(options)) {
-    leading = 'leading' in options ? !!options.leading : leading;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
+    leading = 'leading' in options ? Boolean(options.leading) : leading;
+    trailing = 'trailing' in options ? Boolean(options.trailing) : trailing;
   }
+
   return debounce(func, wait, {
     leading,
     trailing,
