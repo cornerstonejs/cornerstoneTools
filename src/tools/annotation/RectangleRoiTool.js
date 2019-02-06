@@ -35,8 +35,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        // ShowMinMax: false,
-        // ShowHounsfieldUnits: true
+        // showMinMax: false,
+        // showHounsfieldUnits: true
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);

@@ -39,8 +39,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        // ShowMinMax: false,
-        // ShowHounsfieldUnits: true,
+        // showMinMax: false,
+        // showHounsfieldUnits: true,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);

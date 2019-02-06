@@ -134,8 +134,8 @@ function debounce(func, wait, options) {
     const timeSinceLastInvoke = time - lastInvokeTime;
 
     // Either this is the first call, activity has stopped and we're at the
-    // Trailing edge, the system time has gone backwards and we're treating
-    // It as the trailing edge, or we've hit the `maxWait` limit.
+    // trailing edge, the system time has gone backwards and we're treating
+    // it as the trailing edge, or we've hit the `maxWait` limit.
     return (
       lastCallTime === undefined ||
       timeSinceLastCall >= wait ||
@@ -158,7 +158,7 @@ function debounce(func, wait, options) {
     timerId = undefined;
 
     // Only invoke if we have `lastArgs` which means `func` has been
-    // Debounced at least once.
+    // debounced at least once.
     if (trailing && lastArgs) {
       return invokeFunc(time);
     }

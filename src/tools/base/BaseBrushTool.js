@@ -454,7 +454,7 @@ class BaseBrushTool extends BaseTool {
 
     // TODO -> Put this elsewhere
     /*
-    Const buffer = new ArrayBuffer(dim.xyz);
+    const buffer = new ArrayBuffer(dim.xyz);
 
     const unit8View = new Uint8Array(buffer);
 
