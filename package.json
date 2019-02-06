@@ -21,7 +21,7 @@
     "build": "npm run test && npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
     "build:prod": "webpack --progress --config ./config/webpack/webpack-prod",
-    "commit": "npx git-cz",
+    "commit": "git-cz",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "clean:dist": "shx rm -rf ./dist",
@@ -49,6 +49,7 @@
     "canvas": "2.1.0",
     "commitizen": "3.0.5",
     "coveralls": "3.0.2",
+    "cz-conventional-changelog": "2.1.0",
     "docma": "3.0.0",
     "eslint": "4.19.1",
     "eslint-config-prettier": "3.3.0",
@@ -100,5 +101,10 @@
       "!src/index.js"
     ],
     "testEnvironment": "jsdom"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
