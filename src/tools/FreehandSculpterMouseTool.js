@@ -121,7 +121,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       return;
     }
 
-    const dataHandles = toolState.data[config.currentTool].handles;
+    const dataHandles = toolState.data[config.currentTool].handles.dataHandles;
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
