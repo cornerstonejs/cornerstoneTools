@@ -108,6 +108,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "adreyfus",
+      "name": "Aloïs Dreyfus",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/25580127?v=4",
+      "profile": "http://www.linkedin.com/in/alois-dreyfus/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
