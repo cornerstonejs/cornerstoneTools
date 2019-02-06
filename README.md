@@ -76,7 +76,7 @@ export default class WwwcTool extends BaseTool {
 
 ## Installation
 
-This module is distributed via [npm][npm] which is bundled with [node][node] and
+This module is distributed via [npm][npm-url] which is bundled with [node][node] and
 should be installed as one of your project's `dependencies`:
 
 ```
