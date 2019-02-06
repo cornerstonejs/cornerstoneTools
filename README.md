@@ -163,10 +163,10 @@ Links:
 -->
 
 <!-- prettier-ignore-start -->
-[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg
-[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext
-[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg
-[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext
+[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg
+[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master
+[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master/graphs/badge.svg
+[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master
 [npm-url]: https://npmjs.org/package/cornerstone-tools
 [npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
 [npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
@@ -178,8 +178,8 @@ Links:
 [ohif-source]: https://github.com/OHIF/Viewers
 [emojis]: https://github.com/kentcdodds/all-contributors#emoji-key
 [all-contributors]: https://github.com/kentcdodds/all-contributors
-[bugs]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acreated-desc
-[requests]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3Aenhancement+is%3Aopen
-[good-first-issue]: https://github.com/cornerstonejs/cornerstone-tools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"good+first+issue"+
+[bugs]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acreated-desc
+[requests]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3Aenhancement+is%3Aopen
+[good-first-issue]: https://github.com/cornerstonejs/cornerstoneTools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"good+first+issue"+
 [google-group]: https://groups.google.com/forum/#!forum/cornerstone-platform
 <!-- prettier-ignore-end -->
