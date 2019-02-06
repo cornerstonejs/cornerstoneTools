@@ -28,8 +28,9 @@ module.exports = {
       'warn',
       'always',
       {
-        ignorePattern: 'pragma|ignored',
+        ignorePattern: '.*:|pragma|ignored|prettier',
         ignoreInlineComments: true,
+        ignoreConsecutiveComments: true,
       },
     ],
     // New tool classes have callbacks and other interfaces that require implementation
