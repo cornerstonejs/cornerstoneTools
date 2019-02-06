@@ -2,7 +2,7 @@ import calculateEllipseStatistics from './calculateEllipseStatistics.js';
 
 describe('calculateEllipseStatistics.js', () => {
   // prettier-ignore
-  let fakePixels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+  const fakePixels = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
@@ -12,7 +12,7 @@ describe('calculateEllipseStatistics.js', () => {
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
                     0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-  let fakeEllipseBounds = {
+  const fakeEllipseBounds = {
     top: 0,
     left: 0,
     height: 10,

@@ -12,7 +12,7 @@
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
 [![Coverage Status][coverage-badge]][coverage]
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-13-orange.svg?style=flat-square)](#contributors)
 
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -76,7 +76,7 @@ export default class WwwcTool extends BaseTool {
 
 ## Installation
 
-This module is distributed via [npm][npm] which is bundled with [node][node] and
+This module is distributed via [npm][npm-url] which is bundled with [node][node] and
 should be installed as one of your project's `dependencies`:
 
 ```
@@ -116,18 +116,14 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 ## Contributors
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
-| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=swederik "Documentation") [👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [💬](#question-swederik "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/><br /><sub><b>Danny Brown</b></sub>](http://dannyrb.com/)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Code") [📖](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=dannyrb "Documentation") [👀](#review-dannyrb "Reviewed Pull Requests") [🚧](#maintenance-dannyrb "Maintenance") [🚇](#infra-dannyrb "Infrastructure (Hosting, Build-Tools, etc)") [🔌](#plugin-dannyrb "Plugin/utility libraries") [💬](#question-dannyrb "Answering Questions") | [<img src="https://avatars0.githubusercontent.com/u/25818497?v=4" width="100px;" alt="James Petts"/><br /><sub><b>James Petts</b></sub>](https://github.com/JamesAPetts)<br />[💻](https://github.com/Cornerstone.js/cornerstoneTools/commits?author=JamesAPetts "Code") [👀](#review-JamesAPetts "Reviewed Pull Requests") [🔌](#plugin-JamesAPetts "Plugin/utility libraries") |
-| :---: | :---: | :---: | :---: |
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
 Thanks goes to these people ([emoji key][emojis]):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<!-- prettier-ignore-end -->
+| [<img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/><br /><sub><b>Chris Hafey</b></sub>](https://www.linkedin.com/in/chafey)<br />[📖](https://github.com/cornerstonejs/cornerstoneTools/commits?author=chafey "Documentation") [💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=chafey "Code") [📝](#blog-chafey "Blogposts") [📢](#talk-chafey "Talks") | [<img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/><br /><sub><b>Erik Ziegler</b></sub>](https://github.com/swederik)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=swederik "Code") [📖](https://github.com/cornerstonejs/cornerstoneTools/commits?author=swederik "Documentation") [👀](#review-swederik "Reviewed Pull Requests") [🚧](#maintenance-swederik "Maintenance") [🚇](#infra-swederik "Infrastructure (Hosting, Build-Tools, etc)") [💬](#question-swederik "Answering Questions") | [<img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/><br /><sub><b>Danny Brown</b></sub>](http://dannyrb.com/)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=dannyrb "Code") [📖](https://github.com/cornerstonejs/cornerstoneTools/commits?author=dannyrb "Documentation") [👀](#review-dannyrb "Reviewed Pull Requests") [🚧](#maintenance-dannyrb "Maintenance") [🚇](#infra-dannyrb "Infrastructure (Hosting, Build-Tools, etc)") [🔌](#plugin-dannyrb "Plugin/utility libraries") [💬](#question-dannyrb "Answering Questions") | [<img src="https://avatars0.githubusercontent.com/u/25818497?v=4" width="100px;" alt="James Petts"/><br /><sub><b>James Petts</b></sub>](https://github.com/JamesAPetts)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=JamesAPetts "Code") [👀](#review-JamesAPetts "Reviewed Pull Requests") [🔌](#plugin-JamesAPetts "Plugin/utility libraries") [📖](https://github.com/cornerstonejs/cornerstoneTools/commits?author=JamesAPetts "Documentation") [💬](#question-JamesAPetts "Answering Questions") | [<img src="https://avatars0.githubusercontent.com/u/126077?v=4" width="100px;" alt="Steve Pieper"/><br /><sub><b>Steve Pieper</b></sub>](http://www.isomics.com)<br />[💬](#question-pieper "Answering Questions") [🔧](#tool-pieper "Tools") | [<img src="https://avatars3.githubusercontent.com/u/1905961?v=4" width="100px;" alt="Rodrigo Antinarelli"/><br /><sub><b>Rodrigo Antinarelli</b></sub>](https://rodrigoea.com/)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=rodrigolabs "Code") | [<img src="https://avatars2.githubusercontent.com/u/10813109?v=4" width="100px;" alt="Zaid Safadi"/><br /><sub><b>Zaid Safadi</b></sub>](http://blog.zaidsafadi.com/)<br />[💬](#question-Zaid-Safadi "Answering Questions") |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| [<img src="https://avatars3.githubusercontent.com/u/2378326?v=4" width="100px;" alt="Gustavo André Lelis"/><br /><sub><b>Gustavo André Lelis</b></sub>](https://github.com/galelis)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=galelis "Code") | [<img src="https://avatars1.githubusercontent.com/u/3926071?v=4" width="100px;" alt="Kofifus"/><br /><sub><b>Kofifus</b></sub>](https://github.com/kofifus)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=kofifus "Code") | [<img src="https://avatars2.githubusercontent.com/u/25580127?v=4" width="100px;" alt="Aloïs Dreyfus"/><br /><sub><b>Aloïs Dreyfus</b></sub>](http://www.linkedin.com/in/alois-dreyfus/)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=adreyfus "Code") | [<img src="https://avatars0.githubusercontent.com/u/616382?v=4" width="100px;" alt="Tim Leslie"/><br /><sub><b>Tim Leslie</b></sub>](http://www.timl.id.au)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=timleslie "Code") | [<img src="https://avatars3.githubusercontent.com/u/7297450?v=4" width="100px;" alt="diego0020"/><br /><sub><b>diego0020</b></sub>](https://github.com/diego0020)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=diego0020 "Code") | [<img src="https://avatars1.githubusercontent.com/u/4920551?v=4" width="100px;" alt="Evren Ozkan"/><br /><sub><b>Evren Ozkan</b></sub>](https://github.com/evren217)<br />[💻](https://github.com/cornerstonejs/cornerstoneTools/commits?author=evren217 "Code") |
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors][all-contributors] specification.
@@ -149,7 +145,8 @@ Please file an issue for bugs, missing documentation, or unexpected behavior.
 Please file an issue to suggest new features. Vote on feature requests by adding
 a 👍. This helps maintainers prioritize what to work on.
 
-[**See Feature Requests**][requests]
+[**See Feature Requests**][requests-feature]
+[**See Internal Change Requests**][requests-implementation]
 
 ### ❓ Questions
 
@@ -167,10 +164,10 @@ Links:
 -->
 
 <!-- prettier-ignore-start -->
-[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext.svg?style=svg
-[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/vNext
-[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext/graphs/badge.svg
-[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/vNext
+[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg
+[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master
+[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master/graphs/badge.svg
+[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master
 [npm-url]: https://npmjs.org/package/cornerstone-tools
 [npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
 [npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
@@ -182,8 +179,9 @@ Links:
 [ohif-source]: https://github.com/OHIF/Viewers
 [emojis]: https://github.com/kentcdodds/all-contributors#emoji-key
 [all-contributors]: https://github.com/kentcdodds/all-contributors
-[bugs]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+is%3Aopen+label%3Abug+sort%3Acreated-desc
-[requests]: https://github.com/cornerstonejs/cornerstone-tools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3Aenhancement+is%3Aopen
-[good-first-issue]: https://github.com/cornerstonejs/cornerstone-tools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"good+first+issue"+
+[bugs]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A"🐛+Bug%3A+Verified"+sort%3Acreated-desc
+[requests-feature]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A"💻+Change%3A+Feature"+is%3Aopen
+[requests-implementation]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A"💻+Change%3A+Implementation"+is%3Aopen
+[good-first-issue]: https://github.com/cornerstonejs/cornerstoneTools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"🥇+Good+First+Issue"
 [google-group]: https://groups.google.com/forum/#!forum/cornerstone-platform
 <!-- prettier-ignore-end -->

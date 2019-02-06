@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "3.0.0-b.0",
+  "version": "3.0.1",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.min.js",
   "keywords": [
@@ -61,6 +61,7 @@
     "jest-junit": "5.1.0",
     "lodash": "4.17.10",
     "nodemon": "1.18.6",
+    "semantic-release": "^15.13.3",
     "shx": "^0.3.2",
     "uglifyjs-webpack-plugin": "1.2.5",
     "webpack": "4.9.1",

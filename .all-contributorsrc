@@ -1,6 +1,6 @@
 {
   "projectName": "cornerstoneTools",
-  "projectOwner": "Cornerstone.js",
+  "projectOwner": "cornerstonejs",
   "repoType": "github",
   "repoHost": "https://github.com",
   "files": [
@@ -58,7 +58,91 @@
       "contributions": [
         "code",
         "review",
-        "plugin"
+        "plugin",
+        "doc",
+        "question"
+      ]
+    },
+    {
+      "login": "pieper",
+      "name": "Steve Pieper",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/126077?v=4",
+      "profile": "http://www.isomics.com",
+      "contributions": [
+        "question",
+        "tool"
+      ]
+    },
+    {
+      "login": "rodrigolabs",
+      "name": "Rodrigo Antinarelli",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1905961?v=4",
+      "profile": "https://rodrigoea.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Zaid-Safadi",
+      "name": "Zaid Safadi",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10813109?v=4",
+      "profile": "http://blog.zaidsafadi.com/",
+      "contributions": [
+        "question"
+      ]
+    },
+    {
+      "login": "galelis",
+      "name": "Gustavo André Lelis",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2378326?v=4",
+      "profile": "https://github.com/galelis",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "kofifus",
+      "name": "Kofifus",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3926071?v=4",
+      "profile": "https://github.com/kofifus",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "adreyfus",
+      "name": "Aloïs Dreyfus",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/25580127?v=4",
+      "profile": "http://www.linkedin.com/in/alois-dreyfus/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "timleslie",
+      "name": "Tim Leslie",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/616382?v=4",
+      "profile": "http://www.timl.id.au",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "diego0020",
+      "name": "diego0020",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/7297450?v=4",
+      "profile": "https://github.com/diego0020",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "evren217",
+      "name": "Evren Ozkan",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/4920551?v=4",
+      "profile": "https://github.com/evren217",
+      "contributions": [
+        "code"
       ]
     }
   ],
