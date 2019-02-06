@@ -99,6 +99,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kofifus",
+      "name": "Kofifus",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3926071?v=4",
+      "profile": "https://github.com/kofifus",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
