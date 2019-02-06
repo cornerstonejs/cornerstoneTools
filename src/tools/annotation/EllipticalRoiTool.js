@@ -1,25 +1,29 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Drawing
 import {
   getNewContext,
   draw,
   setShadow,
   drawEllipse,
+  drawHandles,
+  drawLinkedTextBox,
 } from './../../drawing/index.js';
-import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
+
+// Util
 import calculateSUV from './../../util/calculateSUV.js';
-//
+import {
+  pointInEllipse,
+  calculateEllipseStatistics,
+} from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
-
-import ellipseUtils from './../../util/ellipse/index.js';
-
-const { pointInEllipse, calculateEllipseStatistics } = ellipseUtils;
+import throttle from './../../util/throttle.js';
 
 /**
  * @public
@@ -34,11 +38,14 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // showMinMax: false,
+        // showHounsfieldUnits: true,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
-
     this.initialConfiguration = initialConfiguration;
   }
 
@@ -86,18 +93,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     };
   }
 
-  /**
-   *
-   *
-   * @param {*} element
-   * @param {*} data
-   * @param {*} coords
-   * @returns {Boolean}
-   */
-  pointNearTool(element, data, coords) {
-    // TODO: How should we handle touch? for mouse, distance is 15 for touch its 25
-    const distance = 15;
-
+  pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -112,6 +108,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
+    const distance = interactionType === 'mouse' ? 15 : 25;
     const startCanvas = external.cornerstone.pixelToCanvas(
       element,
       data.handles.start
@@ -146,163 +143,80 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   }
 
   renderToolData(evt) {
-    const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
       return;
     }
 
-    // We have tool data for this element - iterate over each one and draw it
+    const eventData = evt.detail;
+    const { image, element } = eventData;
+    const lineWidth = toolStyle.getToolWidth();
+    const { handleRadius, drawHandlesOnHover } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
 
-    const { image, element } = eventData;
-
-    const lineWidth = toolStyle.getToolWidth();
-    const seriesModule = external.cornerstone.metaData.get(
-      'generalSeriesModule',
-      image.imageId
-    );
-    const imagePlane = external.cornerstone.metaData.get(
+    // Meta
+    const seriesModule =
+      external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
+      {};
+    let imagePlane = external.cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
     );
 
-    let modality;
-    let rowPixelSpacing = image.rowPixelSpacing;
-    let colPixelSpacing = image.columnPixelSpacing;
+    // Pixel Spacing
+    const modality = seriesModule.modality;
+    const hasPixelSpacing =
+      imagePlane && imagePlane.rowPixelSpacing && imagePlane.columnPixelSpacing;
 
-    if (imagePlane) {
-      rowPixelSpacing =
-        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-      colPixelSpacing =
-        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-    }
+    imagePlane = imagePlane || {};
+    const pixelSpacing = {
+      rowPixelSpacing: imagePlane.rowPixelSpacing || 1,
+      columnPixelSpacing: imagePlane.columnPixelSpacing || 1,
+    };
 
-    if (seriesModule) {
-      modality = seriesModule.modality;
-    }
+    draw(context, context => {
+      // If we have tool data for this element - iterate over each set and draw it
+      for (let i = 0; i < toolData.data.length; i++) {
+        const data = toolData.data[i];
 
-    // If we have tool data for this element - iterate over each set and draw it
-    for (let i = 0; i < toolData.data.length; i++) {
-      const data = toolData.data[i];
+        if (data.visible === false) {
+          continue;
+        }
 
-      if (data.visible === false) {
-        continue;
-      }
-
-      draw(context, context => {
-        // Apply any shadow settings defined in the tool configuration
-        setShadow(context, this.configuration);
-
-        // Check which color the rendered tool should be
+        // Configure
         const color = toolColors.getColorIfActive(data);
-
-        // Draw the ellipse on the canvas
-        drawEllipse(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
-
-        // Draw the handles
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
+        setShadow(context, this.configuration);
+
+        // Draw
+        drawEllipse(context, element, data.handles.start, data.handles.end, {
+          color,
+        });
         drawHandles(context, eventData, data.handles, handleOptions);
 
-        // Define variables for the area and mean/standard deviation
-        let area, meanStdDev, meanStdDevSUV;
-
-        // Perform a check to see if the tool has been invalidated. This is to prevent
-        // Unnecessary re-calculation of the area, mean, and standard deviation if the
-        // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-        if (data.invalidated === false) {
-          // If the data is not invalidated, retrieve it from the toolData
-          meanStdDev = data.meanStdDev;
-          meanStdDevSUV = data.meanStdDevSUV;
-          area = data.area;
-        } else {
-          // If the data has been invalidated, we need to calculate it again
-
-          // Retrieve the bounds of the ellipse in image coordinates
-          const ellipse = {
-            left: Math.round(
-              Math.min(data.handles.start.x, data.handles.end.x)
-            ),
-            top: Math.round(Math.min(data.handles.start.y, data.handles.end.y)),
-            width: Math.round(
-              Math.abs(data.handles.start.x - data.handles.end.x)
-            ),
-            height: Math.round(
-              Math.abs(data.handles.start.y - data.handles.end.y)
-            ),
-          };
-
-          // First, make sure this is not a color image, since no mean / standard
-          // Deviation will be calculated for color images.
-          if (!image.color) {
-            // Retrieve the array of pixels that the ellipse bounds cover
-            const pixels = external.cornerstone.getPixels(
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.cachedStats) {
+            _throttledUpdateCachedStats(
+              image,
               element,
-              ellipse.left,
-              ellipse.top,
-              ellipse.width,
-              ellipse.height
+              data,
+              modality,
+              pixelSpacing
             );
-
-            // Calculate the mean & standard deviation from the pixels and the ellipse details
-            meanStdDev = calculateEllipseStatistics(pixels, ellipse);
-
-            if (modality === 'PT') {
-              // If the image is from a PET scan, use the DICOM tags to
-              // Calculate the SUV from the mean and standard deviation.
-
-              // Note that because we are using modality pixel values from getPixels, and
-              // The calculateSUV routine also rescales to modality pixel values, we are first
-              // Returning the values to storedPixel values before calcuating SUV with them.
-              // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-              meanStdDevSUV = {
-                mean: calculateSUV(
-                  image,
-                  (meanStdDev.mean - image.intercept) / image.slope
-                ),
-                stdDev: calculateSUV(
-                  image,
-                  (meanStdDev.stdDev - image.intercept) / image.slope
-                ),
-              };
-            }
-
-            // If the mean and standard deviation values are sane, store them for later retrieval
-            if (meanStdDev && !isNaN(meanStdDev.mean)) {
-              data.meanStdDev = meanStdDev;
-              data.meanStdDevSUV = meanStdDevSUV;
-            }
+          } else {
+            _updateCachedStats(image, element, data, modality, pixelSpacing);
           }
-
-          // Calculate the image area from the ellipse dimensions and pixel spacing
-          area =
-            Math.PI *
-            ((ellipse.width * (colPixelSpacing || 1)) / 2) *
-            ((ellipse.height * (rowPixelSpacing || 1)) / 2);
-
-          // If the area value is sane, store it for later retrieval
-          if (!isNaN(area)) {
-            data.area = area;
-          }
-
-          // Set the invalidated flag to false so that this data won't automatically be recalculated
-          data.invalidated = false;
         }
 
-        // If the textbox has not been moved by the user, it should be displayed on the right-most
-        // Side of the tool.
+        // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          // Find the rightmost side of the ellipse at its vertical center, and place the textbox here
-          // Note that this calculates it in image coordinates
           data.handles.textBox.x = Math.max(
             data.handles.start.x,
             data.handles.end.x
@@ -311,13 +225,23 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
             (data.handles.start.y + data.handles.end.y) / 2;
         }
 
-        const text = textBoxText(data);
+        const textBoxAnchorPoints = handles => {
+          return _findTextBoxAnchorPoints(handles.start, handles.end);
+        };
+        const textBoxContent = _createTextBoxContent(
+          context,
+          image.color,
+          data.cachedStats,
+          modality,
+          hasPixelSpacing,
+          this.configuration
+        );
 
         drawLinkedTextBox(
           context,
           element,
           data.handles.textBox,
-          text,
+          textBoxContent,
           data.handles,
           textBoxAnchorPoints,
           color,
@@ -325,98 +249,240 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           0,
           true
         );
-      });
-    }
+      }
+    });
+  }
+}
 
-    function textBoxText(data) {
-      const { meanStdDev, meanStdDevSUV, area } = data;
+/**
+ *
+ */
+const _throttledUpdateCachedStats = throttle(_updateCachedStats, 110);
 
-      // Define an array to store the rows of text for the textbox
-      const textLines = [];
+/**
+ *
+ *
+ * @param {*} image
+ * @param {*} element
+ * @param {*} data
+ * @param {string} modality
+ * @param {*} pixelSpacing
+ */
+function _updateCachedStats(image, element, data, modality, pixelSpacing) {
+  const stats = _calculateStats(
+    image,
+    element,
+    data.handles,
+    modality,
+    pixelSpacing
+  );
+  data.cachedStats = stats;
+  data.invalidated = false;
+}
 
-      // If the mean and standard deviation values are present, display them
-      if (meanStdDev && meanStdDev.mean !== undefined) {
-        // If the modality is CT, add HU to denote Hounsfield Units
-        let moSuffix = '';
+/**
+ *
+ *
+ * @param {*} startHandle
+ * @param {*} endHandle
+ * @returns
+ */
+function _findTextBoxAnchorPoints(startHandle, endHandle) {
+  const { left, top, width, height } = _getEllipseImageCoordinates(
+    startHandle,
+    endHandle
+  );
 
-        if (modality === 'CT') {
-          moSuffix = ' HU';
-        }
+  return [
+    {
+      // Top middle point of ellipse
+      x: left + width / 2,
+      y: top,
+    },
+    {
+      // Left middle point of ellipse
+      x: left,
+      y: top + height / 2,
+    },
+    {
+      // Bottom middle point of ellipse
+      x: left + width / 2,
+      y: top + height,
+    },
+    {
+      // Right middle point of ellipse
+      x: left + width,
+      y: top + height / 2,
+    },
+  ];
+}
 
-        // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numbersWithCommas(
-          meanStdDev.mean.toFixed(2)
-        )}${moSuffix}`;
-        // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numbersWithCommas(
-          meanStdDev.stdDev.toFixed(2)
-        )}${moSuffix}`;
+/**
+ *
+ *
+ * @param {*} context
+ * @param {*} isColorImage
+ * @param {*} [{ area, mean, stdDev, min, max, meanStdDevSUV }={}]
+ * @param {*} modality
+ * @param {*} hasPixelSpacing
+ * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
+ * @returns
+ */
+function _createTextBoxContent(
+  context,
+  isColorImage,
+  { area, mean, stdDev, min, max, meanStdDevSUV } = {},
+  modality,
+  hasPixelSpacing,
+  options = {}
+) {
+  const showMinMax = options.showMinMax || false;
+  const showHounsfieldUnits =
+    options.showHounsfieldUnits === false ? false : true;
+  const textLines = [];
 
-        // If this image has SUV values to display, concatenate them to the text line
-        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-          const SUVtext = ' SUV: ';
+  // Don't display mean/standardDev for color images
+  let otherLines = [];
+  if (!isColorImage) {
+    const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
+    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
 
-          meanText +=
-            SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText +=
-            SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
-        }
+    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
+    const stdDevString = `Std Dev: ${numbersWithCommas(
+      stdDev.toFixed(2)
+    )}${suffix}`;
 
-        // Add these text lines to the array to be displayed in the textbox
-        textLines.push(meanText);
-        textLines.push(stdDevText);
+    // If this image has SUV values to display, concatenate them to the text line
+    if (hasStandardUptakeValues) {
+      const SUVtext = ' SUV: ';
+
+      const meanSuvString = `${SUVtext}${numbersWithCommas(
+        meanStdDevSUV.mean.toFixed(2)
+      )}`;
+      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
+        meanStdDevSUV.stdDev.toFixed(2)
+      )}`;
+
+      const targetStringLength = Math.floor(
+        context.measureText(`${stdDevString}     `).width
+      );
+      while (context.measureText(meanString).width < targetStringLength) {
+        meanString += ' ';
       }
 
-      // If the area is a sane value, display it
-      if (area) {
-        // Determine the area suffix based on the pixel spacing in the image.
-        // If pixel spacing is present, use millimeters. Otherwise, use pixels.
-        // This uses Char code 178 for a superscript 2
-        let suffix = ` mm${String.fromCharCode(178)}`;
-
-        if (!rowPixelSpacing || !colPixelSpacing) {
-          suffix = ` pixels${String.fromCharCode(178)}`;
-        }
-
-        // Create a line of text to display the area and its units
-        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
-
-        // Add this text line to the array to be displayed in the textbox
-        textLines.push(areaText);
-      }
-
-      return textLines;
+      otherLines.push(`${meanString}${meanSuvString}`);
+      otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
+    } else {
+      otherLines.push(`${meanString}     ${stdDevString}`);
     }
 
-    function textBoxAnchorPoints(handles) {
-      // Retrieve the bounds of the ellipse (left, top, width, and height)
-      const left = Math.min(handles.start.x, handles.end.x);
-      const top = Math.min(handles.start.y, handles.end.y);
-      const width = Math.abs(handles.start.x - handles.end.x);
-      const height = Math.abs(handles.start.y - handles.end.y);
+    if (showMinMax) {
+      let minString = `Min: ${min}${suffix}`;
+      const maxString = `Max: ${max}${suffix}`;
+      const targetStringLength = hasStandardUptakeValues
+        ? Math.floor(context.measureText(`${stdDevString}     `).width)
+        : Math.floor(context.measureText(`${meanString}     `).width);
 
-      return [
-        {
-          // Top middle point of ellipse
-          x: left + width / 2,
-          y: top,
-        },
-        {
-          // Left middle point of ellipse
-          x: left,
-          y: top + height / 2,
-        },
-        {
-          // Bottom middle point of ellipse
-          x: left + width / 2,
-          y: top + height,
-        },
-        {
-          // Right middle point of ellipse
-          x: left + width,
-          y: top + height / 2,
-        },
-      ];
+      while (context.measureText(minString).width < targetStringLength) {
+        minString += ' ';
+      }
+
+      otherLines.push(`${minString}${maxString}`);
     }
   }
+
+  textLines.push(_formatArea(area, hasPixelSpacing));
+  otherLines.forEach(x => textLines.push(x));
+
+  return textLines;
+}
+
+/**
+ *
+ *
+ * @param {*} area
+ * @param {*} hasPixelSpacing
+ * @returns
+ */
+function _formatArea(area, hasPixelSpacing) {
+  // This uses Char code 178 for a superscript 2
+  const suffix = hasPixelSpacing
+    ? ` mm${String.fromCharCode(178)}`
+    : ` px${String.fromCharCode(178)}`;
+
+  return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+}
+
+/**
+ *
+ *
+ * @param {*} image
+ * @param {*} element
+ * @param {*} handles
+ * @param {*} modality
+ * @param {*} pixelSpacing
+ * @returns
+ */
+function _calculateStats(image, element, handles, modality, pixelSpacing) {
+  // Retrieve the bounds of the ellipse in image coordinates
+  const ellipseCoordinates = _getEllipseImageCoordinates(
+    handles.start,
+    handles.end
+  );
+
+  // Retrieve the array of pixels that the ellipse bounds cover
+  const pixels = external.cornerstone.getPixels(
+    element,
+    ellipseCoordinates.left,
+    ellipseCoordinates.top,
+    ellipseCoordinates.width,
+    ellipseCoordinates.height
+  );
+
+  // Calculate the mean & standard deviation from the pixels and the ellipse details
+  const ellipseMeanStdDev = calculateEllipseStatistics(
+    pixels,
+    ellipseCoordinates
+  );
+
+  let meanStdDevSUV;
+  if (modality === 'PT') {
+    meanStdDevSUV = {
+      mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
+      stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
+    };
+  }
+
+  // Calculate the image area from the ellipse dimensions and pixel spacing
+  const area =
+    Math.PI *
+    ((ellipseCoordinates.width * (pixelSpacing.columnPixelSpacing || 1)) / 2) *
+    ((ellipseCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
+
+  return {
+    area: area || 0,
+    count: ellipseMeanStdDev.count || 0,
+    mean: ellipseMeanStdDev.mean || 0,
+    variance: ellipseMeanStdDev.variance || 0,
+    stdDev: ellipseMeanStdDev.stdDev || 0,
+    min: ellipseMeanStdDev.min || 0,
+    max: ellipseMeanStdDev.max || 0,
+    meanStdDevSUV,
+  };
+}
+
+/**
+ * Retrieve the bounds of the ellipse in image coordinates
+ *
+ * @param {*} startHandle
+ * @param {*} endHandle
+ * @returns
+ */
+function _getEllipseImageCoordinates(startHandle, endHandle) {
+  return {
+    left: Math.round(Math.min(startHandle.x, endHandle.x)),
+    top: Math.round(Math.min(startHandle.y, endHandle.y)),
+    width: Math.round(Math.abs(startHandle.x - endHandle.x)),
+    height: Math.round(Math.abs(startHandle.y - endHandle.y)),
+  };
 }

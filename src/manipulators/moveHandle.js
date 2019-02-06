@@ -28,13 +28,14 @@ const _upOrEndEvents = {
 
 /**
  * Move the provided handle
+ *
  * @public
  * @method moveHandle
  * @memberof Manipulators
  *
  * @param {*} evtDetail
  * @param {*} toolName
- * @param {*} toolData
+ * @param {*} annotation
  * @param {*} handle
  * @param {*} [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
@@ -46,7 +47,7 @@ const _upOrEndEvents = {
 export default function(
   evtDetail,
   toolName,
-  toolData,
+  annotation,
   handle,
   options = {},
   interactionType = 'mouse'
@@ -64,7 +65,7 @@ export default function(
   const dragHandler = _dragHandler.bind(
     this,
     toolName,
-    toolData,
+    annotation,
     handle,
     options,
     interactionType
@@ -74,7 +75,7 @@ export default function(
     _upOrEndHandler(
       toolName,
       evtDetail,
-      toolData,
+      annotation,
       handle,
       options,
       interactionType,
@@ -87,7 +88,7 @@ export default function(
   };
 
   handle.active = true;
-  toolData.active = true;
+  annotation.active = true;
   state.isToolLocked = true;
 
   // Add Event Listeners
@@ -126,7 +127,7 @@ export default function(
 
 function _dragHandler(
   toolName,
-  toolData,
+  annotation,
   handle,
   options,
   interactionType,
@@ -141,14 +142,13 @@ function _dragHandler(
     interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
 
-  if (handle.hasMoved === false) {
-    handle.hasMoved = true;
-  }
-
   runAnimation.value = false;
   handle.active = true;
+  handle.hasMoved = true;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
+  // TODO: A way to not flip this for textboxes on annotations
+  annotation.invalidated = true;
 
   if (options.preventHandleOutsideImage) {
     clipToBox(handle, image);
@@ -160,7 +160,7 @@ function _dragHandler(
   const modifiedEventData = {
     toolName,
     element,
-    measurementData: toolData,
+    measurementData: annotation,
   };
 
   triggerEvent(element, eventType, modifiedEventData);
@@ -181,6 +181,7 @@ function _upOrEndHandler(
 
   handle.active = false;
   annotation.active = false;
+  // TODO: A way to not flip this for textboxes on annotations
   annotation.invalidated = true;
   state.isToolLocked = false;
   runAnimation.value = false;

@@ -71,6 +71,19 @@ jobs:
   ##################
   #
   ##################
+  publish_npm:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: npm install
+      - run:
+          name: Publish using Semantic Release
+          command: npx semantic-release --dry-run
+
+  ##################
+  #
+  ##################
   deployment:
     <<: *defaults
     steps:
@@ -91,7 +104,8 @@ workflows:
   version: 2
 
   ###
-  # Pull Requests
+  # PULL REQUESTS
+  ###
   test_build:
     jobs:
       - checkout_code:
@@ -106,7 +120,28 @@ workflows:
             - checkout_code
 
   ###
-  # Merges to vNext
+  # MERGE: MASTER
+  ###
+  test_build_publish:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              only: master
+      - test_and_report:
+          requires:
+            - checkout_code
+      - build:
+          requires:
+            - checkout_code
+      - publish_npm:
+          requires:
+            - checkout_code
+            - test_and_report
+            - build
+  ###
+  # MERGE: VNEXT
+  ###
   test_build_deploy:
     jobs:
       - checkout_code:

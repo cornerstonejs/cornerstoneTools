@@ -44,7 +44,9 @@ export default function(evt) {
 
   // Invalidate the segmentation bitmap such that it gets redrawn.
   for (let i = 0; i < maxSegmentations; i++) {
-    toolData.data[i].invalidated = true;
+    if (toolData.data[i]) {
+      toolData.data[i].invalidated = true;
+    }
   }
 
   // Refresh the canvas

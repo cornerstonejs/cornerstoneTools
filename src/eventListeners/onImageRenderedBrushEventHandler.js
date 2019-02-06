@@ -108,7 +108,7 @@ function shouldRenderSegmentation(evt, segIndex, segData) {
   const toolData = segData.toolData;
   const visibleSegmentations = segData.visibleSegmentations;
 
-  if (!toolData.data[segIndex].pixelData) {
+  if (!toolData.data[segIndex] || !toolData.data[segIndex].pixelData) {
     // No data, no render.
     return false;
   }
@@ -162,6 +162,10 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   const pixelData = toolData.data[segIndex].pixelData;
+
+  if (!pixelData) {
+    return;
+  }
 
   const colormapId = state.colorMapId;
   const colormap = external.cornerstone.colors.getColormap(colormapId);

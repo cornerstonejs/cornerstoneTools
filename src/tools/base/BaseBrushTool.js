@@ -3,6 +3,8 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 
 const { state, setters } = store.modules.brush;
 
@@ -420,6 +422,106 @@ class BaseBrushTool extends BaseTool {
    */
   static getReferencedToolDataName() {
     return 'brush';
+  }
+
+  /**
+   * @static invalidateBrushOnEnabledElement - invalidate all the brush data.
+   *
+   * @returns {null}
+   */
+  static invalidateBrushOnEnabledElement(enabledElementUID) {
+    const element = store.getters.enabledElementByUID(enabledElementUID);
+
+    const stackToolState = getToolState(element, 'stack');
+
+    if (!stackToolState) {
+      return;
+    }
+
+    const imageIds = stackToolState.data[0].imageIds;
+
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    const image = enabledElement.image;
+
+    const dim = {
+      xy: image.columns * image.rows,
+      z: image.rows,
+      xyz: image.columns * image.rows * imageIds.length,
+    };
+
+    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+    // TODO -> Put this elsewhere
+    /*
+    const buffer = new ArrayBuffer(dim.xyz);
+
+    const unit8View = new Uint8Array(buffer);
+
+    console.log(unit8View.length);
+    */
+
+    for (let i = 0; i < imageIds.length; i++) {
+      const imageId = imageIds[i];
+
+      if (toolState[imageId] && toolState[imageId].brush) {
+        const brushData = toolState[imageId].brush.data;
+
+        for (let j = 0; j < brushData.length; j++) {
+          if (brushData[j].pixelData) {
+            brushData[j].invalidated = true;
+          }
+        }
+      }
+    }
+
+    external.cornerstone.updateImage(element, true);
+  }
+
+  /**
+   * @static getDataAsVolume - Returns a datacube for the segmentation.
+   *
+   * @return {type}  description
+   */
+  static getDataAsVolume(enabledElementUID) {
+    const element = store.getters.enabledElementByUID(enabledElementUID);
+
+    const stackToolState = getToolState(element, 'stack');
+
+    if (!stackToolState) {
+      return;
+    }
+
+    const imageIds = stackToolState.data[0].imageIds;
+
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    const image = enabledElement.image;
+
+    const dim = {
+      xy: image.columns * image.rows,
+      z: image.rows,
+      xyz: image.columns * image.rows * imageIds.length,
+    };
+
+    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+    const buffer = new ArrayBuffer(dim.xyz);
+
+    const uint8View = new Uint8Array(buffer);
+
+    for (let i = 0; i < imageIds.length; i++) {
+      const imageId = imageIds[i];
+
+      // TODO -> Workout HTF we will do this for multiple colors etc.
+      if (
+        toolState[imageId] &&
+        toolState[imageId].brush &&
+        toolState[imageId].brush.data[0].pixelData
+      ) {
+        // ADD brush data to the location of that slice.
+      }
+    }
   }
 }
 
