@@ -39,8 +39,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        // showMinMax: false,
-        // showHounsfieldUnits: true,
+        // ShowMinMax: false,
+        // ShowHounsfieldUnits: true,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -225,9 +225,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
             (data.handles.start.y + data.handles.end.y) / 2;
         }
 
-        const textBoxAnchorPoints = handles => {
-          return _findTextBoxAnchorPoints(handles.start, handles.end);
-        };
+        const textBoxAnchorPoints = handles =>
+          _findTextBoxAnchorPoints(handles.start, handles.end);
         const textBoxContent = _createTextBoxContent(
           context,
           image.color,
@@ -276,6 +275,7 @@ function _updateCachedStats(image, element, data, modality, pixelSpacing) {
     modality,
     pixelSpacing
   );
+
   data.cachedStats = stats;
   data.invalidated = false;
 }
@@ -337,12 +337,12 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits =
-    options.showHounsfieldUnits === false ? false : true;
+  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
-  let otherLines = [];
+  const otherLines = [];
+
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
@@ -366,6 +366,7 @@ function _createTextBoxContent(
       const targetStringLength = Math.floor(
         context.measureText(`${stdDevString}     `).width
       );
+
       while (context.measureText(meanString).width < targetStringLength) {
         meanString += ' ';
       }
@@ -446,6 +447,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   );
 
   let meanStdDevSUV;
+
   if (modality === 'PT') {
     meanStdDevSUV = {
       mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,

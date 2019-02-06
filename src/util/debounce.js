@@ -73,15 +73,15 @@ function debounce(func, wait, options) {
   const useRAF =
     !wait && wait !== 0 && typeof window.requestAnimationFrame === 'function';
 
-  if (typeof func != 'function') {
+  if (typeof func !== 'function') {
     throw new TypeError('Expected a function');
   }
-  wait = +wait || 0;
+  wait = Number(wait) || 0;
   if (isObject(options)) {
-    leading = !!options.leading;
+    leading = Boolean(options.leading);
     maxing = 'maxWait' in options;
-    maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait;
-    trailing = 'trailing' in options ? !!options.trailing : trailing;
+    maxWait = maxing ? Math.max(Number(options.maxWait) || 0, wait) : maxWait;
+    trailing = 'trailing' in options ? Boolean(options.trailing) : trailing;
   }
 
   function invokeFunc(time) {
@@ -91,6 +91,7 @@ function debounce(func, wait, options) {
     lastArgs = lastThis = undefined;
     lastInvokeTime = time;
     result = func.apply(thisArg, args);
+
     return result;
   }
 
@@ -98,6 +99,7 @@ function debounce(func, wait, options) {
     if (useRAF) {
       return window.requestAnimationFrame(pendingFunc);
     }
+
     return setTimeout(pendingFunc, wait);
   }
 
@@ -132,8 +134,8 @@ function debounce(func, wait, options) {
     const timeSinceLastInvoke = time - lastInvokeTime;
 
     // Either this is the first call, activity has stopped and we're at the
-    // trailing edge, the system time has gone backwards and we're treating
-    // it as the trailing edge, or we've hit the `maxWait` limit.
+    // Trailing edge, the system time has gone backwards and we're treating
+    // It as the trailing edge, or we've hit the `maxWait` limit.
     return (
       lastCallTime === undefined ||
       timeSinceLastCall >= wait ||
@@ -144,6 +146,7 @@ function debounce(func, wait, options) {
 
   function timerExpired() {
     const time = Date.now();
+
     if (shouldInvoke(time)) {
       return trailingEdge(time);
     }
@@ -155,11 +158,12 @@ function debounce(func, wait, options) {
     timerId = undefined;
 
     // Only invoke if we have `lastArgs` which means `func` has been
-    // debounced at least once.
+    // Debounced at least once.
     if (trailing && lastArgs) {
       return invokeFunc(time);
     }
     lastArgs = lastThis = undefined;
+
     return result;
   }
 
@@ -194,17 +198,20 @@ function debounce(func, wait, options) {
       if (maxing) {
         // Handle invocations in a tight loop.
         timerId = startTimer(timerExpired, wait);
+
         return invokeFunc(lastCallTime);
       }
     }
     if (timerId === undefined) {
       timerId = startTimer(timerExpired, wait);
     }
+
     return result;
   }
   debounced.cancel = cancel;
   debounced.flush = flush;
   debounced.pending = pending;
+
   return debounced;
 }
 
