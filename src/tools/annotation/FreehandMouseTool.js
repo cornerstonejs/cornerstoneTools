@@ -729,11 +729,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     dataHandles[currentHandle].x = config.mouseLocation.handles.start.x;
     dataHandles[currentHandle].y = config.mouseLocation.handles.start.y;
 
-    if (currentHandle === 0) {
-      handleIndex = dataHandles.length - 1;
-    } else {
-      handleIndex = currentHandle - 1;
-    }
+    handleIndex = this._getPrevHandleIndex(currentHandle, dataHandles);
 
     if (currentHandle >= 0) {
       const lastLineIndex = dataHandles[handleIndex].lines.length - 1;
@@ -745,6 +741,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Update the image
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  /**
+   * Returns the previous handle to the current one.
+   * @param {Number} currentHandle - the current handle index
+   * @param {Array} dataHandles - the handles Array of the freehand data
+   */
+  _getPrevHandleIndex (currentHandle, dataHandles) {
+    if (currentHandle === 0) {
+      return dataHandles.length - 1;
+    } else {
+      return currentHandle - 1;
+    }
   }
 
   /**
