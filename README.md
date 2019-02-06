@@ -79,7 +79,7 @@ export default class WwwcTool extends BaseTool {
 This module is distributed via [npm][npm-url] which is bundled with [node][node] and
 should be installed as one of your project's `dependencies`:
 
-```
+```js
 npm install --save cornerstone-tools
 ```
 
