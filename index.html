@@ -316,7 +316,7 @@
         }
 
         const toolLabelId =
-          toolName.charAt(0).toUpperCase() + toolName.slice(1);
+          toolName.charAt(0).toLowerCase() + toolName.slice(1);
         const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
         toolLabel.classList.toggle('turned-on');
       });
