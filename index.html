@@ -130,7 +130,7 @@
             <input
               id="overlayCheckbox"
               class="hide"
-              data-tool="overlay"
+              data-tool="Overlay"
               data-tool-type="none"
               type="checkbox"
             />
@@ -314,8 +314,10 @@
         } else {
           cornerstoneTools.setToolDisabled(toolName);
         }
-        console.info(`toggledTool: ${toolName}`);
-        const toolLabel = document.querySelector(`#${toolName}`); //scaleOverlay or overlay
+
+        const toolLabelId =
+          toolName.charAt(0).toUpperCase() + toolName.slice(1);
+        const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
         toolLabel.classList.toggle('turned-on');
       });
     });
