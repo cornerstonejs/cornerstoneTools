@@ -59,7 +59,7 @@ export default class OverlayTool extends BaseTool {
 
     const context = getNewContext(eventData.canvasContext.canvas);
     const overlays = eventData.image.overlays;
-    const { image, viewport, element } = eventData;
+    const { enabledElement, viewport } = eventData;
 
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
