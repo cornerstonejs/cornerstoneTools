@@ -4,6 +4,7 @@ import DragProbeTool from './DragProbeTool.js';
 import EraserTool from './EraserTool.js';
 import FreehandSculpterMouseTool from './FreehandSculpterMouseTool.js';
 import MagnifyTool from './MagnifyTool.js';
+import OverlayTool from './OverlayTool.js';
 import PanMultiTouchTool from './PanMultiTouchTool.js';
 import PanTool from './PanTool.js';
 import ReferenceLinesTool from './ReferenceLinesTool.js';
@@ -27,6 +28,7 @@ export {
   EraserTool,
   FreehandSculpterMouseTool,
   MagnifyTool,
+  OverlayTool,
   PanMultiTouchTool,
   PanTool,
   ReferenceLinesTool,
@@ -51,6 +53,7 @@ export default {
   EraserTool,
   FreehandSculpterMouseTool,
   MagnifyTool,
+  OverlayTool,
   PanMultiTouchTool,
   PanTool,
   ReferenceLinesTool,
