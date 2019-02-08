@@ -106,7 +106,9 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/3926071?v=4",
       "profile": "https://github.com/kofifus",
       "contributions": [
-        "code"
+        "code",
+        "tool",
+        "bug"
       ]
     },
     {
