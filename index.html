@@ -123,6 +123,19 @@
         </ul>
         <ul class="tool-category" data-tool-category="overlay">
           <li>
+            <label id="overlay" class="checkbox-label" for="overlayCheckbox">
+              Overlay <label class="label-on"> ON</label>
+              <label class="label-off"> OFF</label>
+            </label>
+            <input
+              id="overlayCheckbox"
+              class="hide"
+              data-tool="Overlay"
+              data-tool-type="none"
+              type="checkbox"
+            />
+          </li>
+          <li>
             <label
               id="scaleOverlay"
               class="checkbox-label"
@@ -301,7 +314,10 @@
         } else {
           cornerstoneTools.setToolDisabled(toolName);
         }
-        const toolLabel = document.querySelector('#scaleOverlay');
+
+        const toolLabelId =
+          toolName.charAt(0).toLowerCase() + toolName.slice(1);
+        const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
         toolLabel.classList.toggle('turned-on');
       });
     });
