@@ -170,8 +170,8 @@ workflows:
           filters:
             branches:
               only:
-                - feature/*
-                - hotfix/*
+                - /feature\/.*/
+                - /hotfix\/.*/
       - test_and_report:
           requires:
             - checkout_code
@@ -193,8 +193,8 @@ workflows:
           filters:
             branches:
               ignore:
-                - feature/*
-                - hotfix/*
+                - /feature\/.*/
+                - /hotfix\/.*/
                 - master
       - test_and_report:
           requires:
