@@ -1,25 +1,31 @@
 #!/bin/bash
 
+echo 'looking for tag'
+echo "branch: ${CIRCLE_BRANCH}"
+echo "build: ${CIRCLE_BUILD_NUM}"
+
 ## Capture branch name/type
 hotfixRegex="hotfix\/(.*)"
 featureRegex="feature\/(.*)"
 
-taggedPublish=false
 packageTag=""
 fullBranch="${CIRCLE_BRANCH}"
 
 if [[ $fullBranch =~ $hotfixRegex ]]
 then
-    taggedPublish=true
+    echo "regex: ${BASH_REMATCH[1]}"
     packageTag="fix-${BASH_REMATCH[1]}.${CIRCLE_BUILD_NUM}"
-    echo 'export TAGGED_PUBLISH=$taggedPublish' >> $BASH_ENV
-    echo 'export PACKAGE_TAG=$packageTag' >> $BASH_ENV
+    echo "export PACKAGE_TAG=$packageTag" >> $BASH_ENV
 elif [[ $fullBranch =~ $featureRegex ]]
 then
-    taggedPublish=true
+    echo "regex: ${BASH_REMATCH[1]}"
     packageTag="feature-${BASH_REMATCH[1]}.${CIRCLE_BUILD_NUM}"
-    echo 'export TAGGED_PUBLISH=$taggedPublish' >> $BASH_ENV
-    echo 'export PACKAGE_TAG=$packageTag' >> $BASH_ENV
+    echo "export PACKAGE_TAG=$packageTag" >> $BASH_ENV
 else
     echo "$fullBranch is not a hotfix or feature branch"
 fi
+
+echo "TAG: $packageTag"
+echo "TAG: $PACKAGE_TAG"
+
+npm publish --tag $packageTag
