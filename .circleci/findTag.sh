@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ## Capture branch name/type
 hotfixRegex="hotfix\/(.*)"
 featureRegex="feature\/(.*)"

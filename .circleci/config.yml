@@ -111,7 +111,7 @@ jobs:
       # Sets $PACKAGE_TAG and $TAGGED_PUBLISH env vars
       - run:
           name: Determine which tag to publish package under
-          command: sh ~/repo/.circleci/findTag.sh
+          command: bash ~/repo/.circleci/findTag.sh
       - run:
           name: 'What is my package tag?'
           command: echo ${PACKAGE_TAG}
