@@ -77,9 +77,13 @@ jobs:
           root: ~/repo
           paths: .
 
-  ##################
+  ###
+  # NPM PUBLISH: Master
   #
-  ##################
+  # - Semantic release runs checks
+  # - Changelog and version are added to GitHub
+  # - NPM package is released using calculated new version
+  ###
   publish_npm:
     <<: *defaults
     steps:
@@ -140,27 +144,6 @@ workflows:
             - checkout_code
             - test_and_report
             - build
-
-  ###
-  # MERGE: VERSION BRANCHES
-  ###
-  #   test_build_deploy:
-  #     jobs:
-  #       - checkout_code:
-  #           filters:
-  #             branches:
-  #               only: vNext
-  #       - test_and_report:
-  #           requires:
-  #             - checkout_code
-  #       - build:
-  #           requires:
-  #             - checkout_code
-  #       - deployment:
-  #           requires:
-  #             - checkout_code
-  #             - test_and_report
-  #             - build
 
   ###
   # MERGE: FEATURE/HOTFIX BRANCHES
