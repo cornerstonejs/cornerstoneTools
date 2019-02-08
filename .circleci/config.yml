@@ -120,22 +120,6 @@ workflows:
   version: 2
 
   ###
-  # PULL REQUESTS
-  ###
-  test_build:
-    jobs:
-      - checkout_code:
-          filters:
-            branches:
-              ignore: vNext
-      - test_and_report:
-          requires:
-            - checkout_code
-      - build:
-          requires:
-            - checkout_code
-
-  ###
   # MERGE: MASTER
   ###
   test_build_publish:
@@ -199,3 +183,22 @@ workflows:
             - checkout_code
             - test_and_report
             - build
+
+  ###
+  # PULL REQUESTS
+  ###
+  test_build:
+    jobs:
+      - checkout_code:
+          filters:
+            branches:
+              ignore:
+                - feature/*
+                - hotfix/*
+                - master
+      - test_and_report:
+          requires:
+            - checkout_code
+      - build:
+          requires:
+            - checkout_code
