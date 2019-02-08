@@ -25,6 +25,5 @@ else
 fi
 
 echo "TAG: $packageTag"
-echo "TAG: $PACKAGE_TAG"
 
 npm publish --tag $packageTag
