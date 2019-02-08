@@ -8,12 +8,16 @@ then
 		| sed 's/[",]//g' \
 		| tr -d '[[:space:]]')
 
-	NEW_PACKAGE_VERSION=$(echo $PACKAGE_VERSION | sed -e "s/^\([0-9]*\.[0-9]*\.[0-9]*\)$/\build-$CIRCLE_BUILD_NUM/")
+	PACKAGE_FLAG="-build.$CIRCLE_BUILD_NUM"
+
+	NEW_PACKAGE_VERSION=$(echo $PACKAGE_VERSION | sed -e "s/^\([0-9]*\.[0-9]*\.[0-9]*\)$/\-build.$CIRCLE_BUILD_NUM/")
+	ALTERNATIVE_PACKAGE_VERSION="$PACKAGE_VERSION$PACKAGE_FLAG"
 	echo "Found package version: $PACKAGE_VERSION"
 	echo "Setting version to: $NEW_PACKAGE_VERSION"
+	echo "alternative version: $ALTERNATIVE_PACKAGE_VERSION"
 	# uses npm-version to set version in package.json
 	# see https://docs.npmjs.com/cli/version
-	npm version $NEW_PACKAGE_VERSION --no-git-tag-version
+	npm version $ALTERNATIVE_PACKAGE_VERSION --no-git-tag-version
 	#
 	git config credential.helper 'cache --timeout=120'
 	git config user.email "danny.ri.brown@gmail.com"
