@@ -113,6 +113,9 @@ jobs:
           name: Determine which tag to publish package under
           command: sh ~/repo/.circleci/findTag.sh
       - run:
+          name: 'What is my package tag?'
+          command: echo ${PACKAGE_TAG}
+      - run:
           name: Publish package
           command: npm publish --tag ${PACKAGE_TAG}
 
