@@ -86,10 +86,7 @@ module.exports = {
       }
     ],*/
     //'line-comment-position': 'warn',
-    'linebreak-style': [
-      'warn',
-      'unix'
-    ],
+    'linebreak-style': 0,
     'lines-around-comment': 'warn',
     'lines-around-directive': 'warn',
     //'max-depth': 'warn',
