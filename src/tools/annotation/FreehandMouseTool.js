@@ -214,22 +214,16 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       return;
     }
 
-    const image = eventData.image;
-    const element = eventData.element;
+    const { image, element } = eventData;
     const config = this.configuration;
     const seriesModule = external.cornerstone.metaData.get(
       'generalSeriesModule',
       image.imageId
     );
-    let modality;
-
-    if (seriesModule) {
-      modality = seriesModule.modality;
-    }
+    const modality = seriesModule ? seriesModule.modality : null;
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
-
     const lineWidth = toolStyle.getToolWidth();
 
     for (let i = 0; i < toolState.data.length; i++) {
