@@ -20,10 +20,13 @@
 			</ul>
 
 			<!-- Select Active Tool -->
-			<ul class="tool-category active" data-tool-category="tools">
-				<li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
-				<li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
-			</ul>
+      <ul class="tool-category active" data-tool-category="tools">
+        <li><a href="#" data-tool="FreehandMouse">FreehandMouse</a></li>
+        <li><a href="#" data-tool="FreehandSculpterMouse">FreehandSculpterMouse</a></li>
+        <li><a href="#" id="saveToolState">Save Freehand</a></li>
+        <li><a href="#" id="clearToolState">Clear Freehand</a></li>
+        <li><a href="#" id="loadToolState">Load Freehand State</a></li>
+      </ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
 				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
 				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
@@ -478,7 +481,42 @@
 		freehandSculpterTool.hoverCursorFadeDistance = realValue;
 	});
 
+  const saveToolStateButton = document.getElementById('saveToolState');
+  const clearToolStateButton = document.getElementById('clearToolState');
+  const loadToolStateButton = document.getElementById('loadToolState');
+  let toolState = null;
 
+  saveToolStateButton.addEventListener('click', event => {
+		const toolStateString = JSON.stringify(cornerstoneTools.getToolState(element, freehandTool.name));
+
+		if (toolStateString) {
+			toolState = JSON.parse(toolStateString);
+			alert("saved");
+		} else {
+			alert("nothing to save!");
+		}
+  });
+
+  clearToolStateButton.addEventListener('click', event => {
+    cornerstoneTools.clearToolState(element, freehandTool.name);
+
+    cornerstone.updateImage(element);
+  });
+
+  loadToolStateButton.addEventListener('click', event => {
+    if (toolState) {
+      cornerstoneTools.clearToolState(element, freehandTool.name);
+
+      toolState.data.forEach((data) => {
+        cornerstoneTools.addToolState(element, freehandTool.name, data);
+      })
+
+			cornerstone.updateImage(element);
+			alert('loaded');
+    } else {
+			alert ('Nothing has been saved!');
+		}
+  });
 
 </script>
 
