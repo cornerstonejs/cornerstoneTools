@@ -52,6 +52,16 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       return false;
     }
 
+    const element = eventData.element;
+    const config = this.configuration;
+
+    const toolState = getToolState(element, this.referencedToolName);
+    const data = toolState.data[config.currentTool];
+
+    if (!data) {
+      return false;
+    }
+
     if (this._active) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
@@ -121,7 +131,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       return;
     }
 
-    const dataHandles = toolState.data[config.currentTool].handles.dataHandles;
+    const dataHandles = toolState.data[config.currentTool].handles.points;
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
