@@ -47,20 +47,14 @@ export default class OverlayTool extends BaseTool {
   renderToolData(evt) {
     const eventData = evt.detail;
 
-    if (
-      !eventData ||
-      !eventData.enabledElement ||
-      !eventData.image ||
-      !eventData.image.overlays ||
-      !eventData.image.overlays.length === 0
-    ) {
+    if (!eventData || !eventData.enabledElement || !eventData.image) {
       return;
     }
 
     const context = getNewContext(eventData.canvasContext.canvas);
-    const overlays = eventData.image.overlays;
+    const overlays = external.cornerstone.metaData.get('overlayPlaneModule', eventData.image.imageId).overlays;
     const { enabledElement, viewport } = eventData;
-
+    
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
       viewport.displayedArea.columnPixelSpacing;
@@ -71,8 +65,11 @@ export default class OverlayTool extends BaseTool {
     context.save();
 
     overlays.forEach(overlay => {
-      if (!overlay.visible) {
+      if (overlay.visible === false) {
         return;
+      }
+      if (overlay.fillStyle === undefined) {
+        overlay.fillStyle = 'yellow';
       }
       const layerCanvas = document.createElement('canvas');
 
