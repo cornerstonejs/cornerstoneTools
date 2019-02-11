@@ -52,27 +52,27 @@ function _deletePoint(eventData, deleteInfo) {
   // Get the toolData from insertInfo
   const data = toolData.data[toolIndex];
 
+  const points = data.handles.points;
+
   // Only allow delete if > 3 points
-  if (data.handles.length <= 3) {
+  if (points.length <= 3) {
     return;
   }
 
   // Link the line of the previous handle to the one after handles[deleteHandle];
-  if (deleteHandle === data.handles.length - 1) {
-    data.handles[deleteHandle - 1].lines.pop();
-    data.handles[deleteHandle - 1].lines.push(data.handles[0]);
+  if (deleteHandle === points.length - 1) {
+    points[deleteHandle - 1].lines.pop();
+    points[deleteHandle - 1].lines.push(points[0]);
   } else if (deleteHandle === 0) {
-    data.handles[data.handles.length - 1].lines.pop();
-    data.handles[data.handles.length - 1].lines.push(
-      data.handles[deleteHandle + 1]
-    );
+    points[points.length - 1].lines.pop();
+    points[points.length - 1].lines.push(points[deleteHandle + 1]);
   } else {
-    data.handles[deleteHandle - 1].lines.pop();
-    data.handles[deleteHandle - 1].lines.push(data.handles[deleteHandle + 1]);
+    points[deleteHandle - 1].lines.pop();
+    points[deleteHandle - 1].lines.push(points[deleteHandle + 1]);
   }
 
   // Remove the handle
-  data.handles.splice(deleteHandle, 1);
+  points.splice(deleteHandle, 1);
 
   data.invalidated = true;
   data.active = true;
@@ -108,18 +108,20 @@ function _insertPoint(eventData, insertInfo) {
 
   const handleData = new FreehandHandleData(eventData.currentPoints.image);
 
+  const points = data.handles.points;
+
   // Add the new handle
-  data.handles.splice(insertIndex, 0, handleData);
+  points.splice(insertIndex, 0, handleData);
 
   // Add the line from the previous handle to the inserted handle (note the tool is now one increment longer)
-  data.handles[insertIndex - 1].lines.pop();
-  data.handles[insertIndex - 1].lines.push(eventData.currentPoints.image);
+  points[insertIndex - 1].lines.pop();
+  points[insertIndex - 1].lines.push(eventData.currentPoints.image);
 
   // Add the line from the inserted handle to the handle after
-  if (insertIndex === data.handles.length - 1) {
-    data.handles[insertIndex].lines.push(data.handles[0]);
+  if (insertIndex === points.length - 1) {
+    points[insertIndex].lines.push(points[0]);
   } else {
-    data.handles[insertIndex].lines.push(data.handles[insertIndex + 1]);
+    points[insertIndex].lines.push(points[insertIndex + 1]);
   }
 
   data.active = true;

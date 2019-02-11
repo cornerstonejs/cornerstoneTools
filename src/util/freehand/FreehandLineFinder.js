@@ -114,8 +114,9 @@ export default class FreehandLineFinder {
     const toolData = this._toolData;
 
     const data = toolData.data[toolIndex];
+    const points = data.handles.points;
 
-    if (data.handles === undefined) {
+    if (points === undefined) {
       return null;
     }
 
@@ -129,10 +130,10 @@ export default class FreehandLineFinder {
       distance: Infinity, // Some large number
     };
 
-    for (let i = 0; i < data.handles.length; i++) {
+    for (let i = 0; i < points.length; i++) {
       const handleCanvas = external.cornerstone.pixelToCanvas(
         eventData.element,
-        data.handles[i]
+        points[i]
       );
       const handleDistanceFromMousePoint = external.cornerstoneMath.point.distance(
         handleCanvas,
@@ -158,19 +159,13 @@ export default class FreehandLineFinder {
    */
   _getCloseLinesInTool(toolIndex) {
     const toolData = this._toolData;
-    const dataHandles = toolData.data[toolIndex].handles;
+    const points = toolData.data[toolIndex].handles.points;
 
     const closeLines = [];
 
-    for (let i = 0; i < dataHandles.length; i++) {
-      const nextIndex = FreehandLineFinder.getNextHandleIndex(
-        i,
-        dataHandles.length
-      );
-      const d = this._distanceOfPointfromLine(
-        dataHandles[i],
-        dataHandles[nextIndex]
-      );
+    for (let i = 0; i < points.length; i++) {
+      const nextIndex = FreehandLineFinder.getNextHandleIndex(i, points.length);
+      const d = this._distanceOfPointfromLine(points[i], points[nextIndex]);
 
       if (d < distanceThreshold) {
         closeLines.push([i, nextIndex]);
@@ -214,8 +209,9 @@ export default class FreehandLineFinder {
     const eventData = this._eventData;
     const toolData = this._toolData;
     const data = toolData.data[toolIndex];
+    const points = data.handles.points;
 
-    if (data.handles === undefined) {
+    if (data.handles.points === undefined) {
       return;
     }
 
@@ -223,8 +219,8 @@ export default class FreehandLineFinder {
       return false;
     }
 
-    const handle1 = data.handles[handleIndexArray[0]];
-    const handle2 = data.handles[handleIndexArray[1]];
+    const handle1 = points[handleIndexArray[0]];
+    const handle2 = points[handleIndexArray[1]];
 
     const p = FreehandLineFinder.getCanvasPointsFromHandles(
       handle1,
