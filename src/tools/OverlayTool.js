@@ -59,12 +59,16 @@ export default class OverlayTool extends BaseTool {
     ) || { overlays: [] };
     const overlays = overlaysMeta.overlays;
 
+    const viewportPixelSpacing = {
+      column: viewport.displayedArea.columnPixelSpacing || 1,
+      row: viewport.displayedArea.rowPixelSpacing || 1,
+    };
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
-      viewport.displayedArea.columnPixelSpacing;
+      viewportPixelSpacing.column;
     const imageHeight =
       Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) *
-      viewport.displayedArea.rowPixelSpacing;
+      viewportPixelSpacing.row;
 
     context.save();
 
