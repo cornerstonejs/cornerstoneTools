@@ -904,7 +904,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const mousePoint = config.mouseLocation.handles.start;
 
     const handleFurtherThanMinimumSpacing = handle =>
-      this._isDistanceLargerThanSpacingCanvas(element, handle, mousePoint);
+      this._isDistanceLargerThanSpacing(element, handle, mousePoint);
 
     if (points.every(handleFurtherThanMinimumSpacing)) {
       this._addPoint(eventData);
@@ -1156,9 +1156,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Compare with all other handles appart from the last one
     for (let i = 1; i < points.length - 1; i++) {
-      if (
-        this._isDistanceSmallerThanSpacingCanvas(element, points[i], mousePoint)
-      ) {
+      if (this._isDistanceSmallerThanSpacing(element, points[i], mousePoint)) {
         return true;
       }
     }
@@ -1177,10 +1175,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *                              allowed canvas spacing.
    */
   _isDistanceSmallerThanCompleteSpacingCanvas(element, p1, p2) {
-    return this._compareDistanceToSpacingCanvas(
+    const p1Canvas = external.cornerstone.pixelToCanvas(element, p1);
+    const p2Canvas = external.cornerstone.pixelToCanvas(element, p2);
+
+    return this._compareDistanceToSpacing(
       element,
-      p1,
-      p2,
+      p1Canvas,
+      p2Canvas,
       '<',
       this.configuration.completeHandleRadius
     );
@@ -1196,10 +1197,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _isDistanceSmallerThanSpacingCanvas(element, p1, p2) {
+  _isDistanceSmallerThanSpacing(element, p1, p2) {
     const config = this.configuration;
 
-    return this._compareDistanceToSpacingCanvas(element, p1, p2, '<');
+    return this._compareDistanceToSpacing(element, p1, p2, '<');
   }
 
   /**
@@ -1212,10 +1213,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _isDistanceLargerThanSpacingCanvas(element, p1, p2) {
+  _isDistanceLargerThanSpacing(element, p1, p2) {
     const config = this.configuration;
 
-    return this._compareDistanceToSpacingCanvas(element, p1, p2, '>');
+    return this._compareDistanceToSpacing(element, p1, p2, '>');
   }
 
   /**
@@ -1229,27 +1230,18 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {boolean}            True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
-  _compareDistanceToSpacingCanvas(
+  _compareDistanceToSpacing(
     element,
     p1,
     p2,
     comparison = '>',
     spacing = this.configuration.spacing
   ) {
-    const p1Canvas = external.cornerstone.pixelToCanvas(element, p1);
-    const p2Canvas = external.cornerstone.pixelToCanvas(element, p2);
-
-    let result;
-
     if (comparison === '>') {
-      result =
-        external.cornerstoneMath.point.distance(p1Canvas, p2Canvas) > spacing;
-    } else {
-      result =
-        external.cornerstoneMath.point.distance(p1Canvas, p2Canvas) < spacing;
+      return external.cornerstoneMath.point.distance(p1, p2) > spacing;
     }
 
-    return result;
+    return external.cornerstoneMath.point.distance(p1, p2) < spacing;
   }
 
   /**
