@@ -46,17 +46,18 @@ export default class OverlayTool extends BaseTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
+    const { enabledElement, image, viewport } = eventData;
 
-    if (!eventData || !eventData.enabledElement || !eventData.image) {
+    if (!eventData || !enabledElement || !image) {
       return;
     }
 
     const context = getNewContext(eventData.canvasContext.canvas);
-    const overlays = external.cornerstone.metaData.get(
-      'overlayPlaneModule', 
+    const overlaysMeta = external.cornerstone.metaData.get(
+      'overlayPlaneModule',
       eventData.image.imageId
-    ).overlays;
-    const { enabledElement, viewport } = eventData;
+    ) || { overlays: [] };
+    const overlays = overlaysMeta.overlays;
 
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
