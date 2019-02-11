@@ -2,17 +2,17 @@
   "name": "cornerstone-tools",
   "version": "3.0.1",
   "description": "Medical imaging tools for the Cornerstone library",
-  "main": "./dist/cornerstoneTools.min.js",
+  "main": "./dist/cornerstoneTools.js",
+  "module": "./dist/cornerstoneTools.js",
   "keywords": [
     "DICOM",
     "medical",
     "imaging",
     "cornerstone"
   ],
-  "author": "Chris Hafey, Prasath",
+  "author": "https://github.com/cornerstonejs/cornerstoneTools#contributors",
   "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
   "license": "MIT",
-  "module": "./dist/cornerstoneTools.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
