@@ -382,33 +382,6 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   }
 
   /**
-   * _getImageToCanvasSpacingModifier - Returns the scaling modifier from
-   * image to canvas.
-   *
-   *
-   * @param {Object} eventData - Data object associated with the event.
-   * @returns {Number}           The scaling modifier.
-   */
-  /*
-  _getImageToCanvasSpacingModifier(eventData) {
-    const image = eventData.image;
-    const element = eventData.element;
-
-    const topLeftCanvas = external.cornerstone.pixelToCanvas(element, {
-      x: 0,
-      y: 0,
-    });
-
-    const bottomRightCanvas = external.cornerstone.pixelToCanvas(element, {
-      x: image.columns,
-      y: image.rows,
-    });
-
-    return (bottomRightCanvas.x - topLeftCanvas.x) / image.columns;
-  }
-  */
-
-  /**
    * Pushes the points radially away from the mouse if they are
    * contained within the circle defined by the freehandSculpter's toolSize and
    * the mouse position.
