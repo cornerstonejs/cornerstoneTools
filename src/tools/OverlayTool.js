@@ -52,9 +52,12 @@ export default class OverlayTool extends BaseTool {
     }
 
     const context = getNewContext(eventData.canvasContext.canvas);
-    const overlays = external.cornerstone.metaData.get('overlayPlaneModule', eventData.image.imageId).overlays;
+    const overlays = external.cornerstone.metaData.get(
+      'overlayPlaneModule', 
+      eventData.image.imageId
+    ).overlays;
     const { enabledElement, viewport } = eventData;
-    
+
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
       viewport.displayedArea.columnPixelSpacing;
