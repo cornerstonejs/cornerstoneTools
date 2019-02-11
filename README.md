@@ -19,6 +19,10 @@
 [![MIT License][license-image]][license-url]
 <!-- prettier-ignore-end -->
 
+## Index
+
+- [Contributing][contributing]
+
 ## The problem
 
 Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
@@ -166,6 +170,7 @@ Links:
 <!-- prettier-ignore-start -->
 [build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg
 [build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master
+[contributing]: https://github.com/cornerstonejs/cornerstoneTools/blob/master/CONTRIBUTING.md
 [coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master/graphs/badge.svg
 [coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master
 [npm-url]: https://npmjs.org/package/cornerstone-tools
