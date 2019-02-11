@@ -126,7 +126,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     const isPointNearTool = this._pointNearHandle(element, data, coords);
 
-    return isPointNearTool !== undefined;
+    if (isPointNearTool !== undefined) {
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -978,10 +982,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         data.handles.points[i]
       );
 
-      if (
-        external.cornerstoneMath.point.distance(handleCanvas, coords) <
-        config.spacing
-      ) {
+      if (external.cornerstoneMath.point.distance(handleCanvas, coords) < 6) {
         return i;
       }
     }
