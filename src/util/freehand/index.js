@@ -6,6 +6,7 @@ import freehandIntersect from './freehandIntersect.js';
 import FreehandLineFinder from './FreehandLineFinder.js';
 import insertOrDelete from './insertOrDelete.js';
 import pointInFreehand from './pointInFreehand.js';
+import addLine from './addLine.js';
 
 export default {
   calculateFreehandStatistics,
@@ -16,4 +17,5 @@ export default {
   FreehandLineFinder,
   insertOrDelete,
   pointInFreehand,
+  addLine,
 };
