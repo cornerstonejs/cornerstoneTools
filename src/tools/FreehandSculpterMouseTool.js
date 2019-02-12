@@ -102,10 +102,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
-      this._initialiseSculpting(eventData);
-    } else {
-      this._initialiseSculpting(eventData);
     }
+
+    this._initialiseSculpting(eventData);
 
     external.cornerstone.updateImage(eventData.element);
 
