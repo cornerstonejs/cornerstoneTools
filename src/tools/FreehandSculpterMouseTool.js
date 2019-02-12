@@ -568,12 +568,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     points[previousIndex].lines.pop();
     points[previousIndex].lines.push(points[insertIndex]);
 
-    // Add the line from the inserted handle to the handle after
-    if (insertIndex === points.length - 1) {
-      points[insertIndex].lines.push(points[0]);
-    } else {
-      points[insertIndex].lines.push(points[insertIndex + 1]);
-    }
+    freehandUtils.addLine(points, insertIndex);
   }
 
   /**
