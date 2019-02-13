@@ -5,6 +5,7 @@ import getActiveToolsForElement from './../../store/getActiveToolsForElement.js'
 jest.mock('./../../store/index.js', () => ({
   state: {
     isToolLocked: false,
+    isMultiPartToolActive: false,
     tools: [
       {
         aDifferentCustomFunctionName: jest.fn(),

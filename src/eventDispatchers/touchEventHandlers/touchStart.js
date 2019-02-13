@@ -1,11 +1,11 @@
 // State
 import { getters, state } from '../../store/index.js';
-// Import anyHandlesOutsideImage from '../manipulators/anyHandlesOutsideImage.js';
 import { findHandleDataNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
+import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
 
 export default function(evt) {
   if (state.isToolLocked) {
@@ -21,9 +21,13 @@ export default function(evt) {
     getters.touchTools()
   );
 
-  const activeTools = activeAndPassiveTools.filter(
+  let activeTools = activeAndPassiveTools.filter(
     tool => tool.mode === 'active' && tool.options.isTouchActive
   );
+
+  if (state.isMultiPartToolActive) {
+    activeTools = filterToolsUseableWithMultiPartTools(activeTools);
+  }
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {

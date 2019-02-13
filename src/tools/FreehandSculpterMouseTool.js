@@ -35,6 +35,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     super(initialConfiguration);
 
     this.hasCursor = true;
+    this.isMultiPartTool = true;
     this.initialConfiguration = initialConfiguration;
     this.referencedToolName = initialConfiguration.referencedToolName;
 
@@ -153,7 +154,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     this._active = false;
 
-    state.isToolLocked = false;
+    state.isMultiPartToolActive = false;
 
     this._getMouseLocation(eventData);
     this._invalidateToolData(eventData);
@@ -335,7 +336,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     this._active = true;
 
     // Interupt event dispatcher
-    state.isToolLocked = true;
+    state.isMultiPartToolActive = true;
 
     this._configureToolSize(eventData);
     this._getMouseLocation(eventData);

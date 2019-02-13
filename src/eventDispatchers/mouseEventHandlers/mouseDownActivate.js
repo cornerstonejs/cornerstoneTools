@@ -2,6 +2,7 @@ import addNewMeasurement from './addNewMeasurement.js';
 import { getters, state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
 import BaseAnnotationTool from './../../tools/base/BaseAnnotationTool.js';
+import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
 
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
@@ -24,6 +25,10 @@ export default function(evt) {
       tool.options.isMouseActive
   );
 
+  if (state.isMultiPartToolActive) {
+    tools = filterToolsUseableWithMultiPartTools(tools);
+  }
+
   if (tools.length === 0) {
     return;
   }
@@ -36,6 +41,10 @@ export default function(evt) {
     if (consumedEvent) {
       return;
     }
+  }
+
+  if (state.isMultiPartToolActive) {
+    return;
   }
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
