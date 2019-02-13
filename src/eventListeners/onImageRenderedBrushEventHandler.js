@@ -61,28 +61,15 @@ export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
-  let toolData = getToolState(
+  const activeSegIndex = store.modules.brush.state.drawColorId;
+
+  const toolData = getToolState(
     element,
     BaseBrushTool.getReferencedToolDataName()
   );
 
   if (!toolData) {
-    // Make toolData array as big as max number of segmentations.
-    for (let i = 0; i < maxSegmentations; i++) {
-      addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    }
-
-    toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
-
-    // TEMP: HACK: Create first pixel data such that the tool has some data and the brush
-    // Cursor can be rendered. Can be replaced once we have a mechanism for SVG cursors.
-    const newPixelData = new Uint8ClampedArray(
-      eventData.image.width * eventData.image.height
-    );
-
-    toolData.data[0].pixelData = newPixelData;
-
-    toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
+    return;
   }
 
   const enabledElement = external.cornerstone.getEnabledElement(element);

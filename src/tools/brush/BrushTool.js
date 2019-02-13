@@ -32,6 +32,8 @@ export default class BrushTool extends BaseBrushTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+
+    console.log(this);
   }
 
   /**
@@ -118,39 +120,17 @@ function _overlappingStrategy(evt, configuration) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-  const toolData = getToolState(element, configuration.referencedToolData);
-
-  let shouldErase = false;
-
-  // Check for key, could be a mouseDown or mouseDrag event.
-  if (_isCtrlDown(eventData)) {
-    console.log('ctrlDown');
-    shouldErase = true;
-  }
-
-  const segmentationIndex = state.drawColorId;
-
-  if (!toolData.data[segmentationIndex].pixelData) {
-    const newPixelData = new Uint8ClampedArray(
-      eventData.image.width * eventData.image.height
-    );
-
-    toolData.data[segmentationIndex].pixelData = newPixelData;
-  }
-
-  const pixelData = toolData.data[segmentationIndex].pixelData;
-
-  const radius = state.radius;
+  const toolState = getToolState(element, configuration.referencedToolData);
+  const toolData = toolState.data;
 
   if (x < 0 || x > columns || y < 0 || y > rows) {
     return;
   }
 
+  const radius = state.radius;
   const pointerArray = getCircle(radius, rows, columns, x, y);
 
-  drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
-
-  toolData.data[segmentationIndex].invalidated = true;
+  _drawMainColor(eventData, toolData, pointerArray);
 }
 
 function _nonOverlappingStrategy(evt, configuration) {
@@ -160,45 +140,20 @@ function _nonOverlappingStrategy(evt, configuration) {
   const { x, y } = eventData.currentPoints.image;
   const toolState = getToolState(element, configuration.referencedToolData);
   const toolData = toolState.data;
-
-  let shouldErase = false;
-
-  // Check for key, could be a mouseDown or mouseDrag event.
-  if (_isCtrlDown(eventData)) {
-    console.log('ctrlDown');
-    shouldErase = true;
-  }
-
-  const activeSegmentationIndex = state.drawColorId;
-
-  if (!toolData[activeSegmentationIndex].pixelData) {
-    const newPixelData = new Uint8ClampedArray(
-      eventData.image.width * eventData.image.height
-    );
-
-    toolData[activeSegmentationIndex].pixelData = newPixelData;
-  }
-
-  const pixelData = toolData[activeSegmentationIndex].pixelData;
-
-  const radius = state.radius;
+  const segmentationIndex = state.drawColorId;
 
   if (x < 0 || x > columns || y < 0 || y > rows) {
     return;
   }
 
+  const radius = state.radius;
   const pointerArray = getCircle(radius, rows, columns, x, y);
-
-  // Draw / Erase the active color.
-  drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
-
-  toolData[activeSegmentationIndex].invalidated = true;
 
   const numberOfColors = BaseBrushTool.getNumberOfColors();
 
   // If there is brush data in this region for other colors, delete it.
   for (let i = 0; i < numberOfColors; i++) {
-    if (i === activeSegmentationIndex) {
+    if (i === segmentationIndex) {
       continue;
     }
 
@@ -207,6 +162,36 @@ function _nonOverlappingStrategy(evt, configuration) {
       toolData[i].invalidated = true;
     }
   }
+
+  _drawMainColor(eventData, toolData, pointerArray);
+}
+
+function _drawMainColor(eventData, toolData, pointerArray) {
+  const shouldErase = _isCtrlDown(eventData);
+  const columns = eventData.image.columns;
+  const segmentationIndex = state.drawColorId;
+
+  if (shouldErase && !toolData[segmentationIndex]) {
+    // Erase command, yet no data yet, just return.
+    return;
+  }
+
+  if (!toolData[segmentationIndex]) {
+    toolData[segmentationIndex] = {};
+  }
+
+  if (!toolData[segmentationIndex].pixelData) {
+    toolData[segmentationIndex].pixelData = new Uint8ClampedArray(
+      eventData.image.width * eventData.image.height
+    );
+  }
+
+  const pixelData = toolData[segmentationIndex].pixelData;
+
+  // Draw / Erase the active color.
+  drawBrushPixels(pointerArray, pixelData, columns, shouldErase);
+
+  toolData[segmentationIndex].invalidated = true;
 }
 
 function _isCtrlDown(eventData) {
