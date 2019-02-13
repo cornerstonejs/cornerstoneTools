@@ -1,6 +1,9 @@
 import external from './../../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import {
+  getToolState,
+  addToolState,
+} from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
 import EVENTS from '../../events';
@@ -118,7 +121,19 @@ function _overlappingStrategy(evt, configuration) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-  const toolState = getToolState(element, configuration.referencedToolData);
+  let toolState = getToolState(
+    element,
+    BaseBrushTool.getReferencedToolDataName()
+  );
+
+  if (!toolState) {
+    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
+    toolState = getToolState(
+      element,
+      BaseBrushTool.getReferencedToolDataName()
+    );
+  }
+
   const toolData = toolState.data;
 
   if (x < 0 || x > columns || y < 0 || y > rows) {
@@ -136,7 +151,20 @@ function _nonOverlappingStrategy(evt, configuration) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-  const toolState = getToolState(element, configuration.referencedToolData);
+
+  let toolState = getToolState(
+    element,
+    BaseBrushTool.getReferencedToolDataName()
+  );
+
+  if (!toolState) {
+    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
+    toolState = getToolState(
+      element,
+      BaseBrushTool.getReferencedToolDataName()
+    );
+  }
+
   const toolData = toolState.data;
   const segmentationIndex = state.drawColorId;
 
