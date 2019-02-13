@@ -430,6 +430,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {null}
    */
   static invalidateBrushOnEnabledElement(enabledElementUID) {
+    /** WIP **/
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
     const stackToolState = getToolState(element, 'stack');
@@ -451,15 +452,6 @@ class BaseBrushTool extends BaseTool {
     };
 
     const toolState = globalImageIdSpecificToolStateManager.saveToolState();
-
-    // TODO -> Put this elsewhere
-    /*
-    const buffer = new ArrayBuffer(dim.xyz);
-
-    const unit8View = new Uint8Array(buffer);
-
-    console.log(unit8View.length);
-    */
 
     for (let i = 0; i < imageIds.length; i++) {
       const imageId = imageIds[i];
@@ -484,6 +476,7 @@ class BaseBrushTool extends BaseTool {
    * @return {type}  description
    */
   static getDataAsVolume(enabledElementUID) {
+    /** WIP **/
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
     const stackToolState = getToolState(element, 'stack');
