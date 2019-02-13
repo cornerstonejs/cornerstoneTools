@@ -32,8 +32,6 @@ export default class BrushTool extends BaseBrushTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    console.log(this);
   }
 
   /**
