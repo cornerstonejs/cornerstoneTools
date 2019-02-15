@@ -33,7 +33,7 @@ Building one or two tools on top of [Cornerstone.js](https://github.com/cornerst
 - The ability to "drop-in" others' tools, and they "just work"
 - and many others
 
-This library attempts to solve these problems, and in a highly pluggable and extensible way.
+This library solves these problems in a highly pluggable and extensible way.
 
 ## This solution
 
