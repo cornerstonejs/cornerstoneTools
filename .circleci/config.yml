@@ -94,6 +94,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: cd examples
+      - run: ls
       - restore_cache:
           keys:
             - rubygems-v1-{{ checksum "Gemfile.lock" }}
