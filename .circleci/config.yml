@@ -80,6 +80,9 @@ jobs:
       - run:
           name: Publish using Semantic Release
           command: npx semantic-release
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 
   build_examples:
     working_directory: ~/repo
