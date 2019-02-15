@@ -3,7 +3,9 @@
     <h1>{{ page.title }}</h1>
 
     <div class="buttons">
-      <button class="button set-tool-mode" data-action="Active">Active</button>
+      <button class="button set-tool-mode is-primary" data-action="Active">
+        Active
+      </button>
       <button class="button set-tool-mode" data-action="Passive">
         Passive
       </button>
@@ -65,6 +67,7 @@
     // Add the tool
     const apiTool = cornerstoneTools[`${toolName}Tool`];
     cornerstoneTools.addTool(apiTool);
+    cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
 
     /***************************************************************************
      * UI & Boilerplate setup code
@@ -107,6 +110,15 @@
         };
 
         cornerstoneTools[`setTool${action}`](toolName, options);
+
+        // Remove active style from all buttons
+        const buttons = document.querySelectorAll('.set-tool-mode');
+        buttons.forEach(btn => {
+          btn.classList.remove('is-primary');
+        });
+
+        // Add active style to this button
+        this.classList.add('is-primary');
 
         evt.preventDefault();
         evt.stopPropagation();
