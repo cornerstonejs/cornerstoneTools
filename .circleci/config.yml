@@ -94,8 +94,11 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run:
+          name: Install Bundler
+          command: cd examples && gem install bundler:2.0.1
+      - run:
           name: Bundle Install
-          command: cd examples && bundle check || bundle install
+          command: cd examples && (bundle check || bundle install)
       - run:
           name: Jekyll build
           command: cd examples && bundle exec jekyll build
