@@ -80,6 +80,9 @@ jobs:
       - run:
           name: Publish using Semantic Release
           command: npx semantic-release
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 
   build_examples:
     working_directory: ~/repo
@@ -91,6 +94,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: cd examples
+      - run: ls
       - restore_cache:
           keys:
             - rubygems-v1-{{ checksum "Gemfile.lock" }}
