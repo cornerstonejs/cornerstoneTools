@@ -38,6 +38,12 @@ for D in *; do
 	fi
 done
 
+# Create examples directory
+mkdir ./examples
+
+# Move examples output to folder
+mv -v "./../examples/_site"/* "./examples"
+
 # Commit & Push
 cd ./latest/_book/
 git init
