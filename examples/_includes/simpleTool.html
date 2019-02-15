@@ -1,0 +1,107 @@
+<body>
+  <div class="wrapper">
+    <h1>{{ page.title }}</h1>
+    <button id="active">Active</button>
+    <button id="passive">Passive</button>
+    <button id="enable">Enable</button>
+    <button id="disable">Disable</button>
+
+    <div class="cornerstone-element-wrapper">
+      <div
+        class="cornerstone-element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+    </div>
+  </div>
+
+  {{ content }}
+
+  {% include cornerstoneFiles.html %}
+
+  <script>
+    const toolName = '{{ page.toolName }}';
+    const cTools = cornerstoneTools.init();
+    const imageIds = ['example://1', 'example://2'];
+
+    // Enable & Setup all of our elements
+    const element = document.querySelector('.cornerstone-element');
+    cornerstone.enable(element);
+    cTools.addEnabledElement(element);
+
+    element.tabIndex = 0;
+    element.focus();
+
+    cornerstone.loadImage(imageIds[0]).then(function(image) {
+      cornerstone.displayImage(element, image);
+    });
+
+    // Add the tool
+    const apiTool = cornerstoneTools[`${toolName}Tool`];
+
+    if (apiTool) {
+      cTools.addTool(apiTool);
+    } else {
+      console.warn(`unable to add tool with name ${toolName}Tool`);
+      console.log(cornerstoneTools);
+    }
+
+    const activeTool = document.querySelector('#active');
+    const passiveTool = document.querySelector('#passive');
+    const enableTool = document.querySelector('#enable');
+    const disableTool = document.querySelector('#disable');
+
+    // Setup button listener
+    activeTool.addEventListener('mousedown', evt => {
+      const mouseButtonMask = evt.buttons
+        ? evt.buttons
+        : convertMouseEventWhichToButtons(evt.which);
+      cTools.setToolActive(toolName, { mouseButtonMask });
+
+      evt.preventDefault();
+      evt.stopPropagation();
+      evt.stopImmediatePropagation();
+      return false;
+    });
+    passiveTool.addEventListener('mousedown', () => {
+      cTools.setToolPassive(toolName);
+    });
+    enableTool.addEventListener('mousedown', () => {
+      cTools.setToolEnable(toolName);
+    });
+    disableTool.addEventListener('mousedown', () => {
+      cTools.setToolDisable(toolName);
+    });
+
+    const convertMouseEventWhichToButtons = which => {
+      switch (which) {
+        // no button
+        case 0:
+          return 0;
+        // left
+        case 1:
+          return 1;
+        // middle
+        case 2:
+          return 4;
+        // right
+        case 3:
+          return 2;
+      }
+      return 0;
+    };
+
+    const preventContextMenu = event => event.preventDefault();
+    const preventMidleClick = event => {
+      if (event.button && event.button === 1) {
+        event.preventDefault();
+      }
+    };
+    const buttons = document.querySelectorAll('button');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('contextmenu', preventContextMenu, true);
+      btn.addEventListener('auxclick', preventMidleClick, false);
+    });
+  </script>
+</body>
