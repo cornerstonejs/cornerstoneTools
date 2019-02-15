@@ -93,23 +93,12 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - run: cd examples
-      - run: ls
-      - restore_cache:
-          keys:
-            - rubygems-v1-{{ checksum "Gemfile.lock" }}
-            - rubygems-v1-fallback
       - run:
           name: Bundle Install
-          command: bundle check || bundle install
-      - save_cache:
-          key: rubygems-v1-{{ checksum "Gemfile.lock" }}
-          paths:
-            - ./../vendor/bundle
+          command: cd examples && bundle check || bundle install
       - run:
           name: Jekyll build
-          command: bundle exec jekyll build
-      - run: cd ..
+          command: cd examples && bundle exec jekyll build
       - persist_to_workspace:
           root: ~/repo
           paths: .
