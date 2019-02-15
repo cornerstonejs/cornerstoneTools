@@ -1,7 +1,7 @@
 ---
 layout: page
 title: Angle Tool
-toolName: angle
+toolName: Angle
 htmlFile: simpleTool.html
 permalink: /angle/
 ---
