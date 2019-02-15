@@ -47,4 +47,4 @@ git push -f git@github.com:cornerstonejs/cornerstoneTools.git master:gh-pages
 cd ..
 
 # Used to pause so you can read output before dismissing
-read -n 1 -s -r -p "Press any key to exit"
+# read -n 1 -s -r -p "Press any key to exit"

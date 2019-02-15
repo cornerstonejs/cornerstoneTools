@@ -1,0 +1,26 @@
+<head>
+  <script>
+    window.ENVIRONMENT = '{{ jekyll.environment }}';
+  </script>
+
+  <!-- support for mobile touch devices -->
+  <meta
+    name="viewport"
+    content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1"
+  />
+
+  <link rel="stylesheet" href="{{ '/assets/main.css' | relative_url }}" />
+  <link rel="stylesheet" href="{{ '/assets/styles.css' | relative_url }}" />
+
+  <!-- include the hammer.js library for touch gestures-->
+  <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+  <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.min.js"></script>
+
+  <!-- include the cornerstone library -->
+  <script src="https://unpkg.com/cornerstone-core"></script>
+  <script src="https://unpkg.com/cornerstone-math"></script>
+  <script src="https://unpkg.com/cornerstone-wado-image-loader"></script>
+
+  <!-- Why we're all here ;) -->
+  <script src="https://unpkg.com/cornerstone-tools"></script>
+</head>
