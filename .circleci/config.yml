@@ -81,6 +81,42 @@ jobs:
           name: Publish using Semantic Release
           command: npx semantic-release
 
+  build_examples:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/ruby:2.5
+    environment:
+      BUNDLE_PATH: ~/repo/vendor/bundle
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: cd examples
+      - restore_cache:
+          keys:
+            - rubygems-v1-{{ checksum "Gemfile.lock" }}
+            - rubygems-v1-fallback
+      - run:
+          name: Bundle Install
+          command: bundle check || bundle install
+      - save_cache:
+          key: rubygems-v1-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ./../vendor/bundle
+      - run:
+          name: Jekyll build
+          command: bundle exec jekyll build
+      - run: cd ..
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  publish_docs:
+    <<: *defaults
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: npm run publish:docs
+
   ##################
   #
   ##################
@@ -139,6 +175,12 @@ workflows:
             - checkout_code
             - test_and_report
             - build
+      - build_examples:
+          requires:
+            - publish_npm
+      - publish_docs:
+          requires:
+            - build_examples
   ###
   # MERGE: VNEXT
   ###
