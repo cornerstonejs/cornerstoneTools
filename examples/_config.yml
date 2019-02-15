@@ -13,23 +13,25 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: Your awesome title
-email: your-email@example.com
+title: Tool Examples
+email: danny.ri.brown+cstools@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  Write an awesome description for your new site here. You can edit this
-  line in _config.yml. It will appear in your document head meta (for
-  Google search results) and in your feed.xml site description.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
-twitter_username: jekyllrb
-github_username:  jekyll
+  cornerstone-tools is a light-weight solution for building Tools on top of
+  Cornerstone.js. It's only dependencies are libraries within the Cornerstone
+  family. Instead of trying to "do everything" it aims to be extensible and
+  pluggable to aid in the rapid development of new tools. Ideally, tools created
+  using cornerstone-tools can be easily shared, allowing for the creation of a
+  broader ecosystem.
+baseurl: '' # the subpath of your site, e.g. /blog
+url: '' # the base hostname & protocol for your site, e.g. http://example.com
+# twitter_username: jekyllrb
+github_username: cornerstonejs
 
 # Build settings
 markdown: kramdown
 theme: minima
 plugins:
   - jekyll-feed
-
 # Exclude from processing.
 # The following items will not be processed, by default. Create a custom list
 # to override the default setting.
