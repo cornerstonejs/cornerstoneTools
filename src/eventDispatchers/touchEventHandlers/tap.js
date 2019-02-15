@@ -12,7 +12,7 @@ import { moveHandle, moveAllHandles } from '../../manipulators/index.js';
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
 export default function(evt) {
-  if (state.isToolLocked) {
+  if (state.isToolLocked || state.isMultiPartToolActive) {
     return;
   }
 

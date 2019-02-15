@@ -11,6 +11,7 @@ export const state = {
   enabledElements: [],
   tools: [],
   isToolLocked: false,
+  activeMultiPartTool: null,
   mousePositionImage: {},
   // Settings
   clickProximity: 6,

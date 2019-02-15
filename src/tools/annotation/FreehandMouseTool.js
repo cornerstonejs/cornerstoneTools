@@ -52,6 +52,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+    this.isMultiPartTool = true;
 
     this._drawing = false;
     this._dragging = false;
@@ -569,7 +570,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._activateModify(element);
 
     // Interupt eventDispatchers
-    state.isToolLocked = true;
+    state.isMultiPartToolActive = true;
 
     preventPropagation(evt);
   }
@@ -624,6 +625,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _drawingMouseDragCallback(evt) {
     const eventData = evt.detail;
+
+    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+      return;
+    }
+
     const toolState = getToolState(eventData.element, this.name);
 
     const config = this.configuration;
@@ -649,13 +655,18 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {undefined}
    */
   _drawingMouseUpCallback(evt) {
+    const eventData = evt.detail;
+
+    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+      return;
+    }
+
     if (!this._dragging) {
       return;
     }
 
     this._dragging = false;
 
-    const eventData = evt.detail;
     const element = eventData.element;
 
     const config = this.configuration;
@@ -683,6 +694,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _drawingMouseDownCallback(evt) {
     const eventData = evt.detail;
+
+    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+      return;
+    }
+
     const element = eventData.element;
     const coords = eventData.currentPoints.canvas;
 
@@ -715,6 +731,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _editMouseDragCallback(evt) {
     const eventData = evt.detail;
+
+    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+      return;
+    }
+
     const toolState = getToolState(eventData.element, this.name);
 
     const config = this.configuration;
@@ -771,6 +792,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _editMouseUpCallback(evt) {
     const eventData = evt.detail;
+
+    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+      return;
+    }
+
     const element = eventData.element;
     const toolState = getToolState(eventData.element, this.name);
 
@@ -779,7 +805,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._dropHandle(eventData, toolState);
     this._endDrawing(element);
 
-    state.isToolLocked = false;
+    state.isMultiPartToolActive = false;
 
     external.cornerstone.updateImage(eventData.element);
   }
@@ -837,7 +863,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const config = this.configuration;
 
     // Block event distpatcher whilst drawing
-    state.isToolLocked = true;
+    state.isMultiPartToolActive = true;
 
     this._referencedElement = element;
 
@@ -949,7 +975,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     if (this._drawing) {
       this._drawing = false;
-      state.isToolLocked = false;
+      state.isMultiPartToolActive = false;
       this._deactivateDraw(element);
     }
 

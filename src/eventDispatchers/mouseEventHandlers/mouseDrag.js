@@ -1,5 +1,6 @@
 import { getters, state } from './../../store/index.js';
 import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
+import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
 
 // Tools like wwwc. Non-annotation tools w/ specific
 // Down + mouse behavior
@@ -24,6 +25,10 @@ export default function(evt) {
       tool.options.isMouseActive
   );
   tools = tools.filter(tool => typeof tool.mouseDragCallback === 'function');
+
+  if (state.isMultiPartToolActive) {
+    tools = filterToolsUseableWithMultiPartTools(tools);
+  }
 
   if (tools.length === 0) {
     return;

@@ -5,7 +5,7 @@ import addNewMeasurement from './addNewMeasurement.js';
 import BaseAnnotationTool from './../../tools/base/BaseAnnotationTool.js';
 
 export default function(evt) {
-  if (state.isToolLocked) {
+  if (state.isToolLocked || state.isMultiPartToolActive) {
     return;
   }
 

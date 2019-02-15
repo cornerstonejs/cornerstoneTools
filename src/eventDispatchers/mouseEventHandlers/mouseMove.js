@@ -12,7 +12,7 @@ import getToolsWithDataForElement from './../../store/getToolsWithDataForElement
  * @param {*} evt
  */
 export default function(evt) {
-  if (state.isToolLocked) {
+  if (state.isToolLocked || state.isMultiPartToolActive) {
     return;
   }
 
