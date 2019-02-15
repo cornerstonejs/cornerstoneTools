@@ -87,7 +87,7 @@ jobs:
   build_examples:
     working_directory: ~/repo
     docker:
-      - image: circleci/ruby:2.5
+      - image: circleci/ruby:2.6.0-node
     environment:
       BUNDLE_PATH: ~/repo/vendor/bundle
     steps:
