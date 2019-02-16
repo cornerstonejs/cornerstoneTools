@@ -1,9 +1,7 @@
 ---
-layout: page
-title: Angle Tool
-toolName: Angle
-htmlFile: simpleTool.html
-permalink: /angle/
+layout: tool-simple
+title: Lenght Tool
+toolName: Length
 ---
 
 ## How to set up the {{page.toolName}} tool:

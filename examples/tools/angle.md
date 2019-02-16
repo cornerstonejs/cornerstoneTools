@@ -1,9 +1,7 @@
 ---
-layout: page
-title: EllipticalRoi Tool
-toolName: EllipticalRoi
-htmlFile: simpleTool.html
-permalink: /elliptical-roi/
+layout: tool-simple
+title: Angle Tool
+toolName: Angle
 ---
 
 ## How to set up the {{page.toolName}} tool:
