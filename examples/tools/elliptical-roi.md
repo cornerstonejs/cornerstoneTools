@@ -1,9 +1,7 @@
 ---
-layout: page
-title: Lenght Tool
-toolName: Length
-htmlFile: simpleTool.html
-permalink: /length/
+layout: tool-simple
+title: EllipticalRoi Tool
+toolName: EllipticalRoi
 ---
 
 ## How to set up the {{page.toolName}} tool:

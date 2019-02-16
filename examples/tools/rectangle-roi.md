@@ -1,9 +1,7 @@
 ---
-layout: page
+layout: tool-simple
 title: RectangleRoi Tool
 toolName: RectangleRoi
-htmlFile: simpleTool.html
-permalink: /rectangle-roi/
 ---
 
 ## How to set up the {{page.toolName}} tool:

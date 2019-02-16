@@ -16,7 +16,7 @@
 title: Tool Examples
 email: danny.ri.brown+cstools@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  cornerstone-tools is a light-weight solution for building Tools on top of
+  CornerstoneTools.js is a light-weight solution for building Tools on top of
   Cornerstone.js. It's only dependencies are libraries within the Cornerstone
   family. Instead of trying to "do everything" it aims to be extensible and
   pluggable to aid in the rapid development of new tools. Ideally, tools created
