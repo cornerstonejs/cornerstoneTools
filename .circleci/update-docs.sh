@@ -51,6 +51,10 @@ mkdir ./latest/_book/examples
 # Move examples output to folder
 mv -v "./../examples/_site"/* "./latest/_book/examples"
 
+# Set User
+git config --global user.email "danny.ri.brown@gmail.com"
+git config --global user.name "dannyrb"
+
 # Commit & Push
 cd ./latest/_book/
 git init
