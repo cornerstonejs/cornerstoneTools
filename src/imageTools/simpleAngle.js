@@ -14,7 +14,7 @@ import lineSegDistance from '../util/lineSegDistance.js';
 import { addToolState, removeToolState, getToolState } from '../stateManagement/toolState.js';
 import { getNewContext, draw, setShadow, drawJoinedLines } from '../util/drawing.js';
 import { textBoxWidth } from '../util/drawTextBox.js';
-import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 
@@ -279,7 +279,7 @@ function onHandleDoneMove (element, data) {
 
   calcualteAngle(data, image);
 
-  fireCompleted(element, data);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 function calcualteAngle (data, image) {
@@ -315,23 +315,6 @@ function calcualteAngle (data, image) {
 
   data.rAngle = roundToDecimal(angle, 2);
 
-}
-
-/**
- * Fire cornerstonetoolsmeasurementcompleted event on provided element
- * @param {any} element which freehand data has been completed
- * @param {any} data the measurment data
- * @returns {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
 }
 
 const simpleAngle = mouseButtonTool({

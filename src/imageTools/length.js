@@ -1,8 +1,7 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
-import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -63,24 +62,7 @@ function onHandleDoneMove (element, data) {
 
   calculateLength(data, rowPixelSpacing, colPixelSpacing);
 
-  fireCompleted(element, data);
-}
-
-/**
- * Fire cornerstonetoolsmeasurementmodified event on provided element
- * @param {any} element which freehand data has been modified
- * @param {any} data the measurment data
- * @returns {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 // /////// BEGIN IMAGE RENDERING ///////

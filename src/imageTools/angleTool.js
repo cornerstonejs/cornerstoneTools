@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -9,7 +8,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow, drawLines } from '../util/drawing.js';
-import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 const toolType = 'angle';
@@ -151,24 +150,7 @@ function onHandleDoneMove (element, data) {
 
   calcualteAngle(data, image);
 
-  fireCompleted(element, data);
-}
-
-/**
- * Fire cornerstonetoolsmeasurementcompleted event on provided element
- * @param {any} element which freehand data has been completed
- * @param {any} data the measurment data
- * @return {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 // Module exports

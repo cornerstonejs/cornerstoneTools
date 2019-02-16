@@ -20,6 +20,7 @@ import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 import { textBoxWidth } from '../util/drawTextBox.js';
 import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -431,24 +432,7 @@ function pressCallback (e) {
 }
 
 function onHandleDoneMove (element, data) {
-  fireCompleted(element, data);
-}
-
-/**
- * Fire cornerstonetoolsmeasurementcompleted event on provided element
- * @param {any} element which freehand data has been completed
- * @param {any} data the measurment data
- * @return {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 const arrowAnnotate = mouseButtonTool({

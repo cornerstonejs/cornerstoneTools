@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -6,7 +5,7 @@ import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
-import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow, drawRect } from '../util/drawing.js';
@@ -294,7 +293,7 @@ function onHandleDoneMove (element, data) {
 
   calculateStatistics(data, element, image, modality, rowPixelSpacing, colPixelSpacing);
 
-  fireCompleted(element, data);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 function calculateStatistics (data, element, image, modality, rowPixelSpacing, colPixelSpacing) {
@@ -370,23 +369,6 @@ function calculateStatistics (data, element, image, modality, rowPixelSpacing, c
     // Set the invalidated flag to false so that this data won't automatically be recalculated
     data.invalidated = false;
   }
-}
-
-/**
- * Fire cornerstonetoolsmeasurementmodified event on provided element
- * @param {any} element which freehand data has been modified
- * @param {any} data the measurment data
- * @returns {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
 }
 
 // Module exports

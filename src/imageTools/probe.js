@@ -1,5 +1,4 @@
-import EVENTS from '../events.js';
-import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -106,7 +105,7 @@ function onHandleDoneMove (element, data) {
 
   calculateDisplayData(data, element, image);
 
-  fireCompleted(element, data);
+  triggerMeasurementCompletedEvent(element, data, toolType);
 }
 
 function calculateDisplayData (data, element, image) {
@@ -134,23 +133,6 @@ function calculateDisplayData (data, element, image) {
       }
     }
   }
-}
-
-/**
- * Fire cornerstonetoolsmeasurementmodified event on provided element
- * @param {any} element which freehand data has been modified
- * @param {any} data the measurment data
- * @returns {void}
- */
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
 }
 
 // Module exports

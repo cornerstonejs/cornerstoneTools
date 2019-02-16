@@ -7,6 +7,7 @@ import handleActivator from '../manipulators/handleActivator.js';
 import pointInsideBoundingBox from '../util/pointInsideBoundingBox.js';
 import calculateSUV from '../util/calculateSUV.js';
 import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import isMouseButtonEnabled from '../util/isMouseButtonEnabled.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState, removeToolState } from '../stateManagement/toolState.js';
@@ -344,7 +345,7 @@ function endDrawing (eventData, handleNearby) {
 
     calculateStatistics(data, eventData.element, eventData.image, modality, rowPixelSpacing, colPixelSpacing);
 
-    fireCompleted(eventData.element, data);
+    triggerMeasurementCompletedEvent(eventData.element, data, toolType);
   }
 
   external.cornerstone.updateImage(eventData.element);
@@ -1200,23 +1201,6 @@ function fireModifiedEvent (element, data) {
   };
 
   triggerEvent(element, eventType, modifiedEventData);
-}
-
-/**
- * Fire cornerstonetoolsmeasurementcompleted event on provided element
- * @param {any} element which freehand data has been modified
- * @param {any} data the measurment data
- * @returns {void}
-*/
-function fireCompleted (element, data) {
-  const eventType = EVENTS.MEASUREMENT_COMPLETED;
-  const completedEventData = {
-    toolType,
-    element,
-    measurementData: data
-  };
-
-  triggerEvent(element, eventType, completedEventData);
 }
 
 /**
