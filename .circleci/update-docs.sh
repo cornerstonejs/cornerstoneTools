@@ -4,6 +4,13 @@
 # https://stackoverflow.com/a/3355423/1867984
 cd "$(dirname "$0")"
 
+# Generate Examples
+cd ./../examples/
+gem install bundler:2.0.1
+bundle check || bundle install
+export JEKYLL_ENV="production"
+bundle exec jekyll build --config _config.yml,_config_production.yml
+
 # Generate all version's GitBook output
 cd ./../docs/
 for D in *; do
@@ -39,10 +46,10 @@ for D in *; do
 done
 
 # Create examples directory
-mkdir ./examples
+mkdir ./latest/_book/examples
 
 # Move examples output to folder
-mv -v "./../examples/_site"/* "./examples"
+mv -v "./../examples/_site"/* "./latest/_book/examples"
 
 # Commit & Push
 cd ./latest/_book/

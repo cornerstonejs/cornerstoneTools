@@ -84,7 +84,10 @@ jobs:
           root: ~/repo
           paths: .
 
-  build_examples:
+  ##################
+  #
+  ##################
+  publish_docs:
     working_directory: ~/repo
     docker:
       - image: circleci/ruby:2.6.0-node
@@ -93,25 +96,30 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
+      - run: npm install
+      - run: npm install gitbook-cli -g
       - run:
-          name: Install Bundler
-          command: cd examples && gem install bundler:2.0.1
-      - run:
-          name: Bundle Install
-          command: cd examples && (bundle check || bundle install)
-      - run:
-          name: Jekyll build
-          command: cd examples && bundle exec jekyll build
-      - persist_to_workspace:
-          root: ~/repo
-          paths: .
+          name: Do Magic
+          command: sh ~/repo/.circleci/update-docs.sh
+      #   - run:
+      #       name: Install Bundler
+      #       command: cd examples && gem install bundler:2.0.1
+      #   - run:
+      #       name: Bundle Install
+      #       command: cd examples && (bundle check || bundle install)
+      #   - run:
+      #       name: Jekyll build
+      #       command: cd examples && bundle exec JEKYLL_ENV=production jekyll build
+    #   - persist_to_workspace:
+    #       root: ~/repo
+    #       paths: .
 
-  publish_docs:
-    <<: *defaults
-    steps:
-      - attach_workspace:
-          at: ~/repo
-      - run: npm run docs:deploy
+  #   publish_docs:
+  #     <<: *defaults
+  #     steps:
+  #       - attach_workspace:
+  #           at: ~/repo
+  #       - run: npm run docs:deploy
 
   ##################
   #
@@ -171,9 +179,9 @@ workflows:
             - checkout_code
             - test_and_report
             - build
-      - build_examples:
-          requires:
-            - publish_npm
+      #   - build_examples:
+      #       requires:
+      #         - publish_npm
       - publish_docs:
           requires:
             - build_examples
