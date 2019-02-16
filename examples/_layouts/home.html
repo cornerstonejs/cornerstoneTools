@@ -2,30 +2,34 @@
 layout: default
 ---
 
-<div class="home">
-  {% if page.title %}
-  <h1 class="page-heading">{{ page.title }}</h1>
-  {% endif %}
-
-  {{ content }}
-
-  {% if site.pages.size > 0 %}
-  <h2 class="tool-list-heading">
-    {{ page.list_title | default: 'Tool Index' }}
-  </h2>
-  <ul class="tool-list">
-    {% for page in site.pages %} {% if page.toolName %}
-    <li>
-      <h3>
-        <a class="tool-link" href="{{ page.url | relative_url }}">
-          {{ page.title | escape }}
-        </a>
-      </h3>
-      {% if site.show_excerpts %}
-      {{ page.excerpt }}
+<section class="section">
+  <div class="container">
+    <div class="home">
+      {% if page.title %}
+      <h1 class="page-heading">{{ page.title }}</h1>
       {% endif %}
-    </li>
-    {% endif %} {% endfor %}
-  </ul>
-  {% endif %}
-</div>
+
+      {{ content }}
+
+      {% if site.pages.size > 0 %}
+      <h2 class="tool-list-heading">
+        {{ page.list_title | default: 'Tool Index' }}
+      </h2>
+      <ul class="tool-list">
+        {% for page in site.pages %} {% if page.toolName %}
+        <li>
+          <h3>
+            <a class="tool-link" href="{{ page.url | relative_url }}">
+              {{ page.title | escape }}
+            </a>
+          </h3>
+          {% if site.show_excerpts %}
+          {{ page.excerpt }}
+          {% endif %}
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</section>
