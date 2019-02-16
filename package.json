@@ -30,7 +30,7 @@
     "docs:api": "docma --config ./docma.json && docma serve ./docs/latest/api",
     "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api\"",
     "docs:book": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
-    "docs:deploy": "bash ./build/update-docs.sh",
+    "docs:deploy": "bash ./.circleci/update-docs.sh",
     "lint": "eslint -c .eslintrc.js --fix src",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
