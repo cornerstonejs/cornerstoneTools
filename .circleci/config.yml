@@ -96,23 +96,14 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
+      - add_ssh_keys:
+          fingerprints:
+            - '26:d1:03:c4:cd:b6:74:fb:fe:fe:f0:ce:b0:f6:76:3b'
       - run: npm install
       - run: sudo npm install gitbook-cli -g
       - run:
           name: Do Magic
           command: sh ~/repo/.circleci/update-docs.sh
-      #   - run:
-      #       name: Install Bundler
-      #       command: cd examples && gem install bundler:2.0.1
-      #   - run:
-      #       name: Bundle Install
-      #       command: cd examples && (bundle check || bundle install)
-      #   - run:
-      #       name: Jekyll build
-      #       command: cd examples && bundle exec JEKYLL_ENV=production jekyll build
-      #   - persist_to_workspace:
-      #       root: ~/repo
-      #       paths: .
 
   ##################
   #
@@ -144,7 +135,10 @@ workflows:
       - checkout_code:
           filters:
             branches:
-              ignore: vNext
+              ignore:
+                - master
+                - feature/*
+                - hotfix/*
       - test_and_report:
           requires:
             - checkout_code
