@@ -97,7 +97,7 @@ jobs:
       - attach_workspace:
           at: ~/repo
       - run: npm install
-      - run: npm install gitbook-cli -g
+      - run: sudo npm install gitbook-cli -g
       - run:
           name: Do Magic
           command: sh ~/repo/.circleci/update-docs.sh
@@ -110,16 +110,9 @@ jobs:
       #   - run:
       #       name: Jekyll build
       #       command: cd examples && bundle exec JEKYLL_ENV=production jekyll build
-    #   - persist_to_workspace:
-    #       root: ~/repo
-    #       paths: .
-
-  #   publish_docs:
-  #     <<: *defaults
-  #     steps:
-  #       - attach_workspace:
-  #           at: ~/repo
-  #       - run: npm run docs:deploy
+      #   - persist_to_workspace:
+      #       root: ~/repo
+      #       paths: .
 
   ##################
   #
