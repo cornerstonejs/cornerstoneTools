@@ -184,7 +184,7 @@ workflows:
       #         - publish_npm
       - publish_docs:
           requires:
-            - build_examples
+            - publish_npm
   ###
   # MERGE: VNEXT
   ###
