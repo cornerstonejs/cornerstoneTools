@@ -96,9 +96,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/repo
-      - add_ssh_keys:
-          fingerprints:
-            - '26:d1:03:c4:cd:b6:74:fb:fe:fe:f0:ce:b0:f6:76:3b'
+      - run:
+          name: Avoid hosts unknown for github
+          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
       - run: npm install
       - run: sudo npm install gitbook-cli -g
       - run:
