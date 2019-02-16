@@ -1,3 +1,5 @@
+import EVENTS from '../events.js';
+import triggerEvent from '../util/triggerEvent.js';
 import external from '../externalModules.js';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool.js';
@@ -135,6 +137,27 @@ function onImageRendered (e) {
 }
 // /////// END IMAGE RENDERING ///////
 
+function onHandleDoneMove ( element, data) {
+  fireCompleted(element, data);
+}
+
+/**
+ * Fire cornerstonetoolsmeasurementmodified event on provided element
+ * @param {any} element which freehand data has been modified
+ * @param {any} data the measurment data
+ * @returns {void}
+ */
+function fireCompleted (element, data) {
+  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+  const completedEventData = {
+    toolType,
+    element,
+    measurementData: data
+  };
+
+  triggerEvent(element, eventType, completedEventData);
+}
+
 // Module exports
 const preventHandleOutsideImage = true;
 
@@ -143,7 +166,8 @@ const highlight = mouseButtonRectangleTool({
   onImageRendered,
   pointNearTool,
   pointInsideRect,
-  toolType
+  toolType,
+  onHandleDoneMove
 }, preventHandleOutsideImage);
 
 const highlightTouch = touchTool({
@@ -151,7 +175,8 @@ const highlightTouch = touchTool({
   onImageRendered,
   pointNearTool,
   pointInsideRect,
-  toolType
+  toolType,
+  onHandleDoneMove
 }, preventHandleOutsideImage);
 
 export {

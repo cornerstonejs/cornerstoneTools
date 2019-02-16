@@ -12,6 +12,7 @@ import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { addToolState, getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
 import { clipToBox } from '../util/clip.js';
+import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 // Freehand tool libraries
 import { keyDownCallback, keyUpCallback } from '../util/freehand/keysHeld.js';
@@ -80,9 +81,10 @@ function createNewMeasurement () {
 /**
 * Returns true if the mouse cursor is near a handle
 *
-* @param {Object} eventData - data object associated with an event.
-* @param {Number} toolIndex - the ID of the tool
-* @return {Boolean}
+* @param {HTMLElement} element - the element where the image is drawn
+* @param {Object} data - The tool data object.
+* @param {{x:Number, y:Number}} coords - coordintates of the point
+* @return {Boolean} True if provided coordinates are near the tool handle; Otherwise, false. 
 */
 function pointNearTool (element, data, coords) {
   const isPointNearTool = pointNearHandle(element, data, coords);
@@ -338,9 +340,11 @@ function endDrawing (eventData, handleNearby) {
       modality = seriesModule.modality;
     }
 
-    calculateStatistics(data, eventData.element, eventData.image, modality);
+    const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(eventData.image);
 
-    fireModifiedEvent(eventData.element, data);
+    calculateStatistics(data, eventData.element, eventData.image, modality, rowPixelSpacing, colPixelSpacing);
+
+    fireCompleted(eventData.element, data);
   }
 
   external.cornerstone.updateImage(eventData.element);
@@ -809,6 +813,7 @@ function onImageRendered (e) {
   const config = freehand.getConfiguration();
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
   let modality;
+  const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
 
   if (seriesModule) {
     modality = seriesModule.modality;
@@ -882,7 +887,7 @@ function onImageRendered (e) {
       }
 
       // Define variables for the area and mean/standard deviation
-      calculateStatistics(data, element, image, modality);
+      calculateStatistics(data, element, image, modality, rowPixelSpacing, colPixelSpacing);
 
       // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
       if (data.polyBoundingBox && !data.textBox.freehand) {
@@ -942,7 +947,7 @@ function onImageRendered (e) {
       // This uses Char code 178 for a superscript 2
       let suffix = ` mm${String.fromCharCode(178)}`;
 
-      if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+      if (!rowPixelSpacing || !colPixelSpacing) {
         suffix = ` pixels${String.fromCharCode(178)}`;
       }
 
@@ -961,7 +966,8 @@ function onImageRendered (e) {
   }
 }
 
-function calculateStatistics(data, element, image, modality) {
+
+function calculateStatistics (data, element, image, modality, rowPixelSpacing, columnPixelSpacing) {
   const cornerstone = external.cornerstone;
 
   // Define variables for the area and mean/standard deviation
@@ -1038,15 +1044,18 @@ function calculateStatistics(data, element, image, modality) {
 
     // Retrieve the pixel spacing values, and if they are not
     // Real non-zero values, set them to 1
-    const columnPixelSpacing = image.columnPixelSpacing || 1;
-    const rowPixelSpacing = image.rowPixelSpacing || 1;
-    const scaling = columnPixelSpacing * rowPixelSpacing;
+    const scaling = (columnPixelSpacing || 1) * (rowPixelSpacing || 1);
 
     area = freeHandArea(data.handles, scaling);
 
     // If the area value is sane, store it for later retrieval
     if (!isNaN(area)) {
       data.area = area;
+
+      data.unit = `mm${String.fromCharCode(178)}`;
+      if (!rowPixelSpacing || !columnPixelSpacing) {
+        data.unit = `pixels${String.fromCharCode(178)}`;
+      }
     }
 
     // Set the invalidated flag to false so that this data won't automatically be recalculated
@@ -1169,6 +1178,15 @@ function closeToolIfDrawing(element) {
 }
 
 /**
+* Get the configuation object for the freehand tool.
+*
+* @return {Object} configuration - The freehand tool's configuration object.
+*/
+function getConfiguration () {
+  return configuration;
+}
+
+/**
  * Fire cornerstonetoolsmeasurementmodified event on provided element
  * @param {any} element which freehand data has been modified
  * @param {any} data the measurment data
@@ -1185,18 +1203,27 @@ function fireModifiedEvent (element, data) {
 }
 
 /**
-* Get the configuation object for the freehand tool.
-*
-* @return {Object} configuration - The freehand tool's configuration object.
+ * Fire cornerstonetoolsmeasurementcompleted event on provided element
+ * @param {any} element which freehand data has been modified
+ * @param {any} data the measurment data
+ * @returns {void}
 */
-function getConfiguration () {
-  return configuration;
+function fireCompleted (element, data) {
+  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+  const completedEventData = {
+    toolType,
+    element,
+    measurementData: data
+  };
+
+  triggerEvent(element, eventType, completedEventData);
 }
 
 /**
 * Set the configuation object for the freehand tool.
 *
 * @param {Object} config - The configuration object to set the freehand tool's configuration.
+* @returns {void}
 */
 function setConfiguration (config) {
   configuration = config;

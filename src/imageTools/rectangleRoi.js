@@ -1,3 +1,4 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -5,9 +6,11 @@ import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
 import drawHandles from '../manipulators/drawHandles.js';
 import calculateSUV from '../util/calculateSUV.js';
+import triggerEvent from '../util/triggerEvent.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow, drawRect } from '../util/drawing.js';
+import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 const toolType = 'rectangleRoi';
 
@@ -133,18 +136,8 @@ function onImageRendered (e) {
   const lineWidth = toolStyle.getToolWidth();
   const config = rectangleRoi.getConfiguration();
   const seriesModule = cornerstone.metaData.get('generalSeriesModule', image.imageId);
-  const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
   let modality;
-  let rowPixelSpacing;
-  let colPixelSpacing;
-
-  if (imagePlane) {
-    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-  } else {
-    rowPixelSpacing = image.rowPixelSpacing;
-    colPixelSpacing = image.columnPixelSpacing;
-  }
+  const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(eventData.image);
 
   if (seriesModule) {
     modality = seriesModule.modality;
@@ -190,71 +183,7 @@ function onImageRendered (e) {
         drawHandles(context, eventData, data.handles, color);
       }
 
-      // Define variables for the area and mean/standard deviation
-      let area,
-        meanStdDev,
-        meanStdDevSUV;
-
-      // Perform a check to see if the tool has been invalidated. This is to prevent
-      // Unnecessary re-calculation of the area, mean, and standard deviation if the
-      // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-      if (data.invalidated === false) {
-        // If the data is not invalidated, retrieve it from the toolData
-        meanStdDev = data.meanStdDev;
-        meanStdDevSUV = data.meanStdDevSUV;
-        area = data.area;
-      } else {
-        // If the data has been invalidated, we need to calculate it again
-
-        // Retrieve the bounds of the ellipse in image coordinates
-        const ellipse = {
-          left: Math.min(data.handles.start.x, data.handles.end.x),
-          top: Math.min(data.handles.start.y, data.handles.end.y),
-          width: Math.abs(data.handles.start.x - data.handles.end.x),
-          height: Math.abs(data.handles.start.y - data.handles.end.y)
-        };
-
-        // First, make sure this is not a color image, since no mean / standard
-        // Deviation will be calculated for color images.
-        if (!image.color) {
-          // Retrieve the array of pixels that the ellipse bounds cover
-          const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
-
-          // Calculate the mean & standard deviation from the pixels and the ellipse details
-          meanStdDev = calculateMeanStdDev(pixels, ellipse);
-
-          if (modality === 'PT') {
-            // If the image is from a PET scan, use the DICOM tags to
-            // Calculate the SUV from the mean and standard deviation.
-
-            // Note that because we are using modality pixel values from getPixels, and
-            // The calculateSUV routine also rescales to modality pixel values, we are first
-            // Returning the values to storedPixel values before calcuating SUV with them.
-            // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-            meanStdDevSUV = {
-              mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
-              stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
-            };
-          }
-
-          // If the mean and standard deviation values are sane, store them for later retrieval
-          if (meanStdDev && !isNaN(meanStdDev.mean)) {
-            data.meanStdDev = meanStdDev;
-            data.meanStdDevSUV = meanStdDevSUV;
-          }
-        }
-
-        // Calculate the image area from the ellipse dimensions and pixel spacing
-        area = (ellipse.width * (colPixelSpacing || 1)) * (ellipse.height * (rowPixelSpacing || 1));
-
-        // If the area value is sane, store it for later retrieval
-        if (!isNaN(area)) {
-          data.area = area;
-        }
-
-        // Set the invalidated flag to false so that this data won't automatically be recalculated
-        data.invalidated = false;
-      }
+      calculateStatistics(data, element, image, modality, rowPixelSpacing, colPixelSpacing);
 
       const text = textBoxText(data);
 
@@ -353,19 +282,128 @@ function onImageRendered (e) {
 }
 // /////// END IMAGE RENDERING ///////
 
+function onHandleDoneMove (element, data) {
+  const image = external.cornerstone.getImage(element);
+  const seriesModule = external.cornerstone.metaData.get('generalSeriesModule', image.imageId);
+  let modality;
+  const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
+
+  if (seriesModule) {
+    modality = seriesModule.modality;
+  }
+
+  calculateStatistics(data, element, image, modality, rowPixelSpacing, colPixelSpacing);
+
+  fireCompleted(element, data);
+}
+
+function calculateStatistics (data, element, image, modality, rowPixelSpacing, colPixelSpacing) {
+  const cornerstone = external.cornerstone;
+
+  // Define variables for the area and mean/standard deviation
+  let area,
+    meanStdDev,
+    meanStdDevSUV;
+
+  // Perform a check to see if the tool has been invalidated. This is to prevent
+  // Unnecessary re-calculation of the area, mean, and standard deviation if the
+  // Image is re-rendered but the tool has not moved (e.g. during a zoom)
+  if (data.invalidated === false) {
+    // If the data is not invalidated, retrieve it from the toolData
+    meanStdDev = data.meanStdDev;
+    meanStdDevSUV = data.meanStdDevSUV;
+    area = data.area;
+  } else {
+    // If the data has been invalidated, we need to calculate it again
+
+    // Retrieve the bounds of the ellipse in image coordinates
+    const ellipse = {
+      left: Math.min(data.handles.start.x, data.handles.end.x),
+      top: Math.min(data.handles.start.y, data.handles.end.y),
+      width: Math.abs(data.handles.start.x - data.handles.end.x),
+      height: Math.abs(data.handles.start.y - data.handles.end.y)
+    };
+
+    // First, make sure this is not a color image, since no mean / standard
+    // Deviation will be calculated for color images.
+    if (!image.color) {
+      // Retrieve the array of pixels that the ellipse bounds cover
+      const pixels = cornerstone.getPixels(element, ellipse.left, ellipse.top, ellipse.width, ellipse.height);
+
+      // Calculate the mean & standard deviation from the pixels and the ellipse details
+      meanStdDev = calculateMeanStdDev(pixels, ellipse);
+
+      if (modality === 'PT') {
+        // If the image is from a PET scan, use the DICOM tags to
+        // Calculate the SUV from the mean and standard deviation.
+
+        // Note that because we are using modality pixel values from getPixels, and
+        // The calculateSUV routine also rescales to modality pixel values, we are first
+        // Returning the values to storedPixel values before calcuating SUV with them.
+        // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+        meanStdDevSUV = {
+          mean: calculateSUV(image, (meanStdDev.mean - image.intercept) / image.slope),
+          stdDev: calculateSUV(image, (meanStdDev.stdDev - image.intercept) / image.slope)
+        };
+      }
+
+      // If the mean and standard deviation values are sane, store them for later retrieval
+      if (meanStdDev && !isNaN(meanStdDev.mean)) {
+        data.meanStdDev = meanStdDev;
+        data.meanStdDevSUV = meanStdDevSUV;
+      }
+    }
+
+    // Calculate the image area from the ellipse dimensions and pixel spacing
+    area = (ellipse.width * (colPixelSpacing || 1)) * (ellipse.height * (rowPixelSpacing || 1));
+
+    // If the area value is sane, store it for later retrieval
+    if (!isNaN(area)) {
+      data.area = area;
+
+      data.unit = `mm${String.fromCharCode(178)}`;
+      if (!rowPixelSpacing || !colPixelSpacing) {
+        data.unit = `pixels${String.fromCharCode(178)}`;
+      }
+    }
+
+    // Set the invalidated flag to false so that this data won't automatically be recalculated
+    data.invalidated = false;
+  }
+}
+
+/**
+ * Fire cornerstonetoolsmeasurementmodified event on provided element
+ * @param {any} element which freehand data has been modified
+ * @param {any} data the measurment data
+ * @returns {void}
+ */
+function fireCompleted (element, data) {
+  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+  const completedEventData = {
+    toolType,
+    element,
+    measurementData: data
+  };
+
+  triggerEvent(element, eventType, completedEventData);
+}
+
 // Module exports
 const rectangleRoi = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 const rectangleRoiTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 export {

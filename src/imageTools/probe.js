@@ -1,3 +1,5 @@
+import EVENTS from '../events.js';
+import triggerEvent from '../util/triggerEvent.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
@@ -77,34 +79,13 @@ function onImageRendered (e) {
       // Draw the handles
       drawHandles(context, eventData, data.handles, color);
 
-      if (config && config.disableTextBox) return;
+      if (config && config.disableTextBox) {
+        return;
+      }
 
-      const x = Math.round(data.handles.end.x);
-      const y = Math.round(data.handles.end.y);
-      let storedPixels;
+      calculateDisplayData(data, eventData.element, eventData.image);
 
-      let text,
-        str;
-
-      if (x >= 0 && y >= 0 && x < eventData.image.columns && y < eventData.image.rows) {
-        if (eventData.image.color) {
-          text = `${x}, ${y}`;
-          storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
-          str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
-        } else {
-          storedPixels = cornerstone.getStoredPixels(eventData.element, x, y, 1, 1);
-          const sp = storedPixels[0];
-          const mo = sp * eventData.image.slope + eventData.image.intercept;
-          const suv = calculateSUV(eventData.image, sp);
-
-          // Draw text
-          text = `${x}, ${y}`;
-          str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
-          if (suv) {
-            str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
-          }
-        }
-
+      if (data.str && data.text) {
         const coords = {
           // Translate the x/y away from the cursor
           x: data.handles.end.x + 3,
@@ -112,27 +93,81 @@ function onImageRendered (e) {
         };
         const textCoords = cornerstone.pixelToCanvas(eventData.element, coords);
 
-        drawTextBox(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-        drawTextBox(context, text, textCoords.x, textCoords.y, color);
+        drawTextBox(context, data.str, textCoords.x, textCoords.y + fontHeight + 5, color);
+        drawTextBox(context, data.text, textCoords.x, textCoords.y, color);
       }
     });
   }
 }
 // /////// END IMAGE RENDERING ///////
 
+function onHandleDoneMove (element, data) {
+  const image = external.cornerstone.getImage(element);
+
+  calculateDisplayData(data, element, image);
+
+  fireCompleted(element, data);
+}
+
+function calculateDisplayData (data, element, image) {
+  const x = Math.round(data.handles.end.x);
+  const y = Math.round(data.handles.end.y);
+  let storedPixels;
+
+  if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
+    if (image.color) {
+      data.text = `${x}, ${y}`;
+      storedPixels = getRGBPixels(element, x, y, 1, 1);
+      data.str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${storedPixels[2]}`;
+    } else {
+      storedPixels = external.cornerstone.getStoredPixels(element, x, y, 1, 1);
+      const sp = storedPixels[0];
+      const mo = sp * image.slope + image.intercept;
+      const suv = calculateSUV(image, sp);
+
+      // Draw text
+      data.text = `${x}, ${y}`;
+      data.str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
+
+      if (suv) {
+        data.str += ` SUV: ${parseFloat(suv.toFixed(3))}`;
+      }
+    }
+  }
+}
+
+/**
+ * Fire cornerstonetoolsmeasurementmodified event on provided element
+ * @param {any} element which freehand data has been modified
+ * @param {any} data the measurment data
+ * @returns {void}
+ */
+function fireCompleted (element, data) {
+  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+  const completedEventData = {
+    toolType,
+    element,
+    measurementData: data
+  };
+
+  triggerEvent(element, eventType, completedEventData);
+}
+
 // Module exports
 const probe = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 const probeTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 export {

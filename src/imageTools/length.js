@@ -1,6 +1,8 @@
+import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import mouseButtonTool from './mouseButtonTool.js';
 import touchTool from './touchTool.js';
+import triggerEvent from '../util/triggerEvent.js';
 import drawLinkedTextBox from '../util/drawLinkedTextBox.js';
 import toolStyle from '../stateManagement/toolStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -8,6 +10,7 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow, drawLine } from '../util/drawing.js';
+import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 const toolType = 'length';
 
@@ -54,6 +57,32 @@ function pointNearTool (element, data, coords) {
   return lineSegDistance(element, data.handles.start, data.handles.end, coords) < 25;
 }
 
+function onHandleDoneMove (element, data) {
+  const image = external.cornerstone.getImage(element);
+  const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
+
+  calculateLength(data, rowPixelSpacing, colPixelSpacing);
+
+  fireCompleted(element, data);
+}
+
+/**
+ * Fire cornerstonetoolsmeasurementmodified event on provided element
+ * @param {any} element which freehand data has been modified
+ * @param {any} data the measurment data
+ * @returns {void}
+ */
+function fireCompleted (element, data) {
+  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+  const completedEventData = {
+    toolType,
+    element,
+    measurementData: data
+  };
+
+  triggerEvent(element, eventType, completedEventData);
+}
+
 // /////// BEGIN IMAGE RENDERING ///////
 function onImageRendered (e) {
   const eventData = e.detail;
@@ -65,24 +94,13 @@ function onImageRendered (e) {
     return;
   }
 
-  const cornerstone = external.cornerstone;
   // We have tool data for this element - iterate over each one and draw it
   const context = getNewContext(eventData.canvasContext.canvas);
-  const { image, element } = eventData;
+  const { element } = eventData;
 
   const lineWidth = toolStyle.getToolWidth();
   const config = length.getConfiguration();
-  const imagePlane = cornerstone.metaData.get('imagePlaneModule', image.imageId);
-  let rowPixelSpacing;
-  let colPixelSpacing;
-
-  if (imagePlane) {
-    rowPixelSpacing = imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing = imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-  } else {
-    rowPixelSpacing = image.rowPixelSpacing;
-    colPixelSpacing = image.columnPixelSpacing;
-  }
+  const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(eventData.image);
 
   for (let i = 0; i < toolData.data.length; i++) {
     const data = toolData.data[i];
@@ -107,15 +125,7 @@ function onImageRendered (e) {
 
       drawHandles(context, eventData, data.handles, color, handleOptions);
 
-      // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-      const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
-      const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
-
-      // Calculate the length, and create the text variable with the millimeters or pixels suffix
-      const length = Math.sqrt(dx * dx + dy * dy);
-
-      // Store the length inside the tool for outside access
-      data.length = length;
+      calculateLength(data, rowPixelSpacing, colPixelSpacing);
 
       if (!data.handles.textBox.hasMoved) {
         const coords = {
@@ -153,6 +163,8 @@ function onImageRendered (e) {
       suffix = ' pixels';
     }
 
+    data.unit = suffix.trim();
+
     return `${data.length.toFixed(2)}${suffix}`;
   }
 
@@ -165,6 +177,18 @@ function onImageRendered (e) {
     return [handles.start, midpoint, handles.end];
   }
 }
+
+function calculateLength (data, rowPixelSpacing, colPixelSpacing) {
+  // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+  const dx = (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+  const dy = (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+
+  // Calculate the length, and create the text variable with the millimeters or pixels suffix
+  const length = Math.sqrt(dx * dx + dy * dy);
+
+  // Store the length inside the tool for outside access
+  data.length = length;
+}
 // /////// END IMAGE RENDERING ///////
 
 // Module exports
@@ -172,14 +196,16 @@ const length = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 const lengthTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 export {
