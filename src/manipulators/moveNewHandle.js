@@ -5,6 +5,7 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import { publishHandleDoneMovingEvent } from '../util/moveHandleDoneEventBroker.js';
 
 const _moveEvents = {
   mouse: [EVENTS.MOUSE_MOVE, EVENTS.MOUSE_DRAG],
@@ -190,6 +191,12 @@ function _moveEndHandler(
   if (typeof options.doneMovingCallback === 'function') {
     options.doneMovingCallback();
   }
+
+  // eslint-disable-next-line prettier/prettier
+  const args = { element,
+data: annotation };
+
+  publishHandleDoneMovingEvent(toolName, args);
 
   // Update Image
   external.cornerstone.updateImage(element);

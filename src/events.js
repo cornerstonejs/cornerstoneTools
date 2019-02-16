@@ -181,6 +181,11 @@ const EVENTS = {
   /**
    *  @type {String}
    */
+  MEASUREMENT_COMPLETED: 'cornerstonetoolsmeasurementcompleted',
+
+  /**
+   *  @type {String}
+   */
   TOOL_DEACTIVATED: 'cornerstonetoolstooldeactivated',
 
   /**

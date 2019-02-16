@@ -24,6 +24,9 @@ import {
 } from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { subscribeHandleDoneMovingEvent } from '../../util/moveHandleDoneEventBroker.js';
+import triggerMeasurementCompletedEvent from '../../util/triggerMeasurementCompletedEvent.js';
+import getColRowPixelSpacing from '../../util/getColRowPixelSpacing.js';
 
 /**
  * @public
@@ -47,6 +50,28 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     super(initialConfiguration);
     this.initialConfiguration = initialConfiguration;
+
+    subscribeHandleDoneMovingEvent(defaultConfig.name, ({ element, data }) => {
+      const image = external.cornerstone.getImage(element);
+      const seriesModule = external.cornerstone.metaData.get(
+        'generalSeriesModule',
+        image.imageId
+      );
+      let modality;
+      const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
+      const pixelSpacing = {
+        rowPixelSpacing,
+        columnPixelSpacing: colPixelSpacing,
+      };
+
+      if (seriesModule) {
+        modality = seriesModule.modality;
+      }
+
+      _updateCachedStats(image, element, data, modality, pixelSpacing);
+
+      triggerMeasurementCompletedEvent(element, data, this.name);
+    });
   }
 
   createNewMeasurement(eventData) {
@@ -159,20 +184,14 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
-    let imagePlane = external.cornerstone.metaData.get(
-      'imagePlaneModule',
-      image.imageId
-    );
+    const { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing =
-      imagePlane && imagePlane.rowPixelSpacing && imagePlane.columnPixelSpacing;
-
-    imagePlane = imagePlane || {};
+    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
     const pixelSpacing = {
-      rowPixelSpacing: imagePlane.rowPixelSpacing || 1,
-      columnPixelSpacing: imagePlane.columnPixelSpacing || 1,
+      rowPixelSpacing,
+      columnPixelSpacing: colPixelSpacing,
     };
 
     draw(context, context => {
@@ -266,6 +285,7 @@ const _throttledUpdateCachedStats = throttle(_updateCachedStats, 110);
  * @param {*} data
  * @param {string} modality
  * @param {*} pixelSpacing
+ * @returns {void}
  */
 function _updateCachedStats(image, element, data, modality, pixelSpacing) {
   const stats = _calculateStats(
@@ -285,7 +305,7 @@ function _updateCachedStats(image, element, data, modality, pixelSpacing) {
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {Object}
  */
 function _findTextBoxAnchorPoints(startHandle, endHandle) {
   const { left, top, width, height } = _getEllipseImageCoordinates(
@@ -326,7 +346,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  * @param {*} modality
  * @param {*} hasPixelSpacing
  * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
- * @returns
+ * @returns {[]}
  */
 function _createTextBoxContent(
   context,
@@ -403,7 +423,7 @@ function _createTextBoxContent(
  *
  * @param {*} area
  * @param {*} hasPixelSpacing
- * @returns
+ * @returns {String}
  */
 function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
@@ -415,6 +435,17 @@ function _formatArea(area, hasPixelSpacing) {
 }
 
 /**
+ * Returns the unit of measurement text value
+ * @param {Boolean} hasPixelSpacing
+ * @returns {String} the unit of measurement text value
+ */
+function _getUnit(hasPixelSpacing) {
+  return hasPixelSpacing
+    ? `mm${String.fromCharCode(178)}`
+    : `px${String.fromCharCode(178)}`;
+}
+
+/**
  *
  *
  * @param {*} image
@@ -422,7 +453,7 @@ function _formatArea(area, hasPixelSpacing) {
  * @param {*} handles
  * @param {*} modality
  * @param {*} pixelSpacing
- * @returns
+ * @returns {Object}
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the ellipse in image coordinates
@@ -470,6 +501,9 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,
+    unit: _getUnit(
+      pixelSpacing.rowPixelSpacing && pixelSpacing.columnPixelSpacing
+    ),
   };
 }
 
@@ -478,7 +512,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {Object}
  */
 function _getEllipseImageCoordinates(startHandle, endHandle) {
   return {
