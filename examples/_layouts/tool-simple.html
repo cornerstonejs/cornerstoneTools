@@ -2,32 +2,34 @@
 layout: default
 ---
 
-<div class="wrapper">
-  <h1>{{ page.title }}</h1>
+<section class="section">
+  <div class="container">
+    <h1>{{ page.title }}</h1>
 
-  <div class="buttons">
-    <button class="button set-tool-mode is-primary" data-action="Active">
-      Active
-    </button>
-    <button class="button set-tool-mode" data-action="Passive">
-      Passive
-    </button>
-    <button class="button set-tool-mode" data-action="Enabled">Enable</button>
-    <button class="button set-tool-mode" data-action="Disabled">
-      Disable
-    </button>
+    <div class="buttons">
+      <button class="button set-tool-mode is-primary" data-action="Active">
+        Active
+      </button>
+      <button class="button set-tool-mode" data-action="Passive">
+        Passive
+      </button>
+      <button class="button set-tool-mode" data-action="Enabled">Enable</button>
+      <button class="button set-tool-mode" data-action="Disabled">
+        Disable
+      </button>
+    </div>
+
+    <div class="cornerstone-element-wrapper">
+      <div
+        class="cornerstone-element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+    </div>
+
+    {{ content }}
   </div>
-
-  <div class="cornerstone-element-wrapper">
-    <div
-      class="cornerstone-element"
-      data-index="0"
-      oncontextmenu="return false"
-    ></div>
-  </div>
-</div>
-
-{{ content }}
+</section>
 
 <script>
   // NOTE: We pull these in from packaged sources in our header,
