@@ -1,4 +1,4 @@
-## How to set up the {{page.toolName}} tool:
+<h2 class="title is-2">How to set up the {{page.toolName}} tool:</h2>
 
 {% highlight javascript %}
 // Init cornerstone tools
