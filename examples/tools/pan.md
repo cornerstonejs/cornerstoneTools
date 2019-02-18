@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Pan Tool
+toolName: Pan
 ---
 
 {% include tool-simple-code-snippet.md %}

@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Arrow Annotate Tool
+toolName: ArrowAnnotate
 ---
 
 {% include tool-simple-code-snippet.md %}

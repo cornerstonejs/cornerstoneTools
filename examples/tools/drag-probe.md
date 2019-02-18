@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Drag Probe Tool
+toolName: DragProbe
 ---
 
 {% include tool-simple-code-snippet.md %}

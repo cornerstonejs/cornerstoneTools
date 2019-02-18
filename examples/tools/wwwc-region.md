@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: WWWC Region Tool
+toolName: WwwcRegion
 ---
 
 {% include tool-simple-code-snippet.md %}

@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Bidirectional Tool
+toolName: Bidirectional
 ---
 
 {% include tool-simple-code-snippet.md %}

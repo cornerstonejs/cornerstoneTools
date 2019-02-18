@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Probe Tool
+toolName: Probe
 ---
 
 {% include tool-simple-code-snippet.md %}

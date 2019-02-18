@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Rotate Tool
+toolName: Rotate
 ---
 
 {% include tool-simple-code-snippet.md %}

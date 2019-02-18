@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Cobb Angle Tool
+toolName: CobbAngle
 ---
 
 {% include tool-simple-code-snippet.md %}

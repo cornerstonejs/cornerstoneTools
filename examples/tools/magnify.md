@@ -1,7 +1,7 @@
 ---
 layout: tool-simple
-title: Length Tool
-toolName: Length
+title: Magnify Tool
+toolName: Magnify
 ---
 
 {% include tool-simple-code-snippet.md %}
