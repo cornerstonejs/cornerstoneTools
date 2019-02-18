@@ -1,6 +1,6 @@
 ---
 layout: tool-simple
-title: Lenght Tool
+title: Length Tool
 toolName: Length
 ---
 
