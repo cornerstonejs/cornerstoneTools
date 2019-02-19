@@ -56,6 +56,8 @@ function touchTool (touchToolInterface) {
       if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
         // Delete the measurement
         removeToolState(element, touchToolInterface.toolType, measurementData);
+      } else if(touchToolInterface.onHandleDoneMove) {
+        touchToolInterface.onHandleDoneMove (element, measurementData);
       }
 
       cornerstone.updateImage(element);
@@ -74,6 +76,8 @@ function touchTool (touchToolInterface) {
       if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
         // Delete the measurement
         removeToolState(element, touchToolInterface.toolType, measurementData);
+      } else if(touchToolInterface.onHandleDoneMove) {
+        touchToolInterface.onHandleDoneMove (element, measurementData);
       }
 
       element.addEventListener(EVENTS.TOUCH_START_ACTIVE, touchToolInterface.touchDownActivateCallback || touchDownActivateCallback);
@@ -119,6 +123,8 @@ function touchTool (touchToolInterface) {
       if (anyHandlesOutsideImage(eventData, data.handles)) {
         // Delete the measurement
         removeToolState(element, touchToolInterface.toolType, data);
+      } else if(touchToolInterface.onHandleDoneMove) {
+        touchToolInterface.onHandleDoneMove (element, data);
       }
 
       cornerstone.updateImage(element);
@@ -195,6 +201,8 @@ function touchTool (touchToolInterface) {
       if (anyHandlesOutsideImage(eventData, data.handles)) {
         // Delete the measurement
         removeToolState(eventData.element, touchToolInterface.toolType, data);
+      } else if(touchToolInterface.onHandleDoneMove) {
+        touchToolInterface.onHandleDoneMove (element, data);
       }
 
       cornerstone.updateImage(eventData.element);

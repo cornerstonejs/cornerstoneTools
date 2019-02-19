@@ -44,7 +44,7 @@
             </div>
             <br/>
         </div>
-        <div class="col-xs-10">
+        <div class="col-xs-7">
             <div style="width:512px;height:512px;position:relative;display:inline-block;color:white;"
                  oncontextmenu="return false"
                  class='cornerstone-enabled-image'
@@ -66,6 +66,14 @@
                 <div id="mrbottomleft" style="position: absolute;bottom:3px; left:3px">
                     WW/WC:
                 </div>
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="h3">Tool Events:</div>
+            <div style="float:left;
+            overflow-y: auto;
+            height: 512px;">
+                <ul id="logger"></ul>
             </div>
         </div>
     </div>
@@ -122,7 +130,68 @@
         document.getElementById('mrbottomright').textContent = "Zoom: " + viewport.scale.toFixed(2);
     };
 
+    function onMeasurementadded (e){
+        document.getElementById('logger').innerHTML = "";
+        const node = document.createElement('li');
+        const textnode = document.createTextNode(`Added ${e.detail.toolType}`);
+        node.appendChild(textnode); 
+        document.getElementById('logger').appendChild(node);
+    }
+    
+    function onMeasurementModified (e){
+        const node = document.createElement('li');
+        const textnode = document.createTextNode("Modified");
+        const elem = document.getElementById('logger');
+        
+        node.appendChild(textnode); 
+        elem.appendChild(node);
+        elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
+    }
+
+    function onMeasurementRemoved (e) {
+        const node = document.createElement('li');
+        const textnode = document.createTextNode("Removed");
+        const elem = document.getElementById('logger');
+        
+        node.appendChild(textnode); 
+        elem.appendChild(node);
+        elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
+    }
+
+    function onMeasurementCompleted (e) {
+        const node = document.createElement('li');
+        const displayValue = getMeasurementDisplayValue(e.detail);
+        const textnode = document.createTextNode(`Completed: ${displayValue}`);
+        const elem = document.getElementById('logger');
+        
+        node.appendChild(textnode); 
+        elem.appendChild(node);
+        elem.parentElement.scrollTop = elem.parentElement.scrollHeight;
+    }
+
+    function getMeasurementDisplayValue(measurement) {
+        const measurementData = measurement.measurementData;
+
+        if (measurementData.area) {
+            return `Area = ${measurementData.area} ${measurementData.unit}`;
+        } else if (measurementData.length) {
+            return `Length = ${measurementData.length} ${measurementData.unit}`;
+        } else if (measurementData.rAngle){
+            return `Angle = ${measurementData.rAngle} ${measurementData.unit}`;
+        } else if (measurementData.text || measurementData.str) {
+            return `${measurementData.str}, ${measurementData.text}`;
+        } 
+        else {
+            return '';
+        }
+    }
+
     element.addEventListener('cornerstoneimagerendered', onImageRendered);
+
+    element.addEventListener('cornerstonetoolsmeasurementadded', onMeasurementadded);
+    element.addEventListener('cornerstonetoolsmeasurementmodified', onMeasurementModified);
+    element.addEventListener('cornerstonemeasurementremoved', onMeasurementRemoved);
+    element.addEventListener('cornerstonemeasurementcompleted', onMeasurementCompleted);
 
     var imageId = 'example://1';
 

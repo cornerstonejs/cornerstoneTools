@@ -8,6 +8,8 @@ import drawHandles from '../manipulators/drawHandles.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow, drawLines } from '../util/drawing.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
+import getColRowPixelSpacing from '../util/getColRowPixelSpacing.js';
 
 const toolType = 'angle';
 
@@ -103,22 +105,13 @@ function onImageRendered (e) {
       // Draw the handles
       drawHandles(context, eventData, data.handles);
 
-      // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
-      // Where lines cross to measure angle. For now it will show smallest angle.
-      const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-      const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-      const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * columnPixelSpacing;
-      const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
-      const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * columnPixelSpacing;
-      const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+      calcualteAngle(data, eventData.image);
 
-      let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
-
-      angle *= (180 / Math.PI);
-
-      const rAngle = roundToDecimal(angle, 2);
+      const rAngle = data.rAngle;
       const str = '00B0'; // Degrees symbol
-      const text = rAngle.toString() + String.fromCharCode(parseInt(str, 16));
+
+      data.unit = String.fromCharCode(parseInt(str, 16));
+      const text = rAngle.toString() + data.unit;
 
       const handleStartCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.start2);
       const handleEndCanvas = cornerstone.pixelToCanvas(eventData.element, data.handles.end2);
@@ -132,19 +125,49 @@ function onImageRendered (e) {
 }
 // /////// END IMAGE RENDERING ///////
 
+function calcualteAngle (data, image) {
+  // Need to work on correct angle to measure.  This is a cobb angle and we need to determine
+  // Where lines cross to measure angle. For now it will show smallest angle.
+  let { rowPixelSpacing, colPixelSpacing } = getColRowPixelSpacing(image);
+
+  rowPixelSpacing = rowPixelSpacing || 1;
+  colPixelSpacing = colPixelSpacing || 1;
+
+  const dx1 = (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) * colPixelSpacing;
+  const dy1 = (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) * rowPixelSpacing;
+  const dx2 = (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) * colPixelSpacing;
+  const dy2 = (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) * rowPixelSpacing;
+
+  let angle = Math.acos(Math.abs(((dx1 * dx2) + (dy1 * dy2)) / (Math.sqrt((dx1 * dx1) + (dy1 * dy1)) * Math.sqrt((dx2 * dx2) + (dy2 * dy2)))));
+
+  angle *= (180 / Math.PI);
+
+  data.rAngle = roundToDecimal(angle, 2);
+}
+
+function onHandleDoneMove (element, data) {
+  const image = external.cornerstone.getImage(element);
+
+  calcualteAngle(data, image);
+
+  triggerMeasurementCompletedEvent(element, data, toolType);
+}
+
 // Module exports
 const angle = mouseButtonTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 const angleTouch = touchTool({
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
-  toolType
+  toolType,
+  onHandleDoneMove
 });
 
 export {

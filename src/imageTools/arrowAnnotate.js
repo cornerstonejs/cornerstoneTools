@@ -20,6 +20,7 @@ import lineSegDistance from '../util/lineSegDistance.js';
 import { getNewContext, draw, setShadow } from '../util/drawing.js';
 import { textBoxWidth } from '../util/drawTextBox.js';
 import triggerEvent from '../util/triggerEvent.js';
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 
 const toolType = 'arrowAnnotate';
 
@@ -89,12 +90,14 @@ function addNewMeasurement (mouseEventData) {
     if (anyHandlesOutsideImage(mouseEventData, measurementData.handles)) {
       // Delete the measurement
       removeToolState(element, toolType, measurementData);
-    }
+    } else {
+      const config = arrowAnnotate.getConfiguration();
 
-    const config = arrowAnnotate.getConfiguration();
+      if (measurementData.text === undefined) {
+        config.getTextCallback(doneChangingTextCallback);
+      }
 
-    if (measurementData.text === undefined) {
-      config.getTextCallback(doneChangingTextCallback);
+      onHandleDoneMove(element, measurementData);
     }
 
     cornerstone.updateImage(element);
@@ -294,18 +297,20 @@ function addNewMeasurementTouch (touchEventData) {
   cornerstone.updateImage(element);
 
   moveNewHandleTouch(touchEventData, toolType, measurementData, measurementData.handles.end, function () {
-    cornerstone.updateImage(element);
-
     if (anyHandlesOutsideImage(touchEventData, measurementData.handles)) {
       // Delete the measurement
       removeToolState(element, toolType, measurementData);
+    } else {
+      const config = arrowAnnotate.getConfiguration();
+
+      if (measurementData.text === undefined) {
+        config.getTextCallback(doneChangingTextCallback);
+      }
+
+      onHandleDoneMove(element, measurementData);
     }
 
-    const config = arrowAnnotate.getConfiguration();
-
-    if (measurementData.text === undefined) {
-      config.getTextCallback(doneChangingTextCallback);
-    }
+    cornerstone.updateImage(element);
   });
 }
 
@@ -426,13 +431,18 @@ function pressCallback (e) {
   e.stopPropagation();
 }
 
+function onHandleDoneMove (element, data) {
+  triggerMeasurementCompletedEvent(element, data, toolType);
+}
+
 const arrowAnnotate = mouseButtonTool({
   addNewMeasurement,
   createNewMeasurement,
   onImageRendered,
   pointNearTool,
   toolType,
-  mouseDoubleClickCallback: doubleClickCallback
+  mouseDoubleClickCallback: doubleClickCallback,
+  onHandleDoneMove
 });
 
 arrowAnnotate.setConfiguration(configuration);
@@ -443,7 +453,8 @@ const arrowAnnotateTouch = touchTool({
   onImageRendered,
   pointNearTool,
   toolType,
-  pressCallback
+  pressCallback,
+  onHandleDoneMove
 });
 
 export { arrowAnnotate, arrowAnnotateTouch };

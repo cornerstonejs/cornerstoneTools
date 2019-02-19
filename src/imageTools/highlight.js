@@ -1,3 +1,4 @@
+import triggerMeasurementCompletedEvent from '../util/triggerMeasurementCompletedEvent.js';
 import external from '../externalModules.js';
 import mouseButtonRectangleTool from './mouseButtonRectangleTool.js';
 import touchTool from './touchTool.js';
@@ -135,6 +136,10 @@ function onImageRendered (e) {
 }
 // /////// END IMAGE RENDERING ///////
 
+function onHandleDoneMove (element, data) {
+  triggerMeasurementCompletedEvent(element, data, toolType);
+}
+
 // Module exports
 const preventHandleOutsideImage = true;
 
@@ -143,7 +148,8 @@ const highlight = mouseButtonRectangleTool({
   onImageRendered,
   pointNearTool,
   pointInsideRect,
-  toolType
+  toolType,
+  onHandleDoneMove
 }, preventHandleOutsideImage);
 
 const highlightTouch = touchTool({
@@ -151,7 +157,8 @@ const highlightTouch = touchTool({
   onImageRendered,
   pointNearTool,
   pointInsideRect,
-  toolType
+  toolType,
+  onHandleDoneMove
 }, preventHandleOutsideImage);
 
 export {
