@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - 2019-02-19
+## [2.5.0] - 2019-02-19
 ### Added
 - Add measurement completed event #787 (thanks @Zaid-Safadi)
 - add promise to fusionRenderer.render #769 (thanks @sisobus)
