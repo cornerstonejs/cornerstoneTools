@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - 2019-02-19
+### Added
+- Add measurement completed event #787 (thanks @Zaid-Safadi)
+- add promise to fusionRenderer.render #769 (thanks @sisobus)
+- filter mouse events on eraser (thanks @rodrigolabs)
+- Feature to disable probe textbox by setting the configuration. #698 (thanks @hsahin)
+### Fixed
+- Fix Freehand handles not closed after loading state data. Issue #775 (thanks @Zaid-Safadi)
+- Fix deactivating/canceling freehand while drawing is not working #784 (#785) (thanks @Zaid-Safadi)
+- Fix freehand tool doesn't fire MEASUREMENT_MODIFIED event #774 and include area statistics on completion. (#786) (thanks @Zaid-Safadi)
+- Update angleTool.js (thanks kofifus)
+- Fix cobbs angle - solves issue #762 & #766 (thanks kofifus)
+- Added extra check in case config is undefined. (thanks Haluk Sahin)
+- Prevent circular import (toolstyle/texStyle) dependency #641 (thanks @kofifus)
+- fix magnify use cornerstone.enable bug whith use webgl renderer (thanks @xingbofeng)
+- Fix issue #690: Live examples not working. Replace local cornerstone and cornerstoneMath to pull from unpkg (thanks @Zaid-Safadi
+)
+- Fixes being able to set shadowOptions to falsy values, adds shadowBlur (thanks @Maistho)
+- Added return line to probe tool if the text box is not desired. (thanks @hsahin)
+
 ## [2.4.0] - 2018-10-25
 ### Added
 - Added a configuration setting on the stackPrefetch tool, called "preserveExistingPool", that prevents resetting the prefetch pool each time a new stack viewer is activated (thanks @Saucistophe)
