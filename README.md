@@ -84,7 +84,11 @@ This module is distributed via [npm][npm-url] which is bundled with [node][node]
 should be installed as one of your project's `dependencies`:
 
 ```js
-npm install --save cornerstone-tools
+// To install the newest version
+npm install --save cornerstone-tools@3
+
+// To install the legacy version (2.4.x branch)
+npm install --save cornerstone-tools@2
 ```
 
 This library has `peerDependencies` listings for:
