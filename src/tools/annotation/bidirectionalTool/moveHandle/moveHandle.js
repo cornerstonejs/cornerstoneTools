@@ -1,4 +1,5 @@
 import external from './../../../../externalModules.js';
+import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 
@@ -19,7 +20,6 @@ export default function(
   const _dragCallback = event => {
     const eventData = event.detail;
 
-    handle.active = true;
     handle.hasMoved = true;
 
     if (handle.index === undefined || handle.index === null) {
@@ -52,6 +52,9 @@ export default function(
     );
   };
 
+  handle.active = true;
+  state.isToolLocked = true;
+
   element.addEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
   element.addEventListener(EVENTS.TOUCH_DRAG, _dragCallback);
 
@@ -72,6 +75,9 @@ export default function(
   );
 
   const interactionEndCallback = () => {
+    handle.active = false;
+    state.isToolLocked = false;
+
     element.removeEventListener(
       external.cornerstone.EVENTS.IMAGE_RENDERED,
       imageRenderedHandler
