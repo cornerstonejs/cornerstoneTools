@@ -5,8 +5,9 @@ import pointNearTool from './bidirectionalTool/pointNearTool.js';
 import renderToolData from './bidirectionalTool/renderToolData.js';
 import addNewMeasurement from './bidirectionalTool/addNewMeasurement.js';
 import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
-import preMouseDownCallback from './bidirectionalTool/preMouseDownCallback.js';
-import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js';
+import handleSelectedCallback from './bidirectionalTool/handleSelectedCallback.js';
+import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouseCallback.js';
+import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
@@ -54,7 +55,8 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.addNewMeasurement = addNewMeasurement.bind(this);
     this._moveCallback = _moveCallback.bind(this);
 
-    this.preMouseDownCallback = preMouseDownCallback.bind(this);
-    this.preTouchStartCallback = preTouchStartCallback.bind(this);
+    this.handleSelectedCallback = handleSelectedCallback.bind(this);
+    this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);
+    this.handleSelectedTouchCallback = handleSelectedTouchCallback.bind(this);
   }
 }

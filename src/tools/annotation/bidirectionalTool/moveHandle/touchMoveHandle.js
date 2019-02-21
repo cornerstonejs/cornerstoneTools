@@ -1,4 +1,5 @@
 import external from './../../../../externalModules.js';
+import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 
@@ -27,7 +28,6 @@ export default function(
   const touchDragCallback = event => {
     const eventData = event.detail;
 
-    handle.active = true;
     handle.hasMoved = true;
 
     if (handle.index === undefined || handle.index === null) {
@@ -57,9 +57,15 @@ export default function(
     external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
   };
 
+  handle.active = true;
+  state.isToolLocked = true;
+
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
   const touchEndCallback = () => {
+    handle.active = false;
+    state.isToolLocked = false;
+
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
     touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);
