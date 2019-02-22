@@ -173,5 +173,9 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   const lengthText = ` L ${data.longestDiameter}${suffix}`;
   const widthText = ` W ${data.shortestDiameter}${suffix}`;
 
+  if (data.lesionNamingNumber) {
+    return [`Target ${data.lesionNamingNumber}`, lengthText, widthText];
+  }
+
   return [lengthText, widthText];
 };
