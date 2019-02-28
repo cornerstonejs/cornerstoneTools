@@ -109,12 +109,7 @@ export default function(evt) {
         handles.perpendicularStart,
         handles.perpendicularEnd,
       ];
-      let textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
-
-      if (data.additionalData && Array.isArray(data.additionalData)) {
-        textLines = data.additionalData.concat(textLines);
-      }
-
+      const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
       drawLinkedTextBox(
         context,
         element,
@@ -173,8 +168,9 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   const lengthText = ` L ${data.longestDiameter}${suffix}`;
   const widthText = ` W ${data.shortestDiameter}${suffix}`;
 
-  if (data.lesionNamingNumber) {
-    return [`Target ${data.lesionNamingNumber}`, lengthText, widthText];
+  const { labels } = data;
+  if (labels && Array.isArray(labels)) {
+    return [...labels, lengthText, widthText];
   }
 
   return [lengthText, widthText];
