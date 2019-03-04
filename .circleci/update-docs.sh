@@ -35,7 +35,7 @@ for D in *; do
 		echo "Moving ${D} to the latest version's history folder"
 
 		mkdir "./latest/_book/history/${D}"
-		cp -v "./${D}/_book"/* "./latest/_book/history/${D}"
+		cp -v -r "./${D}/_book"/* "./latest/_book/history/${D}"
 
 	fi
 done
