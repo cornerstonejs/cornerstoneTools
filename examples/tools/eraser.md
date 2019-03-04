@@ -1,9 +1,6 @@
 ---
-layout: tool-simple
+layout: needs-example
 title: Eraser Tool
 toolName: Eraser
+toolType: general
 ---
-
-<h2 class="title is-2">🚧 Under Construction 🚧</h2>
-
-This example needs additional work
