@@ -3,6 +3,10 @@
     window.ENVIRONMENT = '{{ jekyll.environment }}';
   </script>
 
+  <title>
+    {{ page.title | default: 'Cornerstone Tools: Examples' }}
+  </title>
+
   <!-- support for mobile touch devices -->
   <meta
     name="viewport"
