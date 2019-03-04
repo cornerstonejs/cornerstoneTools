@@ -243,10 +243,10 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mouseup: ${getEventButtons(e)}`);
+    console.log(`mouseup: ${e.which}`);
     const eventData = {
       event: e,
-      buttons: getEventButtons(e),
+      buttons: e.which,
       viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
