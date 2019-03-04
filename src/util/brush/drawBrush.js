@@ -10,6 +10,7 @@ import { draw, fillBox } from '../../drawing/index.js';
  * @param  {number[]} storedPixels        The brush mask to modify.
  * @param  {number} columns             The number of columns in the mask.
  * @param  {boolean} [shouldErase = false] If true the modified mask pixels will be set to 0, rather than 1.
+ * @returns {void}
  */
 function drawBrushPixels(
   pointerArray,
@@ -34,6 +35,7 @@ function drawBrushPixels(
  * @param  {Object} context      The canvas context.
  * @param  {string} color        The color to draw the pixels.
  * @param  {HTMLElement} element      The element on which the canvas resides.
+ * @returns {void}
  */
 function drawBrushOnCanvas(pointerArray, context, color, element) {
   const canvasPtTL = external.cornerstone.pixelToCanvas(element, {

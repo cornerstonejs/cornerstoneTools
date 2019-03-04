@@ -8,9 +8,9 @@ import external from '../externalModules.js';
  * @export @public @function
  * @name setContextToDisplayFontSize
  *
- * @param enabledElement The cornerstone enabled element.
- * @param context The canvas context.
- * @param fontSize The font size.
+ * @param {DOMElement} enabledElement The cornerstone enabled element.
+ * @param {CanvasRenderingContext2D} context The canvas context.
+ * @param {number} fontSize The font size.
  * @returns {Object} {fontSize: number, lineHeight: number, fontScale: number}
  */
 export default function(enabledElement, context, fontSize) {

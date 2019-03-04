@@ -19,6 +19,7 @@ const setters = {
    * Sets the brush radius, account for global min/max radius
    *
    * @param {number} radius
+   * @returns {void}
    */
   radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
@@ -29,6 +30,7 @@ const setters = {
    * Sets the brush color map to something other than the default
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
+   * @returns {void}
    */
   brushColorMap: colors => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -126,39 +128,18 @@ const getters = {
 /**
  * EnabledElementCallback - Element specific initilisation.
  * @public
- * @param  {Object} enabledElement  The element on which the module is
+ * @param  {Object} enabledElement - The element on which the module is
  *                                  being initialised.
+ * @returns {void}
  */
 function enabledElementCallback(enabledElement) {
   setters.elementVisible(enabledElement);
 }
 
 /**
- * RemoveEnabledElementCallback - Element specific memory cleanup.
- * @public
- * @param  {Object} enabledElement  The element being removed.
- */
-function removeEnabledElementCallback(enabledElement) {
-  if (!external.cornerstone) {
-    return;
-  }
-
-  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-    enabledElement
-  );
-
-  const enabledElementUID = cornerstoneEnabledElement.uuid;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-  const numberOfColors = colormap.getNumberOfColors();
-
-  // Remove enabledElement specific data.
-  delete state.visibleSegmentations[enabledElementUID];
-  delete state.imageBitmapCache[enabledElementUID];
-}
-
-/**
  * OnRegisterCallback - Initialise the module when a new element is added.
  * @public
+ * @returns {void}
  */
 function onRegisterCallback() {
   _initDefaultColorMap();

@@ -33,6 +33,7 @@ export default function(configuration) {
  * Cornerstone#ElementEnabled events.
  * @private
  * @method
+ * @returns {void}
  */
 function _addCornerstoneEventListeners() {
   // Clear any listeners that may already be set
@@ -54,6 +55,7 @@ function _addCornerstoneEventListeners() {
  * Cornerstone#ElementEnabled events.
  * @private
  * @method
+ * @returns {void}
  */
 function _removeCornerstoneEventListeners() {
   const cornerstone = external.cornerstone;
@@ -83,6 +85,7 @@ function _removeCornerstoneEventListeners() {
  * module.
  * @private
  * @method
+ * @returns {void}
  */
 function _initModules() {
   const modules = store.modules;

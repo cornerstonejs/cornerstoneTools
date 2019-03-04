@@ -1,10 +1,10 @@
 import store from '../store/index.js';
 import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
-import { getToolState, addToolState } from '../stateManagement/toolState.js';
+import { getToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
 import BaseBrushTool from './../tools/base/BaseBrushTool.js';
-import { getNewContext } from '../drawing/index.js';
 import {
+  getNewContext,
   resetCanvasContextTransform,
   transformCanvasContext,
 } from '../drawing/index.js';
@@ -20,7 +20,7 @@ import {
 // Import regeneratorRuntime from "regenerator-runtime";
 
 if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = async function(imageData) {
+  window.createImageBitmap = function(imageData) {
     return new Promise(resolve => {
       const img = document.createElement('img');
 
@@ -56,12 +56,12 @@ const { state, getters, setters } = store.modules.brush;
  *
  * @private
  * @param {Object} evt - The event.
+ * @returns {void}
  */
 export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
-  const activeSegIndex = store.modules.brush.state.drawColorId;
 
   const toolData = getToolState(
     element,
@@ -191,6 +191,9 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
  *
  * @private
  * @param  {Object} evt description
+ * @param {ImageBitmap} imageBitmap
+ * @param {Boolean} alwaysVisible
+ * @returns {void}
  */
 function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   const eventData = evt.detail;

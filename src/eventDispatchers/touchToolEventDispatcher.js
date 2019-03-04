@@ -26,6 +26,7 @@ import {
  * - onImageRendered: redraw visible tool data
  * @private
  * @param {*} element
+ * @returns {void}
  */
 const enable = function(element) {
   element.addEventListener(EVENTS.TAP, tap);

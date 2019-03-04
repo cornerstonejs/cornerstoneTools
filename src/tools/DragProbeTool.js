@@ -83,8 +83,9 @@ export default class DragProbeTool extends BaseTool {
 /**
  * Default strategy will pick the exactly point of mouse/touch interact and display the probe data.
  *
- * @param  {} evt Image rendered event
- * @param  {} config Tool configuration
+ * @param  {Object} evt Image rendered event
+ * @param  {Object} config Tool configuration
+ * @returns {void}
  */
 const defaultStrategy = (evt, config) => {
   const cornerstone = external.cornerstone;
@@ -148,8 +149,9 @@ const defaultStrategy = (evt, config) => {
 /**
  * Minimal strategy will position a circle and use the center of the circle to calculate and display probe data.
  *
- * @param  {} evt Image rendered event
- * @param  {} config Tool configuration
+ * @param  {Object} evt Image rendered event
+ * @param  {Object} config Tool configuration
+ * @returns {void}
  */
 const minimalStrategy = (evt, config) => {
   const cornerstone = external.cornerstone;
