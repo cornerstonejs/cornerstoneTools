@@ -4,14 +4,8 @@
 # https://stackoverflow.com/a/3355423/1867984
 cd "$(dirname "$0")"
 
-# Generate Examples
-cd ./../examples/
-gem install bundler:2.0.1
-bundle check || bundle install
-export JEKYLL_ENV="production"
-bundle exec jekyll build --config _config.yml,_config_production.yml
-
 # Generate all version's GitBook output
+# For each directory in /docs ...
 cd ./../docs/
 for D in *; do
     if [ -d "${D}" ]; then
@@ -45,7 +39,16 @@ for D in *; do
 	fi
 done
 
+# Generate Examples
+cd ./../examples/
+gem install bundler:2.0.1
+bundle check || bundle install
+export JEKYLL_ENV="production"
+bundle exec jekyll build --config _config.yml,_config_production.yml
+
+
 # Create examples directory
+cd ./../docs/
 mkdir ./latest/_book/examples
 
 # Move examples output to folder
