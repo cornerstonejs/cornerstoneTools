@@ -1,9 +1,6 @@
 ---
-layout: tool-simple
+layout: needs-example
 title: Text Marker Tool
 toolName: TextMarker
+toolType: annotation
 ---
-
-<h2 class="title is-2">🚧 Under Construction 🚧</h2>
-
-This example needs additional work
