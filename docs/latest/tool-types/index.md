@@ -1,7 +1,5 @@
 # Tool Types
 
-{% include "./../partials/beta-warning.md" %}
-
 In order to make development of new Tools quick, easy and relatively boilerplate-free, all Tools `extend` one of three base classes, which provide the functionality required to integrate seamlessly into the Cornerstone Tools framework.
 
 Base classes have two types of methods of interest to Tool developers:
