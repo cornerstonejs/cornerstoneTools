@@ -1,7 +1,5 @@
 # Contributing
 
-{% include "./partials/beta-warning.md" %}
-
 We love contributions, and we have plenty of work queued up for all skill levels. If you have an idea, feel free to create a new topic on [our community discussion board](https://groups.google.com/forum/#!forum/cornerstone-platform), or comment on an existing [enhancement](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Aenhancement), [up-for-grabs](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22up+for+grabs%22), [bug](https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3Abug), [documentation](https://github.com/cornerstonejs/cornerstoneTools/labels/documentation) issue. A quick "here is how I intend to approach this problem", with sign-off from someone like @swederik, will go a long way toward increasing the chances your hard work will be merged :+1:
 
 **How To Contribute:**
