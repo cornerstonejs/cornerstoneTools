@@ -6,6 +6,23 @@ import triggerEvent from '../util/triggerEvent.js';
 let isClickEvent = true;
 let preventClickTimeout;
 const clickDelay = 200;
+const buttonToButtonsDictionary = {
+  // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/button
+  // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/buttons
+  0: 1,
+  1: 4,
+  2: 2,
+  3: 8,
+  4: 16,
+};
+
+function changeButtonToButtons(eventButton) {
+  if (eventButton in buttonToButtonsDictionary) {
+    return buttonToButtonsDictionary[eventButton];
+  }
+
+  return 0;
+}
 
 function getEventButtons(event) {
   if (typeof event.buttons === 'number') {
@@ -243,10 +260,12 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mouseup: ${e.which}`);
+    const buttons = changeButtonToButtons(e.button);
+
+    console.log(`mouseup: ${buttons}`);
     const eventData = {
       event: e,
-      buttons: e.which,
+      buttons,
       viewport: external.cornerstone.getViewport(element),
       image: enabledElement.image,
       element,
