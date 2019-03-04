@@ -8,8 +8,9 @@ cd "$(dirname "$0")"
 # For each directory in /docs ...
 cd ./../docs/
 for D in *; do
-    if [ -d "${D}" ]; then
-        echo "Generating output for: ${D}"
+  if [ -d "${D}" ]; then
+
+		echo "Generating output for: ${D}"
 		cd "${D}"
 
 		# Clear previous output, generate new
@@ -18,7 +19,7 @@ for D in *; do
 		gitbook build
 
 		cd ..
-    fi
+  fi
 done
 
 # Move CNAME File into `latest`
@@ -29,13 +30,13 @@ mkdir ./latest/_book/history
 
 # Move each version's files to latest's history folder
 for D in *; do
-	if [ -d "${D}" ]; then
-		if [ "${D}" == v* ] ; then
-    		echo "Moving ${D} to the latest version's history folder"
+  if [ -d "${D}" ]; then
 
-			mkdir "./latest/_book/history/${D}"
-			mv -v "./${D}/_book"/* "./latest/_book/history/${D}"
-		fi
+		echo "Moving ${D} to the latest version's history folder"
+
+		mkdir "./latest/_book/history/${D}"
+		cp -v "./${D}/_book"/* "./latest/_book/history/${D}"
+
 	fi
 done
 
