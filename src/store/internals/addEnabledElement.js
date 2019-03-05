@@ -2,6 +2,7 @@ import {
   mouseEventListeners,
   wheelEventListener,
   touchEventListeners,
+  keyboardEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
@@ -63,6 +64,11 @@ export default function(elementEnabledEvt) {
   if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
+  }
+
+  // Keyboard
+  if (store.modules.globalConfiguration.state.keyboardEnabled) {
+    keyboardEventListeners.enable(enabledElement);
   }
 
   // State

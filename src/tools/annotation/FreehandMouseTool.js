@@ -5,6 +5,7 @@ import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -66,6 +67,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
+
+    this._drawingKeyDownCallback = this._drawingKeyDownCallback.bind(this);
   }
 
   createNewMeasurement(eventData) {
@@ -811,6 +814,21 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
+   * Event handler for KEY_DOWN during handle drag event loop.
+   *
+   * @private
+   * @param {Object} evt - The event.
+   * @returns {undefined}
+   */
+  _drawingKeyDownCallback(evt) {
+    const eventData = evt.detail;
+
+    if (eventData.keyCode === 27) {
+      this._cancelDrawing(eventData.element);
+    }
+  }
+
+  /**
    * Places a handle of the freehand tool if the new location is valid.
    * If the new location is invalid the handle snaps back to its previous position.
    *
@@ -978,6 +996,41 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       state.isMultiPartToolActive = false;
       this._deactivateDraw(element);
     }
+
+    external.cornerstone.updateImage(element);
+  }
+
+  /**
+   * Ends the active drawing loop and removes the polygon.
+   *
+   * @private
+   * @param {Object} element - The element on which the roi is being drawn.
+   * @returns {undefined}
+   */
+  _cancelDrawing(element) {
+    if (!this._drawing) {
+      return;
+    }
+    const toolState = getToolState(element, this.name);
+
+    const config = this.configuration;
+
+    const data = toolState.data[config.currentTool];
+
+    data.active = false;
+    data.highlight = false;
+    data.handles.invalidHandlePlacement = false;
+
+    // Reset the current handle
+    config.currentHandle = 0;
+    config.currentTool = -1;
+    data.canComplete = false;
+
+    removeToolState(element, this.name, data);
+
+    this._drawing = false;
+    state.isMultiPartToolActive = false;
+    this._deactivateDraw(element);
 
     external.cornerstone.updateImage(element);
   }
@@ -1287,6 +1340,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.addEventListener(EVENTS.MOUSE_DRAG, this._drawingMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
+    element.addEventListener(EVENTS.KEY_DOWN, this._drawingKeyDownCallback);
+
     external.cornerstone.updateImage(element);
   }
 
@@ -1312,6 +1367,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       this._drawingMouseDragCallback
     );
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
+    element.removeEventListener(EVENTS.KEY_DOWN, this._drawingKeyDownCallback);
 
     external.cornerstone.updateImage(element);
   }
