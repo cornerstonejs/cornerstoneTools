@@ -536,7 +536,6 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @param {Object} points - The points.
    * @param {Array} indiciesToInsertAfter - The working list of indicies to insert new points after.
    * @param {number} maxSpacing
-   * @modifies indiciesToInsertAfter
    * @returns {void}
    */
   _checkSpacing(i, points, indiciesToInsertAfter, maxSpacing) {
