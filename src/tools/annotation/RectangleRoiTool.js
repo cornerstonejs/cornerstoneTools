@@ -253,6 +253,7 @@ const _throttledUpdateCachedStats = throttle(_updateCachedStats, 110);
  * @param {*} data
  * @param {string} modality
  * @param {*} pixelSpacing
+ * @returns {void}
  */
 function _updateCachedStats(image, element, data, modality, pixelSpacing) {
   const stats = _calculateStats(
@@ -273,7 +274,7 @@ function _updateCachedStats(image, element, data, modality, pixelSpacing) {
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {{ left: number, top: number, width: number, height: number}}
  */
 function _getRectangleImageCoordinates(startHandle, endHandle) {
   return {
@@ -292,7 +293,7 @@ function _getRectangleImageCoordinates(startHandle, endHandle) {
  * @param {*} handles
  * @param {*} modality
  * @param {*} pixelSpacing
- * @returns
+ * @returns {Object} The Stats object
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the rectangle in image coordinates
@@ -345,7 +346,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
  *
  * @param {*} sp
  * @param {*} rectangle
- * @returns
+ * @returns {{ count, number, mean: number,  variance: number,  stdDev: number,  min: number,  max: number }}
  */
 function _calculateRectangleStats(sp, rectangle) {
   let sum = 0;
@@ -395,7 +396,7 @@ function _calculateRectangleStats(sp, rectangle) {
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {Array.<{x: number, y: number}>}
  */
 function _findTextBoxAnchorPoints(startHandle, endHandle) {
   const { left, top, width, height } = _getRectangleImageCoordinates(
@@ -432,7 +433,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  *
  * @param {*} area
  * @param {*} hasPixelSpacing
- * @returns
+ * @returns {string} The formatted label for showing area
  */
 function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
@@ -453,7 +454,7 @@ function _formatArea(area, hasPixelSpacing) {
  * @param {*} modality
  * @param {*} hasPixelSpacing
  * @param {*} [options={}]
- * @returns
+ * @returns {string[]}
  */
 function _createTextBoxContent(
   context,
