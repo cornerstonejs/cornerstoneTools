@@ -43,6 +43,7 @@ import store from '../index.js';
  * @name addEnabledElement
  * @param {Cornerstone#ElementEnabled} elementEnabledEvt
  * @listens Cornerstone#ElementEnabled
+ * @returns {void}
  */
 export default function(elementEnabledEvt) {
   console.log('EVENT:ELEMENT_ENABLED');
@@ -74,6 +75,7 @@ export default function(elementEnabledEvt) {
  * @private
  * @method
  * @param {HTMLElement} enabledElement
+ * @returns {void}
  */
 const _addEnabledElmenet = function(enabledElement) {
   store.state.enabledElements.push(enabledElement);
@@ -90,6 +92,7 @@ const _addEnabledElmenet = function(enabledElement) {
  * @private
  * @method
  * @param  {Object} enabledElement
+ * @returns {void}
  */
 function _initModulesOnElement(enabledElement) {
   const modules = store.modules;
@@ -101,6 +104,13 @@ function _initModulesOnElement(enabledElement) {
   });
 }
 
+/**
+ * Iterate over our stores globalTools adding each one to `enabledElement`
+ * @private
+ * @method
+ * @param {HTMLElement} enabledElement
+ * @returns {void}
+ */
 function _addGlobalToolsToElement(enabledElement) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
@@ -113,6 +123,14 @@ function _addGlobalToolsToElement(enabledElement) {
   });
 }
 
+/**
+ * Iterate over the globalToolChangeHistory and apply each `historyEvent`
+ * to the supplied `enabledElement`.
+ * @private
+ * @method
+ * @param {HTMLElement} enabledElement
+ * @returns {void}
+ */
 function _repeatGlobalToolHistory(enabledElement) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;

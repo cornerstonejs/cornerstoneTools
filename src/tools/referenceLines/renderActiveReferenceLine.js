@@ -13,6 +13,7 @@ import { draw, drawLine } from './../../drawing/index.js';
  * @param  {Object} eventData      The data associated with the event.
  * @param  {HTMLElement} targetElement    The element on which to render the reference line.
  * @param  {HTMLElement} referenceElement The element referenced by the line.
+ * @returns {void}
  */
 export default function(context, eventData, targetElement, referenceElement) {
   const cornerstone = external.cornerstone;

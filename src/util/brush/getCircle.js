@@ -8,7 +8,7 @@
  * @param  {number} columns    The number of columns.
  * @param  {number} [xCoord = 0] The x-location of the center of the circle.
  * @param  {number} [yCoord = 0] The y-location of the center of the circle.
- * @returns {number[][]}        Array of pixels contained within the circle.
+ * @returns {Array.number[]}        Array of pixels contained within the circle.
  */
 export default function getCircle(
   radius,

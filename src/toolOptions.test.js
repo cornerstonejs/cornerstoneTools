@@ -6,7 +6,7 @@ import * as toolOptions from './toolOptions.js';
  * corresponding call to toolOptions, and then ensures that the model's internal
  * state matches the global toolOptions state at every toolType and element.
  */
-class toolOptionsModel {
+class ToolOptionsModel {
   constructor() {
     this.options = [];
     this.elements = [];
@@ -94,7 +94,7 @@ describe('toolOptions manipulation', function() {
   let model;
 
   beforeEach(function() {
-    model = new toolOptionsModel();
+    model = new ToolOptionsModel();
   });
 
   it('has expected effects', function() {

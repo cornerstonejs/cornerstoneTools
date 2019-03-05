@@ -13,6 +13,7 @@ export default class FreehandLineFinder {
   /**
    * Creates an instance of FreehandLineFinder.
    * @param {*} eventData - Data object associated with the event.
+   * @param {string} toolName - The tool name
    * @memberof FreehandLineFinder
    */
   constructor(eventData, toolName) {

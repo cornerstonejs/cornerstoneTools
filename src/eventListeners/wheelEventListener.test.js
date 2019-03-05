@@ -1,9 +1,6 @@
 // SUT
 import wheelEventListener from './wheelEventListener.js';
 
-// Setup
-import external from './../externalModules.js';
-
 jest.mock('./../externalModules.js');
 
 describe('eventListeners/wheelEventListener.js', () => {
@@ -41,7 +38,7 @@ describe('eventListeners/wheelEventListener.js', () => {
     const localElement = document.createElement('div');
 
     // Assert
-    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+    localElement.addEventListener('cornerstonetoolsmousewheel', () => {
       expect(true).toBe(true);
       done();
     });
@@ -56,7 +53,7 @@ describe('eventListeners/wheelEventListener.js', () => {
     const localElement = document.createElement('div');
     const scrollHandler = jest.fn();
 
-    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+    localElement.addEventListener('cornerstonetoolsmousewheel', () => {
       scrollHandler();
     });
     wheelEventListener.enable(localElement);

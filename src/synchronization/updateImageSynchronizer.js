@@ -11,6 +11,7 @@ import external from '../externalModules.js';
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element
  * @param {HTMLElement} targetElement - The target element
+ * @returns {void}
  */
 export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element

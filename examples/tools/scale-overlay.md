@@ -2,6 +2,7 @@
 layout: tool-simple
 title: Scale Overlay Tool
 toolName: ScaleOverlay
+toolType: general
 ---
 
 <!-- TODO:

@@ -14,6 +14,7 @@ import convertToVector3 from '../util/convertToVector3.js';
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the image position
  * @param {HTMLElement} targetElement - The target element
+ * @returns {void}
  */
 export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element

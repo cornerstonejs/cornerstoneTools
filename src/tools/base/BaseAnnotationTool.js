@@ -44,6 +44,7 @@ class BaseAnnotationTool extends BaseTool {
    * @param  {type} evt description
    * @returns {type}     description
    */
+  // eslint-disable-next-line no-unused-vars
   createNewMeasurement(evt) {
     throw new Error(
       `Method createNewMeasurement not implemented for ${this.name}.`
@@ -63,6 +64,7 @@ class BaseAnnotationTool extends BaseTool {
    * @param {string} [interactionType=mouse]
    * @returns {boolean} If the point is near the tool
    */
+  // eslint-disable-next-line no-unused-vars
   pointNearTool(element, data, coords, interactionType = 'mouse') {
     throw new Error(`Method pointNearTool not implemented for ${this.name}.`);
   }
@@ -80,6 +82,7 @@ class BaseAnnotationTool extends BaseTool {
    * closest rendered portion of the annotation. -1 if the distance cannot be
    * calculated.
    */
+  // eslint-disable-next-line no-unused-vars
   distanceFromPoint(element, data, coords) {
     throw new Error(
       `Method distanceFromPoint not implemented for ${this.name}.`
@@ -91,7 +94,9 @@ class BaseAnnotationTool extends BaseTool {
    *
    * @abstract
    * @param {*} evt
+   * @returns {void}
    */
+  // eslint-disable-next-line no-unused-vars
   renderToolData(evt) {
     throw new Error(`renderToolData not implemented for ${this.name}.`);
   }
@@ -106,6 +111,7 @@ class BaseAnnotationTool extends BaseTool {
    * @abstract
    * @event
    * @param {Object} evt - The event.
+   * @returns {boolean} - True if the image needs to be updated
    */
   mouseMoveCallback(evt) {
     const { element, currentPoints } = evt.detail;
@@ -147,7 +153,7 @@ class BaseAnnotationTool extends BaseTool {
    * @param  {*} toolData   -
    * @param  {*} handle - The selected handle.
    * @param  {String} interactionType -
-   * @returns {undefined}
+   * @returns {void}
    */
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
     moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
@@ -162,7 +168,7 @@ class BaseAnnotationTool extends BaseTool {
    * @param  {*} evt
    * @param  {*} annotation
    * @param  {string} [interactionType=mouse]
-   * @returns {undefined}
+   * @returns {void}
    */
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
     moveAnnotation(evt, this, annotation, interactionType);

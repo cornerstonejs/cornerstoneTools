@@ -29,6 +29,7 @@ import store from '../index.js';
  * @name removeEnabledElement
  * @param {Cornerstone#ElementDisabled} elementDisabledEvt
  * @listens Cornerstone#ElementDisabled
+ * @returns {void}
  */
 export default function(elementDisabledEvt) {
   console.info('EVENT:ELEMENT_DISABLED');
@@ -61,6 +62,7 @@ export default function(elementDisabledEvt) {
  * @private
  * @method
  * @param {HTMLElement} enabledElement
+ * @returns  {void}
  */
 const _removeAllToolsForElement = function(enabledElement) {
   // Note: We may want to `setToolDisabled` before removing from store
@@ -75,6 +77,7 @@ const _removeAllToolsForElement = function(enabledElement) {
  * @private
  * @method
  * @param {HTMLElement} enabledElement
+ * @returns {void}
  */
 const _removeEnabledElement = function(enabledElement) {
   if (store.modules) {
@@ -98,6 +101,7 @@ const _removeEnabledElement = function(enabledElement) {
  * @private
  * @method
  * @param  {Object} enabledElement
+ * @returns {void}
  */
 function _cleanModulesOnElement(enabledElement) {
   const modules = store.modules;

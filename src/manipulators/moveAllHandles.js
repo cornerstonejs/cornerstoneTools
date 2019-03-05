@@ -44,7 +44,7 @@ export default function(
   { element },
   toolName,
   annotation,
-  handle = null,
+  handle,
   options = {},
   interactionType = 'mouse'
 ) {

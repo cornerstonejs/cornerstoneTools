@@ -213,14 +213,22 @@ export default class TextMarkerTool extends BaseAnnotationTool {
 }
 
 /**
- * This function is a callback to be overwriten in order to provide the wante feature
+ * This function is a callback to be overwriten in order to provide the wanted feature
  * modal, overlay, popup or any kind of interaction with the user to be able to update
  * the text marker label.
  *
- * @param  {} data
- * @param  {} eventData
- * @param  {} doneChangingTextCallback
+ * @param  {Object} data
+ * @param  {Object} eventData
+ * @param  {doneChangingTextCallback} doneChangingTextCallback
+ * @returns {void}
  */
 const changeTextCallback = (data, eventData, doneChangingTextCallback) => {
+  // eslint-disable-next-line no-alert
   doneChangingTextCallback(data, prompt('Change your annotation:'));
 };
+
+/**
+ * @callback doneChangingTextCallback
+ * @param {Object} data
+ * @param {string} text - The new text
+ */
