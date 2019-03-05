@@ -14,6 +14,7 @@ import registerItem from './registerItem.js';
  * @param {Object|function} item The item/module itself.
  * @param {boolean} [overwrite=false] Whether an item/module should be
  *                                    overwritten, should it have the same name.
+ * @returns {void}
  */
 export default function(type, name, item, overwrite = false) {
   if (!isValidInput(type, name, item)) {

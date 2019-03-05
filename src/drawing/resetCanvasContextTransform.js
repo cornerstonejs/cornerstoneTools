@@ -7,7 +7,7 @@
  * @memberof Drawing
  *
  * @param {CanvasRenderingContext2D} context - context you wish to transform
- * @returns null
+ * @returns {void}
  */
 export default function(context) {
   context.setTransform(1, 0, 0, 1, 0, 0);

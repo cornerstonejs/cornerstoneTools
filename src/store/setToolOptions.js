@@ -11,6 +11,7 @@ import getToolForElement from './getToolForElement.js';
  * @param {HTMLElement} element The element.
  * @param {string} toolName The name of the tool.
  * @param {Object} options The options to set.
+ * @returns {void}
  */
 const setToolOptionsForElement = function(element, toolName, options) {
   const tool = getToolForElement(element, toolName);
@@ -29,6 +30,7 @@ const setToolOptionsForElement = function(element, toolName, options) {
  *
  * @param {string} toolName
  * @param {Object} options
+ * @returns {void}
  */
 const setToolOptions = function(toolName, options) {
   state.enabledElements.forEach(element => {

@@ -64,6 +64,7 @@ const dragCallback = function(evt) {
  *
  * @param {*} evt
  * @param {*} { invert, maxScale, minScale }
+ * @returns {void}
  */
 function defaultStrategy(evt, { invert, maxScale, minScale }) {
   const deltaY = evt.detail.deltaPoints.page.y;

@@ -1,20 +1,18 @@
-import store from '../store/index.js';
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import external from '../externalModules.js';
-
-const { setters } = store.modules.brush;
 
 /**
  * Clears the brush imageBitmapCache,
  * invaldates the data and calls for a re-render.
  * @private
  * @param {Object} evt - The event.
+ * @returns {void}
  */
 export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const activeSegIndex = store.modules.brush.state.drawColorId;
+
   let toolData = getToolState(
     element,
     BaseBrushTool.getReferencedToolDataName()
@@ -25,7 +23,6 @@ export default function(evt) {
     toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
   }
 
-  const enabledElement = external.cornerstone.getEnabledElement(element);
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
   // Invalidate the segmentation bitmap such that it gets redrawn.

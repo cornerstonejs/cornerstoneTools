@@ -171,9 +171,10 @@ export default class ScaleOverlayTool extends BaseTool {
 
 /**
  * Computes the max bound for scales on the image
- * @param  {} canvasSize
- * @param  {} horizontalReduction
- * @param  {} verticalReduction
+ * @param  {{width: number, height: number}} canvasSize
+ * @param  {number} horizontalReduction
+ * @param  {number} verticalReduction
+ * @returns {Object.<string, { x:number, y:number }>}
  */
 const computeScaleBounds = (
   canvasSize,
@@ -202,8 +203,10 @@ const computeScaleBounds = (
 };
 
 /**
- * @param  {} context
- * @param  {} imageAttributes
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element
+ * @param {Object} imageAttributes
+ * @returns {void}
  */
 const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
@@ -252,6 +255,12 @@ const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
   }
 };
 
+/**
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element
+ * @param {Object} imageAttributes
+ * @returns {void}
+ */
 const drawHorizontalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
 

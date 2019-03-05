@@ -115,6 +115,7 @@ function debounce(func, wait, options) {
     lastInvokeTime = time;
     // Start the timer for the trailing edge.
     timerId = startTimer(timerExpired, wait);
+
     // Invoke the leading edge.
     return leading ? invokeFunc(time) : result;
   }
@@ -188,7 +189,7 @@ function debounce(func, wait, options) {
     const isInvoking = shouldInvoke(time);
 
     lastArgs = args;
-    lastThis = this;
+    lastThis = this; // eslint-disable-line consistent-this
     lastCallTime = time;
 
     if (isInvoking) {

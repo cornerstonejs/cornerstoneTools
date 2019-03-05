@@ -29,6 +29,7 @@ export default function(evt, interactionType) {
       element,
       measurementData,
     };
+
     external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
   };
 

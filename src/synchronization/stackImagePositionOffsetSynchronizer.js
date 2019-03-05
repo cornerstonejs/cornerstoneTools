@@ -20,6 +20,7 @@ import convertToVector3 from '../util/convertToVector3.js';
  * @param {Object} eventData - The data object from the triggering event
  * @param {Object} positionDifference - An object with { x, y, z } values that will be
  * added to the source image's coordinates
+ * @returns {void}
  */
 export default function(
   synchronizer,

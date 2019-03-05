@@ -12,6 +12,7 @@ import mixins from '../mixins/index.js';
  * @param {Object} mixin The mixin itself.
  * @param {boolean} [overwrite=false] Whether an mixin should be overwritten,
  *                                    should it have the same name.
+ * @returns {void}
  */
 export default function(name, mixin, overwrite = false) {
   if (isMixinRegistered(name)) {
