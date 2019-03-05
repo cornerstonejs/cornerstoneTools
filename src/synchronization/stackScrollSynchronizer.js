@@ -15,6 +15,7 @@ import clip from '../util/clip.js';
  * @param {HTMLElement} sourceElement - The source element for the scroll event
  * @param {HTMLElement} targetElement - The target element
  * @param {Object} eventData - The data object from the triggering event
+ * @returns {void}
  */
 export default function(synchronizer, sourceElement, targetElement, eventData) {
   // If the target and source are the same, stop

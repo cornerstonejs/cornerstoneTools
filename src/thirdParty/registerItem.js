@@ -12,6 +12,7 @@ import { lib } from '../lib.js';
  * @param {Object|function} item The item itself.
  * @param {boolean} [overwrite=false] Whether an item should be overwritten,
  *                                    should it have the same name.
+ * @returns {void}
  */
 export default function(type, name, item, overwrite = false) {
   if (isItemNameRegistered(type, name)) {

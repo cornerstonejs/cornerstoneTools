@@ -39,6 +39,7 @@ function getToolOptions(toolType, element) {
  * @param {string} toolType Tool type identifier of the target options object.
  * @param {HTMLElement} element Element of the target options object.
  * @param {Object} options Options object to store at target.
+ * @returns {void}
  */
 function setToolOptions(toolType, element, options) {
   if (!elementToolOptions[toolType]) {
@@ -81,6 +82,7 @@ function setToolOptions(toolType, element, options) {
  *
  * @param {string} toolType Tool type identifier of the target options object.
  * @param {HTMLElement} element Element of the target options object.
+ * @returns {void}
  */
 function clearToolOptions(toolType, element) {
   const toolOptions = elementToolOptions[toolType];
@@ -100,6 +102,7 @@ function clearToolOptions(toolType, element) {
  * @name clearToolOptionsByToolType
  *
  * @param {string} toolType Tool type identifier of the target options objects.
+ * @returns {void}
  */
 function clearToolOptionsByToolType(toolType) {
   delete elementToolOptions[toolType];
@@ -113,6 +116,7 @@ function clearToolOptionsByToolType(toolType) {
  * @name clearToolOptionsByElement
  *
  * @param {HTMLElement} element Element of the target options objects.
+ * @returns {void}
  */
 function clearToolOptionsByElement(element) {
   for (const toolType in elementToolOptions) {

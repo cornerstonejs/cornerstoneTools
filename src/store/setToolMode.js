@@ -556,6 +556,7 @@ function _determineStringBindings(toolName, options, interactionTypes) {
   const globalTool = store.state.globalTools[toolName];
 
   if (globalTool) {
+    // eslint-disable-next-line new-cap
     const tool = new globalTool.tool(globalTool.configuration);
 
     tool.supportedInteractionTypes.forEach(interactionType => {
