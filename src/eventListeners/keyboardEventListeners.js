@@ -5,16 +5,12 @@ import triggerEvent from '../util/triggerEvent.js';
 let mouseX;
 let mouseY;
 
-function keyPress(e) {
-  const cornerstone = external.cornerstone;
+function getKeyPressData(e) {
   const element = e.currentTarget;
+  const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
 
-  if (!enabledElement.image) {
-    return;
-  }
-
-  const keyPressData = {
+  return {
     event: window.event || e, // Old IE support
     element,
     viewport: cornerstone.getViewport(element),
@@ -29,6 +25,18 @@ function keyPress(e) {
     keyCode: e.keyCode,
     which: e.which,
   };
+}
+
+function keyPress(e) {
+  const cornerstone = external.cornerstone;
+  const element = e.currentTarget;
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  if (!enabledElement.image) {
+    return;
+  }
+
+  const keyPressData = getKeyPressData(e);
 
   keyPressData.currentPoints.canvas = cornerstone.pixelToCanvas(
     element,
