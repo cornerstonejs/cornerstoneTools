@@ -822,8 +822,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   _drawingKeyDownCallback(evt) {
     const eventData = evt.detail;
+    const config = this.configuration;
 
-    if (eventData.keyCode === 27) {
+    if (eventData.keyCode === config.cancelKeyCode) {
       this._cancelDrawing(eventData.element);
     }
   }
@@ -1525,6 +1526,7 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
+    cancelKeyCode: 27,
   };
 }
 
