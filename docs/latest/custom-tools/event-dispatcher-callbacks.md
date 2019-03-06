@@ -8,7 +8,8 @@ Here we can add the meat of our Tool. Event dispatchers check for methods on Too
 For our Tool we want to log to the console on mouse click. `BaseTool` has two appropriate methods: `preMouseDownCallback` and `postMouseDownCallback`. These fire before or after other annotation data on the canvas has a chance to claim the mouse click. for our Tool we shall choose `preMouseDownCallback`, as it's always nice to say hello before doing anything else. The method can simply be defined and it shall be called when appropriate via the `mouseToolEventDispatcher`:
 
 ```js
-import BaseTool from './../base/BaseTool.js';
+import csTools from 'cornerstone-tools';
+const BaseTool = csTools.import('base/BaseTool');
 
 export default class HelloWorldMouseTool extends BaseTool {
   constructor (name = 'HelloWorldMouse') {
