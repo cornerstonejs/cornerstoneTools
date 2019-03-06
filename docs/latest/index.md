@@ -1,7 +1,5 @@
 # Introduction
 
-{% include "./partials/beta-warning.md" %}
-
 ## What is CornerstoneTools.js {#what-is-cornerstone-tools-js}
 
 Cornerstone Tools is a JavaScript library that assists in annotating, segmenting, and measuring medical images. This library also provides a framework for creating new tools, managing all tools in a consistent, cohesive manner, and importing/exporting tool measurement data.
@@ -59,7 +57,7 @@ _To disable touch event listeners:_
 
 ```js
 const config = {
-  touchEnabled: false
+  touchEnabled: false,
 };
 const csTools = cornerstoneTools.init(config);
 ```
@@ -79,7 +77,7 @@ const csTools = cornerstoneTools.init();
 const LengthTool = cornerstoneTools.LengthTool;
 
 // Make sure we have at least one element Enabled
-const element = document.querySelector("#element-1");
+const element = document.querySelector('#element-1');
 cornerstone.enable(element);
 
 // Adds tool to ALL currently Enabled elements
@@ -99,7 +97,7 @@ csTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
 
 // OR activate the tool for a specific Enabled element
 csTools.setToolActiveForElement(enabledElement, LengthTool.name, {
-  mouseButtonMask: 1
+  mouseButtonMask: 1,
 });
 ```
 
