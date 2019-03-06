@@ -66,9 +66,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
     this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
-    this._measurementModifyCallback = this._measurementModifyCallback.bind(
-      this
-    );
   }
 
   createNewMeasurement(eventData) {
@@ -814,13 +811,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   *
-   */
-  _measurementModifyCallback(evt) {
-    // console.log(evt.detail);
-  }
-
-  /**
    * Places a handle of the freehand tool if the new location is valid.
    * If the new location is invalid the handle snaps back to its previous position.
    *
@@ -1301,11 +1291,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.addEventListener(EVENTS.MOUSE_DRAG, this._drawingMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
-    element.addEventListener(
-      EVENTS.MEASUREMENT_MODIFIED,
-      this._measurementModifyCallback
-    );
-
     external.cornerstone.updateImage(element);
   }
 
@@ -1332,11 +1317,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     );
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
 
-    element.removeEventListener(
-      EVENTS.MEASUREMENT_MODIFIED,
-      this._measurementModifyCallback
-    );
-
     external.cornerstone.updateImage(element);
   }
 
@@ -1353,11 +1333,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.addEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.addEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
 
-    element.addEventListener(
-      EVENTS.MEASUREMENT_MODIFIED,
-      this._measurementModifyCallback
-    );
-
     external.cornerstone.updateImage(element);
   }
 
@@ -1373,11 +1348,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(EVENTS.MOUSE_UP, this._editMouseUpCallback);
     element.removeEventListener(EVENTS.MOUSE_DRAG, this._editMouseDragCallback);
     element.removeEventListener(EVENTS.MOUSE_CLICK, this._editMouseUpCallback);
-
-    element.removeEventListener(
-      EVENTS.MEASUREMENT_MODIFIED,
-      this._measurementModifyCallback
-    );
 
     external.cornerstone.updateImage(element);
   }
