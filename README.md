@@ -22,6 +22,7 @@
 ## Index
 
 - [Installing](#installation)
+- [Examples & Docs](#examples--docs)
 - [Contributing][contributing]
 
 ## The problem
