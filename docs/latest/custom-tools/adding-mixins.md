@@ -7,13 +7,11 @@ import csTools from 'cornerstone-tools';
 const BaseTool = csTools.import('base/BaseTool');
 
 export default class HelloWorldMouseTool extends BaseTool {
-  constructor (name = 'HelloWorldMouse') {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      mixins: [
-        'activeOrDisabledBinaryTool'
-      ]
+      mixins: ['activeOrDisabledBinaryTool'],
     });
   }
 }
