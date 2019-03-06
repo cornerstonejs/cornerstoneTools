@@ -76,6 +76,12 @@
  */
 
 import {
+  BaseAnnotationTool,
+  BaseBrushTool,
+  BaseTool,
+} from './tools/base/index.js';
+
+import {
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
@@ -196,6 +202,10 @@ import { default as version } from './version.js';
 
 const cornerstoneTools = {
   // ~~~ TOOLS
+  // ~ Base Tools
+  BaseAnnotationTool,
+  BaseBrushTool,
+  BaseTool,
   // ~ Annotation Tools
   AngleTool,
   ArrowAnnotateTool,
@@ -292,6 +302,10 @@ const cornerstoneTools = {
 // Named Exports
 export {
   // ~~~ TOOLS
+  // ~ Base Tools
+  BaseAnnotationTool,
+  BaseBrushTool,
+  BaseTool,
   // ~ Annotation Tools
   AngleTool,
   ArrowAnnotateTool,
