@@ -518,6 +518,12 @@
 		}
   });
 
+  element.addEventListener('keydown', event => {
+  	if (event.keyCode === 27) {
+	  	freehandTool.cancelDrawing(element);
+  	}
+  });
+
 </script>
 
 </html>
