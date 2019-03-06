@@ -8,28 +8,26 @@ Here we can add the meat of our Tool. Event dispatchers check for methods on Too
 For our Tool we want to log to the console on mouse click. `BaseTool` has two appropriate methods: `preMouseDownCallback` and `postMouseDownCallback`. These fire before or after other annotation data on the canvas has a chance to claim the mouse click. for our Tool we shall choose `preMouseDownCallback`, as it's always nice to say hello before doing anything else. The method can simply be defined and it shall be called when appropriate via the `mouseToolEventDispatcher`:
 
 ```js
-import BaseTool from './../base/BaseTool.js';
+import { BaseTool } from 'cornerstone-tools';
 
 export default class HelloWorldMouseTool extends BaseTool {
-  constructor (name = 'HelloWorldMouse') {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      mixins: [
-        'activeOrDisabledBinaryTool'
-      ]
+      mixins: ['activeOrDisabledBinaryTool'],
     });
   }
 
-  preMouseDownCallback (evt) {
+  preMouseDownCallback(evt) {
     console.log('Hello cornerstoneTools!');
   }
 
-  activeCallback (element) {
+  activeCallback(element) {
     console.log(`Hello element ${element.uuid}!`);
   }
 
-  disabledCallback (element) {
+  disabledCallback(element) {
     console.log(`Goodbye element ${element.uuid}!`);
   }
 }

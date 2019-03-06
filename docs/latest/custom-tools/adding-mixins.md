@@ -3,17 +3,14 @@
 Next you can add any [mixins](../anatomy-of-a-tool/index.md#mixins) you wish to add the Tool. These are passed to `super`, and initialized in `BaseTool`. For our example, our Tool only makes sense in `Active` or `Disabled` modes, as it has none of its own data, and logs `'Hello cornerstoneTools!'` on click, as such we shall include the `activeOrDisabledBinaryTool` mixin:
 
 ```js
-import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import { BaseTool } from 'cornerstone-tools';
 
 export default class HelloWorldMouseTool extends BaseTool {
-  constructor (name = 'HelloWorldMouse') {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
-      mixins: [
-        'activeOrDisabledBinaryTool'
-      ]
+      mixins: ['activeOrDisabledBinaryTool'],
     });
   }
 }

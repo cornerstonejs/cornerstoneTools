@@ -1,6 +1,8 @@
 # Custom Tools
 
-This guide will give you an overview of creating a new Tool. This is applicable for Tools being built within the library as well as Tools for 3rd party plugins. For the specifics on setting up a Tool for a plugin, check the third party [tool](../third-party-functionality/index.md#tools) guide.
+This guide will give you an overview of creating a new Tool. This is applicable for Tools being built within the library as well as Tools for 3rd party plugins.
+
+See the [Third-Party functionality guide](../third-party-functionality/index.md) for more details on the integration and extension options available.
 
 {% include "./choosing-a-base-class.md" %}
 {% include "./creating-your-tool.md" %}
