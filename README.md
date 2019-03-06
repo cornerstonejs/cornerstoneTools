@@ -21,6 +21,7 @@
 
 ## Index
 
+- [Installing](#installation)
 - [Contributing][contributing]
 
 ## The problem
