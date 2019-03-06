@@ -2,6 +2,7 @@
 layout: tool-simple
 title: Freehand Mouse Tool
 toolName: FreehandMouse
+toolType: annotation
 ---
 
 <!--

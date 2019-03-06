@@ -1,4 +1,3 @@
-/* eslint no-bitwise:0 */
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
@@ -31,6 +30,7 @@ function getPlayClipTimeouts(vector, speed) {
 
   // First element of a frame time vector must be discarded
   for (i = 1; i < limit; i++) {
+    // eslint-disable-next-line no-bitwise
     delay = (Number(vector[i]) / speed) | 0; // Integral part only
     timeouts.push(delay);
     if (i === 1) {
@@ -46,6 +46,7 @@ function getPlayClipTimeouts(vector, speed) {
   if (timeouts.length > 0) {
     if (timeouts.isTimeVarying) {
       // If it's a time varying vector, make the last item an average...
+      // eslint-disable-next-line no-bitwise
       delay = (sum / timeouts.length) | 0;
     } else {
       delay = timeouts[0];
@@ -60,6 +61,7 @@ function getPlayClipTimeouts(vector, speed) {
 /**
  * [private] Performs the heavy lifting of stopping an ongoing animation.
  * @param {Object} playClipData The data from playClip that needs to be stopped.
+ * @returns {void}
  */
 function stopClipWithData(playClipData) {
   const id = playClipData.intervalId;
@@ -76,7 +78,8 @@ function stopClipWithData(playClipData) {
 
 /**
  * [private] Trigger playClip tool stop event.
- * @param element
+ * @param {HTMLElement} element
+ * @returns {void}
  */
 function triggerStopEvent(element) {
   const eventDetail = {
@@ -90,8 +93,9 @@ function triggerStopEvent(element) {
  * Starts playing a clip or adjusts the frame rate of an already playing clip.  framesPerSecond is
  * optional and defaults to 30 if not specified.  A negative framesPerSecond will play the clip in reverse.
  * The element must be a stack of images
- * @param element
- * @param framesPerSecond
+ * @param {HTMLElement} element
+ * @param {number} framesPerSecond
+ * @returns {void}
  */
 function playClip(element, framesPerSecond) {
   let playClipData;
@@ -279,7 +283,8 @@ function playClip(element, framesPerSecond) {
 
 /**
  * Stops an already playing clip.
- * * @param element
+ * @param {HTMLElement} element
+ * @returns {void}
  */
 function stopClip(element) {
   const playClipToolData = getToolState(element, toolType);

@@ -9,8 +9,9 @@ import addLine from './addLine.js';
  * @export @public @method
  * @name insertOrDelete
  *
- * @param {Object} e The event.
+ * @param {Object} evt The event.
  * @param {Object} nearby Object containing information about a nearby handle.
+ * @returns {void}
  */
 export default function(evt, nearby) {
   const eventData = evt.detail;
@@ -39,6 +40,7 @@ export default function(evt, nearby) {
  *
  * @param {Object} eventData The data object associated with the event.
  * @param {Object} deleteInfo Object containing information about which point to delete.
+ * @returns {void}
  */
 function _deletePoint(eventData, deleteInfo) {
   const toolData = getToolState(eventData.element, this.name);
@@ -90,6 +92,7 @@ function _deletePoint(eventData, deleteInfo) {
  *
  * @param {Object} eventData - The data object associated with the event.
  * @param {Object} insertInfo - Object containing information about where to insert the point.
+ * @returns {void}
  */
 function _insertPoint(eventData, insertInfo) {
   const toolData = getToolState(eventData.element, this.name);
@@ -134,6 +137,7 @@ function _insertPoint(eventData, insertInfo) {
  * @method
  *
  * @param {Object} insertInfo - Object containing information about where to insert the point.
+ * @returns {void}
  */
 function _getInsertionIndex(insertInfo) {
   // Get lowest index that isn't zero

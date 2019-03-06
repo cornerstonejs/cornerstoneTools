@@ -1,4 +1,3 @@
-import EVENTS from '../events.js';
 import scrollToIndex from './scrollToIndex.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import clip from './clip.js';
@@ -13,6 +12,7 @@ import external from './../externalModules.js';
  * @param  {number} images                The number of images to scroll through.
  * @param  {type} [loop = false]          Whether to loop the scrolling.
  * @param  {type} [allowSkipping = true]  Whether frames can be skipped.
+ * @returns {void}
  */
 export default function(element, images, loop = false, allowSkipping = true) {
   const toolData = getToolState(element, 'stack');
@@ -58,6 +58,7 @@ export default function(element, images, loop = false, allowSkipping = true) {
  * @param  {type} stackData    Data object containing information about the stack.
  * @param  {Object} pendingEvent The event to process next.
  * @param  {HTMLElement} element      The element being scrolled through.
+ * @returns {void}
  */
 function scrollWithoutSkipping(stackData, pendingEvent, element) {
   if (stackData.pending[0] === pendingEvent) {

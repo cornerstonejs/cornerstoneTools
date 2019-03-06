@@ -775,6 +775,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * Returns the previous handle to the current one.
    * @param {Number} currentHandle - the current handle index
    * @param {Array} points - the handles Array of the freehand data
+   * @returns {Number} - The index of the previos handle
    */
   _getPrevHandleIndex(currentHandle, points) {
     if (currentHandle === 0) {
@@ -993,8 +994,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {Number|Object|Boolean}
    */
   _pointNearHandle(element, data, coords) {
-    const config = this.configuration;
-
     if (data.handles === undefined || data.handles.points === undefined) {
       return;
     }
@@ -1225,8 +1224,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *                              allowed canvas spacing.
    */
   _isDistanceSmallerThanSpacing(element, p1, p2) {
-    const config = this.configuration;
-
     return this._compareDistanceToSpacing(element, p1, p2, '<');
   }
 
@@ -1241,8 +1238,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *                              allowed canvas spacing.
    */
   _isDistanceLargerThanSpacing(element, p1, p2) {
-    const config = this.configuration;
-
     return this._compareDistanceToSpacing(element, p1, p2, '>');
   }
 
@@ -1254,7 +1249,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param  {Object} p1          The first point, in pixel space.
    * @param  {Object} p2          The second point, in pixel space.
    * @param  {string} comparison  The comparison to make.
-   * @returns {boolean}            True if the distance is smaller than the
+   * @param  {number} spacing     The allowed canvas spacing
+   * @returns {boolean}           True if the distance is smaller than the
    *                              allowed canvas spacing.
    */
   _compareDistanceToSpacing(

@@ -180,6 +180,7 @@ export default class MagnifyTool extends BaseTool {
    *
    * @private
    * @param {*} evt
+   * @returns {void}
    */
   _drawZoomedElement(evt) {
     const element = evt.detail.element;
@@ -219,7 +220,7 @@ export default class MagnifyTool extends BaseTool {
   /**
    * Removes the canvas and associated enabled element that's
    * used to render the zoomed image.
-   *
+   * @returns {void}
    */
   _removeZoomElement() {
     if (this.zoomElement !== undefined) {
@@ -236,6 +237,7 @@ export default class MagnifyTool extends BaseTool {
    * @private
    *
    * @param {*} element
+   * @returns {void}
    */
   _createMagnificationCanvas(element) {
     // If the magnifying glass canvas doesn't already exist
@@ -258,6 +260,7 @@ export default class MagnifyTool extends BaseTool {
    *
    *
    * @param {*} evt
+   * @returns {void}
    */
   _destroyMagnificationCanvas(evt) {
     const element = evt.detail.element;

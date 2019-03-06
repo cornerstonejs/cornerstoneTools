@@ -50,7 +50,9 @@ class BaseBrushTool extends BaseTool {
    *
    * @abstract
    * @param {Object} evt - The event.
+   * @returns {void}
    */
+  // eslint-disable-next-line no-unused-vars
   renderBrush(evt) {
     throw new Error(`Method renderBrush not implemented for ${this.name}.`);
   }
@@ -61,7 +63,9 @@ class BaseBrushTool extends BaseTool {
    * @protected
    * @abstract
    * @param  {Object} evt The event.
+   * @returns {void}
    */
+  // eslint-disable-next-line no-unused-vars
   _paint(evt) {
     throw new Error(`Method _paint not implemented for ${this.name}.`);
   }
@@ -100,6 +104,7 @@ class BaseBrushTool extends BaseTool {
    * @protected
    * @event
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   _startPainting(evt) {
     const eventData = evt.detail;
@@ -131,6 +136,7 @@ class BaseBrushTool extends BaseTool {
    * @event
    * @param {Object} evt - The event.
    */
+  // eslint-disable-next-line no-unused-vars
   passiveCallback(evt) {
     external.cornerstone.updateImage(this.element);
   }
@@ -161,6 +167,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @protected
    * @param  {Number} drawId The id of the color (segmentation) to switch to.
+   * @returns {string} The brush color in rgba format
    */
   _getBrushColor(drawId) {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -183,6 +190,7 @@ class BaseBrushTool extends BaseTool {
    * @protected
    * @event
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   _drawingMouseUpCallback(evt) {
     const eventData = evt.detail;
@@ -200,6 +208,7 @@ class BaseBrushTool extends BaseTool {
    * @protected
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
+   * @returns {void}
    */
   _startListeningForMouseUp(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
@@ -220,6 +229,7 @@ class BaseBrushTool extends BaseTool {
    * @protected
    * @param {Object} element - The viewport element to add event listeners to.
    * @modifies {element}
+   * @returns {void}
    */
   _stopListeningForMouseUp(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this._drawingMouseUpCallback);
@@ -240,6 +250,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   nextSegmentation() {
     const numberOfColors = this.constructor.getNumberOfColors();
@@ -258,6 +269,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   previousSegmentation() {
     const numberOfColors = this.constructor.getNumberOfColors();
@@ -276,6 +288,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   increaseBrushSize() {
     const oldRadius = state.radius;
@@ -295,6 +308,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   decreaseBrushSize() {
     const oldRadius = state.radius;
@@ -308,8 +322,8 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
-   * @param  {String} enabledElement  The enabledElement on which to display.
    * @param  {Number} segIndex        The index of the segmentation.
+   * @returns {void}
    */
   showSegmentationOnElement(segIndex) {
     const enabledElement = this._getEnabledElement();
@@ -326,6 +340,7 @@ class BaseBrushTool extends BaseTool {
    * @public
    * @api
    * @param  {Number} segIndex        The index of the segmentation.
+   * @returns {void}
    */
   hideSegmentationOnElement(segIndex) {
     const enabledElement = this._getEnabledElement();
@@ -340,6 +355,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   showAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
@@ -359,6 +375,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
+   * @returns {void}
    */
   hideAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
@@ -388,7 +405,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   get alpha() {
-    state.alpha;
+    return state.alpha;
   }
 
   set alpha(value) {
@@ -399,7 +416,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   get hiddenButActiveAlpha() {
-    state.hiddenButActiveAlpha;
+    return state.hiddenButActiveAlpha;
   }
 
   set hiddenButActiveAlpha(value) {
@@ -425,9 +442,12 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * @static invalidateBrushOnEnabledElement - invalidate all the brush data.
+   * Invalidate all the brush data.
    *
-   * @returns {null}
+   * @static
+   * @public
+   * @param {string} enabledElementUID - This identifier for the enabled element.
+   * @returns {void}
    */
   static invalidateBrushOnEnabledElement(enabledElementUID) {
     /** WIP **/
@@ -440,16 +460,6 @@ class BaseBrushTool extends BaseTool {
     }
 
     const imageIds = stackToolState.data[0].imageIds;
-
-    const enabledElement = external.cornerstone.getEnabledElement(element);
-
-    const image = enabledElement.image;
-
-    const dim = {
-      xy: image.columns * image.rows,
-      z: image.rows,
-      xyz: image.columns * image.rows * imageIds.length,
-    };
 
     const toolState = globalImageIdSpecificToolStateManager.saveToolState();
 
@@ -471,9 +481,11 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * @static getDataAsVolume - Returns a datacube for the segmentation.
+   * Returns a datacube for the segmentation.
    *
-   * @return {type}  description
+   * @static
+   * @param {string} enabledElementUID - This identifier for the enabled element.
+   * @returns {type}  description
    */
   static getDataAsVolume(enabledElementUID) {
     /** WIP **/

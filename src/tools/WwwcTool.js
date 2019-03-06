@@ -45,7 +45,9 @@ export default class WwwcTool extends BaseTool {
  * provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
  * image will feel the same as a 16 bit image would)
  *
- * @param eventData
+ * @param {Object} evt
+ * @param {Object} { orienttion }
+ * @returns {void}
  */
 function basicLevelingStrategy(evt, { orientation }) {
   const eventData = evt.detail;
