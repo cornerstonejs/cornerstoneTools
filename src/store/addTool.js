@@ -9,15 +9,15 @@ import getToolForElement from './getToolForElement.js';
  * @memberof CornerstoneTools
  *
  * @param {HTMLElement} element The element to add the tool to.
- * @param {BaseTool} apiTool The tool to add to the element.
+ * @param {BaseTool} ApiTool The tool to add to the element.
  * @param {Object} [configuration] Override the default tool configuration
  * @returns {undefined}
  */
-const addToolForElement = function(element, apiTool, configuration) {
+const addToolForElement = function(element, ApiTool, configuration) {
   // Instantiating the tool here makes it harder to accidentally add
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
-  const tool = new apiTool(configuration);
+  const tool = new ApiTool(configuration);
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
@@ -37,14 +37,14 @@ const addToolForElement = function(element, apiTool, configuration) {
  * @function addTool
  * @memberof CornerstoneTools
  *
- * @param {BaseTool} apiTool The tool to add to each element.
+ * @param {BaseTool} ApiTool The tool to add to each element.
  * @param {Object} [configuration] Override the default tool configuration
  * @returns {undefined}
  */
-const addTool = function(apiTool, configuration) {
-  _addToolGlobally(apiTool, configuration);
+const addTool = function(ApiTool, configuration) {
+  _addToolGlobally(ApiTool, configuration);
   store.state.enabledElements.forEach(element => {
-    addToolForElement(element, apiTool, configuration);
+    addToolForElement(element, ApiTool, configuration);
   });
 };
 
@@ -55,16 +55,16 @@ const addTool = function(apiTool, configuration) {
  * @private
  * @function addToolGlobally
  *
- * @param {BaseTool} apiTool
+ * @param {BaseTool} ApiTool
  * @param {Object} [configuration] Override the default tool configuration
  * @returns {undefined}
  */
-const _addToolGlobally = function(apiTool, configuration) {
+const _addToolGlobally = function(ApiTool, configuration) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
 
-  const tool = new apiTool(configuration);
+  const tool = new ApiTool(configuration);
   const toolAlreadyAddedGlobally =
     store.state.globalTools[tool.name] !== undefined;
 
@@ -75,7 +75,7 @@ const _addToolGlobally = function(apiTool, configuration) {
   }
 
   store.state.globalTools[tool.name] = {
-    tool: apiTool,
+    tool: ApiTool,
     configuration,
     activeBindings: [],
   };

@@ -9,6 +9,7 @@ import store from './index.js';
  * @name removeToolForElement
  * @param {HTMLElement} element The element.
  * @param {string} toolName The name of the tool.
+ * @returns {void}
  */
 const removeToolForElement = function(element, toolName) {
   const toolIndex = store.state.tools.findIndex(
@@ -28,6 +29,7 @@ const removeToolForElement = function(element, toolName) {
  * @method
  * @name removeTool
  * @param {string} toolName The name of the tool.
+ * @returns {void}
  */
 const removeTool = function(toolName) {
   _removeToolGlobally(toolName);
@@ -44,6 +46,7 @@ const removeTool = function(toolName) {
  * @method
  * @name removeToolGlobally
  * @param {string} toolName The name of the tool to remove.
+ * @returns {void}
  */
 const _removeToolGlobally = function(toolName) {
   if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {

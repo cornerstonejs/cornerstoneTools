@@ -12,6 +12,7 @@ import triggerEvent from '../util/triggerEvent.js';
  *
  * @param  {type} element         The element to scroll through.
  * @param  {type} newImageIdIndex The target image index.
+ * @returns {void}
  */
 export default function(element, newImageIdIndex) {
   const toolData = getToolState(element, 'stack');

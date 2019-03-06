@@ -6,7 +6,7 @@ import {
 } from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
-import EVENTS from '../../events';
+import EVENTS from '../../events.js';
 
 const { drawBrushPixels, getCircle } = brushUtils;
 const { state } = store.modules.brush;
@@ -41,6 +41,7 @@ export default class BrushTool extends BaseBrushTool {
    * Called by the event dispatcher to render the image.
    *
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   renderBrush(evt) {
     const eventData = evt.detail;
@@ -69,7 +70,6 @@ export default class BrushTool extends BaseBrushTool {
     }
 
     // Draw the hover overlay on top of the pixel data
-    const configuration = this._configuration;
     const radius = state.radius;
     const context = eventData.canvasContext;
     const element = eventData.element;
@@ -101,7 +101,8 @@ export default class BrushTool extends BaseBrushTool {
    * Paints the data to the canvas.
    *
    * @private
-   * @param  {Object} eventData The data object associated with the event.
+   * @param  {Object} evt The data object associated with the event.
+   * @returns {void}
    */
   _paint(evt) {
     this.applyActiveStrategy(evt, this.configuration);
@@ -116,7 +117,7 @@ export default class BrushTool extends BaseBrushTool {
   }
 }
 
-function _overlappingStrategy(evt, configuration) {
+function _overlappingStrategy(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   const { rows, columns } = eventData.image;
@@ -146,7 +147,7 @@ function _overlappingStrategy(evt, configuration) {
   _drawMainColor(eventData, toolData, pointerArray);
 }
 
-function _nonOverlappingStrategy(evt, configuration) {
+function _nonOverlappingStrategy(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
   const { rows, columns } = eventData.image;

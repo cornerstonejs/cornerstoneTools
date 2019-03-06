@@ -19,6 +19,7 @@ const setters = {
    * Sets the brush radius, account for global min/max radius
    *
    * @param {number} radius
+   * @returns {void}
    */
   radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
@@ -29,6 +30,7 @@ const setters = {
    * Sets the brush color map to something other than the default
    *
    * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
+   * @returns {void}
    */
   brushColorMap: colors => {
     const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
@@ -126,8 +128,9 @@ const getters = {
 /**
  * EnabledElementCallback - Element specific initilisation.
  * @public
- * @param  {Object} enabledElement  The element on which the module is
+ * @param  {Object} enabledElement - The element on which the module is
  *                                  being initialised.
+ * @returns {void}
  */
 function enabledElementCallback(enabledElement) {
   setters.elementVisible(enabledElement);
@@ -137,7 +140,9 @@ function enabledElementCallback(enabledElement) {
  * RemoveEnabledElementCallback - Element specific memory cleanup.
  * @public
  * @param  {Object} enabledElement  The element being removed.
+ * @returns {void}
  */
+// TODO -> Test this before adding it to the module.
 function removeEnabledElementCallback(enabledElement) {
   if (!external.cornerstone) {
     return;
@@ -159,6 +164,7 @@ function removeEnabledElementCallback(enabledElement) {
 /**
  * OnRegisterCallback - Initialise the module when a new element is added.
  * @public
+ * @returns {void}
  */
 function onRegisterCallback() {
   _initDefaultColorMap();

@@ -75,6 +75,7 @@ function getBrowserInfo() {
  * @name setMaxSimultaneousRequests
  *
  * @param  {number} newMaxSimultaneousRequests The value.
+ * @returns {void}
  */
 function setMaxSimultaneousRequests(newMaxSimultaneousRequests) {
   configMaxSimultaneousRequests = newMaxSimultaneousRequests;

@@ -94,12 +94,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * Event handler for MOUSE_DOWN.
    *
    * @param {Object} evt - The event.
+   * @returns {boolean}
    */
   preMouseDownCallback(evt) {
     const eventData = evt.detail;
     const config = this.configuration;
-
-    const imageNeedsUpdate = false;
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
@@ -117,6 +116,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @event
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   activeMouseDragCallback(evt) {
     const config = this.configuration;
@@ -146,6 +146,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * Event handler for MOUSE_UP during the active loop.
    *
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   activeMouseUpCallback(evt) {
     const eventData = evt.detail;
@@ -174,6 +175,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param  {type} evt description
+   * @returns {void}
    */
   _renderHoverCursor(evt) {
     const eventData = evt.detail;
@@ -242,6 +244,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @public
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   newImageCallback(evt) {
     this._deselectAllTools(evt);
@@ -252,6 +255,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @public
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   enabledCallback(evt) {
     this._deselectAllTools(evt);
@@ -262,6 +266,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @public
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   passiveCallback(evt) {
     this._deselectAllTools(evt);
@@ -272,6 +277,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @public
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   disabledCallback(evt) {
     this._deselectAllTools(evt);
@@ -282,6 +288,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} eventData - Data object associated with the event.
+   * @returns {void}
    */
   _selectFreehandTool(eventData) {
     const config = this.configuration;
@@ -304,8 +311,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @private
    * @param {Object} element - The parent element of the freehand tool.
    * @param {Number} toolIndex - The ID of the freehand tool.
+   * @returns {void}
    */
-
   _activateFreehandTool(element, toolIndex) {
     const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data;
@@ -328,6 +335,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} eventData - Data object associated with the event.
+   * @returns {void}
    */
   _initialiseSculpting(eventData) {
     const element = eventData.element;
@@ -352,6 +360,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @private
    * @param {Object} eventData - Data object associated with the event.
    * @param {Object} points - Array of points.
+   * @returns {void}
    */
   _sculpt(eventData, points) {
     const config = this.configuration;
@@ -417,8 +426,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * Pushes one handle.
    *
    * @private
-   * @param {Number} i - The index of the handle to push.
-   * @param {Number} distanceToHandle - The distance between the mouse cursor and the handle.
+   * @param {number} i - The index of the handle to push.
+   * @param {number} distanceToHandle - The distance between the mouse cursor and the handle.
+   * @returns {void}
    */
   _pushOneHandle(i, distanceToHandle) {
     const { points, mousePoint, toolSize, image } = this._sculptData;
@@ -454,6 +464,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * new handles are placed on the circle defined by the the freehandSculpter's
    * toolSize and the mouse position.
    * @private
+   * @param {Array} pushedHandles
+   * @returns {void}
    */
   _insertNewHandles(pushedHandles) {
     const indiciesToInsertAfter = this._findNewHandleIndicies(pushedHandles);
@@ -477,7 +489,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @returns {Object} An array of indicies that describe where new handles should be inserted.
    */
   _findNewHandleIndicies(pushedHandles) {
-    const { element, points, maxSpacing } = this._sculptData;
+    const { points, maxSpacing } = this._sculptData;
     const indiciesToInsertAfter = [];
 
     for (let i = pushedHandles.first; i <= pushedHandles.last; i++) {
@@ -520,10 +532,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * _checkSpacing - description
    *@modifies indiciesToInsertAfter
    *
-   * @param  {type} i                     The index to check.
-   * @param  {type} points                The points.
-   * @param  {type} indiciesToInsertAfter The working list of indicies to
-   *                                      insert new points after.
+   * @param {number} i - The index to check.
+   * @param {Object} points - The points.
+   * @param {Array} indiciesToInsertAfter - The working list of indicies to insert new points after.
+   * @param {number} maxSpacing
+   * @returns {void}
    */
   _checkSpacing(i, points, indiciesToInsertAfter, maxSpacing) {
     const nextHandleIndex = this.constructor._getNextHandleIndex(
@@ -546,7 +559,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * mousePoint.
    *
    * @private
-   * @param {Object} insertIndex - The index to insert the new handle.
+   * @param {number} insertIndex - The index to insert the new handle.
+   * @returns {void}
    */
   _insertHandleRadially(insertIndex) {
     const { points } = this._sculptData;
@@ -577,6 +591,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * single point.
    *
    * @private
+   * @returns {void}
    */
   _consolidateHandles() {
     const { points } = this._sculptData;
@@ -597,10 +612,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * populated regions of the contour (see mergeCloseHandles).
    *
    * @private
-   * @returns {Object} An array of close pairs in points.
+   * @returns {Array} An array of close pairs in points.
    */
   _findCloseHandlePairs() {
-    const { points, element, minSpacing } = this._sculptData;
+    const { points, minSpacing } = this._sculptData;
     const closePairs = [];
     let length = points.length;
 
@@ -638,7 +653,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * iterative fashion to prevent generating a singularity in some edge cases.
    *
    * @private
-   * @param {Object} closePairs - An array of pairs of handle indicies.
+   * @param {Array} closePairs - An array of pairs of handle indicies.
+   * @returns {void}
    */
   _mergeCloseHandles(closePairs) {
     let removedIndexModifier = 0;
@@ -666,6 +682,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} handlePair - A pair of handle indicies.
+   * @returns {void}
    */
   _combineHandles(handlePair) {
     const { points, image } = this._sculptData;
@@ -701,6 +718,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} eventData - Data object associated with the event.
+   * @returns {void}
    */
   _configureToolSize(eventData) {
     const element = eventData.element;
@@ -742,6 +760,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} eventData - The data assoicated with the event.
+   * @returns {void}
    */
   _getMouseLocation(eventData) {
     const config = this.configuration;
@@ -757,6 +776,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @private
    * @param {Object} element - The viewport element to attach event listeners to.
    * @modifies {element}
+   * @returns {void}
    */
   _activateSculpt(element) {
     this._deactivateSculpt(element);
@@ -775,6 +795,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @private
    * @param {Object} element - The viewport element to remove event listeners from.
    * @modifies {element}
+   * @returns {void}
    */
   _deactivateSculpt(element) {
     element.removeEventListener(EVENTS.MOUSE_UP, this.activeMouseUpCallback);
@@ -792,6 +813,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} eventData - Data object associated with the event.
+   * @returns {void}
    */
   _invalidateToolData(eventData) {
     const config = this.configuration;
@@ -807,7 +829,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param {Object} evt - The event.
+   * @returns {void}
    */
+  // eslint-disable-next-line no-unused-vars
   _deselectAllTools(evt) {
     const config = this.configuration;
     const toolData = getToolState(this.element, this.referencedToolName);
@@ -853,9 +877,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param  {Object}  eventData    Data object associated with the event.
-   * @param  {Number}  radius       The distance from the mouse to the ROI
+   * @param  {Number}  radiusCanvas The distance from the mouse to the ROI
    *                                in canvas coordinates.
-   * @returns {Number}               The limited radius in canvas coordinates.
+   * @returns {Number}              The limited radius in canvas coordinates.
    */
   _limitCursorRadiusCanvas(eventData, radiusCanvas) {
     return this._limitCursorRadius(eventData, radiusCanvas, true);
@@ -867,9 +891,9 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    *
    * @private
    * @param  {Object}  eventData    Data object associated with the event.
-   * @param  {Number}  radius       The distance from the mouse to the ROI
+   * @param  {Number}  radiusImage  The distance from the mouse to the ROI
    *                                in image coordinates.
-   * @returns {Number}               The limited radius in image coordinates.
+   * @returns {Number}              The limited radius in image coordinates.
    */
   _limitCursorRadiusImage(eventData, radiusImage) {
     return this._limitCursorRadius(eventData, radiusImage, false);
@@ -884,7 +908,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @param  {Number}  radius       The distance from the mouse to the ROI.
    * @param  {Boolean} canvasCoords Whether the calculation should be performed
    *                                In canvas coordinates.
-   * @returns {Number}               The limited radius.
+   * @returns {Number}              The limited radius.
    */
   _limitCursorRadius(eventData, radius, canvasCoords = false) {
     const element = eventData.element;

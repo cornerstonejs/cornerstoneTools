@@ -110,6 +110,7 @@ export default function(evt) {
         handles.perpendicularEnd,
       ];
       const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
+
       drawLinkedTextBox(
         context,
         element,
@@ -169,6 +170,7 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   const widthText = ` W ${data.shortestDiameter}${suffix}`;
 
   const { labels } = data;
+
   if (labels && Array.isArray(labels)) {
     return [...labels, lengthText, widthText];
   }
