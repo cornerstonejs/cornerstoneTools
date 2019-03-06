@@ -175,6 +175,15 @@
         "doc",
         "code"
       ]
+    },
+    {
+      "login": "sisobus",
+      "name": "Sangkeun Kim",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/3329885?v=4",
+      "profile": "http://sisobus.com",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
