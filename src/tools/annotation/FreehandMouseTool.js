@@ -5,6 +5,7 @@ import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -1445,6 +1446,41 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     this.configuration.invalidColor = value;
     external.cornerstone.updateImage(this.element);
+  }
+
+  /**
+   * Ends the active drawing loop and removes the polygon.
+   *
+   * @public
+   * @param {Object} element - The element on which the roi is being drawn.
+   * @returns {undefined}
+   */
+  cancelDrawing(element) {
+    if (!this._drawing) {
+      return;
+    }
+    const toolState = getToolState(element, this.name);
+
+    const config = this.configuration;
+
+    const data = toolState.data[config.currentTool];
+
+    data.active = false;
+    data.highlight = false;
+    data.handles.invalidHandlePlacement = false;
+
+    // Reset the current handle
+    config.currentHandle = 0;
+    config.currentTool = -1;
+    data.canComplete = false;
+
+    removeToolState(element, this.name, data);
+
+    this._drawing = false;
+    state.isMultiPartToolActive = false;
+    this._deactivateDraw(element);
+
+    external.cornerstone.updateImage(element);
   }
 }
 
