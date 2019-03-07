@@ -2,6 +2,7 @@ import external from './../../../externalModules.js';
 import EVENTS from './../../../events.js';
 import { moveNewHandle } from './../../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
+import calculateLongestAndShortestDiameters from './utils/calculateLongestAndShortestDiameters.js';
 import {
   addToolState,
   removeToolState,
@@ -22,15 +23,32 @@ export default function(evt, interactionType) {
     measurementData.active = false;
     external.cornerstone.updateImage(element);
 
-    // Trigger measurement modified event
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
-    const modifiedEventData = {
-      toolName: this.name,
-      element,
-      measurementData,
+    const measurementModifiedHandler = () => {
+      const modifiedEventData = {
+        toolName: this.name,
+        element,
+        measurementData,
+      };
+
+      calculateLongestAndShortestDiameters(eventData, measurementData);
+
+      external.cornerstone.triggerEvent(
+        element,
+        EVENTS.MEASUREMENT_MODIFIED,
+        modifiedEventData
+      );
+
+      element.removeEventListener(
+        external.cornerstone.EVENTS.IMAGE_RENDERED,
+        measurementModifiedHandler
+      );
     };
 
-    external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
+    // Wait on image render before triggering the modified event
+    element.addEventListener(
+      external.cornerstone.EVENTS.IMAGE_RENDERED,
+      measurementModifiedHandler
+    );
   };
 
   // Associate this data with this imageId so we can render it and manipulate it
