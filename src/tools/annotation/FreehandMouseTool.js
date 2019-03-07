@@ -915,7 +915,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Force onImageRendered to fire
     external.cornerstone.updateImage(eventData.element);
-
     this.fireModifiedEvent(eventData.element, data);
   }
 
