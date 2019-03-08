@@ -11,8 +11,6 @@ export default function calculateLongestAndShortestDiameters(
     perpendicularEnd,
   } = measurementData.handles;
 
-  // UpdatePerpendicularLineHandles(eventData, measurementData);
-
   // Calculate the long axis length
   const dx = (start.x - end.x) * (columnPixelSpacing || 1);
   const dy = (start.y - end.y) * (rowPixelSpacing || 1);
