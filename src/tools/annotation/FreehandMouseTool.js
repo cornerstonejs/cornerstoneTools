@@ -864,7 +864,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     config.currentTool = toolState.data.length - 1;
 
-    config.activeDrawingToolReference = toolState.data[config.currentTool];
+    this._activeDrawingToolReference = toolState.data[config.currentTool];
   }
 
   /**
@@ -1291,7 +1291,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   _deactivateDraw(element) {
     this._drawing = false;
     state.isMultiPartToolActive = false;
-    this.configuration.activeDrawingToolReference = null;
+    this._activeDrawingToolReference = null;
 
     element.removeEventListener(
       EVENTS.MOUSE_DOWN,
@@ -1492,14 +1492,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   newImageCallback(evt) {
     const config = this.configuration;
 
-    if (!(this._drawing && config.activeDrawingToolReference)) {
+    if (!(this._drawing && this._activeDrawingToolReference)) {
       return;
     }
 
     // Actively drawing but scrolled to different image.
 
     const element = evt.detail.element;
-    const data = config.activeDrawingToolReference;
+    const data = this._activeDrawingToolReference;
 
     data.active = false;
     data.highlight = false;
@@ -1537,7 +1537,6 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
-    activeDrawingToolReference: null,
   };
 }
 
