@@ -1,4 +1,9 @@
-// Calculate the longest and shortest diameters for the given measurementData
+/**
+ * Calculates longest and shortest diameters using measurement handles and pixelSpacing
+ * @param  {Object} eventData
+ * @param  {Object} measurementData
+ * @returns {void}
+ */
 export default function calculateLongestAndShortestDiameters(
   eventData,
   measurementData
