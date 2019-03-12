@@ -22,33 +22,6 @@ export default function(evt, interactionType) {
   const doneCallback = () => {
     measurementData.active = false;
     external.cornerstone.updateImage(element);
-
-    const measurementModifiedHandler = () => {
-      const modifiedEventData = {
-        toolName: this.name,
-        element,
-        measurementData,
-      };
-
-      calculateLongestAndShortestDiameters(eventData, measurementData);
-
-      external.cornerstone.triggerEvent(
-        element,
-        EVENTS.MEASUREMENT_MODIFIED,
-        modifiedEventData
-      );
-
-      element.removeEventListener(
-        external.cornerstone.EVENTS.IMAGE_RENDERED,
-        measurementModifiedHandler
-      );
-    };
-
-    // Wait on image render before triggering the modified event
-    element.addEventListener(
-      external.cornerstone.EVENTS.IMAGE_RENDERED,
-      measurementModifiedHandler
-    );
   };
 
   // Associate this data with this imageId so we can render it and manipulate it
@@ -89,6 +62,20 @@ export default function(evt, interactionType) {
         perpendicularStart.locked = false;
 
         external.cornerstone.updateImage(element);
+
+        const modifiedEventData = {
+          toolType: this.name,
+          element,
+          measurementData,
+        };
+
+        calculateLongestAndShortestDiameters(eventData, measurementData);
+
+        external.cornerstone.triggerEvent(
+          element,
+          EVENTS.MEASUREMENT_MODIFIED,
+          modifiedEventData
+        );
       },
     },
     interactionType

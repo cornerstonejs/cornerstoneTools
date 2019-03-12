@@ -48,31 +48,18 @@ export default function(
 
     external.cornerstone.updateImage(element);
 
-    const measurementModifiedHandler = () => {
-      const modifiedEventData = {
-        toolType,
-        element,
-        measurementData: data,
-      };
-
-      calculateLongestAndShortestDiameters(mouseEventData, data);
-
-      external.cornerstone.triggerEvent(
-        element,
-        EVENTS.MEASUREMENT_MODIFIED,
-        modifiedEventData
-      );
-
-      element.removeEventListener(
-        external.cornerstone.EVENTS.IMAGE_RENDERED,
-        measurementModifiedHandler
-      );
+    const modifiedEventData = {
+      toolType,
+      element,
+      measurementData: data,
     };
 
-    // Wait on image render before triggering the modified event
-    element.addEventListener(
-      external.cornerstone.EVENTS.IMAGE_RENDERED,
-      measurementModifiedHandler
+    calculateLongestAndShortestDiameters(mouseEventData, data);
+
+    external.cornerstone.triggerEvent(
+      element,
+      EVENTS.MEASUREMENT_MODIFIED,
+      modifiedEventData
     );
   };
 
