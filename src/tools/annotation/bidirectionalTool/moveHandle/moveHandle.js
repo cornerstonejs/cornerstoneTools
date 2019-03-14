@@ -2,6 +2,7 @@ import external from './../../../../externalModules.js';
 import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
+import calculateLongestAndShortestDiameters from '../utils/calculateLongestAndShortestDiameters.js';
 
 export default function(
   mouseEventData,
@@ -44,6 +45,8 @@ export default function(
       element,
       measurementData: data,
     };
+
+    calculateLongestAndShortestDiameters(mouseEventData, data);
 
     external.cornerstone.triggerEvent(
       element,

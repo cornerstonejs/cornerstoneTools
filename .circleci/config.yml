@@ -3,7 +3,7 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:latest
+    - image: circleci/node:10.0.0
 
 jobs:
   ##################
@@ -15,15 +15,15 @@ jobs:
       - checkout
       - attach_workspace:
           at: ~/repo
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "package.json" }}
-            - v1-dependencies-
-      - run: npm install
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+      # - restore_cache:
+      #     keys:
+      #       - v1-dependencies-{{ checksum "package.json" }}
+      #       - v1-dependencies-
+      # - run: npm install
+      # - save_cache:
+      #     paths:
+      #       - node_modules
+      #     key: v1-dependencies-{{ checksum "package.json" }}
       - persist_to_workspace:
           root: ~/repo
           paths: .

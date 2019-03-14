@@ -2,6 +2,7 @@ import external from './../../../../externalModules.js';
 import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
+import calculateLongestAndShortestDiameters from '../utils/calculateLongestAndShortestDiameters.js';
 
 const touchEndEvents = [
   EVENTS.TOUCH_END,
@@ -47,14 +48,19 @@ export default function(
 
     external.cornerstone.updateImage(element);
 
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const modifiedEventData = {
       toolType,
       element,
       measurementData: data,
     };
 
-    external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
+    calculateLongestAndShortestDiameters(mouseEventData, data);
+
+    external.cornerstone.triggerEvent(
+      element,
+      EVENTS.MEASUREMENT_MODIFIED,
+      modifiedEventData
+    );
   };
 
   handle.active = true;
