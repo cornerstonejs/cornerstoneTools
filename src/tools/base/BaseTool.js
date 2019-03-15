@@ -49,8 +49,7 @@ class BaseTool {
     // Configuration is set at tool initalization
     this._configuration = Object.assign({}, configuration);
 
-    // True if tool has a custom cursor, causes the frame to render on every mouse move when the tool is active.
-    this.svgCursor = null;
+    // True if tool has a canvas cursor, causes the frame to render on every mouse move when the tool is active.
     this.hasCanvasCursor = false;
     this.hideDefaultCursor = false;
 
