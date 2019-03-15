@@ -1,4 +1,5 @@
 import BaseTool from './base/BaseTool.js';
+import MouseCursor from '../util/MouseCursor.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -26,6 +27,9 @@ export default class StackScrollTool extends BaseTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+
+    this.configuration.svgCursor =
+      this.configuration.svgCursor || stackScrollCursor;
 
     this.mouseDragCallback = this._dragCallback.bind(this);
     this.touchDragCallback = this._dragCallback.bind(this);
@@ -81,3 +85,13 @@ export default class StackScrollTool extends BaseTool {
     );
   }
 }
+
+const stackScrollCursor = new MouseCursor(
+  `<svg
+    data-icon="stackScroll" role="img" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 28" width="32" height="32"
+  >
+    <path fill="#ffffff" d="M24 21v2c0 0.547-0.453 1-1 1h-22c-0.547 0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1zM24 13v2c0 0.547-0.453 1-1 1h-22c-0.547 0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1zM24 5v2c0 0.547-0.453 1-1 1h-22c-0.547 0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1z"></path>
+  </svg>`,
+  'center32'
+);
