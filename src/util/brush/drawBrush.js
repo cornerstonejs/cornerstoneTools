@@ -7,24 +7,26 @@ import { draw, fillBox } from '../../drawing/index.js';
  * @name drawBrushPixels
  *
  * @param  {Object[]} pointerArray        The array of points to draw.
- * @param  {number[]} storedPixels        The brush mask to modify.
- * @param  {number} columns             The number of columns in the mask.
+ * @param  {number[]} toolData            The cornerstoneTools annotation to modify.
+ * @param  {number} columns               The number of columns in the mask.
  * @param  {boolean} [shouldErase = false] If true the modified mask pixels will be set to 0, rather than 1.
  * @returns {void}
  */
-function drawBrushPixels(
-  pointerArray,
-  storedPixels,
-  columns,
-  shouldErase = false
-) {
+function drawBrushPixels(pointerArray, toolData, columns, shouldErase = false) {
   const getPixelIndex = (x, y) => y * columns + x;
+
+  const pixelData = toolData.pixelData;
 
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
 
-    storedPixels[spIndex] = shouldErase ? 0 : 1;
+    pixelData[spIndex] = shouldErase ? 0 : 1;
   });
+
+  // If Erased the last pixel, delete the pixelData array.
+  if (shouldErase && !pixelData.some(element => element !== 0)) {
+    delete toolData.pixelData;
+  }
 }
 
 /**
