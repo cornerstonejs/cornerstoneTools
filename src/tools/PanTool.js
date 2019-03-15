@@ -1,5 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import svgCursors from '../assets/svgCursors.js';
 
 /**
  * @public
@@ -18,6 +19,8 @@ export default class PanTool extends BaseTool {
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
+
+    this.svgCursor = svgCursors.pan;
 
     this.initialConfiguration = initialConfiguration;
     // Touch

@@ -7,6 +7,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from './base/BaseTool.js';
+import { hideCursor, resetCursor } from '../store/setToolCursor.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
@@ -34,7 +35,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     super(initialConfiguration);
 
-    this.hasCursor = true;
+    this.hasCanvasCursor = true;
     this.isMultiPartTool = true;
     this.initialConfiguration = initialConfiguration;
     this.referencedToolName = initialConfiguration.referencedToolName;
@@ -303,6 +304,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
 
     config.currentTool = closestToolIndex;
+    hideCursor(element);
   }
 
   /**
@@ -843,6 +845,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
         toolData.data[i].active = false;
       }
     }
+
+    resetCursor(this.element);
 
     external.cornerstone.updateImage(this.element);
   }

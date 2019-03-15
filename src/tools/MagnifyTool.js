@@ -1,6 +1,7 @@
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
+import svgCursors from '../assets/svgCursors.js';
 
 /**
  * @public
@@ -19,6 +20,7 @@ export default class MagnifyTool extends BaseTool {
         magnifySize: 300,
         magnificationLevel: 2,
       },
+      mixins: ['activeOrDisabledBinaryTool'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -27,6 +29,8 @@ export default class MagnifyTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
+
+    this.svgCursor = svgCursors.magnify;
 
     // Mode Callbacks: (element, options)
     this.activeCallback = this._createMagnificationCanvas.bind(this);

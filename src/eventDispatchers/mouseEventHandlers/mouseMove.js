@@ -34,9 +34,9 @@ export default function(evt) {
 
   let imageNeedsUpdate = false;
 
-  // If any tools are active, check if they have a cursor, and if so update image.
+  // If any tools are active, check if they have a canvas cursor, and if so update image.
   if (activeTools.length > 0) {
-    imageNeedsUpdate = activeTools.some(tool => tool.hasCursor);
+    imageNeedsUpdate = activeTools.some(tool => tool.hasCanvasCursor);
   }
 
   tools = getToolsWithDataForElement(element, tools);

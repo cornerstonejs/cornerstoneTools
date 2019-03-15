@@ -35,7 +35,8 @@ class BaseBrushTool extends BaseTool {
       mixins,
     });
 
-    this.hasCursor = true;
+    this.hideDefaultCursor = true;
+    this.hasCanvasCursor = true;
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);

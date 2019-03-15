@@ -1,6 +1,7 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
+import svgCursors from '../assets/svgCursors.js';
 
 /**
  * @public
@@ -25,6 +26,8 @@ export default class RotateTool extends BaseTool {
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
+
+    this.svgCursor = svgCursors.rotate;
 
     this.initialConfiguration = initialConfiguration;
   }

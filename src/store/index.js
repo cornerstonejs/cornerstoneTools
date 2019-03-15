@@ -19,6 +19,8 @@ export const state = {
   handleRadius: 6,
   deleteIfHandleOutsideImage: true,
   preventHandleOutsideImage: false,
+  // Cursor
+  svgCursorUrl: null,
 };
 
 export const getters = {
