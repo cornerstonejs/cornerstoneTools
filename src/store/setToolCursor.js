@@ -8,14 +8,13 @@ export { setSVGCursor, resetCursor, hideCursor };
  * @param {Object} tool The tool to fetch the cursor from.
  */
 function setSVGCursor(tool, element) {
-  //clearSVGCursor(element);
   console.log('attempting to set cursor...');
   // TODO: (state vs options) Exit if cursors wasn't updated
   // TODO: Exit if invalid options to create cursor
 
   // Note: Max size of an SVG cursor is 128x128, default is 32x32.
-  const cursorBlob = tool.svgCursor;
-  const mousePoint = cursorBlob.mousePoint ? cursorBlob.mousePoint : '4 4';
+  const cursorBlob = tool.svgCursor.blob;
+  const mousePoint = tool.svgCursor.mousePoint;
 
   console.log(cursorBlob);
 

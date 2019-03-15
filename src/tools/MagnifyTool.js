@@ -1,7 +1,18 @@
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
-import svgCursors from '../assets/svgCursors.js';
+import { hideCursor, setSVGCursor } from '../store/setToolCursor.js';
+import MouseCursor from '../util/MouseCursor.js';
+import mouseCursorPoints from '../util/mouseCursorPoints.js';
+
+const magnifyCursor = new MouseCursor(
+  `
+  <svg data-icon="magnify" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="32" height="32">
+    <path fill="#ffffff" d="M508.5 481.6l-129-129c-2.3-2.3-5.3-3.5-8.5-3.5h-10.3C395 312 416 262.5 416 208 416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c54.5 0 104-21 141.1-55.2V371c0 3.2 1.3 6.2 3.5 8.5l129 129c4.7 4.7 12.3 4.7 17 0l9.9-9.9c4.7-4.7 4.7-12.3 0-17zM208 384c-97.3 0-176-78.7-176-176S110.7 32 208 32s176 78.7 176 176-78.7 176-176 176z"/>
+  </svg>
+  `,
+  mouseCursorPoints.topLeft
+);
 
 /**
  * @public
@@ -20,7 +31,6 @@ export default class MagnifyTool extends BaseTool {
         magnifySize: 300,
         magnificationLevel: 2,
       },
-      mixins: ['activeOrDisabledBinaryTool'],
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -30,7 +40,7 @@ export default class MagnifyTool extends BaseTool {
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 
-    this.svgCursor = svgCursors.magnify;
+    this.svgCursor = magnifyCursor;
 
     // Mode Callbacks: (element, options)
     this.activeCallback = this._createMagnificationCanvas.bind(this);
@@ -59,6 +69,8 @@ export default class MagnifyTool extends BaseTool {
     // On next frame
     window.requestAnimationFrame(() => this._drawMagnificationTool(evt));
 
+    hideCursor(evt.detail.element);
+
     evt.preventDefault();
     evt.stopPropagation();
   }
@@ -73,9 +85,10 @@ export default class MagnifyTool extends BaseTool {
   _removeMagnifyingGlass(evt) {
     const element = evt.detail.element;
 
-    element.querySelector('.magnifyTool').style.display = 'none';
     // Re-enable the mouse cursor
-    document.body.style.cursor = 'default';
+    setSVGCursor(this, element);
+
+    element.querySelector('.magnifyTool').style.display = 'none';
     this._removeZoomElement();
   }
 
@@ -175,7 +188,7 @@ export default class MagnifyTool extends BaseTool {
     magnifyCanvas.style.display = 'block';
 
     // Hide the mouse cursor, so the user can see better
-    document.body.style.cursor = 'none';
+    //document.body.style.cursor = 'none';
   }
 
   /**

@@ -57,10 +57,10 @@ const setToolActiveForElement = function(
         options[`is${interactionType}Active`] = false;
       }
     });
-  }
 
-  if (tool.supportedInteractionTypes.includes('Mouse')) {
-    _setCursorIfPrimary(element, options, tool);
+    if (tool.supportedInteractionTypes.includes('Mouse')) {
+      _setCursorIfPrimary(element, options, tool);
+    }
   }
 
   // Resume normal behavior
@@ -68,10 +68,6 @@ const setToolActiveForElement = function(
 };
 
 function _setCursorIfPrimary(element, options, tool) {
-  console.log('in _setCursorIfPrimary');
-
-  console.log(options);
-
   let mouseButtonMask;
 
   if (typeof options === 'number') {
@@ -79,8 +75,6 @@ function _setCursorIfPrimary(element, options, tool) {
   } else {
     mouseButtonMask = options.mouseButtonMask;
   }
-
-  console.log(mouseButtonMask);
 
   if (mouseButtonMask.includes(1)) {
     if (tool.svgCursor) {
