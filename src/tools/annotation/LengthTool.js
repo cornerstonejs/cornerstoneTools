@@ -1,5 +1,6 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import MouseCursor from '../../util/MouseCursor.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
@@ -27,6 +28,9 @@ export default class LengthTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: lengthCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -238,3 +242,18 @@ export default class LengthTool extends BaseAnnotationTool {
     }
   }
 }
+
+const lengthCursor = new MouseCursor(
+  `<svg
+    data-icon="length" role="img" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24" width="32" height="32"
+  >
+  <g id="length-group" fill="none" stroke-width="1" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+    <circle id="length-circle" cx="6.5" cy="6.5" r="6" />
+    <path id="length-plus" d="M6.5,3 l0,7 M3,6.5 l7,0"></path>
+    <path id="length-dashes" d="m22.5,6 -16.5,16.5" stroke-width="3" stroke-dasharray="0.6666,5" />
+  </g>
+</svg>
+`,
+  'topLeft'
+);
