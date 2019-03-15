@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import MouseCursor from '../util/MouseCursor.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
 
@@ -36,6 +37,8 @@ export default class ZoomTool extends BaseTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+
+    this.configuration.svgCursor = this.configuration.svgCursor || zoomCursor;
   }
 
   touchDragCallback(evt) {
@@ -219,3 +222,23 @@ function zoomToCenterStrategy(evt, { invert, maxScale, minScale }) {
     minScale,
   });
 }
+
+const zoomCursor = new MouseCursor(
+  `<svg
+    data-icon="zoom" role="img" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 640 512" width="40" height="32"
+  >
+    <path fill="#ffffff" d="M508.5 481.6l-129-129c-2.3-2.3-5.3-3.5-8.5-3.5h-10.3C395
+      312 416 262.5 416 208 416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c54.5
+      0 104-21 141.1-55.2V371c0 3.2 1.3 6.2 3.5 8.5l129 129c4.7 4.7 12.3 4.7 17
+      0l9.9-9.9c4.7-4.7 4.7-12.3 0-17zM208 384c-97.3 0-176-78.7-176-176S110.7 32 208
+      32s176 78.7 176 176-78.7 176-176 176z"
+    />
+    <path fill="#ffffff" transform="scale(0.22,0.22) translate(1400,0)" d="M1216
+      320q0 26-19 45t-45 19h-128v1024h128q26 0 45 19t19 45-19 45l-256 256q-19
+      19-45 19t-45-19l-256-256q-19-19-19-45t19-45 45-19h128v-1024h-128q-26
+      0-45-19t-19-45 19-45l256-256q19-19 45-19t45 19l256 256q19 19 19 45z"
+    />
+  </svg>`,
+  'topLeft'
+);
