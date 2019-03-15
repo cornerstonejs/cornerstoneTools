@@ -1,5 +1,6 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import MouseCursor from '../../util/MouseCursor.js';
 // State
 import textStyle from './../../stateManagement/textStyle.js';
 import {
@@ -41,6 +42,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+
+    this.configuration.svgCursor =
+      this.configuration.svgCursor || cobbAngleCursor;
     this.hasIncomplete = false;
   }
 
@@ -372,3 +376,19 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 }
+
+const cobbAngleCursor = new MouseCursor(
+  `<svg
+    data-icon="cobbAngle" role="img" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 32 32" width="32" height="32"
+  >
+  <path stroke="white" d="M28.59 2.34L3.82 12.32"></path>
+  <path stroke="white" d="M28.59 29.66L3.82 19.68"></path>
+  <path stroke="white" stroke-dasharray="2" fill-opacity="0" d="M12.37
+    23.06C12.67 22.36 12.85 21.93 12.92 21.76C14.6 17.8 14.68 13.35 13.15
+    9.33C13.11 9.24 13.02 9 12.88 8.63">
+  </path>
+</svg>
+`,
+  'center32'
+);
