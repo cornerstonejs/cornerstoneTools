@@ -26,15 +26,15 @@ export default class CrosshairsTool extends BaseTool {
     const defaultConfig = {
       name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: crosshairsCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor =
-      this.configuration.svgCursor || crosshairsCursor;
 
     this.mouseDownCallback = this._chooseLocation.bind(this);
     this.mouseDragCallback = this._chooseLocation.bind(this);

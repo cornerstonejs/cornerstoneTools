@@ -20,6 +20,7 @@ export default class MagnifyTool extends BaseTool {
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2,
+        svgCursor: magnifyCursor,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -29,9 +30,6 @@ export default class MagnifyTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
-
-    this.configuration.svgCursor =
-      this.configuration.svgCursor || magnifyCursor;
 
     // Mode Callbacks: (element, options)
     this.activeCallback = this._createMagnificationCanvas.bind(this);

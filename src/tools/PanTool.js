@@ -15,12 +15,13 @@ export default class PanTool extends BaseTool {
     const defaultConfig = {
       name: 'Pan',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: panCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
-
-    this.configuration.svgCursor = this.configuration.svgCursor || panCursor;
 
     this.initialConfiguration = initialConfiguration;
     // Touch

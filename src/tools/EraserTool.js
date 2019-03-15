@@ -17,14 +17,15 @@ export default class EraserTool extends BaseTool {
     const defaultConfig = {
       name: 'Eraser',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: eraserCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor = this.configuration.svgCursor || eraserCursor;
 
     this.preMouseDownCallback = this._deleteAllNearbyTools.bind(this);
     this.preTouchStartCallback = this._deleteAllNearbyTools.bind(this);

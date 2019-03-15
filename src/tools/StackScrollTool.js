@@ -20,6 +20,7 @@ export default class StackScrollTool extends BaseTool {
       configuration: {
         loop: false,
         allowSkipping: true,
+        svgCursor: stackScrollCursor,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -27,9 +28,6 @@ export default class StackScrollTool extends BaseTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor =
-      this.configuration.svgCursor || stackScrollCursor;
 
     this.mouseDragCallback = this._dragCallback.bind(this);
     this.touchDragCallback = this._dragCallback.bind(this);

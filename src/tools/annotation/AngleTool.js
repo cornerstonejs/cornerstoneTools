@@ -38,14 +38,15 @@ class AngleTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: angleCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor = this.configuration.svgCursor || angleCursor;
     this.preventNewMeasurement = false;
   }
 

@@ -36,15 +36,15 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: cobbAngleCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor =
-      this.configuration.svgCursor || cobbAngleCursor;
     this.hasIncomplete = false;
   }
 

@@ -30,6 +30,7 @@ export default class ZoomTool extends BaseTool {
         preventZoomOutsideImage: false,
         minScale: 0.25,
         maxScale: 20.0,
+        svgCursor: zoomCursor,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -37,8 +38,6 @@ export default class ZoomTool extends BaseTool {
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
-
-    this.configuration.svgCursor = this.configuration.svgCursor || zoomCursor;
   }
 
   touchDragCallback(evt) {

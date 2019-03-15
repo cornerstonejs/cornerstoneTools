@@ -1,6 +1,7 @@
 /* eslint no-alert: 0 */
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import MouseCursor from '../../util/MouseCursor.js';
 
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
@@ -37,6 +38,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         drawHandles: false,
         drawHandlesOnHover: true,
         arrowFirst: true,
+        svgCursor: arrowAnnotateCursor,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -45,6 +47,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
     this.initialConfiguration = initialConfiguration;
     this.preventNewMeasurement = false;
+
+    console.log(this.configuration);
   }
 
   createNewMeasurement(evt) {
@@ -340,3 +344,18 @@ function getTextCallback(doneChangingTextCallback) {
 function changeTextCallback(data, eventData, doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Change your annotation:'));
 }
+
+const arrowAnnotateCursor = new MouseCursor(
+  `<svg
+    data-icon="arrowAnnotate" role="img" xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24" width="32" height="32"
+  >
+  <g id="arrowAnnotate-group" fill="none" stroke-width="1" stroke="white" stroke-linecap="round" stroke-linejoin="round">
+    <circle id="arrowAnnotate-circle" cx="6.5" cy="6.5" r="6" />
+    <path id="arrowAnnotate-plus" d="M6.5,3 l0,7 M3,6.5 l7,0"></path>
+    <path id="arrowAnnotate-arrow" d="M23,7 l-15,15 M7,17 l0,6 6,0" stroke-width="2" />
+  </g>
+</svg>
+`,
+  'topLeft'
+);

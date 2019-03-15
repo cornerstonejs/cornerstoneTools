@@ -22,12 +22,13 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        svgCursor: rotateCursor,
+      },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
-
-    this.configuration.svgCursor = this.configuration.svgCursor || rotateCursor;
 
     this.initialConfiguration = initialConfiguration;
   }
