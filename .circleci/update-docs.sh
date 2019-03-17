@@ -4,6 +4,12 @@
 # https://stackoverflow.com/a/3355423/1867984
 cd "$(dirname "$0")"
 
+## Generate DOCMA API Docs
+cd ..
+npm run docs:api
+cd ./.circleci/
+
+
 # Generate all version's GitBook output
 # For each directory in /docs ...
 cd ./../docs/
