@@ -31,6 +31,7 @@ jobs:
             - attach_workspace:
                   at: ~/repo
             - run: npm install
+            - run: npm rebuild
             - run:
                   name: Install codecov
                   command: npm install --save-dev codecov
@@ -52,6 +53,7 @@ jobs:
             - attach_workspace:
                   at: ~/repo
             - run: npm install
+            - run: npm rebuild
             - run:
                   name: Build our app
                   command: npm run build
