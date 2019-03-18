@@ -174,9 +174,6 @@ export default class MagnifyTool extends BaseTool {
     magnifyCanvas.style.top = `${magnifyPosition.top}px`;
     magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
-
-    // Hide the mouse cursor, so the user can see better
-    //document.body.style.cursor = 'none';
   }
 
   /**
