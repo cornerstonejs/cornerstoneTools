@@ -74,7 +74,7 @@ export default class MagnifyTool extends BaseTool {
     const element = evt.detail.element;
 
     // Re-enable the mouse cursor
-    setSVGCursor(this);
+    setSVGCursor(this.element, this.svgCursor);
 
     element.querySelector('.magnifyTool').style.display = 'none';
     this._removeZoomElement();

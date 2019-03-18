@@ -78,7 +78,7 @@ function _setCursorIfPrimary(element, options, tool) {
 
   if (mouseButtonMask.includes(1)) {
     if (tool.svgCursor) {
-      setSVGCursor(tool);
+      setSVGCursor(tool.element, tool.svgCursor);
     } else if (tool.hideDefaultCursor) {
       hideCursor(element);
     } else {
