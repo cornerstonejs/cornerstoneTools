@@ -6,7 +6,7 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  * If a tool is specified, then only clear that tool.
  *
  * @param  {HTMLElement} element The element to fetch the stack from.
- * @param  {type} [toolName]  A tool to filter on.
+ * @param  {string} [toolName]  A tool to filter on.
  * @returns {Object} A reference to the cleaned global toolState.
  */
 export default function(element, toolName) {

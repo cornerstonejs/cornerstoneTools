@@ -7,7 +7,7 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  * state.
  *
  * @param  {HTMLElement} element The element to fetch the stack from.
- * @param  {type} [toolName]  A tool to filter on.
+ * @param  {string} [toolName]  A tool to filter on.
  * @returns {object[]}     The requested toolState.
  */
 export default function(element, toolName) {

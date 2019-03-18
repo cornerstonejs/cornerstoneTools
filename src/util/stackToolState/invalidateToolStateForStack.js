@@ -6,7 +6,7 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  * has an `invalidated` method.
  *
  * @param  {HTMLElement} element - The element to fetch the stack from.
- * @param  {type} [toolName] - A tool to filter on.
+ * @param  {string} [toolName] - A tool to filter on.
  * @returns {Object} A reference to the altered global toolState.
  */
 export default function(element, toolName) {
