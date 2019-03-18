@@ -1,6 +1,5 @@
 import BaseTool from './base/BaseTool.js';
 import external from './../externalModules.js';
-import MouseCursor from '../util/MouseCursor.js';
 
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import {
@@ -26,9 +25,7 @@ export default class CrosshairsTool extends BaseTool {
     const defaultConfig = {
       name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: crosshairsCursor,
-      },
+      svgCursor: crosshairsCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -195,8 +192,7 @@ export default class CrosshairsTool extends BaseTool {
   }
 }
 
-const crosshairsCursor = new MouseCursor(
-  `<svg
+const crosshairsCursor = `<svg
     data-icon="crosshairs" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -212,5 +208,4 @@ const crosshairsCursor = new MouseCursor(
       154.5-278.5t278.5-154.5v-143q0-26 19-45t45-19h128q26 0 45 19t19 45v143q161
       37 278.5 154.5t154.5 278.5h143q26 0 45 19t19 45z"
     />
-  </svg>`
-);
+  </svg>`;

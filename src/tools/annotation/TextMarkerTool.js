@@ -1,5 +1,4 @@
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 import external from './../../externalModules.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -29,8 +28,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         ascending: true,
         loop: false,
         changeTextCallback,
-        svgCursor: textMarkerCursor,
       },
+      svgCursor: textMarkerCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -235,8 +234,7 @@ const changeTextCallback = (data, eventData, doneChangingTextCallback) => {
  * @param {string} text - The new text
  */
 
-const textMarkerCursor = new MouseCursor(
-  `<svg
+const textMarkerCursor = `<svg
      data-icon="textMarker" role="img" xmlns="http://www.w3.org/2000/svg"
      width="16" height="16" viewBox="0 0 1792 1792"
    >
@@ -251,5 +249,4 @@ const textMarkerCursor = new MouseCursor(
     0-174.5-10t-174.5-10q-8 0-26.5 4t-21.5 4q-80 14-188 14z"
   />
  </svg>
- `
-);
+ `;

@@ -1,6 +1,5 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -42,8 +41,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
-        svgCursor: ellipticalRoiCursor,
       },
+      svgCursor: ellipticalRoiCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -492,8 +491,7 @@ function _getEllipseImageCoordinates(startHandle, endHandle) {
   };
 }
 
-const ellipticalRoiCursor = new MouseCursor(
-  `<svg
+const ellipticalRoiCursor = `<svg
     data-icon="ellipse" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -502,5 +500,4 @@ const ellipticalRoiCursor = new MouseCursor(
       385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5
       279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"
     />
-  </svg>`
-);
+  </svg>`;

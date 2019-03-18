@@ -1,6 +1,5 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 
 /**
  * @public
@@ -15,9 +14,7 @@ export default class PanTool extends BaseTool {
     const defaultConfig = {
       name: 'Pan',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: panCursor,
-      },
+      svgCursor: panCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -64,8 +61,7 @@ export default class PanTool extends BaseTool {
   }
 }
 
-const panCursor = new MouseCursor(
-  `<svg
+const panCursor = `<svg
     data-icon="pan" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -77,5 +73,4 @@ const panCursor = new MouseCursor(
       144 355 355 355-355-144-144q-31-30-14-69 17-40 59-40h448q26 0 45 19t19
       45v448q0 42-39 59-13 5-25 5-26 0-45-19z"
     />
-  </svg>`
-);
+  </svg>`;

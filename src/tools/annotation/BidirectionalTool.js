@@ -1,5 +1,4 @@
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 
 import createNewMeasurement from './bidirectionalTool/createNewMeasurement.js';
 import pointNearTool from './bidirectionalTool/pointNearTool.js';
@@ -37,8 +36,8 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         shadow: shadowConfig,
         drawHandlesOnHover: true,
         additionalData: [],
-        svgCursor: bidirectionalCursor,
       },
+      svgCursor: bidirectionalCursor,
     };
 
     const mergedConfiguration = Object.assign(
@@ -63,8 +62,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
   }
 }
 
-const bidirectionalCursor = new MouseCursor(
-  `<svg
+const bidirectionalCursor = `<svg
     data-icon="bidirectional" role="img" xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 48 48" width="32" height="32"
   >
@@ -74,5 +72,4 @@ const bidirectionalCursor = new MouseCursor(
     <path fill="#ffffff" stroke="#ffffff" d="M28.87 3.19C28.87 3.87 28.31 4.43 27.63 4.43C26.95 4.43 26.4 3.87 26.4 3.19C26.4 2.51 26.95 1.95 27.63 1.95C28.31 1.95 28.87 2.51 28.87 3.19Z"></path>
     <path fill="#ffffff" stroke="#ffffff" d="M28.87 15.75C28.87 16.43 28.31 16.99 27.63 16.99C26.95 16.99 26.4 16.43 26.4 15.75C26.4 15.07 26.95 14.51 27.63 14.51C28.31 14.51 28.87 15.07 28.87 15.75Z"></path>
     <path fill="#ffffff" stroke="#ffffff" d="M4.73 28.44C4.73 29.12 4.17 29.68 3.49 29.68C2.81 29.68 2.25 29.12 2.25 28.44C2.25 27.76 2.81 27.2 3.49 27.2C4.17 27.2 4.73 27.76 4.73 28.44Z"></path>
-</svg>`
-);
+</svg>`;

@@ -20,6 +20,7 @@ class BaseAnnotationTool extends BaseTool {
     configuration,
     supportedInteractionTypes,
     mixins,
+    svgCursor,
   }) {
     super({
       name,
@@ -28,6 +29,7 @@ class BaseAnnotationTool extends BaseTool {
       configuration,
       supportedInteractionTypes,
       mixins,
+      svgCursor,
     });
   }
 

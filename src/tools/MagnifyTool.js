@@ -2,7 +2,6 @@ import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
 import { hideCursor, setSVGCursor } from '../store/setToolCursor.js';
-import MouseCursor from '../util/MouseCursor.js';
 
 /**
  * @public
@@ -20,8 +19,8 @@ export default class MagnifyTool extends BaseTool {
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2,
-        svgCursor: magnifyCursor,
       },
+      svgCursor: magnifyCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -278,8 +277,7 @@ export default class MagnifyTool extends BaseTool {
   }
 }
 
-const magnifyCursor = new MouseCursor(
-  `
+const magnifyCursor = `
   <svg
     data-icon="magnify" role="img" xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 512 512" width="32" height="32"
@@ -291,5 +289,4 @@ const magnifyCursor = new MouseCursor(
       32s176 78.7 176 176-78.7 176-176 176z"
     />
   </svg>
-  `
-);
+  `;

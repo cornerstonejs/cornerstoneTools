@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
 
@@ -17,9 +16,7 @@ export default class EraserTool extends BaseTool {
     const defaultConfig = {
       name: 'Eraser',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: eraserCursor,
-      },
+      svgCursor: eraserCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -58,8 +55,7 @@ export default class EraserTool extends BaseTool {
   }
 }
 
-const eraserCursor = new MouseCursor(
-  `<svg
+const eraserCursor = `<svg
     data-icon="eraser" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="28" viewBox="0 0 2048 1792"
   >
@@ -68,5 +64,4 @@ const eraserCursor = new MouseCursor(
       0-69.5-20.5t-47.5-54.5q-15-34-9.5-71.5t30.5-65.5l896-1024q38-44 96-44h768q38
       0 69.5 20.5t47.5 54.5z"
     />
-  </svg>`
-);
+  </svg>`;

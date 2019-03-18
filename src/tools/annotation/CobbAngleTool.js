@@ -1,6 +1,5 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 // State
 import textStyle from './../../stateManagement/textStyle.js';
 import {
@@ -36,9 +35,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: cobbAngleCursor,
-      },
+      svgCursor: cobbAngleCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -377,8 +374,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   }
 }
 
-const cobbAngleCursor = new MouseCursor(
-  `<svg
+const cobbAngleCursor = `<svg
     data-icon="cobbAngle" role="img" xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 32 32" width="32" height="32"
   >
@@ -389,5 +385,4 @@ const cobbAngleCursor = new MouseCursor(
     9.33C13.11 9.24 13.02 9 12.88 8.63">
   </path>
 </svg>
-`
-);
+`;

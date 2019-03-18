@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 // Drawing
 import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
@@ -23,8 +22,8 @@ export default class WwwcRegionTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         minWindowWidth: 10,
-        svgCursor: wwwcRegionCursor,
       },
+      svgCursor: wwwcRegionCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -266,8 +265,7 @@ const _calculateMinMaxMean = function(pixelLuminance, globalMin, globalMax) {
   };
 };
 
-const wwwcRegionCursor = new MouseCursor(
-  `<svg
+const wwwcRegionCursor = `<svg
     data-icon="wwwcRegion" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -276,5 +274,4 @@ const wwwcRegionCursor = new MouseCursor(
     84.5t84.5 203.5z"
   />
 </svg>
-`
-);
+`;

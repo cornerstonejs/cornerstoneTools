@@ -1,7 +1,6 @@
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 // State
 import {
   addToolState,
@@ -48,6 +47,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       name: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse'],
       configuration: defaultFreehandConfiguration(),
+      svgCursor: freehandCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -1538,7 +1538,6 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
-    svgCursor: freehandCursor,
   };
 }
 
@@ -1548,8 +1547,7 @@ function preventPropagation(evt) {
   evt.preventDefault();
 }
 
-const freehandCursor = new MouseCursor(
-  `<svg
+const freehandCursor = `<svg
     data-icon="freehand" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 18 18"
   >
@@ -1583,5 +1581,4 @@ const freehandCursor = new MouseCursor(
       <line stroke="white" fill="white" id="svg_37" y2="12.716169" x2="15.180796" y1="13.881899" x1="14.549359"/>
       <line stroke="white" fill="white" id="svg_39" y2="11.429009" x2="15.520801" y1="12.813313" x1="15.15651"/>
       <ellipse fill="white" ry="1" rx="1" id="svg_40" cy="10.967574" cx="15.520801"/>
-  </svg>`
-);
+  </svg>`;

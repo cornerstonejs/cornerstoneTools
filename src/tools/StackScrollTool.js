@@ -1,5 +1,4 @@
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
@@ -20,8 +19,8 @@ export default class StackScrollTool extends BaseTool {
       configuration: {
         loop: false,
         allowSkipping: true,
-        svgCursor: stackScrollCursor,
       },
+      svgCursor: stackScrollCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -84,8 +83,7 @@ export default class StackScrollTool extends BaseTool {
   }
 }
 
-const stackScrollCursor = new MouseCursor(
-  `<svg
+const stackScrollCursor = `<svg
     data-icon="stackScroll" role="img" xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 28" width="32" height="32"
   >
@@ -95,5 +93,4 @@ const stackScrollCursor = new MouseCursor(
       0 1 0.453 1 1zM24 5v2c0 0.547-0.453 1-1 1h-22c-0.547
       0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1z"
       />
-  </svg>`
-);
+  </svg>`;

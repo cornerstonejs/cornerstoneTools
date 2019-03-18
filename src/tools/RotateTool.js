@@ -1,7 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
-import MouseCursor from '../util/MouseCursor.js';
 
 /**
  * @public
@@ -22,9 +21,7 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: rotateCursor,
-      },
+      svgCursor: rotateCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -103,8 +100,7 @@ const verticalStrategy = evt => {
   viewport.rotation += deltaPoints.page.y / viewport.scale;
 };
 
-const rotateCursor = new MouseCursor(
-  `<svg data-icon="rotate" role="img" xmlns="http://www.w3.org/2000/svg"
+const rotateCursor = `<svg data-icon="rotate" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
     <path fill="#ffffff" d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39
@@ -115,5 +111,4 @@ const rotateCursor = new MouseCursor(
       164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14
       39 17 39 59z"
     />
-  </svg>`
-);
+  </svg>`;

@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 
 import textStyle from '../stateManagement/textStyle.js';
 import toolColors from '../stateManagement/toolColors.js';
@@ -33,9 +32,7 @@ export default class DragProbeTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: probeCursor,
-      },
+      svgCursor: probeCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -265,8 +262,7 @@ const minimalStrategy = (evt, config) => {
   });
 };
 
-const probeCursor = new MouseCursor(
-  `<svg
+const probeCursor = `<svg
     data-icon="probe" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -277,5 +273,4 @@ const probeCursor = new MouseCursor(
     385.5-103 385.5 103 279.5 279.5 103 385.5z"
   />
 </svg>
-`
-);
+`;

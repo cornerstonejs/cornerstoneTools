@@ -1,6 +1,5 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import textStyle from './../../stateManagement/textStyle.js';
@@ -26,9 +25,7 @@ export default class ProbeTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        svgCursor: probeCursor,
-      },
+      svgCursor: probeCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -184,8 +181,7 @@ export default class ProbeTool extends BaseAnnotationTool {
   }
 }
 
-const probeCursor = new MouseCursor(
-  `<svg
+const probeCursor = `<svg
     data-icon="probe" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -196,5 +192,4 @@ const probeCursor = new MouseCursor(
     385.5-103 385.5 103 279.5 279.5 103 385.5z"
   />
 </svg>
-`
-);
+`;

@@ -1,6 +1,5 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import MouseCursor from '../util/MouseCursor.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
 
@@ -30,8 +29,8 @@ export default class ZoomTool extends BaseTool {
         preventZoomOutsideImage: false,
         minScale: 0.25,
         maxScale: 20.0,
-        svgCursor: zoomCursor,
       },
+      svgCursor: zoomCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -222,8 +221,7 @@ function zoomToCenterStrategy(evt, { invert, maxScale, minScale }) {
   });
 }
 
-const zoomCursor = new MouseCursor(
-  `<svg
+const zoomCursor = `<svg
     data-icon="zoom" role="img" xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 640 512" width="40" height="32"
   >
@@ -238,5 +236,4 @@ const zoomCursor = new MouseCursor(
       19-45 19t-45-19l-256-256q-19-19-19-45t19-45 45-19h128v-1024h-128q-26
       0-45-19t-19-45 19-45l256-256q19-19 45-19t45 19l256 256q19 19 19 45z"
     />
-  </svg>`
-);
+  </svg>`;

@@ -1,6 +1,5 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-import MouseCursor from '../../util/MouseCursor.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -36,10 +35,10 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        svgCursor: rectangleRoiCursor,
         // showMinMax: false,
         // showHounsfieldUnits: true
       },
+      svgCursor: rectangleRoiCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -527,8 +526,7 @@ function _createTextBoxContent(
   return textLines;
 }
 
-const rectangleRoiCursor = new MouseCursor(
-  `<svg
+const rectangleRoiCursor = `<svg
     data-icon="rectangleRoi" role="img" xmlns="http://www.w3.org/2000/svg"
     width="32" height="32" viewBox="0 0 1792 1792"
   >
@@ -538,5 +536,4 @@ const rectangleRoiCursor = new MouseCursor(
     84.5-203.5t203.5-84.5h832q119 0 203.5 84.5t84.5 203.5z"
   />
 </svg>
-`
-);
+`;

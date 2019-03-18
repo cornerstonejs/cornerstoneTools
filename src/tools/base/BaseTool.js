@@ -1,4 +1,5 @@
 import mixins from './../../mixins/index.js';
+import MouseCursor from './../../util/MouseCursor.js';
 
 /**
  * @typedef ToolConfiguration
@@ -26,6 +27,7 @@ class BaseTool {
     configuration,
     supportedInteractionTypes,
     mixins,
+    svgCursor,
   } = {}) {
     /**
      * A unique, identifying tool name
@@ -42,6 +44,10 @@ class BaseTool {
     this.defaultStrategy =
       defaultStrategy || Object.keys(this.strategies)[0] || undefined;
     this.activeStrategy = this.defaultStrategy;
+
+    if (svgCursor) {
+      this.svgCursor = new MouseCursor(svgCursor);
+    }
 
     // Options are set when a tool is added, during a "mode" change,
     // Or via a tool's option's setter
