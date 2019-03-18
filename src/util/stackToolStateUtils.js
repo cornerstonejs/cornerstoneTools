@@ -50,7 +50,7 @@ function invalidateToolStateForStack(element, toolName) {
   if (toolName) {
     _invalideToolSpecificToolStateForStack(element, toolName);
   } else {
-    _invalidateCompleteToolStateForStack(element);
+    _invalidateAllToolStateForStack(element);
   }
 }
 
@@ -68,7 +68,7 @@ function _invalideToolSpecificToolStateForStack(element, toolName) {
   }
 }
 
-function _invalidateCompleteToolStateForStack(element) {
+function _invalidateAllToolStateForStack(element) {
   const imageIds = _getImageIdsOfStackImages(imageIds);
   const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
 
@@ -103,13 +103,37 @@ function _invalidateImageIdSpecificToolState(
  * mergeToolStateToGlobalToolState - Cleanly merges toolState to the
  * global tool state.
  *
- * @param  {object} toolState - The new toolState to merge with the
+ * @param  {object} newToolState - The new toolState to merge with the
  *                              global tool state.
  * @returns {Null}
  */
-function mergeToolStateToGlobalToolState(toolState) {}
+function mergeToolStateToGlobalToolState(newToolState) {
+  const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
 
-//
+  Object.keys(newToolState).forEach(imageId => {
+    if (!globalToolState[imageId]) {
+      globalToolState[imageId] = {};
+    }
+
+    _mergeImageIdSpecificToolState(
+      globalToolState[imageId],
+      newToolState[imageId]
+    );
+  });
+}
+
+function _mergeImageIdSpecificToolState(globalToolState, newToolState) {
+  Object.keys(newToolState).forEach(toolName => {
+    if (!globalToolState[toolName]) {
+      globalToolState[toolName] = {};
+      globalToolState[toolName].data = [];
+    } else if (globalToolState[toolName].data) {
+      globalToolState[toolName].data = [];
+    }
+
+    globalToolState[toolName].data.concat(newToolState[toolName].data);
+  });
+}
 
 /**
  * clearToolStateForStack - clears toolstate for all imageIds in the stack.
@@ -119,7 +143,39 @@ function mergeToolStateToGlobalToolState(toolState) {}
  * @param  {type} [toolName]  A tool to filter on.
  * @returns {Null}
  */
-function clearToolStateForStack(element, toolName) {}
+function clearToolStateForStack(element, toolName) {
+  if (toolName) {
+    _clearToolSpecificToolStateForStack(element, toolName);
+  } else {
+    _clearAllToolStateForStack(element);
+  }
+}
+
+function _clearAllToolStateForStack(element) {
+  const imageIds = _getImageIdsOfStackImages(imageIds);
+  const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+  for (let i = 0; i < imageIds.length; i++) {
+    const imageIdI = imageIds[i];
+
+    if (globalToolState[imageIdI]) {
+      delete globalToolState[imageIdI];
+    }
+  }
+}
+
+function _clearToolSpecificToolStateForStack(element, toolName) {
+  const imageIds = _getImageIdsOfStackImages(imageIds);
+  const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+  for (let i = 0; i < imageIds.length; i++) {
+    const imageIdI = imageIds[i];
+
+    if (globalToolState[imageIdI] && globalToolState[imageIdI][toolName]) {
+      delete globalToolState[imageIdI][toolName];
+    }
+  }
+}
 
 function _getImageIdsOfStackImages(element) {
   const stackToolState = getToolState(element, 'stack');
