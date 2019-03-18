@@ -71,6 +71,7 @@ import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
 import brushUtils from './util/brush/index.js';
 import zoomUtils from './util/zoom/index.js';
+import stackToolStateUtils from './util/stackToolState/index.js';
 import triggerEvent from './util/triggerEvent.js';
 import convertToVector3 from './util/convertToVector3.js';
 
@@ -141,4 +142,5 @@ export const lib = {
   'util/freehandUtils': freehandUtils,
   'util/brushUtils': brushUtils,
   'util/zoomUtils': zoomUtils,
+  'util/stackToolStateUtils': stackToolStateUtils,
 };

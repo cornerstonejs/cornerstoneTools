@@ -6,7 +6,7 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  *
  * @param  {object} newToolState - The new toolState to merge with the
  *                              global tool state.
- * @returns {Null}
+ * @returns {Object} A reference to the altered global toolState.
  */
 export default function(newToolState) {
   const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
@@ -21,6 +21,8 @@ export default function(newToolState) {
       newToolState[imageId]
     );
   });
+
+  return globalToolState;
 }
 
 function _mergeImageIdSpecificToolState(globalToolState, newToolState) {
@@ -28,10 +30,12 @@ function _mergeImageIdSpecificToolState(globalToolState, newToolState) {
     if (!globalToolState[toolName]) {
       globalToolState[toolName] = {};
       globalToolState[toolName].data = [];
-    } else if (globalToolState[toolName].data) {
+    } else if (!globalToolState[toolName].data) {
       globalToolState[toolName].data = [];
     }
 
-    globalToolState[toolName].data.concat(newToolState[toolName].data);
+    globalToolState[toolName].data = globalToolState[toolName].data.concat(
+      newToolState[toolName].data
+    );
   });
 }

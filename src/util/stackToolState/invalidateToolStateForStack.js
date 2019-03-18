@@ -1,4 +1,4 @@
-import { getImageIdsOfStack } from './getImageIdsOfStack.js';
+import getImageIdsOfStack from './getImageIdsOfStack.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/index.js';
 
 /**
@@ -7,13 +7,13 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  *
  * @param  {HTMLElement} element - The element to fetch the stack from.
  * @param  {type} [toolName] - A tool to filter on.
- * @returns {Null}
+ * @returns {Object} A reference to the altered global toolState.
  */
 export default function(element, toolName) {
   if (toolName) {
-    _invalideToolSpecificToolStateForStack(element, toolName);
+    return _invalideToolSpecificToolStateForStack(element, toolName);
   } else {
-    _invalidateAllToolStateForStack(element);
+    return _invalidateAllToolStateForStack(element);
   }
 }
 
@@ -25,10 +25,12 @@ function _invalideToolSpecificToolStateForStack(element, toolName) {
     const imageIdI = imageIds[i];
     const imageIdSpecificToolState = globalToolState[imageIdI];
 
-    if (imageIdSpecificToolState && imageIdSpecificToolState.toolName) {
+    if (imageIdSpecificToolState && imageIdSpecificToolState[toolName]) {
       _invalidateImageIdSpecificToolState(imageIdSpecificToolState, toolName);
     }
   }
+
+  return globalToolState;
 }
 
 function _invalidateAllToolStateForStack(element) {
@@ -45,6 +47,8 @@ function _invalidateAllToolStateForStack(element) {
       });
     }
   }
+
+  return globalToolState;
 }
 
 function _invalidateImageIdSpecificToolState(

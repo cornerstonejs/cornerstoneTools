@@ -1,6 +1,6 @@
 import { getToolState } from '../../stateManagement/toolState.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
-import getToolStateForStack from './getToolStateForStack.js';
+import clearToolStateForStack from './clearToolStateForStack.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn((element, toolName) => {
@@ -24,25 +24,26 @@ jest.mock('../../stateManagement/imageIdSpecificStateManager.js', () => ({
   },
 }));
 
-describe('getToolStateForStack.js', () => {
+describe('clearToolStateForStack.js', () => {
   beforeEach(() => {});
 
-  describe('getToolStateForStack', () => {
-    it('should return only the toolState for the Length tool.', () => {
-      const toolState = getToolStateForStack({}, 'Length');
+  describe('clearToolStateForStack', () => {
+    it('should clear the whole toolState for any imageIds in the stack.', () => {
+      const toolState = clearToolStateForStack({});
 
-      expect(toolState['example://1'].Length.data.length).toEqual(1);
-      expect(toolState['example://2']).toBeUndefined();
-      expect(toolState['example://3'].Length.data.length).toEqual(1);
-      expect(toolState['imageIdfromADifferentStack']).toBeUndefined();
+      expect(toolState['example://1']).toBeUndefined();
+      expect(toolState['imageIdfromADifferentStack']).toBeDefined();
     });
-    it("should return the whole stack's toolState.", () => {
-      const toolState = getToolStateForStack({});
+
+    it('should clear the Length toolState for any imageIds in the stack.', () => {
+      const toolState = clearToolStateForStack({}, 'Length');
+
+      console.log(toolState);
 
       expect(toolState['example://1']).toBeDefined();
-      expect(toolState['example://2']).toBeDefined();
-      expect(toolState['example://3']).toBeDefined();
-      expect(toolState['imageIdfromADifferentStack']).toBeUndefined();
+      expect(toolState['example://1'].Length).toBeUndefined();
+      expect(toolState['example://1'].EllipticalRoi).toBeDefined();
+      expect(toolState['imageIdfromADifferentStack']).toBeDefined();
     });
   });
 });

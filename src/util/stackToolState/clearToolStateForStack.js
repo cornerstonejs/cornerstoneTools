@@ -1,4 +1,4 @@
-import { getImageIdsOfStack } from './getImageIdsOfStack.js';
+import getImageIdsOfStack from './getImageIdsOfStack.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/index.js';
 
 /**
@@ -7,13 +7,13 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
  *
  * @param  {HTMLElement} element The element to fetch the stack from.
  * @param  {type} [toolName]  A tool to filter on.
- * @returns {Null}
+ * @returns {Object} A reference to the cleaned global toolState.
  */
 export default function(element, toolName) {
   if (toolName) {
-    _clearToolSpecificToolStateForStack(element, toolName);
+    return _clearToolSpecificToolStateForStack(element, toolName);
   } else {
-    _clearAllToolStateForStack(element);
+    return _clearAllToolStateForStack(element);
   }
 }
 
@@ -28,6 +28,8 @@ function _clearAllToolStateForStack(element) {
       delete globalToolState[imageIdI];
     }
   }
+
+  return globalToolState;
 }
 
 function _clearToolSpecificToolStateForStack(element, toolName) {
@@ -39,6 +41,12 @@ function _clearToolSpecificToolStateForStack(element, toolName) {
 
     if (globalToolState[imageIdI] && globalToolState[imageIdI][toolName]) {
       delete globalToolState[imageIdI][toolName];
+
+      if (Object.keys(globalToolState[imageIdI]).length === 0) {
+        delete globalToolState[imageIdI];
+      }
     }
   }
+
+  return globalToolState;
 }

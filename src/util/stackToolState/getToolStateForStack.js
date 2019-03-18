@@ -13,23 +13,41 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ind
 export default function(element, toolName) {
   const imageIds = getImageIdsOfStack(element);
   const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
+  return toolName
+    ? _getToolSpecificToolStateForStack(element, toolName)
+    : _getAllToolStateForStack(element);
+}
 
-  const requestedToolState = [];
+function _getToolSpecificToolStateForStack(element, toolName) {
+  const imageIds = getImageIdsOfStack(element);
+  const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
 
-  if (toolName) {
-    for (let i = 0; i < imageIds.length; i++) {
-      const imageIdI = imageIds[i];
-      const imageIdSpecificToolState = globalToolState[imageIdI];
+  const requestedToolState = {};
 
-      if (imageIdSpecificToolState && imageIdSpecificToolState.toolName) {
-        requestedToolState[imageIdI] = imageIdSpecificToolState.toolName;
-      }
+  for (let i = 0; i < imageIds.length; i++) {
+    const imageIdI = imageIds[i];
+    const imageIdSpecificToolState = globalToolState[imageIdI];
+
+    if (imageIdSpecificToolState && imageIdSpecificToolState[toolName]) {
+      requestedToolState[imageIdI] = {
+        [toolName]: imageIdSpecificToolState[toolName],
+      };
     }
-  } else {
-    for (let i = 0; i < imageIds.length; i++) {
-      if (globalToolState[imageIds[i]]) {
-        requestedToolState.push(globalToolState[imageIds[i]]);
-      }
+  }
+
+  return requestedToolState;
+}
+
+function _getAllToolStateForStack(element) {
+  const imageIds = getImageIdsOfStack(element);
+  const globalToolState = globalImageIdSpecificToolStateManager.saveToolState();
+
+  const requestedToolState = {};
+
+  for (let i = 0; i < imageIds.length; i++) {
+    const imageIdI = imageIds[i];
+    if (globalToolState[imageIdI]) {
+      requestedToolState[imageIdI] = globalToolState[imageIdI];
     }
   }
 
