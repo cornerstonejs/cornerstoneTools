@@ -115,6 +115,5 @@ const rotateCursor = new MouseCursor(
       164-245 245-164 298-61q147 0 284.5 55.5t244.5 156.5l130-129q29-31 70-14
       39 17 39 59z"
     />
-  </svg>`,
-  'center32'
+  </svg>`
 );

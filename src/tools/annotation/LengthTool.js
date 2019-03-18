@@ -254,6 +254,5 @@ const lengthCursor = new MouseCursor(
     <path id="length-dashes" d="m22.5,6 -16.5,16.5" stroke-width="3" stroke-dasharray="0.6666,5" />
   </g>
 </svg>
-`,
-  'topLeft'
+`
 );

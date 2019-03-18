@@ -212,6 +212,5 @@ const crosshairsCursor = new MouseCursor(
       154.5-278.5t278.5-154.5v-143q0-26 19-45t45-19h128q26 0 45 19t19 45v143q161
       37 278.5 154.5t154.5 278.5h143q26 0 45 19t19 45z"
     />
-  </svg>`,
-  'center32'
+  </svg>`
 );

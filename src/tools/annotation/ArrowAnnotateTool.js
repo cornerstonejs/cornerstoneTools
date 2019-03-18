@@ -356,6 +356,5 @@ const arrowAnnotateCursor = new MouseCursor(
     <path id="arrowAnnotate-arrow" d="M23,7 l-15,15 M7,17 l0,6 6,0" stroke-width="2" />
   </g>
 </svg>
-`,
-  'topLeft'
+`
 );

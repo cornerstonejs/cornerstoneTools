@@ -389,6 +389,5 @@ const cobbAngleCursor = new MouseCursor(
     9.33C13.11 9.24 13.02 9 12.88 8.63">
   </path>
 </svg>
-`,
-  'center32'
+`
 );

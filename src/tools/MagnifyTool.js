@@ -291,6 +291,5 @@ const magnifyCursor = new MouseCursor(
       32s176 78.7 176 176-78.7 176-176 176z"
     />
   </svg>
-  `,
-  'topLeft'
+  `
 );

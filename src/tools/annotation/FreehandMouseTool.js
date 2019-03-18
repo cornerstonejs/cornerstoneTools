@@ -1583,6 +1583,5 @@ const freehandCursor = new MouseCursor(
       <line stroke="white" fill="white" id="svg_37" y2="12.716169" x2="15.180796" y1="13.881899" x1="14.549359"/>
       <line stroke="white" fill="white" id="svg_39" y2="11.429009" x2="15.520801" y1="12.813313" x1="15.15651"/>
       <ellipse fill="white" ry="1" rx="1" id="svg_40" cy="10.967574" cx="15.520801"/>
-  </svg>`,
-  'topLeft'
+  </svg>`
 );

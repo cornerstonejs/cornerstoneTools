@@ -67,7 +67,6 @@ import angleBetweenPoints from './util/angleBetweenPoints.js';
 import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
 import numbersWithCommas from './util/numbersWithCommas.js';
 import MouseCursor from './util/MouseCursor.js';
-import mouseCursorPoints from './util/mouseCursorPoints.js';
 
 import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
@@ -138,7 +137,6 @@ export const lib = {
   'util/triggerEvent': triggerEvent,
   'util/convertToVectro3': convertToVector3,
   'util/MouseCursor': MouseCursor,
-  'util/mouseCursorPoints': mouseCursorPoints,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,

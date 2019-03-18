@@ -68,6 +68,5 @@ const eraserCursor = new MouseCursor(
       0-69.5-20.5t-47.5-54.5q-15-34-9.5-71.5t30.5-65.5l896-1024q38-44 96-44h768q38
       0 69.5 20.5t47.5 54.5z"
     />
-  </svg>`,
-  'topLeft'
+  </svg>`
 );

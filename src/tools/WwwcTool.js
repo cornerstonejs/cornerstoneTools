@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import MouseCursor from '../util/MouseCursor.js';
 
 /**
  * @public
@@ -17,6 +18,7 @@ export default class WwwcTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         orientation: 0,
+        svgCursor: wwwcCursor,
       },
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
@@ -72,3 +74,14 @@ function basicLevelingStrategy(evt, { orientation }) {
     eventData.viewport.voi.windowCenter += deltaX;
   }
 }
+
+const wwwcCursor = new MouseCursor(
+  `<svg
+    data-icon="wwwc" role="img" xmlns="http://www.w3.org/2000/svg"
+    width="32" height="32" viewBox="0 0 18 18"
+  >
+  <path fill="#ffffff" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8" />
+  <circle cx="9" cy="9" r="8" fill="none" stroke-width="2" stroke="#ffffff" />
+</svg>
+`
+);
