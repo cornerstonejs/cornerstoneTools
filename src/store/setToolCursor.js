@@ -1,13 +1,13 @@
 import { state } from './index.js';
 
-export { setSVGCursor, resetCursor, hideCursor };
+export { setToolCursor, resetToolCursor, hideToolCursor };
 
 /**
  * Creates an SVG Cursor for the target element
  *
  * @param {MouseCursor} svgCursor - The cursor.
  */
-function setSVGCursor(element, svgCursor) {
+function setToolCursor(element, svgCursor) {
   console.log('attempting to set cursor...');
   // TODO: (state vs options) Exit if cursors wasn't updated
   // TODO: Exit if invalid options to create cursor
@@ -22,11 +22,11 @@ function setSVGCursor(element, svgCursor) {
   state.svgCursorUrl = svgCursorUrl;
 }
 
-function resetCursor(element) {
+function resetToolCursor(element) {
   _clearStateAndSetCursor(element, 'initial');
 }
 
-function hideCursor(element) {
+function hideToolCursor(element) {
   _clearStateAndSetCursor(element, 'none');
 }
 

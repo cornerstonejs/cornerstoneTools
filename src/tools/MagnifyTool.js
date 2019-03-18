@@ -1,7 +1,7 @@
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
-import { hideCursor, setSVGCursor } from '../store/setToolCursor.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
 
 /**
  * @public
@@ -57,7 +57,7 @@ export default class MagnifyTool extends BaseTool {
     // On next frame
     window.requestAnimationFrame(() => this._drawMagnificationTool(evt));
 
-    hideCursor(evt.detail.element);
+    hideToolCursor(evt.detail.element);
 
     evt.preventDefault();
     evt.stopPropagation();
@@ -74,7 +74,7 @@ export default class MagnifyTool extends BaseTool {
     const element = evt.detail.element;
 
     // Re-enable the mouse cursor
-    setSVGCursor(this.element, this.svgCursor);
+    setToolCursor(this.element, this.svgCursor);
 
     element.querySelector('.magnifyTool').style.display = 'none';
     this._removeZoomElement();

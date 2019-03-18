@@ -7,7 +7,7 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from './base/BaseTool.js';
-import { hideCursor, setSVGCursor } from '../store/setToolCursor.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
@@ -305,7 +305,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
 
     config.currentTool = closestToolIndex;
-    hideCursor(element);
+    hideToolCursor(element);
   }
 
   /**
@@ -847,7 +847,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       }
     }
 
-    setSVGCursor(this.element, this.svgCursor);
+    setToolCursor(this.element, this.svgCursor);
 
     external.cornerstone.updateImage(this.element);
   }

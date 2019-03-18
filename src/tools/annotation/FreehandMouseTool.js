@@ -22,7 +22,7 @@ import { getNewContext, draw, drawJoinedLines } from '../../drawing/index.js';
 import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
 import drawHandles from '../../drawing/drawHandles.js';
 import { clipToBox } from '../../util/clip.js';
-import { hideCursor, setSVGCursor } from '../../store/setToolCursor.js';
+import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 
 import freehandUtils from '../../util/freehand/index.js';
 
@@ -1270,7 +1270,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   _activateDraw(element) {
     this._drawing = true;
     state.isMultiPartToolActive = true;
-    hideCursor(this.element);
+    hideToolCursor(this.element);
 
     // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
@@ -1295,7 +1295,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._drawing = false;
     state.isMultiPartToolActive = false;
     this._activeDrawingToolReference = null;
-    setSVGCursor(this.element, this.svgCursor);
+    setToolCursor(this.element, this.svgCursor);
 
     element.removeEventListener(
       EVENTS.MOUSE_DOWN,
