@@ -115,6 +115,8 @@ function newImageIdSpecificToolStateManager() {
 // Visible enabled images
 const globalImageIdSpecificToolStateManager = newImageIdSpecificToolStateManager();
 
+console.log(globalImageIdSpecificToolStateManager);
+
 export {
   newImageIdSpecificToolStateManager,
   globalImageIdSpecificToolStateManager,
