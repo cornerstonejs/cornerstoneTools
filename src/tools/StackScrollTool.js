@@ -83,14 +83,17 @@ export default class StackScrollTool extends BaseTool {
   }
 }
 
-const stackScrollCursor = `<svg
-    data-icon="stackScroll" role="img" xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 28" width="32" height="32"
-  >
-    <path fill="#ffffff" d="M24 21v2c0 0.547-0.453 1-1 1h-22c-0.547
+const stackScrollCursor = {
+  svgGroupString: `<path fill="ACTIVE_COLOR" d="M24 21v2c0 0.547-0.453 1-1 1h-22c-0.547
       0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1zM24 13v2c0
       0.547-0.453 1-1 1h-22c-0.547 0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547
       0 1 0.453 1 1zM24 5v2c0 0.547-0.453 1-1 1h-22c-0.547
       0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1z"
-      />
-  </svg>`;
+      />`,
+  options: {
+    viewBox: {
+      x: 24,
+      y: 28,
+    },
+  },
+};

@@ -265,13 +265,15 @@ const _calculateMinMaxMean = function(pixelLuminance, globalMin, globalMax) {
   };
 };
 
-const wwwcRegionCursor = `<svg
-    data-icon="wwwcRegion" role="img" xmlns="http://www.w3.org/2000/svg"
-    width="32" height="32" viewBox="0 0 1792 1792"
-  >
-  <path fill="#ffffff" d="M1664 416v960q0 119-84.5 203.5t-203.5 84.5h-960q-119
+const wwwcRegionCursor = {
+  svgGroupString: `<path fill="ACTIVE_COLOR" d="M1664 416v960q0 119-84.5 203.5t-203.5 84.5h-960q-119
     0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5
     84.5t84.5 203.5z"
-  />
-</svg>
-`;
+  />`,
+  options: {
+    viewBox: {
+      x: 1792,
+      y: 1792,
+    },
+  },
+};

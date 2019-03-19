@@ -342,14 +342,14 @@ function changeTextCallback(data, eventData, doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Change your annotation:'));
 }
 
-const arrowAnnotateCursor = `<svg
-    data-icon="arrowAnnotate" role="img" xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24" width="32" height="32"
-  >
-  <g id="arrowAnnotate-group" fill="none" stroke-width="1" stroke="white" stroke-linecap="round" stroke-linejoin="round">
-    <circle id="arrowAnnotate-circle" cx="6.5" cy="6.5" r="6" />
-    <path id="arrowAnnotate-plus" d="M6.5,3 l0,7 M3,6.5 l7,0"></path>
+const arrowAnnotateCursor = {
+  svgGroupString: `<g id="arrowAnnotate-group" fill="none" stroke-width="1" stroke="ACTIVE_COLOR" stroke-linecap="round" stroke-linejoin="round">
     <path id="arrowAnnotate-arrow" d="M23,7 l-15,15 M7,17 l0,6 6,0" stroke-width="2" />
-  </g>
-</svg>
-`;
+  </g>`,
+  options: {
+    viewBox: {
+      x: 24,
+      y: 24,
+    },
+  },
+};

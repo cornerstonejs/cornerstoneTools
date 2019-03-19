@@ -74,11 +74,13 @@ function basicLevelingStrategy(evt, { orientation }) {
   }
 }
 
-const wwwcCursor = `<svg
-    data-icon="wwwc" role="img" xmlns="http://www.w3.org/2000/svg"
-    width="32" height="32" viewBox="0 0 18 18"
-  >
-  <path fill="#ffffff" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8" />
-  <circle cx="9" cy="9" r="8" fill="none" stroke-width="2" stroke="#ffffff" />
-</svg>
-`;
+const wwwcCursor = {
+  svgGroupString: `<path fill="ACTIVE_COLOR" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8" />
+    <circle cx="9" cy="9" r="8" fill="none" stroke-width="2" stroke="ACTIVE_COLOR" />`,
+  options: {
+    viewBox: {
+      x: 18,
+      y: 18,
+    },
+  },
+};
