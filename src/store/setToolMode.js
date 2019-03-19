@@ -8,6 +8,8 @@ import {
   hideToolCursor,
 } from './setToolCursor.js';
 
+const globalConfiguration = store.modules.globalConfiguration;
+
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
  * respond to user input, and can create new data.
@@ -62,7 +64,10 @@ const setToolActiveForElement = function(
       }
     });
 
-    if (tool.supportedInteractionTypes.includes('Mouse')) {
+    if (
+      globalConfiguration.state.showSVGCursors &&
+      tool.supportedInteractionTypes.includes('Mouse')
+    ) {
       _setToolCursorIfPrimary(element, options, tool);
     }
   }

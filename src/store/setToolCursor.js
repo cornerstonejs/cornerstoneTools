@@ -1,6 +1,8 @@
-import { state } from './index.js';
+import { state, modules } from './index.js';
 
 export { setToolCursor, resetToolCursor, hideToolCursor };
+
+const globalConfiguration = modules.globalConfiguration;
 
 /**
  * Creates an SVG Cursor for the target element
@@ -8,6 +10,9 @@ export { setToolCursor, resetToolCursor, hideToolCursor };
  * @param {MouseCursor} svgCursor - The cursor.
  */
 function setToolCursor(element, svgCursor) {
+  if (!globalConfiguration.state.showSVGCursors) {
+    return;
+  }
   console.log('attempting to set cursor...');
   // TODO: (state vs options) Exit if cursors wasn't updated
   // TODO: Exit if invalid options to create cursor
@@ -23,10 +28,18 @@ function setToolCursor(element, svgCursor) {
 }
 
 function resetToolCursor(element) {
+  if (!globalConfiguration.state.showSVGCursors) {
+    return;
+  }
+
   _clearStateAndSetCursor(element, 'initial');
 }
 
 function hideToolCursor(element) {
+  if (!globalConfiguration.state.showSVGCursors) {
+    return;
+  }
+
   _clearStateAndSetCursor(element, 'none');
 }
 
