@@ -13,8 +13,7 @@ function setToolCursor(element, svgCursor) {
   if (!globalConfiguration.state.showSVGCursors) {
     return;
   }
-  console.log('attempting to set cursor...');
-  // TODO: (state vs options) Exit if cursors wasn't updated
+  // TODO: (state vs options) Exit if cursor wasn't updated
   // TODO: Exit if invalid options to create cursor
 
   // Note: Max size of an SVG cursor is 128x128, default is 32x32.
@@ -28,10 +27,6 @@ function setToolCursor(element, svgCursor) {
 }
 
 function resetToolCursor(element) {
-  if (!globalConfiguration.state.showSVGCursors) {
-    return;
-  }
-
   _clearStateAndSetCursor(element, 'initial');
 }
 

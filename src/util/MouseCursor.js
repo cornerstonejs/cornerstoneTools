@@ -7,7 +7,7 @@ const mousePosition = '8 8';
 //
 
 const defaultOptions = {
-  iconSize: 32,
+  iconSize: 16,
   viewBox: {
     x: 32,
     y: 32,
