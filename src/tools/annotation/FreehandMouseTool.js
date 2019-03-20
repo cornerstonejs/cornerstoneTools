@@ -632,27 +632,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {undefined}
    */
   _drawingMouseDragCallback(evt) {
-    const eventData = evt.detail;
-
-    if (!this.options.mouseButtonMask.includes(eventData.buttons)) {
+    if (!this.options.mouseButtonMask.includes(evt.detail.buttons)) {
       return;
     }
 
-    const toolState = getToolState(eventData.element, this.name);
-
-    const config = this.configuration;
-    const currentTool = config.currentTool;
-
-    const data = toolState.data[currentTool];
-
-    // Set the mouseLocation handle
-    this._getMouseLocation(eventData);
-    this._checkInvalidHandleLocation(data, eventData);
-    this._addPointPencilMode(eventData, data.handles.points);
-    this._dragging = true;
-
-    // Force onImageRendered
-    external.cornerstone.updateImage(eventData.element);
+    this._drawingDrag(evt);
   }
 
   /**
@@ -663,6 +647,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {undefined}
    */
   _drawingTouchDragCallback(evt) {
+    this._drawingDrag(evt);
+  }
+
+  _drawingDrag(evt) {
     const eventData = evt.detail;
 
     const toolState = getToolState(eventData.element, this.name);
