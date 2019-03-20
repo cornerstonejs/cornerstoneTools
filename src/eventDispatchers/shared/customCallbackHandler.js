@@ -7,8 +7,6 @@ export default function(handlerType, customFunction, evt) {
     return false;
   }
 
-  console.log(customFunction, state.isMultiPartToolActive);
-
   // TODO: We sometimes see a null detail for TOUCH_PRESS
   const element = evt.detail.element;
   let tools = state.tools.filter(tool =>

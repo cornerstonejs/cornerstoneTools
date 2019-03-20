@@ -169,6 +169,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
   activeTouchEndCallback(evt) {
     this._activeEnd(evt);
 
+    this._deselectAllTools(evt);
     this._recentTouchEnd = true;
   }
 
