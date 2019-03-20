@@ -1483,6 +1483,29 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
+   * Ends the active drawing loop and completes the polygon.
+   *
+   * @public
+   * @param {Object} element - The element on which the roi is being drawn.
+   * @returns {null}
+   */
+  completeDrawing(element) {
+    if (!this._drawing) {
+      return;
+    }
+    const toolState = getToolState(element, this.name);
+    const config = this.configuration;
+    const data = toolState.data[config.currentTool];
+
+    if (!freehandIntersect.end(data.handles.points)) {
+      const lastHandlePlaced = config.currentHandle;
+
+      data.polyBoundingBox = {};
+      this._endDrawing(element, lastHandlePlaced);
+    }
+  }
+
+  /**
    * newImageCallback - new image event handler.
    *
    * @public
