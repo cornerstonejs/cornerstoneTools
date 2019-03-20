@@ -519,7 +519,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   addNewMeasurement(evt) {
     const eventData = evt.detail;
 
-    this._startDrawing(eventData);
+    this._startDrawing(evt);
     this._addPoint(eventData);
 
     preventPropagation(evt);
@@ -943,19 +943,25 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * from existing handles.
    *
    * @private
-   * @param {Object} eventData - data object associated with an event.
+   * @param {Object} evt - The event.
    * @returns {undefined}
    */
-  _startDrawing(eventData) {
+  _startDrawing(evt) {
+    const eventData = evt.detail;
     const measurementData = this.createNewMeasurement(eventData);
     const element = eventData.element;
     const config = this.configuration;
 
-    // Block event distpatcher whilst drawing
-
     this._referencedElement = element;
 
-    this._activateDraw(element);
+    let interactionType;
+
+    if (evt.type === EVENTS.MOUSE_DOWN_ACTIVATE) {
+      interactionType = 'Mouse';
+    } else if (evt.type === EVENTS.TOUCH_START_ACTIVE) {
+      interactionType = 'Touch';
+    }
+    this._activateDraw(element, interactionType);
     this._getMouseLocation(eventData);
 
     addToolState(eventData.element, this.name, measurementData);
@@ -1292,12 +1298,22 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const p1Canvas = external.cornerstone.pixelToCanvas(element, p1);
     const p2Canvas = external.cornerstone.pixelToCanvas(element, p2);
 
+    let completeHandleRadius;
+
+    if (this._drawingInteractionType === 'Mouse') {
+      completeHandleRadius = this.configuration.completeHandleRadius;
+    } else if (this._drawingInteractionType === 'Touch') {
+      completeHandleRadius = this.configuration.completeHandleRadiusTouch;
+    }
+
+    console.log(completeHandleRadius);
+
     return this._compareDistanceToSpacing(
       element,
       p1Canvas,
       p2Canvas,
       '<',
-      this.configuration.completeHandleRadius
+      completeHandleRadius
     );
   }
 
@@ -1360,11 +1376,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @private
    * @param {Object} element - The viewport element to add event listeners to.
+   * @param {string} interactionType - The interactionType used for the loop.
    * @modifies {element}
    * @returns {undefined}
    */
-  _activateDraw(element) {
+  _activateDraw(element, interactionType = 'Mouse') {
     this._drawing = true;
+    this._drawingInteractionType = interactionType;
+
     state.isMultiPartToolActive = true;
 
     // Polygonal Mode
@@ -1403,6 +1422,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._drawing = false;
     state.isMultiPartToolActive = false;
     this._activeDrawingToolReference = null;
+    this._drawingInteractionType = null;
 
     element.removeEventListener(
       EVENTS.MOUSE_DOWN,
@@ -1665,6 +1685,7 @@ function defaultFreehandConfiguration() {
     spacing: 1,
     activeHandleRadius: 3,
     completeHandleRadius: 6,
+    completeHandleRadiusTouch: 28,
     alwaysShowHandles: false,
     invalidColor: 'crimson',
     currentHandle: 0,
