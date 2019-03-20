@@ -7,6 +7,8 @@ export default function(handlerType, customFunction, evt) {
     return false;
   }
 
+  console.log(customFunction, state.isMultiPartToolActive);
+
   // TODO: We sometimes see a null detail for TOUCH_PRESS
   const element = evt.detail.element;
   let tools = state.tools.filter(tool =>
@@ -15,6 +17,7 @@ export default function(handlerType, customFunction, evt) {
 
   // Tool is active, and specific callback is active
   tools = getActiveToolsForElement(element, tools, handlerType);
+
   // Tool has expected callback custom function
   tools = tools.filter(tool => typeof tool[customFunction] === 'function');
 
