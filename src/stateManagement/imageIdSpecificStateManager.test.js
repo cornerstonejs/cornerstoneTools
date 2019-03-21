@@ -1,45 +1,78 @@
-import './../externalModules.js';
+import externalModules from './../externalModules.js';
 import { newImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 
 jest.mock('./../externalModules.js');
 
 describe('imageIdSpecificStateManager.add', () => {
-  it('should add data to the exiting toolState', () => {
+  it('creates the toolState and adds the data', () => {
     const stateManager = newImageIdSpecificToolStateManager();
     const toolType = 'TestTool';
-    const testElement = {};
+    const imageId = 'abc123';
+    const testElement = {
+      image: {
+        imageId,
+      },
+    };
 
-    // Setup with some intial data
-    // stateManager.restoreImageIdToolState(imageId, initialData);
-
-    stateManager.add(testElement, toolType, 'data2');
-
-    // Using "undefined" as the value here because the implementation of
-    // the externalModules mock has an image without an imageId property.
-    // There may be a better way of doing this.
-    const imageId = undefined;
+    externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
+      () => testElement
+    );
+    stateManager.add(testElement, toolType, 'data1');
 
     const allToolState = stateManager.saveToolState();
 
-    expect(allToolState[imageId][toolType].data).toContain('data2');
+    expect(allToolState[imageId][toolType].data).toContain('data1');
   });
-});
 
-describe('Just the syntax', () => {
-  it('throws an error', () => {
-    const enabledElement = {};
-    const toolState = {};
+  it('adds data to the existing toolState', () => {
+    const stateManager = newImageIdSpecificToolStateManager();
+    const toolType = 'TestTool';
+    const imageId = 'abc123';
+    const testElement = {
+      image: {
+        imageId,
+      },
+    };
 
-    // --- the old implementation
-    if (
-      !enabledElement.image ||
-      toolState.hasOwnProperty(enabledElement.image.imageId) === false
-    ) {
-      toolState[enabledElement.image.imageId] = {};
-    }
+    externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
+      () => testElement
+    );
 
-    const imageIdToolState = toolState[enabledElement.image.imageId];
+    // Setup with some intial data
+    stateManager.restoreImageIdToolState(imageId, {
+      [toolType]: { data: ['initialData'] },
+    });
+    // Add more data
+    stateManager.add(testElement, toolType, 'addedData');
 
-    console.log(imageIdToolState);
+    // Check the results
+    const allToolState = stateManager.saveToolState();
+
+    expect(allToolState[imageId][toolType].data).toEqual(
+      expect.arrayContaining(['initialData', 'addedData'])
+    );
+  });
+
+  describe('when the image is not yet defined', () => {
+    it('returns without adding the data', () => {
+      const stateManager = newImageIdSpecificToolStateManager();
+      const toolType = 'TestTool';
+      const imageId = 'abc123';
+      const testElement = {
+        image: undefined,
+      };
+
+      externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
+        () => testElement
+      );
+
+      // Add more data
+      stateManager.add(testElement, toolType, 'testData');
+
+      // Check the results
+      const allToolState = stateManager.saveToolState();
+
+      expect(allToolState[imageId]).toBeUndefined();
+    });
   });
 });
