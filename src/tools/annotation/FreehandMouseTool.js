@@ -64,13 +64,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._drawingMouseMoveCallback = this._drawingMouseMoveCallback.bind(this);
     this._drawingMouseDragCallback = this._drawingMouseDragCallback.bind(this);
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
+    this._drawingMouseDoubleClickCallback = this._drawingMouseDoubleClickCallback.bind(
+      this
+    );
+    this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
+    this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
+
     this._drawingTouchStartCallback = this._drawingTouchStartCallback.bind(
       this
     );
     this._drawingTouchDragCallback = this._drawingTouchDragCallback.bind(this);
-
-    this._editMouseUpCallback = this._editMouseUpCallback.bind(this);
-    this._editMouseDragCallback = this._editMouseDragCallback.bind(this);
+    this._drawingDoubleTapClickCallback = this._drawingDoubleTapClickCallback.bind(
+      this
+    );
     this._editTouchDragCallback = this._editTouchDragCallback.bind(this);
   }
 
@@ -773,6 +779,59 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     return;
   }
 
+  /** Ends the active drawing loop and completes the polygon.
+   *
+   * @public
+   * @param {Object} element - The element on which the roi is being drawn.
+   * @returns {null}
+   */
+  completeDrawing(element) {
+    if (!this._drawing) {
+      return;
+    }
+    const toolState = getToolState(element, this.name);
+    const config = this.configuration;
+    const data = toolState.data[config.currentTool];
+
+    if (
+      !freehandIntersect.end(data.handles.points) &&
+      data.handles.points.length >= 2
+    ) {
+      const lastHandlePlaced = config.currentHandle;
+
+      data.polyBoundingBox = {};
+      this._endDrawing(element, lastHandlePlaced);
+    }
+  }
+
+  /**
+   * Event handler for MOUSE_DOUBLE_CLICK during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   * @returns {undefined}
+   */
+  _drawingMouseDoubleClickCallback(evt) {
+    const eventData = evt.detail;
+
+    this.completeDrawing(eventData.element);
+    preventPropagation(evt);
+  }
+
+  /**
+   * Event handler for DOUBLE_TAP during drawing event loop.
+   *
+   * @event
+   * @param {Object} evt - The event.
+   * @returns {undefined}
+   */
+  _drawingDoubleTapClickCallback(evt) {
+    const eventData = evt.detail;
+
+    this.completeDrawing(eventData.element);
+    preventPropagation(evt);
+  }
+
   /**
    * Event handler for MOUSE_DRAG during handle drag event loop.
    *
@@ -1306,8 +1365,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       completeHandleRadius = this.configuration.completeHandleRadiusTouch;
     }
 
-    console.log(completeHandleRadius);
-
     return this._compareDistanceToSpacing(
       element,
       p1Canvas,
@@ -1389,6 +1446,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._drawingMouseMoveCallback);
+    element.addEventListener(
+      EVENTS.MOUSE_DOUBLE_CLICK,
+      this._drawingMouseDoubleClickCallback
+    );
 
     // Drag/Pencil Mode
     element.addEventListener(EVENTS.MOUSE_DRAG, this._drawingMouseDragCallback);
@@ -1406,6 +1467,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     element.addEventListener(EVENTS.TOUCH_DRAG, this._drawingTouchDragCallback);
     element.addEventListener(EVENTS.TOUCH_END, this._drawingMouseUpCallback);
+    element.addEventListener(
+      EVENTS.DOUBLE_TAP,
+      this._drawingDoubleTapClickCallback
+    );
 
     external.cornerstone.updateImage(element);
   }
@@ -1431,6 +1496,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     element.removeEventListener(
       EVENTS.MOUSE_MOVE,
       this._drawingMouseMoveCallback
+    );
+    element.removeEventListener(
+      EVENTS.MOUSE_DOUBLE_CLICK,
+      this._drawingMouseDoubleClickCallback
     );
     element.removeEventListener(
       EVENTS.MOUSE_DRAG,
