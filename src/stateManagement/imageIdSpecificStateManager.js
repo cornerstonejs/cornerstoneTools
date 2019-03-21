@@ -36,14 +36,12 @@ function newImageIdSpecificToolStateManager() {
   // As modules that restore saved state
   function addImageIdSpecificToolState(element, toolType, data) {
     const enabledElement = external.cornerstone.getEnabledElement(element);
-
-    // If we don't have an image for this element exit early
-    if (!enabledElement.image) {
-      return;
-    }
-
     // If we don't have any tool state for this imageId, add an empty object
-    if (toolState.hasOwnProperty(enabledElement.image.imageId) === false) {
+
+    if (
+      !enabledElement.image ||
+      toolState.hasOwnProperty(enabledElement.image.imageId) === false
+    ) {
       toolState[enabledElement.image.imageId] = {};
     }
 
