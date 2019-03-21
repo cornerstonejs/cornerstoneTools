@@ -14,6 +14,7 @@ import {
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import { lengthCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -239,15 +240,3 @@ export default class LengthTool extends BaseAnnotationTool {
     }
   }
 }
-
-const lengthCursor = {
-  svgGroupString: `<g id="length-group" fill="none" stroke-width="1" stroke="ACTIVE_COLOR" stroke-linecap="round" stroke-linejoin="round">
-    <path id="length-dashes" d="m22.5,6 -16.5,16.5" stroke-width="3" stroke-dasharray="0.6666,5" />
-  </g>`,
-  options: {
-    viewBox: {
-      x: 24,
-      y: 24,
-    },
-  },
-};

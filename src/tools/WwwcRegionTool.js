@@ -5,6 +5,7 @@ import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
+import { wwwcRegionCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -263,17 +264,4 @@ const _calculateMinMaxMean = function(pixelLuminance, globalMin, globalMax) {
     max,
     mean: sum / numPixels,
   };
-};
-
-const wwwcRegionCursor = {
-  svgGroupString: `<path fill="ACTIVE_COLOR" d="M1664 416v960q0 119-84.5 203.5t-203.5 84.5h-960q-119
-    0-203.5-84.5t-84.5-203.5v-960q0-119 84.5-203.5t203.5-84.5h960q119 0 203.5
-    84.5t84.5 203.5z"
-  />`,
-  options: {
-    viewBox: {
-      x: 1792,
-      y: 1792,
-    },
-  },
 };

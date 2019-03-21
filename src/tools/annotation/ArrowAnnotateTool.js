@@ -18,6 +18,7 @@ import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
+import { arrowAnnotateCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -341,15 +342,3 @@ function getTextCallback(doneChangingTextCallback) {
 function changeTextCallback(data, eventData, doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Change your annotation:'));
 }
-
-const arrowAnnotateCursor = {
-  svgGroupString: `<g id="arrowAnnotate-group" fill="none" stroke-width="1" stroke="ACTIVE_COLOR" stroke-linecap="round" stroke-linejoin="round">
-    <path id="arrowAnnotate-arrow" d="M23,7 l-15,15 M7,17 l0,6 6,0" stroke-width="2" />
-  </g>`,
-  options: {
-    viewBox: {
-      x: 24,
-      y: 24,
-    },
-  },
-};

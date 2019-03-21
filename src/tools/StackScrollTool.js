@@ -2,6 +2,7 @@ import BaseTool from './base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { stackScrollCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -82,18 +83,3 @@ export default class StackScrollTool extends BaseTool {
     );
   }
 }
-
-const stackScrollCursor = {
-  svgGroupString: `<path fill="ACTIVE_COLOR" d="M24 21v2c0 0.547-0.453 1-1 1h-22c-0.547
-      0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1zM24 13v2c0
-      0.547-0.453 1-1 1h-22c-0.547 0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547
-      0 1 0.453 1 1zM24 5v2c0 0.547-0.453 1-1 1h-22c-0.547
-      0-1-0.453-1-1v-2c0-0.547 0.453-1 1-1h22c0.547 0 1 0.453 1 1z"
-      />`,
-  options: {
-    viewBox: {
-      x: 24,
-      y: 28,
-    },
-  },
-};

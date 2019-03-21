@@ -22,6 +22,7 @@ import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import EVENTS from './../../events.js';
+import { cobbAngleCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -373,18 +374,3 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     );
   }
 }
-
-const cobbAngleCursor = {
-  svgGroupString: `<path stroke="ACTIVE_COLOR" d="M28.59 2.34L3.82 12.32"></path>
-  <path stroke="ACTIVE_COLOR" d="M28.59 29.66L3.82 19.68"></path>
-  <path stroke="ACTIVE_COLOR" stroke-dasharray="2" fill-opacity="0" d="M12.37
-    23.06C12.67 22.36 12.85 21.93 12.92 21.76C14.6 17.8 14.68 13.35 13.15
-    9.33C13.11 9.24 13.02 9 12.88 8.63">
-  </path>`,
-  options: {
-    viewBox: {
-      x: 32,
-      y: 32,
-    },
-  },
-};

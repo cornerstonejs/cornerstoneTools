@@ -24,6 +24,7 @@ import {
 } from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { ellipticalRoiCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -490,17 +491,3 @@ function _getEllipseImageCoordinates(startHandle, endHandle) {
     height: Math.round(Math.abs(startHandle.y - endHandle.y)),
   };
 }
-
-const ellipticalRoiCursor = {
-  svgGroupString: `<path fill="ACTIVE_COLOR" d="M896 352q-148 0-273 73t-198 198-73 273 73 273 198
-      198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103
-      385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5
-      279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"
-    />`,
-  options: {
-    viewBox: {
-      x: 1792,
-      y: 1792,
-    },
-  },
-};

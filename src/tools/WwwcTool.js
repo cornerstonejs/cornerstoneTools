@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { wwwcCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -73,14 +74,3 @@ function basicLevelingStrategy(evt, { orientation }) {
     eventData.viewport.voi.windowCenter += deltaX;
   }
 }
-
-const wwwcCursor = {
-  svgGroupString: `<path fill="ACTIVE_COLOR" d="M14.5,3.5 a1 1 0 0 1 -11,11 Z" stroke="none" opacity="0.8" />
-    <circle cx="9" cy="9" r="8" fill="none" stroke-width="2" stroke="ACTIVE_COLOR" />`,
-  options: {
-    viewBox: {
-      x: 18,
-      y: 18,
-    },
-  },
-};
