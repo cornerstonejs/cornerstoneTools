@@ -50,7 +50,7 @@ export default class MouseCursor {
     const svgOptions = Object.assign(defaultOptions, this.options);
     const viewBox = svgOptions.viewBox;
 
-    return `
+    const svgString = `
     <svg
       data-icon="cursor" role="img" xmlns="http://www.w3.org/2000/svg"
       width="32" height="32" viewBox="0 0 ${viewBox.x} ${viewBox.y}"
@@ -59,6 +59,8 @@ export default class MouseCursor {
         /ACTIVE_COLOR/g,
         `${toolColors.getActiveColor()}`
       )}
-  </svg>`;
+    </svg>`;
+
+    return new Blob([svgString], { type: 'image/svg+xml' });
   }
 }
