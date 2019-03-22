@@ -54,8 +54,10 @@ class BaseTool {
     // Configuration is set at tool initalization
     this._configuration = Object.assign({}, configuration);
 
-    // True if tool has a canvas cursor, causes the frame to render on every mouse move when the tool is active.
-    this.hasCanvasCursor = false;
+    // updateOnMouseMove causes the frame to render on every mouse move when
+    // the tool is active. This is useful for tools that render large/dynamic
+    // items to the canvas which can't easily be respresented with an SVG Cursor.
+    this.updateOnMouseMove = false;
     this.hideDefaultCursor = false;
 
     // Apply mixins if mixinsArray is not empty.

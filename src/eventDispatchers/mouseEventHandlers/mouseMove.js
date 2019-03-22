@@ -36,7 +36,7 @@ export default function(evt) {
 
   // If any tools are active, check if they have a canvas cursor, and if so update image.
   if (activeTools.length > 0) {
-    imageNeedsUpdate = activeTools.some(tool => tool.hasCanvasCursor);
+    imageNeedsUpdate = activeTools.some(tool => tool.updateOnMouseMove);
   }
 
   tools = getToolsWithDataForElement(element, tools);

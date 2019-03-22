@@ -37,7 +37,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     super(initialConfiguration);
 
-    this.hasCanvasCursor = true;
+    this.updateOnMouseMove = true;
     this.isMultiPartTool = true;
     this.initialConfiguration = initialConfiguration;
     this.referencedToolName = initialConfiguration.referencedToolName;
