@@ -1,26 +1,16 @@
 import toolColors from '../../stateManagement/toolColors.js';
+import { modules } from '../../store/index.js';
 
-const defaultOptions = {
-  iconSize: 16,
-  viewBox: {
-    x: 16,
-    y: 16,
-  },
-  mousePoint: {
-    x: 8,
-    y: 8,
-  },
-};
-
-let mousePointerGroupString = `
-  <path stroke="ACTIVE_COLOR" d="M8 16L8 0" id="dUU9BLALA"></path>
-  <path stroke="ACTIVE_COLOR" d="M16 8L0 8" id="b9wR4oWz"></path>
-`;
+const cursorModule = modules.cursor;
 
 export default class MouseCursor {
   constructor(iconGroupString, options) {
     this.iconGroupString = iconGroupString;
-    this.options = Object.assign({}, defaultOptions, options);
+    this.options = Object.assign(
+      {},
+      cursorModule.getters.defaultOptions(),
+      options
+    );
   }
 
   get iconSVG() {
@@ -50,7 +40,7 @@ export default class MouseCursor {
   }
 
   _generateIconWithPointerSVGString() {
-    const { iconSize, viewBox } = this.options;
+    const { mousePointerGroupString, iconSize, viewBox } = this.options;
     const scale = iconSize / Math.max(viewBox.x, viewBox.y);
     const activeColor = toolColors.getActiveColor();
     const svgSize = 16 + iconSize;

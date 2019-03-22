@@ -26,12 +26,14 @@ export const arrowAnnotateCursor = new MouseCursor(
 );
 
 export const bidirectionalCursor = new MouseCursor(
-  `<path fill="#ffffff" stroke="ACTIVE_COLOR" d="M27.63 3.21L3.12 28.81"></path>
-  <path fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" d="M27.63 15.75L15.27 4.43"></path>
-  <path fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" d="M16.5 4.28C16.5 4.96 15.95 5.51 15.27 5.51C14.59 5.51 14.03 4.96 14.03 4.28C14.03 3.59 14.59 3.04 15.27 3.04C15.95 3.04 16.5 3.59 16.5 4.28Z" ></path>
-  <path fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" d="M28.87 3.19C28.87 3.87 28.31 4.43 27.63 4.43C26.95 4.43 26.4 3.87 26.4 3.19C26.4 2.51 26.95 1.95 27.63 1.95C28.31 1.95 28.87 2.51 28.87 3.19Z"></path>
-  <path fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" d="M28.87 15.75C28.87 16.43 28.31 16.99 27.63 16.99C26.95 16.99 26.4 16.43 26.4 15.75C26.4 15.07 26.95 14.51 27.63 14.51C28.31 14.51 28.87 15.07 28.87 15.75Z"></path>
-  <path fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" d="M4.73 28.44C4.73 29.12 4.17 29.68 3.49 29.68C2.81 29.68 2.25 29.12 2.25 28.44C2.25 27.76 2.81 27.2 3.49 27.2C4.17 27.2 4.73 27.76 4.73 28.44Z"></path>`,
+  `<g fill="ACTIVE_COLOR" stroke-width="3" stroke="ACTIVE_COLOR">
+    <path d="M27.63 3.21L3.12 28.81"></path>
+    <path d="M27.63 15.75L15.27 4.43"></path>
+    <path d="M16.5 4.28C16.5 4.96 15.95 5.51 15.27 5.51C14.59 5.51 14.03 4.96 14.03 4.28C14.03 3.59 14.59 3.04 15.27 3.04C15.95 3.04 16.5 3.59 16.5 4.28Z" ></path>
+    <path d="M28.87 3.19C28.87 3.87 28.31 4.43 27.63 4.43C26.95 4.43 26.4 3.87 26.4 3.19C26.4 2.51 26.95 1.95 27.63 1.95C28.31 1.95 28.87 2.51 28.87 3.19Z"></path>
+    <path d="M28.87 15.75C28.87 16.43 28.31 16.99 27.63 16.99C26.95 16.99 26.4 16.43 26.4 15.75C26.4 15.07 26.95 14.51 27.63 14.51C28.31 14.51 28.87 15.07 28.87 15.75Z"></path>
+    <path d="M4.73 28.44C4.73 29.12 4.17 29.68 3.49 29.68C2.81 29.68 2.25 29.12 2.25 28.44C2.25 27.76 2.81 27.2 3.49 27.2C4.17 27.2 4.73 27.76 4.73 28.44Z"></path>
+  </g>`,
   {
     viewBox: {
       x: 48,
@@ -41,12 +43,14 @@ export const bidirectionalCursor = new MouseCursor(
 );
 
 export const cobbAngleCursor = new MouseCursor(
-  `<path stroke="ACTIVE_COLOR" d="M28.59 2.34L3.82 12.32"></path>
-  <path stroke="ACTIVE_COLOR" d="M28.59 29.66L3.82 19.68"></path>
-  <path stroke="ACTIVE_COLOR" stroke-dasharray="2" fill-opacity="0" d="M12.37
-    23.06C12.67 22.36 12.85 21.93 12.92 21.76C14.6 17.8 14.68 13.35 13.15
-    9.33C13.11 9.24 13.02 9 12.88 8.63">
-  </path>`,
+  `<g stroke="ACTIVE_COLOR" stroke-width="3">
+    <path d="M28.59 2.34L3.82 12.32"></path>
+    <path d="M28.59 29.66L3.82 19.68"></path>
+    <path stroke-dasharray="2" fill-opacity="0" d="M12.37
+      23.06C12.67 22.36 12.85 21.93 12.92 21.76C14.6 17.8 14.68 13.35 13.15
+      9.33C13.11 9.24 13.02 9 12.88 8.63">
+    </path>
+  </g>`,
   {
     viewBox: {
       x: 32,
@@ -56,22 +60,21 @@ export const cobbAngleCursor = new MouseCursor(
 );
 
 export const ellipticalRoiCursor = new MouseCursor(
-  `<path fill="ACTIVE_COLOR" d="M896 352q-148 0-273 73t-198 198-73 273 73 273 198
-      198 273 73 273-73 198-198 73-273-73-273-198-198-273-73zm768 544q0 209-103
-      385.5t-279.5 279.5-385.5 103-385.5-103-279.5-279.5-103-385.5 103-385.5
-      279.5-279.5 385.5-103 385.5 103 279.5 279.5 103 385.5z"
+  `<path stroke="ACTIVE_COLOR" fill="none" stroke-width="3" d="M30.74 15.76C30.74 20.99 24.14 25.23 16
+    25.23C7.86 25.23 1.26 20.99 1.26 15.76C1.26 10.54 7.86 6.3 16 6.3C24.14
+    6.3 30.74 10.54 30.74 15.76Z"
     />`,
   {
     viewBox: {
-      x: 1792,
-      y: 1792,
+      x: 32,
+      y: 32,
     },
   }
 );
 
 export const freehandMouseCursor = new MouseCursor(
   `
-  <g fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR">
+  <g fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" stroke-width="2">
     <ellipse ry="1" rx="1" id="svg_3" cy="4.240343" cx="14.306499"/>
     <line id="svg_4" y2="3.58462" x2="12.242186" y1="3.997482" x1="13.432202"/>
     <line id="svg_5" y2="3.268901" x2="10.857882" y1="3.608906" x1="12.387902"/>
