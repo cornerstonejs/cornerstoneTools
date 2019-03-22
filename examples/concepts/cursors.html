@@ -3,6 +3,53 @@ layout: blank
 title: Cursors
 ---
 
+<style>
+  .cursor-list,
+  .cursor-list-with-pointer {
+    display: flex;
+    padding: 15px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: black;
+  }
+
+  .cursor-list img {
+    padding: 5px;
+    flex-basis: 32px;
+  }
+</style>
+
+<h3 class="title is-3">Access Cursor Images</h3>
+
+
+{% highlight javascript %}
+// Grab a cursor
+const cursors = cornerstoneTools.import('tools/cursors');
+const cursor = cursors.arrowAnnotateCursor; // `MouseCursor` class
+
+// Create and display cursor image
+const cursorImg = document.createElement('img');
+const cursorImgUrl = window.URL.createObjectURL(cursor.iconSVG);
+
+cursorImg.src = cursorImgUrl;
+document.querySelector('body').appendChild(cursorImg);
+
+// Create and display cursor image w/ pointer
+const cursorImgPointer = document.createElement('img');
+const cursorImgPointerUrl = window.URL.createObjectURL(cursor.blob);
+
+cursorImgPointer.src = cursorImgPointerUrl;
+document.querySelector('body').appendChild(cursorImgPointer);
+{% endhighlight %}
+
+<h4 class="title is-4">Cursors w/o Pointers</h4>
+
+<div class="cursor-list"></div>
+
+<h4 class="title is-4" style="margin-top: 1.5em;">Cursors w/ Pointers</h4>
+
+<div class="cursor-list-with-pointer"></div>
+
 <script>
   // NOTE: We pull these in from packaged sources in our header,
   // but here are the associated NPM packages that can be used instead
@@ -48,8 +95,32 @@ title: Cursors
   cornerstoneTools.setToolActive('RectangleRoi', { mouseButtonMask: 1 });
 
   // Grab all SVGs
+  const MouseCursor = cornerstoneTools.import('tools/cursors/MouseCursor');
   const cursors = cornerstoneTools.import('tools/cursors');
-  console.log(cursors);
+  const $cursorList = document.querySelector('.cursor-list');
+  const $cursorListWithPointer = document.querySelector('.cursor-list-with-pointer')
+
+  Object.keys(cursors).forEach(cursorName => {
+    const cursor = cursors[cursorName];
+
+    // Create cursor image from blob
+    const imageUrl = window.URL.createObjectURL(cursor.iconSVG);
+    const img = document.createElement('img');
+
+    img.src = imageUrl;
+    img.alt = cursorName;
+    $cursorList.appendChild(img)
+
+    // Create cursor + pointer image from blob
+    const imageUrl2 = window.URL.createObjectURL(cursor.blob);
+    const img2 = document.createElement('img');
+
+    img2.src = imageUrl2;
+    img2.alt = cursorName;
+    $cursorListWithPointer.appendChild(img2);
+
+    // window.URL.revokeObjectURL(imageUrl);
+  });
 
   /***************************************************************************
    * UI & Boilerplate setup code
