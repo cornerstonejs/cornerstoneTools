@@ -185,6 +185,15 @@
         "code",
         "question"
       ]
+    },
+    {
+      "login": "vsaase",
+      "name": "Victor Saase",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/378021?v=4",
+      "profile": "https://github.com/vsaase",
+      "contributions": [
+        "ideas"
+      ]
     }
   ],
   "contributorsPerLine": 7

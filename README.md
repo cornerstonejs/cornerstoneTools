@@ -12,7 +12,7 @@
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
 [![Coverage Status][coverage-badge]][coverage]
-[![All Contributors](https://img.shields.io/badge/all_contributors-17-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors)
 
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -21,6 +21,8 @@
 
 ## Index
 
+- [Installing](#installation)
+- [Examples & Docs](#examples--docs)
 - [Contributing][contributing]
 
 ## The problem

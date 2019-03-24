@@ -301,8 +301,6 @@
 			const mouseButtonMask = evt.buttons
 				? evt.buttons
 				: convertMouseEventWhichToButtons(evt.which)
-			// TODO: Let's make this happen automagically for mask/touch conflicts?
-			setAllToolsPassive();
 			const toolType = evt.target.getAttribute('data-tool-type')
 			setButtonActive(toolName, mouseButtonMask, toolType);
 			cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
@@ -521,6 +519,9 @@
   element.addEventListener('keydown', event => {
   	if (event.keyCode === 27) {
 	  	freehandTool.cancelDrawing(element);
+  	}
+  	if (event.keyCode === 13) {
+  		freehandTool.completeDrawing(element)
   	}
   });
 
