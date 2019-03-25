@@ -63,23 +63,27 @@ describe('setToolModeForElement', () => {
     expect(mergeOptions).toBeCalledWith({ mouseButtonMask: [1, 2] });
   });
 
-  it('does not allow deplicates mouseButtonMasks', () => {
+  it('does not allow duplicate mouseButtonMasks', () => {
     const mergeOptions = jest.fn();
     const testTool = {
       mode: undefined,
-      options: { mouseButtonMask: [1, 2] }, // <--- start with this
+      options: { mouseButtonMask: [1, 1, 2] }, // <--- start with this
       supportedInteractionTypes: ['Mouse'],
       mergeOptions,
     };
 
-    getToolForElement.mockImplementation(() => testTool);
+    getToolForElement.mockImplementationOnce(() => testTool);
 
     const toolName = 'MyTool';
-    const options = { mouseButtonMask: 1 }; // <-- this should not cause a duplicate
+    const options = { mouseButtonMask: [2, 2, 3] }; // <-- "add" this
     const element = {};
 
     setToolEnabledForElement(element, toolName, options);
 
-    expect(mergeOptions).toBeCalledWith({ mouseButtonMask: [1, 2] });
+    const { mouseButtonMask } = mergeOptions.mock.calls[0][0];
+
+    // Note: sorting is required to because Array.from(set) can
+    // does not guarantee the order of results returned.
+    expect(mouseButtonMask.sort()).toEqual([1, 2, 3]);
   });
 });
