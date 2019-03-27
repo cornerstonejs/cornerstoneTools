@@ -210,15 +210,10 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
     options.mouseButtonMask.length !== 0 &&
     Array.isArray(tool.options.mouseButtonMask)
   ) {
-    options.mouseButtonMask = options.mouseButtonMask
-      .concat(tool.options.mouseButtonMask)
-      .reduce((acc, m) => {
-        if (acc.indexOf(m) === -1) {
-          acc.push(m);
-        }
-
-        return acc;
-      }, []);
+    options.mouseButtonMask = _mergeMouseButtonMask(
+      options.mouseButtonMask,
+      tool.options.mouseButtonMask
+    );
   }
 
   // Set mode & options
@@ -609,17 +604,6 @@ const _inputResolvers = {
   MultiTouch: _resolveMultiTouchInputConflicts,
 };
 
-export {
-  setToolActive,
-  setToolActiveForElement,
-  setToolDisabled,
-  setToolDisabledForElement,
-  setToolEnabled,
-  setToolEnabledForElement,
-  setToolPassive,
-  setToolPassiveForElement,
-};
-
 function _getNormalizedOptions(options) {
   // Is an object, but not an Array
   if (options === Object(options) && !Array.isArray(options)) {
@@ -649,3 +633,30 @@ function _getNormalizedOptions(options) {
 
   return options;
 }
+
+function _mergeMouseButtonMask(newMask, oldMask) {
+  // Merges and removes duplicates
+  return newMask.concat(oldMask).reduce((acc, m) => {
+    if (acc.indexOf(m) === -1) {
+      acc.push(m);
+    }
+
+    return acc;
+  }, []);
+}
+
+export {
+  setToolActive,
+  setToolActiveForElement,
+  setToolDisabled,
+  setToolDisabledForElement,
+  setToolEnabled,
+  setToolEnabledForElement,
+  setToolPassive,
+  setToolPassiveForElement,
+  // Exported for testing
+  setToolMode,
+  setToolModeForElement,
+  _getNormalizedOptions,
+  _mergeMouseButtonMask,
+};
