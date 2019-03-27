@@ -144,7 +144,7 @@ describe('_getNormalizedOptions', () => {
       mouseButtonMask: [1, 2, 3],
     });
   });
-  it('returns { mouseButtonMask: [1,2,3] } when options is { mouseButtonMask is [1,2,3] }', () => {
+  it('returns { mouseButtonMask: [1,2,3] } when options is { mouseButtonMask: [1,2,3] }', () => {
     expect(_getNormalizedOptions({ mouseButtonMask: [1, 2, 3] })).toEqual({
       mouseButtonMask: [1, 2, 3],
     });
