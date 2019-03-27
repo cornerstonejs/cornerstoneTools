@@ -101,7 +101,7 @@ describe('_mergeMouseButtonMask', () => {
 });
 
 describe('_getNormalizedOptions', () => {
-  // Undefined and null
+  // Shorthand examples
   it('returns { mouseButtonMask: [] } when options is undefined', () => {
     const received = _getNormalizedOptions(undefined);
 
@@ -112,6 +112,21 @@ describe('_getNormalizedOptions', () => {
 
     expect(received).toEqual({ mouseButtonMask: [] });
   });
+  it('returns { mouseButtonMask: [] } when options is 0', () => {
+    expect(_getNormalizedOptions(0)).toEqual({ mouseButtonMask: [] });
+  });
+  it('returns { mouseButtonMask: [num] } when options is a number > 0', () => {
+    expect(_getNormalizedOptions(1)).toEqual({ mouseButtonMask: [1] });
+    expect(_getNormalizedOptions(2)).toEqual({ mouseButtonMask: [2] });
+    expect(_getNormalizedOptions(3)).toEqual({ mouseButtonMask: [3] });
+  });
+  it('returns { mouseButtonMask: [1,2,3] } when options is [1,2,3]', () => {
+    expect(_getNormalizedOptions([1, 2, 3])).toEqual({
+      mouseButtonMask: [1, 2, 3],
+    });
+  });
+
+  // Longhand examples
   it('returns { mouseButtonMask: [] } when options is {}', () => {
     expect(_getNormalizedOptions({})).toEqual({
       mouseButtonMask: [],
@@ -127,21 +142,9 @@ describe('_getNormalizedOptions', () => {
       mouseButtonMask: [],
     });
   });
-
-  // Numbers
-  it('returns { mouseButtonMask: [] } when options is 0', () => {
-    expect(_getNormalizedOptions(0)).toEqual({ mouseButtonMask: [] });
-  });
-  it('returns { mouseButtonMask: [num] } when options is a number > 0', () => {
-    expect(_getNormalizedOptions(1)).toEqual({ mouseButtonMask: [1] });
-    expect(_getNormalizedOptions(2)).toEqual({ mouseButtonMask: [2] });
-    expect(_getNormalizedOptions(3)).toEqual({ mouseButtonMask: [3] });
-  });
-
-  // Arrays
-  it('returns { mouseButtonMask: [1,2,3] } when options is [1,2,3]', () => {
-    expect(_getNormalizedOptions([1, 2, 3])).toEqual({
-      mouseButtonMask: [1, 2, 3],
+  it('returns { mouseButtonMask: [] } when options is { mouseButtonMask: 0 }', () => {
+    expect(_getNormalizedOptions({ mouseButtonMask: null })).toEqual({
+      mouseButtonMask: [],
     });
   });
   it('returns { mouseButtonMask: [1,2,3] } when options is { mouseButtonMask: [1,2,3] }', () => {
