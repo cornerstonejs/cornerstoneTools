@@ -153,6 +153,33 @@ describe('_getNormalizedOptions', () => {
     });
   });
 
+  // Invalid settings
+  it('filters out invalid mouseButtonMask options', () => {
+    expect(_getNormalizedOptions('something bad')).toEqual({
+      mouseButtonMask: [],
+    });
+    expect(_getNormalizedOptions({ mouseButtonMask: 'something bad' })).toEqual(
+      {
+        mouseButtonMask: [],
+      }
+    );
+    expect(_getNormalizedOptions({ mouseButtonMask: ['bad'] })).toEqual({
+      mouseButtonMask: [],
+    });
+    expect(_getNormalizedOptions(['bad', 'bad', 'bad'])).toEqual({
+      mouseButtonMask: [],
+    });
+    expect(_getNormalizedOptions([true, false])).toEqual({
+      mouseButtonMask: [],
+    });
+    expect(_getNormalizedOptions([true, false, 1])).toEqual({
+      mouseButtonMask: [1],
+    });
+    expect(_getNormalizedOptions({ mouseButtonMask: ['bad', 1] })).toEqual({
+      mouseButtonMask: [1],
+    });
+  });
+
   // Other stuff
   it('does not modify any value other than mouseButtonMask', () => {
     const options = {

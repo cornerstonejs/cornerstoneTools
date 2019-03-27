@@ -605,31 +605,28 @@ const _inputResolvers = {
 };
 
 function _getNormalizedOptions(options) {
-  // Is an object, but not an Array
-  if (options === Object(options) && !Array.isArray(options)) {
-    if (options.mouseButtonMask === 0 || options.mouseButtonMask === null) {
-      options.mouseButtonMask = [];
-    } else if (typeof options.mouseButtonMask === 'number') {
-      const tempArray = [];
-
-      tempArray.push(options.mouseButtonMask);
-      options.mouseButtonMask = tempArray;
-    }
-  } else if (typeof options === 'number') {
-    const tempArray = [];
-
-    tempArray.push(options);
-    options = {
-      mouseButtonMask: options === 0 ? [] : tempArray,
-    };
-  } else if (options === null) {
-    options = {
-      mouseButtonMask: [],
-    };
-  } else {
-    console.info(`No options provided when changing tool mode`);
-    options = {};
+  if (Array.isArray(options)) {
+    // If options is an array assume the array is the mouseButtonMask array
+    options = { mouseButtonMask: options };
+  } else if (options !== Object(options)) {
+    // And if it's something other than an object, assume options is
+    // a single mouseButtonMask
+    options = { mouseButtonMask: [options] };
   }
+
+  // If there is still no 'mouseButtonMask' default it to an empty array
+  if (!options.hasOwnProperty('mouseButtonMask')) {
+    options.mouseButtonMask = [];
+  }
+
+  if (!Array.isArray(options.mouseButtonMask)) {
+    options.mouseButtonMask = [options.mouseButtonMask];
+  }
+
+  // Now filter out anything that is not an number or is the number 0
+  options.mouseButtonMask = options.mouseButtonMask.filter(
+    o => typeof o === 'number' && o !== 0
+  );
 
   return options;
 }
