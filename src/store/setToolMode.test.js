@@ -144,4 +144,25 @@ describe('_getNormalizedOptions', () => {
       mouseButtonMask: [1, 2, 3],
     });
   });
+
+  // Other stuff
+  it('does not modify any value other than mouseButtonMask', () => {
+    const options = {
+      // Tool specific options
+      type: 'Teapot',
+      size: 'little',
+      height: 'short',
+      build: 'stout',
+      handleLocation: 'here',
+      spoutLocation: 'here',
+      // What this method cares about
+      mouseButtonMask: 1,
+    };
+
+    const expectedResult = Object.assign({}, options, {
+      mouseButtonMask: [1], // MouseButtonMask is normalised
+    });
+
+    expect(_getNormalizedOptions(options)).toEqual(expectedResult);
+  });
 });
