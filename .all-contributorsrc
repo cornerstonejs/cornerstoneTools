@@ -182,7 +182,17 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/3329885?v=4",
       "profile": "http://sisobus.com",
       "contributions": [
-        "code"
+        "code",
+        "question"
+      ]
+    },
+    {
+      "login": "vsaase",
+      "name": "Victor Saase",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/378021?v=4",
+      "profile": "https://github.com/vsaase",
+      "contributions": [
+        "ideas"
       ]
     }
   ],

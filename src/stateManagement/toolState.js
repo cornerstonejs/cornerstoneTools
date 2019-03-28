@@ -13,7 +13,7 @@ import triggerEvent from '../util/triggerEvent.js';
  */
 function getElementToolStateManager(element) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
-  // If the enabledImage has no toolStateManager, create a default one for it
+  // If the enabledElement has no toolStateManager, create a default one for it
   // NOTE: This makes state management element specific
 
   if (enabledElement.toolStateManager === undefined) {

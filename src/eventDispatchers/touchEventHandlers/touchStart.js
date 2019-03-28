@@ -49,6 +49,10 @@ export default function(evt) {
     }
   }
 
+  if (state.isMultiPartToolActive) {
+    return;
+  }
+
   const annotationTools = getToolsWithDataForElement(
     element,
     activeAndPassiveTools
