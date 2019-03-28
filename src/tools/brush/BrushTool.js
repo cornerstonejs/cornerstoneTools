@@ -23,7 +23,7 @@ export default class BrushTool extends BaseBrushTool {
   constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Brush',
-      supportedInteractionTypes: ['Mouse'],
+      supportedInteractionTypes: ['Mouse', 'Touch'],
       strategies: {
         overlapping: _overlappingStrategy,
         nonOverlapping: _nonOverlappingStrategy,
@@ -34,6 +34,8 @@ export default class BrushTool extends BaseBrushTool {
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
+
+    this.touchDragCallback = this._paint.bind(this);
 
     this.initialConfiguration = initialConfiguration;
   }
