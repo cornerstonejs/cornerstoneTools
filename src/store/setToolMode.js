@@ -80,7 +80,7 @@ function _setToolCursorIfPrimary(element, options, tool) {
   let mouseButtonMask;
 
   if (typeof options === 'number') {
-    mouseButtonMask = options;
+    mouseButtonMask = [options];
   } else {
     mouseButtonMask = options.mouseButtonMask;
   }
