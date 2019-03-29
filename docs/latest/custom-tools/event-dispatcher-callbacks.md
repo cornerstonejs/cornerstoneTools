@@ -15,7 +15,7 @@ export default class HelloWorldMouseTool extends BaseTool {
   constructor(name = 'HelloWorldMouse') {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
+      supportedInteractionTypes: ['Mouse'],
       mixins: ['activeOrDisabledBinaryTool'],
     });
   }
