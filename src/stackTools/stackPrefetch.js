@@ -3,6 +3,11 @@ import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('stackTools')
+  .extend('stackPrefetch');
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
@@ -146,7 +151,7 @@ function prefetch(element) {
   const preventCache = false;
 
   function doneCallback(image) {
-    // Console.log('prefetch done: ' + image.imageId);
+    log('prefetch done: %s', image.imageId);
     const imageIdIndex = stack.imageIds.indexOf(image.imageId);
 
     removeFromList(imageIdIndex);
@@ -156,7 +161,7 @@ function prefetch(element) {
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
   function failCallback(error) {
-    console.log(`prefetch errored: ${error}`);
+    log('prefetch errored: %o', error);
     if (errorLoadingHandler) {
       errorLoadingHandler(element, imageId, error, 'stackPrefetch');
     }
@@ -295,9 +300,7 @@ function enable(element) {
 
   // Check if we are allowed to cache images in this stack
   if (stack.preventCache === true) {
-    console.warn(
-      'A stack that should not be cached was given the stackPrefetch'
-    );
+    log('A stack that should not be cached was given the stackPrefetch');
 
     return;
   }

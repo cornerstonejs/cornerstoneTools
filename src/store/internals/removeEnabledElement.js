@@ -10,6 +10,11 @@ import {
   touchToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('internals')
+  .extend('removeEnabledElement');
 
 /**
  * Element Disabled event.
@@ -32,7 +37,7 @@ import store from '../index.js';
  * @returns {void}
  */
 export default function(elementDisabledEvt) {
-  console.info('EVENT:ELEMENT_DISABLED');
+  log('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers
@@ -91,7 +96,7 @@ const _removeEnabledElement = function(enabledElement) {
   if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
   } else {
-    console.warn('unable to remove element');
+    log('unable to remove element');
   }
 };
 

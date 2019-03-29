@@ -1,5 +1,8 @@
 import store from './index.js';
 import getToolForElement from './getToolForElement.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools').extend('addTool');
 
 /**
  * Adds a tool to an enabled element.
@@ -21,7 +24,7 @@ const addToolForElement = function(element, ApiTool, configuration) {
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
-    console.warn(`${tool.name} has already been added to the target element`);
+    log('%s has already been added to the target element', tool.name);
 
     return;
   }
@@ -69,7 +72,7 @@ const _addToolGlobally = function(ApiTool, configuration) {
     store.state.globalTools[tool.name] !== undefined;
 
   if (toolAlreadyAddedGlobally) {
-    console.warn(`${tool.name} has already been added globally`);
+    log('%s has already been added globally', tool.name);
 
     return;
   }

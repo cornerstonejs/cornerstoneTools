@@ -1,9 +1,15 @@
 import external from '../../externalModules.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('eventDispatchers')
+  .extend('mouseEventHandlers');
 
 export default function(evt, tool) {
-  //
+  log('addNewMeasurement');
+
   evt.preventDefault();
   evt.stopPropagation();
   const eventData = evt.detail;

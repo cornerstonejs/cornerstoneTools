@@ -7,13 +7,18 @@ import {
   addToolState,
   removeToolState,
 } from '../../stateManagement/toolState.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('eventDispatchers')
+  .extend('touchEventHandlers');
 
 export default function(evt, tool) {
-  console.log('touch: addNewMeasurement');
-  //
+  log('addNewMeasurement');
+
   evt.preventDefault();
   evt.stopPropagation();
-  //
+
   const touchEventData = evt.detail;
   const element = touchEventData.element;
   const measurementData = tool.createNewMeasurement(touchEventData);

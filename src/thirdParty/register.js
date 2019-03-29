@@ -1,6 +1,11 @@
 import registerModule from './registerModule.js';
 import registerMixin from './registerMixin.js';
 import registerItem from './registerItem.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('thirdParty')
+  .extend('register');
 
 /**
  * Register an item or module to cornerstoneTools.
@@ -30,7 +35,6 @@ export default function(type, name, item, overwrite = false) {
       break;
     default:
       registerItem(type, name, item, overwrite);
-      console.warn(`unrecognised type ${type}, not registering ${name}`);
   }
 }
 
@@ -48,20 +52,22 @@ export default function(type, name, item, overwrite = false) {
  */
 function isValidInput(type, name, item) {
   if (!type) {
-    console.warn('The type must be given in order to register.');
+    log('The type must be given in order to register.');
 
     return false;
   }
 
   if (!name) {
-    console.warn(`The ${type} must have a name in order to register.`);
+    log(`The %s must have a name in order to register.`, type);
 
     return false;
   }
 
   if (typeof item !== 'object' && typeof item !== 'function') {
-    console.warn(
-      `The ${item} is a ${typeof item}, it should be an Object or a function.`
+    log(
+      `The %s is a %s, it should be an Object or a function.`,
+      item,
+      typeof item
     );
 
     return false;

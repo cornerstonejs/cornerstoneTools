@@ -2,6 +2,9 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools').extend('eventListeners');
 
 let isClickEvent = true;
 let preventClickTimeout;
@@ -60,7 +63,7 @@ function mouseDoubleClick(e) {
 
   const lastPoints = copyPoints(startPoints);
 
-  console.log(`double-click: ${getEventButtons(e)}`);
+  log('double-click: %o', getEventButtons(e));
   const eventData = {
     event: e,
     buttons: getEventButtons(e),
@@ -174,7 +177,7 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mousemove ${getEventButtons(e)}`);
+    log('mousemove: %o', getEventButtons(e));
     const eventData = {
       buttons: getEventButtons(e),
       viewport: external.cornerstone.getViewport(element),
@@ -243,7 +246,7 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mouseup: ${getEventButtons(e)}`);
+    log('mouseup: %o', getEventButtons(e));
     const eventData = {
       event: e,
       buttons: getEventButtons(e),

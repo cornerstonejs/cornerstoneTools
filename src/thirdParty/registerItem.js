@@ -1,4 +1,9 @@
 import { lib } from '../lib.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('thirdParty')
+  .extend('registerType');
 
 /**
  * Register an item to cornerstoneTools.
@@ -15,19 +20,22 @@ import { lib } from '../lib.js';
  * @returns {void}
  */
 export default function(type, name, item, overwrite = false) {
-  if (isItemNameRegistered(type, name)) {
-    console.warn(`${type}/${name} is already registered`);
+  const itemKey = `${type}/${name}`;
+  const alreadyRegistered = isItemNameRegistered(itemKey);
 
-    if (overwrite) {
-      console.warn(`Overwriting ${type}/${name}`);
-    } else {
-      return;
-    }
+  if (alreadyRegistered && !overwrite) {
+    log('%s is already registered', itemKey);
+
+    return;
   }
 
-  lib[`${type}/${name}`] = item;
+  if (alreadyRegistered) {
+    log('Overwriting %s', itemKey);
+  }
+
+  lib[itemKey] = item;
 }
 
-function isItemNameRegistered(type, name) {
-  return lib[`${type}/${name}`] !== undefined;
+function isItemNameRegistered(itemKey) {
+  return lib[itemKey] !== undefined;
 }

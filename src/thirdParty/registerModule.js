@@ -1,4 +1,9 @@
 import { modules } from '../store/index.js';
+import debug from 'debug';
+
+const log = debug('cornerstoneTools')
+  .extend('thirdParty')
+  .extend('registerModule');
 
 /**
  * Register a module.
@@ -14,19 +19,21 @@ import { modules } from '../store/index.js';
  * @returns {void}
  */
 export default function(name, newModule, overwrite = false) {
-  if (isModuleNameRegistered(name)) {
-    console.warn(`A module with the name ${name} is already registered`);
+  const alreadyRegistered = isModuleNameRegistered(name);
 
-    if (overwrite) {
-      console.warn(`Overwriting module ${name}`);
-    } else {
-      return;
-    }
+  if (alreadyRegistered && !overwrite) {
+    log('A module with the name %s is already registered', name);
+
+    return;
+  }
+
+  if (alreadyRegistered) {
+    log('Overwriting module %s', name);
   }
 
   modules[name] = newModule;
 }
 
 function isModuleNameRegistered(name) {
-  return Object.keys(modules).some(key => key === name);
+  return modules[name] !== undefined;
 }

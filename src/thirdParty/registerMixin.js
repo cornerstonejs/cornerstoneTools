@@ -1,6 +1,10 @@
 import { lib } from '../lib.js';
 import mixins from '../mixins/index.js';
+import debug from 'debug';
 
+const log = debug('cornerstoneTools')
+  .extend('thirdParty')
+  .extend('registerMixin');
 /**
  * Register an mixin to cornerstoneTools.
  * @export
@@ -14,15 +18,18 @@ import mixins from '../mixins/index.js';
  *                                    should it have the same name.
  * @returns {void}
  */
-export default function(name, mixin, overwrite = false) {
-  if (isMixinRegistered(name)) {
-    console.warn(`mixins/${name} is already registered`);
 
-    if (overwrite) {
-      console.warn(`Overwriting mixins/${name}`);
-    } else {
-      return;
-    }
+export default function(name, mixin, overwrite = false) {
+  const alreadyRegistered = isMixinRegistered(name);
+
+  if (alreadyRegistered && !overwrite) {
+    log('mixins/%s is already registered', name);
+
+    return;
+  }
+
+  if (alreadyRegistered) {
+    log('Overwriting mixins/%s', name);
   }
 
   // Register to the mixins object
