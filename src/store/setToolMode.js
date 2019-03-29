@@ -12,7 +12,7 @@ import {
 const globalConfiguration = store.modules.globalConfiguration;
 const log = debug('cornerstoneTools')
   .extend('store')
-  .enabled('setToolMode');
+  .extend('setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
