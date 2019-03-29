@@ -1068,6 +1068,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Force onImageRendered to fire
     external.cornerstone.updateImage(eventData.element);
+    this.fireModifiedEvent(eventData.element, data);
   }
 
   /**
@@ -1131,6 +1132,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     }
 
     external.cornerstone.updateImage(element);
+
+    this.fireModifiedEvent(element, data);
   }
 
   /**
@@ -1588,6 +1591,19 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       this._endDrawing(element, lastHandlePlaced);
       external.cornerstone.updateImage(element);
     }
+  }
+
+  /**
+   * Fire cornerstonetoolsmeasurementmodified event on provided element
+   * @param {any} element which freehand data has been modified
+   * @param {any} data the measurment data
+   */
+  fireModifiedEvent(element, data) {
+    external.cornerstone.triggerEvent(
+      element,
+      EVENTS.MEASUREMENT_MODIFIED,
+      data
+    );
   }
 
   // ===================================================================
