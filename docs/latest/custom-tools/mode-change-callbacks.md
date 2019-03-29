@@ -12,25 +12,23 @@ Note that unlike a lot of the Tools, the `element` on which the Tool resides is 
 For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
-import external from './../externalModules.js';
-import BaseTool from './../base/BaseTool.js';
+import csTools from 'cornerstone-tools';
+const BaseTool = csTools.import('base/BaseTool');
 
 export default class HelloWorldMouseTool extends BaseTool {
-  constructor (name = 'HelloWorldMouse') {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
-      supportedInteractionTypes: ['mouse'],
-      mixins: [
-        'activeOrDisabledBinaryTool'
-      ]
+      supportedInteractionTypes: ['Mouse'],
+      mixins: ['activeOrDisabledBinaryTool'],
     });
   }
 
-  activeCallback (element) {
+  activeCallback(element) {
     console.log(`Hello element ${element.uuid}!`);
   }
 
-  disabledCallback (element) {
+  disabledCallback(element) {
     console.log(`Goodbye element ${element.uuid}!`);
   }
 }
