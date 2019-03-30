@@ -17,11 +17,9 @@ import {
   setToolDisabledForElement,
 } from './../setToolMode.js';
 import store from '../index.js';
-import debug from 'debug';
+import { logger } from '../../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('internals')
-  .extend('addEnabledElement');
+const log = logger('internals:addEnabledElement');
 
 /**
  * Element Enabled event.

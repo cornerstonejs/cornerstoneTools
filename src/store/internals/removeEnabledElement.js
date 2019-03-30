@@ -10,11 +10,9 @@ import {
   touchToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
-import debug from 'debug';
+import { logger } from '../../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('internals')
-  .extend('removeEnabledElement');
+const log = logger('internals:removeEnabledElement');
 
 /**
  * Element Disabled event.

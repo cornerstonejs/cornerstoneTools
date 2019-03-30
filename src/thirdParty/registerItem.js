@@ -1,9 +1,7 @@
 import { lib } from '../lib.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('thirdParty')
-  .extend('registerType');
+const log = logger('thirdParty:registerType');
 
 /**
  * Register an item to cornerstoneTools.

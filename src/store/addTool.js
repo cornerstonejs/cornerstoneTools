@@ -1,8 +1,8 @@
 import store from './index.js';
 import getToolForElement from './getToolForElement.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools').extend('addTool');
+const log = logger('addTool');
 
 /**
  * Adds a tool to an enabled element.

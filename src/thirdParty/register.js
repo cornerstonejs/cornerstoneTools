@@ -1,11 +1,9 @@
 import registerModule from './registerModule.js';
 import registerMixin from './registerMixin.js';
 import registerItem from './registerItem.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('thirdParty')
-  .extend('register');
+const log = logger('thirdParty:register');
 
 /**
  * Register an item or module to cornerstoneTools.

@@ -1,9 +1,7 @@
 import { modules } from '../store/index.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('thirdParty')
-  .extend('registerModule');
+const log = logger('thirdParty:registerModule');
 
 /**
  * Register a module.

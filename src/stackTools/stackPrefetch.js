@@ -3,11 +3,9 @@ import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('stackTools')
-  .extend('stackPrefetch');
+const log = logger('stackTools:stackPrefetch');
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';

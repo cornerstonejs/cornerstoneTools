@@ -1,10 +1,8 @@
 import { lib } from '../lib.js';
 import mixins from '../mixins/index.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('thirdParty')
-  .extend('registerMixin');
+const log = logger('thirdParty:registerMixin');
 /**
  * Register an mixin to cornerstoneTools.
  * @export

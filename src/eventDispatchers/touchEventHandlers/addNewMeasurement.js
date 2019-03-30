@@ -7,11 +7,9 @@ import {
   addToolState,
   removeToolState,
 } from '../../stateManagement/toolState.js';
-import debug from 'debug';
+import { logger } from '../../util/logger.js';
 
-const log = debug('cornerstoneTools')
-  .extend('eventDispatchers')
-  .extend('touchEventHandlers');
+const log = logger('eventDispatchers:touchEventHandlers');
 
 export default function(evt, tool) {
   log('addNewMeasurement');

@@ -2,9 +2,9 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
-import debug from 'debug';
+import { logger } from '../util/logger.js';
 
-const log = debug('cornerstoneTools').extend('eventListeners');
+const log = logger('eventListeners');
 
 let isClickEvent = true;
 let preventClickTimeout;

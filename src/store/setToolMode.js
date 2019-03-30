@@ -2,17 +2,15 @@ import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
 import store from './../store/index.js';
-import debug from 'debug';
 import {
   setToolCursor,
   resetToolCursor,
   hideToolCursor,
 } from './setToolCursor.js';
+import { logger } from '../util/logger.js';
 
 const globalConfiguration = store.modules.globalConfiguration;
-const log = debug('cornerstoneTools')
-  .extend('store')
-  .extend('setToolMode');
+const log = logger('store:setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
