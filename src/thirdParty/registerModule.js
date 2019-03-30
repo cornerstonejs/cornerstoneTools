@@ -20,13 +20,13 @@ export default function(name, newModule, overwrite = false) {
   const alreadyRegistered = isModuleNameRegistered(name);
 
   if (alreadyRegistered && !overwrite) {
-    logger.log('A module with the name %s is already registered', name);
+    logger.warn('A module with the name %s is already registered', name);
 
     return;
   }
 
   if (alreadyRegistered) {
-    logger.log('Overwriting module %s', name);
+    logger.warn('Overwriting module %s', name);
   }
 
   modules[name] = newModule;

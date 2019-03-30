@@ -24,7 +24,7 @@ const addToolForElement = function(element, ApiTool, configuration) {
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
-    logger.log('%s has already been added to the target element', tool.name);
+    logger.warn('%s has already been added to the target element', tool.name);
 
     return;
   }
@@ -72,7 +72,7 @@ const _addToolGlobally = function(ApiTool, configuration) {
     store.state.globalTools[tool.name] !== undefined;
 
   if (toolAlreadyAddedGlobally) {
-    logger.log('%s has already been added globally', tool.name);
+    logger.warn('%s has already been added globally', tool.name);
 
     return;
   }

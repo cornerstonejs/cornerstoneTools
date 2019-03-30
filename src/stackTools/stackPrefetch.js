@@ -298,7 +298,9 @@ function enable(element) {
 
   // Check if we are allowed to cache images in this stack
   if (stack.preventCache === true) {
-    logger.log('A stack that should not be cached was given the stackPrefetch');
+    logger.warn(
+      'A stack that should not be cached was given the stackPrefetch'
+    );
 
     return;
   }

@@ -94,7 +94,7 @@ const _removeEnabledElement = function(enabledElement) {
   if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
   } else {
-    logger.log('unable to remove element');
+    logger.warn('unable to remove element');
   }
 };
 

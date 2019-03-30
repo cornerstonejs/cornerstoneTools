@@ -21,13 +21,13 @@ export default function(name, mixin, overwrite = false) {
   const alreadyRegistered = isMixinRegistered(name);
 
   if (alreadyRegistered && !overwrite) {
-    logger.log('mixins/%s is already registered', name);
+    logger.warn('mixins/%s is already registered', name);
 
     return;
   }
 
   if (alreadyRegistered) {
-    logger.log('Overwriting mixins/%s', name);
+    logger.warn('Overwriting mixins/%s', name);
   }
 
   // Register to the mixins object

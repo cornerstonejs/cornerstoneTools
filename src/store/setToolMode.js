@@ -231,7 +231,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    logger.log('Unable to find tool "%s" for enabledElement', toolName);
+    logger.warn('Unable to find tool "%s" for enabledElement', toolName);
 
     return;
   }
@@ -328,7 +328,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
       if (inputResolver) {
         inputResolver(tool, element, options);
       } else {
-        logger.log(
+        logger.warn(
           'Unable to resolve input conflicts for type %s',
           interactionType
         );

@@ -22,13 +22,13 @@ export default function(type, name, item, overwrite = false) {
   const alreadyRegistered = isItemNameRegistered(itemKey);
 
   if (alreadyRegistered && !overwrite) {
-    logger.log('%s is already registered', itemKey);
+    logger.warn('%s is already registered', itemKey);
 
     return;
   }
 
   if (alreadyRegistered) {
-    logger.log('Overwriting %s', itemKey);
+    logger.warn('Overwriting %s', itemKey);
   }
 
   lib[itemKey] = item;
