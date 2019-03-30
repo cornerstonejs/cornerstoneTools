@@ -1,17 +1,20 @@
-import external from './../../externalModules.js';
+import external from '../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import { getToolState } from './../../stateManagement/toolState.js';
-import textStyle from './../../stateManagement/textStyle.js';
-import toolColors from './../../stateManagement/toolColors.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import textStyle from '../../stateManagement/textStyle.js';
+import toolColors from '../../stateManagement/toolColors.js';
 // Drawing
-import { getNewContext, draw } from './../../drawing/index.js';
-import drawTextBox from './../../drawing/drawTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
+import { getNewContext, draw } from '../../drawing/index.js';
+import drawTextBox from '../../drawing/drawTextBox.js';
+import drawHandles from '../../drawing/drawHandles.js';
 // Utilities
-import getRGBPixels from './../../util/getRGBPixels.js';
-import calculateSUV from './../../util/calculateSUV.js';
+import getRGBPixels from '../../util/getRGBPixels.js';
+import calculateSUV from '../../util/calculateSUV.js';
 import { probeCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:ProbeTool');
 
 /**
  * @public
@@ -40,8 +43,8 @@ export default class ProbeTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
-        `required eventData not supplieed to tool ${
+      logger.error(
+        `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
       );
@@ -77,8 +80,8 @@ export default class ProbeTool extends BaseAnnotationTool {
     const validParameters = hasEndHandle;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
     }
 

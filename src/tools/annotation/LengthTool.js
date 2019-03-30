@@ -15,6 +15,9 @@ import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:LengthTool');
 
 /**
  * @public
@@ -42,7 +45,7 @@ export default class LengthTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
+      logger.warn(
         `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
@@ -96,12 +99,14 @@ export default class LengthTool extends BaseAnnotationTool {
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.error(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
+
+      return false;
     }
 
-    if (!validParameters || data.visible === false) {
+    if (data.visible === false) {
       return false;
     }
 

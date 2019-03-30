@@ -2,9 +2,9 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('eventListeners');
+const logger = getLogger('eventListeners');
 
 let isClickEvent = true;
 let preventClickTimeout;
@@ -63,7 +63,7 @@ function mouseDoubleClick(e) {
 
   const lastPoints = copyPoints(startPoints);
 
-  log('double-click: %o', getEventButtons(e));
+  logger.log('double-click: %o', getEventButtons(e));
   const eventData = {
     event: e,
     buttons: getEventButtons(e),
@@ -177,7 +177,7 @@ function mouseDown(e) {
       ),
     };
 
-    log('mousemove: %o', getEventButtons(e));
+    logger.log('mousemove: %o', getEventButtons(e));
     const eventData = {
       buttons: getEventButtons(e),
       viewport: external.cornerstone.getViewport(element),
@@ -246,7 +246,7 @@ function mouseDown(e) {
       ),
     };
 
-    log('mouseup: %o', getEventButtons(e));
+    logger.log('mouseup: %o', getEventButtons(e));
     const eventData = {
       event: e,
       buttons: getEventButtons(e),

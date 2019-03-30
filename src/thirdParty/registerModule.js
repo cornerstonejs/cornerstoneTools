@@ -1,7 +1,7 @@
 import { modules } from '../store/index.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('thirdParty:registerModule');
+const logger = getLogger('thirdParty:registerModule');
 
 /**
  * Register a module.
@@ -20,13 +20,13 @@ export default function(name, newModule, overwrite = false) {
   const alreadyRegistered = isModuleNameRegistered(name);
 
   if (alreadyRegistered && !overwrite) {
-    log('A module with the name %s is already registered', name);
+    logger.log('A module with the name %s is already registered', name);
 
     return;
   }
 
   if (alreadyRegistered) {
-    log('Overwriting module %s', name);
+    logger.log('Overwriting module %s', name);
   }
 
   modules[name] = newModule;

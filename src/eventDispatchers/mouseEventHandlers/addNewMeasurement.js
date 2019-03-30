@@ -1,12 +1,12 @@
 import external from '../../externalModules.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
-import { logger } from '../../util/logger.js';
+import { getLogger } from '../../util/logger.js';
 
-const log = logger('eventDispatchers:mouseEventHandlers');
+const logger = getLogger('eventDispatchers:mouseEventHandlers');
 
 export default function(evt, tool) {
-  log('addNewMeasurement');
+  logger.log('addNewMeasurement');
 
   evt.preventDefault();
   evt.stopPropagation();

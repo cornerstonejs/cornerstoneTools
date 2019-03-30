@@ -7,10 +7,10 @@ import {
   resetToolCursor,
   hideToolCursor,
 } from './setToolCursor.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
 const globalConfiguration = store.modules.globalConfiguration;
-const log = logger('store:setToolMode');
+const logger = getLogger('store:setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -231,7 +231,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    log('Unable to find tool "%s" for enabledElement', toolName);
+    logger.log('Unable to find tool "%s" for enabledElement', toolName);
 
     return;
   }
@@ -328,7 +328,10 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
       if (inputResolver) {
         inputResolver(tool, element, options);
       } else {
-        log('Unable to resolve input conflicts for type %s', interactionType);
+        logger.log(
+          'Unable to resolve input conflicts for type %s',
+          interactionType
+        );
       }
     }
   });
@@ -350,7 +353,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
     });
 
     if (!toolHasAnyActiveInteractionType) {
-      log("Setting tool %s's to PASSIVE", t.name);
+      logger.log("Setting tool %s's to PASSIVE", t.name);
       setToolPassiveForElement(element, t.name);
     }
   });
@@ -426,11 +429,14 @@ function _resolveTouchInputConflicts(tool, element, options) {
   );
 
   if (activeTouchTool) {
-    log("Setting tool %s's isTouchActive to false", activeTouchTool.name);
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
+    );
     activeTouchTool.options.isTouchActive = false;
   }
   if (activeMultiTouchToolWithOneTouchPointer) {
-    log(
+    logger.log(
       "Setting tool %s's isTouchActive to false",
       activeMultiTouchToolWithOneTouchPointer.name
     );
@@ -469,7 +475,7 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
   }
 
   if (activeMultiTouchTool) {
-    log(
+    logger.log(
       "Setting tool %s's isMultiTouchActive to false",
       activeMultiTouchTool.name
     );
@@ -477,7 +483,10 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
   }
 
   if (activeTouchTool) {
-    log("Setting tool %s's isTouchActive to false", activeTouchTool.name);
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
+    );
     activeTouchTool.options.isTouchActive = false;
   }
 }
@@ -510,7 +519,7 @@ function _resolveGenericInputConflicts(
   );
 
   if (activeToolWithActiveInteractionType) {
-    log(
+    logger.log(
       "Setting tool %s's %s to false",
       activeToolWithActiveInteractionType.name,
       interactionTypeFlag
@@ -672,7 +681,7 @@ function _getNormalizedOptions(options) {
       mouseButtonMask: [],
     };
   } else {
-    log('No options provided when changing tool mode');
+    logger.log('No options provided when changing tool mode');
     options = {};
   }
 

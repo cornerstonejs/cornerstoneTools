@@ -1,9 +1,9 @@
 import registerModule from './registerModule.js';
 import registerMixin from './registerMixin.js';
 import registerItem from './registerItem.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('thirdParty:register');
+const logger = getLogger('thirdParty:register');
 
 /**
  * Register an item or module to cornerstoneTools.
@@ -50,19 +50,19 @@ export default function(type, name, item, overwrite = false) {
  */
 function isValidInput(type, name, item) {
   if (!type) {
-    log('The type must be given in order to register.');
+    logger.warn('The type must be given in order to register.');
 
     return false;
   }
 
   if (!name) {
-    log(`The %s must have a name in order to register.`, type);
+    logger.warn(`The %s must have a name in order to register.`, type);
 
     return false;
   }
 
   if (typeof item !== 'object' && typeof item !== 'function') {
-    log(
+    logger.warn(
       `The %s is a %s, it should be an Object or a function.`,
       item,
       typeof item

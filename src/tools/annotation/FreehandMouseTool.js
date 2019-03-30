@@ -24,8 +24,10 @@ import drawHandles from '../../drawing/drawHandles.js';
 import { clipToBox } from '../../util/clip.js';
 import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 import { freehandMouseCursor } from '../cursors/index.js';
-
 import freehandUtils from '../../util/freehand/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:FreehandMouseTool');
 
 const {
   insertOrDelete,
@@ -88,7 +90,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
+      logger.error(
         `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`

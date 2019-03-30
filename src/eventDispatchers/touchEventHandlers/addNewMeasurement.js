@@ -7,12 +7,12 @@ import {
   addToolState,
   removeToolState,
 } from '../../stateManagement/toolState.js';
-import { logger } from '../../util/logger.js';
+import { getLogger } from '../../util/logger.js';
 
-const log = logger('eventDispatchers:touchEventHandlers');
+const logger = getLogger('eventDispatchers:touchEventHandlers');
 
 export default function(evt, tool) {
-  log('addNewMeasurement');
+  logger.log('addNewMeasurement');
 
   evt.preventDefault();
   evt.stopPropagation();

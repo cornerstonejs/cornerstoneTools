@@ -17,9 +17,9 @@ import {
   setToolDisabledForElement,
 } from './../setToolMode.js';
 import store from '../index.js';
-import { logger } from '../../util/logger.js';
+import { getLogger } from '../../util/logger.js';
 
-const log = logger('internals:addEnabledElement');
+const logger = getLogger('internals:addEnabledElement');
 
 /**
  * Element Enabled event.
@@ -49,7 +49,7 @@ const log = logger('internals:addEnabledElement');
  * @returns {void}
  */
 export default function(elementEnabledEvt) {
-  log('EVENT:ELEMENT_ENABLED');
+  logger.log('EVENT:ELEMENT_ENABLED');
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers

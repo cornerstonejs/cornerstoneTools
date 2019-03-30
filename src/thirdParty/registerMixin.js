@@ -1,8 +1,8 @@
 import { lib } from '../lib.js';
 import mixins from '../mixins/index.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('thirdParty:registerMixin');
+const logger = getLogger('thirdParty:registerMixin');
 /**
  * Register an mixin to cornerstoneTools.
  * @export
@@ -21,13 +21,13 @@ export default function(name, mixin, overwrite = false) {
   const alreadyRegistered = isMixinRegistered(name);
 
   if (alreadyRegistered && !overwrite) {
-    log('mixins/%s is already registered', name);
+    logger.log('mixins/%s is already registered', name);
 
     return;
   }
 
   if (alreadyRegistered) {
-    log('Overwriting mixins/%s', name);
+    logger.log('Overwriting mixins/%s', name);
   }
 
   // Register to the mixins object

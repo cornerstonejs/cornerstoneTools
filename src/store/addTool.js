@@ -1,8 +1,8 @@
 import store from './index.js';
 import getToolForElement from './getToolForElement.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('addTool');
+const logger = getLogger('addTool');
 
 /**
  * Adds a tool to an enabled element.
@@ -24,7 +24,7 @@ const addToolForElement = function(element, ApiTool, configuration) {
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
-    log('%s has already been added to the target element', tool.name);
+    logger.log('%s has already been added to the target element', tool.name);
 
     return;
   }
@@ -72,7 +72,7 @@ const _addToolGlobally = function(ApiTool, configuration) {
     store.state.globalTools[tool.name] !== undefined;
 
   if (toolAlreadyAddedGlobally) {
-    log('%s has already been added globally', tool.name);
+    logger.log('%s has already been added globally', tool.name);
 
     return;
   }

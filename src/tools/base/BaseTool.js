@@ -1,4 +1,7 @@
-import mixins from './../../mixins/index.js';
+import mixins from '../../mixins/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:base:BaseTool');
 
 /**
  * @typedef ToolConfiguration
@@ -154,7 +157,7 @@ class BaseTool {
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
       } else {
-        console.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
+        logger.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
       }
     }
   }

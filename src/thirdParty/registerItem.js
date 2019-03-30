@@ -1,7 +1,7 @@
 import { lib } from '../lib.js';
-import { logger } from '../util/logger.js';
+import { getLogger } from '../util/logger.js';
 
-const log = logger('thirdParty:registerType');
+const logger = getLogger('thirdParty:registerType');
 
 /**
  * Register an item to cornerstoneTools.
@@ -22,13 +22,13 @@ export default function(type, name, item, overwrite = false) {
   const alreadyRegistered = isItemNameRegistered(itemKey);
 
   if (alreadyRegistered && !overwrite) {
-    log('%s is already registered', itemKey);
+    logger.log('%s is already registered', itemKey);
 
     return;
   }
 
   if (alreadyRegistered) {
-    log('Overwriting %s', itemKey);
+    logger.log('Overwriting %s', itemKey);
   }
 
   lib[itemKey] = item;
