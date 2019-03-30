@@ -16,25 +16,10 @@ export const getLogger = scope => {
 
   return {
     log,
-
-    // Warnings should always be output to the brower console
-    // in development mode
-    warn(...params) {
-      if (devMode) {
-        // If in development mode - use console.warn directly
-        // eslint-disable-next-line no-console
-        console.warn.apply(null, params);
-      } else {
-        // Otherwise use log
-        log(...params);
-      }
-    },
-
-    // Errors should always be output to the browser console
-    error(...prarms) {
-      // eslint-disable-next-line no-console
-      console.error.apply(null, prarms);
-    },
+    // eslint-disable-next-line no-console
+    warn: devMode ? console.warn.bind(console) : log,
+    // eslint-disable-next-line no-console
+    error: console.error.bind(console),
   };
 };
 
