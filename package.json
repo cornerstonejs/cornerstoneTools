@@ -75,8 +75,8 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "^0.1.7",
-    "debug": "^4.1.1"
+    "cornerstone-math": "0.1.7",
+    "debug": "4.1.1"
   },
   "files": [
     "dist/cornerstoneTools.js",
