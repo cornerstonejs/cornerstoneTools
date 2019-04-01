@@ -28,7 +28,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const defaultConfig = {
       name: 'FreehandSculpterMouse',
       referencedToolName: 'FreehandMouse',
-      supportedInteractionTypes: ['Mouse'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'DoubleTap'],
       mixins: ['activeOrDisabledBinaryTool'],
       configuration: getDefaultFreehandSculpterMouseToolConfiguration(),
       svgCursor: freehandSculpterMouseCursor,
@@ -46,6 +46,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     // Create bound functions for private event loop.
     this.activeMouseUpCallback = this.activeMouseUpCallback.bind(this);
+    this.activeTouchEndCallback = this.activeTouchEndCallback.bind(this);
     this.activeMouseDragCallback = this.activeMouseDragCallback.bind(this);
   }
 
@@ -80,7 +81,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
         this.configuration.mouseLocation.handles,
         options
       );
-    } else if (this.configuration.showCursorOnHover) {
+    } else if (this.configuration.showCursorOnHover && !this._recentTouchEnd) {
       this._renderHoverCursor(evt);
     }
   }
@@ -89,8 +90,20 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const eventData = evt.detail;
 
     this._selectFreehandTool(eventData);
-
     external.cornerstone.updateImage(eventData.element);
+  }
+
+  doubleTapCallback(evt) {
+    const eventData = evt.detail;
+
+    this._selectFreehandTool(eventData);
+    external.cornerstone.updateImage(eventData.element);
+  }
+
+  preTouchStartCallback(evt) {
+    this._initialiseSculpting(evt);
+
+    return true;
   }
 
   /**
@@ -100,16 +113,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @returns {boolean}
    */
   preMouseDownCallback(evt) {
-    const eventData = evt.detail;
-    const config = this.configuration;
-
-    if (config.currentTool === null) {
-      this._selectFreehandTool(eventData);
+    if (!this.options.mouseButtonMask.includes(evt.detail.buttons)) {
+      return;
     }
 
-    this._initialiseSculpting(eventData);
-
-    external.cornerstone.updateImage(eventData.element);
+    this._initialiseSculpting(evt);
 
     return true;
   }
@@ -152,6 +160,23 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * @returns {void}
    */
   activeMouseUpCallback(evt) {
+    this._activeEnd(evt);
+  }
+
+  /**
+   * Event handler for TOUCH_END during the active loop.
+   *
+   * @param {Object} evt - The event.
+   * @returns {void}
+   */
+  activeTouchEndCallback(evt) {
+    this._activeEnd(evt);
+
+    this._deselectAllTools(evt);
+    this._recentTouchEnd = true;
+  }
+
+  _activeEnd(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
     const config = this.configuration;
@@ -187,6 +212,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[this.configuration.currentTool];
+
+    this._recentTouchEnd = false;
 
     let coords;
 
@@ -338,12 +365,17 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * tool, and begin sculpting.
    *
    * @private
-   * @param {Object} eventData - Data object associated with the event.
+   * @param {Object} evt - The event.
    * @returns {void}
    */
-  _initialiseSculpting(eventData) {
-    const element = eventData.element;
+  _initialiseSculpting(evt) {
+    const eventData = evt.detail;
     const config = this.configuration;
+    const element = eventData.element;
+
+    if (config.currentTool === null) {
+      this._selectFreehandTool(eventData);
+    }
 
     this._active = true;
 
@@ -355,6 +387,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     this._activateFreehandTool(element, config.currentTool);
     this._activateSculpt(element);
+
+    external.cornerstone.updateImage(eventData.element);
   }
 
   /**
@@ -790,6 +824,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     element.addEventListener(EVENTS.MOUSE_CLICK, this.activeMouseUpCallback);
     element.addEventListener(EVENTS.MOUSE_DRAG, this.activeMouseDragCallback);
 
+    element.addEventListener(EVENTS.TOUCH_END, this.activeTouchEndCallback);
+    element.addEventListener(EVENTS.TOUCH_TAP, this.activeTouchEndCallback);
+    element.addEventListener(EVENTS.TOUCH_DRAG, this.activeMouseDragCallback);
+
     external.cornerstone.updateImage(element);
   }
 
@@ -806,6 +844,13 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     element.removeEventListener(EVENTS.MOUSE_CLICK, this.activeMouseUpCallback);
     element.removeEventListener(
       EVENTS.MOUSE_DRAG,
+      this.activeMouseDragCallback
+    );
+
+    element.removeEventListener(EVENTS.TOUCH_END, this.activeTouchEndCallback);
+    element.removeEventListener(EVENTS.TOUCH_TAP, this.activeTouchEndCallback);
+    element.removeEventListener(
+      EVENTS.TOUCH_DRAG,
       this.activeMouseDragCallback
     );
 
