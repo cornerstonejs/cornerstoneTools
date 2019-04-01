@@ -1,5 +1,16 @@
 import MouseCursor from './MouseCursor.js';
 
+/*
+MACROS:
+
+The following keys will have the appropriate value injected by the MouseCursor
+class when an SVG is requested:
+
+- ACTIVE_COLOR  => options.activeColor || toolColors.getActiveColor();
+- TOOL_COLOR    => options.toolColor || toolColors.getToolColor();
+- FILL_COLOR    => options.fillColor || toolColors.getFillColor();
+*/
+
 export const angleCursor = new MouseCursor(
   `<path fill="ACTIVE_COLOR" d="M1203 544q0 13-10 23l-393 393 393 393q10 10 10 23t-10 23l-50
         50q-10 10-23 10t-23-10l-466-466q-10-10-10-23t10-23l466-466q10-10 23-10t23

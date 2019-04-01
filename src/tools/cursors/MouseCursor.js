@@ -7,7 +7,7 @@ const cursorModule = modules.cursor;
 MACROS:
 
 The following keys will have the appropriate value injected when
-the SVG is requested:
+an SVG is requested:
 
 - ACTIVE_COLOR  => options.activeColor || toolColors.getActiveColor();
 - TOOL_COLOR    => options.toolColor || toolColors.getToolColor();
