@@ -3,6 +3,17 @@ import { modules } from '../../store/index.js';
 
 const cursorModule = modules.cursor;
 
+/*
+MACROS:
+
+The following keys will have the appropriate value injected when
+the SVG is requested:
+
+- ACTIVE_COLOR  => options.activeColor || toolColors.getActiveColor();
+- TOOL_COLOR    => options.toolColor || toolColors.getToolColor();
+- FILL_COLOR    => options.fillColor || toolColors.getFillColor();
+*/
+
 export default class MouseCursor {
   constructor(iconGroupString, options) {
     this.iconGroupString = iconGroupString;
@@ -13,24 +24,24 @@ export default class MouseCursor {
     );
   }
 
-  get iconSVG() {
-    const svgString = this._generateIconSVGString();
+  getIconSVG(options = {}) {
+    const svgString = this._generateIconSVGString(options);
 
     return new Blob([svgString], { type: 'image/svg+xml' });
   }
 
-  get iconWithPointerSVG() {
-    const svgString = this._generateIconWithPointerSVGString();
+  getIconSVGString(options = {}) {
+    return this._generateIconSVGString(options);
+  }
+
+  getIconWithPointerSVG(options = {}) {
+    const svgString = this._generateIconWithPointerSVGString(options);
 
     return new Blob([svgString], { type: 'image/svg+xml' });
   }
 
-  get iconSVGString() {
-    return this._generateIconSVGString();
-  }
-
-  get iconWithPointerString() {
-    return this._generateIconWithPointerSVGString();
+  getIconWithPointerString(options = {}) {
+    return this._generateIconWithPointerSVGString(options);
   }
 
   get mousePoint() {
@@ -39,39 +50,53 @@ export default class MouseCursor {
     return `${mousePoint.x} ${mousePoint.y}`;
   }
 
-  _generateIconWithPointerSVGString() {
-    const { mousePointerGroupString, iconSize, viewBox } = this.options;
+  _generateIconWithPointerSVGString(options = {}) {
+    const svgOptions = Object.assign({}, this.options, options);
+    const { mousePointerGroupString, iconSize, viewBox } = svgOptions;
+
     const scale = iconSize / Math.max(viewBox.x, viewBox.y);
-    const activeColor = toolColors.getActiveColor();
     const svgSize = 16 + iconSize;
 
-    return `
+    const svgString = `
         <svg
         data-icon="cursor" role="img" xmlns="http://www.w3.org/2000/svg"
         width="${svgSize}" height="${svgSize}" viewBox="0 0 ${svgSize} ${svgSize}"
       >
         <g>
-          ${mousePointerGroupString.replace(/ACTIVE_COLOR/g, `${activeColor}`)}
+          ${mousePointerGroupString}
         </g>
         <g transform="translate(16, 16) scale(${scale})">
-          ${this.iconGroupString.replace(/ACTIVE_COLOR/g, `${activeColor}`)}
+          ${this.iconGroupString}
         </g>
       </svg>`;
+
+    return this._injectColors(svgString, svgOptions);
   }
 
-  _generateIconSVGString() {
-    const { iconSize, viewBox } = this.options;
+  _generateIconSVGString(options = {}) {
+    const svgOptions = Object.assign({}, this.options, options);
+    const { iconSize, viewBox } = svgOptions;
 
-    return `
+    const svgString = `
       <svg
         data-icon="cursor" role="img" xmlns="http://www.w3.org/2000/svg"
         width="${iconSize}" height="${iconSize}" viewBox="0 0
         ${viewBox.x} ${viewBox.y}"
       >
-        ${this.iconGroupString.replace(
-          /ACTIVE_COLOR/g,
-          `${toolColors.getActiveColor()}`
-        )}
+        ${this.iconGroupString}
       </svg>`;
+
+    return this._injectColors(svgString, svgOptions);
+  }
+
+  _injectColors(svgString, options = {}) {
+    const activeColor = options.activeColor || toolColors.getActiveColor();
+    const toolColor = options.toolColor || toolColors.getToolColor();
+    const fillColor = options.fillColor || toolColors.getFillColor();
+
+    return svgString
+      .replace(/ACTIVE_COLOR/g, `${activeColor}`)
+      .replace(/TOOL_COLOR/g, `${toolColor}`)
+      .replace(/FILL_COLOR/g, `${fillColor}`);
   }
 }

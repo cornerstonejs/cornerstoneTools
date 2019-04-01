@@ -17,7 +17,7 @@ function setToolCursor(element, svgCursor) {
   // TODO: Exit if invalid options to create cursor
 
   // Note: Max size of an SVG cursor is 128x128, default is 32x32.
-  const cursorBlob = svgCursor.iconWithPointerSVG;
+  const cursorBlob = svgCursor.getIconWithPointerSVG();
   const mousePoint = svgCursor.mousePoint;
 
   const svgCursorUrl = window.URL.createObjectURL(cursorBlob);

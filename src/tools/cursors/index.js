@@ -359,26 +359,3 @@ export const zoomCursor = new MouseCursor(
     },
   }
 );
-
-export default {
-  angleCursor,
-  arrowAnnotateCursor,
-  bidirectionalCursor,
-  cobbAngleCursor,
-  ellipticalRoiCursor,
-  freehandMouseCursor,
-  freehandSculpterMouseCursor,
-  lengthCursor,
-  probeCursor,
-  rectangleRoiCursor,
-  textMarkerCursor,
-  crosshairsCursor,
-  eraserCursor,
-  magnifyCursor,
-  panCursor,
-  rotateCursor,
-  stackScrollCursor,
-  wwwcRegionCursor,
-  wwwcCursor,
-  zoomCursor,
-};

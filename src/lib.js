@@ -18,7 +18,7 @@ import {
 } from './util/findAndMoveHelpers.js';
 
 import mixins from './mixins/index.js';
-import cursors from './tools/cursors/index.js';
+import * as cursors from './tools/cursors/index.js';
 
 import {
   getNewContext,
