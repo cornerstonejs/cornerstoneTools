@@ -14,6 +14,7 @@ import {
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import { lengthCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -27,6 +28,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: lengthCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

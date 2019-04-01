@@ -7,6 +7,8 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from './base/BaseTool.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
+import { freehandSculpterMouseCursor } from './cursors/index.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
@@ -29,12 +31,13 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch', 'DoubleTap'],
       mixins: ['activeOrDisabledBinaryTool'],
       configuration: getDefaultFreehandSculpterMouseToolConfiguration(),
+      svgCursor: freehandSculpterMouseCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
-    this.hasCursor = true;
+    this.updateOnMouseMove = true;
     this.isMultiPartTool = true;
     this.initialConfiguration = initialConfiguration;
     this.referencedToolName = initialConfiguration.referencedToolName;
@@ -330,6 +333,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
 
     config.currentTool = closestToolIndex;
+    hideToolCursor(element);
   }
 
   /**
@@ -361,7 +365,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * tool, and begin sculpting.
    *
    * @private
-   * @param {Object} eventData - Data object associated with the event.
+   * @param {Object} evt - The event.
    * @returns {void}
    */
   _initialiseSculpting(evt) {
@@ -888,6 +892,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
         toolData.data[i].active = false;
       }
     }
+
+    setToolCursor(this.element, this.svgCursor);
 
     external.cornerstone.updateImage(this.element);
   }

@@ -22,6 +22,7 @@ import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import EVENTS from './../../events.js';
+import { cobbAngleCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -35,6 +36,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: cobbAngleCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

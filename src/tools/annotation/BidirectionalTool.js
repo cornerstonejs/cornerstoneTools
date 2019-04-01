@@ -8,6 +8,8 @@ import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
 import handleSelectedCallback from './bidirectionalTool/handleSelectedCallback.js';
 import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouseCallback.js';
 import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
+import toolColors from '../../stateManagement/toolColors.js';
+import { bidirectionalCursor } from '../cursors/index.js';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
@@ -37,6 +39,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         drawHandlesOnHover: true,
         additionalData: [],
       },
+      svgCursor: bidirectionalCursor,
     };
 
     const mergedConfiguration = Object.assign(

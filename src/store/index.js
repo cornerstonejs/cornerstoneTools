@@ -1,5 +1,6 @@
 // Modules
 import brush from './modules/brushModule.js';
+import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
 
@@ -19,6 +20,8 @@ export const state = {
   handleRadius: 6,
   deleteIfHandleOutsideImage: true,
   preventHandleOutsideImage: false,
+  // Cursor
+  svgCursorUrl: null,
 };
 
 export const getters = {
@@ -42,6 +45,7 @@ export const setters = {};
 
 export const modules = {
   brush,
+  cursor,
   globalConfiguration,
 };
 

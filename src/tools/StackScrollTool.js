@@ -2,6 +2,7 @@ import BaseTool from './base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { stackScrollCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -20,6 +21,7 @@ export default class StackScrollTool extends BaseTool {
         loop: false,
         allowSkipping: true,
       },
+      svgCursor: stackScrollCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

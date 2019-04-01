@@ -23,6 +23,7 @@ class BaseBrushTool extends BaseTool {
     configuration,
     supportedInteractionTypes,
     mixins,
+    svgCursor,
   }) {
     configuration.referencedToolData = 'brush';
 
@@ -33,9 +34,11 @@ class BaseBrushTool extends BaseTool {
       configuration,
       supportedInteractionTypes,
       mixins,
+      svgCursor,
     });
 
-    this.hasCursor = true;
+    this.updateOnMouseMove = true;
+    this.hideDefaultCursor = true;
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);

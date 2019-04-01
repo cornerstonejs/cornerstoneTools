@@ -1,5 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { panCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -14,6 +15,7 @@ export default class PanTool extends BaseTool {
     const defaultConfig = {
       name: 'Pan',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: panCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

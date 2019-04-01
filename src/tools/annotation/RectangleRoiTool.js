@@ -20,6 +20,7 @@ import {
 import calculateSUV from './../../util/calculateSUV.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { rectangleRoiCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -38,6 +39,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         // showMinMax: false,
         // showHounsfieldUnits: true
       },
+      svgCursor: rectangleRoiCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

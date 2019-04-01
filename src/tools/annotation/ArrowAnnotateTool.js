@@ -18,6 +18,7 @@ import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
+import { arrowAnnotateCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -38,6 +39,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         drawHandlesOnHover: true,
         arrowFirst: true,
       },
+      svgCursor: arrowAnnotateCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

@@ -2,6 +2,7 @@ import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { getToolState, removeToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
+import { eraserCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -16,6 +17,7 @@ export default class EraserTool extends BaseTool {
     const defaultConfig = {
       name: 'Eraser',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: eraserCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

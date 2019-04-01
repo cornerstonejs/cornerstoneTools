@@ -21,6 +21,7 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
+import { angleCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -32,11 +33,12 @@ import roundToDecimal from './../../util/roundToDecimal.js';
  *
  * @param {ToolConfiguration} [configuration={}]
  */
-class AngleTool extends BaseAnnotationTool {
+export default class AngleTool extends BaseAnnotationTool {
   constructor(configuration = {}) {
     const defaultConfig = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: angleCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -326,5 +328,3 @@ class AngleTool extends BaseAnnotationTool {
 function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 }
-
-export default AngleTool;

@@ -22,6 +22,8 @@ import { getNewContext, draw, drawJoinedLines } from '../../drawing/index.js';
 import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
 import drawHandles from '../../drawing/drawHandles.js';
 import { clipToBox } from '../../util/clip.js';
+import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
+import { freehandMouseCursor } from '../cursors/index.js';
 
 import freehandUtils from '../../util/freehand/index.js';
 
@@ -47,6 +49,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       name: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: defaultFreehandConfiguration(),
+      svgCursor: freehandMouseCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
@@ -574,7 +577,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       const points = toolState.data[toolIndex].handles.points;
 
       for (let p = 0; p < points.length; p++) {
-        if (points[p] == handle) {
+        if (points[p] === handle) {
           config.currentHandle = p;
           config.currentTool = toolIndex;
         }
@@ -1445,6 +1448,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     this._drawingInteractionType = interactionType;
 
     state.isMultiPartToolActive = true;
+    hideToolCursor(this.element);
 
     // Polygonal Mode
     element.addEventListener(EVENTS.MOUSE_DOWN, this._drawingMouseDownCallback);
@@ -1491,6 +1495,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     state.isMultiPartToolActive = false;
     this._activeDrawingToolReference = null;
     this._drawingInteractionType = null;
+    setToolCursor(this.element, this.svgCursor);
 
     element.removeEventListener(
       EVENTS.MOUSE_DOWN,

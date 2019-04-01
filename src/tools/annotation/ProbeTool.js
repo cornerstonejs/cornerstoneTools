@@ -11,6 +11,7 @@ import drawHandles from './../../drawing/drawHandles.js';
 // Utilities
 import getRGBPixels from './../../util/getRGBPixels.js';
 import calculateSUV from './../../util/calculateSUV.js';
+import { probeCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -25,6 +26,7 @@ export default class ProbeTool extends BaseAnnotationTool {
     const defaultConfig = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: probeCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

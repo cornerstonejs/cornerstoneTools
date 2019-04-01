@@ -2,6 +2,7 @@ import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
+import { zoomCursor } from './cursors/index.js';
 
 const { correctShift, changeViewportScale } = zoomUtils;
 
@@ -30,6 +31,7 @@ export default class ZoomTool extends BaseTool {
         minScale: 0.25,
         maxScale: 20.0,
       },
+      svgCursor: zoomCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

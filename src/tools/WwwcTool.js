@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { wwwcCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -18,6 +19,7 @@ export default class WwwcTool extends BaseTool {
       configuration: {
         orientation: 0,
       },
+      svgCursor: wwwcCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

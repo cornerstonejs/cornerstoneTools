@@ -1,6 +1,7 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
+import { rotateCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -21,6 +22,7 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: rotateCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

@@ -5,6 +5,7 @@ import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
+import { wwwcRegionCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -23,6 +24,7 @@ export default class WwwcRegionTool extends BaseTool {
       configuration: {
         minWindowWidth: 10,
       },
+      svgCursor: wwwcRegionCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

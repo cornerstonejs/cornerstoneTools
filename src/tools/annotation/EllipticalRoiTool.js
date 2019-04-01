@@ -24,6 +24,7 @@ import {
 } from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { ellipticalRoiCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -42,6 +43,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // showMinMax: false,
         // showHounsfieldUnits: true,
       },
+      svgCursor: ellipticalRoiCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

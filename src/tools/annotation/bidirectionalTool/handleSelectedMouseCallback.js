@@ -11,6 +11,7 @@ import getHandleNearImagePoint from './../../../manipulators/getHandleNearImageP
 import { moveAllHandles } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
+import { setToolCursor, hideToolCursor } from '../../../store/setToolCursor.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -33,7 +34,7 @@ export default function(evt) {
       handle.selected = true;
     }
 
-    element.style.cursor = '';
+    setToolCursor(this.element, this.svgCursor);
 
     external.cornerstone.updateImage(element);
     element.addEventListener(EVENTS.MOUSE_MOVE, this._moveCallback);
@@ -68,7 +69,9 @@ export default function(evt) {
       /* Hide the cursor to improve precision while resizing the line or set to move
          if dragging text box
       */
-      element.style.cursor = handle.hasBoundingBox ? 'move' : 'none';
+      if (!handle.hasBoundingBox) {
+        hideToolCursor(this.element);
+      }
 
       moveHandle(eventData, this.name, data, handle, () =>
         handleDoneMove(handle)

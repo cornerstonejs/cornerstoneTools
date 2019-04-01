@@ -8,6 +8,7 @@ import {
   removeToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
+import { textMarkerCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -29,6 +30,7 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         loop: false,
         changeTextCallback,
       },
+      svgCursor: textMarkerCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

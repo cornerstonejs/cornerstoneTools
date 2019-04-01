@@ -12,6 +12,7 @@ import {
   drawCircle,
 } from '../drawing/index.js';
 import drawTextBox, { textBoxWidth } from '../drawing/drawTextBox.js';
+import { probeCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -32,7 +33,7 @@ export default class DragProbeTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {},
+      svgCursor: probeCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 

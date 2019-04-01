@@ -2,6 +2,13 @@ import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
 import store from './../store/index.js';
+import {
+  setToolCursor,
+  resetToolCursor,
+  hideToolCursor,
+} from './setToolCursor.js';
+
+const globalConfiguration = store.modules.globalConfiguration;
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -56,11 +63,38 @@ const setToolActiveForElement = function(
         options[`is${interactionType}Active`] = false;
       }
     });
+
+    if (
+      globalConfiguration.state.showSVGCursors &&
+      tool.supportedInteractionTypes.includes('Mouse')
+    ) {
+      _setToolCursorIfPrimary(element, options, tool);
+    }
   }
 
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
+
+function _setToolCursorIfPrimary(element, options, tool) {
+  let mouseButtonMask;
+
+  if (typeof options === 'number') {
+    mouseButtonMask = [options];
+  } else {
+    mouseButtonMask = options.mouseButtonMask;
+  }
+
+  if (mouseButtonMask.includes(1)) {
+    if (tool.svgCursor) {
+      setToolCursor(tool.element, tool.svgCursor);
+    } else if (tool.hideDefaultCursor) {
+      hideToolCursor(element);
+    } else {
+      resetToolCursor(element);
+    }
+  }
+}
 
 /**
  * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,

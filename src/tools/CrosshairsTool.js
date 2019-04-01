@@ -7,9 +7,11 @@ import {
   getToolState,
   clearToolState,
 } from '../stateManagement/toolState.js';
+import toolColors from '../stateManagement/toolColors.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';
+import { crosshairsCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -25,12 +27,14 @@ export default class CrosshairsTool extends BaseTool {
     const defaultConfig = {
       name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: crosshairsCursor,
     };
     const initialConfiguration = Object.assign(defaultConfig, configuration);
 
     super(initialConfiguration);
 
     this.initialConfiguration = initialConfiguration;
+
     this.mouseDownCallback = this._chooseLocation.bind(this);
     this.mouseDragCallback = this._chooseLocation.bind(this);
     this.touchDragCallback = this._chooseLocation.bind(this);
