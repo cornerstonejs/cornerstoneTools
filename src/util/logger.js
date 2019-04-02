@@ -25,14 +25,14 @@ export const getLogger = scope => {
 
 /**
  * @method enable
- * @param {string} scope
+ * @param {string} scope The scope to enabled
  * @returns {void}
  */
-export const enable = scope => debugLib.enable(scope || BASE_SCOPE);
+export const enable = (scope = `${BASE_SCOPE}:*`) => debugLib.enable(scope);
 
 /**
  * @method disable
  * @param {string} scope
- * @returns {void}
+ * @returns {string} The previously enabled scope
  */
-export const disable = scope => debugLib.disable(scope || BASE_SCOPE);
+export const disable = () => debugLib.disable();

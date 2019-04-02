@@ -4,7 +4,7 @@ import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { getLogger } from '../util/logger.js';
 
-const logger = getLogger('eventListeners');
+const logger = getLogger('eventListeners:mouseEventListeners');
 
 let isClickEvent = true;
 let preventClickTimeout;
