@@ -3,8 +3,23 @@ import debugLib from 'debug';
 const BASE_SCOPE = 'cornerstoneTools';
 const baseLogger = debugLib(BASE_SCOPE);
 
-// TODO: Have webpack set this appropriately
-const devMode = true;
+const devMode = process.env.NODE_ENV === 'development';
+
+// If we're in dev-mode, tell the user how to get logs
+if (devMode && !baseLogger.enabled) {
+  // eslint-disable-next-line no-console
+  console.log(
+    '%cCornerstone Tools',
+    'background: #339955; padding: 4px; font-weight: bold; color: white'
+  );
+
+  // eslint-disable-next-line no-console
+  console.info(
+    'run %clocalStorage.setItem("debug", "cornerstoneTools")%c to see console output',
+    'background: #eaeaea; color: #333; font-family: monospace',
+    ''
+  );
+}
 
 /**
  * @method debug

@@ -1,6 +1,8 @@
 import LengthTool from './LengthTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
+jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
@@ -20,13 +22,6 @@ const goodMouseEventData = {
 };
 
 describe('LengthTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
-
   describe('default values', () => {
     it('has a default name of "Length"', () => {
       const defaultName = 'Length';
@@ -46,11 +41,12 @@ describe('LengthTool.js', () => {
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
       const instantiatedTool = new LengthTool('toolName');
+      const logger = getLogger();
 
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.mock.calls[0][0]).toContain(
+      expect(logger.error).toHaveBeenCalled();
+      expect(logger.error.mock.calls[0][0]).toContain(
         'required eventData not supplied to tool'
       );
     });
@@ -112,11 +108,12 @@ describe('LengthTool.js', () => {
       const noHandlesMeasurementData = {
         handles: {},
       };
+      const logger = getLogger();
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
     it('returns false when measurement data is null or undefined', () => {

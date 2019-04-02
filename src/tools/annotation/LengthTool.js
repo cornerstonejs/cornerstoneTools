@@ -45,7 +45,7 @@ export default class LengthTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      logger.warn(
+      logger.error(
         `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
@@ -99,7 +99,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
-      logger.error(
+      logger.warn(
         `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
 
