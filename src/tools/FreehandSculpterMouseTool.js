@@ -375,6 +375,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
+
+      if (config.currentTool === null) {
+        return;
+      }
     }
 
     this._active = true;
