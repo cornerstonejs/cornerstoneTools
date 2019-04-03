@@ -4,9 +4,7 @@ import { modules } from '../../store/index.js';
 const cursorModule = modules.cursor;
 
 /*
-MACROS:
-
-The following keys will have the appropriate value injected when
+MACROS - The following keys will have the appropriate value injected when
 an SVG is requested:
 
 - ACTIVE_COLOR  => options.activeColor || toolColors.getActiveColor();

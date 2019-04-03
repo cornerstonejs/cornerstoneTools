@@ -21,6 +21,13 @@
 
 ## Index
 
+### The Fun Stuff
+
+- [TOOL EXAMPLES](https://tools.cornerstonejs.org/examples/)
+  - [Create or Update an Example](https://github.com/cornerstonejs/cornerstoneTools/tree/master/examples)
+
+### Everything Else
+
 - [Installing](#installation)
 - [Examples & Docs](#examples--docs)
 - [Contributing][contributing]
