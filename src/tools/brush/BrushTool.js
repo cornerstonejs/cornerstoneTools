@@ -6,6 +6,7 @@ import {
 } from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
+import triggerEvent from './../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 
 const { drawBrushPixels, getCircle } = brushUtils;
@@ -110,11 +111,7 @@ export default class BrushTool extends BaseBrushTool {
   _paint(evt) {
     this.applyActiveStrategy(evt, this.configuration);
 
-    external.cornerstone.triggerEvent(
-      evt.detail.element,
-      EVENTS.MEASUREMENT_MODIFIED,
-      evt.detail
-    );
+    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
 
     external.cornerstone.updateImage(evt.detail.element);
   }

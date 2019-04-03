@@ -208,6 +208,35 @@
       saveBtn.addEventListener('click', evt => {
         cornerstoneTools.SaveAs(element, 'viewportImage.png');
       });
+
+      // Log measurement events
+      const { EVENTS } = cornerstoneTools;
+      const log = event => {
+        const type = `MEASUREMENT_${event.type
+          .replace('cornerstonetoolsmeasurement', '')
+          .toUpperCase()}`;
+        const color = {
+          MEASUREMENT_ADDED: '#27e',
+          MEASUREMENT_MODIFIED: '#e72',
+          MEASUREMENT_COMPLETED: '#5b5',
+          MEASUREMENT_REMOVED: '#f55',
+        }[type];
+
+        console.log(
+          '%c %s %c %s %c %o',
+          `background: ${color}; color: white; padding: 4px 0;`,
+          type,
+          // The tool type
+          `color: ${color}; font-family: monospace;`,
+          event.detail.toolName,
+          '',
+          event.detail
+        );
+      };
+      element.addEventListener(EVENTS.MEASUREMENT_ADDED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_COMPLETED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_REMOVED, log);
     });
 
     // Iterate over all tool-category links
