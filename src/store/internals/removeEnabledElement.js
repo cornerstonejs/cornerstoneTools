@@ -10,6 +10,9 @@ import {
   touchToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('internals:removeEnabledElement');
 
 /**
  * Element Disabled event.
@@ -32,7 +35,7 @@ import store from '../index.js';
  * @returns {void}
  */
 export default function(elementDisabledEvt) {
-  console.info('EVENT:ELEMENT_DISABLED');
+  logger.log('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
 
   // Dispatchers
@@ -91,7 +94,7 @@ const _removeEnabledElement = function(enabledElement) {
   if (foundElementIndex > -1) {
     store.state.enabledElements.splice(foundElementIndex, 1);
   } else {
-    console.warn('unable to remove element');
+    logger.warn('unable to remove element');
   }
 };
 

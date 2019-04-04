@@ -1,9 +1,12 @@
-import external from './../externalModules.js';
+import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('tools:ScaleOverlayTool');
 
 /**
  * @public
@@ -68,7 +71,7 @@ export default class ScaleOverlayTool extends BaseTool {
 
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
-      console.warn(
+      logger.warn(
         `unable to define rowPixelSpacing or colPixelSpacing from data on ${
           this.name
         }'s renderToolData`

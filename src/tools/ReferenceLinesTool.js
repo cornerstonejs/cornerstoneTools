@@ -3,7 +3,10 @@ import BaseTool from './base/BaseTool.js';
 
 import { getNewContext } from '../drawing/index.js';
 import renderActiveReferenceLine from './referenceLines/renderActiveReferenceLine.js';
-import { waitForEnabledElementImageToLoad } from './../util/wait.js';
+import { waitForEnabledElementImageToLoad } from '../util/wait.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('tools:ReferenceLinesTool');
 
 /**
  * When enabled, this tool will display references lines for each source
@@ -43,7 +46,7 @@ export default class ReferenceLinesTool extends BaseTool {
     if (!enabledElement || !renderer || !synchronizationContext) {
       // TODO: Unable to add tool state, image never loaded.
       // Should we `setToolDisabledForElement` here?
-      console.warn(
+      logger.warn(
         `Unable to enable ${
           this.name
         }. Exiting enable callback. Tool will be enabled, but will not render.`

@@ -25,6 +25,9 @@ import {
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { ellipticalRoiCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:EllipticalRoiTool');
 
 /**
  * @public
@@ -56,7 +59,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
+      logger.error(
         `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
@@ -101,8 +104,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
     }
 

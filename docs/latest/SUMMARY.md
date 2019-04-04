@@ -48,6 +48,7 @@
 
 ## Misc
 
+- [Debugging](debugging/index.md)
 - [API](https://tools.cornerstonejs.org/api/)
 - 3rd Party Tool Directory _coming soon_
 - Custom Tool Example Repositories _coming soon_

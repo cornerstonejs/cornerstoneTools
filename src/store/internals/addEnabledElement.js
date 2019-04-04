@@ -17,6 +17,9 @@ import {
   setToolDisabledForElement,
 } from './../setToolMode.js';
 import store from '../index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('internals:addEnabledElement');
 
 /**
  * Element Enabled event.
@@ -46,7 +49,7 @@ import store from '../index.js';
  * @returns {void}
  */
 export default function(elementEnabledEvt) {
-  console.log('EVENT:ELEMENT_ENABLED');
+  logger.log('EVENT:ELEMENT_ENABLED');
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers
@@ -67,7 +70,7 @@ export default function(elementEnabledEvt) {
   }
 
   // State
-  _addEnabledElmenet(enabledElement);
+  _addEnabledElement(enabledElement);
 }
 
 /**
@@ -77,7 +80,7 @@ export default function(elementEnabledEvt) {
  * @param {HTMLElement} enabledElement
  * @returns {void}
  */
-const _addEnabledElmenet = function(enabledElement) {
+const _addEnabledElement = function(enabledElement) {
   store.state.enabledElements.push(enabledElement);
   if (store.modules) {
     _initModulesOnElement(enabledElement);

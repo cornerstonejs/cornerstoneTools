@@ -24,8 +24,10 @@ import drawHandles from '../../drawing/drawHandles.js';
 import { clipToBox } from '../../util/clip.js';
 import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 import { freehandMouseCursor } from '../cursors/index.js';
-
 import freehandUtils from '../../util/freehand/index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:FreehandMouseTool');
 
 const {
   insertOrDelete,
@@ -88,7 +90,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
+      logger.error(
         `required eventData not supplied to tool ${
           this.name
         }'s createNewMeasurement`
@@ -572,7 +574,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       y: handle.y,
     };
 
-    //iterating over handles of all toolData instances to find the indices of the selected handle
+    // Iterating over handles of all toolData instances to find the indices of the selected handle
     for (let toolIndex = 0; toolIndex < toolState.data.length; toolIndex++) {
       const points = toolState.data[toolIndex].handles.points;
 
@@ -704,6 +706,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     if (!freehandIntersect.end(data.handles.points) && data.canComplete) {
       const lastHandlePlaced = config.currentHandle;
+
       this._endDrawing(element, lastHandlePlaced);
     }
 
@@ -1728,7 +1731,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * newImageCallback - new image event handler.
    *
    * @public
-   * @param  {object} evt The event.
+   * @param  {Object} evt The event.
    * @returns {null}
    */
   newImageCallback(evt) {
@@ -1749,6 +1752,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     // Connect the end handle to the origin handle
     const points = data.handles.points;
+
     points[config.currentHandle - 1].lines.push(points[0]);
 
     // Reset the current handle

@@ -7,8 +7,10 @@ import {
   resetToolCursor,
   hideToolCursor,
 } from './setToolCursor.js';
+import { getLogger } from '../util/logger.js';
 
 const globalConfiguration = store.modules.globalConfiguration;
+const logger = getLogger('store:setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -229,7 +231,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    console.warn(`Unable to find tool '${toolName}' for enabledElement`);
+    logger.warn('Unable to find tool "%s" for enabledElement', toolName);
 
     return;
   }
@@ -326,8 +328,9 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
       if (inputResolver) {
         inputResolver(tool, element, options);
       } else {
-        console.warn(
-          `Unable to resolve input conflicts for type ${interactionType}`
+        logger.warn(
+          'Unable to resolve input conflicts for type %s',
+          interactionType
         );
       }
     }
@@ -350,7 +353,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
     });
 
     if (!toolHasAnyActiveInteractionType) {
-      console.info(`Setting tool ${t.name}'s to PASSIVE`);
+      logger.log("Setting tool %s's to PASSIVE", t.name);
       setToolPassiveForElement(element, t.name);
     }
   });
@@ -426,16 +429,16 @@ function _resolveTouchInputConflicts(tool, element, options) {
   );
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
   if (activeMultiTouchToolWithOneTouchPointer) {
-    console.info(
-      `Setting tool ${
-        activeMultiTouchToolWithOneTouchPointer.name
-      }'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeMultiTouchToolWithOneTouchPointer.name
     );
     activeMultiTouchToolWithOneTouchPointer.options.isMultiTouchActive = false;
   }
@@ -472,15 +475,17 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
   }
 
   if (activeMultiTouchTool) {
-    console.info(
-      `Setting tool ${activeMultiTouchTool.name}'s isMultiTouchActive to false`
+    logger.log(
+      "Setting tool %s's isMultiTouchActive to false",
+      activeMultiTouchTool.name
     );
     activeMultiTouchTool.options.isMultiTouchActive = false;
   }
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
@@ -505,22 +510,21 @@ function _resolveGenericInputConflicts(
   element,
   options
 ) {
+  const interactionTypeFlag = `is${interactionType}Active`;
   const activeToolWithActiveInteractionType = store.state.tools.find(
     t =>
       t.element === element &&
       t.mode === 'active' &&
-      t.options[`is${interactionType}Active`] === true
+      t.options[interactionTypeFlag] === true
   );
 
   if (activeToolWithActiveInteractionType) {
-    console.info(
-      `Setting tool ${
-        activeToolWithActiveInteractionType.name
-      }'s is${interactionType}Active to false`
+    logger.log(
+      "Setting tool %s's %s to false",
+      activeToolWithActiveInteractionType.name,
+      interactionTypeFlag
     );
-    activeToolWithActiveInteractionType.options[
-      `is${interactionType}Active`
-    ] = false;
+    activeToolWithActiveInteractionType.options[interactionTypeFlag] = false;
   }
 }
 
@@ -677,7 +681,7 @@ function _getNormalizedOptions(options) {
       mouseButtonMask: [],
     };
   } else {
-    console.info(`No options provided when changing tool mode`);
+    logger.log('No options provided when changing tool mode');
     options = {};
   }
 

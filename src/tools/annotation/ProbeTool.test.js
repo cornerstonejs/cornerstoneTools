@@ -1,11 +1,13 @@
 import ProbeTool from './ProbeTool.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
-jest.mock('./../../stateManagement/toolState.js', () => ({
+jest.mock('../../util/logger.js');
+jest.mock('../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
+jest.mock('../../import.js', () => ({
   default: jest.fn(),
 }));
 
@@ -20,13 +22,6 @@ const goodMouseEventData = {
 };
 
 describe('ProbeTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
-
   describe('default values', () => {
     it('has a default name of "Probe"', () => {
       const defaultName = 'Probe';
@@ -45,13 +40,15 @@ describe('ProbeTool.js', () => {
 
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
+      const logger = getLogger();
       const instantiatedTool = new ProbeTool();
 
-      instantiatedTool.createNewMeasurement(badMouseEventData);
+      const d = instantiatedTool.createNewMeasurement(badMouseEventData);
 
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.mock.calls[0][0]).toContain(
-        'required eventData not supplieed to tool'
+      expect(d).toBeUndefined();
+      expect(logger.error).toHaveBeenCalled();
+      expect(logger.error.mock.calls[0][0]).toContain(
+        'required eventData not supplied to tool'
       );
     });
 
@@ -93,6 +90,8 @@ describe('ProbeTool.js', () => {
 
     // Todo: Not sure we want all of our methods to check for valid params.
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
+      const logger = getLogger();
+
       const instantiatedTool = new ProbeTool();
       const noHandlesMeasurementData = {
         handles: {},
@@ -100,8 +99,8 @@ describe('ProbeTool.js', () => {
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
     it('returns false when measurement data is null or undefined', () => {
