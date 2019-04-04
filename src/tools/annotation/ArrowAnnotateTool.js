@@ -250,22 +250,22 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         doneMovingCallback: () => {
           if (measurementData.text === undefined) {
             this.configuration.getTextCallback(text => {
+              measurementData.active = false;
+
               if (text) {
                 measurementData.text = text;
+                const eventType = EVENTS.MEASUREMENT_COMPLETED;
+                const eventData = {
+                  toolName: this.name,
+                  element,
+                  measurementData,
+                };
+
+                triggerEvent(element, eventType, eventData);
               } else {
                 removeToolState(element, this.name, measurementData);
               }
 
-              measurementData.active = false;
-
-              const eventType = EVENTS.MEASUREMENT_COMPLETED;
-              const eventData = {
-                toolName: this.name,
-                element,
-                measurementData,
-              };
-
-              triggerEvent(element, eventType, eventData);
               external.cornerstone.updateImage(element);
             });
           }
