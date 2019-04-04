@@ -222,15 +222,36 @@
           MEASUREMENT_REMOVED: '#f55',
         }[type];
 
+        const getData = ({ measurementData }) => {
+          const out = {};
+          if (measurementData.area) {
+            out.area = `${measurementData.area} ${measurementData.unit}`;
+          }
+          if (measurementData.length) {
+            out.length = `${measurementData.length} ${measurementData.unit}`;
+          }
+          if (measurementData.rAngle) {
+            out.angle = `${measurementData.rAngle} ${measurementData.unit}`;
+          }
+          if (measurementData.text) {
+            out.text = `${measurementData.text}`;
+          }
+          if (measurementData.str) {
+            out.str = `${measurementData.text}`;
+          }
+          return JSON.stringify(out);
+        };
+
         console.log(
           '%c %s %c %s %c %o',
           `background: ${color}; color: white; padding: 4px 0;`,
           type,
           // The tool type
           `color: ${color}; font-family: monospace;`,
-          event.detail.toolName,
+          event.detail.toolType || event.detail.toolName,
           '',
-          event.detail
+          getData(event.detail)
+          // event.detail
         );
       };
       element.addEventListener(EVENTS.MEASUREMENT_ADDED, log);
