@@ -23,6 +23,7 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import EVENTS from './../../events.js';
 import { cobbAngleCursor } from '../cursors/index.js';
+import triggerEvent from '../../util/triggerEvent.js';
 
 /**
  * @public
@@ -216,17 +217,12 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     }
   }
 
-  getIncomplete(target) {
-    const toolData = getToolState(target, this.name);
+  getIncomplete(element) {
+    const toolState = getToolState(element, this.name);
 
-    if (toolData === undefined) {
-      return;
-    }
 
-    for (let i = 0; i < toolData.data.length; i++) {
-      if (toolData.data[i].complete === false) {
-        return toolData.data[i];
-      }
+    if (toolState && Array.isArray(toolState.data)) {
+      return toolState.data.find(({ complete }) => complete === false);
     }
   }
 
@@ -238,13 +234,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     let measurementData;
     let toMoveHandle;
+    let options;
 
     // Search for incomplete measurements
     const element = evt.detail.element;
-    const maybePending = this.getIncomplete(element);
+    const pendingMeasurement = this.getIncomplete(element);
 
-    if (maybePending) {
-      measurementData = maybePending;
+    if (pendingMeasurement) {
+      measurementData = pendingMeasurement;
       measurementData.complete = true;
       measurementData.handles.start2 = {
         x: eventData.currentPoints.image.x,
@@ -262,10 +259,26 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       };
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
+      options = Object.assign(
+        {
+          doneMovingCallback: () => {
+            const eventType = EVENTS.MEASUREMENT_COMPLETED;
+            const eventData = {
+              toolType: this.name,
+              element,
+              measurementData,
+            };
+
+            triggerEvent(element, eventType, eventData);
+          },
+        },
+        this.options
+      );
     } else {
       measurementData = this.createNewMeasurement(eventData);
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
+      options = this.options;
     }
 
     // Associate this data with this imageId so we can render it and manipulate it
@@ -276,7 +289,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.name,
       measurementData,
       toMoveHandle,
-      this.options,
+      options,
       interactionType
     );
   }

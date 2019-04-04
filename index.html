@@ -178,7 +178,7 @@
   <script src="netlify-example/imageLoader.js"></script>
 
   <script>
-    cornerstoneTools.init({showSVGCursors: true});
+    cornerstoneTools.init({ showSVGCursors: true });
     const imageIds = ['example://1', 'example://2', 'example://3'];
     const stack = {
       currentImageIdIndex: 0,
@@ -232,6 +232,9 @@
           }
           if (measurementData.rAngle) {
             out.angle = `${measurementData.rAngle}`;
+          }
+          if (measurementData.value) {
+            out.value = `${measurementData.value}`;
           }
           if (measurementData.text) {
             out.text = `${measurementData.text}`;
