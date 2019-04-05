@@ -222,13 +222,19 @@
           MEASUREMENT_REMOVED: '#f55',
         }[type];
 
-        const getData = ({ measurementData }) => {
+        const getData = detail => {
+          const { measurementData = {} } = detail;
           const out = {};
+          if (measurementData.cachedStats) {
+            Object.keys(measurementData.cachedStats).forEach(key => {
+              out[key] = measurementData.cachedStats[key];
+            });
+          }
           if (measurementData.area) {
             out.area = `${measurementData.area} ${measurementData.unit}`;
           }
           if (measurementData.length) {
-            out.length = `${measurementData.length} ${measurementData.unit}`;
+            out.length = `${measurementData.length}`;
           }
           if (measurementData.rAngle) {
             out.angle = `${measurementData.rAngle}`;
@@ -242,7 +248,12 @@
           if (measurementData.str) {
             out.str = `${measurementData.text}`;
           }
-          return JSON.stringify(out);
+
+          if (Object.keys(out).length === 0) {
+            return measurementData;
+          } else {
+            return JSON.stringify(out);
+          }
         };
 
         console.log(
@@ -357,10 +368,10 @@
     });
 
     // Activate first tool
-    cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
-      mouseButtonMask: 1,
-      isTouchActive: true,
-    });
+    // cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
+    //   mouseButtonMask: 1,
+    //   isTouchActive: true,
+    // });
 
     const setToolCategoryActive = categoryName => {
       Array.from(toolCategoryLinks).forEach(toolLink => {
