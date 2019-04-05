@@ -220,7 +220,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   getIncomplete(element) {
     const toolState = getToolState(element, this.name);
 
-
     if (toolState && Array.isArray(toolState.data)) {
       return toolState.data.find(({ complete }) => complete === false);
     }
