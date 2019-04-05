@@ -709,9 +709,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       const lastHandlePlaced = config.currentHandle;
 
       this._endDrawing(element, lastHandlePlaced);
-      console.log('_endDrawing called');
-    } else {
-      console.log('_endDrawing NOT called');
     }
 
     preventPropagation(evt);
@@ -895,6 +892,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @event
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   _editTouchDragCallback(evt) {
     const eventData = evt.detail;
@@ -1144,6 +1142,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(element);
 
     this.fireModifiedEvent(element, data);
+    this.fireCompletedEvent(element, data);
   }
 
   /**
