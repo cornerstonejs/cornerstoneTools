@@ -225,29 +225,28 @@
         const getData = detail => {
           const { measurementData = {} } = detail;
           const out = {};
+          const measurementKeys = [
+            'length',
+            'rAngle',
+            'value',
+            'text',
+            'str',
+            'text',
+            'longestDiameter',
+            'shortestDiameter',
+          ];
+
           if (measurementData.cachedStats) {
             Object.keys(measurementData.cachedStats).forEach(key => {
               out[key] = measurementData.cachedStats[key];
             });
           }
-          if (measurementData.area) {
-            out.area = `${measurementData.area} ${measurementData.unit}`;
-          }
-          if (measurementData.length) {
-            out.length = `${measurementData.length}`;
-          }
-          if (measurementData.rAngle) {
-            out.angle = `${measurementData.rAngle}`;
-          }
-          if (measurementData.value) {
-            out.value = `${measurementData.value}`;
-          }
-          if (measurementData.text) {
-            out.text = `${measurementData.text}`;
-          }
-          if (measurementData.str) {
-            out.str = `${measurementData.text}`;
-          }
+
+          measurementKeys.forEach(key => {
+            if (key in measurementData) {
+              out[key] = measurementData[key];
+            }
+          });
 
           if (Object.keys(out).length === 0) {
             return measurementData;

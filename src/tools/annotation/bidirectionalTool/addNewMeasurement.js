@@ -7,6 +7,7 @@ import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
+import triggerEvent from '../../../util/triggerEvent.js';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
@@ -71,11 +72,8 @@ export default function(evt, interactionType) {
 
         calculateLongestAndShortestDiameters(eventData, measurementData);
 
-        external.cornerstone.triggerEvent(
-          element,
-          EVENTS.MEASUREMENT_MODIFIED,
-          modifiedEventData
-        );
+        triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
+        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       },
     },
     interactionType
