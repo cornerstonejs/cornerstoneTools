@@ -7,7 +7,6 @@ import {
   getToolState,
   clearToolState,
 } from '../stateManagement/toolState.js';
-import toolColors from '../stateManagement/toolColors.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { setToolOptions } from '../toolOptions.js';

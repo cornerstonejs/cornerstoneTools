@@ -52,12 +52,13 @@ class BaseTool {
     }
 
     // Options are set when a tool is added, during a "mode" change,
-    // Or via a tool's option's setter
+    // or via a tool's option's setter
     this._options = {};
+
     // Configuration is set at tool initalization
     this._configuration = Object.assign({}, configuration);
 
-    // updateOnMouseMove causes the frame to render on every mouse move when
+    // `updateOnMouseMove` causes the frame to render on every mouse move when
     // the tool is active. This is useful for tools that render large/dynamic
     // items to the canvas which can't easily be respresented with an SVG Cursor.
     this.updateOnMouseMove = false;
