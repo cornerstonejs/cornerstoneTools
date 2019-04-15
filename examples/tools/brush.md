@@ -14,8 +14,6 @@ This example needs additional work
   document.addEventListener("DOMContentLoaded", (event) => {
     const brushTools = cornerstoneTools.store.state.tools.find((tool) => tool.name === 'Brush')
 
-    console.log(brushTools)
-
   })
 
 </script>
