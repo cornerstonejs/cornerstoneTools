@@ -5,16 +5,21 @@ toolName: Crosshairs
 toolType: stack
 ---
 
-
 <h2 class="title is-2">How to set up the {{page.toolName}} tool:</h2>
 
 {% highlight javascript %}
 // Init cornerstone tools
 cornerstoneTools.init()
 
-// Enable any elements, and display images
-const imageIds = [`image_id_1`,`image_id_2`,]
-// ...
+// used to determine which image loader we use to load the image.
+const scheme = 'wadouri'
+const baseUrl = 'https://mypacs.com/dicoms/'
+const series = [
+    'image_1.dcm',
+    'image_2.dcm'
+]
+
+const imageIds = series.map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`;
 
 // Add our tool, and set it's mode
 const {{page.toolName}}Tool = cornerstoneTools.{{page.toolName}}Tool
@@ -22,7 +27,7 @@ const {{page.toolName}}Tool = cornerstoneTools.{{page.toolName}}Tool
 //define the stack
 const stack = {
   currentImageIdIndex: 0,
-  imageIds: imageIds,
+  imageIds: imageIds
 }
 
 // load images and set the stack
