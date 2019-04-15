@@ -5,7 +5,7 @@ toolName: Crosshairs
 toolType: stack
 ---
 
-<h2 class="title is-2">How to set up the {{page.toolName}} tool:</h2>
+<h2 class="title is-2">How to set up the CrosshairsTool tool:</h2>
 
 {% highlight javascript %}
 // Init cornerstone tools
@@ -19,15 +19,15 @@ const series = [
     'image_2.dcm'
 ]
 
-const imageIds = series.map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`;
+const imageIds = series.map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`
 
 // Add our tool, and set it's mode
-const {{page.toolName}}Tool = cornerstoneTools.{{page.toolName}}Tool
+const CrosshairsTool = cornerstoneTools.CrosshairsToolTool
 
 //define the stack
 const stack = {
   currentImageIdIndex: 0,
-  imageIds: imageIds
+  imageIds
 }
 
 // load images and set the stack
@@ -37,7 +37,7 @@ cornerstone.loadImage(imageIds[0]).then((image) => {
   cornerstoneTools.addToolState(element, 'stack', stack)
 })
 
-cornerstoneTools.addTool({{page.toolName}}Tool)
-cornerstoneTools.setToolActive('{{page.toolName}}', { mouseButtonMask: 1 })
+cornerstoneTools.addTool(CrosshairsToolTool)
+cornerstoneTools.setToolActive('CrosshairsTool', { mouseButtonMask: 1 })
 
 {% endhighlight %}
