@@ -98,9 +98,11 @@ layout: default
   })
 
   // Add the tool
-  const apiTool = cornerstoneTools.StackScrollTool
-  cornerstoneTools.addTool(apiTool);
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
   cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+  cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 });
 
   const topgramPromise = cornerstone.loadImage(topgramImageIds[0]).then((image) => {
       // display this image
