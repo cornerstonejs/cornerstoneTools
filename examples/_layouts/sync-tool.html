@@ -96,7 +96,7 @@ layout: default
     cornerstoneTools.updateImageSynchronizer
   )
 
-  loadImage(cornerstone, chestImageIds, chestElement, chestStack)
+  const chestPromise = _loadImage(cornerstone, chestImageIds, chestElement, chestStack)
 
   // Add the tool
   cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
@@ -105,19 +105,29 @@ layout: default
   cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
   cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 })
 
-  loadImage(cornerstone, topgramImageIds, topgramElement, topgramStack)
+  const topgramPromise = _loadImage(cornerstone, topgramImageIds, topgramElement, topgramStack)
 
-  setTimeout(() => {
-    const tool = cornerstoneTools[`${toolName}Tool`];
-
-    cornerstoneTools.addTool(tool);
-    cornerstoneTools.setToolActive(toolName, {
-      mouseButtonMask: 1,
-      synchronizationContext: synchronizer,
+  // promisse all
+  Promise.all([chestPromise, topgramPromise]).then(() => {
+    // Add the enabled elements to the synchronization context
+    elements.forEach(element => {
+        synchronizer.add(element)
     })
-  }, 2000)
+    synchronizer.enabled = true;
 
-  function loadImage(cornerstone, imageIds, element, stack){
+    const tool = cornerstoneTools[`${toolName}Tool`]
+
+    elements.forEach(element => {
+      cornerstoneTools.addTool(tool)
+      cornerstoneTools.setToolActive(toolName, {
+        mouseButtonMask: 1,
+        synchronizationContext: synchronizer,
+      })
+    })
+
+  })
+
+  function _loadImage(cornerstone, imageIds, element, stack){
     return cornerstone.loadImage(imageIds[0]).then((image) => {
         // display this image
         cornerstone.displayImage(element, image)
