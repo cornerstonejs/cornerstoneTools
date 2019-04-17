@@ -104,7 +104,7 @@ layout: default
       synchronizer.add(chestElement)
       cornerstoneTools.addStackStateManager(
         chestElement,
-        ['stack', 'Crosshairs']
+        ['stack', toolName]
       )
       cornerstoneTools.addToolState(chestElement, 'stack', chestStack)
   })
@@ -124,17 +124,16 @@ layout: default
       synchronizer.add(topgramElement)
       cornerstoneTools.addStackStateManager(
         topgramElement,
-        ['stack', 'Crosshairs']
+        ['stack', toolName]
       )
       cornerstoneTools.addToolState(topgramElement, 'stack', topgramStack)
   })
 
-  // Crosshairs stuff
   setTimeout(() => {
-    const CrosshairsTool = cornerstoneTools.CrosshairsTool;
+    const tool = cornerstoneTools[`${toolName}Tool`];
 
-    cornerstoneTools.addTool(CrosshairsTool);
-    cornerstoneTools.setToolActive('Crosshairs', {
+    cornerstoneTools.addTool(tool);
+    cornerstoneTools.setToolActive(toolName, {
       mouseButtonMask: 1,
       synchronizationContext: synchronizer,
     })
