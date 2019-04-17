@@ -54,26 +54,26 @@ layout: default
   const baseUrl =
     window.ENVIRONMENT === 'development'
       ? 'http://localhost:4000/'
-      : 'https://tools.cornerstonejs.org/examples/';
+      : 'https://tools.cornerstonejs.org/examples/'
 
-  _initCornerstone();
-  _initInterface();
+  _initCornerstone()
+  _initInterface()
 
-  const topgramElement = document.getElementById('topgram_element');
-  const chestElement = document.getElementById('chest_element');
-  const elements = [topgramElement, chestElement];
+  const topgramElement = document.getElementById('topgram_element')
+  const chestElement = document.getElementById('chest_element')
+  const elements = [topgramElement, chestElement]
 
   // Init CornerstoneTools
-  cornerstoneTools.init();
+  cornerstoneTools.init()
   // image enable the dicomImage element and add canvas to it
   elements.forEach(element => {
       cornerstone.enable(element)
   })
-  const toolName = '{{ page.toolName }}';
+  const toolName = '{{ page.toolName }}'
 
   const topgramImageIds = [
     `wadouri:${baseUrl}assets/dicom/bellona/topogram/IM-0001-0001.dcm`
-  ];
+  ]
 
   const chestImageIds = new Array()
   // up to now it is hard coded 37 chest images
@@ -86,43 +86,59 @@ layout: default
       imageIds: chestImageIds
   }
 
-  const synchronizer = new cornerstoneTools.Synchronizer("cornerstonenewimage", cornerstoneTools.updateImageSynchronizer);
+  const topgramStack = {
+    currentImageIdIndex : 0,
+      imageIds: topgramImageIds
+  }
+
+  const synchronizer = new cornerstoneTools.Synchronizer(
+    'cornerstonenewimage',
+    cornerstoneTools.updateImageSynchronizer
+  )
 
   const chestPromise = cornerstone.loadImage(chestImageIds[0]).then((image) => {
       // display this image
       cornerstone.displayImage(chestElement, image)
 
       // set the stack as tool state
-      cornerstoneTools.addStackStateManager(chestElement, ['stack', 'crosshairs'])
+      synchronizer.add(chestElement)
+      cornerstoneTools.addStackStateManager(
+        chestElement,
+        ['stack', 'Crosshairs']
+      )
       cornerstoneTools.addToolState(chestElement, 'stack', chestStack)
   })
 
   // Add the tool
   cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
-  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 })
 
   cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-  cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 })
 
   const topgramPromise = cornerstone.loadImage(topgramImageIds[0]).then((image) => {
       // display this image
       cornerstone.displayImage(topgramElement, image)
+
+      // set the stack as tool state
+      synchronizer.add(topgramElement)
+      cornerstoneTools.addStackStateManager(
+        topgramElement,
+        ['stack', 'Crosshairs']
+      )
+      cornerstoneTools.addToolState(topgramElement, 'stack', topgramStack)
   })
 
-  Promise.all([chestPromise, topgramPromise]).then(() => {
-      // Add the enabled elements to the synchronization context
-      elements.forEach(element => {
-          synchronizer.add(element)
-      })
-      synchronizer.enabled = true
+  // Crosshairs stuff
+  setTimeout(() => {
+    const CrosshairsTool = cornerstoneTools.CrosshairsTool;
 
-      // elements.forEach(element => {
-      //     const apiTool = cornerstoneTools[`${toolName}Tool`]
-      //     cornerstoneTools.addTool(apiTool)
-      //     cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 })
-      //     cornerstoneTools.setToolActive(element, 'crosshairs', { mouseButtonMask: 1, synchronizationContext: synchronizer });
-      // })
-  })
+    cornerstoneTools.addTool(CrosshairsTool);
+    cornerstoneTools.setToolActive('Crosshairs', {
+      mouseButtonMask: 1,
+      synchronizationContext: synchronizer,
+    })
+  }, 2000)
 
   /***************************************************************************
    * UI & Boilerplate setup code
@@ -134,11 +150,11 @@ layout: default
    */
   function _initCornerstone() {
     // Externals
-    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
-    cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-    cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
-    cornerstoneTools.external.cornerstone = cornerstone;
-    cornerstoneTools.external.Hammer = Hammer;
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone
+    cornerstoneWADOImageLoader.external.dicomParser = dicomParser
+    cornerstoneTools.external.cornerstoneMath = cornerstoneMath
+    cornerstoneTools.external.cornerstone = cornerstone
+    cornerstoneTools.external.Hammer = Hammer
 
     // Image Loader
     const config = {
@@ -146,10 +162,10 @@ layout: default
       taskConfiguration: {
         decodeTask: {
           codecsPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderCodecs.js`,
-        },
-      },
-    };
-    cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
+        }
+      }
+    }
+    cornerstoneWADOImageLoader.webWorkerManager.initialize(config)
   }
 
   /***
@@ -162,49 +178,49 @@ layout: default
       const options = {
         mouseButtonMask:
           evt.buttons || convertMouseEventWhichToButtons(evt.which),
-      };
+      }
 
-      cornerstoneTools[`setTool${action}`](toolName, options);
+      cornerstoneTools[`setTool${action}`](toolName, options)
 
       // Remove active style from all buttons
-      const buttons = document.querySelectorAll('.set-tool-mode');
+      const buttons = document.querySelectorAll('.set-tool-mode')
       buttons.forEach(btn => {
-        btn.classList.remove('is-primary');
-      });
+        btn.classList.remove('is-primary')
+      })
 
       // Add active style to this button
-      this.classList.add('is-primary');
+      this.classList.add('is-primary')
 
-      evt.preventDefault();
-      evt.stopPropagation();
-      evt.stopImmediatePropagation();
-      return false;
-    };
+      evt.preventDefault()
+      evt.stopPropagation()
+      evt.stopImmediatePropagation()
+      return false
+    }
 
-    const buttons = document.querySelectorAll('.set-tool-mode');
+    const buttons = document.querySelectorAll('.set-tool-mode')
 
     buttons.forEach(btn => {
       btn.addEventListener('contextmenu', handleClick);
       btn.addEventListener('auxclick', handleClick);
       btn.addEventListener('click', handleClick);
-    });
+    })
   }
 
   const convertMouseEventWhichToButtons = which => {
     switch (which) {
       // no button
       case 0:
-        return 0;
+        return 0
       // left
       case 1:
-        return 1;
+        return 1
       // middle
       case 2:
-        return 4;
+        return 4
       // right
       case 3:
-        return 2;
+        return 2
     }
-    return 0;
-  };
+    return 0
+  }
 </script>
