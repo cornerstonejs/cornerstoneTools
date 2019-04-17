@@ -92,8 +92,8 @@ layout: default
   }
 
   const synchronizer = new cornerstoneTools.Synchronizer(
-    'cornerstonenewimage',
-    cornerstoneTools.updateImageSynchronizer
+    'cornerstoneimagerendered',
+    cornerstoneTools.wwwcSynchronizer
   )
 
   const chestPromise = _loadImage(cornerstone, chestImageIds, chestElement, chestStack)
