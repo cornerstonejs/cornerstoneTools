@@ -35,9 +35,9 @@ const _upOrEndEvents = {
  * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
  * @param {Object}   [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {function} [options.doneMovingCallback]
  * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {string}   [interactionType=mouse]
+ * @param {function} [doneMovingCallback]
  * @returns {undefined}
  */
 export default function(
@@ -46,7 +46,8 @@ export default function(
   annotation,
   handle,
   options = {},
-  interactionType = 'mouse'
+  interactionType = 'mouse',
+  doneMovingCallback
 ) {
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
@@ -69,7 +70,8 @@ export default function(
         dragHandler,
         upOrEndHandler,
       },
-      evt
+      evt,
+      doneMovingCallback
     );
   };
 
@@ -137,7 +139,8 @@ function _upOrEndHandler(
   options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
-  evt
+  evt,
+  doneMovingCallback
 ) {
   const eventData = evt.detail;
   const element = evt.detail.element;
@@ -162,8 +165,8 @@ function _upOrEndHandler(
     removeToolState(element, toolName, annotation);
   }
 
-  if (typeof options.doneMovingCallback === 'function') {
-    options.doneMovingCallback();
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
   }
 
   external.cornerstone.updateImage(element);

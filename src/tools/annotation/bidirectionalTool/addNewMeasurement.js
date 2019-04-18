@@ -36,49 +36,48 @@ export default function(evt, interactionType) {
     this.name,
     measurementData,
     end,
-    {
-      doneMovingCallback: () => {
-        const { handles, longestDiameter, shortestDiameter } = measurementData;
-        const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
-        const longestDiameterSize = parseFloat(longestDiameter) || 0;
-        const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-        const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
-        const isTooFast = new Date().getTime() - timestamp < 150;
+    this.options,
+    interactionType,
+    () => {
+      const { handles, longestDiameter, shortestDiameter } = measurementData;
+      const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
+      const longestDiameterSize = parseFloat(longestDiameter) || 0;
+      const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
+      const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+      const isTooFast = new Date().getTime() - timestamp < 150;
 
-        if (hasHandlesOutside || isTooSmal || isTooFast) {
-          // Delete the measurement
-          measurementData.cancelled = true;
-          removeToolState(element, this.name, measurementData);
-        } else {
-          // Set lesionMeasurementData Session
-          config.getMeasurementLocationCallback(
-            measurementData,
-            eventData,
-            doneCallback
-          );
-        }
-
-        // Perpendicular line is not connected to long-line
-        perpendicularStart.locked = false;
-
-        external.cornerstone.updateImage(element);
-
-        const modifiedEventData = {
-          toolType: this.name,
-          element,
+      if (hasHandlesOutside || isTooSmal || isTooFast) {
+        // Delete the measurement
+        measurementData.cancelled = true;
+        removeToolState(element, this.name, measurementData);
+      } else {
+        // Set lesionMeasurementData Session
+        config.getMeasurementLocationCallback(
           measurementData,
-        };
-
-        calculateLongestAndShortestDiameters(eventData, measurementData);
-
-        external.cornerstone.triggerEvent(
-          element,
-          EVENTS.MEASUREMENT_MODIFIED,
-          modifiedEventData
+          eventData,
+          doneCallback
         );
-      },
-    },
-    interactionType
+      }
+
+      // Perpendicular line is not connected to long-line
+      perpendicularStart.locked = false;
+
+      external.cornerstone.updateImage(element);
+
+      const modifiedEventData = {
+        toolType: this.name,
+        element,
+        measurementData,
+      };
+
+      calculateLongestAndShortestDiameters(eventData, measurementData);
+
+      external.cornerstone.triggerEvent(
+        element,
+        EVENTS.MEASUREMENT_MODIFIED,
+        modifiedEventData
+      );
+    }
   );
 }
 
