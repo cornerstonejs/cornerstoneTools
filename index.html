@@ -367,10 +367,10 @@
     });
 
     // Activate first tool
-    // cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
-    //   mouseButtonMask: 1,
-    //   isTouchActive: true,
-    // });
+    cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
+      mouseButtonMask: 1,
+      isTouchActive: true,
+    });
 
     const setToolCategoryActive = categoryName => {
       Array.from(toolCategoryLinks).forEach(toolLink => {
