@@ -40,11 +40,6 @@ export default function(
   const { scale, translation } = viewport;
   const rotation = viewport.rotation - initialRotation;
 
-  console.log('========================');
-  console.log(initialRotation);
-  console.log(viewport.rotation);
-  console.log(rotation);
-
   const centerPoint = {
     x: width / 2 + translation.x * scale,
     y: height / 2 + translation.y * scale,
