@@ -82,6 +82,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           highlight: true,
           active: true,
         },
+        initialRotation: eventData.viewport.rotation,
         textBox: {
           active: false,
           hasMoved: false,
@@ -187,9 +188,17 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         setShadow(context, this.configuration);
 
         // Draw
-        drawRect(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
+        drawRect(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          {
+            color,
+          },
+          'pixel',
+          data.handles.initialRotation
+        );
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
