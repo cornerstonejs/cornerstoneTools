@@ -5,6 +5,8 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import getActiveTool from '../util/getActiveTool';
+import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 
 const _dragEvents = {
   mouse: [EVENTS.MOUSE_DRAG],
@@ -117,6 +119,11 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
   }
 
   external.cornerstone.updateImage(element);
+
+  const activeTool = getActiveTool(evt.detail);
+  if (activeTool instanceof BaseAnnotationTool) {
+    activeTool.updateStatistics(evt, annotation);
+  }
 
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {

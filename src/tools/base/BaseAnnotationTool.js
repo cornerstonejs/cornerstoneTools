@@ -5,6 +5,9 @@ import {
   moveHandleNearImagePoint,
   moveAnnotation,
 } from './../../util/findAndMoveHelpers.js';
+import { getLogger } from '../../util/logger';
+
+const logger = getLogger('addTool');
 
 /**
  * @memberof Tools.Base
@@ -158,6 +161,17 @@ class BaseAnnotationTool extends BaseTool {
    */
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
     moveAnnotation(evt, this, annotation, interactionType);
+  }
+
+  /**
+   * Updates statistics for the tool's annotation data on the element
+   *
+   * @param {*} evt
+   * @param {*} data
+   * @returns {void}
+   */
+  updateStatistics(evt, data) {
+    logger.warn(`updateStatistics not implemented for ${this.name}.`);
   }
 }
 
