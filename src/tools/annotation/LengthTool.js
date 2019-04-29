@@ -17,6 +17,7 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import throttle from '../../util/throttle';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -36,6 +37,8 @@ export default class LengthTool extends BaseAnnotationTool {
     };
 
     super(props, defaultProps);
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -58,6 +61,7 @@ export default class LengthTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       handles: {
         start: {
           x,
@@ -114,9 +118,7 @@ export default class LengthTool extends BaseAnnotationTool {
     );
   }
 
-  updateStatistics(evt, data) {
-    const eventData = evt.detail;
-    const { image } = eventData;
+  updateCachedStats(image, element, data) {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
@@ -130,6 +132,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
     // Store the length inside the tool for outside access
     data.length = length;
+    data.invalidated = false;
   }
 
   renderToolData(evt) {
@@ -196,7 +199,14 @@ export default class LengthTool extends BaseAnnotationTool {
         // So that it sits beside the length tool handle
         const xOffset = 10;
 
-        this.updateStatistics(evt, data);
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.length) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
+          }
+        }
 
         const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 

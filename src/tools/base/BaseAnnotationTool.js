@@ -7,7 +7,7 @@ import {
 } from './../../util/findAndMoveHelpers.js';
 import { getLogger } from '../../util/logger';
 
-const logger = getLogger('addTool');
+const logger = getLogger('baseAnnotationTool');
 
 /**
  * @memberof Tools.Base
@@ -164,14 +164,15 @@ class BaseAnnotationTool extends BaseTool {
   }
 
   /**
-   * Updates statistics for the tool's annotation data on the element
+   * Updates cached statistics for the tool's annotation data on the element
    *
-   * @param {*} evt
+   * @param {*} image
+   * @param {*} element
    * @param {*} data
    * @returns {void}
    */
-  updateStatistics(evt, data) {
-    logger.warn(`updateStatistics not implemented for ${this.name}.`);
+  updateCachedStats(image, element, data) {
+    logger.warn(`updateCachedStats not implemented for ${this.name}.`);
   }
 }
 

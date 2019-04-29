@@ -1,8 +1,8 @@
 // State
-import { getters, state } from './../../store/index.js';
-import getActiveToolsForElement from './../../store/getActiveToolsForElement.js';
+import { state } from './../../store/index.js';
 import addNewMeasurement from './addNewMeasurement.js';
 import BaseAnnotationTool from './../../tools/base/BaseAnnotationTool.js';
+import getActiveTool from '../../util/getActiveTool';
 
 export default function(evt) {
   if (state.isToolLocked || state.isMultiPartToolActive) {
@@ -10,15 +10,7 @@ export default function(evt) {
   }
 
   const element = evt.detail.element;
-  let tools = getActiveToolsForElement(element, getters.touchTools());
-
-  tools = tools.filter(tool => tool.options.isTouchActive);
-
-  if (tools.length === 0) {
-    return;
-  }
-
-  const activeTool = tools[0];
+  const activeTool = getActiveTool(element, null, 'touch');
 
   // Note: custom `addNewMeasurement` will need to prevent event bubbling
   if (activeTool && activeTool.addNewMeasurement) {

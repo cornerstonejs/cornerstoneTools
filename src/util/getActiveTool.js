@@ -4,20 +4,32 @@ import filterToolsUseableWithMultiPartTools from '../store/filterToolsUsableWith
 
 // Todo: We could simplify this if we only allow one active
 // Tool per mouse button mask?
-export default function getActiveTool(eventData) {
-  // Filter out disabled, enabled, and passive
-  let tools = getActiveToolsForElement(eventData.element, getters.mouseTools());
+export default function getActiveTool(
+  element,
+  buttons,
+  interactionType = 'mouse'
+) {
+  let tools;
 
-  // Filter out tools that do not match mouseButtonMask
-  tools = tools.filter(
-    tool =>
-      Array.isArray(tool.options.mouseButtonMask) &&
-      tool.options.mouseButtonMask.includes(eventData.buttons) &&
-      tool.options.isMouseActive
-  );
+  if (interactionType === 'touch') {
+    tools = getActiveToolsForElement(element, getters.touchTools());
+    tools = tools.filter(tool => tool.options.isTouchActive);
+  } else {
+    // Filter out disabled, enabled, and passive
+    tools = getActiveToolsForElement(element, getters.mouseTools());
 
-  if (state.isMultiPartToolActive) {
-    tools = filterToolsUseableWithMultiPartTools(tools);
+    // Filter out tools that do not match mouseButtonMask
+    tools = tools.filter(
+      tool =>
+        Array.isArray(tool.options.mouseButtonMask) &&
+        buttons &&
+        tool.options.mouseButtonMask.includes(buttons) &&
+        tool.options.isMouseActive
+    );
+
+    if (state.isMultiPartToolActive) {
+      tools = filterToolsUseableWithMultiPartTools(tools);
+    }
   }
 
   if (tools.length === 0) {

@@ -100,7 +100,7 @@ function _moveHandler(
   interactionType,
   evt
 ) {
-  const { currentPoints, image, element } = evt.detail;
+  const { currentPoints, image, element, buttons } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -120,9 +120,10 @@ function _moveHandler(
 
   external.cornerstone.updateImage(element);
 
-  const activeTool = getActiveTool(evt.detail);
+  const activeTool = getActiveTool(element, buttons, interactionType);
+
   if (activeTool instanceof BaseAnnotationTool) {
-    activeTool.updateStatistics(evt, annotation);
+    activeTool.updateCachedStats(image, element, annotation);
   }
 
   const eventType = EVENTS.MEASUREMENT_MODIFIED;

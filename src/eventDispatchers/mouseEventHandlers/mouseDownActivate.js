@@ -8,10 +8,8 @@ export default function(evt) {
     return;
   }
 
-  const eventData = evt.detail;
-  const element = eventData.element;
-
-  const activeTool = getActiveTool(eventData);
+  const { element, buttons } = evt.detail;
+  const activeTool = getActiveTool(element, buttons, 'mouse');
 
   if (typeof activeTool.preMouseDownActivateCallback === 'function') {
     const consumedEvent = activeTool.preMouseDownActivateCallback(evt);
