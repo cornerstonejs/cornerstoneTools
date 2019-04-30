@@ -208,3 +208,32 @@ export function planePlaneIntersection(targetImagePlane, referenceImagePlane) {
     end: intersections[1],
   };
 }
+
+/**
+ * Translate a point using a rotation angle.
+ * @export @public @method
+ * @name rotatePoint
+ *
+ * @param {Object} point - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Object} center - `{ x, y }` in either pixel or canvas coordinates.
+ * @param {Number} angle - angle in degrees
+ * @returns {Object} - `{ x, y }` new point translated
+ */
+export function rotatePoint(point, center, angle) {
+  const angleRadians = angle * (Math.PI / 180); // Convert to radians
+
+  const rotatedX =
+    Math.cos(angleRadians) * (point.x - center.x) -
+    Math.sin(angleRadians) * (point.y - center.y) +
+    center.x;
+
+  const rotatedY =
+    Math.sin(angleRadians) * (point.x - center.x) +
+    Math.cos(angleRadians) * (point.y - center.y) +
+    center.y;
+
+  return {
+    x: rotatedX,
+    y: rotatedY,
+  };
+}
