@@ -455,7 +455,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ellipseCoordinates.height
   );
 
-  // Calculate the mean & standard deviation from the pixels and the ellipse details
+  // Calculate the mean & standard deviation from the pixels and the ellipse details.
   const ellipseMeanStdDev = calculateEllipseStatistics(
     pixels,
     ellipseCoordinates
