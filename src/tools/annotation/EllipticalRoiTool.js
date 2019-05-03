@@ -86,6 +86,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           highlight: true,
           active: true,
         },
+        initialRotation: eventData.viewport.rotation,
         textBox: {
           active: false,
           hasMoved: false,
@@ -200,9 +201,17 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         setShadow(context, this.configuration);
 
         // Draw
-        drawEllipse(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
+        drawEllipse(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          {
+            color,
+          },
+          'pixel',
+          data.handles.initialRotation
+        );
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
@@ -446,7 +455,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ellipseCoordinates.height
   );
 
-  // Calculate the mean & standard deviation from the pixels and the ellipse details
+  // Calculate the mean & standard deviation from the pixels and the ellipse details.
   const ellipseMeanStdDev = calculateEllipseStatistics(
     pixels,
     ellipseCoordinates

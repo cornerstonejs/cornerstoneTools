@@ -19,6 +19,9 @@ const goodMouseEventData = {
       y: 0,
     },
   },
+  viewport: {
+    rotation: 0,
+  },
 };
 
 describe('EllipticalRoiTool.js', () => {
@@ -81,6 +84,18 @@ describe('EllipticalRoiTool.js', () => {
       expect(startHandle.y).toBe(goodMouseEventData.currentPoints.image.y);
       expect(endHandle.x).toBe(goodMouseEventData.currentPoints.image.x);
       expect(endHandle.y).toBe(goodMouseEventData.currentPoints.image.y);
+    });
+
+    it('returns a measurement with a initial rotation', () => {
+      const instantiatedTool = new EllipticalRoiTool();
+
+      const toolMeasurement = instantiatedTool.createNewMeasurement(
+        goodMouseEventData
+      );
+
+      const initialRotation = toolMeasurement.handles.initialRotation;
+
+      expect(initialRotation).toBe(goodMouseEventData.viewport.rotation);
     });
 
     it('returns a measurement with a textBox handle', () => {

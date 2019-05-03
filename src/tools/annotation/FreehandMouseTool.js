@@ -1607,10 +1607,16 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @param {any} data the measurment data
    */
   fireModifiedEvent(element, data) {
+    const modifiedEventData = {
+      toolName: this.name,
+      element,
+      measurementData: data,
+    };
+
     external.cornerstone.triggerEvent(
       element,
       EVENTS.MEASUREMENT_MODIFIED,
-      data
+      modifiedEventData
     );
   }
 
