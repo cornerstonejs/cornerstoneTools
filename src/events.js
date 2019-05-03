@@ -192,6 +192,16 @@ const EVENTS = {
    *  @type {String}
    */
   STACK_SCROLL: 'cornerstonetoolsstackscroll',
+
+  /**
+   *  @type {String}
+   */
+  STACK_PREFETCH_IMAGE_DONE: 'cornerstonetoolsstackprefetchimagedone',
+
+  /**
+   *  @type {String}
+   */
+  STACK_PREFETCH_DONE: 'cornerstonetoolsstackprefetchdone',
 };
 
 export default EVENTS;
