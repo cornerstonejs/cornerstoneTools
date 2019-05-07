@@ -1,7 +1,7 @@
 import calculateLongestAndShortestDiameters from './calculateLongestAndShortestDiameters.js';
 
 let measurementData = {};
-let eventData = {};
+let pixelSpacing = {};
 
 describe('CalculateLongestAndShortestDiameters.js', () => {
   beforeEach(() => {
@@ -30,37 +30,33 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
         },
       },
     };
-    eventData = {
-      image: {},
-    };
+    pixelSpacing = {};
   });
 
   it('should calculates long/short diameters', () => {
-    eventData = {
-      image: {
-        rowPixelSpacing: 0.876953125,
-        columnPixelSpacing: 0.876953125,
-      },
+    pixelSpacing = {
+      rowPixelSpacing: 0.876953125,
+      colPixelSpacing: 0.876953125,
     };
 
-    calculateLongestAndShortestDiameters(eventData, measurementData);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
-    expect(measurementData.longestDiameter).toEqual('94.5');
-    expect(measurementData.shortestDiameter).toEqual('47.3');
+    expect(longestDiameter).toEqual('94.5');
+    expect(shortestDiameter).toEqual('47.3');
   });
 
   it('should return values with scale of 1', () => {
-    calculateLongestAndShortestDiameters(eventData, measurementData);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
-    expect(measurementData.shortestDiameter).toMatch(/\d*\.\d$/);
-    expect(measurementData.longestDiameter).toMatch(/\d*\.\d$/);
+    expect(shortestDiameter).toMatch(/\d*\.\d$/);
+    expect(longestDiameter).toMatch(/\d*\.\d$/);
   });
 
   it('should use a default pixelSpacing of 1 when pixelSpacing is undefined', () => {
-    calculateLongestAndShortestDiameters(eventData, measurementData);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
-    expect(measurementData.longestDiameter).toEqual('107.8');
-    expect(measurementData.shortestDiameter).toEqual('53.9');
+    expect(longestDiameter).toEqual('107.8');
+    expect(shortestDiameter).toEqual('53.9');
   });
 
   it('should get longest and shortest diameters defined even with undefined handles', () => {
@@ -77,10 +73,10 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
       perpendicularEnd: {},
     };
 
-    calculateLongestAndShortestDiameters(eventData, measurementData);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
-    expect(measurementData.shortestDiameter).toEqual('0.0');
-    expect(measurementData.longestDiameter).toEqual('5.7');
+    expect(shortestDiameter).toEqual('0.0');
+    expect(longestDiameter).toEqual('5.7');
   });
 
   it('should make shortestDiameter always small than longestDiameter', () => {
@@ -103,9 +99,9 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
       },
     };
 
-    calculateLongestAndShortestDiameters(eventData, measurementData);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
-    expect(measurementData.shortestDiameter).toEqual('7.1');
-    expect(measurementData.longestDiameter).toEqual('9.9');
+    expect(shortestDiameter).toEqual('7.1');
+    expect(longestDiameter).toEqual('9.9');
   });
 });
