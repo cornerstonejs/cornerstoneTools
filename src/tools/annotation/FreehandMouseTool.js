@@ -1605,7 +1605,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   * Fire cornerstonetoolsmeasurementmodified event on provided element
+   * Fire MEASUREMENT_MODIFIED event on provided element
    * @param {any} element which freehand data has been modified
    * @param {any} measurementData the measurment data
    * @returns {void}
@@ -1746,7 +1746,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   * NewImageCallback - new image event handler.
+   * New image event handler.
    *
    * @public
    * @param  {Object} evt The event.
