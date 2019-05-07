@@ -5,6 +5,9 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('manipulators:moveHandle');
 
 const runAnimation = {
   value: false,
@@ -210,6 +213,13 @@ function _upOrEndHandler(
     evt.detail.handlePressed = annotation;
     handle.x = image.x; // Original Event
     handle.y = image.y;
+  }
+
+  if (typeof options.doneMovingCallback === 'function') {
+    logger.warn(
+      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+    );
+    options.doneMovingCallback();
   }
 
   if (typeof doneMovingCallback === 'function') {
