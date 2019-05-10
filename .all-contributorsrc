@@ -212,6 +212,15 @@
       "contributions": [
         "content"
       ]
+    },
+    {
+      "login": "mix3d",
+      "name": "Madison Dickson",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1474137?v=4",
+      "profile": "http://mix3dstudios.com",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
