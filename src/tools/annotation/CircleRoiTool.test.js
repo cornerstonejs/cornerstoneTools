@@ -3,7 +3,7 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 
 /* ~ Setup
- * In order to mock properly, Jest needs jest.mock('moduleName') to be in the
+ * To mock properly, Jest needs jest.mock('moduleName') to be in the
  * same scope as the require/import statement.
  */
 import external from '../../externalModules.js';
