@@ -31,20 +31,18 @@ import { angleCursor } from '../cursors/index.js';
  * @extends Tools.Base.BaseAnnotationTool
  * @hideconstructor
  *
- * @param {ToolConfiguration} [configuration={}]
+ * @param {ToolConfiguration} [props={}]
  */
 export default class AngleTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: angleCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.preventNewMeasurement = false;
   }
 

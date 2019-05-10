@@ -11,17 +11,15 @@ import { panCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class PanTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Pan',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: panCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     // Touch
     this.touchDragCallback = this._dragCallback.bind(this);
     // Mouse

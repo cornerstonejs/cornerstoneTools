@@ -27,17 +27,14 @@ const logger = getLogger('tools:annotation:LengthTool');
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class LengthTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: lengthCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   createNewMeasurement(eventData) {

@@ -13,24 +13,8 @@ import {
  * @extends Tools.Base.BaseTool
  */
 class BaseAnnotationTool extends BaseTool {
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  }) {
-    super({
-      name,
-      strategies,
-      defaultStrategy,
-      configuration,
-      supportedInteractionTypes,
-      mixins,
-      svgCursor,
-    });
+  constructor(...args) {
+    super(...args);
   }
 
   // ===================================================================

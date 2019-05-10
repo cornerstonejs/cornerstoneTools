@@ -28,8 +28,8 @@ import { arrowAnnotateCursor } from '../cursors/index.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -41,11 +41,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       },
       svgCursor: arrowAnnotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.preventNewMeasurement = false;
   }
 

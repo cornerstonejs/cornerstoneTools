@@ -12,8 +12,8 @@ import { rotateCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class RotateTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Rotate',
       strategies: {
         default: defaultStrategy,
@@ -24,11 +24,8 @@ export default class RotateTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: rotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   touchDragCallback(evt) {
