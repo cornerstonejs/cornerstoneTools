@@ -1,6 +1,7 @@
 import AngleTool from './AngleTool.js';
 import ArrowAnnotateTool from './ArrowAnnotateTool.js';
 import BidirectionalTool from './BidirectionalTool.js';
+import CircleRoiTool from './CircleRoiTool.js';
 import CobbAngleTool from './CobbAngleTool.js';
 import EllipticalRoiTool from './EllipticalRoiTool.js';
 import FreehandMouseTool from './FreehandMouseTool.js';
@@ -13,6 +14,7 @@ import TextMarkerTool from './TextMarkerTool.js';
 export { default as AngleTool } from './AngleTool.js';
 export { default as ArrowAnnotateTool } from './ArrowAnnotateTool.js';
 export { default as BidirectionalTool } from './BidirectionalTool.js';
+export { default as CircleRoiTool } from './CircleRoiTool.js';
 export { default as CobbAngleTool } from './CobbAngleTool.js';
 export { default as EllipticalRoiTool } from './EllipticalRoiTool.js';
 export { default as FreehandMouseTool } from './FreehandMouseTool.js';
@@ -26,6 +28,7 @@ export default {
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
+  CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
   FreehandMouseTool,
