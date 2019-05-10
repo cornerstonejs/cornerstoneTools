@@ -1,4 +1,5 @@
 import mixins from './../../mixins/index.js';
+import { getLogger } from '../../util/logger.js';
 import deepmerge from './../../util/deepmerge.js';
 
 const logger = getLogger('tools:base:BaseTool');
@@ -36,7 +37,7 @@ class BaseTool {
       configuration,
       supportedInteractionTypes,
       mixins,
-      svgCursor
+      svgCursor,
     } = this.initialConfiguration;
 
     /**
