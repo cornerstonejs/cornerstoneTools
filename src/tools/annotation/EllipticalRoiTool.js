@@ -38,8 +38,8 @@ const logger = getLogger('tools:annotation:EllipticalRoiTool');
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class EllipticalRoiTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -48,10 +48,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       },
       svgCursor: ellipticalRoiCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   createNewMeasurement(eventData) {
