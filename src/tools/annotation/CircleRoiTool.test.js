@@ -198,13 +198,13 @@ describe('CircleRoiTool.js', () => {
       expect(isPointNearTool).toBe(false);
     });
 
-    it('returns true when point is within in hit area region', () => {
+    it('returns true when point is within hit area region', () => {
       const instantiatedTool = new CircleRoiTool();
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
       );
 
-      // Setting the coordinates outside the cirlce boundary but between the half of hit area region(15)t
+      // Setting the coordinates outside the cirlce boundary but between the half of hit area region(15)
       const coords = {
         x: 15,
         y: 30,
