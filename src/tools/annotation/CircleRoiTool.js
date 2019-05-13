@@ -121,8 +121,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const radius = _getDistance(startCanvas, endCanvas);
 
     // Checking if point is near the tool by comparing its distance from the center of the circle
-    return !(
-      distanceFromCenter > radius + distance / 2 || distanceFromCenter < radius
+    return (
+      distanceFromCenter > radius - distance / 2 &&
+      distanceFromCenter < radius + distance / 2
     );
   }
 
