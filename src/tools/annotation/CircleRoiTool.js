@@ -21,6 +21,7 @@ import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { circleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:EllipticalRoiTool');
@@ -38,6 +39,11 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
+      svgCursor: circleRoiCursor,
     };
 
     super(props, defaultProps);
@@ -60,7 +66,8 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       invalidated: true,
       handles: {
         start: {
@@ -202,6 +209,15 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         );
 
         drawHandles(context, eventData, data.handles, handleOptions);
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          continue;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          continue;
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {

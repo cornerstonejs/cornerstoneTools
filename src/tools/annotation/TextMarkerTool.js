@@ -23,15 +23,11 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'TextMarker',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-        markers: [],
-        current: '',
-        ascending: true,
-        loop: false,
-        changeTextCallback,
-      },
+      configuration: {},
       svgCursor: textMarkerCursor,
     };
+
+    Object.assign(defaultProps.configuration, defaultTextMarkerConfiguration());
 
     super(props, defaultProps);
     this.touchPressCallback = this._changeText.bind(this);
@@ -50,7 +46,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       text: config.current,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       handles: {
         end: {
           x: eventData.currentPoints.image.x,
@@ -231,3 +228,13 @@ const changeTextCallback = (data, eventData, doneChangingTextCallback) => {
  * @param {Object} data
  * @param {string} text - The new text
  */
+
+function defaultTextMarkerConfiguration() {
+  return {
+    markers: [],
+    current: '',
+    ascending: true,
+    loop: false,
+    changeTextCallback,
+  };
+}

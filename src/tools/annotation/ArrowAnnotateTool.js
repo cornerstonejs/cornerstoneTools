@@ -33,14 +33,13 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        getTextCallback,
-        changeTextCallback,
-        drawHandles: false,
-        drawHandlesOnHover: true,
-        arrowFirst: true,
+        // hideTextBox: false,
+        // textBoxOnHover: false,
       },
       svgCursor: arrowAnnotateCursor,
     };
+
+    Object.assign(defaultProps.configuration, defaultArrowConfiguration());
 
     super(props, defaultProps);
     this.preventNewMeasurement = false;
@@ -51,7 +50,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       handles: {
         start: {
           x: evt.detail.currentPoints.image.x,
@@ -154,6 +154,15 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
         if (this.configuration.drawHandles) {
           drawHandles(context, evt.detail, data.handles, handleOptions);
+        }
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
         }
 
         const text = textBoxText(data);
@@ -338,4 +347,14 @@ function getTextCallback(doneChangingTextCallback) {
 
 function changeTextCallback(data, eventData, doneChangingTextCallback) {
   doneChangingTextCallback(prompt('Change your annotation:'));
+}
+
+function defaultArrowConfiguration() {
+  return {
+    getTextCallback,
+    changeTextCallback,
+    drawHandles: false,
+    drawHandlesOnHover: true,
+    arrowFirst: true,
+  };
 }

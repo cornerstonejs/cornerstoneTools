@@ -40,7 +40,9 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         // showMinMax: false,
-        // showHounsfieldUnits: true
+        // showHounsfieldUnits: true,
+        // hideTextBox: false,
+        // textBoxOnHover: false
       },
       svgCursor: rectangleRoiCursor,
     };
@@ -65,7 +67,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       invalidated: true,
       handles: {
         start: {
@@ -198,6 +201,15 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
         drawHandles(context, eventData, data.handles, handleOptions);
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          continue;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          continue;
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {

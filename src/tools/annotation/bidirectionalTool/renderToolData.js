@@ -79,7 +79,9 @@ export default function(evt) {
       } = data.handles;
 
       // Draw the measurement line
-      drawLine(context, element, start, end, { color });
+      drawLine(context, element, start, end, {
+        color,
+      });
 
       // Draw perpendicular line
       const strokeWidth = lineWidth;
@@ -99,6 +101,15 @@ export default function(evt) {
 
       // Draw the handles
       drawHandles(context, eventData, data.handles, handleOptions);
+
+      // Hide TextBox
+      if (this.configuration.hideTextBox) {
+        return;
+      }
+      // TextBox OnHover
+      if (this.configuration.textBoxOnHover && !data.active) {
+        return;
+      }
 
       // Draw the textbox
       // Move the textbox slightly to the right and upwards

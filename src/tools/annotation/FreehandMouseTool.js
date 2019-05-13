@@ -50,9 +50,14 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: defaultFreehandConfiguration(),
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: freehandMouseCursor,
     };
+
+    Object.assign(defaultProps.configuration, defaultFreehandConfiguration());
 
     super(props, defaultProps);
 
@@ -97,26 +102,24 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       return;
     }
 
-    const measurementData = {
+    return {
       visible: true,
       active: true,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       invalidated: true,
-      color: undefined,
       handles: {
         points: [],
+        textBox: {
+          active: false,
+          hasMoved: false,
+          movesIndependently: false,
+          drawnIndependently: true,
+          allowedOutsideImage: true,
+          hasBoundingBox: true,
+        },
       },
     };
-
-    measurementData.handles.textBox = {
-      active: false,
-      hasMoved: false,
-      movesIndependently: false,
-      drawnIndependently: true,
-      allowedOutsideImage: true,
-      hasBoundingBox: true,
-    };
-
-    return measurementData;
   }
 
   /**
@@ -284,7 +287,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
               eventData.element,
               data.handles.points[j],
               lines,
-              { color }
+              {
+                color,
+              }
             );
           }
         }
@@ -428,6 +433,15 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
           // Set the invalidated flag to false so that this data won't automatically be recalculated
           data.invalidated = false;
+        }
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
         }
 
         // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
@@ -1732,7 +1746,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   * newImageCallback - new image event handler.
+   * NewImageCallback - new image event handler.
    *
    * @public
    * @param  {Object} evt The event.

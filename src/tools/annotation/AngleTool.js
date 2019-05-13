@@ -38,6 +38,10 @@ export default class AngleTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: angleCursor,
     };
 
@@ -51,7 +55,8 @@ export default class AngleTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -143,7 +148,9 @@ export default class AngleTool extends BaseAnnotationTool {
           eventData.element,
           data.handles.start,
           [data.handles.middle, data.handles.end],
-          { color }
+          {
+            color,
+          }
         );
 
         // Draw the handles
@@ -154,6 +161,15 @@ export default class AngleTool extends BaseAnnotationTool {
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
+        }
 
         // Default to isotropic pixel size, update suffix to reflect this
         const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;

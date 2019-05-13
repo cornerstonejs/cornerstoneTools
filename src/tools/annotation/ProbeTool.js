@@ -29,6 +29,10 @@ export default class ProbeTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false
+      },
       svgCursor: probeCursor,
     };
 
@@ -52,7 +56,8 @@ export default class ProbeTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       handles: {
         end: {
           x: eventData.currentPoints.image.x,
@@ -123,6 +128,15 @@ export default class ProbeTool extends BaseAnnotationTool {
           handleRadius,
           color,
         });
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
+        }
 
         const x = Math.round(data.handles.end.x);
         const y = Math.round(data.handles.end.y);

@@ -31,6 +31,10 @@ export default class LengthTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: lengthCursor,
     };
 
@@ -56,7 +60,8 @@ export default class LengthTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       handles: {
         start: {
           x,
@@ -170,6 +175,15 @@ export default class LengthTool extends BaseAnnotationTool {
         };
 
         drawHandles(context, eventData, data.handles, handleOptions);
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
+        }
 
         // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
         const dx =

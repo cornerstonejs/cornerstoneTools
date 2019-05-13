@@ -11,9 +11,6 @@ import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouch
 import toolColors from '../../stateManagement/toolColors.js';
 import { bidirectionalCursor } from '../cursors/index.js';
 
-const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
-  doneCallback();
-
 /**
  * @public
  * @class BidirectionalTool
@@ -24,20 +21,21 @@ const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
  */
 
 export default class BidirectionalTool extends BaseAnnotationTool {
-  constructor(props) {
+  constructor(props = {}) {
     const defaultProps = {
       name: 'Bidirectional',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        changeMeasurementLocationCallback: emptyLocationCallback,
-        getMeasurementLocationCallback: emptyLocationCallback,
-        textBox: '',
-        shadow: '',
-        drawHandlesOnHover: true,
-        additionalData: [],
+        // hideTextBox: false,
+        // textBoxOnHover: false,
       },
       svgCursor: bidirectionalCursor,
     };
+
+    Object.assign(
+      defaultProps.configuration,
+      defaultBidirectionalConfiguration()
+    );
 
     super(props, defaultProps);
 
@@ -51,4 +49,18 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);
     this.handleSelectedTouchCallback = handleSelectedTouchCallback.bind(this);
   }
+}
+
+const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
+  doneCallback();
+
+function defaultBidirectionalConfiguration() {
+  return {
+    changeMeasurementLocationCallback: emptyLocationCallback,
+    getMeasurementLocationCallback: emptyLocationCallback,
+    textBox: '',
+    shadow: '',
+    drawHandlesOnHover: true,
+    additionalData: [],
+  };
 }

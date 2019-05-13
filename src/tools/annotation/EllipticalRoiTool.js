@@ -45,6 +45,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
+        // hideTextBox: true,
+        // textBoxOnHover: false,
       },
       svgCursor: ellipticalRoiCursor,
     };
@@ -69,7 +71,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       invalidated: true,
       handles: {
         start: {
@@ -211,6 +214,15 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
         drawHandles(context, eventData, data.handles, handleOptions);
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          continue;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          continue;
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {

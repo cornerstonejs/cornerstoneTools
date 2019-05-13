@@ -36,6 +36,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: cobbAngleCursor,
     };
 
@@ -51,7 +55,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: this.configuration.color,
+      activeColor: this.configuration.activeColor,
       complete: false,
       value: '',
       handles: {
@@ -180,6 +185,15 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
         // Draw the text
         context.fillStyle = color;
+
+        // Hide TextBox
+        if (this.configuration.hideTextBox) {
+          return;
+        }
+        // TextBox OnHover
+        if (this.configuration.textBoxOnHover && !data.active) {
+          return;
+        }
 
         const text = data.value;
 
