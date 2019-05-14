@@ -181,6 +181,8 @@ export default class LengthTool extends BaseAnnotationTool {
           return;
         }
         // TextBox OnHover
+        data.handles.textBox.hasBoundingBox = !this.configuration
+          .textBoxOnHover;
         if (this.configuration.textBoxOnHover && !data.active) {
           return;
         }

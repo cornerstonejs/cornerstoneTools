@@ -191,6 +191,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           return;
         }
         // TextBox OnHover
+        data.handles.textBox.hasBoundingBox = !this.configuration
+          .textBoxOnHover;
         if (this.configuration.textBoxOnHover && !data.active) {
           return;
         }

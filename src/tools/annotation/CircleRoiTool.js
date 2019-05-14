@@ -215,6 +215,8 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           continue;
         }
         // TextBox OnHover
+        data.handles.textBox.hasBoundingBox = !this.configuration
+          .textBoxOnHover;
         if (this.configuration.textBoxOnHover && !data.active) {
           continue;
         }

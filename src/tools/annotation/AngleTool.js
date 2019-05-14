@@ -167,6 +167,8 @@ export default class AngleTool extends BaseAnnotationTool {
           return;
         }
         // TextBox OnHover
+        data.handles.textBox.hasBoundingBox = !this.configuration
+          .textBoxOnHover;
         if (this.configuration.textBoxOnHover && !data.active) {
           return;
         }
