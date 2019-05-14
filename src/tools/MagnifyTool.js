@@ -196,10 +196,12 @@ export default class MagnifyTool extends BaseTool {
     const image = enabledElement.image;
 
     // Create a new cornerstone enabledElement
-    this.zoomElement = document.createElement('div');
-    this.zoomElement.width = origCanvas.width * magnificationLevel;
-    this.zoomElement.height = origCanvas.height * magnificationLevel;
-    external.cornerstone.enable(this.zoomElement, enabledElement.options);
+    if (!this.zoomElement) {
+      this.zoomElement = document.createElement('div');
+      this.zoomElement.width = origCanvas.width * magnificationLevel;
+      this.zoomElement.height = origCanvas.height * magnificationLevel;
+      external.cornerstone.enable(this.zoomElement, enabledElement.options);
+    }
 
     const zoomEnabledElement = external.cornerstone.getEnabledElement(
       this.zoomElement
@@ -216,6 +218,7 @@ export default class MagnifyTool extends BaseTool {
     viewport.scale *= magnificationLevel;
     external.cornerstone.displayImage(this.zoomElement, image);
     external.cornerstone.setViewport(this.zoomElement, viewport);
+    // To do enable annotation tools for zoomElement 
   }
 
   /**
@@ -260,11 +263,10 @@ export default class MagnifyTool extends BaseTool {
   /**
    *
    *
-   * @param {*} evt
+   * @param {*} element
    * @returns {void}
    */
-  _destroyMagnificationCanvas(evt) {
-    const element = evt.detail.element;
+  _destroyMagnificationCanvas(element) {
     const magnifyCanvas = element.querySelector('.magnifyTool');
 
     if (magnifyCanvas) {
