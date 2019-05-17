@@ -23,7 +23,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 
-const logger = getLogger('tools:annotation:EllipticalRoiTool');
+const logger = getLogger('tools:annotation:CircleRoiTool');
 
 /**
  * @public
@@ -121,8 +121,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const radius = _getDistance(startCanvas, endCanvas);
 
     // Checking if point is near the tool by comparing its distance from the center of the circle
-    return !(
-      distanceFromCenter > radius + distance / 2 || distanceFromCenter < radius
+    return (
+      distanceFromCenter > radius - distance / 2 &&
+      distanceFromCenter < radius + distance / 2
     );
   }
 
