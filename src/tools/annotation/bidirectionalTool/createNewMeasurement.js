@@ -22,17 +22,25 @@ export default function(mouseEventData) {
     active: true,
     handles: {
       start: getHandle(x, y, 0),
-      end: getHandle(x, y, 1, { active: true }),
-      perpendicularStart: getHandle(x, y, 2, { locked: true }),
+      end: getHandle(x, y, 1, {
+        active: true,
+      }),
+      perpendicularStart: getHandle(x, y, 2, {
+        locked: true,
+      }),
       perpendicularEnd: getHandle(x, y, 3),
       textBox: getHandle(x - 50, y - 70, null, {
         highlight: false,
-        hasMoved: true,
         active: false,
+        color: undefined,
+        activeColor: undefined,
+        hasMoved: true,
         movesIndependently: false,
         drawnIndependently: true,
         allowedOutsideImage: true,
         hasBoundingBox: true,
+        hide: false,
+        hover: false,
       }),
     },
     longestDiameter: 0,

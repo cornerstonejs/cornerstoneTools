@@ -1,14 +1,18 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
+import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Manipulators
 import { moveNewHandle } from './../../manipulators/index.js';
+
 // Drawing
 import {
   getNewContext,
@@ -78,11 +82,15 @@ export default class AngleTool extends BaseAnnotationTool {
         },
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -163,13 +171,16 @@ export default class AngleTool extends BaseAnnotationTool {
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Hide TextBox
-        if (this.configuration.hideTextBox) {
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
           return;
         }
         // TextBox OnHover
-        data.handles.textBox.hasBoundingBox = !this.configuration
-          .textBoxOnHover;
-        if (this.configuration.textBoxOnHover && !data.active) {
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover || !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
           return;
         }
 
@@ -247,6 +258,9 @@ export default class AngleTool extends BaseAnnotationTool {
             data.handles.textBox.y = coords.y;
           }
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawLinkedTextBox(
             context,
             eventData.element,
@@ -254,7 +268,7 @@ export default class AngleTool extends BaseAnnotationTool {
             text,
             data.handles,
             textBoxAnchorPoints,
-            color,
+            textColor,
             lineWidth,
             0,
             true

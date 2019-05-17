@@ -2,17 +2,25 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
-import toolStyle from './../../stateManagement/toolStyle.js';
+// State
 import textStyle from './../../stateManagement/textStyle.js';
-import toolColors from './../../stateManagement/toolColors.js';
-import { moveNewHandle } from './../../manipulators/index.js';
-import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
-import lineSegDistance from './../../util/lineSegDistance.js';
+import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   removeToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
+import toolStyle from './../../stateManagement/toolStyle.js';
+import toolColors from './../../stateManagement/toolColors.js';
+
+// Manipulators
+import { moveNewHandle } from './../../manipulators/index.js';
+
+// Util
+import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
+import lineSegDistance from './../../util/lineSegDistance.js';
+
+// Drawing
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
@@ -67,11 +75,15 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         },
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -157,13 +169,16 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         // Hide TextBox
-        if (this.configuration.hideTextBox) {
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
           return;
         }
         // TextBox OnHover
-        data.handles.textBox.hasBoundingBox = !this.configuration
-          .textBoxOnHover;
-        if (this.configuration.textBoxOnHover && !data.active) {
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover || !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
           return;
         }
 
@@ -211,6 +226,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             data.handles.textBox.y = coords.y;
           }
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawLinkedTextBox(
             context,
             element,
@@ -218,7 +236,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             text,
             data.handles,
             textBoxAnchorPoints,
-            color,
+            textColor,
             lineWidth,
             0,
             false

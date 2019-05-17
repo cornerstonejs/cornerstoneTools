@@ -1,9 +1,12 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
+import textColors from './../../stateManagement/textColors.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Drawing
 import {
   getNewContext,
@@ -77,11 +80,15 @@ export default class LengthTool extends BaseAnnotationTool {
         },
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -177,13 +184,16 @@ export default class LengthTool extends BaseAnnotationTool {
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Hide TextBox
-        if (this.configuration.hideTextBox) {
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
           return;
         }
         // TextBox OnHover
-        data.handles.textBox.hasBoundingBox = !this.configuration
-          .textBoxOnHover;
-        if (this.configuration.textBoxOnHover && !data.active) {
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover || !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
           return;
         }
 
@@ -222,6 +232,9 @@ export default class LengthTool extends BaseAnnotationTool {
 
         const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
+        // Text Colors
+        const textColor = textColors.getColorIfActive(data);
+
         drawLinkedTextBox(
           context,
           element,
@@ -229,7 +242,7 @@ export default class LengthTool extends BaseAnnotationTool {
           text,
           data.handles,
           textBoxAnchorPoints,
-          color,
+          textColor,
           lineWidth,
           xOffset,
           true

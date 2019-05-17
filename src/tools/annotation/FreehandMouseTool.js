@@ -1,7 +1,9 @@
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
+
 // State
+import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   getToolState,
@@ -10,8 +12,10 @@ import {
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { state } from '../../store/index.js';
+
 // Manipulators
 import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
+
 // Implementation Logic
 import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
 import calculateSUV from '../../util/calculateSUV.js';
@@ -112,11 +116,15 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         points: [],
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -436,13 +444,16 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         }
 
         // Hide TextBox
-        if (this.configuration.hideTextBox) {
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
           return;
         }
         // TextBox OnHover
-        data.handles.textBox.hasBoundingBox = !this.configuration
-          .textBoxOnHover;
-        if (this.configuration.textBoxOnHover && !data.active) {
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover || !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
           return;
         }
 
@@ -461,6 +472,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
           const text = textBoxText.call(this, data);
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawLinkedTextBox(
             context,
             element,
@@ -468,7 +482,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
             text,
             data.handles.points,
             textBoxAnchorPoints,
-            color,
+            textColor,
             lineWidth,
             0,
             true
