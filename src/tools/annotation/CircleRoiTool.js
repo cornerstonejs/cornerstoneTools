@@ -23,7 +23,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 
-const logger = getLogger('tools:annotation:EllipticalRoiTool');
+const logger = getLogger('tools:annotation:CircleRoiTool');
 
 /**
  * @public

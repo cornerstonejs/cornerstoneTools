@@ -117,9 +117,9 @@ class BaseAnnotationTool extends BaseTool {
       // Tool data's 'active' does not match coordinates
       // TODO: can't we just do an if/else and save on a pointNearTool check?
       const nearToolAndNotMarkedActive =
-        this.pointNearTool(element, data, coords) && !data.active;
+        this.pointNearTool(element, data, coords, 'mouse') && !data.active;
       const notNearToolAndMarkedActive =
-        !this.pointNearTool(element, data, coords) && data.active;
+        !this.pointNearTool(element, data, coords, 'mouse') && data.active;
 
       if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
         data.active = !data.active;
