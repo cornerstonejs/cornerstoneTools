@@ -167,7 +167,7 @@ describe('CircleRoiTool.js', () => {
       expect(isPointNearTool).toBe(false);
     });
 
-    it('returns false when point is inside the cirle roi', () => {
+    it('returns false when point is not in the hit area region', () => {
       const instantiatedTool = new CircleRoiTool();
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -175,8 +175,8 @@ describe('CircleRoiTool.js', () => {
 
       // Setting the coordinates to be inside the circle annotation
       const coords = {
-        x: 20,
-        y: 20,
+        x: 23.5, // For the 'mouse', we are setting the hit area region to be 7.5 px wide
+        y: 23.5,
       };
 
       // picking a start handler as {x: 25, y: 25} and end handler as {x: 15, y: 15};
