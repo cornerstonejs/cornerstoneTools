@@ -226,7 +226,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
         // TextBox OnHover
         data.handles.textBox.hasBoundingBox =
-          !this.configuration.textBoxOnHover || !data.handles.textBox.hover;
+          !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
         if (
           (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
           !data.active
