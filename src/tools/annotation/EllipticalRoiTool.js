@@ -282,7 +282,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           textColor,
           lineWidth,
-          0,
+          10,
           true
         );
       }

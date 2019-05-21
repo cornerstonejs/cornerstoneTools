@@ -171,7 +171,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     };
 
     draw(newContext, context => {
-      // If we have tool data for this element - iterate over each set and draw it
+      // If we have tool data for this element, iterate over each set and draw it
       for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
 
@@ -279,7 +279,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           textColor,
           lineWidth,
-          0,
+          10,
           true
         );
       }
