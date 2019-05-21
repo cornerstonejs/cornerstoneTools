@@ -244,7 +244,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           color,
           lineWidth,
-          0,
+          10,
           true
         );
       }
