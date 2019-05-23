@@ -19,6 +19,7 @@ import {
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
+import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
@@ -221,12 +222,12 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
         // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          data.handles.textBox.x = Math.max(
-            data.handles.start.x,
-            data.handles.end.x
+          const defaultCoords = getROITextBoxCoords(
+            eventData.viewport,
+            data.handles
           );
-          data.handles.textBox.y =
-            (data.handles.start.y + data.handles.end.y) / 2;
+
+          Object.assign(data.handles.textBox, defaultCoords);
         }
 
         const textBoxAnchorPoints = handles =>
