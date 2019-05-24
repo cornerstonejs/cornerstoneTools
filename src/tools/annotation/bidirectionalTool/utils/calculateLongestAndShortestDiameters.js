@@ -1,14 +1,13 @@
 /**
  * Calculates longest and shortest diameters using measurement handles and pixelSpacing
- * @param  {Object} eventData
  * @param  {Object} measurementData
- * @returns {void}
+ * @param pixelSpacing
  */
 export default function calculateLongestAndShortestDiameters(
-  eventData,
-  measurementData
+  measurementData,
+  pixelSpacing
 ) {
-  const { rowPixelSpacing, columnPixelSpacing } = eventData.image;
+  const { rowPixelSpacing, colPixelSpacing } = pixelSpacing;
   const {
     start,
     end,
@@ -17,13 +16,13 @@ export default function calculateLongestAndShortestDiameters(
   } = measurementData.handles;
 
   // Calculate the long axis length
-  const dx = (start.x - end.x) * (columnPixelSpacing || 1);
+  const dx = (start.x - end.x) * (colPixelSpacing || 1);
   const dy = (start.y - end.y) * (rowPixelSpacing || 1);
   let length = Math.sqrt(dx * dx + dy * dy);
 
   // Calculate the short axis length
   const wx =
-    (perpendicularStart.x - perpendicularEnd.x) * (columnPixelSpacing || 1);
+    (perpendicularStart.x - perpendicularEnd.x) * (colPixelSpacing || 1);
   const wy =
     (perpendicularStart.y - perpendicularEnd.y) * (rowPixelSpacing || 1);
   let width = Math.sqrt(wx * wx + wy * wy);
@@ -41,7 +40,8 @@ export default function calculateLongestAndShortestDiameters(
     width = tempL;
   }
 
-  // Set measurement text to show lesion table
-  measurementData.longestDiameter = length.toFixed(1);
-  measurementData.shortestDiameter = width.toFixed(1);
+  return {
+    longestDiameter: length.toFixed(1),
+    shortestDiameter: width.toFixed(1),
+  };
 }

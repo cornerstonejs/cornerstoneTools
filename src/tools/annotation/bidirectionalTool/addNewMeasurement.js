@@ -2,15 +2,16 @@ import external from './../../../externalModules.js';
 import EVENTS from './../../../events.js';
 import { moveNewHandle } from './../../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
-import calculateLongestAndShortestDiameters from './utils/calculateLongestAndShortestDiameters.js';
 import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
+import getActiveTool from '../../../util/getActiveTool';
+import BaseAnnotationTool from '../../base/BaseAnnotationTool';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
-  const { element, image } = eventData;
+  const { element, image, buttons } = eventData;
   const config = this.configuration;
 
   if (checkPixelSpacing(image)) {
@@ -61,15 +62,21 @@ export default function(evt, interactionType) {
         // Perpendicular line is not connected to long-line
         perpendicularStart.locked = false;
 
+        measurementData.invalidated = true;
+
         external.cornerstone.updateImage(element);
+
+        const activeTool = getActiveTool(element, buttons, interactionType);
+
+        if (activeTool instanceof BaseAnnotationTool) {
+          activeTool.updateCachedStats(image, element, measurementData);
+        }
 
         const modifiedEventData = {
           toolType: this.name,
           element,
           measurementData,
         };
-
-        calculateLongestAndShortestDiameters(eventData, measurementData);
 
         external.cornerstone.triggerEvent(
           element,
