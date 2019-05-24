@@ -32,6 +32,11 @@ const goodMouseEventData = {
   },
 };
 
+const image = {
+  rowPixelSpacing: 0.8984375,
+  columnPixelSpacing: 0.8984375
+};
+
 describe('CircleRoiTool.js', () => {
   describe('default values', () => {
     it('has a default name of "CircleRoi"', () => {
@@ -229,6 +234,66 @@ describe('CircleRoiTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(true);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    external.cornerstone.metaData = {
+      get: jest.fn(),
+    };
+
+    external.cornerstone.getPixels = () => {
+      return [100, 100, 100,
+        100, 4, 5,
+        100, 3, 6,
+        100, 100, 100,
+        100, 4, 5,
+        100, 3, 6,
+        100, 100, 100,
+        100, 4, 5,
+        100, 3, 6,
+        100, 100, 100,
+        100, 4, 5,
+        100, 3, 6
+      ];
+    };
+
+    it('should calculate and update annotation values', () => {
+      const instantiatedTool = new CircleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3
+          },
+          end: {
+            x: 4,
+            y: 4
+          }
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('5.07');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('1.12');
+
+      data.handles.start.x = 3;
+      data.handles.start.y = 3;
+      data.handles.end.x = 5;
+      data.handles.end.y = 5;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('20.29');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('47.86');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.60');
     });
   });
 

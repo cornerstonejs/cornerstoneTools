@@ -24,6 +24,8 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import EVENTS from './../../events.js';
 import { cobbAngleCursor } from '../cursors/index.js';
+import throttle from '../../util/throttle';
+import getPixelSpacing from '../../util/getPixelSpacing';
 
 /**
  * @public
@@ -47,6 +49,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     super(props, defaultProps);
 
     this.hasIncomplete = false;
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -58,6 +62,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       active: true,
       color: this.configuration.color,
       activeColor: this.configuration.activeColor,
+      invalidated: true,
       complete: false,
       value: '',
       handles: {
@@ -126,6 +131,35 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start2, data.handles.end2, coords) <
         25
     );
+  }
+
+  updateCachedStats(image, element, data) {
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+    const dx1 =
+      (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
+      colPixelSpacing;
+    const dy1 =
+      (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
+      rowPixelSpacing;
+    const dx2 =
+      (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
+      colPixelSpacing;
+    const dy2 =
+      (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
+      rowPixelSpacing;
+
+    let angle = Math.acos(
+      Math.abs(
+        (dx1 * dx2 + dy1 * dy2) /
+          (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))
+      )
+    );
+
+    angle *= 180 / Math.PI;
+
+    data.rAngle = roundToDecimal(angle, 2);
+    data.invalidated = false;
   }
 
   renderToolData(evt) {
@@ -307,60 +341,34 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   }
 
   onMeasureModified(ev) {
-    const image = external.cornerstone.getEnabledElement(ev.detail.element)
-      .image;
+    const { element } = ev.detail;
+    const image = external.cornerstone.getEnabledElement(element).image;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     if (ev.detail.toolName !== this.name) {
       return;
     }
     const data = ev.detail.measurementData;
 
-    data.value = calculateValue(data, image);
-
-    function calculateValue(data, image) {
-      // Default to isotropic pixel size, update suffix to reflect this
-      const columnPixelSpacing = image.columnPixelSpacing || 1;
-      const rowPixelSpacing = image.rowPixelSpacing || 1;
-
-      const dx1 =
-        (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
-        columnPixelSpacing;
-      const dy1 =
-        (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
-        rowPixelSpacing;
-      const dx2 =
-        (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
-        columnPixelSpacing;
-      const dy2 =
-        (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
-        rowPixelSpacing;
-
-      let angle = Math.acos(
-        Math.abs(
-          (dx1 * dx2 + dy1 * dy2) /
-            (Math.sqrt(dx1 * dx1 + dy1 * dy1) *
-              Math.sqrt(dx2 * dx2 + dy2 * dy2))
-        )
-      );
-
-      angle *= 180 / Math.PI;
-
-      const rAngle = roundToDecimal(angle, 2);
-
-      if (!Number.isNaN(data.rAngle)) {
-        return textBoxText(
-          rAngle,
-          image.rowPixelSpacing,
-          image.columnPixelSpacing
-        );
+    // Update textbox stats
+    if (data.invalidated === true) {
+      if (data.rAngle) {
+        this.throttledUpdateCachedStats(image, element, data);
+      } else {
+        this.updateCachedStats(image, element, data);
       }
-
-      return '';
     }
 
-    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
-      const suffix =
-        !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
+    const { rAngle } = data;
+
+    data.value = '';
+
+    if (!Number.isNaN(rAngle)) {
+      data.value = textBoxText(rAngle, rowPixelSpacing, colPixelSpacing);
+    }
+
+    function textBoxText(rAngle, rowPixelSpacing, colPixelSpacing) {
+      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
 
       return (

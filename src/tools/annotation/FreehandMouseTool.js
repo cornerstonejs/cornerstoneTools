@@ -30,6 +30,7 @@ import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 import { freehandMouseCursor } from '../cursors/index.js';
 import freehandUtils from '../../util/freehand/index.js';
 import { getLogger } from '../../util/logger.js';
+import throttle from '../../util/throttle';
 
 const logger = getLogger('tools:annotation:FreehandMouseTool');
 
@@ -90,6 +91,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       this
     );
     this._editTouchDragCallback = this._editTouchDragCallback.bind(this);
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -232,6 +235,117 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    *
    *
+   *
+   * @param image
+   * @param element
+   * @param data
+   */
+  updateCachedStats(image, element, data) {
+    // Define variables for the area and mean/standard deviation
+    let area, meanStdDev, meanStdDevSUV;
+
+    const seriesModule = external.cornerstone.metaData.get(
+      'generalSeriesModule',
+      image.imageId
+    );
+    const modality = seriesModule ? seriesModule.modality : null;
+
+    const points = data.handles.points;
+    // If the data has been invalidated, and the tool is not currently active,
+    // We need to calculate it again.
+
+    // Retrieve the bounds of the ROI in image coordinates
+    const bounds = {
+      left: points[0].x,
+      right: points[0].x,
+      bottom: points[0].y,
+      top: points[0].x,
+    };
+
+    for (let i = 0; i < points.length; i++) {
+      bounds.left = Math.min(bounds.left, points[i].x);
+      bounds.right = Math.max(bounds.right, points[i].x);
+      bounds.bottom = Math.min(bounds.bottom, points[i].y);
+      bounds.top = Math.max(bounds.top, points[i].y);
+    }
+
+    const polyBoundingBox = {
+      left: bounds.left,
+      top: bounds.bottom,
+      width: Math.abs(bounds.right - bounds.left),
+      height: Math.abs(bounds.top - bounds.bottom),
+    };
+
+    // Store the bounding box information for the text box
+    data.polyBoundingBox = polyBoundingBox;
+
+    // First, make sure this is not a color image, since no mean / standard
+    // Deviation will be calculated for color images.
+    if (!image.color) {
+      // Retrieve the array of pixels that the ROI bounds cover
+      const pixels = external.cornerstone.getPixels(
+        element,
+        polyBoundingBox.left,
+        polyBoundingBox.top,
+        polyBoundingBox.width,
+        polyBoundingBox.height
+      );
+
+      // Calculate the mean & standard deviation from the pixels and the object shape
+      meanStdDev = calculateFreehandStatistics.call(
+        this,
+        pixels,
+        polyBoundingBox,
+        data.handles.points
+      );
+
+      if (modality === 'PT') {
+        // If the image is from a PET scan, use the DICOM tags to
+        // Calculate the SUV from the mean and standard deviation.
+
+        // Note that because we are using modality pixel values from getPixels, and
+        // The calculateSUV routine also rescales to modality pixel values, we are first
+        // Returning the values to storedPixel values before calcuating SUV with them.
+        // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
+        meanStdDevSUV = {
+          mean: calculateSUV(
+            image,
+            (meanStdDev.mean - image.intercept) / image.slope
+          ),
+          stdDev: calculateSUV(
+            image,
+            (meanStdDev.stdDev - image.intercept) / image.slope
+          ),
+        };
+      }
+
+      // If the mean and standard deviation values are sane, store them for later retrieval
+      if (meanStdDev && !isNaN(meanStdDev.mean)) {
+        data.meanStdDev = meanStdDev;
+        data.meanStdDevSUV = meanStdDevSUV;
+      }
+    }
+
+    // Retrieve the pixel spacing values, and if they are not
+    // Real non-zero values, set them to 1
+    const columnPixelSpacing = image.columnPixelSpacing || 1;
+    const rowPixelSpacing = image.rowPixelSpacing || 1;
+    const scaling = columnPixelSpacing * rowPixelSpacing;
+
+    area = freehandArea(data.handles.points, scaling);
+
+    // If the area value is sane, store it for later retrieval
+    if (!isNaN(area)) {
+      data.area = area;
+    }
+
+    // Set the invalidated flag to false so that this data won't automatically be recalculated
+    data.invalidated = false;
+  }
+
+  /**
+   *
+   *
    * @param {*} evt
    * @returns {undefined}
    */
@@ -338,109 +452,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
           drawHandles(context, eventData, [firstHandle], options);
         }
 
-        // Define variables for the area and mean/standard deviation
-        let area, meanStdDev, meanStdDevSUV;
-
-        // Perform a check to see if the tool has been invalidated. This is to prevent
-        // Unnecessary re-calculation of the area, mean, and standard deviation if the
-        // Image is re-rendered but the tool has not moved (e.g. during a zoom)
-        if (data.invalidated === false) {
-          // If the data is not invalidated, retrieve it from the toolState
-          meanStdDev = data.meanStdDev;
-          meanStdDevSUV = data.meanStdDevSUV;
-          area = data.area;
-        } else if (!data.active) {
-          const points = data.handles.points;
-          // If the data has been invalidated, and the tool is not currently active,
-          // We need to calculate it again.
-
-          // Retrieve the bounds of the ROI in image coordinates
-          const bounds = {
-            left: points[0].x,
-            right: points[0].x,
-            bottom: points[0].y,
-            top: points[0].x,
-          };
-
-          for (let i = 0; i < points.length; i++) {
-            bounds.left = Math.min(bounds.left, points[i].x);
-            bounds.right = Math.max(bounds.right, points[i].x);
-            bounds.bottom = Math.min(bounds.bottom, points[i].y);
-            bounds.top = Math.max(bounds.top, points[i].y);
+        // Update textbox stats
+        if (data.invalidated === true && !data.active) {
+          if (data.meanStdDev && data.meanStdDevSUV && data.area) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
           }
-
-          const polyBoundingBox = {
-            left: bounds.left,
-            top: bounds.bottom,
-            width: Math.abs(bounds.right - bounds.left),
-            height: Math.abs(bounds.top - bounds.bottom),
-          };
-
-          // Store the bounding box information for the text box
-          data.polyBoundingBox = polyBoundingBox;
-
-          // First, make sure this is not a color image, since no mean / standard
-          // Deviation will be calculated for color images.
-          if (!image.color) {
-            // Retrieve the array of pixels that the ROI bounds cover
-            const pixels = external.cornerstone.getPixels(
-              element,
-              polyBoundingBox.left,
-              polyBoundingBox.top,
-              polyBoundingBox.width,
-              polyBoundingBox.height
-            );
-
-            // Calculate the mean & standard deviation from the pixels and the object shape
-            meanStdDev = calculateFreehandStatistics.call(
-              this,
-              pixels,
-              polyBoundingBox,
-              data.handles.points
-            );
-
-            if (modality === 'PT') {
-              // If the image is from a PET scan, use the DICOM tags to
-              // Calculate the SUV from the mean and standard deviation.
-
-              // Note that because we are using modality pixel values from getPixels, and
-              // The calculateSUV routine also rescales to modality pixel values, we are first
-              // Returning the values to storedPixel values before calcuating SUV with them.
-              // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-              meanStdDevSUV = {
-                mean: calculateSUV(
-                  image,
-                  (meanStdDev.mean - image.intercept) / image.slope
-                ),
-                stdDev: calculateSUV(
-                  image,
-                  (meanStdDev.stdDev - image.intercept) / image.slope
-                ),
-              };
-            }
-
-            // If the mean and standard deviation values are sane, store them for later retrieval
-            if (meanStdDev && !isNaN(meanStdDev.mean)) {
-              data.meanStdDev = meanStdDev;
-              data.meanStdDevSUV = meanStdDevSUV;
-            }
-          }
-
-          // Retrieve the pixel spacing values, and if they are not
-          // Real non-zero values, set them to 1
-          const columnPixelSpacing = image.columnPixelSpacing || 1;
-          const rowPixelSpacing = image.rowPixelSpacing || 1;
-          const scaling = columnPixelSpacing * rowPixelSpacing;
-
-          area = freehandArea(data.handles.points, scaling);
-
-          // If the area value is sane, store it for later retrieval
-          if (!isNaN(area)) {
-            data.area = area;
-          }
-
-          // Set the invalidated flag to false so that this data won't automatically be recalculated
-          data.invalidated = false;
         }
 
         // Hide TextBox

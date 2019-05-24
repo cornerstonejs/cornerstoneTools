@@ -1,8 +1,6 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../../../externalModules.js';
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
-import calculateLongestAndShortestDiameters from './utils/calculateLongestAndShortestDiameters.js';
 
 // State
 import textColors from './../../../stateManagement/textColors.js';
@@ -18,6 +16,7 @@ import {
   drawLine,
 } from './../../../drawing/index.js';
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
+import getPixelSpacing from '../../../util/getPixelSpacing';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -31,20 +30,7 @@ export default function(evt) {
     return;
   }
 
-  const imagePlane = external.cornerstone.metaData.get(
-    'imagePlaneModule',
-    image.imageId
-  );
-
-  let rowPixelSpacing = image.rowPixelSpacing;
-  let colPixelSpacing = image.columnPixelSpacing;
-
-  if (imagePlane) {
-    rowPixelSpacing =
-      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing =
-      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-  }
+  const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
   // LT-29 Disable Target Measurements when pixel spacing is not available
   if (!rowPixelSpacing || !colPixelSpacing) {
@@ -68,7 +54,13 @@ export default function(evt) {
     color = data.active ? activeColor : toolColors.getToolColor();
 
     // Calculate the data measurements
-    calculateLongestAndShortestDiameters(eventData, data);
+    if (data.invalidated === true) {
+      if (data.longestDiameter && data.shortestDiameter) {
+        this.throttledUpdateCachedStats(image, element, data);
+      } else {
+        this.updateCachedStats(image, element, data);
+      }
+    }
 
     draw(context, context => {
       // Configurable shadow
