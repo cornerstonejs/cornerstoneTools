@@ -18,6 +18,7 @@ import {
 
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
+import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
@@ -222,12 +223,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          data.handles.textBox.x = Math.max(
-            data.handles.start.x,
-            data.handles.end.x
+          const defaultCoords = getROITextBoxCoords(
+            eventData.viewport,
+            data.handles
           );
-          data.handles.textBox.y =
-            (data.handles.start.y + data.handles.end.y) / 2;
+
+          Object.assign(data.handles.textBox, defaultCoords);
         }
 
         const textBoxAnchorPoints = handles =>
@@ -250,7 +251,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           color,
           lineWidth,
-          0,
+          10,
           true
         );
       }

@@ -19,12 +19,13 @@ import {
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
+import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 
-const logger = getLogger('tools:annotation:EllipticalRoiTool');
+const logger = getLogger('tools:annotation:CircleRoiTool');
 
 /**
  * @public
@@ -124,8 +125,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const radius = _getDistance(startCanvas, endCanvas);
 
     // Checking if point is near the tool by comparing its distance from the center of the circle
-    return !(
-      distanceFromCenter > radius + distance / 2 || distanceFromCenter < radius
+    return (
+      distanceFromCenter > radius - distance / 2 &&
+      distanceFromCenter < radius + distance / 2
     );
   }
 
@@ -172,7 +174,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
 
     draw(newContext, context => {
-      // If we have tool data for this element - iterate over each set and draw it
+      // If we have tool data for this element, iterate over each set and draw it
       for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
 
@@ -228,12 +230,12 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
         // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          data.handles.textBox.x = Math.max(
-            data.handles.start.x,
-            data.handles.end.x
+          const defaultCoords = getROITextBoxCoords(
+            eventData.viewport,
+            data.handles
           );
-          data.handles.textBox.y =
-            (data.handles.start.y + data.handles.end.y) / 2;
+
+          Object.assign(data.handles.textBox, defaultCoords);
         }
 
         const textBoxAnchorPoints = handles =>
@@ -257,7 +259,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           color,
           lineWidth,
-          0,
+          10,
           true
         );
       }
