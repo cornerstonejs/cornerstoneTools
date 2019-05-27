@@ -11,6 +11,10 @@ export default function(evt) {
   const { element, buttons } = evt.detail;
   const activeTool = getActiveTool(element, buttons, 'mouse');
 
+  if (!activeTool) {
+    return;
+  }
+
   if (typeof activeTool.preMouseDownActivateCallback === 'function') {
     const consumedEvent = activeTool.preMouseDownActivateCallback(evt);
 
