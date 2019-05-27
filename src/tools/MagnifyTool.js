@@ -13,8 +13,8 @@ import { magnifyCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -23,11 +23,9 @@ export default class MagnifyTool extends BaseTool {
       },
       svgCursor: magnifyCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 

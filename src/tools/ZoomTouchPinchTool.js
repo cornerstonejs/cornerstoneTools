@@ -14,8 +14,8 @@ const { correctShift } = zoomUtils;
  * @extends {BaseTool}
  */
 export default class ZoomTouchPinchTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ZoomTouchPinch',
       // TODO: Do we need a better way to specify touchPinch?
       supportedInteractionTypes: ['TouchPinch'],
@@ -24,11 +24,8 @@ export default class ZoomTouchPinchTool extends BaseTool {
         maxScale: 20.0,
       },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   touchPinchCallback(evt) {

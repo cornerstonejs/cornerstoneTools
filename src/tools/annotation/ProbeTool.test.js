@@ -11,6 +11,20 @@ jest.mock('../../import.js', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('./../../externalModules.js', () => ({
+  cornerstone: {
+    metaData: {
+      get: jest.fn(),
+    },
+    getStoredPixels: (element, x, y) => {
+      const storedPixels = [10, 20, 30,
+        40, 50, 60,
+        70, 80, 90];
+      return [storedPixels[x * 2 + y]];
+    }
+  },
+}));
+
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
   currentPoints: {
@@ -19,6 +33,14 @@ const goodMouseEventData = {
       y: 0,
     },
   },
+};
+
+const image = {
+  rows: 3,
+  columns: 3,
+  slope: 1,
+  intercept: 1,
+  color: false
 };
 
 describe('ProbeTool.js', () => {
@@ -129,6 +151,42 @@ describe('ProbeTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(false);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    it('should calculate and update annotation values', () => {
+      const instantiatedTool = new ProbeTool();
+
+      const data = {
+        handles: {
+          end: {
+            x: 0,
+            y: 0
+          }
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.x).toEqual(0);
+      expect(data.cachedStats.y).toEqual(0);
+      expect(data.cachedStats.mo).toEqual(11);
+      expect(data.cachedStats.sp).toEqual(10);
+
+      data.handles.end.x = 2;
+      data.handles.end.y = 2;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.x).toEqual(2);
+      expect(data.cachedStats.y).toEqual(2);
+      expect(data.cachedStats.mo).toEqual(71);
+      expect(data.cachedStats.sp).toEqual(70);
     });
   });
 

@@ -5,7 +5,7 @@ A tool's mode (known as tool state in v2) determines how a tool is rendered, and
 | Mode               | Description                                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | Active             | Active tools will render and respond to user input. Active tools are able to create new annotations and/or measurements.     |
-| Passive            | Passive tools will render and _passively_ respond to user input. Their data can be manipulated, but not createed.            |
+| Passive            | Passive tools will render and _passively_ respond to user input. Their data can be manipulated, but not created.            |
 | Enabled            | Enabled tools will render, but will not respond to input. The "enabled" tool state is essentially a "read-only" state.       |
 | Disabled (default) | The default state for a tool. Tools that are disabled cannot be interacted with and are not rendered on the enabled element. |
 

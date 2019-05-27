@@ -203,6 +203,33 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "singhArmani",
+      "name": "Amandeep Singh",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11068601?v=4",
+      "profile": "https://github.com/singhArmani",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "mix3d",
+      "name": "Madison Dickson",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1474137?v=4",
+      "profile": "http://mix3dstudios.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kevinleedrum",
+      "name": "Kevin Lee Drum",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3342530?v=4",
+      "profile": "https://github.com/kevinleedrum",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7

@@ -1,5 +1,6 @@
-import mixins from '../../mixins/index.js';
+import mixins from './../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
+import deepmerge from './../../util/deepmerge.js';
 
 const logger = getLogger('tools:base:BaseTool');
 
@@ -20,17 +21,25 @@ const logger = getLogger('tools:base:BaseTool');
 class BaseTool {
   /**
    * Constructor description
-   * @param {ToolConfiguration} [ToolConfiguration={}]
+   * @param {defaultProps} [defaultProps={}] Tools Default properties
+   * @param {props} [props={}] Tool properties set on instantiation of a tool
    */
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  } = {}) {
+  constructor(props, defaultProps) {
+    /**
+     * Merge default props with custom props
+     */
+    this.initialConfiguration = deepmerge(defaultProps, props);
+
+    const {
+      name,
+      strategies,
+      defaultStrategy,
+      configuration,
+      supportedInteractionTypes,
+      mixins,
+      svgCursor,
+    } = this.initialConfiguration;
+
     /**
      * A unique, identifying tool name
      * @type {String}

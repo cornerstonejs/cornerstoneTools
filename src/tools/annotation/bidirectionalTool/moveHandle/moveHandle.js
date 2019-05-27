@@ -2,7 +2,8 @@ import external from './../../../../externalModules.js';
 import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
-import calculateLongestAndShortestDiameters from '../utils/calculateLongestAndShortestDiameters.js';
+import getActiveTool from '../../../../util/getActiveTool';
+import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
 
 export default function(
   mouseEventData,
@@ -12,7 +13,7 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
-  const element = mouseEventData.element;
+  const { element, image, buttons } = mouseEventData;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
@@ -38,15 +39,21 @@ export default function(
       handle.y = Math.min(handle.y, eventData.image.height);
     }
 
+    data.invalidated = true;
+
     external.cornerstone.updateImage(element);
+
+    const activeTool = getActiveTool(element, buttons, 'mouse');
+
+    if (activeTool instanceof BaseAnnotationTool) {
+      activeTool.updateCachedStats(image, element, data);
+    }
 
     const modifiedEventData = {
       toolType,
       element,
       measurementData: data,
     };
-
-    calculateLongestAndShortestDiameters(mouseEventData, data);
 
     external.cornerstone.triggerEvent(
       element,
