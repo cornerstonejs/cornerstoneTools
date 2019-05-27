@@ -22,6 +22,8 @@ import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import { angleCursor } from '../cursors/index.js';
+import triggerEvent from '../../util/triggerEvent.js';
+import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 
@@ -294,6 +296,14 @@ export default class AngleTool extends BaseAnnotationTool {
         doneMovingCallback: () => {
           measurementData.active = false;
           this.preventNewMeasurement = false;
+          const eventType = EVENTS.MEASUREMENT_COMPLETED;
+          const eventData = {
+            toolType: this.name,
+            element,
+            measurementData,
+          };
+
+          triggerEvent(element, eventType, eventData);
           external.cornerstone.updateImage(element);
         },
       },

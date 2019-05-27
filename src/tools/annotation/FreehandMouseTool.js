@@ -10,6 +10,7 @@ import {
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { state } from '../../store/index.js';
+import triggerEvent from '../../util/triggerEvent.js';
 // Manipulators
 import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
 // Implementation Logic
@@ -907,6 +908,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    * @event
    * @param {Object} evt - The event.
+   * @returns {void}
    */
   _editTouchDragCallback(evt) {
     const eventData = evt.detail;
@@ -1156,6 +1158,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(element);
 
     this.fireModifiedEvent(element, data);
+    this.fireCompletedEvent(element, data);
   }
 
   /**
@@ -1618,22 +1621,31 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   * Fire cornerstonetoolsmeasurementmodified event on provided element
+   * Fire MEASUREMENT_MODIFIED event on provided element
    * @param {any} element which freehand data has been modified
-   * @param {any} data the measurment data
+   * @param {any} measurementData the measurment data
+   * @returns {void}
    */
-  fireModifiedEvent(element, data) {
-    const modifiedEventData = {
+  fireModifiedEvent(element, measurementData) {
+    const eventType = EVENTS.MEASUREMENT_MODIFIED;
+    const eventData = {
       toolName: this.name,
       element,
-      measurementData: data,
+      measurementData,
     };
 
-    external.cornerstone.triggerEvent(
+    triggerEvent(element, eventType, eventData);
+  }
+
+  fireCompletedEvent(element, measurementData) {
+    const eventType = EVENTS.MEASUREMENT_COMPLETED;
+    const eventData = {
+      toolName: this.name,
       element,
-      EVENTS.MEASUREMENT_MODIFIED,
-      modifiedEventData
-    );
+      measurementData,
+    };
+
+    triggerEvent(element, eventType, eventData);
   }
 
   // ===================================================================
@@ -1750,7 +1762,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   }
 
   /**
-   * newImageCallback - new image event handler.
+   * New image event handler.
    *
    * @public
    * @param  {Object} evt The event.
