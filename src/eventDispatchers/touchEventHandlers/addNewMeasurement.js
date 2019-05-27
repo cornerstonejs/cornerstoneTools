@@ -7,6 +7,7 @@ import {
   addToolState,
   removeToolState,
 } from '../../stateManagement/toolState.js';
+import triggerEvent from '../../util/triggerEvent.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('eventDispatchers:touchEventHandlers');
@@ -57,12 +58,28 @@ export default function(evt, tool) {
 
   external.cornerstone.updateImage(element);
 
+  const options = Object.assign(
+    {
+      doneMovingCallback: () => {
+        const eventType = EVENTS.MEASUREMENT_COMPLETED;
+        const eventData = {
+          toolName: tool.name,
+          element,
+          measurementData,
+        };
+
+        triggerEvent(element, eventType, eventData);
+      },
+    },
+    tool.options
+  );
+
   moveNewHandle(
     touchEventData,
     tool.name,
     measurementData,
     measurementData.handles.end,
-    tool.options,
+    options,
     'touch'
   );
 }

@@ -6,6 +6,7 @@ import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
+import triggerEvent from '../../../util/triggerEvent.js';
 import getActiveTool from '../../../util/getActiveTool';
 import BaseAnnotationTool from '../../base/BaseAnnotationTool';
 
@@ -78,11 +79,8 @@ export default function(evt, interactionType) {
           measurementData,
         };
 
-        external.cornerstone.triggerEvent(
-          element,
-          EVENTS.MEASUREMENT_MODIFIED,
-          modifiedEventData
-        );
+        triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
+        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       },
     },
     interactionType
