@@ -16,26 +16,12 @@ const { state, setters } = store.modules.brush;
  * @extends Tools.Base.BaseTool
  */
 class BaseBrushTool extends BaseTool {
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  }) {
-    configuration.referencedToolData = 'brush';
-
-    super({
-      name,
-      strategies,
-      defaultStrategy,
-      configuration,
-      supportedInteractionTypes,
-      mixins,
-      svgCursor,
-    });
+  constructor(props, defaultProps = {}) {
+    if (!defaultProps.configuration) {
+      defaultProps.configuration = {};
+    }
+    defaultProps.configuration.referencedToolData = 'brush';
+    super(props, defaultProps);
 
     this.updateOnMouseMove = true;
     this.hideDefaultCursor = true;
@@ -141,7 +127,13 @@ class BaseBrushTool extends BaseTool {
    */
   // eslint-disable-next-line no-unused-vars
   passiveCallback(evt) {
-    external.cornerstone.updateImage(this.element);
+    try {
+      external.cornerstone.updateImage(this.element);
+    } catch (error) {
+      // It is possible that the image has not been loaded
+      // when this is called.
+      return;
+    }
   }
 
   /**

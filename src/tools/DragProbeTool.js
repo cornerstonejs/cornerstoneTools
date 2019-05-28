@@ -24,8 +24,8 @@ import { probeCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class DragProbeTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'DragProbe',
       strategies: {
         default: defaultStrategy,
@@ -35,9 +35,8 @@ export default class DragProbeTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: probeCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
     this.touchDragCallback = this._movingEventCallback.bind(this);
     this.touchEndCallback = this._endMovingEventCallback.bind(this);
@@ -45,7 +44,6 @@ export default class DragProbeTool extends BaseTool {
     this.mouseDragCallback = this._movingEventCallback.bind(this);
     this.mouseUpCallback = this._endMovingEventCallback.bind(this);
 
-    this.initialConfiguration = initialConfiguration;
     this.dragEventData = {};
   }
 

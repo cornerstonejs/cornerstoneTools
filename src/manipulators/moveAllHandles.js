@@ -5,6 +5,8 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import getActiveTool from '../util/getActiveTool';
+import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 
 const _dragEvents = {
   mouse: [EVENTS.MOUSE_DRAG],
@@ -57,7 +59,13 @@ export default function(
     options
   );
 
-  const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
+  const dragHandler = _dragHandler.bind(
+    this,
+    toolName,
+    annotation,
+    options,
+    interactionType
+  );
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
     _upOrEndHandler(
@@ -85,8 +93,14 @@ export default function(
   });
 }
 
-function _dragHandler(toolName, annotation, options = {}, evt) {
-  const { element, image } = evt.detail;
+function _dragHandler(
+  toolName,
+  annotation,
+  options = {},
+  interactionType,
+  evt
+) {
+  const { element, image, buttons } = evt.detail;
   const { x, y } = evt.detail.deltaPoints.image;
 
   annotation.active = true;
@@ -117,6 +131,12 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
   }
 
   external.cornerstone.updateImage(element);
+
+  const activeTool = getActiveTool(element, buttons, interactionType);
+
+  if (activeTool instanceof BaseAnnotationTool) {
+    activeTool.updateCachedStats(image, element, annotation);
+  }
 
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {

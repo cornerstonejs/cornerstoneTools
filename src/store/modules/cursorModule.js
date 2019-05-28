@@ -21,9 +21,7 @@ const setters = {
 };
 
 const getters = {
-  defaultOptions: () => {
-    return state;
-  },
+  defaultOptions: () => state,
 };
 
 export default {
