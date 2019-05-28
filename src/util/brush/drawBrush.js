@@ -1,10 +1,6 @@
 import external from '../../externalModules.js';
 import { draw, fillBox } from '../../drawing/index.js';
 
-import { getLogger } from '../logger.js';
-
-const logger = getLogger('util:brush:drawBrush');
-
 /**
  * Fills in the brush mask data with new data.
  * @export @public @method
@@ -31,20 +27,20 @@ function drawBrushPixels(
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
 
-    if (shouldErase && pixelData[spIndex] === segmentIndex) {
-      pixelData[spIndex] = 0;
+    if (shouldErase) {
+      if (pixelData[spIndex] === segmentIndex) {
+        pixelData[spIndex] = 0;
+      }
     } else {
       pixelData[spIndex] = segmentIndex;
     }
   });
 
-  logger.warn(pixelData);
-
   brushStackData.labelMap2D[imageIdIndex].invalidated = true;
 
   // If Erased the last pixel, delete the pixelData array.
   if (shouldErase && !pixelData.some(element => element !== 0)) {
-    logger.warn('deleting');
+    console.log('deleting');
     delete brushStackData.labelMap2D[imageIdIndex];
   }
 }

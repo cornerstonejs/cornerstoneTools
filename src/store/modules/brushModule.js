@@ -12,83 +12,10 @@ const state = {
   maxRadius: 50,
   alpha: 0.4,
   renderBrushIfHiddenButActive: true,
-  hiddenButActiveAlpha: 0.2,
   colorMapId: 'BrushColorMap',
-
-  segmentations: [],
-
-  // TODO -> this should be stack tool state.
-
-  /*
-  segmentationData: [
-    {
-      seriesInstanceUid: 'blah',
-      segmentations: [
-        {
-          metadata: [],
-          labelmap: new Uint8ArrayBuffer(wholeVolumeLength)
-        }
-
-      ]
-
-      segments: [
-        {
-          index: 0,
-          metadata,
-          frames: [
-            new Uint8ArrayBuffer(sliceDimensions);
-          ]
-        }
-      ]
-    }
-  ]
-  */
-
-  visibleSegmentations: {},
-  imageBitmapCache: {},
-  segmentationMetadata: {}, // TODO ^ move this into segmentations object.
+  visibleSegmentations: {}, // TODO - We aren't currently using this.
+  segmentationMetadata: {},
 };
-
-// TODO -> REDO THIS
-
-function getSegment(seriesInstanceUid, segmentIndex, frame) {
-  const stack = state.segmentations.find(
-    stack => (stack.seriesInstanceUid = seriesInstanceUid)
-  );
-
-  const segment = stack.segments.find(
-    segment => segment.index === segmentIndex
-  );
-
-  if (!segment) {
-    return;
-  }
-
-  return frame ? segment.frames[frame] : segment.frames;
-}
-
-function setSegment(seriesInstanceUid, segmentIndex, frame) {
-  const segmentations = stack.segmentations;
-
-  let stack = segmentations.find(
-    stack => (stack.seriesInstanceUid = seriesInstanceUid)
-  );
-
-  if (!stack) {
-    segmentations.push({
-      seriesInstanceUid,
-      segments: [],
-    });
-
-    stack = segmentations[segmentations.length - 1];
-  }
-
-  let segment = stack.segments.find(segment => segment.index === segmentIndex);
-
-  if (!segment) {
-    stack.segments.find;
-  }
-}
 
 /**
  * Sets the brush radius, account for global min/max radius
@@ -289,7 +216,7 @@ function _initDefaultColorMap() {
   // Values here are hand picked to jump around the color wheel in such a way
   // that you only get colors that are similar after every 15ish colors.
 
-  let l = 1;
+  let l = 0.5;
   let h = 0;
 
   let minL = 50;
@@ -297,7 +224,9 @@ function _initDefaultColorMap() {
   let decLumCount = 15;
   let inc = 97;
 
-  for (let i = 0; i < defaultSegmentationCount; i++) {
+  colormap.setColor(0, [0, 0, 0, 0]);
+
+  for (let i = 1; i <= defaultSegmentationCount; i++) {
     colormap.setColor(i, [...hslToRgb(h, 1, l), 255]);
 
     h += inc;
@@ -307,13 +236,11 @@ function _initDefaultColorMap() {
 
     if (decLumCount === 0) {
       decLumCount = 15;
-      l = Math.min(l - 0.02, minL);
+      l = Math.min(l + 0.02, minL);
     }
   }
 
-  const colorLutTable = [[0, 0, 0, 0]];
-
-  logger.warn(colormap);
+  const colorLutTable = [];
 
   for (let i = 0; i < defaultSegmentationCount; i++) {
     colorLutTable.push(colormap.getColor(i));

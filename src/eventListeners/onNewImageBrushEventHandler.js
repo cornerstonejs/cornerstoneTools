@@ -26,8 +26,11 @@ export default function(evt) {
 
   let invalidated = false;
 
+  console.log(brushStackState);
+
   for (let i = 0; i < brushStackState.data.length; i++) {
-    const brushStackData = brushStackState[i];
+    const brushStackData = brushStackState.data[i];
+
     const labelMap2D = brushStackData.labelMap2D[currentImageIdIndex];
 
     if (labelMap2D) {

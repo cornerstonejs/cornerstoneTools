@@ -7,9 +7,6 @@ import {
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
 import EVENTS from '../../events.js';
-import { getLogger } from '../../util/logger.js';
-
-const logger = getLogger('tools:BrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
@@ -137,8 +134,6 @@ export default class BrushTool extends BaseBrushTool {
       evt.detail
     );
 
-    logger.warn('update Image');
-
     external.cornerstone.updateImage(evt.detail.element);
   }
 
@@ -152,12 +147,8 @@ export default class BrushTool extends BaseBrushTool {
       BaseBrushTool.getReferencedToolDataName()
     );
 
-    logger.warn(brushStackState);
-
     if (!brushStackState.data.length) {
       const numberOfFrames = stackState.data[0].imageIds.length;
-
-      logger.warn(stackState);
 
       addToolState(element, referencedToolDataName, {
         buffer: new ArrayBuffer(rows * columns * numberOfFrames),
@@ -171,10 +162,7 @@ export default class BrushTool extends BaseBrushTool {
       );
     }
 
-    logger.warn(brushStackState);
-
     const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
-
     const brushStackData = brushStackState.data[0];
 
     if (!brushStackData.labelMap2D[currentImageIdIndex]) {
@@ -189,8 +177,6 @@ export default class BrushTool extends BaseBrushTool {
       // Clear cache for this displaySet to avoid flickering.
       brushStackData.imageBitmapCache = null;
     }
-
-    logger.warn(brushStackState);
 
     return {
       brushStackState,

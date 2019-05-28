@@ -253,7 +253,7 @@ class BaseBrushTool extends BaseTool {
     let drawId = state.drawColorId + 1;
 
     if (drawId === numberOfColors) {
-      drawId = 0;
+      drawId = 1;
     }
 
     state.drawColorId = drawId;
@@ -271,7 +271,7 @@ class BaseBrushTool extends BaseTool {
 
     let drawId = state.drawColorId - 1;
 
-    if (drawId < 0) {
+    if (drawId === 0) {
       drawId = numberOfColors - 1;
     }
 
