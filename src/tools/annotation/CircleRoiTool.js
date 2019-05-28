@@ -24,6 +24,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import { circleRoiCursor } from '../cursors/index.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -40,6 +41,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: circleRoiCursor,
     };
 
     super(props, defaultProps);
