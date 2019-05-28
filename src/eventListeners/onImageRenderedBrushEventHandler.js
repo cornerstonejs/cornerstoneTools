@@ -4,10 +4,6 @@ import {
   transformCanvasContext,
 } from '../drawing/index.js';
 
-import { getLogger } from '../util/logger.js';
-
-const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
-
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
@@ -67,10 +63,6 @@ export default function(evt) {
     BaseBrushTool.getReferencedToolDataName()
   );
 
-  logger.warn('LABELMAP RENDER:');
-
-  logger.warn(brushStackState);
-
   if (!brushStackState.data.length) {
     return;
   }
@@ -117,10 +109,10 @@ function createNewBitmapAndQueueRenderOfSegmentation(
 
   const pixelData = labelMap2D.pixelData;
 
-  logger.warn(`createNewBitmapAndQueueRenderOfSegmentation`);
-  logger.warn(state.colorLutTable);
-
-  const imageData = new ImageData(eventImage.width, eventImage.height);
+  const imageData = new ImageData(
+    eventData.image.width,
+    eventData.image.height
+  );
   const image = {
     stats: {},
     minPixelValue: 0,
