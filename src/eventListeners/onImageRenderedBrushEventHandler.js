@@ -9,6 +9,10 @@ import {
   transformCanvasContext,
 } from '../drawing/index.js';
 
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
+
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
@@ -63,100 +67,63 @@ export default function(evt) {
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  const toolData = getToolState(
+  const brushStackState = getToolState(
     element,
     BaseBrushTool.getReferencedToolDataName()
   );
 
-  if (!toolData) {
+  logger.warn('LABELMAP RENDER:');
+
+  logger.warn(brushStackState);
+
+  if (!brushStackState.data.length) {
     return;
   }
 
-  const enabledElement = external.cornerstone.getEnabledElement(element);
-  const enabledElementUID = enabledElement.uuid;
+  const stackState = getToolState(element, 'stack');
+  const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
 
-  const segData = {
-    visibleSegmentations: getters.visibleSegmentationsForElement(
-      enabledElementUID
-    ),
-    imageBitmapCache: getters.imageBitmapCacheForElement(enabledElementUID),
-    toolData,
-  };
+  for (let i = 0; i < brushStackState.data.length; i++) {
+    const brushStackData = brushStackState.data[i];
 
-  for (let segIndex = 0; segIndex < maxSegmentations; segIndex++) {
-    if (shouldRenderSegmentation(evt, segIndex, segData)) {
-      renderSegmentation(evt, segIndex, segData);
+    const labelMap2D = brushStackData.labelMap2D[currentImageIdIndex];
+
+    if (labelMap2D) {
+      const imageBitmapCache = brushStackData.imageBitmapCache;
+
+      renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache);
     }
   }
 }
 
-function shouldRenderSegmentation(evt, segIndex, segData) {
-  const element = evt.detail.element;
-  const toolData = segData.toolData;
-  const visibleSegmentations = segData.visibleSegmentations;
-
-  if (!toolData.data[segIndex] || !toolData.data[segIndex].pixelData) {
-    // No data, no render.
-    return false;
-  }
-
-  if (visibleSegmentations[segIndex]) {
-    // Has data and marked as visible, render!
-    return true;
-  }
-
-  const currentColor = state.drawColorId;
-
-  if (currentColor !== segIndex) {
-    // Hidden and not current color, don't render.
-    return false;
-  }
-
-  // Check that a brush tool is active.
-  const activeTools = getActiveToolsForElement(element, store.state.tools);
-  const brushTools = activeTools.filter(tool => tool instanceof BaseBrushTool);
-
-  if (brushTools.length > 0) {
-    // Active brush tool with same color, render!
-    return true;
-  }
-
-  return false;
-}
-
-function renderSegmentation(evt, segIndex, segData) {
-  const toolData = segData.toolData;
-  const imageBitmapCache = segData.imageBitmapCache;
-  const visibleSegmentations = segData.visibleSegmentations;
-
+function renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache) {
   // Draw previous image if cached.
-  if (imageBitmapCache && imageBitmapCache[segIndex]) {
-    _drawImageBitmap(
+  if (imageBitmapCache) {
+    _drawImageBitmap(evt, imageBitmapCache);
+  }
+
+  if (labelMap2D.invalidated) {
+    createNewBitmapAndQueueRenderOfSegmentation(
       evt,
-      imageBitmapCache[segIndex],
-      visibleSegmentations[segIndex]
+      brushStackData,
+      labelMap2D
     );
   }
-
-  if (toolData.data[segIndex].invalidated) {
-    createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex);
-  }
 }
 
-function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
+function createNewBitmapAndQueueRenderOfSegmentation(
+  evt,
+  brushStackData,
+  labelMap2D
+) {
   const eventData = evt.detail;
   const element = eventData.element;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  const pixelData = toolData.data[segIndex].pixelData;
+  const pixelData = labelMap2D.pixelData;
 
-  if (!pixelData) {
-    return;
-  }
-
-  const colormapId = state.colorMapId;
-  const colormap = external.cornerstone.colors.getColormap(colormapId);
-  const colorLutTable = [[0, 0, 0, 0], colormap.getColor(segIndex)];
+  logger.warn(`createNewBitmapAndQueueRenderOfSegmentation`);
+  logger.warn(state.colorLutTable);
 
   const imageData = new ImageData(
     eventData.image.width,
@@ -170,17 +137,13 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
-    colorLutTable,
+    state.colorLutTable,
     imageData.data
   );
 
   window.createImageBitmap(imageData).then(newImageBitmap => {
-    setters.imageBitmapCacheForElement(
-      enabledElement.uuid,
-      segIndex,
-      newImageBitmap
-    );
-    toolData.data[segIndex].invalidated = false;
+    brushStackData.imageBitmapCache = newImageBitmap;
+    labelMap2D.invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);
   });
@@ -192,10 +155,9 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
  * @private
  * @param  {Object} evt description
  * @param {ImageBitmap} imageBitmap
- * @param {Boolean} alwaysVisible
  * @returns {void}
  */
-function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
+function _drawImageBitmap(evt, imageBitmap) {
   const eventData = evt.detail;
   const context = getNewContext(eventData.canvasContext.canvas);
 
@@ -230,7 +192,7 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   const viewport = eventData.viewport;
 
   context.imageSmoothingEnabled = false;
-  context.globalAlpha = getLayerAlpha(alwaysVisible);
+  context.globalAlpha = state.alpha;
 
   transformCanvasContext(context, canvas, viewport);
 
@@ -252,12 +214,4 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   context.globalAlpha = 1.0;
 
   resetCanvasContextTransform(context);
-}
-
-function getLayerAlpha(alwaysVisible) {
-  if (alwaysVisible) {
-    return state.alpha;
-  }
-
-  return state.hiddenButActiveAlpha;
 }

@@ -1,7 +1,12 @@
 import external from './../../externalModules.js';
 
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('store:modules:brushModule');
+
 const state = {
-  drawColorId: 0,
+  colorLutTable: [],
+  drawColorId: 1,
   radius: 10,
   minRadius: 1,
   maxRadius: 50,
@@ -9,120 +14,215 @@ const state = {
   renderBrushIfHiddenButActive: true,
   hiddenButActiveAlpha: 0.2,
   colorMapId: 'BrushColorMap',
+
+  segmentations: [],
+
+  // TODO -> this should be stack tool state.
+
+  /*
+  segmentationData: [
+    {
+      seriesInstanceUid: 'blah',
+      segmentations: [
+        {
+          metadata: [],
+          labelmap: new Uint8ArrayBuffer(wholeVolumeLength)
+        }
+
+      ]
+
+      segments: [
+        {
+          index: 0,
+          metadata,
+          frames: [
+            new Uint8ArrayBuffer(sliceDimensions);
+          ]
+        }
+      ]
+    }
+  ]
+  */
+
   visibleSegmentations: {},
   imageBitmapCache: {},
-  segmentationMetadata: {},
+  segmentationMetadata: {}, // TODO ^ move this into segmentations object.
+};
+
+// TODO -> REDO THIS
+
+function getSegment(seriesInstanceUid, segmentIndex, frame) {
+  const stack = state.segmentations.find(
+    stack => (stack.seriesInstanceUid = seriesInstanceUid)
+  );
+
+  const segment = stack.segments.find(
+    segment => segment.index === segmentIndex
+  );
+
+  if (!segment) {
+    return;
+  }
+
+  return frame ? segment.frames[frame] : segment.frames;
+}
+
+function setSegment(seriesInstanceUid, segmentIndex, frame) {
+  const segmentations = stack.segmentations;
+
+  let stack = segmentations.find(
+    stack => (stack.seriesInstanceUid = seriesInstanceUid)
+  );
+
+  if (!stack) {
+    segmentations.push({
+      seriesInstanceUid,
+      segments: [],
+    });
+
+    stack = segmentations[segmentations.length - 1];
+  }
+
+  let segment = stack.segments.find(segment => segment.index === segmentIndex);
+
+  if (!segment) {
+    stack.segments.find;
+  }
+}
+
+/**
+ * Sets the brush radius, account for global min/max radius
+ *
+ * @param {number} radius
+ * @returns {void}
+ */
+function setRadius(radius) {
+  state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
+}
+
+/**
+ * TODO: Should this be a init config property?
+ * Sets the brush color map to something other than the default
+ *
+ * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
+ * @returns {void}
+ */
+function setBrushColorMap(colors) {
+  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+
+  colormap.setNumberOfColors(colors.length);
+
+  for (let i = 0; i < colors.length; i++) {
+    colormap.setColor(i, colors[i]);
+  }
+}
+function setElementVisible(enabledElement) {
+  if (!external.cornerstone) {
+    return;
+  }
+
+  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
+    enabledElement
+  );
+
+  const enabledElementUID = cornerstoneEnabledElement.uuid;
+  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  const numberOfColors = colormap.getNumberOfColors();
+
+  state.visibleSegmentations[enabledElementUID] = [];
+
+  for (let i = 0; i < numberOfColors; i++) {
+    state.visibleSegmentations[enabledElementUID].push(true);
+  }
+}
+
+function getVisibleSegmentationsForElement(enabledElementUID) {
+  if (!state.visibleSegmentations[enabledElementUID]) {
+    return null;
+  }
+
+  return state.visibleSegmentations[enabledElementUID];
+}
+
+function setBrushVisibilityForElement(
+  enabledElementUID,
+  segIndex,
+  visible = true
+) {
+  if (!state.visibleSegmentations[enabledElementUID]) {
+    state.imageBitmapCache[enabledElementUID] = [];
+  }
+
+  state.visibleSegmentations[enabledElementUID][segIndex] = visible;
+}
+
+function getImageBitmapCacheForElement(enabledElementUID) {
+  if (!state.imageBitmapCache[enabledElementUID]) {
+    return null;
+  }
+
+  return state.imageBitmapCache[enabledElementUID];
+}
+
+function setImageBitmapCacheForElement(
+  enabledElementUID,
+  segIndex,
+  imageBitmap
+) {
+  if (!state.imageBitmapCache[enabledElementUID]) {
+    state.imageBitmapCache[enabledElementUID] = [];
+  }
+
+  state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
+}
+
+function clearImageBitmapCacheForElement(enabledElementUID) {
+  state.imageBitmapCache[enabledElementUID] = [];
+}
+
+/**
+ * Retrieves series-specific brush segmentation metadata.
+ * @public
+ * @function metadata
+ * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
+ * @param {number} [segIndex] - The segmentation index.
+ *
+ * @returns {Object[]|Object} An array of segmentation metadata, or specifc
+ *                            segmentation data if segIndex is defined.
+ */
+function getMetadata(seriesInstanceUid, segIndex) {
+  if (!state.segmentationMetadata[seriesInstanceUid]) {
+    return;
+  }
+
+  if (segIndex !== undefined) {
+    return state.segmentationMetadata[seriesInstanceUid][segIndex];
+  }
+
+  return state.segmentationMetadata[seriesInstanceUid];
+}
+
+function setMetadata(seriesInstanceUid, segIndex, metadata) {
+  if (!state.segmentationMetadata[seriesInstanceUid]) {
+    state.segmentationMetadata[seriesInstanceUid] = [];
+  }
+
+  state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
+}
+
+const getters = {
+  imageBitmapCacheForElement: getImageBitmapCacheForElement,
+  visibleSegmentationsForElement: getVisibleSegmentationsForElement,
+  metadata: getMetadata,
 };
 
 const setters = {
-  /**
-   * Sets the brush radius, account for global min/max radius
-   *
-   * @param {number} radius
-   * @returns {void}
-   */
-  radius: radius => {
-    state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
-  },
-
-  /**
-   * TODO: Should this be a init config property?
-   * Sets the brush color map to something other than the default
-   *
-   * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
-   * @returns {void}
-   */
-  brushColorMap: colors => {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-
-    colormap.setNumberOfColors(colors.length);
-
-    for (let i = 0; i < colors.length; i++) {
-      colormap.setColor(i, colors[i]);
-    }
-  },
-  elementVisible: enabledElement => {
-    if (!external.cornerstone) {
-      return;
-    }
-
-    const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-      enabledElement
-    );
-
-    const enabledElementUID = cornerstoneEnabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-    const numberOfColors = colormap.getNumberOfColors();
-
-    state.visibleSegmentations[enabledElementUID] = [];
-
-    for (let i = 0; i < numberOfColors; i++) {
-      state.visibleSegmentations[enabledElementUID].push(true);
-    }
-  },
-  brushVisibilityForElement: (enabledElementUID, segIndex, visible = true) => {
-    if (!state.visibleSegmentations[enabledElementUID]) {
-      state.imageBitmapCache[enabledElementUID] = [];
-    }
-
-    state.visibleSegmentations[enabledElementUID][segIndex] = visible;
-  },
-  imageBitmapCacheForElement: (enabledElementUID, segIndex, imageBitmap) => {
-    if (!state.imageBitmapCache[enabledElementUID]) {
-      state.imageBitmapCache[enabledElementUID] = [];
-    }
-
-    state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
-  },
-  clearImageBitmapCacheForElement: enabledElementUID => {
-    state.imageBitmapCache[enabledElementUID] = [];
-  },
-  metadata: (seriesInstanceUid, segIndex, metadata) => {
-    if (!state.segmentationMetadata[seriesInstanceUid]) {
-      state.segmentationMetadata[seriesInstanceUid] = [];
-    }
-
-    state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
-  },
-};
-
-const getters = {
-  imageBitmapCacheForElement: enabledElementUID => {
-    if (!state.imageBitmapCache[enabledElementUID]) {
-      return null;
-    }
-
-    return state.imageBitmapCache[enabledElementUID];
-  },
-  visibleSegmentationsForElement: enabledElementUID => {
-    if (!state.visibleSegmentations[enabledElementUID]) {
-      return null;
-    }
-
-    return state.visibleSegmentations[enabledElementUID];
-  },
-
-  /**
-   * Retrieves series-specific brush segmentation metadata.
-   * @public
-   * @function metadata
-   * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
-   * @param {number} [segIndex] - The segmentation index.
-   *
-   * @returns {Object[]|Object} An array of segmentation metadata, or specifc
-   *                            segmentation data if segIndex is defined.
-   */
-  metadata: (seriesInstanceUid, segIndex) => {
-    if (!state.segmentationMetadata[seriesInstanceUid]) {
-      return;
-    }
-
-    if (segIndex !== undefined) {
-      return state.segmentationMetadata[seriesInstanceUid][segIndex];
-    }
-
-    return state.segmentationMetadata[seriesInstanceUid];
-  },
+  brushColorMap: setBrushColorMap,
+  elementVisible: setElementVisible,
+  brushVisibilityForElement: setBrushVisibilityForElement,
+  imageBitmapCacheForElement: setImageBitmapCacheForElement,
+  clearImageBitmapCacheForElement: clearImageBitmapCacheForElement,
+  metadata: setMetadata,
 };
 
 /**
@@ -178,93 +278,72 @@ export default {
   setters,
 };
 
-const distinctColors = [
-  [230, 25, 75, 255],
-  [60, 180, 175, 255],
-  [255, 225, 25, 255],
-  [0, 130, 200, 255],
-  [245, 130, 48, 255],
-  [145, 30, 180, 255],
-  [70, 240, 240, 255],
-  [240, 50, 230, 255],
-  [210, 245, 60, 255],
-  [250, 190, 190, 255],
-  [0, 128, 128, 255],
-  [230, 190, 255, 255],
-  [170, 110, 40, 255],
-  [255, 250, 200, 255],
-  [128, 0, 0, 255],
-  [170, 255, 195, 255],
-  [128, 128, 0, 255],
-  [255, 215, 180, 255],
-  [0, 0, 128, 255],
-];
-
 let colorPairIndex = 0;
 
 function _initDefaultColorMap() {
-  const defaultSegmentationCount = 19;
+  const defaultSegmentationCount = 255;
   const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
 
   colormap.setNumberOfColors(defaultSegmentationCount);
 
-  /*
-    19 Colors selected to be as distinct from each other as possible,
-    and ordered such that between each index you make large jumps around the
-    color wheel. If defaultSegmentationCount is greater than 19, generate a
-    random linearly interperlated color between 2 colors.
-  */
+  // Values here are hand picked to jump around the color wheel in such a way
+  // that you only get colors that are similar after every 15ish colors.
+
+  let l = 1;
+  let h = 0;
+
+  let minL = 50;
+
+  let decLumCount = 15;
+  let inc = 97;
+
   for (let i = 0; i < defaultSegmentationCount; i++) {
-    if (i < distinctColors.length) {
-      colormap.setColor(i, distinctColors[i]);
-    } else {
-      colormap.setColor(i, _generateInterpolatedColor());
+    colormap.setColor(i, [...hslToRgb(h, 1, l), 255]);
+
+    h += inc;
+    if (h > 360) h -= 360;
+
+    decLumCount--;
+
+    if (decLumCount === 0) {
+      decLumCount = 15;
+      l = Math.min(l - 0.02, minL);
     }
   }
-}
 
-/**
- * _generateInterpolatedColor -  generates a color interpolated between two
- *                              colors. Humans can only distinguish between
- *                              ~15-20 colors, so this is the best we can do.
- * @private
- *
- * @returns {type}  description
- */
-function _generateInterpolatedColor() {
-  const randIndicies = _getNextColorPair();
-  const fraction = Math.random();
-  const interpolatedColor = [];
+  const colorLutTable = [[0, 0, 0, 0]];
 
-  for (let i = 0; i < 4; i++) {
-    interpolatedColor.push(
-      Math.floor(
-        fraction * distinctColors[randIndicies[0]][i] +
-          (1.0 - fraction) * distinctColors[randIndicies[1]][i]
-      )
-    );
+  logger.warn(colormap);
+
+  for (let i = 0; i < defaultSegmentationCount; i++) {
+    colorLutTable.push(colormap.getColor(i));
   }
 
-  return interpolatedColor;
+  state.colorLutTable = colorLutTable;
 }
 
-/**
- * _getNextColorPair - returns the next pair of indicies to interpolate between.
- *
- * @private
- *
- * @returns {Array} An array containing the two indicies.
- */
-function _getNextColorPair() {
-  const indexPair = [colorPairIndex];
+function hslToRgb(h, s = 1.0, l = 0.58) {
+  //logger.warn(`hslToRgb: hsl: ${h}, ${s}, ${l}`);
 
-  if (colorPairIndex < distinctColors.length - 1) {
-    colorPairIndex++;
-    indexPair.push(colorPairIndex);
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+
+  let rp, gp, bp;
+
+  if (h < 60) {
+    [rp, gp, bp] = [c, x, 0];
+  } else if (h < 120) {
+    [rp, gp, bp] = [x, c, 0];
+  } else if (h < 180) {
+    [rp, gp, bp] = [0, c, x];
+  } else if (h < 240) {
+    [rp, gp, bp] = [0, x, c];
+  } else if (h < 300) {
+    [rp, gp, bp] = [x, 0, c];
   } else {
-    colorPairIndex = 0;
-    indexPair.push(colorPairIndex);
+    [rp, gp, bp] = [c, 0, x];
   }
 
-  return indexPair;
+  return [(rp + m) * 255, (gp + m) * 255, (bp + m) * 255];
 }

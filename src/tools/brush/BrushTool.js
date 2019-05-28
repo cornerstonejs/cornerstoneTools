@@ -7,10 +7,14 @@ import {
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
 import EVENTS from '../../events.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:BrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
 const brushModule = store.modules.brush;
+const referencedToolDataName = BaseBrushTool.getReferencedToolDataName();
 
 /**
  * @public
@@ -24,11 +28,6 @@ export default class BrushTool extends BaseBrushTool {
     const defaultProps = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      strategies: {
-        overlapping: _overlappingStrategy,
-        nonOverlapping: _nonOverlappingStrategy,
-      },
-      defaultStrategy: 'overlapping',
       configuration: {},
     };
 
@@ -105,7 +104,32 @@ export default class BrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _paint(evt) {
-    this.applyActiveStrategy(evt, this.configuration);
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const { rows, columns } = eventData.image;
+    const { x, y } = eventData.currentPoints.image;
+
+    if (x < 0 || x > columns || y < 0 || y > rows) {
+      return;
+    }
+
+    const { brushStackState, currentImageIdIndex } = this._getLabelMap(evt);
+
+    const radius = brushModule.state.radius;
+    const pointerArray = getCircle(radius, rows, columns, x, y);
+
+    const shouldErase = _isCtrlDown(eventData);
+    const segmentIndex = brushModule.state.drawColorId;
+
+    // Draw / Erase the active color.
+    drawBrushPixels(
+      pointerArray,
+      brushStackState.data[0],
+      currentImageIdIndex,
+      segmentIndex,
+      columns,
+      shouldErase
+    );
 
     external.cornerstone.triggerEvent(
       evt.detail.element,
@@ -113,127 +137,66 @@ export default class BrushTool extends BaseBrushTool {
       evt.detail
     );
 
+    logger.warn('update Image');
+
     external.cornerstone.updateImage(evt.detail.element);
   }
-}
 
-function _overlappingStrategy(evt) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-  const { rows, columns } = eventData.image;
-  const { x, y } = eventData.currentPoints.image;
-  let toolState = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
-  );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
+  _getLabelMap(evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const { rows, columns } = eventData.image;
+    const stackState = getToolState(element, 'stack');
+    let brushStackState = getToolState(
       element,
       BaseBrushTool.getReferencedToolDataName()
     );
-  }
 
-  const toolData = toolState.data;
+    logger.warn(brushStackState);
 
-  if (x < 0 || x > columns || y < 0 || y > rows) {
-    return;
-  }
+    if (!brushStackState.data.length) {
+      const numberOfFrames = stackState.data[0].imageIds.length;
 
-  const radius = brushModule.state.radius;
-  const pointerArray = getCircle(radius, rows, columns, x, y);
+      logger.warn(stackState);
 
-  _drawMainColor(eventData, toolData, pointerArray);
-}
+      addToolState(element, referencedToolDataName, {
+        buffer: new ArrayBuffer(rows * columns * numberOfFrames),
+        labelMap2D: [],
+        imageBitmapCache: null,
+      });
 
-function _nonOverlappingStrategy(evt) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-  const { rows, columns } = eventData.image;
-  const { x, y } = eventData.currentPoints.image;
-
-  let toolState = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
-  );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-  }
-
-  const toolData = toolState.data;
-  const segmentationIndex = brushModule.state.drawColorId;
-
-  if (x < 0 || x > columns || y < 0 || y > rows) {
-    return;
-  }
-
-  const radius = brushModule.state.radius;
-  const pointerArray = getCircle(radius, rows, columns, x, y);
-
-  const numberOfColors = BaseBrushTool.getNumberOfColors();
-
-  // If there is brush data in this region for other colors, delete it.
-  for (let i = 0; i < numberOfColors; i++) {
-    if (i === segmentationIndex) {
-      continue;
+      brushStackState = getToolState(
+        element,
+        BaseBrushTool.getReferencedToolDataName()
+      );
     }
 
-    if (toolData[i] && toolData[i].pixelData) {
-      drawBrushPixels(pointerArray, toolData[i], columns, true);
-      toolData[i].invalidated = true;
-    }
-  }
+    logger.warn(brushStackState);
 
-  _drawMainColor(eventData, toolData, pointerArray);
-}
+    const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
 
-function _drawMainColor(eventData, toolData, pointerArray) {
-  const shouldErase = _isCtrlDown(eventData);
-  const columns = eventData.image.columns;
-  const segmentationIndex = brushModule.state.drawColorId;
+    const brushStackData = brushStackState.data[0];
 
-  if (shouldErase && !toolData[segmentationIndex]) {
-    // Erase command, yet no data yet, just return.
-    return;
-  }
-
-  if (!toolData[segmentationIndex]) {
-    toolData[segmentationIndex] = {};
-  }
-
-  if (!toolData[segmentationIndex].pixelData) {
-    const enabledElement = external.cornerstone.getEnabledElement(
-      eventData.element
-    );
-    const enabledElementUID = enabledElement.uuid;
-
-    // Clear cache for this color to avoid flickering.
-    const imageBitmapCacheForElement = brushModule.getters.imageBitmapCacheForElement(
-      enabledElementUID
-    );
-
-    if (imageBitmapCacheForElement) {
-      imageBitmapCacheForElement[segmentationIndex] = null;
+    if (!brushStackData.labelMap2D[currentImageIdIndex]) {
+      brushStackData.labelMap2D[currentImageIdIndex] = {
+        pixelData: new Uint8Array(
+          brushStackData.buffer,
+          currentImageIdIndex * rows * columns,
+          rows * columns
+        ),
+        invalidated: true,
+      };
+      // Clear cache for this displaySet to avoid flickering.
+      brushStackData.imageBitmapCache = null;
     }
 
-    // Add a new pixelData array.
-    toolData[segmentationIndex].pixelData = new Uint8ClampedArray(
-      eventData.image.width * eventData.image.height
-    );
+    logger.warn(brushStackState);
+
+    return {
+      brushStackState,
+      currentImageIdIndex,
+    };
   }
-
-  const toolDataI = toolData[segmentationIndex];
-
-  // Draw / Erase the active color.
-  drawBrushPixels(pointerArray, toolDataI, columns, shouldErase);
-
-  toolDataI.invalidated = true;
 }
 
 function _isCtrlDown(eventData) {

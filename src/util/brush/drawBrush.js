@@ -1,31 +1,51 @@
 import external from '../../externalModules.js';
 import { draw, fillBox } from '../../drawing/index.js';
 
+import { getLogger } from '../logger.js';
+
+const logger = getLogger('util:brush:drawBrush');
+
 /**
  * Fills in the brush mask data with new data.
  * @export @public @method
  * @name drawBrushPixels
  *
  * @param  {Object[]} pointerArray        The array of points to draw.
- * @param  {number[]} toolData            The cornerstoneTools annotation to modify.
- * @param  {number} columns               The number of columns in the mask.
+ * @param  {number[]} labelMap2D          The labelmap to modify.
+ * @param  {number}   columns               The number of columns in the mask.
  * @param  {boolean} [shouldErase = false] If true the modified mask pixels will be set to 0, rather than 1.
  * @returns {void}
  */
-function drawBrushPixels(pointerArray, toolData, columns, shouldErase = false) {
+function drawBrushPixels(
+  pointerArray,
+  brushStackData,
+  imageIdIndex,
+  segmentIndex,
+  columns,
+  shouldErase = false
+) {
   const getPixelIndex = (x, y) => y * columns + x;
 
-  const pixelData = toolData.pixelData;
+  const pixelData = brushStackData.labelMap2D[imageIdIndex].pixelData;
 
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
 
-    pixelData[spIndex] = shouldErase ? 0 : 1;
+    if (shouldErase && pixelData[spIndex] === segmentIndex) {
+      pixelData[spIndex] = 0;
+    } else {
+      pixelData[spIndex] = segmentIndex;
+    }
   });
+
+  logger.warn(pixelData);
+
+  brushStackData.labelMap2D[imageIdIndex].invalidated = true;
 
   // If Erased the last pixel, delete the pixelData array.
   if (shouldErase && !pixelData.some(element => element !== 0)) {
-    delete toolData.pixelData;
+    logger.warn('deleting');
+    delete brushStackData.labelMap2D[imageIdIndex];
   }
 }
 
