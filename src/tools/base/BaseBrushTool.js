@@ -465,15 +465,15 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Invalidate all the brush data.
+   * WIP - Invalidate all the brush data.
    *
    * @static
    * @public
    * @param {string} enabledElementUID - This identifier for the enabled element.
    * @returns {void}
    */
+  /*
   static invalidateBrushOnEnabledElement(enabledElementUID) {
-    /** WIP **/
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
     const stackToolState = getToolState(element, 'stack');
@@ -502,16 +502,17 @@ class BaseBrushTool extends BaseTool {
 
     external.cornerstone.updateImage(element, true);
   }
+  */
 
   /**
-   * Returns a datacube for the segmentation.
+   * WIP - Returns a datacube for the segmentation.
    *
    * @static
    * @param {string} enabledElementUID - This identifier for the enabled element.
    * @returns {type}  description
    */
+  /*
   static getDataAsVolume(enabledElementUID) {
-    /** WIP **/
     const element = store.getters.enabledElementByUID(enabledElementUID);
 
     const stackToolState = getToolState(element, 'stack');
@@ -537,6 +538,7 @@ class BaseBrushTool extends BaseTool {
       }
     }
   }
+  */
 }
 
 function _isSegmentationVisibleForElement(
