@@ -53,19 +53,6 @@ export const bidirectionalCursor = new MouseCursor(
   }
 );
 
-export const circleRoiCursor = new MouseCursor(
-  `<path stroke="ACTIVE_COLOR" fill="none" stroke-width="3" d="M30.74 15.76C30.74 20.99 24.14 25.23 16
-    25.23C7.86 25.23 1.26 20.99 1.26 15.76C1.26 10.54 7.86 6.3 16 6.3C24.14
-    6.3 30.74 10.54 30.74 15.76Z"
-    />`,
-  {
-    viewBox: {
-      x: 32,
-      y: 32,
-    },
-  }
-);
-
 export const cobbAngleCursor = new MouseCursor(
   `<g stroke="ACTIVE_COLOR" stroke-width="3">
     <path d="M28.59 2.34L3.82 12.32"></path>
@@ -75,6 +62,16 @@ export const cobbAngleCursor = new MouseCursor(
       9.33C13.11 9.24 13.02 9 12.88 8.63">
     </path>
   </g>`,
+  {
+    viewBox: {
+      x: 32,
+      y: 32,
+    },
+  }
+);
+
+export const circleRoiCursor = new MouseCursor(
+  `<circle stroke="ACTIVE_COLOR" fill="none" stroke-width="3" cx="16" cy="16" r="14" />`,
   {
     viewBox: {
       x: 32,

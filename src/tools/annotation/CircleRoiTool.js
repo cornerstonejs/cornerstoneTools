@@ -23,9 +23,9 @@ import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
-import { circleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import { circleRoiCursor } from '../cursors/index.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
