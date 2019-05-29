@@ -9,7 +9,7 @@ import { getLogger } from '../../util/logger.js';
 const logger = getLogger('store:modules:brushModule');
 
 const state = {
-  colorLutTable: [],
+  colorLutTables: {},
   drawColorId: 1,
   radius: 10,
   minRadius: 1,
@@ -20,6 +20,8 @@ const state = {
   visibleSegmentations: {}, // TODO - We aren't currently using this.
   segmentationMetadata: {},
   series: {},
+
+  // TODO -> active labelmap per series?
 };
 
 function getLabelMapsForElement(element) {
@@ -252,6 +254,7 @@ const getters = {
   visibleSegmentationsForElement: getVisibleSegmentationsForElement,
   metadata: getMetadata,
   getAndCacheLabelMap2D: getAndCacheLabelMap2D,
+  labelMapsForElement: getLabelMapsForElement,
 };
 
 const setters = {
@@ -291,8 +294,6 @@ function removeEnabledElementCallback(enabledElement) {
   );
 
   const enabledElementUID = cornerstoneEnabledElement.uuid;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-  const numberOfColors = colormap.getNumberOfColors();
 
   // Remove enabledElement specific data.
   delete state.visibleSegmentations[enabledElementUID];
@@ -320,7 +321,9 @@ let colorPairIndex = 0;
 
 function _initDefaultColorMap() {
   const defaultSegmentationCount = 255;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  const colorMapId = `${state.colorMapId}_0`;
+
+  const colormap = external.cornerstone.colors.getColormap(colorMapId);
 
   colormap.setNumberOfColors(defaultSegmentationCount);
 
@@ -330,5 +333,5 @@ function _initDefaultColorMap() {
     colormap.setColor(i, colorMap[i]);
   }
 
-  state.colorLutTable = colorMap;
+  state.colorLutTables[colorMapId] = colorMap;
 }

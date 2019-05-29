@@ -9,6 +9,10 @@ import {
   transformCanvasContext,
 } from '../drawing/index.js';
 
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('store:modules:brushModule');
+
 const brushModule = store.modules.brush;
 
 /* Safari and Edge polyfill for createImageBitmap
@@ -63,30 +67,43 @@ const { state, getters, setters } = store.modules.brush;
 export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  // TEMP Fetch every label map.
   const {
-    labelMapSpecificBrushStackState,
+    brushStackState,
     currentImageIdIndex,
-  } = brushModule.getters.getAndCacheLabelMap2D(element, 0);
+  } = brushModule.getters.labelMapsForElement(element);
 
-  const labelMap2D =
-    labelMapSpecificBrushStackState.labelMap2D[currentImageIdIndex];
+  if (!brushStackState) {
+    return;
+  }
 
-  if (labelMap2D) {
-    const imageBitmapCache = labelMapSpecificBrushStackState.imageBitmapCache;
+  for (let i = 0; i < brushStackState.length; i++) {
+    const labelMapSpecificBrushStackState = brushStackState[i];
 
-    renderSegmentation(
-      evt,
-      labelMapSpecificBrushStackState,
-      labelMap2D,
-      imageBitmapCache
-    );
+    const labelMap2D =
+      labelMapSpecificBrushStackState.labelMap2D[currentImageIdIndex];
+
+    if (labelMap2D) {
+      const imageBitmapCache = labelMapSpecificBrushStackState.imageBitmapCache;
+
+      renderSegmentation(
+        evt,
+        labelMapSpecificBrushStackState,
+        i,
+        labelMap2D,
+        imageBitmapCache
+      );
+    }
   }
 }
 
-function renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache) {
+function renderSegmentation(
+  evt,
+  brushStackData,
+  labelMapIndex,
+  labelMap2D,
+  imageBitmapCache
+) {
   // Draw previous image if cached.
   if (imageBitmapCache) {
     _drawImageBitmap(evt, imageBitmapCache);
@@ -96,6 +113,7 @@ function renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache) {
     createNewBitmapAndQueueRenderOfSegmentation(
       evt,
       brushStackData,
+      labelMapIndex,
       labelMap2D
     );
   }
@@ -104,6 +122,7 @@ function renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache) {
 function createNewBitmapAndQueueRenderOfSegmentation(
   evt,
   brushStackData,
+  labelMapIndex,
   labelMap2D
 ) {
   const eventData = evt.detail;
@@ -122,9 +141,11 @@ function createNewBitmapAndQueueRenderOfSegmentation(
     getPixelData: () => pixelData,
   };
 
+  const colorMapId = `${brushModule.state.colorMapId}_${labelMapIndex}`;
+
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
-    state.colorLutTable,
+    state.colorLutTables[colorMapId],
     imageData.data
   );
 
