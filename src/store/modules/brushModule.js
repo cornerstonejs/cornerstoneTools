@@ -1,5 +1,7 @@
 import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
+import getNewBrushColorMap from '../../util/brush/getNewBrushColorMap.js';
+
 //import BaseBrushTool from '../../tools/base/BaseBrushTool.js';
 
 import { getLogger } from '../../util/logger.js';
@@ -13,14 +15,14 @@ const state = {
   minRadius: 1,
   maxRadius: 50,
   alpha: 0.4,
-  renderBrushIfHiddenButActive: true,
+  renderBrushIfHiddenButActive: true, // TODO - We aren't currently using this.
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {}, // TODO - We aren't currently using this.
   segmentationMetadata: {},
   series: {},
 };
 
-function getLabelMap(element) {
+function getLabelMapsForElement(element) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
@@ -34,44 +36,95 @@ function getLabelMap(element) {
 
   let brushStackState = state.series[firstImageId];
 
-  if (brushStackState) {
-    if (!brushStackState.labelMap2D[currentImageIdIndex]) {
-      brushStackState.labelMap2D[currentImageIdIndex] = {
-        pixelData: new Uint8Array(
-          brushStackState.buffer,
-          currentImageIdIndex * rows * columns,
-          rows * columns
-        ),
-        invalidated: true,
-      };
-      // Clear cache for this displaySet to avoid flickering.
-      brushStackState.imageBitmapCache = null;
-    }
-  } else {
-    state.series[firstImageId] = {
-      buffer: new ArrayBuffer(rows * columns * numberOfFrames),
-      labelMap2D: [],
-      imageBitmapCache: null,
-    };
-
-    brushStackState = state.series[firstImageId];
-
-    brushStackState.labelMap2D[currentImageIdIndex] = {
-      pixelData: new Uint8Array(
-        brushStackState.buffer,
-        currentImageIdIndex * rows * columns,
-        rows * columns
-      ),
-      invalidated: true,
-    };
-    // Clear cache for this displaySet to avoid flickering.
-    brushStackState.imageBitmapCache = null;
-  }
-
   return {
     brushStackState,
     currentImageIdIndex,
   };
+}
+
+function getAndCacheLabelMap2D(element, labelMapIndex = 0) {
+  const cornerstone = external.cornerstone;
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  const currentImageIdIndex = stackData.currentImageIdIndex;
+  const { rows, columns } = enabledElement.image;
+  const numberOfFrames = stackData.imageIds.length;
+  const firstImageId = stackData.imageIds[0];
+
+  let brushStackState = state.series[firstImageId];
+
+  if (Array.isArray(brushStackState)) {
+    if (!brushStackState[labelMapIndex]) {
+      addLabelMap3D(
+        brushStackState,
+        labelMapIndex,
+        rows * columns * numberOfFrames
+      );
+    }
+
+    if (!brushStackState[labelMapIndex].labelMap2D[currentImageIdIndex]) {
+      addLabelMap2DView(
+        brushStackState,
+        labelMapIndex,
+        currentImageIdIndex,
+        rows,
+        columns
+      );
+    }
+  } else {
+    state.series[firstImageId] = [];
+
+    brushStackState = state.series[firstImageId];
+
+    addLabelMap3D(
+      brushStackState,
+      labelMapIndex,
+      rows * columns * numberOfFrames
+    );
+
+    addLabelMap2DView(
+      brushStackState,
+      labelMapIndex,
+      currentImageIdIndex,
+      rows,
+      columns
+    );
+  }
+
+  return {
+    labelMapSpecificBrushStackState: brushStackState[labelMapIndex],
+    currentImageIdIndex,
+  };
+}
+
+function addLabelMap3D(brushStackState, labelMapIndex, size) {
+  brushStackState[labelMapIndex] = {
+    buffer: new ArrayBuffer(size),
+    labelMap2D: [],
+    imageBitmapCache: null,
+  };
+}
+
+function addLabelMap2DView(
+  brushStackState,
+  labelMapIndex,
+  currentImageIdIndex,
+  rows,
+  columns
+) {
+  brushStackState[labelMapIndex].labelMap2D[currentImageIdIndex] = {
+    pixelData: new Uint8Array(
+      brushStackState[labelMapIndex].buffer,
+      currentImageIdIndex * rows * columns,
+      rows * columns
+    ),
+    invalidated: true,
+  };
+  // Clear cache for this displaySet to avoid flickering.
+  brushStackState[labelMapIndex].imageBitmapCache = null;
 }
 
 /**
@@ -198,7 +251,7 @@ const getters = {
   imageBitmapCacheForElement: getImageBitmapCacheForElement,
   visibleSegmentationsForElement: getVisibleSegmentationsForElement,
   metadata: getMetadata,
-  labelmap: getLabelMap,
+  getAndCacheLabelMap2D: getAndCacheLabelMap2D,
 };
 
 const setters = {
@@ -246,64 +299,11 @@ function _initDefaultColorMap() {
 
   colormap.setNumberOfColors(defaultSegmentationCount);
 
-  // Values here are hand picked to jump around the color wheel in such a way
-  // that you only get colors that are similar after every 15ish colors.
-
-  let l = 0.5;
-  let h = 0;
-
-  let minL = 50;
-
-  let decLumCount = 15;
-  let inc = 97;
-
-  colormap.setColor(0, [0, 0, 0, 0]);
-
-  for (let i = 1; i <= defaultSegmentationCount; i++) {
-    colormap.setColor(i, [...hslToRgb(h, 1, l), 255]);
-
-    h += inc;
-    if (h > 360) h -= 360;
-
-    decLumCount--;
-
-    if (decLumCount === 0) {
-      decLumCount = 15;
-      l = Math.min(l + 0.02, minL);
-    }
-  }
-
-  const colorLutTable = [];
+  const colorMap = getNewBrushColorMap(defaultSegmentationCount);
 
   for (let i = 0; i < defaultSegmentationCount; i++) {
-    colorLutTable.push(colormap.getColor(i));
+    colormap.setColor(i, colorMap[i]);
   }
 
-  state.colorLutTable = colorLutTable;
-}
-
-function hslToRgb(h, s = 1.0, l = 0.58) {
-  //logger.warn(`hslToRgb: hsl: ${h}, ${s}, ${l}`);
-
-  const c = (1 - Math.abs(2 * l - 1)) * s;
-  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
-  const m = l - c / 2;
-
-  let rp, gp, bp;
-
-  if (h < 60) {
-    [rp, gp, bp] = [c, x, 0];
-  } else if (h < 120) {
-    [rp, gp, bp] = [x, c, 0];
-  } else if (h < 180) {
-    [rp, gp, bp] = [0, c, x];
-  } else if (h < 240) {
-    [rp, gp, bp] = [0, x, c];
-  } else if (h < 300) {
-    [rp, gp, bp] = [x, 0, c];
-  } else {
-    [rp, gp, bp] = [c, 0, x];
-  }
-
-  return [(rp + m) * 255, (gp + m) * 255, (bp + m) * 255];
+  state.colorLutTable = colorMap;
 }

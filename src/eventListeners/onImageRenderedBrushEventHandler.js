@@ -60,16 +60,24 @@ export default function(evt) {
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  const { brushStackState, currentImageIdIndex } = brushModule.getters.labelmap(
-    element
-  );
+  // TEMP Fetch every label map.
+  const {
+    labelMapSpecificBrushStackState,
+    currentImageIdIndex,
+  } = brushModule.getters.getAndCacheLabelMap2D(element, 0);
 
-  const labelMap2D = brushStackState.labelMap2D[currentImageIdIndex];
+  const labelMap2D =
+    labelMapSpecificBrushStackState.labelMap2D[currentImageIdIndex];
 
   if (labelMap2D) {
-    const imageBitmapCache = brushStackState.imageBitmapCache;
+    const imageBitmapCache = labelMapSpecificBrushStackState.imageBitmapCache;
 
-    renderSegmentation(evt, brushStackState, labelMap2D, imageBitmapCache);
+    renderSegmentation(
+      evt,
+      labelMapSpecificBrushStackState,
+      labelMap2D,
+      imageBitmapCache
+    );
   }
 }
 

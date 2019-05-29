@@ -29,10 +29,12 @@ export default class BrushTool extends BaseBrushTool {
     const defaultProps = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {},
+      configuration: { activeLabelMapIndex: 0 },
     };
 
     super(props, defaultProps);
+
+    logger.warn(this);
 
     this.touchDragCallback = this._paint.bind(this);
   }
@@ -115,9 +117,12 @@ export default class BrushTool extends BaseBrushTool {
     }
 
     const {
-      brushStackState,
+      labelMapSpecificBrushStackState,
       currentImageIdIndex,
-    } = brushModule.getters.labelmap(element);
+    } = brushModule.getters.getAndCacheLabelMap2D(
+      element,
+      this.configuration.activeLabelMapIndex
+    );
 
     const radius = brushModule.state.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
@@ -127,7 +132,7 @@ export default class BrushTool extends BaseBrushTool {
     // Draw / Erase the active color.
     drawBrushPixels(
       pointerArray,
-      brushStackState,
+      labelMapSpecificBrushStackState,
       currentImageIdIndex,
       segmentIndex,
       columns,
