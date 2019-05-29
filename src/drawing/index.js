@@ -17,6 +17,7 @@ import draw from './draw.js';
 import drawArrow from './drawArrow.js';
 import drawCircle from './drawCircle.js';
 import drawEllipse from './drawEllipse.js';
+import drawRotatedEllipse from './drawRotatedEllipse.js';
 import drawHandles from './drawHandles.js';
 import drawJoinedLines from './drawJoinedLines.js';
 import drawLine from './drawLine.js';
@@ -40,6 +41,7 @@ export {
   drawArrow,
   drawCircle,
   drawEllipse,
+  drawRotatedEllipse,
   drawHandles,
   drawJoinedLines,
   drawLine,
