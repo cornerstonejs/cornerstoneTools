@@ -1,6 +1,9 @@
 import { getToolState, addToolState } from '../stateManagement/toolState.js';
 import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import external from '../externalModules.js';
+import store from '../store/index.js';
+
+const brushModule = store.modules.brush;
 
 const referencedToolDataName = BaseBrushTool.getReferencedToolDataName();
 
@@ -15,28 +18,17 @@ export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const brushStackState = getToolState(element, referencedToolDataName);
-
-  if (!brushStackState.data.length) {
-    return;
-  }
-
-  const stackState = getToolState(element, 'stack');
-  const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
+  const { brushStackState, currentImageIdIndex } = brushModule.getters.labelmap(
+    element
+  );
 
   let invalidated = false;
 
-  console.log(brushStackState);
+  const labelMap2D = brushStackState.labelMap2D[currentImageIdIndex];
 
-  for (let i = 0; i < brushStackState.data.length; i++) {
-    const brushStackData = brushStackState.data[i];
-
-    const labelMap2D = brushStackData.labelMap2D[currentImageIdIndex];
-
-    if (labelMap2D) {
-      labelMap2D.invalidated = true;
-      invalidated = true;
-    }
+  if (labelMap2D) {
+    labelMap2D.invalidated = true;
+    invalidated = true;
   }
 
   if (invalidated) {

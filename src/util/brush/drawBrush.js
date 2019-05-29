@@ -40,7 +40,6 @@ function drawBrushPixels(
 
   // If Erased the last pixel, delete the pixelData array.
   if (shouldErase && !pixelData.some(element => element !== 0)) {
-    console.log('deleting');
     delete brushStackData.labelMap2D[imageIdIndex];
   }
 }
