@@ -24,6 +24,11 @@ class BaseBrushTool extends BaseTool {
       };
     }
     defaultProps.configuration.referencedToolData = 'brush';
+
+    if (defaultProps.configuration.activeLabelMapIndex === undefined) {
+      defaultProps.configuration.activeLabelMapIndex = 0;
+    }
+
     super(props, defaultProps);
 
     this.updateOnMouseMove = true;
@@ -168,7 +173,12 @@ class BaseBrushTool extends BaseTool {
    * @returns {string} The brush color in rgba format
    */
   _getBrushColor(drawId) {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+    const configuration = this.configuration;
+    const colorMapId = `${state.colorMapId}_${
+      configuration.activeLabelMapIndex
+    }`;
+
+    const colormap = external.cornerstone.colors.getColormap(colorMapId);
     const colorArray = colormap.getColor(drawId);
 
     if (this._drawing) {
@@ -276,7 +286,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   nextSegmentation() {
-    const numberOfColors = this.constructor.getNumberOfColors();
+    const numberOfColors = this._getNumberOfColors();
 
     let drawId = state.drawColorId + 1;
 
@@ -295,7 +305,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   previousSegmentation() {
-    const numberOfColors = this.constructor.getNumberOfColors();
+    const numberOfColors = this._getNumberOfColors();
 
     let drawId = state.drawColorId - 1;
 
@@ -383,7 +393,13 @@ class BaseBrushTool extends BaseTool {
   showAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+
+    const configuration = this.configuration;
+    const colorMapId = `${state.colorMapId}_${
+      configuration.activeLabelMapIndex
+    }`;
+
+    const colormap = external.cornerstone.colors.getColormap(colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
@@ -403,7 +419,13 @@ class BaseBrushTool extends BaseTool {
   hideAllSegmentationsOnElement() {
     const enabledElement = this._getEnabledElement();
     const enabledElementUID = enabledElement.uuid;
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+
+    const configuration = this.configuration;
+    const colorMapId = `${state.colorMapId}_${
+      configuration.activeLabelMapIndex
+    }`;
+
+    const colormap = external.cornerstone.colors.getColormap(colorMapId);
     const numberOfColors = colormap.getNumberOfColors();
 
     for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
@@ -421,8 +443,13 @@ class BaseBrushTool extends BaseTool {
    * @api
    * @returns {Number} The number of colors in the color map.
    */
-  static getNumberOfColors() {
-    const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
+  _getNumberOfColors() {
+    const configuration = this.configuration;
+    const colorMapId = `${state.colorMapId}_${
+      configuration.activeLabelMapIndex
+    }`;
+
+    const colormap = external.cornerstone.colors.getColormap(colorMapId);
 
     return colormap.getNumberOfColors();
   }
