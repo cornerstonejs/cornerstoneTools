@@ -1,4 +1,6 @@
 import external from './../../externalModules.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+//import BaseBrushTool from '../../tools/base/BaseBrushTool.js';
 
 import { getLogger } from '../../util/logger.js';
 
@@ -15,7 +17,62 @@ const state = {
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {}, // TODO - We aren't currently using this.
   segmentationMetadata: {},
+  series: {},
 };
+
+function getLabelMap(element) {
+  const cornerstone = external.cornerstone;
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+
+  const enabledElement = cornerstone.getEnabledElement(element);
+
+  const currentImageIdIndex = stackData.currentImageIdIndex;
+  const { rows, columns } = enabledElement.image;
+  const numberOfFrames = stackData.imageIds.length;
+  const firstImageId = stackData.imageIds[0];
+
+  let brushStackState = state.series[firstImageId];
+
+  if (brushStackState) {
+    if (!brushStackState.labelMap2D[currentImageIdIndex]) {
+      brushStackState.labelMap2D[currentImageIdIndex] = {
+        pixelData: new Uint8Array(
+          brushStackState.buffer,
+          currentImageIdIndex * rows * columns,
+          rows * columns
+        ),
+        invalidated: true,
+      };
+      // Clear cache for this displaySet to avoid flickering.
+      brushStackState.imageBitmapCache = null;
+    }
+  } else {
+    state.series[firstImageId] = {
+      buffer: new ArrayBuffer(rows * columns * numberOfFrames),
+      labelMap2D: [],
+      imageBitmapCache: null,
+    };
+
+    brushStackState = state.series[firstImageId];
+
+    brushStackState.labelMap2D[currentImageIdIndex] = {
+      pixelData: new Uint8Array(
+        brushStackState.buffer,
+        currentImageIdIndex * rows * columns,
+        rows * columns
+      ),
+      invalidated: true,
+    };
+    // Clear cache for this displaySet to avoid flickering.
+    brushStackState.imageBitmapCache = null;
+  }
+
+  return {
+    brushStackState,
+    currentImageIdIndex,
+  };
+}
 
 /**
  * Sets the brush radius, account for global min/max radius
@@ -141,6 +198,7 @@ const getters = {
   imageBitmapCacheForElement: getImageBitmapCacheForElement,
   visibleSegmentationsForElement: getVisibleSegmentationsForElement,
   metadata: getMetadata,
+  labelmap: getLabelMap,
 };
 
 const setters = {

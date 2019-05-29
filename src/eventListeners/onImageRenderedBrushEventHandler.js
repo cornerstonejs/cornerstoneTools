@@ -4,6 +4,8 @@ import {
   transformCanvasContext,
 } from '../drawing/index.js';
 
+const brushModule = store.modules.brush;
+
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
@@ -58,28 +60,16 @@ export default function(evt) {
   const element = eventData.element;
   const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  const brushStackState = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
+  const { brushStackState, currentImageIdIndex } = brushModule.getters.labelmap(
+    element
   );
 
-  if (!brushStackState.data.length) {
-    return;
-  }
+  const labelMap2D = brushStackState.labelMap2D[currentImageIdIndex];
 
-  const stackState = getToolState(element, 'stack');
-  const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
+  if (labelMap2D) {
+    const imageBitmapCache = brushStackState.imageBitmapCache;
 
-  for (let i = 0; i < brushStackState.data.length; i++) {
-    const brushStackData = brushStackState.data[i];
-
-    const labelMap2D = brushStackData.labelMap2D[currentImageIdIndex];
-
-    if (labelMap2D) {
-      const imageBitmapCache = brushStackData.imageBitmapCache;
-
-      renderSegmentation(evt, brushStackData, labelMap2D, imageBitmapCache);
-    }
+    renderSegmentation(evt, brushStackState, labelMap2D, imageBitmapCache);
   }
 }
 

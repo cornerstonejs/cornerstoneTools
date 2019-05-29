@@ -8,6 +8,9 @@ import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
 import triggerEvent from './../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:BrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
@@ -111,18 +114,20 @@ export default class BrushTool extends BaseBrushTool {
       return;
     }
 
-    const { brushStackState, currentImageIdIndex } = this._getLabelMap(evt);
+    const {
+      brushStackState,
+      currentImageIdIndex,
+    } = brushModule.getters.labelmap(element);
 
     const radius = brushModule.state.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
-
     const shouldErase = _isCtrlDown(eventData);
     const segmentIndex = brushModule.state.drawColorId;
 
     // Draw / Erase the active color.
     drawBrushPixels(
       pointerArray,
-      brushStackState.data[0],
+      brushStackState,
       currentImageIdIndex,
       segmentIndex,
       columns,
@@ -132,53 +137,6 @@ export default class BrushTool extends BaseBrushTool {
     triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
 
     external.cornerstone.updateImage(evt.detail.element);
-  }
-
-  _getLabelMap(evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
-    const { rows, columns } = eventData.image;
-    const stackState = getToolState(element, 'stack');
-    let brushStackState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-
-    if (!brushStackState.data.length) {
-      const numberOfFrames = stackState.data[0].imageIds.length;
-
-      addToolState(element, referencedToolDataName, {
-        buffer: new ArrayBuffer(rows * columns * numberOfFrames),
-        labelMap2D: [],
-        imageBitmapCache: null,
-      });
-
-      brushStackState = getToolState(
-        element,
-        BaseBrushTool.getReferencedToolDataName()
-      );
-    }
-
-    const currentImageIdIndex = stackState.data[0].currentImageIdIndex;
-    const brushStackData = brushStackState.data[0];
-
-    if (!brushStackData.labelMap2D[currentImageIdIndex]) {
-      brushStackData.labelMap2D[currentImageIdIndex] = {
-        pixelData: new Uint8Array(
-          brushStackData.buffer,
-          currentImageIdIndex * rows * columns,
-          rows * columns
-        ),
-        invalidated: true,
-      };
-      // Clear cache for this displaySet to avoid flickering.
-      brushStackData.imageBitmapCache = null;
-    }
-
-    return {
-      brushStackState,
-      currentImageIdIndex,
-    };
   }
 }
 
