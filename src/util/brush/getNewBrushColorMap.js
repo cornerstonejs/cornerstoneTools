@@ -10,7 +10,7 @@ export default function getNewBrushColorMap(numberOfColors = 255) {
   rgbArr.push([0, 0, 0, 0]);
 
   for (var i = 0; i < numberOfColors; i++) {
-    rgbArr.push(getRGBAfromHSLA(getNextHue()));
+    rgbArr.push(getRGBAfromHSLA(getNextHue(), getNextL()));
   }
 
   return rgbArr;
@@ -27,6 +27,23 @@ function getNextHue() {
   }
 
   return hueValue;
+}
+
+let l = 0.6;
+let maxL = 0.8;
+let minL = 0.6;
+let incL = 0.07;
+
+function getNextL() {
+  l += incL;
+
+  if (l > maxL) {
+    const diff = l - maxL;
+
+    l = minL + diff;
+  }
+
+  return l;
 }
 
 /**
