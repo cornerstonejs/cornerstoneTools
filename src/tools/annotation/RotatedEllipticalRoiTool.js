@@ -11,7 +11,6 @@ import {
   getNewContext,
   draw,
   setShadow,
-  drawEllipse,
   drawRotatedEllipse,
   drawHandles,
   drawLinkedTextBox,
@@ -88,6 +87,18 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: true,
+        },
+        perpendicularStart: {
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
+          highlight: true,
+          active: false,
+        },
+        perpendicularEnd: {
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
+          highlight: true,
+          active: false,
         },
         initialRotation: eventData.viewport.rotation,
         textBox: {
