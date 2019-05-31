@@ -69,9 +69,10 @@ export default function(evt) {
   const element = eventData.element;
 
   const {
+    activeLabelmapIndex,
     labelmaps3D,
     currentImageIdIndex,
-  } = brushModule.getters.labelMaps3DForElement(element);
+  } = brushModule.getters.labelmaps3D(element);
 
   if (!labelmaps3D) {
     return;
@@ -80,12 +81,25 @@ export default function(evt) {
   for (let i = 0; i < labelmaps3D.length; i++) {
     const labelmap3D = labelmaps3D[i];
 
-    const labelMap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+    if (!labelmap3D) {
+      continue;
+    }
 
-    if (labelMap2D) {
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+    if (labelmap2D) {
       const imageBitmapCache = labelmap3D.imageBitmapCache;
 
-      renderSegmentation(evt, labelmap3D, i, labelMap2D, imageBitmapCache);
+      const isActiveLabelMap = activeLabelmapIndex === i;
+
+      renderSegmentation(
+        evt,
+        labelmap3D,
+        i,
+        labelmap2D,
+        imageBitmapCache,
+        isActiveLabelMap
+      );
     }
   }
 }
@@ -93,21 +107,22 @@ export default function(evt) {
 function renderSegmentation(
   evt,
   labelmap3D,
-  labelMapIndex,
-  labelMap2D,
-  imageBitmapCache
+  labelmapIndex,
+  labelmap2D,
+  imageBitmapCache,
+  isActiveLabelMap
 ) {
   // Draw previous image if cached.
   if (imageBitmapCache) {
-    _drawImageBitmap(evt, imageBitmapCache);
+    _drawImageBitmap(evt, imageBitmapCache, isActiveLabelMap);
   }
 
-  if (labelMap2D.invalidated) {
+  if (labelmap2D.invalidated) {
     createNewBitmapAndQueueRenderOfSegmentation(
       evt,
       labelmap3D,
-      labelMapIndex,
-      labelMap2D
+      labelmapIndex,
+      labelmap2D
     );
   }
 }
@@ -115,14 +130,14 @@ function renderSegmentation(
 function createNewBitmapAndQueueRenderOfSegmentation(
   evt,
   labelmap3D,
-  labelMapIndex,
-  labelMap2D
+  labelmapIndex,
+  labelmap2D
 ) {
   const eventData = evt.detail;
   const element = eventData.element;
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  const pixelData = labelMap2D.pixelData;
+  const pixelData = labelmap2D.pixelData;
 
   const imageData = new ImageData(
     eventData.image.width,
@@ -134,7 +149,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(
     getPixelData: () => pixelData,
   };
 
-  const colorMapId = `${brushModule.state.colorMapId}_${labelMapIndex}`;
+  const colorMapId = `${brushModule.state.colorMapId}_${labelmapIndex}`;
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
@@ -144,7 +159,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(
 
   window.createImageBitmap(imageData).then(newImageBitmap => {
     labelmap3D.imageBitmapCache = newImageBitmap;
-    labelMap2D.invalidated = false;
+    labelmap2D.invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);
   });
@@ -156,9 +171,10 @@ function createNewBitmapAndQueueRenderOfSegmentation(
  * @private
  * @param  {Object} evt description
  * @param {ImageBitmap} imageBitmap
+ * @param {boolean} isActiveLabelMap
  * @returns {void}
  */
-function _drawImageBitmap(evt, imageBitmap) {
+function _drawImageBitmap(evt, imageBitmap, isActiveLabelMap) {
   const eventData = evt.detail;
   const context = getNewContext(eventData.canvasContext.canvas);
 
@@ -193,7 +209,9 @@ function _drawImageBitmap(evt, imageBitmap) {
   const viewport = eventData.viewport;
 
   context.imageSmoothingEnabled = false;
-  context.globalAlpha = state.alpha;
+  context.globalAlpha = isActiveLabelMap
+    ? state.alpha
+    : state.alphaOfInactiveLabelmap;
 
   transformCanvasContext(context, canvas, viewport);
 

@@ -227,15 +227,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   nextSegmentation() {
-    const numberOfColors = this._getNumberOfColors();
-
-    let drawId = state.drawColorId + 1;
-
-    if (drawId === numberOfColors) {
-      drawId = 1;
-    }
-
-    state.drawColorId = drawId;
+    setters.incrementBrushColor(this.element);
   }
 
   /**
@@ -246,15 +238,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   previousSegmentation() {
-    const numberOfColors = this._getNumberOfColors();
-
-    let drawId = state.drawColorId - 1;
-
-    if (drawId === 0) {
-      drawId = numberOfColors - 1;
-    }
-
-    state.drawColorId = drawId;
+    setters.decrementBrushColor(this.element);
   }
 
   /**
@@ -337,7 +321,7 @@ class BaseBrushTool extends BaseTool {
 
     const configuration = this.configuration;
     const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelMapIndex
+      configuration.activeLabelmapIndex
     }`;
 
     const colormap = external.cornerstone.colors.getColormap(colorMapId);
@@ -363,7 +347,7 @@ class BaseBrushTool extends BaseTool {
 
     const configuration = this.configuration;
     const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelMapIndex
+      configuration.activeLabelmapIndex
     }`;
 
     const colormap = external.cornerstone.colors.getColormap(colorMapId);
@@ -374,25 +358,6 @@ class BaseBrushTool extends BaseTool {
     }
 
     external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  /**
-   * Returns the number of colors in the colormap.
-   *
-   * @static
-   * @public
-   * @api
-   * @returns {Number} The number of colors in the color map.
-   */
-  _getNumberOfColors() {
-    const configuration = this.configuration;
-    const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelMapIndex
-    }`;
-
-    const colormap = external.cornerstone.colors.getColormap(colorMapId);
-
-    return colormap.getNumberOfColors();
   }
 
   get alpha() {

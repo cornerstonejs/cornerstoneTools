@@ -18,15 +18,24 @@ export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const {
-    labelmaps3D,
-    currentImageIdIndex,
-  } = brushModule.getters.labelMaps3DForElement(element);
+  const { labelmaps3D, currentImageIdIndex } = brushModule.getters.labelmaps3D(
+    element
+  );
+
+  if (!labelmaps3D) {
+    return;
+  }
 
   let invalidated = false;
 
   for (let i = 0; i < labelmaps3D.length; i++) {
-    const labelmap2D = labelmaps3D[i].labelmaps2D[currentImageIdIndex];
+    const labelmap3D = labelmaps3D[i];
+
+    if (!labelmap3D) {
+      continue;
+    }
+
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
     if (labelmap2D) {
       labelmap2D.invalidated = true;
