@@ -47,87 +47,45 @@
 								</table>
 							</td>
 						</tr>
-						<tr>
-							<th>Keyboard Input</th>
-							<td>
-								<table>
-									<tr>
-										<td>Next Segmentation:</td>
-										<td>]</td>
-									</tr>
-									<tr>
-										<td>Previous Segmentation:</td>
-										<td>[</td>
-									</tr>
-									<tr>
-										<td>Increase Brush Size:</td>
-										<td>+</td>
-									</tr>
-									<tr>
-										<td>Decrease Brush Size :</td>
-										<td>-</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
 					</table>
 					<h2>Brush Tool API</h2>
 					<table>
 						<tr>
 							<th>
-								<button type="button" api-call="hide-all">
-									Hide All Segmentations
+								<button type="button" api-call="next-segment">
+									Next Segment
 								</button>
 							</th>
 							<td>
-									Hides all segmentations unless that segmentation is actively being drawn.
+								Switch to the next segment index.
 							</td>
 						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="show-all">
-									Show All Segmentations
-								</button>
-							</th>
-							<td>
-								Shows all segmentations on the canvas, all the time.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="hide-third">
-									Hide 3rd Segmentation
-								</button>
-							</th>
-							<td>
-								An example of hiding a single segmentation. Hide's the 3rd (yellow) segmentation. When hidden it can only be seen whilst actively being drawn.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="show-third">
-									Show 3rd Segmentation
-								</button>
-							</th>
-							<td><p>
-								An example of un-hiding a single segmentation. Unhide's the 3rd (yellow) segmentation.
-							</p></td>
-						</tr>
-
+            <tr>
+              <th>
+                <button type="button" api-call="previous-segment">
+                  Previous Segment
+                </button>
+              </th>
+              <td>
+                Switch to the previous segment index.
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <button type="button" api-call="switch-labelmap">
+                  Switch Labelmap
+                </button>
+              </th>
+              <td id="active-label-map-label">
+                Active labelmap: 0
+              </td>
+            </tr>
 						<tr>
 							<td>
 								<input type="range" id="alpha" min="0" max="255">
 							</td>
 							<td>
 								alpha - The transparency of segmentations.
-							</td>
-						</tr>
-						<tr>
-							<td>
-								<input type="range" id="alphaWhenHiddenButActive" min="0">
-							</td>
-							<td>
-								alphaWhenHiddenButActive - The transparency of segmentations when set to hidden but actively drawing.
 							</td>
 						</tr>
 					</table>
@@ -174,10 +132,9 @@
 	element.focus();
 
 	cornerstone.loadImage(imageIds[0]).then(function (image) {
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
 		cornerstone.displayImage(element, image);
-
-		cornerstoneTools.addStackStateManager(element, ['stack']);
-		cornerstoneTools.addToolState(element, 'stack', stack);
 	});
 
 	function setAllToolsPassive() {
@@ -341,45 +298,44 @@
 
 	const brushTool = cornerstoneTools.getToolForElement(element, 'Brush');
 
+  let activeLabelmap = 0;
+
 	function brushApiCall (opperation) {
 		switch (opperation) {
-			case 'hide-all':
-				brushTool.hideAllSegmentationsOnElement();
+			case 'next-segment':
+				brushTool.nextSegmentation();
 				break;
-			case 'show-all':
-				brushTool.showAllSegmentationsOnElement();
+			case 'previous-segment':
+				brushTool.previousSegmentation();
 				break;
-			case 'hide-third':
-				brushTool.hideSegmentationOnElement(2); //Zero-indexed
-				break;
-			case 'show-third':
-				brushTool.showSegmentationOnElement(2); //Zero-indexed
-				break;
+      case 'switch-labelmap':
+        if (activeLabelmap === 0) {
+          activeLabelmap = 1;
+        } else {
+          activeLabelmap = 0;
+        }
+
+        cornerstoneTools.store.modules.brush.setters.activeLabelmap(element, activeLabelmap);
+
+        const label = document.getElementById("active-label-map-label");
+        label.innerHTML = "Active Labelmap: " + activeLabelmap;
+
+        break;
 			default:
 				return;
 		}
 	}
 
-	// BRUSH TOOL Key interface
 
 	// API Sliders
-
 	const alphaSlider = document.getElementById("alpha");
-	const alphaWhenHiddenButActiveSlider = document.getElementById("alphaWhenHiddenButActive");
 
 	alphaSlider.defaultValue = Math.floor(0.4*255);
-	alphaWhenHiddenButActiveSlider.defaultValue = Math.floor(0.2*255);
 
 	alphaSlider.addEventListener('input', event => {
 		const normalisedAlpha = event.target.value/255.0;
 
 		brushTool.alpha = normalisedAlpha;
-	});
-
-	alphaWhenHiddenButActiveSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
-
-		brushTool.hiddenButActiveAlpha = normalisedAlpha;
 	});
 
 

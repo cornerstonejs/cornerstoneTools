@@ -11,8 +11,8 @@ const state = {
   radius: 10,
   minRadius: 1,
   maxRadius: 50,
-  alpha: 0.4,
-  renderBrushIfHiddenButActive: true, // TODO - We aren't currently using this.
+  alpha: 0.6,
+  alphaOfInactiveLabelmap: 0.2,
   colorMapId: 'BrushColorMap',
   visibleSegmentations: {}, // TODO - We aren't currently using this.
   segmentationMetadata: {},
@@ -20,7 +20,7 @@ const state = {
 };
 
 /**
- * getLabelMapStats - returns the maximum pixel value, mean and standard
+ * getLabelmapStats - returns the maximum pixel value, mean and standard
  * deviation of the segment given by the segmentIndex of the scan on the element.
  *
  * @param  {HTMLElement} element  The cornerstone enabled element.
@@ -28,7 +28,7 @@ const state = {
  * @returns {object}              An object containing the maximum pixel value,
  *                                the mean and the standard deviation.
  */
-function getLabelMapStats(element, segmentIndex) {
+function getLabelmapStats(element, segmentIndex) {
   return new Promise(resolve => {
     const cornerstone = external.cornerstone;
     const stackState = getToolState(element, 'stack');
@@ -42,8 +42,8 @@ function getLabelMapStats(element, segmentIndex) {
       resolve();
     }
 
-    const activeLabelMapIndex = brushStackState.activeLabelMapIndex;
-    const labelmap3D = brushStackState.labelmaps3D[activeLabelMapIndex];
+    const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+    const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
     const labelmap3Dbuffer = labelmap3D.buffer;
 
     const imagePromises = [];
@@ -63,7 +63,7 @@ function getLabelMapStats(element, segmentIndex) {
 
       logger.warn(imagePixelData);
 
-      const labelmapStats = _labelMapStats(
+      const labelmapStats = _labelmapStats(
         labelmap3Dbuffer,
         imagePixelData,
         rows * columns,
@@ -75,16 +75,16 @@ function getLabelMapStats(element, segmentIndex) {
 }
 
 /**
- * _labelMapStats - description
+ * _labelmapStats - description
  *
- * @param  {type} labelMapBuffer The buffer for the labelmap.
+ * @param  {type} labelmapBuffer The buffer for the labelmap.
  * @param  {Number[][]} imagePixelData The pixeldata of each image slice.
  * @param  {Number} sliceLength    The number of pixels in one slice.
  * @param  {Number} segmentIndex   The index of the segment.
  * @returns {Promise} A promise that resolves to the stats.
  */
-function _labelMapStats(
-  labelMapBuffer,
+function _labelmapStats(
+  labelmapBuffer,
   imagePixelData,
   sliceLength,
   segmentIndex
@@ -96,7 +96,7 @@ function _labelMapStats(
 
   for (let img = 0; img < imagePixelData.length; img++) {
     const Uint8SliceView = new Uint8Array(
-      labelMapBuffer,
+      labelmapBuffer,
       img * sliceLength,
       sliceLength
     );
@@ -123,6 +123,49 @@ function _labelMapStats(
   };
 }
 
+function setActiveLabelmap(element, labelmapIndex = 0) {
+  const cornerstone = external.cornerstone;
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const enabledElement = cornerstone.getEnabledElement(element);
+  const { rows, columns } = enabledElement.image;
+  const numberOfFrames = stackData.imageIds.length;
+  const firstImageId = stackData.imageIds[0];
+
+  let brushStackState = state.series[firstImageId];
+
+  if (!state.colorLutTables[`${state.colorMapId}_${labelmapIndex}`]) {
+    initColorMap(labelmapIndex);
+  }
+
+  if (brushStackState) {
+    brushStackState.activeLabelmapIndex = labelmapIndex;
+
+    if (!brushStackState.labelmaps3D[labelmapIndex]) {
+      addLabelmap3D(
+        brushStackState,
+        labelmapIndex,
+        rows * columns * numberOfFrames
+      );
+    }
+  } else {
+    state.series[firstImageId] = {
+      activeLabelmapIndex: labelmapIndex,
+      labelmaps3D: [],
+    };
+
+    brushStackState = state.series[firstImageId];
+
+    addLabelmap3D(
+      brushStackState,
+      labelmapIndex,
+      rows * columns * numberOfFrames
+    );
+  }
+}
+
+logger.warn(setActiveLabelmap);
+
 function getBrushColor(element, drawing = false) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -134,10 +177,19 @@ function getBrushColor(element, drawing = false) {
   let color;
 
   if (brushStackState) {
-    const activeLabelMapIndex = brushStackState.activeLabelMapIndex;
-    const labelmap3D = brushStackState.labelmaps3D[activeLabelMapIndex];
+    const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+    const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
 
-    color = labelmap3D.activeDrawColorId;
+    if (labelmap3D) {
+      const activeDrawColorId = labelmap3D.activeDrawColorId;
+
+      color =
+        state.colorLutTables[`${state.colorMapId}_${activeLabelmapIndex}`][
+          activeDrawColorId
+        ];
+    } else {
+      // Just set to new labelmap index
+    }
   } else {
     // No data yet, make brush the default color of colormap 0.
     color = state.colorLutTables[`${state.colorMapId}_0`][1];
@@ -160,14 +212,14 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
     return;
   }
 
-  const activeLabelMapIndex = brushStackState.activeLabelMapIndex;
-  const labelmap3D = brushStackState.labelmaps3D[activeLabelMapIndex];
+  const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+  const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
 
   switch (increaseOrDecrease) {
     case 'increase':
       labelmap3D.activeDrawColorId++;
 
-      if (labelmap3D.activeDrawColorId > segmentsPerLabelMap) {
+      if (labelmap3D.activeDrawColorId > segmentsPerLabelmap) {
         labelmap3D.activeDrawColorId = 1;
       }
       break;
@@ -175,39 +227,57 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
       labelmap3D.activeDrawColorId--;
 
       if (labelmap3D.activeDrawColorId <= 0) {
-        labelmap3D.activeDrawColorId = segmentsPerLabelMap;
+        labelmap3D.activeDrawColorId = segmentsPerLabelmap;
       }
       break;
   }
 }
 
-function getLabelMaps3DForElement(element) {
+function getLabelmaps3D(element) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
 
-  const enabledElement = cornerstone.getEnabledElement(element);
-
-  const currentImageIdIndex = stackData.currentImageIdIndex;
-  const { rows, columns } = enabledElement.image;
-  const numberOfFrames = stackData.imageIds.length;
   const firstImageId = stackData.imageIds[0];
-
-  let brushStackState = state.series[firstImageId];
+  const brushStackState = state.series[firstImageId];
 
   let labelmaps3D;
+  let activeLabelmapIndex;
 
   if (brushStackState) {
     labelmaps3D = brushStackState.labelmaps3D;
+    activeLabelmapIndex = brushStackState.activeLabelmapIndex;
   }
 
   return {
     labelmaps3D,
-    currentImageIdIndex,
+    currentImageIdIndex: stackData.currentImageIdIndex,
+    activeLabelmapIndex,
   };
 }
 
-function getAndCacheLabelMap2D(element, labelMapIndex = 0) {
+function getLabelmapBuffers(element) {
+  const { labelmaps3D } = getLabelmaps3D(element);
+
+  if (!labelmaps3D) {
+    return [];
+  }
+
+  const labelmapBuffers = [];
+
+  for (let i = 0; i < labelmaps3D.length; i++) {
+    if (labelmaps3D[i]) {
+      labelmapBuffers.push({
+        labelmapIndex: i,
+        buffer: labelmaps3D[i].buffer,
+      });
+    }
+  }
+
+  return labelmapBuffers;
+}
+
+function getAndCacheLabelmap2D(element) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
@@ -221,45 +291,51 @@ function getAndCacheLabelMap2D(element, labelMapIndex = 0) {
 
   let brushStackState = state.series[firstImageId];
 
+  let activeLabelmapIndex;
+
   if (brushStackState) {
-    if (!brushStackState.labelmaps3D[labelMapIndex]) {
-      addLabelMap3D(
+    activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+
+    if (!brushStackState.labelmaps3D[activeLabelmapIndex]) {
+      addLabelmap3D(
         brushStackState,
-        labelMapIndex,
+        activeLabelmapIndex,
         rows * columns * numberOfFrames
       );
     }
 
     if (
-      !brushStackState.labelmaps3D[labelMapIndex].labelmaps2D[
+      !brushStackState.labelmaps3D[activeLabelmapIndex].labelmaps2D[
         currentImageIdIndex
       ]
     ) {
-      addLabelMap2DView(
+      addLabelmap2DView(
         brushStackState,
-        labelMapIndex,
+        activeLabelmapIndex,
         currentImageIdIndex,
         rows,
         columns
       );
     }
   } else {
+    activeLabelmapIndex = 0;
+
     state.series[firstImageId] = {
-      activeLabelMapIndex: labelMapIndex,
+      activeLabelmapIndex,
       labelmaps3D: [],
     };
 
     brushStackState = state.series[firstImageId];
 
-    addLabelMap3D(
+    addLabelmap3D(
       brushStackState,
-      labelMapIndex,
+      activeLabelmapIndex,
       rows * columns * numberOfFrames
     );
 
-    addLabelMap2DView(
+    addLabelmap2DView(
       brushStackState,
-      labelMapIndex,
+      activeLabelmapIndex,
       currentImageIdIndex,
       rows,
       columns
@@ -267,13 +343,13 @@ function getAndCacheLabelMap2D(element, labelMapIndex = 0) {
   }
 
   return {
-    labelmap3D: brushStackState.labelmaps3D[labelMapIndex],
+    labelmap3D: brushStackState.labelmaps3D[activeLabelmapIndex],
     currentImageIdIndex,
   };
 }
 
-function addLabelMap3D(brushStackState, labelMapIndex, size) {
-  brushStackState.labelmaps3D[labelMapIndex] = {
+function addLabelmap3D(brushStackState, labelmapIndex, size) {
+  brushStackState.labelmaps3D[labelmapIndex] = {
     buffer: new ArrayBuffer(size),
     labelmaps2D: [],
     activeDrawColorId: 1,
@@ -281,25 +357,25 @@ function addLabelMap3D(brushStackState, labelMapIndex, size) {
   };
 }
 
-function addLabelMap2DView(
+function addLabelmap2DView(
   brushStackState,
-  labelMapIndex,
+  labelmapIndex,
   currentImageIdIndex,
   rows,
   columns
 ) {
-  brushStackState.labelmaps3D[labelMapIndex].labelmaps2D[
+  brushStackState.labelmaps3D[labelmapIndex].labelmaps2D[
     currentImageIdIndex
   ] = {
     pixelData: new Uint8Array(
-      brushStackState.labelmaps3D[labelMapIndex].buffer,
+      brushStackState.labelmaps3D[labelmapIndex].buffer,
       currentImageIdIndex * rows * columns,
       rows * columns
     ),
     invalidated: true,
   };
   // Clear cache for this displaySet to avoid flickering.
-  brushStackState.labelmaps3D[labelMapIndex].imageBitmapCache = null;
+  brushStackState.labelmaps3D[labelmapIndex].imageBitmapCache = null;
 }
 
 /**
@@ -312,22 +388,7 @@ function setRadius(radius) {
   state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
 }
 
-/**
- * TODO: Should this be a init config property?
- * Sets the brush color map to something other than the default
- *
- * @param  {Array} colors An array of 4D [red, green, blue, alpha] arrays.
- * @returns {void}
- */
-function setBrushColorMap(colors) {
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-
-  colormap.setNumberOfColors(colors.length);
-
-  for (let i = 0; i < colors.length; i++) {
-    colormap.setColor(i, colors[i]);
-  }
-}
+// TODO
 function setElementVisible(enabledElement) {
   if (!external.cornerstone) {
     return;
@@ -348,6 +409,7 @@ function setElementVisible(enabledElement) {
   }
 }
 
+// TODO
 function getVisibleSegmentationsForElement(enabledElementUID) {
   if (!state.visibleSegmentations[enabledElementUID]) {
     return null;
@@ -356,6 +418,7 @@ function getVisibleSegmentationsForElement(enabledElementUID) {
   return state.visibleSegmentations[enabledElementUID];
 }
 
+// TODO
 function setBrushVisibilityForElement(
   enabledElementUID,
   segIndex,
@@ -366,30 +429,6 @@ function setBrushVisibilityForElement(
   }
 
   state.visibleSegmentations[enabledElementUID][segIndex] = visible;
-}
-
-function getImageBitmapCacheForElement(enabledElementUID) {
-  if (!state.imageBitmapCache[enabledElementUID]) {
-    return null;
-  }
-
-  return state.imageBitmapCache[enabledElementUID];
-}
-
-function setImageBitmapCacheForElement(
-  enabledElementUID,
-  segIndex,
-  imageBitmap
-) {
-  if (!state.imageBitmapCache[enabledElementUID]) {
-    state.imageBitmapCache[enabledElementUID] = [];
-  }
-
-  state.imageBitmapCache[enabledElementUID][segIndex] = imageBitmap;
-}
-
-function clearImageBitmapCacheForElement(enabledElementUID) {
-  state.imageBitmapCache[enabledElementUID] = [];
 }
 
 /**
@@ -423,20 +462,18 @@ function setMetadata(seriesInstanceUid, segIndex, metadata) {
 }
 
 const getters = {
-  imageBitmapCacheForElement: getImageBitmapCacheForElement,
   visibleSegmentationsForElement: getVisibleSegmentationsForElement,
   metadata: getMetadata,
-  getAndCacheLabelMap2D: getAndCacheLabelMap2D,
-  labelMaps3DForElement: getLabelMaps3DForElement,
+  labelmapStats: getLabelmapStats,
+  getAndCacheLabelmap2D: getAndCacheLabelmap2D,
+  labelmaps3D: getLabelmaps3D,
   brushColor: getBrushColor,
+  labelmapBuffers: getLabelmapBuffers,
 };
 
 const setters = {
-  brushColorMap: setBrushColorMap,
   elementVisible: setElementVisible,
   brushVisibilityForElement: setBrushVisibilityForElement,
-  imageBitmapCacheForElement: setImageBitmapCacheForElement,
-  clearImageBitmapCacheForElement: clearImageBitmapCacheForElement,
   metadata: setMetadata,
   incrementBrushColor: element => {
     _changeBrushColor(element, 'increase');
@@ -444,6 +481,7 @@ const setters = {
   decrementBrushColor: element => {
     _changeBrushColor(element, 'decrease');
   },
+  activeLabelmap: setActiveLabelmap,
 };
 
 /**
@@ -497,23 +535,23 @@ export default {
   setters,
 };
 
-const segmentsPerLabelMap = 255;
+const segmentsPerLabelmap = 255;
 
 /**
  * initColorMap - description
  *
- * @param  {type} labelMapIndex description
+ * @param  {type} labelmapIndex description
  * @returns {type}               description
  */
-function initColorMap(labelMapIndex) {
-  const colorMapId = `${state.colorMapId}_${labelMapIndex}`;
+function initColorMap(labelmapIndex) {
+  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colormap = external.cornerstone.colors.getColormap(colorMapId);
 
-  colormap.setNumberOfColors(segmentsPerLabelMap);
+  colormap.setNumberOfColors(segmentsPerLabelmap);
 
-  const newColormap = getNewBrushColorMap(segmentsPerLabelMap);
+  const newColormap = getNewBrushColorMap(segmentsPerLabelmap);
 
-  for (let i = 0; i < segmentsPerLabelMap; i++) {
+  for (let i = 0; i < segmentsPerLabelmap; i++) {
     colormap.setColor(i, newColormap[i]);
   }
 

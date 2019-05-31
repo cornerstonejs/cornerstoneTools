@@ -118,10 +118,7 @@ export default class BrushTool extends BaseBrushTool {
     const {
       labelmap3D,
       currentImageIdIndex,
-    } = brushModule.getters.getAndCacheLabelMap2D(
-      element,
-      this.configuration.activeLabelMapIndex
-    );
+    } = brushModule.getters.getAndCacheLabelmap2D(element);
 
     const radius = brushModule.state.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
