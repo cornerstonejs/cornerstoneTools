@@ -14,7 +14,7 @@ import { draw, fillBox } from '../../drawing/index.js';
  */
 function drawBrushPixels(
   pointerArray,
-  brushStackData,
+  labelmap3D,
   imageIdIndex,
   segmentIndex,
   columns,
@@ -22,7 +22,7 @@ function drawBrushPixels(
 ) {
   const getPixelIndex = (x, y) => y * columns + x;
 
-  const pixelData = brushStackData.labelMap2D[imageIdIndex].pixelData;
+  const pixelData = labelmap3D.labelmaps2D[imageIdIndex].pixelData;
 
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
@@ -36,11 +36,11 @@ function drawBrushPixels(
     }
   });
 
-  brushStackData.labelMap2D[imageIdIndex].invalidated = true;
+  labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
 
   // If Erased the last pixel, delete the pixelData array.
   if (shouldErase && !pixelData.some(element => element !== 0)) {
-    delete brushStackData.labelMap2D[imageIdIndex];
+    delete labelmap3D.labelmaps2D[imageIdIndex];
   }
 }
 

@@ -22,10 +22,6 @@ class BaseBrushTool extends BaseTool {
     }
     defaultProps.configuration.referencedToolData = 'brush';
 
-    if (defaultProps.configuration.activeLabelMapIndex === undefined) {
-      defaultProps.configuration.activeLabelMapIndex = 0;
-    }
-
     super(props, defaultProps);
 
     this.updateOnMouseMove = true;
@@ -161,33 +157,6 @@ class BaseBrushTool extends BaseTool {
   // ===================================================================
   // Implementation interface
   // ===================================================================
-
-  /**
-   * Get the draw color (segmentation) of the tool.
-   *
-   * @protected
-   * @param  {Number} drawId The id of the color (segmentation) to switch to.
-   * @returns {string} The brush color in rgba format
-   */
-  _getBrushColor(drawId) {
-    const configuration = this.configuration;
-    const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelMapIndex
-    }`;
-
-    const colormap = external.cornerstone.colors.getColormap(colorMapId);
-    const colorArray = colormap.getColor(drawId);
-
-    if (this._drawing) {
-      return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${
-        colorArray[[2]]
-      }, 1.0 )`;
-    }
-
-    return `rgba(${colorArray[[0]]}, ${colorArray[[1]]}, ${
-      colorArray[[2]]
-    }, 0.8 )`;
-  }
 
   /**
    * Event handler for MOUSE_UP during the drawing event loop.

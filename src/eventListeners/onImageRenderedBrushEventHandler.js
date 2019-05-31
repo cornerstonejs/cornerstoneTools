@@ -69,37 +69,30 @@ export default function(evt) {
   const element = eventData.element;
 
   const {
-    brushStackState,
+    labelmaps3D,
     currentImageIdIndex,
-  } = brushModule.getters.labelMapsForElement(element);
+  } = brushModule.getters.labelMaps3DForElement(element);
 
-  if (!brushStackState) {
+  if (!labelmaps3D) {
     return;
   }
 
-  for (let i = 0; i < brushStackState.length; i++) {
-    const labelMapSpecificBrushStackState = brushStackState[i];
+  for (let i = 0; i < labelmaps3D.length; i++) {
+    const labelmap3D = labelmaps3D[i];
 
-    const labelMap2D =
-      labelMapSpecificBrushStackState.labelMap2D[currentImageIdIndex];
+    const labelMap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
     if (labelMap2D) {
-      const imageBitmapCache = labelMapSpecificBrushStackState.imageBitmapCache;
+      const imageBitmapCache = labelmap3D.imageBitmapCache;
 
-      renderSegmentation(
-        evt,
-        labelMapSpecificBrushStackState,
-        i,
-        labelMap2D,
-        imageBitmapCache
-      );
+      renderSegmentation(evt, labelmap3D, i, labelMap2D, imageBitmapCache);
     }
   }
 }
 
 function renderSegmentation(
   evt,
-  brushStackData,
+  labelmap3D,
   labelMapIndex,
   labelMap2D,
   imageBitmapCache
@@ -112,7 +105,7 @@ function renderSegmentation(
   if (labelMap2D.invalidated) {
     createNewBitmapAndQueueRenderOfSegmentation(
       evt,
-      brushStackData,
+      labelmap3D,
       labelMapIndex,
       labelMap2D
     );
@@ -121,7 +114,7 @@ function renderSegmentation(
 
 function createNewBitmapAndQueueRenderOfSegmentation(
   evt,
-  brushStackData,
+  labelmap3D,
   labelMapIndex,
   labelMap2D
 ) {
@@ -150,7 +143,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(
   );
 
   window.createImageBitmap(imageData).then(newImageBitmap => {
-    brushStackData.imageBitmapCache = newImageBitmap;
+    labelmap3D.imageBitmapCache = newImageBitmap;
     labelMap2D.invalidated = false;
 
     external.cornerstone.updateImage(eventData.element);
