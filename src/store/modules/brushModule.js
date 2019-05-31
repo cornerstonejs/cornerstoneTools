@@ -1,6 +1,7 @@
 import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import getNewBrushColorMap from '../../util/brush/getNewBrushColorMap.js';
+import labelmapStats from '../../util/brush/labelmapStats.js';
 
 import { getLogger } from '../../util/logger.js';
 
@@ -63,7 +64,7 @@ function getLabelmapStats(element, segmentIndex) {
 
       logger.warn(imagePixelData);
 
-      const labelmapStats = _labelmapStats(
+      const labelmapStats = labelmapStats(
         labelmap3Dbuffer,
         imagePixelData,
         rows * columns,
@@ -72,55 +73,6 @@ function getLabelmapStats(element, segmentIndex) {
       resolve(labelmapStats);
     });
   });
-}
-
-/**
- * _labelmapStats - description
- *
- * @param  {type} labelmapBuffer The buffer for the labelmap.
- * @param  {Number[][]} imagePixelData The pixeldata of each image slice.
- * @param  {Number} sliceLength    The number of pixels in one slice.
- * @param  {Number} segmentIndex   The index of the segment.
- * @returns {Promise} A promise that resolves to the stats.
- */
-function _labelmapStats(
-  labelmapBuffer,
-  imagePixelData,
-  sliceLength,
-  segmentIndex
-) {
-  let maximum = 0;
-  let count = 0;
-  let total = 0;
-  let meanOfSquares = 0;
-
-  for (let img = 0; img < imagePixelData.length; img++) {
-    const Uint8SliceView = new Uint8Array(
-      labelmapBuffer,
-      img * sliceLength,
-      sliceLength
-    );
-    const image = imagePixelData[img];
-
-    for (let ind = 0; ind < image.length; ind++) {
-      if (Uint8SliceView[ind] == segmentIndex) {
-        if (image[ind] > maximum) {
-          maximum = image[ind];
-        }
-        total += image[ind];
-        count += 1;
-        meanOfSquares += image[ind] ** 2;
-      }
-    }
-  }
-  let mean = total / count;
-  let stdDev = (meanOfSquares / count - mean ** 2) ** 0.5;
-
-  return {
-    maximum,
-    mean,
-    stdDev,
-  };
 }
 
 function setActiveLabelmap(element, labelmapIndex = 0) {
