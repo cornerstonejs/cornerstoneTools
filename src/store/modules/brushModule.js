@@ -15,7 +15,6 @@ const state = {
   alpha: 0.6,
   alphaOfInactiveLabelmap: 0.2,
   colorMapId: 'BrushColorMap',
-  visibleSegmentations: {}, // TODO - We aren't currently using this.
   segmentationMetadata: {},
   series: {},
 };
@@ -25,7 +24,7 @@ const state = {
  * deviation of the segment given by the segmentIndex of the scan on the element.
  *
  * @param  {HTMLElement} element  The cornerstone enabled element.
- * @param  {Number} segmentIndex  The segment index to query.
+ * @param  {number} segmentIndex  The segment index to query.
  * @returns {object}              An object containing the maximum pixel value,
  *                                the mean and the standard deviation.
  */
@@ -75,6 +74,15 @@ function getLabelmapStats(element, segmentIndex) {
   });
 }
 
+/**
+ * setActiveLabelmap - Sets the active labelmap for the stack displayed on this
+ * elemenet to the labelmap given by the labelmapIndex. Creates the labelmap if
+ * it doesn't exist.
+ *
+ * @param  {HTMLElement} element           The cornerstone enabled element.
+ * @param  {number} labelmapIndex = 0 The index of the labelmap.
+ * @returns {null}
+ */
 function setActiveLabelmap(element, labelmapIndex = 0) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -116,8 +124,14 @@ function setActiveLabelmap(element, labelmapIndex = 0) {
   }
 }
 
-logger.warn(setActiveLabelmap);
-
+/**
+ * getBrushColor - Returns the brush color as a string for the active segment of
+ * the active labelmap for the series displayed on the element.
+ *
+ * @param  {HTMLElement} element        The cornerstone enabled element.
+ * @param  {boolean} drawing = false    Whether the user is drawing or not.
+ * @returns {string}                    An rgba value as a string.
+ */
 function getBrushColor(element, drawing = false) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -152,6 +166,14 @@ function getBrushColor(element, drawing = false) {
     : `rgba(${color[[0]]}, ${color[[1]]}, ${color[[2]]}, 0.8 )`;
 }
 
+/**
+ * _changeBrushColor - Changes the active segment
+ *
+ * @param  {HTMLElement} element                         The cornerstone enabled element.
+ * @param  {boolean} increaseOrDecrease = 'increase' Whether to increase/decrease
+ *                                                the activeLabelmapIndex.
+ * @returns {null}
+ */
 function _changeBrushColor(element, increaseOrDecrease = 'increase') {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -185,6 +207,14 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
   }
 }
 
+/**
+ * getLabelmaps3D - Returns the labelmaps associated with the series displayed
+ * in the element, the activeLabelmapIndex and the currentImageIdIndex.
+ *
+ * @param  {HTMLElement} element  The cornerstone enabled element.
+ * @returns {object}              An object containing the 3D labelmaps,
+ *                                the activeLabelmapIndex amd the currentImageIdIndex.
+ */
 function getLabelmaps3D(element) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -203,11 +233,19 @@ function getLabelmaps3D(element) {
 
   return {
     labelmaps3D,
-    currentImageIdIndex: stackData.currentImageIdIndex,
     activeLabelmapIndex,
+    currentImageIdIndex: stackData.currentImageIdIndex,
   };
 }
 
+/**
+ * getLabelmapBuffers - Returns the ArrayBuffers of each labelmap associated
+ *                      with the series displayed on the element.
+ *
+ * @param  {type} element The cornerstone enabled element.
+ * @returns {object[]}    An array of objects containing the labelmapIndex and
+ *                        corresponding ArrayBuffer.
+ */
 function getLabelmapBuffers(element) {
   const { labelmaps3D } = getLabelmaps3D(element);
 
@@ -229,6 +267,14 @@ function getLabelmapBuffers(element) {
   return labelmapBuffers;
 }
 
+/**
+ * getAndCacheLabelmap2D - Returns the 3D labelmap and the currentImageIdIndex.
+ *                         Allocates memory for the labelmap and sets a 2D view
+ *                         for the currentImageIdIndex if it does not yet exist.
+ *
+ * @param  {HTMLElement} element  The cornerstone enabled element.
+ * @returns {object}              The 3D labelmap and the currentImageIdIndex.
+ */
 function getAndCacheLabelmap2D(element) {
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
@@ -300,6 +346,14 @@ function getAndCacheLabelmap2D(element) {
   };
 }
 
+/**
+ * addLabelmap3D - Adds a 3D labelmap to the brushStackState.
+ *
+ * @param  {object} brushStackState The labelmap state for a particular stack.
+ * @param  {number} labelmapIndex   The labelmapIndex to set.
+ * @param  {number} size            The size of the ArrayBuffer in bytes.
+ * @returns {null}
+ */
 function addLabelmap3D(brushStackState, labelmapIndex, size) {
   brushStackState.labelmaps3D[labelmapIndex] = {
     buffer: new ArrayBuffer(size),
@@ -309,6 +363,16 @@ function addLabelmap3D(brushStackState, labelmapIndex, size) {
   };
 }
 
+/**
+ * addLabelmap2DView - Adds a 2D view of one slice of a 3D labelmap.
+ *
+ * @param  {object} brushStackState     The labelmap state for a particular stack.
+ * @param  {number} labelmapIndex       The labelmap index.
+ * @param  {number} currentImageIdIndex The stack position of the current image.
+ * @param  {number} rows                The number of rows in the image.
+ * @param  {number} columns             The number of columns in the image.
+ * @returns {null}
+ */
 function addLabelmap2DView(
   brushStackState,
   labelmapIndex,
@@ -340,56 +404,11 @@ function setRadius(radius) {
   state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
 }
 
-// TODO
-function setElementVisible(enabledElement) {
-  if (!external.cornerstone) {
-    return;
-  }
-
-  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-    enabledElement
-  );
-
-  const enabledElementUID = cornerstoneEnabledElement.uuid;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-  const numberOfColors = colormap.getNumberOfColors();
-
-  state.visibleSegmentations[enabledElementUID] = [];
-
-  for (let i = 0; i < numberOfColors; i++) {
-    state.visibleSegmentations[enabledElementUID].push(true);
-  }
-}
-
-// TODO
-function getVisibleSegmentationsForElement(enabledElementUID) {
-  if (!state.visibleSegmentations[enabledElementUID]) {
-    return null;
-  }
-
-  return state.visibleSegmentations[enabledElementUID];
-}
-
-// TODO
-function setBrushVisibilityForElement(
-  enabledElementUID,
-  segIndex,
-  visible = true
-) {
-  if (!state.visibleSegmentations[enabledElementUID]) {
-    state.imageBitmapCache[enabledElementUID] = [];
-  }
-
-  state.visibleSegmentations[enabledElementUID][segIndex] = visible;
-}
-
-/**
- * Retrieves series-specific brush segmentation metadata.
- * @public
- * @function metadata
- * @param {string} seriesInstanceUid - The seriesInstanceUid of the scan.
- * @param {number} [segIndex] - The segmentation index.
+/** TODO
+ * getMetadata - Retrieves series-specific brush segmentation metadata.
  *
+ * @param  {type} seriesInstanceUid The seriesInstanceUid of the scan.
+ * @param  {type} segIndex          The segmentation index.
  * @returns {Object[]|Object} An array of segmentation metadata, or specifc
  *                            segmentation data if segIndex is defined.
  */
@@ -405,69 +424,13 @@ function getMetadata(seriesInstanceUid, segIndex) {
   return state.segmentationMetadata[seriesInstanceUid];
 }
 
+// TODO
 function setMetadata(seriesInstanceUid, segIndex, metadata) {
   if (!state.segmentationMetadata[seriesInstanceUid]) {
     state.segmentationMetadata[seriesInstanceUid] = [];
   }
 
   state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
-}
-
-const getters = {
-  visibleSegmentationsForElement: getVisibleSegmentationsForElement,
-  metadata: getMetadata,
-  labelmapStats: getLabelmapStats,
-  getAndCacheLabelmap2D: getAndCacheLabelmap2D,
-  labelmaps3D: getLabelmaps3D,
-  brushColor: getBrushColor,
-  labelmapBuffers: getLabelmapBuffers,
-};
-
-const setters = {
-  elementVisible: setElementVisible,
-  brushVisibilityForElement: setBrushVisibilityForElement,
-  metadata: setMetadata,
-  incrementBrushColor: element => {
-    _changeBrushColor(element, 'increase');
-  },
-  decrementBrushColor: element => {
-    _changeBrushColor(element, 'decrease');
-  },
-  activeLabelmap: setActiveLabelmap,
-};
-
-/**
- * EnabledElementCallback - Element specific initilisation.
- * @public
- * @param  {Object} enabledElement - The element on which the module is
- *                                  being initialised.
- * @returns {void}
- */
-function enabledElementCallback(enabledElement) {
-  setters.elementVisible(enabledElement);
-}
-
-/**
- * RemoveEnabledElementCallback - Element specific memory cleanup.
- * @public
- * @param  {Object} enabledElement  The element being removed.
- * @returns {void}
- */
-// TODO -> Test this before adding it to the module.
-function removeEnabledElementCallback(enabledElement) {
-  if (!external.cornerstone) {
-    return;
-  }
-
-  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-    enabledElement
-  );
-
-  const enabledElementUID = cornerstoneEnabledElement.uuid;
-
-  // Remove enabledElement specific data.
-  delete state.visibleSegmentations[enabledElementUID];
-  delete state.imageBitmapCache[enabledElementUID];
 }
 
 /**
@@ -482,9 +445,24 @@ function onRegisterCallback() {
 export default {
   state,
   onRegisterCallback,
-  enabledElementCallback,
-  getters,
-  setters,
+  getters: {
+    metadata: getMetadata,
+    labelmapStats: getLabelmapStats,
+    getAndCacheLabelmap2D: getAndCacheLabelmap2D,
+    labelmaps3D: getLabelmaps3D,
+    brushColor: getBrushColor,
+    labelmapBuffers: getLabelmapBuffers,
+  },
+  setters: {
+    metadata: setMetadata,
+    incrementBrushColor: element => {
+      _changeBrushColor(element, 'increase');
+    },
+    decrementBrushColor: element => {
+      _changeBrushColor(element, 'decrease');
+    },
+    activeLabelmap: setActiveLabelmap,
+  },
 };
 
 const segmentsPerLabelmap = 255;
