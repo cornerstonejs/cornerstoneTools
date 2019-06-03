@@ -22,7 +22,13 @@ function drawBrushPixels(
 ) {
   const getPixelIndex = (x, y) => y * columns + x;
 
-  const pixelData = labelmap3D.labelmaps2D[imageIdIndex].pixelData;
+  const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
+  const { segments, pixelData } = labelmap2D;
+
+  if (!shouldErase && !segments[segmentIndex]) {
+    // Add segment to list of segments on slice.
+    segments[segmentIndex] = true;
+  }
 
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
@@ -38,9 +44,33 @@ function drawBrushPixels(
 
   labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
 
-  // If Erased the last pixel, delete the pixelData array.
-  if (shouldErase && !pixelData.some(element => element !== 0)) {
-    delete labelmap3D.labelmaps2D[imageIdIndex];
+  if (shouldErase) {
+    let sliceEmpty = true;
+    let segmentEmpty = true;
+
+    for (let i = 0; i < pixelData.length; i++) {
+      if (pixelData[i]) {
+        sliceEmpty = false;
+
+        if (pixelData[i] === segmentIndex) {
+          segmentEmpty = false;
+        }
+      }
+      if (!sliceEmpty && !segmentEmpty) {
+        break;
+      }
+    }
+
+    // If erased the last segmentIndex label on the slice, remove it from the
+    // list of segments on the slice.
+    if (segmentEmpty) {
+      segments[segmentIndex] = undefined;
+    }
+
+    // If erased the last label on the slice, delete the view.
+    if (sliceEmpty) {
+      delete labelmap3D.labelmaps2D[imageIdIndex];
+    }
   }
 }
 

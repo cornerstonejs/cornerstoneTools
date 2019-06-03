@@ -388,6 +388,7 @@ function addLabelmap2DView(
       currentImageIdIndex * rows * columns,
       rows * columns
     ),
+    segments: {},
     invalidated: true,
   };
   // Clear cache for this displaySet to avoid flickering.
