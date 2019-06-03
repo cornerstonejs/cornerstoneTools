@@ -207,6 +207,12 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
   }
 }
 
+/*
+function setLabelmaps3DForFirstImageId(firstImageId, buffer, labelmapIndex) {
+  for
+}
+*/
+
 /**
  * getLabelmaps3D - Returns the labelmaps associated with the series displayed
  * in the element, the activeLabelmapIndex and the currentImageIdIndex.
@@ -259,6 +265,7 @@ function getLabelmapBuffers(element) {
     if (labelmaps3D[i]) {
       labelmapBuffers.push({
         labelmapIndex: i,
+        bytesPerVoxel: 2,
         buffer: labelmaps3D[i].buffer,
       });
     }
@@ -355,8 +362,9 @@ function getAndCacheLabelmap2D(element) {
  * @returns {null}
  */
 function addLabelmap3D(brushStackState, labelmapIndex, size) {
+  // Buffer size is multiplied by 2 as we are using 2 bytes/voxel for 65536 segments.
   brushStackState.labelmaps3D[labelmapIndex] = {
-    buffer: new ArrayBuffer(size),
+    buffer: new ArrayBuffer(size * 2),
     labelmaps2D: [],
     metadata: {},
     activeDrawColorId: 1,
@@ -440,13 +448,16 @@ function addLabelmap2DView(
   rows,
   columns
 ) {
+  // sliceLengthInBytes is multiplied by 2 as we are using 2 bytes/voxel for 65536 segments.
+  const sliceLengthInBytes = rows * columns * 2;
+
   brushStackState.labelmaps3D[labelmapIndex].labelmaps2D[
     currentImageIdIndex
   ] = {
-    pixelData: new Uint8Array(
+    pixelData: new Uint16Array(
       brushStackState.labelmaps3D[labelmapIndex].buffer,
-      currentImageIdIndex * rows * columns,
-      rows * columns
+      currentImageIdIndex * sliceLengthInBytes,
+      sliceLengthInBytes
     ),
     segments: {},
     invalidated: true,
