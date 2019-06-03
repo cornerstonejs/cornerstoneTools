@@ -169,7 +169,7 @@ function getBrushColor(element, drawing = false) {
 /**
  * _changeBrushColor - Changes the active segment
  *
- * @param  {HTMLElement} element                         The cornerstone enabled element.
+ * @param  {HTMLElement} element           The cornerstone enabled element.
  * @param  {boolean} increaseOrDecrease = 'increase' Whether to increase/decrease
  *                                                the activeLabelmapIndex.
  * @returns {null}
@@ -207,11 +207,35 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
   }
 }
 
-/*
-function setLabelmaps3DForFirstImageId(firstImageId, buffer, labelmapIndex) {
-  for
+async function setLabelmap3DForFirstImageId(
+  firstImageId,
+  buffer,
+  labelmapIndex,
+  metadata = []
+) {
+  const cornerstone = external.cornerstone;
+  const image = await cornerstone.loadAndCacheImage(firstImageId);
+  const { rows, columns } = image;
+
+  let brushStackState = state.series[firstImageId];
+
+  if (!brushStackState) {
+    state.series[firstImageId] = {
+      labelmapIndex,
+      labelmaps3D: [],
+    };
+
+    brushStackState = state.series[firstImageId];
+  }
+
+  brushStackState.labelmaps3D[labelmapIndex] = {
+    buffer,
+    labelmaps2D: [],
+    metadata,
+    activeDrawColorId: 1,
+    imageBitmapCache: null,
+  };
 }
-*/
 
 /**
  * getLabelmaps3D - Returns the labelmaps associated with the series displayed
@@ -366,7 +390,7 @@ function addLabelmap3D(brushStackState, labelmapIndex, size) {
   brushStackState.labelmaps3D[labelmapIndex] = {
     buffer: new ArrayBuffer(size * 2),
     labelmaps2D: [],
-    metadata: {},
+    metadata: [],
     activeDrawColorId: 1,
     imageBitmapCache: null,
   };
@@ -387,7 +411,7 @@ function getMetadata(elementOrFirstImageId, labelmapIndex = 0, segmentIndex) {
 
   const brushStackState = state.series[firstImageId];
 
-  if (!(brushStackState && brushStackState.labelmaps3D[labelmapIndex])) {
+  if (!(brushStackState || brushStackState.labelmaps3D[labelmapIndex])) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
     return;
   }
@@ -401,29 +425,35 @@ function getMetadata(elementOrFirstImageId, labelmapIndex = 0, segmentIndex) {
   return labelmap3D.metadata[segmentIndex];
 }
 
-function setMetadata(
-  elementOrFirstImageId,
-  labelmapIndex = 0,
-  segmentIndex,
-  metadata
-) {
-  let firstImageId;
-
-  if (elementOrFirstImageId instanceof HTMLElement) {
-    const cornerstone = external.cornerstone;
-    const stackState = getToolState(elementOrFirstImageId, 'stack');
-    const stackData = stackState.data[0];
-
-    firstImageId = stackData.imageIds[0];
-  } else {
-    firstImageId = elementOrFirstImageId;
-  }
+function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
+  const cornerstone = external.cornerstone;
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const firstImageId = stackData.imageIds[0];
 
   let brushStackState = state.series[firstImageId];
 
-  if (!(brushStackState && brushStackState.labelmaps3D[labelmapIndex])) {
-    logger.warn('No 3D labelmap on element.');
-    return;
+  if (!brushStackState) {
+    state.series[firstImageId] = {
+      labelmapIndex,
+      labelmaps3D: [],
+    };
+
+    brushStackState = state.series[firstImageId];
+  }
+
+  if (!brushStackState.labelmaps3D[labelmapIndex]) {
+    const enabledElement = cornerstone.getEnabledElement(element);
+
+    const currentImageIdIndex = stackData.currentImageIdIndex;
+    const { rows, columns } = enabledElement.image;
+    const numberOfFrames = stackData.imageIds.length;
+
+    addLabelmap3D(
+      brushStackState,
+      labelmapIndex,
+      rows * columns * numberOfFrames
+    );
   }
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
@@ -459,7 +489,9 @@ function addLabelmap2DView(
       currentImageIdIndex * sliceLengthInBytes,
       sliceLengthInBytes
     ),
-    segments: {},
+    getSegmentIndexes: () => {
+      return new Set(pixelData);
+    },
     invalidated: true,
   };
   // Clear cache for this displaySet to avoid flickering.
