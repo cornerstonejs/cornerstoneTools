@@ -2,15 +2,15 @@ import external from '../../externalModules.js';
 import { draw, fillBox } from '../../drawing/index.js';
 
 /**
- * Fills in the brush mask data with new data.
- * @export @public @method
- * @name drawBrushPixels
+ * drawBrushPixels - Adds or removes labels to a labelmap.
  *
- * @param  {Object[]} pointerArray        The array of points to draw.
- * @param  {number[]} labelMap2D          The labelmap to modify.
- * @param  {number}   columns               The number of columns in the mask.
- * @param  {boolean} [shouldErase = false] If true the modified mask pixels will be set to 0, rather than 1.
- * @returns {void}
+ * @param  {number[]} pointerArray      The array of points to draw.
+ * @param  {Object} labelmap3D          The labelmap to modify.
+ * @param  {number} imageIdIndex        The index of the image in the stack.
+ * @param  {number} segmentIndex        The segment being drawn.
+ * @param  {number} columns             The number of columns in the image.
+ * @param  {boolean} shouldErase = false Whether we should erase rather than color pixels.
+ * @returns {null}
  */
 function drawBrushPixels(
   pointerArray,
@@ -21,14 +21,7 @@ function drawBrushPixels(
   shouldErase = false
 ) {
   const getPixelIndex = (x, y) => y * columns + x;
-
-  const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
-  const { segments, pixelData } = labelmap2D;
-
-  if (!shouldErase && !segments[segmentIndex]) {
-    // Add segment to list of segments on slice.
-    segments[segmentIndex] = true;
-  }
+  const pixelData = labelmap3D.labelmaps2D[imageIdIndex].pixelData;
 
   pointerArray.forEach(point => {
     const spIndex = getPixelIndex(point[0], point[1]);
@@ -44,33 +37,8 @@ function drawBrushPixels(
 
   labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
 
-  if (shouldErase) {
-    let sliceEmpty = true;
-    let segmentEmpty = true;
-
-    for (let i = 0; i < pixelData.length; i++) {
-      if (pixelData[i]) {
-        sliceEmpty = false;
-
-        if (pixelData[i] === segmentIndex) {
-          segmentEmpty = false;
-        }
-      }
-      if (!sliceEmpty && !segmentEmpty) {
-        break;
-      }
-    }
-
-    // If erased the last segmentIndex label on the slice, remove it from the
-    // list of segments on the slice.
-    if (segmentEmpty) {
-      segments[segmentIndex] = undefined;
-    }
-
-    // If erased the last label on the slice, delete the view.
-    if (sliceEmpty) {
-      delete labelmap3D.labelmaps2D[imageIdIndex];
-    }
+  if (shouldErase && pixelData.some(element => !element)) {
+    delete labelmap3D.labelmaps2D[imageIdIndex];
   }
 }
 
