@@ -63,13 +63,13 @@ function getLabelmapStats(element, segmentIndex) {
 
       logger.warn(imagePixelData);
 
-      const labelmapStats = labelmapStats(
+      const stats = labelmapStats(
         labelmap3Dbuffer,
         imagePixelData,
         rows * columns,
         segmentIndex
       );
-      resolve(labelmapStats);
+      resolve(stats);
     });
   });
 }
@@ -358,9 +358,69 @@ function addLabelmap3D(brushStackState, labelmapIndex, size) {
   brushStackState.labelmaps3D[labelmapIndex] = {
     buffer: new ArrayBuffer(size),
     labelmaps2D: [],
+    metadata: {},
     activeDrawColorId: 1,
     imageBitmapCache: null,
   };
+}
+
+function getMetadata(elementOrFirstImageId, labelmapIndex = 0, segmentIndex) {
+  let firstImageId;
+
+  if (elementOrFirstImageId instanceof HTMLElement) {
+    const cornerstone = external.cornerstone;
+    const stackState = getToolState(elementOrFirstImageId, 'stack');
+    const stackData = stackState.data[0];
+
+    firstImageId = stackData.imageIds[0];
+  } else {
+    firstImageId = elementOrFirstImageId;
+  }
+
+  const brushStackState = state.series[firstImageId];
+
+  if (!(brushStackState && brushStackState.labelmaps3D[labelmapIndex])) {
+    logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
+    return;
+  }
+
+  const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
+
+  if (segmentIndex === undefined) {
+    return labelmap3D.metadata;
+  }
+
+  return labelmap3D.metadata[segmentIndex];
+}
+
+function setMetadata(
+  elementOrFirstImageId,
+  labelmapIndex = 0,
+  segmentIndex,
+  metadata
+) {
+  let firstImageId;
+
+  if (elementOrFirstImageId instanceof HTMLElement) {
+    const cornerstone = external.cornerstone;
+    const stackState = getToolState(elementOrFirstImageId, 'stack');
+    const stackData = stackState.data[0];
+
+    firstImageId = stackData.imageIds[0];
+  } else {
+    firstImageId = elementOrFirstImageId;
+  }
+
+  let brushStackState = state.series[firstImageId];
+
+  if (!(brushStackState && brushStackState.labelmaps3D[labelmapIndex])) {
+    logger.warn('No 3D labelmap on element.');
+    return;
+  }
+
+  const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
+
+  labelmap3D.metadata[segmentIndex] = metadata;
 }
 
 /**
@@ -403,35 +463,6 @@ function addLabelmap2DView(
  */
 function setRadius(radius) {
   state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
-}
-
-/** TODO
- * getMetadata - Retrieves series-specific brush segmentation metadata.
- *
- * @param  {type} seriesInstanceUid The seriesInstanceUid of the scan.
- * @param  {type} segIndex          The segmentation index.
- * @returns {Object[]|Object} An array of segmentation metadata, or specifc
- *                            segmentation data if segIndex is defined.
- */
-function getMetadata(seriesInstanceUid, segIndex) {
-  if (!state.segmentationMetadata[seriesInstanceUid]) {
-    return;
-  }
-
-  if (segIndex !== undefined) {
-    return state.segmentationMetadata[seriesInstanceUid][segIndex];
-  }
-
-  return state.segmentationMetadata[seriesInstanceUid];
-}
-
-// TODO
-function setMetadata(seriesInstanceUid, segIndex, metadata) {
-  if (!state.segmentationMetadata[seriesInstanceUid]) {
-    state.segmentationMetadata[seriesInstanceUid] = [];
-  }
-
-  state.segmentationMetadata[seriesInstanceUid][segIndex] = metadata;
 }
 
 /**
