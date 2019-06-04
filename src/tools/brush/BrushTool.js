@@ -1,9 +1,5 @@
 import external from './../../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-import {
-  getToolState,
-  addToolState,
-} from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
 import EVENTS from '../../events.js';
@@ -14,7 +10,6 @@ const logger = getLogger('tools:BrushTool');
 const { drawBrushPixels, getCircle } = brushUtils;
 
 const brushModule = store.modules.brush;
-const referencedToolDataName = BaseBrushTool.getReferencedToolDataName();
 
 /**
  * @public
