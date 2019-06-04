@@ -30,6 +30,8 @@ export default function(
   coordSystem = 'pixel',
   initialRotation = 0.0
 ) {
+  const { isFirst } = corner3;
+
   if (coordSystem === 'pixel') {
     corner1 = external.cornerstone.pixelToCanvas(element, corner1);
     corner2 = external.cornerstone.pixelToCanvas(element, corner2);
@@ -68,9 +70,10 @@ export default function(
   }
   const square = x => x * x;
   const longestDistance = Math.sqrt(square(w) + square(h));
-  const shortestDistance = Math.sqrt(
-    square(corner3.x - center.x) + square(corner3.y - center.y)
-  );
+  const shortestDistance = isFirst
+    ? 0
+    : Math.sqrt(square(corner3.x - center.x) + square(corner3.y - center.y));
+
   const angle =
     (rotation * Math.PI) / 180 +
     Math.atan2(corner2.y - corner1.y, corner2.x - corner1.x);
@@ -80,7 +83,7 @@ export default function(
       center.x,
       center.y,
       longestDistance / 2,
-      shortestDistance / 2,
+      shortestDistance,
       angle,
       0,
       Math.PI * 2
