@@ -1,5 +1,5 @@
 /**
- * _labelmapStats - description
+ * labelmapStats - Returns the statistics of the requested labelmap.
  *
  * @param  {type} labelmapBuffer The buffer for the labelmap.
  * @param  {Number[][]} imagePixelData The pixeldata of each image slice.
@@ -13,7 +13,7 @@ export default function labelmapStats(
   sliceLength,
   segmentIndex
 ) {
-  let segmentPixelValues = [];
+  const segmentPixelValues = [];
 
   for (let img = 0; img < imagePixelData.length; img++) {
     const Uint8SliceView = new Uint8Array(
@@ -24,7 +24,7 @@ export default function labelmapStats(
     const image = imagePixelData[img];
 
     for (let ind = 0; ind < image.length; ind++) {
-      if (Uint8SliceView[ind] == segmentIndex) {
+      if (Uint8SliceView[ind] === segmentIndex) {
         segmentPixelValues.push(image[ind]);
       }
     }
@@ -36,15 +36,15 @@ export default function labelmapStats(
     mean += segmentPixelValues[i];
   }
 
-  mean / segmentPixelValues.length;
+  mean /= segmentPixelValues.length;
 
-  let stDev = 0;
+  let stdDev = 0;
 
   for (let i = 0; i < segmentPixelValues.length; i++) {
-    stDev += Math.pow(segmentPixelValues[i] - mean, 2);
+    stdDev += Math.pow(segmentPixelValues[i] - mean, 2);
   }
 
-  let stdDev = Math.pow(stDev, 0.5);
+  stdDev = Math.pow(stdDev, 0.5);
 
   return {
     maximum,

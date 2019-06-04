@@ -303,91 +303,6 @@ class BaseBrushTool extends BaseTool {
     setters.radius(newRadius);
   }
 
-  /**
-   * Displays a segmentation on the element.
-   *
-   * @public
-   * @api
-   * @param  {Number} segIndex        The index of the segmentation.
-   * @returns {void}
-   */
-  showSegmentationOnElement(segIndex) {
-    const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.uuid;
-
-    setters.brushVisibilityForElement(enabledElementUID, segIndex, true);
-
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  /**
-   * Hides a segmentation on an element.
-   *
-   * @public
-   * @api
-   * @param  {Number} segIndex        The index of the segmentation.
-   * @returns {void}
-   */
-  hideSegmentationOnElement(segIndex) {
-    const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.uuid;
-
-    setters.brushVisibilityForElement(enabledElementUID, segIndex, false);
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  /**
-   * Displays all segmentations on an element.
-   *
-   * @public
-   * @api
-   * @returns {void}
-   */
-  showAllSegmentationsOnElement() {
-    const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.uuid;
-
-    const configuration = this.configuration;
-    const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelmapIndex
-    }`;
-
-    const colormap = external.cornerstone.colors.getColormap(colorMapId);
-    const numberOfColors = colormap.getNumberOfColors();
-
-    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      setters.brushVisibilityForElement(enabledElementUID, segIndex, true);
-    }
-
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  /**
-   * Hides all segmentations on an element.
-   *
-   * @public
-   * @api
-   * @returns {void}
-   */
-  hideAllSegmentationsOnElement() {
-    const enabledElement = this._getEnabledElement();
-    const enabledElementUID = enabledElement.uuid;
-
-    const configuration = this.configuration;
-    const colorMapId = `${state.colorMapId}_${
-      configuration.activeLabelmapIndex
-    }`;
-
-    const colormap = external.cornerstone.colors.getColormap(colorMapId);
-    const numberOfColors = colormap.getNumberOfColors();
-
-    for (let segIndex = 0; segIndex < numberOfColors; segIndex++) {
-      setters.brushVisibilityForElement(enabledElementUID, segIndex, false);
-    }
-
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
   get alpha() {
     return state.alpha;
   }
@@ -399,14 +314,14 @@ class BaseBrushTool extends BaseTool {
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  get hiddenButActiveAlpha() {
-    return state.hiddenButActiveAlpha;
+  get alphaOfInactiveLabelmap() {
+    return state.alphaOfInactiveLabelmap;
   }
 
-  set hiddenButActiveAlpha(value) {
+  set alphaOfInactiveLabelmap(value) {
     const enabledElement = this._getEnabledElement();
 
-    state.hiddenButActiveAlpha = value;
+    state.alphaOfInactiveLabelmap = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
@@ -424,82 +339,6 @@ class BaseBrushTool extends BaseTool {
   static getReferencedToolDataName() {
     return 'brush';
   }
-
-  /**
-   * WIP - Invalidate all the brush data.
-   *
-   * @static
-   * @public
-   * @param {string} enabledElementUID - This identifier for the enabled element.
-   * @returns {void}
-   */
-  /*
-  static invalidateBrushOnEnabledElement(enabledElementUID) {
-    const element = store.getters.enabledElementByUID(enabledElementUID);
-
-    const stackToolState = getToolState(element, 'stack');
-
-    if (!stackToolState) {
-      return;
-    }
-
-    const imageIds = stackToolState.data[0].imageIds;
-
-    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
-
-    for (let i = 0; i < imageIds.length; i++) {
-      const imageId = imageIds[i];
-
-      if (toolState[imageId] && toolState[imageId].brush) {
-        const brushData = toolState[imageId].brush.data;
-
-        for (let j = 0; j < brushData.length; j++) {
-          if (brushData[j].pixelData) {
-            brushData[j].invalidated = true;
-          }
-        }
-      }
-    }
-
-    external.cornerstone.updateImage(element, true);
-  }
-  */
-
-  /**
-   * WIP - Returns a datacube for the segmentation.
-   *
-   * @static
-   * @param {string} enabledElementUID - This identifier for the enabled element.
-   * @returns {type}  description
-   */
-  /*
-  static getDataAsVolume(enabledElementUID) {
-    const element = store.getters.enabledElementByUID(enabledElementUID);
-
-    const stackToolState = getToolState(element, 'stack');
-
-    if (!stackToolState) {
-      return;
-    }
-
-    const imageIds = stackToolState.data[0].imageIds;
-
-    const toolState = globalImageIdSpecificToolStateManager.saveToolState();
-
-    for (let i = 0; i < imageIds.length; i++) {
-      const imageId = imageIds[i];
-
-      // TODO -> Workout HTF we will do this for multiple colors etc.
-      if (
-        toolState[imageId] &&
-        toolState[imageId].brush &&
-        toolState[imageId].brush.data[0].pixelData
-      ) {
-        // ADD brush data to the location of that slice.
-      }
-    }
-  }
-  */
 }
 
 function _isSegmentationVisibleForElement(

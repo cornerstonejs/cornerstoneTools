@@ -3,6 +3,8 @@ import { getToolState } from '../../stateManagement/toolState.js';
 import getNewColorLUT from '../../util/brush/getNewColorLUT.js';
 import labelmapStats from '../../util/brush/labelmapStats.js';
 
+import { getters as storeGetters } from '../index.js';
+
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('store:modules:brushModule');
@@ -104,6 +106,7 @@ function getAndCacheLabelmap2D(element) {
 
   const currentImageIdIndex = stackData.currentImageIdIndex;
   const { rows, columns } = enabledElement.image;
+
   const numberOfFrames = stackData.imageIds.length;
   const firstImageId = stackData.imageIds[0];
 
@@ -449,6 +452,37 @@ function setActiveLabelmap(element, labelmapIndex = 0) {
       rows * columns * numberOfFrames
     );
   }
+
+  cornerstone.updateImage(element);
+}
+
+/**
+ * Invalidate all the brush data.
+ *
+ * @param {string} elementOrEnabledElementUID - The element or the enabledElement UID This identifier for the enabled element.
+ * @returns {void}
+ */
+function invalidateBrushOnEnabledElement(
+  elementOrEnabledElementUID,
+  labelmapIndex = 0
+) {
+  let element;
+
+  if (elementOrEnabledElementUID instanceof HTMLElement) {
+    element = elementOrEnabledElementUID;
+  } else {
+    element = store.getters.enabledElementByUID(elementOrEnabledElementUID);
+  }
+
+  const { labelmaps3D } = getLabelmaps3D(element);
+
+  const labelmap3D = labelmaps3D[labelmapIndex];
+
+  if (!labelmap3D) {
+    return;
+  }
+
+  external.cornerstone.updateImage(element, true);
 }
 
 /**
@@ -628,18 +662,11 @@ function _addLabelmap2DView(
   const sliceLength = rows * columns;
   const byteOffset = sliceLength * 2 * currentImageIdIndex; // 2 bytes/pixel
 
-  logger.warn(brushStackState.labelmaps3D[labelmapIndex].buffer);
-  logger.warn(currentImageIdIndex);
-
-  logger.warn(sliceLength);
-
   const pixelData = new Uint16Array(
     brushStackState.labelmaps3D[labelmapIndex].buffer,
     byteOffset,
     sliceLength
   );
-
-  logger.warn(pixelData);
 
   brushStackState.labelmaps3D[labelmapIndex].labelmaps2D[
     currentImageIdIndex

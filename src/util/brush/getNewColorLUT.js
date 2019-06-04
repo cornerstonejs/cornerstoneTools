@@ -7,7 +7,7 @@
 export default function getNewColorLUT(numberOfColors = 255) {
   const rgbArr = [];
 
-  for (var i = 0; i < numberOfColors; i++) {
+  for (let i = 0; i < numberOfColors; i++) {
     rgbArr.push(getRGBAfromHSLA(getNextHue(), getNextL()));
   }
 
@@ -28,9 +28,9 @@ function getNextHue() {
 }
 
 let l = 0.6;
-let maxL = 0.82;
-let minL = 0.3;
-let incL = 0.07;
+const maxL = 0.82;
+const minL = 0.3;
+const incL = 0.07;
 
 function getNextL() {
   l += incL;

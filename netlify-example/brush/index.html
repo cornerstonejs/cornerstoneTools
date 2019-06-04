@@ -81,9 +81,17 @@
 								<input type="range" id="alpha" min="0" max="255">
 							</td>
 							<td>
-								alpha - The transparency of segmentations.
+								alpha - The transparency of the active segmentation.
 							</td>
 						</tr>
+            <tr>
+              <td>
+                <input type="range" id="alpha-inactive" min="0" max="255">
+              </td>
+              <td>
+                alphaOfInactiveLabelmap - The transparency of inactive segmentations.
+              </td>
+            </tr>
 					</table>
 				</div>
 			</div>
@@ -325,13 +333,22 @@
 	// API Sliders
 	const alphaSlider = document.getElementById("alpha");
 
-	alphaSlider.defaultValue = Math.floor(0.4*255);
+  alphaSlider.defaultValue = Math.floor(0.6*255);
+  alphaSlider.addEventListener('input', event => {
+    const normalisedAlpha = event.target.value/255.0;
 
-	alphaSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
+    brushTool.alpha = normalisedAlpha;
+  });
 
-		brushTool.alpha = normalisedAlpha;
-	});
+
+  const alphaOfInactiveLabelmapSlider = document.getElementById("alpha-inactive");
+
+  alphaOfInactiveLabelmapSlider.defaultValue = Math.floor(0.0);
+  alphaOfInactiveLabelmapSlider.addEventListener('input', event => {
+    const normalisedAlpha = event.target.value/255.0;
+
+    brushTool.alphaOfInactiveLabelmap = normalisedAlpha;
+  });
 
 
 </script>
