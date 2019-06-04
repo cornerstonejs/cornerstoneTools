@@ -1,10 +1,22 @@
+import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
 // State
-import { getToolState } from './../../stateManagement/toolState.js';
+import {
+  addToolState,
+  getToolState,
+  removeToolState,
+} from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolCoordinates from './../../stateManagement/toolCoordinates.js';
+
+import { moveNewHandle, moveAllHandles } from './../../manipulators/index.js';
+import anyHandlesOutsideImage from './../../manipulators/anyHandlesOutsideImage.js';
+import handleActivator from './../../manipulators/handleActivator.js';
+import getHandleNearImagePoint from './../../manipulators/getHandleNearImagePoint.js';
+import movePerpendicularHandle from './../../manipulators/movePerpendicularHandle.js';
 
 // Drawing
 import {
@@ -19,17 +31,32 @@ import {
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
 import {
-  pointInEllipse,
-  calculateEllipseStatistics,
+  pointInRotatedEllipse,
+  calculateRotatedEllipseStatistics,
 } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { rotatedEllipticalRoiCursor } from '../cursors/index.js';
+import { setToolCursor } from './../../store/setToolCursor.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 
 const logger = getLogger('tools:annotation:RotatedEllipticalRoiTool');
+const getCenter = handles => {
+  const { start, end } = handles;
+  const w = Math.abs(start.x - end.x);
+  const h = Math.abs(start.y - end.y);
+  const xMin = Math.min(start.x, end.x);
+  const yMin = Math.min(start.y, end.y);
+
+  const center = {
+    x: xMin + w / 2,
+    y: yMin + h / 2,
+  };
+
+  return center;
+};
 
 /**
  * @public
@@ -56,6 +83,38 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
+  addNewMeasurement(evt) {
+    const eventData = evt.detail;
+    const { element, image } = eventData;
+    const measurementData = this.createNewMeasurement(eventData);
+
+    addToolState(element, this.name, measurementData);
+    const { end } = measurementData.handles;
+
+    external.cornerstone.updateImage(element);
+
+    moveNewHandle(eventData, this.name, measurementData, end, {
+      doneMovingCallback: () => {
+        if (anyHandlesOutsideImage(eventData, measurementData.handles)) {
+          // Delete the measurement
+          removeToolState(element, this.name, measurementData);
+        } else {
+          const center = getCenter(measurementData.handles);
+
+          measurementData.handles.perpendicularPoint.x = center.x;
+          measurementData.handles.perpendicularPoint.y = center.y;
+          measurementData.handles.perpendicularPoint.isFirst = false;
+          this.updateCachedStats(image, element, measurementData);
+          external.cornerstone.triggerEvent(
+            element,
+            EVENTS.MEASUREMENT_COMPLETED,
+            measurementData
+          );
+        }
+      },
+    });
+  }
+
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
@@ -75,30 +134,29 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
       active: true,
       color: undefined,
       invalidated: true,
+      shortestDistance: 0,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
+          key: 'start',
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: true,
+          key: 'end',
         },
-        perpendicularStart: {
+        perpendicularPoint: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
-        },
-        perpendicularEnd: {
-          x: eventData.currentPoints.image.x,
-          y: eventData.currentPoints.image.y,
-          highlight: true,
-          active: false,
+          isFirst: true,
+          key: 'perpendicular',
         },
         initialRotation: eventData.viewport.rotation,
         textBox: {
@@ -128,7 +186,9 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
+    const { cornerstone } = external;
     const distance = interactionType === 'mouse' ? 15 : 25;
+    const center = getCenter(data.handles);
     const startCanvas = external.cornerstone.pixelToCanvas(
       element,
       data.handles.start
@@ -137,29 +197,199 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
       element,
       data.handles.end
     );
+    const perpendicularCanvas = cornerstone.pixelToCanvas(
+      element,
+      data.handles.perpendicularPoint
+    );
+    const centerCanvas = cornerstone.pixelToCanvas(element, center);
 
+    const square = x => x * x;
     const minorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) - distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) - distance,
+      xRadius:
+        Math.sqrt(
+          square(startCanvas.x - endCanvas.x) +
+            square(startCanvas.y - endCanvas.y)
+        ) /
+          2 -
+        distance / 2,
+      yRadius:
+        Math.sqrt(
+          square(perpendicularCanvas.x - centerCanvas.x) +
+            square(perpendicularCanvas.y - centerCanvas.y)
+        ) -
+        distance / 2,
+      center: centerCanvas,
     };
 
     const majorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) + distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) + distance,
+      xRadius:
+        Math.sqrt(
+          square(startCanvas.x - endCanvas.x) +
+            square(startCanvas.y - endCanvas.y)
+        ) /
+          2 +
+        distance / 2,
+      yRadius:
+        Math.sqrt(
+          square(perpendicularCanvas.x - centerCanvas.x) +
+            square(perpendicularCanvas.y - centerCanvas.y)
+        ) +
+        distance / 2,
+      center: centerCanvas,
     };
+    const theta = Math.atan2(
+      endCanvas.y - startCanvas.y,
+      endCanvas.x - startCanvas.x
+    );
 
-    const pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
-    const pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
+    const pointInMinorEllipse = pointInRotatedEllipse(
+      minorEllipse,
+      coords,
+      theta
+    );
+    const pointInMajorEllipse = pointInRotatedEllipse(
+      majorEllipse,
+      coords,
+      theta
+    );
 
     if (pointInMajorEllipse && !pointInMinorEllipse) {
       return true;
     }
 
     return false;
+  }
+
+  mouseMoveCallback(e) {
+    const eventData = e.detail;
+    const { element } = eventData;
+
+    toolCoordinates.setCoords(eventData);
+
+    // If we have no tool data for this element, do nothing
+    const toolData = getToolState(element, this.name);
+
+    if (!toolData) {
+      return;
+    }
+
+    // We have tool data, search through all data
+    // And see if we can activate a handle
+    let imageNeedsUpdate = false;
+
+    for (let i = 0; i < toolData.data.length; i++) {
+      // Get the cursor position in canvas coordinates
+      const coords = eventData.currentPoints.canvas;
+
+      const data = toolData.data[i];
+
+      if (handleActivator(eventData.element, data.handles, coords) === true) {
+        imageNeedsUpdate = true;
+      }
+
+      if (
+        (this.pointNearTool(element, data, coords) && !data.active) ||
+        (!this.pointNearTool(element, data, coords) && data.active)
+      ) {
+        data.active = !data.active;
+        imageNeedsUpdate = true;
+      }
+    }
+
+    // Handle activation status changed, redraw the image
+    if (imageNeedsUpdate === true) {
+      external.cornerstone.updateImage(eventData.element);
+    }
+  }
+
+  handleSelectedCallback(e) {
+    const eventData = e.detail;
+    let data;
+    const { element } = eventData;
+
+    const handleDoneMove = handle => {
+      data.invalidated = true;
+      if (anyHandlesOutsideImage(eventData, data.handles)) {
+        // Delete the measurement
+        removeToolState(element, this.name, data);
+      }
+
+      if (handle) {
+        handle.moving = false;
+        handle.selected = true;
+      }
+
+      setToolCursor(this.element, this.svgCursor);
+
+      external.cornerstone.updateImage(element);
+      element.addEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+      element.addEventListener(EVENTS.TOUCH_START, this._moveCallback);
+    };
+
+    const coords = eventData.startPoints.canvas;
+    const toolData = getToolState(e.currentTarget, this.name);
+
+    if (!toolData) {
+      return;
+    }
+
+    let i;
+
+    // Now check to see if there is a handle we can move
+    for (i = 0; i < toolData.data.length; i++) {
+      data = toolData.data[i];
+      const distance = 6;
+      const handle = getHandleNearImagePoint(
+        element,
+        data.handles,
+        coords,
+        distance
+      );
+
+      if (handle) {
+        element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+        data.active = true;
+        movePerpendicularHandle(
+          eventData,
+          this.name,
+          data,
+          handle,
+          handleDoneMove,
+          true
+        );
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+
+        return;
+      }
+    }
+
+    // Now check to see if there is a line we can move
+    // Now check to see if we have a tool that we can move
+    if (!this.pointNearTool) {
+      return;
+    }
+
+    const opt = {
+      deleteIfHandleOutsideImage: true,
+      preventHandleOutsideImage: false,
+    };
+
+    for (i = 0; i < toolData.data.length; i++) {
+      data = toolData.data[i];
+      data.active = false;
+      if (this.pointNearTool(element, data, coords)) {
+        data.active = true;
+        element.removeEventListener(EVENTS.MOUSE_MOVE, this.mouseMoveCallback);
+        moveAllHandles(e, data, toolData, this.name, opt, handleDoneMove);
+        e.stopImmediatePropagation();
+        e.stopPropagation();
+        e.preventDefault();
+
+        return;
+      }
+    }
   }
 
   updateCachedStats(image, element, data) {
@@ -229,10 +459,7 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
           element,
           data.handles.start,
           data.handles.end,
-          {
-            x: data.handles.end.x - 10,
-            y: data.handles.end.y - 10,
-          },
+          data.handles.perpendicularPoint,
           {
             color,
           },
@@ -261,7 +488,7 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
         }
 
         const textBoxAnchorPoints = handles =>
-          _findTextBoxAnchorPoints(handles.start, handles.end);
+          _findTextBoxAnchorPoints(handles);
         const textBoxContent = _createTextBoxContent(
           context,
           image.color,
@@ -291,36 +518,23 @@ export default class RotatedEllipticalRoiTool extends BaseAnnotationTool {
 /**
  *
  *
- * @param {*} startHandle
- * @param {*} endHandle
+ * @param {*} handles
  * @returns {Array.<{x: number, y: number}>}
  */
-function _findTextBoxAnchorPoints(startHandle, endHandle) {
-  const { left, top, width, height } = _getEllipseImageCoordinates(
-    startHandle,
-    endHandle
-  );
-
+function _findTextBoxAnchorPoints(handles) {
+  // Retrieve the bounds of the ellipse (left, top, width, and height)
   return [
     {
-      // Top middle point of ellipse
-      x: left + width / 2,
-      y: top,
+      x: handles.start.x,
+      y: handles.start.y,
     },
     {
-      // Left middle point of ellipse
-      x: left,
-      y: top + height / 2,
+      x: handles.end.x,
+      y: handles.end.y,
     },
     {
-      // Bottom middle point of ellipse
-      x: left + width / 2,
-      y: top + height,
-    },
-    {
-      // Right middle point of ellipse
-      x: left + width,
-      y: top + height / 2,
+      x: handles.perpendicularPoint.x,
+      y: handles.perpendicularPoint.y,
     },
   ];
 }
@@ -434,10 +648,41 @@ function _formatArea(area, hasPixelSpacing) {
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the ellipse in image coordinates
+  if (handles.perpendicularPoint.isFirst) {
+    return {
+      area: 0,
+      count: 0,
+      mean: 0,
+      variance: 0,
+      stdDev: 0,
+      min: 0,
+      max: 0,
+      meanStdDevSUV: 0,
+    };
+  }
   const ellipseCoordinates = _getEllipseImageCoordinates(
     handles.start,
     handles.end
   );
+  const center = getCenter(handles);
+  const square = x => x * x;
+  const xRadius =
+    Math.sqrt(
+      square(handles.start.x - handles.end.x) +
+        square(handles.start.y - handles.end.y)
+    ) / 2;
+  const yRadius = Math.sqrt(
+    square(handles.perpendicularPoint.x - center.x) +
+      square(handles.perpendicularPoint.y - center.y)
+  );
+  const theta = Math.atan2(
+    handles.end.y - handles.start.y,
+    handles.end.x - handles.start.x
+  );
+
+  ellipseCoordinates.xRadius = xRadius;
+  ellipseCoordinates.yRadius = yRadius;
+  ellipseCoordinates.center = center;
 
   // Retrieve the array of pixels that the ellipse bounds cover
   const pixels = external.cornerstone.getPixels(
@@ -449,9 +694,10 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   );
 
   // Calculate the mean & standard deviation from the pixels and the ellipse details.
-  const ellipseMeanStdDev = calculateEllipseStatistics(
+  const ellipseMeanStdDev = calculateRotatedEllipseStatistics(
     pixels,
-    ellipseCoordinates
+    ellipseCoordinates,
+    theta
   );
 
   let meanStdDevSUV;
@@ -464,10 +710,26 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   }
 
   // Calculate the image area from the ellipse dimensions and pixel spacing
+  const transformedHalfWidth =
+    Math.abs(center.x - handles.start.x) * (pixelSpacing.colPixelSpacing || 1);
+  const transformedHalfHeight =
+    Math.abs(center.y - handles.start.y) * (pixelSpacing.rowPixelSpacing || 1);
+  const transformedHalfLongestDistance = Math.sqrt(
+    square(transformedHalfWidth) + square(transformedHalfHeight)
+  );
+
+  const transformedPerpendicularWidth =
+    Math.abs(center.x - handles.perpendicularPoint.x) *
+    (pixelSpacing.colPixelSpacing || 1);
+  const transformedPerpendicularHeight =
+    Math.abs(center.y - handles.perpendicularPoint.y) *
+    (pixelSpacing.rowPixelSpacing || 1);
+  const transformedHalfShortestDistance = Math.sqrt(
+    square(transformedPerpendicularWidth) +
+      square(transformedPerpendicularHeight)
+  );
   const area =
-    Math.PI *
-    ((ellipseCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2) *
-    ((ellipseCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
+    Math.PI * transformedHalfLongestDistance * transformedHalfShortestDistance;
 
   return {
     area: area || 0,
