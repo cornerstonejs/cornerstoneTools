@@ -15,17 +15,13 @@
 		<div class="wrapper">
 			<!-- Select Tool Category -->
 			<ul class="tool-category-list">
-				<li><a class="tools" data-category="tools" href="#">Brush</a></li>
-				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+				<li><a class="tools" data-category="tools" href="#">Drag</a></li>
 			</ul>
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="tools">
 				<li><a href="#" data-tool="Brush">Brush</a></li>
-			</ul>
-			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
+        <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
 			</ul>
 
 			<!-- Our beautiful element targets -->
@@ -115,8 +111,7 @@
 	cornerstoneTools.init();
 	const imageIds = [
 		'example://1',
-		'example://2',
-		'example://3'
+		'example://2'
 	];
 	const stack = {
 		currentImageIdIndex: 0,

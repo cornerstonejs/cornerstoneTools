@@ -1,13 +1,11 @@
 /**
- * getNewBrushColorMap - Returns an array of RGB colors of length numberOfColors.
+ * getNewColorLUT - Generates an array of RGB colors of length numberOfColors.
  *
  * @param  {Number} numberOfColors = 255 The number of colors to generate
  * @returns {Number[][]}           The array of RGB values.
  */
-export default function getNewBrushColorMap(numberOfColors = 255) {
+export default function getNewColorLUT(numberOfColors = 255) {
   const rgbArr = [];
-
-  rgbArr.push([0, 0, 0, 0]);
 
   for (var i = 0; i < numberOfColors; i++) {
     rgbArr.push(getRGBAfromHSLA(getNextHue(), getNextL()));
@@ -17,12 +15,12 @@ export default function getNewBrushColorMap(numberOfColors = 255) {
 }
 
 const goldenAngle = 137.5;
-let hueValue = 0;
+let hueValue = 222.5;
 
 function getNextHue() {
   hueValue += goldenAngle;
 
-  if (hueValue > 360) {
+  if (hueValue >= 360) {
     hueValue -= 360;
   }
 
@@ -30,8 +28,8 @@ function getNextHue() {
 }
 
 let l = 0.6;
-let maxL = 0.8;
-let minL = 0.6;
+let maxL = 0.82;
+let minL = 0.3;
 let incL = 0.07;
 
 function getNextL() {
