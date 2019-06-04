@@ -194,23 +194,31 @@ describe('RotatedEllipticalRoiTool.js', () => {
             x: 3,
             y: 3,
           },
+          perpendicularPoint: {
+            x: 0,
+            y: 0,
+            isFirst: true,
+          },
         },
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('5.71');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('1.12');
+      expect(data.cachedStats.area.toFixed(2)).toEqual('0.00');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('0.00');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('0.00');
 
       data.handles.start.x = 0;
       data.handles.start.y = 0;
-      data.handles.end.x = 3;
-      data.handles.end.y = 2;
+      data.handles.end.x = 4;
+      data.handles.end.y = 4;
+      data.handles.perpendicularPoint.x = 3;
+      data.handles.perpendicularPoint.y = 1;
+      data.handles.perpendicularPoint.isFirst = false;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('3.80');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('36.33');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
+      expect(data.cachedStats.area.toFixed(2)).toEqual('10.14');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('0.00');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('0.00');
     });
   });
 
