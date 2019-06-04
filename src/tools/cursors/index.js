@@ -94,10 +94,7 @@ export const ellipticalRoiCursor = new MouseCursor(
 );
 
 export const rotatedEllipticalRoiCursor = new MouseCursor(
-  `<path stroke="ACTIVE_COLOR" fill="none" stroke-width="3" d="M30.74 15.76C30.74 20.99 24.14 25.23 16
-    25.23C7.86 25.23 1.26 20.99 1.26 15.76C1.26 10.54 7.86 6.3 16 6.3C24.14
-    6.3 30.74 10.54 30.74 15.76Z"
-    />`,
+  `<ellipse stroke="ACTIVE_COLOR" fill="none" stroke-width="3" cx="16" cy="16" rx="14" ry="8" transform="rotate(30, 16, 16)"/>`,
   {
     viewBox: {
       x: 32,
