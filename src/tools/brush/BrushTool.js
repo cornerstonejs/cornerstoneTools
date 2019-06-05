@@ -122,6 +122,7 @@ export default class BrushTool extends BaseBrushTool {
 
     // Draw / Erase the active color.
     drawBrushPixels(
+      element,
       pointerArray,
       labelmap3D,
       currentImageIdIndex,
@@ -129,8 +130,6 @@ export default class BrushTool extends BaseBrushTool {
       columns,
       shouldErase
     );
-
-    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
 
     external.cornerstone.updateImage(evt.detail.element);
   }

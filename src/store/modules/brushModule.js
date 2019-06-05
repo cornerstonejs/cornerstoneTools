@@ -402,6 +402,10 @@ async function setLabelmap3D(
     activeDrawColorId: 1,
     imageBitmapCache: null,
   };
+
+  external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+    labelmapIndex,
+  });
 }
 
 /**
