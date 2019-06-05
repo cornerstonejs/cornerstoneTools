@@ -265,17 +265,32 @@ function getBrushColor(element, drawing = false) {
 
 /**
  * getLabelmapBuffers - Returns the ArrayBuffers of each labelmap associated
- *                      with the series displayed on the element.
+ *                      with the series displayed on the element, or a specific
+ *                      one if labelmapIndex is defined.
  *
  * @param  {type} element The cornerstone enabled element.
- * @returns {Object[]}    An array of objects containing the labelmapIndex and
- *                        corresponding ArrayBuffer.
+ * @param {type} [labelmapIndex] Optional filtering to only return one labelmap.
+ * @returns {Object|Object[]} An array of objects containing the labelmapIndex and
+ *                        corresponding ArrayBuffer. Only one object if
+ *                        labelmapIndex was specified.
  */
-function getLabelmapBuffers(element) {
+function getLabelmapBuffers(element, labelmapIndex) {
   const { labelmaps3D } = getLabelmaps3D(element);
 
   if (!labelmaps3D) {
     return [];
+  }
+
+  if (labelmapIndex !== undefined) {
+    if (labelmap3D[labelmapIndex]) {
+      return {
+        labelmapIndex,
+        bytesPerVoxel: 2,
+        buffer: labelmaps3D[labelmapIndex].buffer,
+      };
+    } else {
+      return;
+    }
   }
 
   const labelmapBuffers = [];
@@ -291,6 +306,31 @@ function getLabelmapBuffers(element) {
   }
 
   return labelmapBuffers;
+}
+
+/**
+ * getActiveLabelmapBuffer - Returns the ArrayBuffer corresponding to the active
+ *                           labelmap associated with the series displayed on
+ *                           the element.
+ *
+ * @param  {type} element The cornerstone enabled element.
+ * @returns {Object}      An object containing the ArrayBuffer.
+ */
+function getActiveLabelmapBuffer(element) {
+  const cornerstone = external.cornerstone;
+  const stackState = getToolState(element, 'stack');
+  const imageIds = stackState.data[0].imageIds;
+  const firstImageId = imageIds[0];
+
+  const brushStackState = state.series[firstImageId];
+
+  if (!brushStackState) {
+    return;
+  }
+
+  const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+
+  return getLabelmapBuffers(element, activeLabelmapIndex);
 }
 
 /**
@@ -564,6 +604,7 @@ export default {
     labelmapStats: getLabelmapStats,
     brushColor: getBrushColor,
     labelmapBuffers: getLabelmapBuffers,
+    activeLabelmapBuffer: getActiveLabelmapBuffer,
   },
   setters: {
     metadata: setMetadata,
