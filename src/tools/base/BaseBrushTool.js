@@ -218,13 +218,13 @@ class BaseBrushTool extends BaseTool {
   // ===================================================================
 
   /**
-   * Switches to the next segmentation color.
+   * Switches to the next segment color.
    *
    * @public
    * @api
    * @returns {void}
    */
-  nextSegmentation() {
+  nextSegment() {
     setters.incrementBrushColor(this.element);
   }
 
@@ -235,7 +235,7 @@ class BaseBrushTool extends BaseTool {
    * @api
    * @returns {void}
    */
-  previousSegmentation() {
+  previousSegment() {
     setters.decrementBrushColor(this.element);
   }
 

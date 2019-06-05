@@ -35,7 +35,7 @@
 							<td>
 								<table>
 									<tr>
-										<td>Click and drag to use the paint with the selected segmentation.</td>
+										<td>Click and drag to paint with the selected segment.</td>
 									</tr>
 									<tr>
 										<td>Release the mouse to stop painting.</td>
@@ -306,10 +306,10 @@
 	function brushApiCall (opperation) {
 		switch (opperation) {
 			case 'next-segment':
-				brushTool.nextSegmentation();
+				brushTool.nextSegment();
 				break;
 			case 'previous-segment':
-				brushTool.previousSegmentation();
+				brushTool.previousSegment();
 				break;
       case 'switch-labelmap':
         if (activeLabelmap === 0) {
