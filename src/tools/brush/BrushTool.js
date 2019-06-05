@@ -23,7 +23,7 @@ export default class BrushTool extends BaseBrushTool {
     const defaultProps = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {},
+      configuration: { alwaysEraseOnClick: false },
     };
 
     super(props, defaultProps);
@@ -116,7 +116,8 @@ export default class BrushTool extends BaseBrushTool {
 
     const radius = brushModule.state.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
-    const shouldErase = _isCtrlDown(eventData);
+    const shouldErase =
+      _isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
     const segmentIndex = labelmap3D.activeDrawColorId;
 
     // Draw / Erase the active color.

@@ -1,11 +1,7 @@
-import { getToolState, addToolState } from '../stateManagement/toolState.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import external from '../externalModules.js';
 import store from '../store/index.js';
 
 const brushModule = store.modules.brush;
-
-const referencedToolDataName = BaseBrushTool.getReferencedToolDataName();
 
 /**
  * Clears the brush imageBitmapCache,

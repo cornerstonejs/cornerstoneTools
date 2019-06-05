@@ -1,19 +1,10 @@
 import store from '../store/index.js';
-import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
-import { getToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import {
   getNewContext,
   resetCanvasContextTransform,
   transformCanvasContext,
 } from '../drawing/index.js';
-
-import { getLogger } from '../util/logger.js';
-
-const logger = getLogger('store:modules:brushModule');
-
-const brushModule = store.modules.brush;
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
@@ -55,7 +46,7 @@ if (!('createImageBitmap' in window)) {
   };
 }
 
-const { state, getters, setters } = store.modules.brush;
+const { state, getters } = store.modules.brush;
 
 /**
  * Used to redraw the brush label map data per render.
@@ -72,7 +63,7 @@ export default function(evt) {
     activeLabelmapIndex,
     labelmaps3D,
     currentImageIdIndex,
-  } = brushModule.getters.labelmaps3D(element);
+  } = getters.labelmaps3D(element);
 
   if (!labelmaps3D) {
     return;
@@ -95,8 +86,8 @@ export default function(evt) {
 /**
  * renderActiveLabelMap - Renders the active label map for this element.
  *
- * @param  {object} evt                 The cornerstone event.
- * @param  {object[]} labelmaps3D       An array of labelmaps.
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Object[]} labelmaps3D       An array of labelmaps.
  * @param  {number} activeLabelmapIndex The index of the active label map.
  * @param  {number} currentImageIdIndex The in-stack image position.
  * @returns {null}
@@ -124,8 +115,8 @@ function renderActiveLabelMap(
  * renderInactiveLabelMaps - Renders all the inactive label maps if the global
  * alphaOfInactiveLabelmap setting is not zero.
  *
- * @param  {object} evt                 The cornerstone event.
- * @param  {object[]} labelmaps3D       An array of labelmaps.
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Object[]} labelmaps3D       An array of labelmaps.
  * @param  {number} activeLabelmapIndex The index of the active label map.
  * @param  {number} currentImageIdIndex The in-stack image position.
  * @returns {null}
@@ -136,7 +127,7 @@ function renderInactiveLabelMaps(
   activeLabelmapIndex,
   currentImageIdIndex
 ) {
-  if (brushModule.state.alphaOfInactiveLabelmap === 0) {
+  if (state.alphaOfInactiveLabelmap === 0) {
     // Don't bother rendering a whole labelmaps with full transparency!
     return;
   }
@@ -159,10 +150,10 @@ function renderInactiveLabelMaps(
 /**
  * renderSegmentation - Renders the labelmap2D to the canvas.
  *
- * @param  {object} evt              The cornerstone event.
- * @param  {object} labelmap3D       The 3D labelmap.
+ * @param  {Object} evt              The cornerstone event.
+ * @param  {Object} labelmap3D       The 3D labelmap.
  * @param  {number} labelmapIndex    The index of the labelmap.
- * @param  {object} labelmap2D       The 2D labelmap for this current image.
+ * @param  {Object} labelmap2D       The 2D labelmap for this current image.
  * @param  {number} isActiveLabelMap   Whether the labelmap is active.
  * @returns {null}
  */
@@ -192,10 +183,10 @@ function renderSegmentation(
  * createNewBitmapAndQueueRenderOfSegmentation - Creates a bitmap from the
  * labelmap2D and queues a re-render once it is built.
  *
- * @param  {object} evt           The cornerstone event.
- * @param  {object} labelmap3D    The 3D labelmap.
+ * @param  {Object} evt           The cornerstone event.
+ * @param  {Object} labelmap3D    The 3D labelmap.
  * @param  {number} labelmapIndex The index of the labelmap.
- * @param  {object} labelmap2D    The 2D labelmap for the current image.
+ * @param  {Object} labelmap2D    The 2D labelmap for the current image.
  * @returns {null}
  */
 function createNewBitmapAndQueueRenderOfSegmentation(
@@ -206,7 +197,6 @@ function createNewBitmapAndQueueRenderOfSegmentation(
 ) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const enabledElement = external.cornerstone.getEnabledElement(element);
 
   const pixelData = labelmap2D.pixelData;
 
@@ -220,7 +210,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(
     getPixelData: () => pixelData,
   };
 
-  const colorMapId = `${brushModule.state.colorMapId}_${labelmapIndex}`;
+  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
@@ -232,7 +222,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(
     labelmap3D.imageBitmapCache = newImageBitmap;
     labelmap2D.invalidated = false;
 
-    external.cornerstone.updateImage(eventData.element);
+    external.cornerstone.updateImage(element);
   });
 }
 

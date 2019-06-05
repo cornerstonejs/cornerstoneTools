@@ -11,3 +11,4 @@ The `BaseAnnotationTool` is an extension of `BaseTool` for Tools that create and
   - `mouseMoveCallback`
   - `handleSelectedCallback`
   - `toolSelectedCallback`
+  - `updateCachedStats`

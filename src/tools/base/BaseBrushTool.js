@@ -3,8 +3,6 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 
 const { state, setters } = store.modules.brush;
 

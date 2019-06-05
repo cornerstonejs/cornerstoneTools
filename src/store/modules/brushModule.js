@@ -30,22 +30,19 @@ const state = {
  * @param  {HTMLElement} element          The cornerstone enabled element.
  * @param  {number} labelmapIndex = 0     The labelmap index.
  * @param  {number} segmentIndex          The segment index.
- * @returns {object|object[]}             A metadata object or an array of
+ * @returns {Object|Object[]}             A metadata object or an array of
  *                                        metadata objects.
  */
 function getMetadata(element, labelmapIndex = 0, segmentIndex) {
-  let firstImageId;
-
-  const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
-
-  firstImageId = stackData.imageIds[0];
+  const firstImageId = stackData.imageIds[0];
 
   const brushStackState = state.series[firstImageId];
 
   if (!(brushStackState || brushStackState.labelmaps3D[labelmapIndex])) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
+
     return;
   }
 
@@ -63,11 +60,10 @@ function getMetadata(element, labelmapIndex = 0, segmentIndex) {
  * in the element, the activeLabelmapIndex and the currentImageIdIndex.
  *
  * @param  {HTMLElement} element  The cornerstone enabled element.
- * @returns {object}              An object containing the 3D labelmaps,
+ * @returns {Object}              An object containing the 3D labelmaps,
  *                                the activeLabelmapIndex amd the currentImageIdIndex.
  */
 function getLabelmaps3D(element) {
-  const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
 
@@ -95,7 +91,7 @@ function getLabelmaps3D(element) {
  *                         for the currentImageIdIndex if it does not yet exist.
  *
  * @param  {HTMLElement} element  The cornerstone enabled element.
- * @returns {object}              The 3D labelmap and the currentImageIdIndex.
+ * @returns {Object}              The 3D labelmap and the currentImageIdIndex.
  */
 function getAndCacheLabelmap2D(element) {
   const cornerstone = external.cornerstone;
@@ -175,14 +171,13 @@ function getAndCacheLabelmap2D(element) {
  *
  * @param  {HTMLElement} element  The cornerstone enabled element.
  * @param  {number} segmentIndex  The segment index to query.
- * @returns {object}              An object containing the maximum pixel value,
+ * @returns {Object}              An object containing the maximum pixel value,
  *                                the mean and the standard deviation.
  */
 function getLabelmapStats(element, segmentIndex) {
   return new Promise(resolve => {
     const cornerstone = external.cornerstone;
     const stackState = getToolState(element, 'stack');
-    const stackData = stackState.data[0];
     const imageIds = stackState.data[0].imageIds;
     const firstImageId = imageIds[0];
 
@@ -219,6 +214,7 @@ function getLabelmapStats(element, segmentIndex) {
         rows * columns,
         segmentIndex
       );
+
       resolve(stats);
     });
   });
@@ -233,7 +229,6 @@ function getLabelmapStats(element, segmentIndex) {
  * @returns {string}                    An rgba value as a string.
  */
 function getBrushColor(element, drawing = false) {
-  const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];
@@ -271,7 +266,7 @@ function getBrushColor(element, drawing = false) {
  *                      with the series displayed on the element.
  *
  * @param  {type} element The cornerstone enabled element.
- * @returns {object[]}    An array of objects containing the labelmapIndex and
+ * @returns {Object[]}    An array of objects containing the labelmapIndex and
  *                        corresponding ArrayBuffer.
  */
 function getLabelmapBuffers(element) {
@@ -303,7 +298,7 @@ function getLabelmapBuffers(element) {
  * @param  {HTMLElement} element           The cornerstone enabled element.
  * @param  {number} labelmapIndex = 0 The labelmap index.
  * @param  {number} segmentIndex      The segment index.
- * @param  {object} metadata          The metadata object to set.
+ * @param  {Object} metadata          The metadata object to set.
  * @returns {null}
  */
 function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
@@ -326,7 +321,6 @@ function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     const enabledElement = cornerstone.getEnabledElement(element);
 
-    const currentImageIdIndex = stackData.currentImageIdIndex;
     const { rows, columns } = enabledElement.image;
     const numberOfFrames = stackData.imageIds.length;
 
@@ -351,37 +345,24 @@ function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
  *                                    or The first imageId of the the series.
  * @param  {ArrayBuffer} buffer
  * @param  {number} labelmapIndex The index to store the labelmap under.
- * @param  {object[]} metadata = [] Any metadata about the segments.
+ * @param  {Object[]} metadata = [] Any metadata about the segments.
  * @returns {null}
  */
-async function setLabelmap3D(
+function setLabelmap3D(
   elementOrFirstImageId,
   buffer,
   labelmapIndex,
   metadata = []
 ) {
-  const cornerstone = external.cornerstone;
-
   let firstImageId;
-  let rows;
-  let columns;
 
   if (elementOrFirstImageId instanceof HTMLElement) {
     const element = elementOrFirstImageId;
     const stackState = getToolState(element, 'stack');
-    const stackData = stackState.data[0];
 
-    const enabledElement = cornerstone.getEnabledElement(element);
-
-    firstImageId = stackData.imageIds[0];
-    rows = enabledElement.image.rows;
-    columns = enabledElement.image.columns;
+    firstImageId = stackState.data[0].imageIds[0];
   } else {
-    const image = await cornerstone.loadAndCacheImage(firstImageId);
-
     firstImageId = elementOrFirstImageId;
-    rows = image.rows;
-    columns = image.columns;
   }
 
   let brushStackState = state.series[firstImageId];
@@ -457,10 +438,13 @@ function setActiveLabelmap(element, labelmapIndex = 0) {
 }
 
 /**
- * Invalidate all the brush data.
+ * Invalidate all the brush data for a labelmap. Useful if multiple libraries
+ * are writting to the same labelmap.
  *
- * @param {string} elementOrEnabledElementUID - The element or the enabledElement UID This identifier for the enabled element.
- * @returns {void}
+ * @param {string} elementOrEnabledElementUID - The cornerstone enabled element
+ * or the enabledElement UID This identifier for the enabled element.
+ * @param {number} labelmapIndex - The labelmap index.
+ * @returns {null}
  */
 function invalidateBrushOnEnabledElement(
   elementOrEnabledElementUID,
@@ -471,7 +455,7 @@ function invalidateBrushOnEnabledElement(
   if (elementOrEnabledElementUID instanceof HTMLElement) {
     element = elementOrEnabledElementUID;
   } else {
-    element = store.getters.enabledElementByUID(elementOrEnabledElementUID);
+    element = storeGetters.enabledElementByUID(elementOrEnabledElementUID);
   }
 
   const { labelmaps3D } = getLabelmaps3D(element);
@@ -527,6 +511,7 @@ function _validColorLUTLength(colorLUT, segmentsPerLabelmap) {
           colorLUT.length
         } labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}.`
       );
+
       return false;
     } else if (colorLUT.length > segmentsPerLabelmap) {
       logger.warn(
@@ -566,7 +551,7 @@ export default {
   getters: {
     metadata: getMetadata,
     labelmaps3D: getLabelmaps3D,
-    getAndCacheLabelmap2D: getAndCacheLabelmap2D,
+    getAndCacheLabelmap2D,
     labelmapStats: getLabelmapStats,
     brushColor: getBrushColor,
     labelmapBuffers: getLabelmapBuffers,
@@ -579,6 +564,7 @@ export default {
     colorLUT: setColorLUT,
     activeLabelmap: setActiveLabelmap,
     radius: setRadius,
+    invalidateBrushOnEnabledElement,
   },
 };
 
@@ -591,7 +577,6 @@ export default {
  * @returns {null}
  */
 function _changeBrushColor(element, increaseOrDecrease = 'increase') {
-  const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];
@@ -626,7 +611,7 @@ function _changeBrushColor(element, increaseOrDecrease = 'increase') {
 /**
  * _addLabelmap3D - Adds a 3D labelmap to the brushStackState.
  *
- * @param  {object} brushStackState The labelmap state for a particular stack.
+ * @param  {Object} brushStackState The labelmap state for a particular stack.
  * @param  {number} labelmapIndex   The labelmapIndex to set.
  * @param  {number} size            The size of the ArrayBuffer in bytes.
  * @returns {null}
@@ -645,7 +630,7 @@ function _addLabelmap3D(brushStackState, labelmapIndex, size) {
 /**
  * _addLabelmap2DView - Adds a 2D view of one slice of a 3D labelmap.
  *
- * @param  {object} brushStackState     The labelmap state for a particular stack.
+ * @param  {Object} brushStackState     The labelmap state for a particular stack.
  * @param  {number} labelmapIndex       The labelmap index.
  * @param  {number} currentImageIdIndex The stack position of the current image.
  * @param  {number} rows                The number of rows in the image.
@@ -672,9 +657,7 @@ function _addLabelmap2DView(
     currentImageIdIndex
   ] = {
     pixelData,
-    getSegmentIndexes: () => {
-      return new Set(pixelData);
-    },
+    getSegmentIndexes: () => new Set(pixelData),
     invalidated: true,
   };
   // Clear cache for this displaySet to avoid flickering.

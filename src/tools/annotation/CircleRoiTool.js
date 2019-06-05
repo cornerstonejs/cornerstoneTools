@@ -23,6 +23,8 @@ import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import { circleRoiCursor } from '../cursors/index.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -39,9 +41,12 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: circleRoiCursor,
     };
 
     super(props, defaultProps);
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -128,6 +133,25 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     );
   }
 
+  updateCachedStats(image, element, data) {
+    const seriesModule =
+      external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
+      {};
+    const modality = seriesModule.modality;
+    const pixelSpacing = getPixelSpacing(image);
+
+    const stats = _calculateStats(
+      image,
+      element,
+      data.handles,
+      modality,
+      pixelSpacing
+    );
+
+    data.cachedStats = stats;
+    data.invalidated = false;
+  }
+
   renderToolData(evt) {
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -140,24 +164,16 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
     const { handleRadius, drawHandlesOnHover } = this.configuration;
     const newContext = getNewContext(canvasContext.canvas);
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     // Meta
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
-    const imagePlane =
-      external.cornerstone.metaData.get('imagePlaneModule', image.imageId) ||
-      {};
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing =
-      imagePlane && imagePlane.rowPixelSpacing && imagePlane.columnPixelSpacing;
-
-    const pixelSpacing = {
-      rowPixelSpacing: imagePlane.rowPixelSpacing || 1,
-      columnPixelSpacing: imagePlane.columnPixelSpacing || 1,
-    };
+    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
 
     draw(newContext, context => {
       // If we have tool data for this element, iterate over each set and draw it
@@ -208,15 +224,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         // Update textbox stats
         if (data.invalidated === true) {
           if (data.cachedStats) {
-            _throttledUpdateCachedStats(
-              image,
-              element,
-              data,
-              modality,
-              pixelSpacing
-            );
+            this.throttledUpdateCachedStats(image, element, data);
           } else {
-            _updateCachedStats(image, element, data, modality, pixelSpacing);
+            this.updateCachedStats(image, element, data);
           }
         }
 
@@ -257,34 +267,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       }
     });
   }
-}
-
-/**
- *
- */
-const _throttledUpdateCachedStats = throttle(_updateCachedStats, 110);
-
-/**
- *
- *
- * @param {*} image
- * @param {*} element
- * @param {*} data
- * @param {string} modality
- * @param {*} pixelSpacing
- * @returns {void}
- */
-function _updateCachedStats(image, element, data, modality, pixelSpacing) {
-  const stats = _calculateStats(
-    image,
-    element,
-    data.handles,
-    modality,
-    pixelSpacing
-  );
-
-  data.cachedStats = stats;
-  data.invalidated = false;
 }
 
 /**
@@ -464,7 +446,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   const area =
     Math.PI *
-    ((circleCoordinates.width * (pixelSpacing.columnPixelSpacing || 1)) / 2) *
+    ((circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2) *
     ((circleCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
 
   return {

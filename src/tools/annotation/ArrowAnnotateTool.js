@@ -2,12 +2,15 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
+import EVENTS from './../../events.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import triggerEvent from './../../util/triggerEvent.js';
+
 import {
   addToolState,
   removeToolState,
@@ -86,6 +89,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
       25
     );
+  }
+
+  updateCachedStats(image, element, data) {
+    // No stats calculation for this tool
   }
 
   renderToolData(evt) {
@@ -244,13 +251,22 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         doneMovingCallback: () => {
           if (measurementData.text === undefined) {
             this.configuration.getTextCallback(text => {
+              measurementData.active = false;
+
               if (text) {
                 measurementData.text = text;
+                const eventType = EVENTS.MEASUREMENT_COMPLETED;
+                const eventData = {
+                  toolName: this.name,
+                  element,
+                  measurementData,
+                };
+
+                triggerEvent(element, eventType, eventData);
               } else {
                 removeToolState(element, this.name, measurementData);
               }
 
-              measurementData.active = false;
               external.cornerstone.updateImage(element);
             });
           }
