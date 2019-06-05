@@ -2,6 +2,7 @@ import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import getNewColorLUT from '../../util/brush/getNewColorLUT.js';
 import labelmapStats from '../../util/brush/labelmapStats.js';
+import EVENTS from '../../events.js';
 
 import { getters as storeGetters } from '../index.js';
 
@@ -166,6 +167,7 @@ function getAndCacheLabelmap2D(element) {
   return {
     labelmap3D: brushStackState.labelmaps3D[activeLabelmapIndex],
     currentImageIdIndex,
+    activeLabelmapIndex,
   };
 }
 
@@ -365,9 +367,10 @@ async function setLabelmap3D(
   let firstImageId;
   let rows;
   let columns;
+  let element;
 
   if (elementOrFirstImageId instanceof HTMLElement) {
-    const element = elementOrFirstImageId;
+    element = elementOrFirstImageId;
     const stackState = getToolState(element, 'stack');
     const stackData = stackState.data[0];
 
@@ -403,9 +406,11 @@ async function setLabelmap3D(
     imageBitmapCache: null,
   };
 
-  external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
-    labelmapIndex,
-  });
+  if (element) {
+    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+      labelmapIndex,
+    });
+  }
 }
 
 /**

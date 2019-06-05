@@ -14,7 +14,6 @@ import { draw, fillBox } from '../../drawing/index.js';
  * @returns {null}
  */
 function drawBrushPixels(
-  element,
   pointerArray,
   labelmap3D,
   imageIdIndex,
@@ -42,10 +41,6 @@ function drawBrushPixels(
   if (shouldErase && pixelData.some(element => !element)) {
     delete labelmap3D.labelmaps2D[imageIdIndex];
   }
-
-  external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
-    labelmapIndex,
-  });
 }
 
 export { drawBrushPixels };
