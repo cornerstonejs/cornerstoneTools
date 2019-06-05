@@ -112,6 +112,7 @@ export default class BrushTool extends BaseBrushTool {
     const {
       labelmap3D,
       currentImageIdIndex,
+      activeLabelmapIndex,
     } = brushModule.getters.getAndCacheLabelmap2D(element);
 
     const radius = brushModule.state.radius;
@@ -122,7 +123,6 @@ export default class BrushTool extends BaseBrushTool {
 
     // Draw / Erase the active color.
     drawBrushPixels(
-      element,
       pointerArray,
       labelmap3D,
       currentImageIdIndex,
@@ -130,6 +130,10 @@ export default class BrushTool extends BaseBrushTool {
       columns,
       shouldErase
     );
+
+    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+      activeLabelmapIndex,
+    });
 
     external.cornerstone.updateImage(evt.detail.element);
   }
