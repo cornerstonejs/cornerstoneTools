@@ -1,4 +1,5 @@
 import external from '../../externalModules.js';
+import EVENTS from '../../events.js';
 import { draw, fillBox } from '../../drawing/index.js';
 
 /**
@@ -13,6 +14,7 @@ import { draw, fillBox } from '../../drawing/index.js';
  * @returns {null}
  */
 function drawBrushPixels(
+  element,
   pointerArray,
   labelmap3D,
   imageIdIndex,
@@ -40,46 +42,10 @@ function drawBrushPixels(
   if (shouldErase && pixelData.some(element => !element)) {
     delete labelmap3D.labelmaps2D[imageIdIndex];
   }
-}
 
-/**
- * Draws the brush data to the canvas.
- * @export @public @method
- *
- * @param  {Object[]} pointerArray Array of points to draw.
- * @param  {Object} context      The canvas context.
- * @param  {string} color        The color to draw the pixels.
- * @param  {HTMLElement} element      The element on which the canvas resides.
- * @returns {void}
- */
-function drawBrushOnCanvas(pointerArray, context, color, element) {
-  const canvasPtTL = external.cornerstone.pixelToCanvas(element, {
-    x: 0,
-    y: 0,
-  });
-  const canvasPtBR = external.cornerstone.pixelToCanvas(element, {
-    x: 1,
-    y: 1,
-  });
-  const sizeX = canvasPtBR.x - canvasPtTL.x;
-  const sizeY = canvasPtBR.y - canvasPtTL.y;
-
-  draw(context, context => {
-    pointerArray.forEach(point => {
-      const canvasPt = external.cornerstone.pixelToCanvas(element, {
-        x: point[0],
-        y: point[1],
-      });
-      const boundingBox = {
-        left: canvasPt.x,
-        top: canvasPt.y,
-        width: sizeX,
-        height: sizeY,
-      };
-
-      fillBox(context, boundingBox, color);
-    });
+  external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+    labelmapIndex,
   });
 }
 
-export { drawBrushPixels, drawBrushOnCanvas };
+export { drawBrushPixels };
