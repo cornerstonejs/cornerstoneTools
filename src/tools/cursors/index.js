@@ -93,7 +93,7 @@ export const ellipticalRoiCursor = new MouseCursor(
   }
 );
 
-export const freehandMouseCursor = new MouseCursor(
+export const freehandRoiCursor = new MouseCursor(
   `
   <g fill="ACTIVE_COLOR" stroke="ACTIVE_COLOR" stroke-width="2">
     <ellipse ry="1" rx="1" id="svg_3" cy="4.240343" cx="14.306499"/>
@@ -135,7 +135,7 @@ export const freehandMouseCursor = new MouseCursor(
   }
 );
 
-export const freehandSculpterMouseCursor = new MouseCursor(
+export const freehandRoiSculptorCursor = new MouseCursor(
   `<g id="icon-freehand-sculpt" fill="none" stroke-width="1.5" stroke="ACTIVE_COLOR" stroke-linecap="round" stroke-linejoin="round">
       <line id="svg_1" y2="2.559367" x2="10.184807" y1="4.467781" x1="8.81711"/>
       <line id="svg_4" y2="1.493836" x2="11.727442" y1="2.766112" x1="10.089386"/>
