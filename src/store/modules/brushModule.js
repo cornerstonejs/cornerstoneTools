@@ -28,13 +28,24 @@ const state = {
  * segmentIndex is specified, otherwise returns an array of all segment metadata
  * for the labelmap.
  *
- * @param  {HTMLElement} element          The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param  {number} labelmapIndex = 0     The labelmap index.
  * @param  {number} segmentIndex          The segment index.
  * @returns {Object|Object[]}             A metadata object or an array of
  *                                        metadata objects.
  */
-function getMetadata(element, labelmapIndex = 0, segmentIndex) {
+function getMetadata(
+  elementOrEnabledElementUID,
+  labelmapIndex = 0,
+  segmentIndex
+) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];
@@ -60,11 +71,18 @@ function getMetadata(element, labelmapIndex = 0, segmentIndex) {
  * getLabelmaps3D - Returns the labelmaps associated with the series displayed
  * in the element, the activeLabelmapIndex and the currentImageIdIndex.
  *
- * @param  {HTMLElement} element  The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @returns {Object}              An object containing the 3D labelmaps,
  *                                the activeLabelmapIndex amd the currentImageIdIndex.
  */
-function getLabelmaps3D(element) {
+function getLabelmaps3D(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
 
@@ -91,10 +109,17 @@ function getLabelmaps3D(element) {
  *                         Allocates memory for the labelmap and sets a 2D view
  *                         for the currentImageIdIndex if it does not yet exist.
  *
- * @param  {HTMLElement} element  The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @returns {Object}              The 3D labelmap and the currentImageIdIndex.
  */
-function getAndCacheLabelmap2D(element) {
+function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
@@ -171,12 +196,19 @@ function getAndCacheLabelmap2D(element) {
  * getLabelmapStats - returns the maximum pixel value, mean and standard
  * deviation of the segment given by the segmentIndex of the scan on the element.
  *
- * @param  {HTMLElement} element  The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param  {number} segmentIndex  The segment index to query.
  * @returns {Object}              An object containing the maximum pixel value,
  *                                the mean and the standard deviation.
  */
-function getLabelmapStats(element, segmentIndex) {
+function getLabelmapStats(elementOrEnabledElementUID, segmentIndex) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   return new Promise(resolve => {
     const cornerstone = external.cornerstone;
     const stackState = getToolState(element, 'stack');
@@ -226,11 +258,18 @@ function getLabelmapStats(element, segmentIndex) {
  * getBrushColor - Returns the brush color as a string for the active segment of
  * the active labelmap for the series displayed on the element.
  *
- * @param  {HTMLElement} element        The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param  {boolean} drawing = false    Whether the user is drawing or not.
  * @returns {string}                    An rgba value as a string.
  */
-function getBrushColor(element, drawing = false) {
+function getBrushColor(elementOrEnabledElementUID, drawing = false) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];
@@ -268,13 +307,20 @@ function getBrushColor(element, drawing = false) {
  *                      with the series displayed on the element, or a specific
  *                      one if labelmapIndex is defined.
  *
- * @param  {type} element The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param {type} [labelmapIndex] Optional filtering to only return one labelmap.
  * @returns {Object|Object[]} An array of objects containing the labelmapIndex and
  *                        corresponding ArrayBuffer. Only one object if
  *                        labelmapIndex was specified.
  */
-function getLabelmapBuffers(element, labelmapIndex) {
+function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const { labelmaps3D } = getLabelmaps3D(element);
 
   if (!labelmaps3D) {
@@ -282,7 +328,7 @@ function getLabelmapBuffers(element, labelmapIndex) {
   }
 
   if (labelmapIndex !== undefined) {
-    if (labelmap3D[labelmapIndex]) {
+    if (labelmaps3D[labelmapIndex]) {
       return {
         labelmapIndex,
         bytesPerVoxel: 2,
@@ -313,10 +359,17 @@ function getLabelmapBuffers(element, labelmapIndex) {
  *                           labelmap associated with the series displayed on
  *                           the element.
  *
- * @param  {type} element The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @returns {Object}      An object containing the ArrayBuffer.
  */
-function getActiveLabelmapBuffer(element) {
+function getActiveLabelmapBuffer(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const imageIds = stackState.data[0].imageIds;
@@ -336,14 +389,26 @@ function getActiveLabelmapBuffer(element) {
 /**
  * setMetadata - Sets the metadata object for a particular segment of a
  * labelmap3D.
-
- * @param  {HTMLElement} element           The cornerstone enabled element.
+ *
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param  {number} labelmapIndex = 0 The labelmap index.
  * @param  {number} segmentIndex      The segment index.
  * @param  {Object} metadata          The metadata object to set.
  * @returns {null}
  */
-function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
+function setMetadata(
+  elementOrEnabledElementUID,
+  labelmapIndex = 0,
+  segmentIndex,
+  metadata
+) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
@@ -379,8 +444,8 @@ function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
 }
 
 /**
- * setLabelmap3DForFirstImageId - Takes an 16-bit encoded ArrayBuffer and stores
- * it as a segmentation for the series assoicated with the firstImageId.
+ * setLabelmap3D - Takes an 16-bit encoded ArrayBuffer and stores
+ * it as a segmentation for the series assoicated with the element.
  *
  * @param  {HTMLElement|string} elementOrFirstImageId The cornerstone enabled
  *                                    element currently displaying the series,
@@ -390,24 +455,44 @@ function setMetadata(element, labelmapIndex = 0, segmentIndex, metadata) {
  * @param  {Object[]} metadata = [] Any metadata about the segments.
  * @returns {null}
  */
-function setLabelmap3D(
-  elementOrFirstImageId,
+function setLabelmap3DForElement(
+  elementOrEnabledElementUID,
   buffer,
   labelmapIndex,
   metadata = []
 ) {
-  let firstImageId;
-  let element;
+  const element = _getEnabledElement(elementOrEnabledElementUID);
 
-  if (elementOrFirstImageId instanceof HTMLElement) {
-    element = elementOrFirstImageId;
-    const stackState = getToolState(element, 'stack');
-
-    firstImageId = stackState.data[0].imageIds[0];
-  } else {
-    firstImageId = elementOrFirstImageId;
+  if (!element) {
+    return;
   }
 
+  const stackState = getToolState(element, 'stack');
+  const numberOfFrames = stackState.data[0].imageIds.length;
+  const firstImageId = stackState.data[0].imageIds[0];
+
+  setLabelmap3DByFirstImageId(
+    firstImageId,
+    buffer,
+    labelmapIndex,
+    metadata,
+    numberOfFrames
+  );
+
+  if (element) {
+    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+      labelmapIndex,
+    });
+  }
+}
+
+function setLabelmap3DByFirstImageId(
+  firstImageId,
+  buffer,
+  labelmapIndex,
+  metadata = [],
+  numberOfFrames
+) {
   let brushStackState = state.series[firstImageId];
 
   if (!brushStackState) {
@@ -427,10 +512,25 @@ function setLabelmap3D(
     imageBitmapCache: null,
   };
 
-  if (element) {
-    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
-      labelmapIndex,
-    });
+  const labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
+
+  const slicelengthInBytes = buffer / numberOfFrames;
+  const sliceLengthInUint16 = slicelengthInBytes / 2; //sliceLength in Uint16.
+
+  for (let i = 0; i < numberOfFrames; i++) {
+    const pixelData = new Uint16Array(
+      buffer,
+      slicelengthInBytes * i,
+      sliceLengthInUint16
+    );
+
+    if (pixelData.some(element => !element)) {
+      labelmaps2D[i] = {
+        pixelData,
+        getSegmentIndexes: () => new Set(pixelData),
+        invalidated: true,
+      };
+    }
   }
 }
 
@@ -439,11 +539,18 @@ function setLabelmap3D(
  * elemenet to the labelmap given by the labelmapIndex. Creates the labelmap if
  * it doesn't exist.
  *
- * @param  {HTMLElement} element           The cornerstone enabled element.
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
  * @param  {number} labelmapIndex = 0 The index of the labelmap.
  * @returns {null}
  */
-function setActiveLabelmap(element, labelmapIndex = 0) {
+function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
@@ -487,6 +594,80 @@ function setActiveLabelmap(element, labelmapIndex = 0) {
 }
 
 /**
+ * setIncrementBrushColor - Increment the brush color for the active labelmap on
+ *                          the element.
+ *
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
+ * @returns {null}
+ */
+function setIncrementBrushColor(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  _changeBrushColor(element, 'increase');
+}
+
+/**
+ * setDecrementBrushColor - Decrement the brush color for the active labelmap on
+ *                          the element.
+ *
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
+ * @returns {null}
+ */
+function setDecrementBrushColor(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  _changeBrushColor(element, 'decrease');
+}
+
+/**
+ * setBrushColor - Set the brush color for the active labelmap on
+ *                          the element.
+ *
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
+ * @param {number}  segmentIndex The index to set the brush to.
+ * @returns {null}
+ */
+function setBrushColor(elementOrEnabledElementUID, segmentIndex) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const firstImageId = stackData.imageIds[0];
+
+  const brushStackState = state.series[firstImageId];
+
+  if (!brushStackState) {
+    return;
+  }
+
+  const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
+  const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
+
+  if (segmentIndex <= 0) {
+    segmentIndex = 1;
+  } else if (segmentIndex > state.segmentsPerLabelmap) {
+    segmentIndex = state.segmentsPerLabelmap;
+  }
+
+  labelmap3D.activeDrawColorId = segmentIndex;
+}
+
+/**
  * Invalidate all the brush data for a labelmap. Useful if multiple libraries
  * are writting to the same labelmap.
  *
@@ -499,12 +680,10 @@ function invalidateBrushOnEnabledElement(
   elementOrEnabledElementUID,
   labelmapIndex = 0
 ) {
-  let element;
+  const element = _getEnabledElement(elementOrEnabledElementUID);
 
-  if (elementOrEnabledElementUID instanceof HTMLElement) {
-    element = elementOrEnabledElementUID;
-  } else {
-    element = storeGetters.enabledElementByUID(elementOrEnabledElementUID);
+  if (!element) {
+    return;
   }
 
   const { labelmaps3D } = getLabelmaps3D(element);
@@ -516,6 +695,14 @@ function invalidateBrushOnEnabledElement(
   }
 
   external.cornerstone.updateImage(element, true);
+}
+
+function _getEnabledElement(elementOrEnabledElementUID) {
+  if (elementOrEnabledElementUID instanceof HTMLElement) {
+    return elementOrEnabledElementUID;
+  }
+
+  return storeGetters.enabledElementByUID(elementOrEnabledElementUID);
 }
 
 /**
@@ -608,9 +795,11 @@ export default {
   },
   setters: {
     metadata: setMetadata,
-    labelmap3D: setLabelmap3D,
-    incrementBrushColor: element => _changeBrushColor(element, 'increase'),
-    decrementBrushColor: element => _changeBrushColor(element, 'decrease'),
+    labelmap3DForElement: setLabelmap3DForElement,
+    labelmap3DByFirstImageId: setLabelmap3DByFirstImageId,
+    incrementBrushColor: setIncrementBrushColor,
+    decrementBrushColor: setDecrementBrushColor,
+    brushColor: setBrushColor,
     colorLUT: setColorLUT,
     activeLabelmap: setActiveLabelmap,
     radius: setRadius,
