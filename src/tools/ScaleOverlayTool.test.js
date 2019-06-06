@@ -18,7 +18,7 @@ jest.mock('../drawing/index.js', () => ({
   getNewContext: jest.fn(),
 }));
 
-jest.mock('../import.js', () => ({
+jest.mock('../importInternalModule.js', () => ({
   default: jest.fn(),
 }));
 

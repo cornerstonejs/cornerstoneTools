@@ -15,8 +15,8 @@ For our example Tool, this gives us more chances to log hello to the console:
 import cornerstoneTools from 'cornerstone-tools';
 const BaseTool = cornerstoneTools.import('base/BaseTool');
 
-export default class HelloWorldMouseTool extends BaseTool {
-  constructor(name = 'HelloWorldMouse') {
+export default class HelloWorldTool extends BaseTool {
+  constructor(name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],

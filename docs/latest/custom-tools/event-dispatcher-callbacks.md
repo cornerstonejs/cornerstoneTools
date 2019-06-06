@@ -11,8 +11,8 @@ For our Tool we want to log to the console on mouse click. `BaseTool` has two ap
 import cornerstoneTools from 'cornerstone-tools';
 const BaseTool = cornerstoneTools.import('base/BaseTool');
 
-export default class HelloWorldMouseTool extends BaseTool {
-  constructor(name = 'HelloWorldMouse') {
+export default class HelloWorldTool extends BaseTool {
+  constructor(name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],

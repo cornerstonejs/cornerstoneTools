@@ -98,7 +98,7 @@
   };
 
   // 3) A Tool
-  const BaseTool = cornerstoneTools.import('base/BaseTool');
+  const BaseTool = cornerstoneTools.importInternalModule('base/BaseTool');
 
   class HelloWorldMouseTool extends BaseTool {
     constructor (name = 'HelloWorldMouse') {
