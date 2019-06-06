@@ -139,7 +139,7 @@ export const lib = {
   'util/numbersWithCommas': numbersWithCommas,
   'util/lineSegDistance': lineSegDistance,
   'util/triggerEvent': triggerEvent,
-  'util/convertToVectro3': convertToVector3,
+  'util/convertToVector3': convertToVector3,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
