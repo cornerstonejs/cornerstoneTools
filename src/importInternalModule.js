@@ -5,7 +5,7 @@ import { lib } from './lib.js';
  * @export
  * @public
  * @method
- * @name import
+ * @name importInternalModule
  *
  * @param  {string} uri the import path for the entity to import.
  * @returns {Class|Object|Function} The entity requested.

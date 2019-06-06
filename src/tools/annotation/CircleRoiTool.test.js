@@ -13,7 +13,7 @@ jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
+jest.mock('./../../importInternalModule.js', () => ({
   default: jest.fn(),
 }));
 
@@ -34,7 +34,7 @@ const goodMouseEventData = {
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('CircleRoiTool.js', () => {
@@ -247,18 +247,43 @@ describe('CircleRoiTool.js', () => {
     };
 
     external.cornerstone.getPixels = () => {
-      return [100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6
+      return [
+        100,
+        100,
+        100,
+        100,
+        4,
+        5,
+        100,
+        3,
+        6,
+        100,
+        100,
+        100,
+        100,
+        4,
+        5,
+        100,
+        3,
+        6,
+        100,
+        100,
+        100,
+        100,
+        4,
+        5,
+        100,
+        3,
+        6,
+        100,
+        100,
+        100,
+        100,
+        4,
+        5,
+        100,
+        3,
+        6,
       ];
     };
 
@@ -269,12 +294,12 @@ describe('CircleRoiTool.js', () => {
         handles: {
           start: {
             x: 3,
-            y: 3
+            y: 3,
           },
           end: {
             x: 4,
-            y: 4
-          }
+            y: 4,
+          },
         },
       };
 

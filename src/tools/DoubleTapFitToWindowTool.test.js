@@ -7,7 +7,7 @@ jest.mock('../externalModules.js', () => ({
   },
 }));
 
-jest.mock('../import.js', () => ({
+jest.mock('../importInternalModule.js', () => ({
   default: jest.fn(),
 }));
 

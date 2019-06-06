@@ -112,7 +112,7 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
-import { default as imp } from './import.js';
+import { default as importInternalModule } from './importInternalModule.js';
 
 import { default as init } from './init.js';
 
@@ -280,7 +280,7 @@ const cornerstoneTools = {
   SaveAs,
   enableLogger,
   disableLogger,
-  import: imp,
+  importInternalModule,
   register,
   registerSome,
   wwwcSynchronizer,
@@ -390,12 +390,10 @@ export {
   stackImageIndexSynchronizer,
   panZoomSynchronizer,
   requestPoolManager,
+  importInternalModule,
   external,
   EVENTS,
   version,
 };
-
-// This has a weird name, so we can't just import it as 'import';
-export { default as import } from './import.js';
 
 export default cornerstoneTools;
