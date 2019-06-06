@@ -445,12 +445,11 @@ function setMetadata(
 }
 
 /**
- * setLabelmap3D - Takes an 16-bit encoded ArrayBuffer and stores
+ * setLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
  * it as a segmentation for the series assoicated with the element.
  *
- * @param  {HTMLElement|string} elementOrFirstImageId The cornerstone enabled
- *                                    element currently displaying the series,
- *                                    or The first imageId of the the series.
+ * @param  {HTMLElement|string} elementOrEnabledElementUID The cornerstone
+ *                                                  enabled element or its UUID.
  * @param  {ArrayBuffer} buffer
  * @param  {number} labelmapIndex The index to store the labelmap under.
  * @param  {object[]} metadata = [] Any metadata about the segments.
@@ -487,6 +486,19 @@ function setLabelmap3DForElement(
   }
 }
 
+/**
+ * setLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
+ * it as a segmentation for the series assoicated with the firstImageId.
+ *
+ * @param  {HTMLElement|string} firstImageId  The firstImageId of the series to
+ *                                            store the segmentation on.
+ * @param  {ArrayBuffer} buffer
+ * @param  {number} labelmapIndex The index to store the labelmap under.
+ * @param  {Object[]} metadata = [] Any metadata about the segments.
+ * @param  {number} numberOfFrames The number of frames, required to set up the
+ *                                 relevant labelmap2D views.
+ * @returns {null}
+ */
 function setLabelmap3DByFirstImageId(
   firstImageId,
   buffer,
