@@ -2,7 +2,7 @@ import CrosshairsTool from './CrosshairsTool.js';
 import DoubleTapFitToWindowTool from './DoubleTapFitToWindowTool.js';
 import DragProbeTool from './DragProbeTool.js';
 import EraserTool from './EraserTool.js';
-import FreehandSculpterMouseTool from './FreehandSculpterMouseTool.js';
+import FreehandRoiSculptorTool from './FreehandRoiSculptorTool.js';
 import MagnifyTool from './MagnifyTool.js';
 import PanMultiTouchTool from './PanMultiTouchTool.js';
 import PanTool from './PanTool.js';
@@ -25,7 +25,7 @@ export {
   DoubleTapFitToWindowTool,
   DragProbeTool,
   EraserTool,
-  FreehandSculpterMouseTool,
+  FreehandRoiSculptorTool,
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
@@ -49,7 +49,7 @@ export default {
   DoubleTapFitToWindowTool,
   DragProbeTool,
   EraserTool,
-  FreehandSculpterMouseTool,
+  FreehandRoiSculptorTool,
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
