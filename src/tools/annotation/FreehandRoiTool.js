@@ -24,12 +24,12 @@ import drawLinkedTextBox from '../../drawing/drawLinkedTextBox.js';
 import drawHandles from '../../drawing/drawHandles.js';
 import { clipToBox } from '../../util/clip.js';
 import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
-import { freehandMouseCursor } from '../cursors/index.js';
+import { freehandRoiCursor } from '../cursors/index.js';
 import freehandUtils from '../../util/freehand/index.js';
 import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
 
-const logger = getLogger('tools:annotation:FreehandMouseTool');
+const logger = getLogger('tools:annotation:FreehandRoiTool');
 
 const {
   insertOrDelete,
@@ -41,19 +41,19 @@ const {
 
 /**
  * @public
- * @class FreehandMouseTool
+ * @class FreehandRoiTool
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing arbitrary polygonal regions of interest, and
  * measuring the statistics of the enclosed pixels.
  * @extends Tools.Base.BaseAnnotationTool
  */
-export default class FreehandMouseTool extends BaseAnnotationTool {
+export default class FreehandRoiTool extends BaseAnnotationTool {
   constructor(props = {}) {
     const defaultProps = {
-      name: 'FreehandMouse',
+      name: 'FreehandRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: defaultFreehandConfiguration(),
-      svgCursor: freehandMouseCursor,
+      svgCursor: freehandRoiCursor,
     };
 
     super(props, defaultProps);

@@ -8,7 +8,7 @@ import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from './base/BaseTool.js';
 import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
-import { freehandSculpterMouseCursor } from './cursors/index.js';
+import { freehandRoiSculptorCursor } from './cursors/index.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
@@ -16,22 +16,22 @@ const { FreehandHandleData } = freehandUtils;
 
 /**
  * @public
- * @class FreehandSculpterMouseTool
+ * @class FreehandRoiSculptorTool
  * @memberof Tools
  *
  * @classdesc Tool for easily sculpting annotations drawn with
- * the FreehandMouseTool.
+ * the FreehandRoiTool.
  * @extends Tools.Base.BaseTool
  */
-export default class FreehandSculpterMouseTool extends BaseTool {
+export default class FreehandRoiSculptorTool extends BaseTool {
   constructor(props = {}) {
     const defaultProps = {
-      name: 'FreehandSculpterMouse',
-      referencedToolName: 'FreehandMouse',
+      name: 'FreehandRoiSculptor',
+      referencedToolName: 'FreehandRoi',
       supportedInteractionTypes: ['Mouse', 'Touch', 'DoubleTap'],
       mixins: ['activeOrDisabledBinaryTool'],
-      configuration: getDefaultFreehandSculpterMouseToolConfiguration(),
-      svgCursor: freehandSculpterMouseCursor,
+      configuration: getDefaultFreehandRoiSculptorToolConfiguration(),
+      svgCursor: freehandRoiSculptorCursor,
     };
 
     super(props, defaultProps);
@@ -222,11 +222,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
       coords = state.mousePositionImage;
     }
 
-    const freehandMouseTool = getToolForElement(
-      element,
-      this.referencedToolName
-    );
-    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(
+    const freehandRoiTool = getToolForElement(element, this.referencedToolName);
+    let radiusCanvas = freehandRoiTool.distanceFromPointCanvas(
       element,
       data,
       coords
@@ -769,17 +766,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     const toolState = getToolState(element, this.referencedToolName);
     const data = toolState.data[toolIndex];
 
-    const freehandMouseTool = getToolForElement(
-      element,
-      this.referencedToolName
-    );
+    const freehandRoiTool = getToolForElement(element, this.referencedToolName);
 
-    let radiusImage = freehandMouseTool.distanceFromPoint(
-      element,
-      data,
-      coords
-    );
-    let radiusCanvas = freehandMouseTool.distanceFromPointCanvas(
+    let radiusImage = freehandRoiTool.distanceFromPoint(element, data, coords);
+    let radiusCanvas = freehandRoiTool.distanceFromPointCanvas(
       element,
       data,
       coords
@@ -1238,11 +1228,11 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 }
 
 /**
- * Returns the default freehandSculpterMouseTool configuration.
+ * Returns the default freehandRoiSculptorTool configuration.
  *
  * @returns {Object} The default configuration object.
  */
-function getDefaultFreehandSculpterMouseToolConfiguration() {
+function getDefaultFreehandRoiSculptorToolConfiguration() {
   return {
     mouseLocation: {
       handles: {

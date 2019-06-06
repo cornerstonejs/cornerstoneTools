@@ -1,6 +1,6 @@
-import FreehandMouseTool from './FreehandMouseTool.js';
+import FreehandRoiTool from './FreehandRoiTool.js';
 import freehandUtils from '../../util/freehand/index.js';
-import { getLogger } from '../../util/logger.js'
+import { getLogger } from '../../util/logger.js';
 
 const {
   calculateFreehandStatistics,
@@ -29,18 +29,18 @@ const goodMouseEventData = {
   },
 };
 
-describe('FreehandMouseTool.js', function() {
+describe('FreehandRoiTool.js', function() {
   describe('default values', () => {
-    it('has a default name of "FreehandMouse"', () => {
-      const defaultName = 'FreehandMouse';
-      const instantiatedTool = new FreehandMouseTool();
+    it('has a default name of "FreehandRoi"', () => {
+      const defaultName = 'FreehandRoi';
+      const instantiatedTool = new FreehandRoiTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
     it('can be created with a custom tool name', () => {
       const customToolName = { name: 'customToolName' };
-      const instantiatedTool = new FreehandMouseTool(customToolName);
+      const instantiatedTool = new FreehandRoiTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
@@ -48,9 +48,9 @@ describe('FreehandMouseTool.js', function() {
 
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
-      const instantiatedTool = new FreehandMouseTool();
+      const instantiatedTool = new FreehandRoiTool();
       const logger = getLogger();
-      
+
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
       expect(logger.error).toHaveBeenCalled();
@@ -61,7 +61,7 @@ describe('FreehandMouseTool.js', function() {
 
     // Todo: create a more formal definition of a tool measurement object
     it('returns a tool measurement object', () => {
-      const instantiatedTool = new FreehandMouseTool();
+      const instantiatedTool = new FreehandRoiTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
