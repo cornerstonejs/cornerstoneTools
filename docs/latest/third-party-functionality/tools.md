@@ -2,13 +2,13 @@
 
 Third-party tools may be easily created by `import`ing the required base tool Type and extending it.
 
-For instance, if we wanted to package the `HelloWorldMouseTool` we made in the [Custom Tools](custom-tools/index.md) section into a third-party tool:
+For instance, if we wanted to package the `HelloWorldTool` we made in the [Custom Tools](custom-tools/index.md) section into a third-party tool:
 
 ```js
-const BaseTool = cornerstoneTools.import('base/BaseTool');
+const BaseTool = cornerstoneTools.importInternalModule('base/BaseTool');
 
-export default class HelloWorldMouseTool extends BaseTool {
-  constructor (name = 'HelloWorldMouse') {
+export default class HelloWorldTool extends BaseTool {
+  constructor (name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],

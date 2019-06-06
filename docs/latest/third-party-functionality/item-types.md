@@ -19,7 +19,7 @@ Additionally, custom `module`s can be added to the `store`.
 A user can define a new `abstract` base Tool type, from which third-party Tools can inherit from. The new Tool type must inherit from either `BaseTool`, `BaseAnnotationTool` or `BaseBrushTool`. To create a new base Tool type simply [`import`](index.md#imports) the base type you wish to extend and extend it as:
 
 ```js
-const BaseTool = cornerstoneTools.import('core/base/BaseTool');
+const BaseTool = cornerstoneTools.importInternalModule('core/base/BaseTool');
 
 export default class BaseNewTypeTool extends BaseTool {
   // implementation ...
