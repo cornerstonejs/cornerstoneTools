@@ -120,9 +120,9 @@ function _addGlobalToolsToElement(enabledElement) {
   }
 
   Object.keys(store.state.globalTools).forEach(function(key) {
-    const { tool, configuration } = store.state.globalTools[key];
+    const { tool, props } = store.state.globalTools[key];
 
-    addToolForElement(enabledElement, tool, configuration);
+    addToolForElement(enabledElement, tool, props);
   });
 }
 
