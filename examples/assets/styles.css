@@ -23,3 +23,8 @@
   margin: 35px auto;
   flex-grow: 1;
 }
+
+.highlight {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
