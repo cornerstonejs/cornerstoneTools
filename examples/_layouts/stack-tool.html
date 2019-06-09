@@ -46,13 +46,13 @@ layout: default
   cornerstoneTools.init();
   cornerstone.enable(element);
   const toolName = '{{ page.toolName }}';
-  const imageIds = [
-    `wadouri:${baseUrl}assets/dicom/exotic/1.dcm`,
-    `wadouri:${baseUrl}assets/dicom/exotic/2.dcm`,
-    `wadouri:${baseUrl}assets/dicom/exotic/3.dcm`,
-    `wadouri:${baseUrl}assets/dicom/exotic/4.dcm`,
-    `wadouri:${baseUrl}assets/dicom/exotic/5.dcm`,
-  ];
+  const imageIds = [];
+
+  for (let i = 1; i < 38; i++) {
+    imageIds.push(
+      'wadouri:' + baseUrl + 'assets/dicom/bellona/chest_lung/' + i + '.dcm'
+    );
+  }
 
   const stack = {
     currentImageIdIndex: 0,
