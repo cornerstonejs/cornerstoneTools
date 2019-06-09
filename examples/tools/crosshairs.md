@@ -5,8 +5,11 @@ toolName: Crosshairs
 toolType: stack
 ---
 
-<h2 class="title is-2">How to set up the CrosshairsTool tool:</h2>
+<h2 class="title is-3">Setup:</h2>
 
+It's important to note that the CrossHairs tool uses the Cornerstone MetaDataProvider to determine which slices contain our point of interest. If the metadata for the series/volume has not yet been loaded, the tool may be unable to find the most appropriate POI.
+
+<!-- prettier-ignore-start -->
 {% highlight javascript %}
 // Init cornerstone tools
 cornerstoneTools.init()
