@@ -548,6 +548,50 @@ function setLabelmap3DByFirstImageId(
 }
 
 /**
+ * getActiveLabelMapIndex - description
+ *
+ * @param  {type} elementOrEnabledElementUID description
+ * @returns {type}                            description
+ */
+function getActiveLabelMapIndex(elementOrEnabledElementUID) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const firstImageId = stackData.imageIds[0];
+
+  const brushStackState = state.series[firstImageId];
+
+  if (!brushStackState) {
+    return;
+  }
+
+  return brushStackState.activeLabelmapIndex;
+}
+
+/**
+ * getActiveCornerstoneColorMap - Returns the cornerstone colormap for the active
+ * labelmap.
+ *
+ * @param  {type} elementOrEnabledElementUID The cornerstone enabled
+ *                                           element or its UUID.
+ * @returns {Object}                         The cornerstone colormap.
+ */
+function getActiveCornerstoneColorMap(elementOrEnabledElementUID) {
+  const activeLabelMapIndex = getActiveLabelMapIndex(
+    elementOrEnabledElementUID
+  );
+
+  const colorMapId = `${state.colorMapId}_${activeLabelMapIndex}`;
+
+  return external.cornerstone.colors.getColormap(colorMapId);
+}
+
+/**
  * setActiveLabelmap - Sets the active labelmap for the stack displayed on this
  * elemenet to the labelmap given by the labelmapIndex. Creates the labelmap if
  * it doesn't exist.
@@ -708,6 +752,14 @@ function invalidateBrushOnEnabledElement(
   external.cornerstone.updateImage(element, true);
 }
 
+/**
+ * _getEnabledElement - Returns the enabledElement given either the enabledElement
+ *                      or its UUID.
+ *
+ * @param  {string|HTMLElement} elementOrEnabledElementUID  The enabledElement
+ *                                                          or its UUID.
+ * @returns {HTMLElement}
+ */
 function _getEnabledElement(elementOrEnabledElementUID) {
   if (elementOrEnabledElementUID instanceof HTMLElement) {
     return elementOrEnabledElementUID;
@@ -797,9 +849,11 @@ export default {
   getters: {
     metadata: getMetadata,
     labelmaps3D: getLabelmaps3D,
-    getAndCacheLabelmap2D: getAndCacheLabelmap2D,
+    activeLabelMapIndex: getActiveLabelMapIndex,
+    getAndCacheLabelmap2D,
     labelmapStats: getLabelmapStats,
     brushColor: getBrushColor,
+    activeCornerstoneColorMap: getActiveCornerstoneColorMap,
     labelmapBuffers: getLabelmapBuffers,
     activeLabelmapBuffer: getActiveLabelmapBuffer,
   },
