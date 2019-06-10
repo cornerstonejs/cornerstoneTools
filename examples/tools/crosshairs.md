@@ -17,42 +17,45 @@ cornerstoneTools.init()
 const scheme = 'wadouri'
 const baseUrl = 'https://mypacs.com/dicoms/'
 
-const firstSerie = [
-    'image_1.dcm'
+// Create first series stack
+const firstSeries = [
+  'image_1.dcm'
 ]
 
-const firstSeriesImageIds = firstSerie.map(seriesImage => `${scheme}:${baseUrl}$seriesImage}`
+const firstSeriesImageIds = firstSeries
+  .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);
 
-const secondSerie = [
-    'image_11.dcm',
-    'image_22.dcm',
-    'image_33.dcm',
-    'image_44.dcm'
-]
-
-const secondSeriesImageIds = secondSerie.map(seriesImage => `${scheme}:${baseUrl}$seriesImage}`
-
-//define the stacks
 const stackSeries1 = {
   currentImageIdIndex: 0,
   firstSeriesImageIds
 }
 
+// Create second series stack
+const secondSeries = [
+  'image_11.dcm',
+  'image_22.dcm',
+  'image_33.dcm',
+  'image_44.dcm'
+]
+
 const stackSeries2 = {
   currentImageIdIndex: 0,
-  secondSeriesImageIds
+  imageIds: secondSeries
+    .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);
 }
 
-// create the synchronizer
+// Create the synchronizer
 const synchronizer = new cornerstoneTools.Synchronizer(
+  // Cornerstone event that should trigger synchronizer
   'cornerstonenewimage',
+  // Logic that should run on target elements when event is observed on source elements
   cornerstoneTools.updateImageSynchronizer
 )
 
 // load images and set the stack
 const chestPromise = cornerstone.loadImage(chestImageIds[0]).then((image) => {
-    // display this image
-    cornerstone.displayImage(chestElement, image)
+// display this image
+cornerstone.displayImage(chestElement, image)
 
     // set the stack as tool state
     synchronizer.add(chestElement)
@@ -63,24 +66,24 @@ const chestPromise = cornerstone.loadImage(chestImageIds[0]).then((image) => {
     cornerstoneTools.addToolState(chestElement, 'stack', chestStack)
 })
 
-  // Add the tool
-  cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
-  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 })
+// Add the tool
+cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 })
 
-  cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-  cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 })
+cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 })
 
-  const topgramPromise = cornerstone.loadImage(topgramImageIds[0]).then((image) => {
-    // display this image
-    cornerstone.displayImage(topgramElement, image)
-
-    // set the stack as tool state
-    synchronizer.add(topgramElement)
-    cornerstoneTools.addStackStateManager(
-      topgramElement,
-      ['stack', toolName]
-    )
-    cornerstoneTools.addToolState(topgramElement, 'stack', topgramStack)
+const topgramPromise = cornerstone.loadImage(
+  topgramImageIds[0]).then((image) => {
+  // display this image
+  cornerstone.displayImage(topgramElement, image)
+  // set the stack as tool state
+  synchronizer.add(topgramElement)
+  cornerstoneTools.addStackStateManager(
+    topgramElement,
+    ['stack', toolName]
+  )
+  cornerstoneTools.addToolState(topgramElement, 'stack', topgramStack)
 })
-
 {% endhighlight %}
+<!-- prettier-ignore-end -->
