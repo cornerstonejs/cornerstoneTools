@@ -87,3 +87,44 @@ const topgramPromise = cornerstone.loadImage(
 })
 {% endhighlight %}
 <!-- prettier-ignore-end -->
+
+<script>
+// Doing some dark magic here to make sure we don't add our
+// synchronizer/tool until all canvases have rendered an image.
+
+let canvasesReady = false;
+let numImagesLoaded = 0;
+const firstElement = document.getElementById('topgram_element');
+const secondElement = document.getElementById('chest_element');
+
+function addCrosshairsTool(){
+  console.log('addCrosshairsTool')
+  const synchronizer = new cornerstoneTools.Synchronizer(
+    'cornerstonenewimage',
+    cornerstoneTools.updateImageSynchronizer
+  );
+
+  // These have to be added to our synchronizer before we pass it to our tool
+  synchronizer.add(firstElement);
+  synchronizer.add(secondElement);
+  const tool = cornerstoneTools.CrosshairsTool;
+
+  cornerstoneTools.addTool(tool);
+  cornerstoneTools.setToolActive('Crosshairs', {
+    mouseButtonMask: 1,
+    synchronizationContext: synchronizer,
+  });
+}
+
+const handleImageRendered = (evt) => {
+  evt.detail.element.removeEventListener('cornerstoneimagerendered', handleImageRendered)
+
+  numImagesLoaded++;
+  if(numImagesLoaded === 2){
+    addCrosshairsTool();
+  }
+}
+firstElement.addEventListener('cornerstoneimagerendered', handleImageRendered)
+secondElement.addEventListener('cornerstoneimagerendered', handleImageRendered)
+
+</script>
