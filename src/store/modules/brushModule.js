@@ -31,7 +31,7 @@ const state = {
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
  *                                                    element or its UUID.
  * @param  {number} labelmapIndex = 0     The labelmap index.
- * @param  {number} segmentIndex          The segment index.
+ * @param  {number} [segmentIndex]          The segment index.
  * @returns {Object|Object[]}             A metadata object or an array of
  *                                        metadata objects.
  */
@@ -52,7 +52,7 @@ function getMetadata(
 
   const brushStackState = state.series[firstImageId];
 
-  if (!(brushStackState || brushStackState.labelmaps3D[labelmapIndex])) {
+  if (!brushStackState || !brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
 
     return;
