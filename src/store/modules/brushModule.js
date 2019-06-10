@@ -39,8 +39,6 @@ const state = {
 function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
   const element = _getEnabledElement(elementOrEnabledElementUID);
 
-  logger.warn(`in getMetadata!`);
-
   if (!element) {
     return;
   }
@@ -52,11 +50,21 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
 
   const brushStackState = state.series[firstImageId];
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelMapIndex;
+  if (!brushStackState) {
+    logger.warn(`brushStackState is undefined`);
+
+    return;
   }
 
-  if (!brushStackState || !brushStackState.labelmaps3D[labelmapIndex]) {
+  logger.warn(brushStackState);
+
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
+
+  logger.warn(`getMetadata, labelmapIndex: ${labelmapIndex}`);
+
+  if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
     return;
   }
@@ -588,12 +596,12 @@ function setLabelmap3DByFirstImageId(
 }
 
 /**
- * getActiveLabelMapIndex - description
+ * getActiveLabelmapIndex - description
  *
  * @param  {type} elementOrEnabledElementUID description
  * @returns {type}                            description
  */
-function getActiveLabelMapIndex(elementOrEnabledElementUID) {
+function getActiveLabelmapIndex(elementOrEnabledElementUID) {
   const element = _getEnabledElement(elementOrEnabledElementUID);
 
   if (!element) {
@@ -622,11 +630,11 @@ function getActiveLabelMapIndex(elementOrEnabledElementUID) {
  * @returns {Object}                         The cornerstone colormap.
  */
 function getActiveCornerstoneColorMap(elementOrEnabledElementUID) {
-  const activeLabelMapIndex = getActiveLabelMapIndex(
+  const activeLabelmapIndex = getActiveLabelmapIndex(
     elementOrEnabledElementUID
   );
 
-  const colorMapId = `${state.colorMapId}_${activeLabelMapIndex}`;
+  const colorMapId = `${state.colorMapId}_${activeLabelmapIndex}`;
 
   return external.cornerstone.colors.getColormap(colorMapId);
 }
@@ -889,7 +897,7 @@ export default {
   getters: {
     metadata: getMetadata,
     labelmaps3D: getLabelmaps3D,
-    activeLabelMapIndex: getActiveLabelMapIndex,
+    activeLabelmapIndex: getActiveLabelmapIndex,
     activeSegmentIndex: getActiveSegmentIndex,
     getAndCacheLabelmap2D,
     labelmapStats: getLabelmapStats,
