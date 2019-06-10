@@ -30,17 +30,16 @@ const state = {
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
  *                                                    element or its UUID.
- * @param  {number} labelmapIndex = 0     The labelmap index.
- * @param  {number} [segmentIndex]          The segment index.
- * @returns {Object|Object[]}             A metadata object or an array of
- *                                        metadata objects.
+ * @param  {number} [labelmapIndex]    If undefined, defaults to the active
+ *                                     labelmap index.
+ * @param  {number} [segmentIndex]     The segment index.
+ * @returns {Object|Object[]}          A metadata object or an array of
+ *                                     metadata objects.
  */
-function getMetadata(
-  elementOrEnabledElementUID,
-  labelmapIndex = 0,
-  segmentIndex
-) {
+function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
   const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  logger.warn(`in getMetadata!`);
 
   if (!element) {
     return;
@@ -51,6 +50,10 @@ function getMetadata(
   const firstImageId = stackData.imageIds[0];
 
   const brushStackState = state.series[firstImageId];
+
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelMapIndex;
+  }
 
   if (!brushStackState || !brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -298,8 +301,45 @@ function getBrushColor(elementOrEnabledElementUID, drawing = false) {
   }
 
   return drawing
-    ? `rgba(${color[[0]]}, ${color[[1]]}, ${color[[2]]}, 1.0 )`
-    : `rgba(${color[[0]]}, ${color[[1]]}, ${color[[2]]}, 0.8 )`;
+    ? `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1.0 )`
+    : `rgba(${color[0]}, ${color[1]}, ${color[2]}, 0.8 )`;
+}
+
+/**
+ * getActiveSegmentIndex - Returns the active segment segment index  for the
+ * active labelmap for the series displayed on the element.
+ *
+ * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
+ * @param  {number} [labelmapIndex] The labelmap index, defaults to the active labelmap index.
+ * @returns {number}                                  The active segment index.
+ */
+function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const firstImageId = stackData.imageIds[0];
+
+  const brushStackState = state.series[firstImageId];
+
+  if (brushStackState) {
+    if (labelmapIndex === undefined) {
+      labelmapIndex = brushStackState.activeLabelmapIndex;
+    }
+
+    const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
+
+    if (labelmap3D) {
+      return labelmap3D.activeDrawColorId;
+    }
+  }
+
+  return 1;
 }
 
 /**
@@ -852,6 +892,7 @@ export default {
     metadata: getMetadata,
     labelmaps3D: getLabelmaps3D,
     activeLabelMapIndex: getActiveLabelMapIndex,
+    activeSegmentIndex: getActiveSegmentIndex,
     getAndCacheLabelmap2D,
     labelmapStats: getLabelmapStats,
     brushColor: getBrushColor,
