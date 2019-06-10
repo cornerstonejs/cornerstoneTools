@@ -4,11 +4,11 @@
 
 .cornerstone-element-wrapper {
   width: 100%;
-  /* calc(full page - toolbarHeight * 2) */
+  margin: 15px auto 35px auto;
   height: calc(100% - 130px);
   position: relative;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
@@ -18,10 +18,11 @@
   position: relative;
   width: 100%;
   height: 100%;
+  flex-basis: 320px;
   min-width: 320px;
   min-height: 320px;
-  margin: 35px auto;
   flex-grow: 1;
+  border: 2px solid rgb(0, 164, 217);
 }
 
 .highlight {
