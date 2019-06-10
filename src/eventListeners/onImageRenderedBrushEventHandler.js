@@ -1,8 +1,5 @@
 import store from '../store/index.js';
-import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
-import { getToolState } from '../stateManagement/toolState.js';
 import external from '../externalModules.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import {
   getNewContext,
   resetCanvasContextTransform,
@@ -49,7 +46,7 @@ if (!('createImageBitmap' in window)) {
   };
 }
 
-const { state, getters, setters } = store.modules.brush;
+const { state, getters } = store.modules.brush;
 
 /**
  * Used to redraw the brush label map data per render.
@@ -61,102 +58,147 @@ const { state, getters, setters } = store.modules.brush;
 export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const maxSegmentations = BaseBrushTool.getNumberOfColors();
 
-  const toolData = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
-  );
+  const {
+    activeLabelmapIndex,
+    labelmaps3D,
+    currentImageIdIndex,
+  } = getters.labelmaps3D(element);
 
-  if (!toolData) {
+  if (!labelmaps3D) {
     return;
   }
 
-  const enabledElement = external.cornerstone.getEnabledElement(element);
-  const enabledElementUID = enabledElement.uuid;
+  renderInactiveLabelMaps(
+    evt,
+    labelmaps3D,
+    activeLabelmapIndex,
+    currentImageIdIndex
+  );
+  renderActiveLabelMap(
+    evt,
+    labelmaps3D,
+    activeLabelmapIndex,
+    currentImageIdIndex
+  );
+}
 
-  const segData = {
-    visibleSegmentations: getters.visibleSegmentationsForElement(
-      enabledElementUID
-    ),
-    imageBitmapCache: getters.imageBitmapCacheForElement(enabledElementUID),
-    toolData,
-  };
+/**
+ * renderActiveLabelMap - Renders the active label map for this element.
+ *
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Object[]} labelmaps3D       An array of labelmaps.
+ * @param  {number} activeLabelmapIndex The index of the active label map.
+ * @param  {number} currentImageIdIndex The in-stack image position.
+ * @returns {null}
+ */
+function renderActiveLabelMap(
+  evt,
+  labelmaps3D,
+  activeLabelmapIndex,
+  currentImageIdIndex
+) {
+  const labelmap3D = labelmaps3D[activeLabelmapIndex];
 
-  for (let segIndex = 0; segIndex < maxSegmentations; segIndex++) {
-    if (shouldRenderSegmentation(evt, segIndex, segData)) {
-      renderSegmentation(evt, segIndex, segData);
+  if (!labelmap3D) {
+    return;
+  }
+
+  const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+  if (labelmap2D) {
+    renderSegmentation(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
+  }
+}
+
+/**
+ * renderInactiveLabelMaps - Renders all the inactive label maps if the global
+ * alphaOfInactiveLabelmap setting is not zero.
+ *
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Object[]} labelmaps3D       An array of labelmaps.
+ * @param  {number} activeLabelmapIndex The index of the active label map.
+ * @param  {number} currentImageIdIndex The in-stack image position.
+ * @returns {null}
+ */
+function renderInactiveLabelMaps(
+  evt,
+  labelmaps3D,
+  activeLabelmapIndex,
+  currentImageIdIndex
+) {
+  if (state.alphaOfInactiveLabelmap === 0) {
+    // Don't bother rendering a whole labelmaps with full transparency!
+    return;
+  }
+
+  for (let i = 0; i < labelmaps3D.length; i++) {
+    const labelmap3D = labelmaps3D[i];
+
+    if (i === activeLabelmapIndex || !labelmap3D) {
+      continue;
+    }
+
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+    if (labelmap2D) {
+      renderSegmentation(evt, labelmap3D, i, labelmap2D, false);
     }
   }
 }
 
-function shouldRenderSegmentation(evt, segIndex, segData) {
-  const element = evt.detail.element;
-  const toolData = segData.toolData;
-  const visibleSegmentations = segData.visibleSegmentations;
-
-  if (!toolData.data[segIndex] || !toolData.data[segIndex].pixelData) {
-    // No data, no render.
-    return false;
-  }
-
-  if (visibleSegmentations[segIndex]) {
-    // Has data and marked as visible, render!
-    return true;
-  }
-
-  const currentColor = state.drawColorId;
-
-  if (currentColor !== segIndex) {
-    // Hidden and not current color, don't render.
-    return false;
-  }
-
-  // Check that a brush tool is active.
-  const activeTools = getActiveToolsForElement(element, store.state.tools);
-  const brushTools = activeTools.filter(tool => tool instanceof BaseBrushTool);
-
-  if (brushTools.length > 0) {
-    // Active brush tool with same color, render!
-    return true;
-  }
-
-  return false;
-}
-
-function renderSegmentation(evt, segIndex, segData) {
-  const toolData = segData.toolData;
-  const imageBitmapCache = segData.imageBitmapCache;
-  const visibleSegmentations = segData.visibleSegmentations;
-
+/**
+ * renderSegmentation - Renders the labelmap2D to the canvas.
+ *
+ * @param  {Object} evt              The cornerstone event.
+ * @param  {Object} labelmap3D       The 3D labelmap.
+ * @param  {number} labelmapIndex    The index of the labelmap.
+ * @param  {Object} labelmap2D       The 2D labelmap for this current image.
+ * @param  {number} isActiveLabelMap   Whether the labelmap is active.
+ * @returns {null}
+ */
+function renderSegmentation(
+  evt,
+  labelmap3D,
+  labelmapIndex,
+  labelmap2D,
+  isActiveLabelMap
+) {
   // Draw previous image if cached.
-  if (imageBitmapCache && imageBitmapCache[segIndex]) {
-    _drawImageBitmap(
+  if (labelmap3D.imageBitmapCache) {
+    _drawImageBitmap(evt, labelmap3D.imageBitmapCache, isActiveLabelMap);
+  }
+
+  if (labelmap2D.invalidated) {
+    createNewBitmapAndQueueRenderOfSegmentation(
       evt,
-      imageBitmapCache[segIndex],
-      visibleSegmentations[segIndex]
+      labelmap3D,
+      labelmapIndex,
+      labelmap2D
     );
   }
-
-  if (toolData.data[segIndex].invalidated) {
-    createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex);
-  }
 }
 
-function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
+/**
+ * createNewBitmapAndQueueRenderOfSegmentation - Creates a bitmap from the
+ * labelmap2D and queues a re-render once it is built.
+ *
+ * @param  {Object} evt           The cornerstone event.
+ * @param  {Object} labelmap3D    The 3D labelmap.
+ * @param  {number} labelmapIndex The index of the labelmap.
+ * @param  {Object} labelmap2D    The 2D labelmap for the current image.
+ * @returns {null}
+ */
+function createNewBitmapAndQueueRenderOfSegmentation(
+  evt,
+  labelmap3D,
+  labelmapIndex,
+  labelmap2D
+) {
   const eventData = evt.detail;
   const element = eventData.element;
-  const enabledElement = external.cornerstone.getEnabledElement(element);
 
-  const pixelData = toolData.data[segIndex].pixelData;
-
-  if (!pixelData) {
-    return;
-  }
-
-  const colormapId = state.colorMapId;
-  const colormap = external.cornerstone.colors.getColormap(colormapId);
-  const colorLutTable = [[0, 0, 0, 0], colormap.getColor(segIndex)];
+  const pixelData = labelmap2D.pixelData;
 
   const imageData = new ImageData(
     eventData.image.width,
@@ -168,21 +210,19 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
     getPixelData: () => pixelData,
   };
 
+  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
+
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
-    colorLutTable,
+    state.colorLutTables[colorMapId],
     imageData.data
   );
 
   window.createImageBitmap(imageData).then(newImageBitmap => {
-    setters.imageBitmapCacheForElement(
-      enabledElement.uuid,
-      segIndex,
-      newImageBitmap
-    );
-    toolData.data[segIndex].invalidated = false;
+    labelmap3D.imageBitmapCache = newImageBitmap;
+    labelmap2D.invalidated = false;
 
-    external.cornerstone.updateImage(eventData.element);
+    external.cornerstone.updateImage(element);
   });
 }
 
@@ -190,12 +230,12 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
  * Draws the ImageBitmap the canvas.
  *
  * @private
- * @param  {Object} evt description
- * @param {ImageBitmap} imageBitmap
- * @param {Boolean} alwaysVisible
- * @returns {void}
+ * @param  {Object} evt               The cornerstone event.
+ * @param {ImageBitmap} imageBitmap   The ImageBitmap to draw.
+ * @param {boolean} isActiveLabelMap  Whether the labelmap is active.
+ * @returns {null}
  */
-function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
+function _drawImageBitmap(evt, imageBitmap, isActiveLabelMap) {
   const eventData = evt.detail;
   const context = getNewContext(eventData.canvasContext.canvas);
 
@@ -230,7 +270,9 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   const viewport = eventData.viewport;
 
   context.imageSmoothingEnabled = false;
-  context.globalAlpha = getLayerAlpha(alwaysVisible);
+  context.globalAlpha = isActiveLabelMap
+    ? state.alpha
+    : state.alphaOfInactiveLabelmap;
 
   transformCanvasContext(context, canvas, viewport);
 
@@ -252,12 +294,4 @@ function _drawImageBitmap(evt, imageBitmap, alwaysVisible) {
   context.globalAlpha = 1.0;
 
   resetCanvasContextTransform(context);
-}
-
-function getLayerAlpha(alwaysVisible) {
-  if (alwaysVisible) {
-    return state.alpha;
-  }
-
-  return state.hiddenButActiveAlpha;
 }

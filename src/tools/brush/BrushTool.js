@@ -1,13 +1,11 @@
 import external from './../../externalModules.js';
 import BaseBrushTool from './../base/BaseBrushTool.js';
-import {
-  getToolState,
-  addToolState,
-} from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
-import triggerEvent from './../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:BrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
@@ -25,15 +23,12 @@ export default class BrushTool extends BaseBrushTool {
     const defaultProps = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      strategies: {
-        overlapping: _overlappingStrategy,
-        nonOverlapping: _nonOverlappingStrategy,
-      },
-      defaultStrategy: 'overlapping',
       configuration: { alwaysEraseOnClick: false },
     };
 
     super(props, defaultProps);
+
+    logger.warn(this);
 
     this.touchDragCallback = this._paint.bind(this);
   }
@@ -74,8 +69,7 @@ export default class BrushTool extends BaseBrushTool {
     const radius = brushModule.state.radius;
     const context = eventData.canvasContext;
     const element = eventData.element;
-    const drawId = brushModule.state.drawColorId;
-    const color = this._getBrushColor(drawId);
+    const color = brushModule.getters.brushColor(element, this._drawing);
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -106,132 +100,43 @@ export default class BrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _paint(evt) {
-    this.applyActiveStrategy(evt, this.configuration);
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const { rows, columns } = eventData.image;
+    const { x, y } = eventData.currentPoints.image;
 
-    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
+    if (x < 0 || x > columns || y < 0 || y > rows) {
+      return;
+    }
+
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = brushModule.getters.getAndCacheLabelmap2D(element);
+
+    const radius = brushModule.state.radius;
+    const pointerArray = getCircle(radius, rows, columns, x, y);
+    const shouldErase =
+      _isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
+    const segmentIndex = labelmap3D.activeDrawColorId;
+
+    // Draw / Erase the active color.
+    drawBrushPixels(
+      pointerArray,
+      labelmap3D,
+      currentImageIdIndex,
+      segmentIndex,
+      columns,
+      shouldErase
+    );
+
+    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
+      activeLabelmapIndex,
+    });
 
     external.cornerstone.updateImage(evt.detail.element);
   }
-}
-
-function _overlappingStrategy(evt, configuration) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-  const { rows, columns } = eventData.image;
-  const { x, y } = eventData.currentPoints.image;
-  let toolState = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
-  );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-  }
-
-  const toolData = toolState.data;
-
-  if (x < 0 || x > columns || y < 0 || y > rows) {
-    return;
-  }
-
-  const radius = brushModule.state.radius;
-  const pointerArray = getCircle(radius, rows, columns, x, y);
-
-  _drawMainColor(eventData, toolData, pointerArray, configuration);
-}
-
-function _nonOverlappingStrategy(evt, configuration) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-  const { rows, columns } = eventData.image;
-  const { x, y } = eventData.currentPoints.image;
-
-  let toolState = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
-  );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-  }
-
-  const toolData = toolState.data;
-  const segmentationIndex = brushModule.state.drawColorId;
-
-  if (x < 0 || x > columns || y < 0 || y > rows) {
-    return;
-  }
-
-  const radius = brushModule.state.radius;
-  const pointerArray = getCircle(radius, rows, columns, x, y);
-
-  const numberOfColors = BaseBrushTool.getNumberOfColors();
-
-  // If there is brush data in this region for other colors, delete it.
-  for (let i = 0; i < numberOfColors; i++) {
-    if (i === segmentationIndex) {
-      continue;
-    }
-
-    if (toolData[i] && toolData[i].pixelData) {
-      drawBrushPixels(pointerArray, toolData[i], columns, true);
-      toolData[i].invalidated = true;
-    }
-  }
-
-  _drawMainColor(eventData, toolData, pointerArray, configuration);
-}
-
-function _drawMainColor(eventData, toolData, pointerArray, configuration) {
-  const shouldErase =
-    configuration.alwaysEraseOnClick || _isCtrlDown(eventData);
-  const columns = eventData.image.columns;
-  const segmentationIndex = brushModule.state.drawColorId;
-
-  if (shouldErase && !toolData[segmentationIndex]) {
-    // Erase command, yet no data yet, just return.
-    return;
-  }
-
-  if (!toolData[segmentationIndex]) {
-    toolData[segmentationIndex] = {};
-  }
-
-  if (!toolData[segmentationIndex].pixelData) {
-    const enabledElement = external.cornerstone.getEnabledElement(
-      eventData.element
-    );
-    const enabledElementUID = enabledElement.uuid;
-
-    // Clear cache for this color to avoid flickering.
-    const imageBitmapCacheForElement = brushModule.getters.imageBitmapCacheForElement(
-      enabledElementUID
-    );
-
-    if (imageBitmapCacheForElement) {
-      imageBitmapCacheForElement[segmentationIndex] = null;
-    }
-
-    // Add a new pixelData array.
-    toolData[segmentationIndex].pixelData = new Uint8ClampedArray(
-      eventData.image.width * eventData.image.height
-    );
-  }
-
-  const toolDataI = toolData[segmentationIndex];
-
-  // Draw / Erase the active color.
-  drawBrushPixels(pointerArray, toolDataI, columns, shouldErase);
-
-  toolDataI.invalidated = true;
 }
 
 function _isCtrlDown(eventData) {

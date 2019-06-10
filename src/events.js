@@ -197,6 +197,11 @@ const EVENTS = {
    *  @type {String}
    */
   STACK_SCROLL: 'cornerstonetoolsstackscroll',
+
+  /**
+   *  @type {String}
+   */
+  LABELMAP_MODIFIED: 'cornersontetoolslabelmapmodified',
 };
 
 export default EVENTS;

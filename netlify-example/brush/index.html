@@ -15,17 +15,13 @@
 		<div class="wrapper">
 			<!-- Select Tool Category -->
 			<ul class="tool-category-list">
-				<li><a class="tools" data-category="tools" href="#">Brush</a></li>
-				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+				<li><a class="tools" data-category="tools" href="#">Drag</a></li>
 			</ul>
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="tools">
 				<li><a href="#" data-tool="Brush">Brush</a></li>
-			</ul>
-			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
+        <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
 			</ul>
 
 			<!-- Our beautiful element targets -->
@@ -39,33 +35,10 @@
 							<td>
 								<table>
 									<tr>
-										<td>Click and drag to use the paint with the selected segmentation.</td>
+										<td>Click and drag to paint with the selected segment.</td>
 									</tr>
 									<tr>
 										<td>Release the mouse to stop painting.</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-						<tr>
-							<th>Keyboard Input</th>
-							<td>
-								<table>
-									<tr>
-										<td>Next Segmentation:</td>
-										<td>]</td>
-									</tr>
-									<tr>
-										<td>Previous Segmentation:</td>
-										<td>[</td>
-									</tr>
-									<tr>
-										<td>Increase Brush Size:</td>
-										<td>+</td>
-									</tr>
-									<tr>
-										<td>Decrease Brush Size :</td>
-										<td>-</td>
 									</tr>
 								</table>
 							</td>
@@ -75,61 +48,50 @@
 					<table>
 						<tr>
 							<th>
-								<button type="button" api-call="hide-all">
-									Hide All Segmentations
+								<button type="button" api-call="next-segment">
+									Next Segment
 								</button>
 							</th>
 							<td>
-									Hides all segmentations unless that segmentation is actively being drawn.
+								Switch to the next segment index.
 							</td>
 						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="show-all">
-									Show All Segmentations
-								</button>
-							</th>
-							<td>
-								Shows all segmentations on the canvas, all the time.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="hide-third">
-									Hide 3rd Segmentation
-								</button>
-							</th>
-							<td>
-								An example of hiding a single segmentation. Hide's the 3rd (yellow) segmentation. When hidden it can only be seen whilst actively being drawn.
-							</td>
-						</tr>
-						<tr>
-							<th>
-								<button type="button" api-call="show-third">
-									Show 3rd Segmentation
-								</button>
-							</th>
-							<td><p>
-								An example of un-hiding a single segmentation. Unhide's the 3rd (yellow) segmentation.
-							</p></td>
-						</tr>
-
+            <tr>
+              <th>
+                <button type="button" api-call="previous-segment">
+                  Previous Segment
+                </button>
+              </th>
+              <td>
+                Switch to the previous segment index.
+              </td>
+            </tr>
+            <tr>
+              <th>
+                <button type="button" api-call="switch-labelmap">
+                  Switch Labelmap
+                </button>
+              </th>
+              <td id="active-label-map-label">
+                Active labelmap: 0
+              </td>
+            </tr>
 						<tr>
 							<td>
 								<input type="range" id="alpha" min="0" max="255">
 							</td>
 							<td>
-								alpha - The transparency of segmentations.
+								alpha - The transparency of the active segmentation.
 							</td>
 						</tr>
-						<tr>
-							<td>
-								<input type="range" id="alphaWhenHiddenButActive" min="0">
-							</td>
-							<td>
-								alphaWhenHiddenButActive - The transparency of segmentations when set to hidden but actively drawing.
-							</td>
-						</tr>
+            <tr>
+              <td>
+                <input type="range" id="alpha-inactive" min="0" max="255">
+              </td>
+              <td>
+                alphaOfInactiveLabelmap - The transparency of inactive segmentations.
+              </td>
+            </tr>
 					</table>
 				</div>
 			</div>
@@ -157,8 +119,7 @@
 	cornerstoneTools.init();
 	const imageIds = [
 		'example://1',
-		'example://2',
-		'example://3'
+		'example://2'
 	];
 	const stack = {
 		currentImageIdIndex: 0,
@@ -174,10 +135,9 @@
 	element.focus();
 
 	cornerstone.loadImage(imageIds[0]).then(function (image) {
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
 		cornerstone.displayImage(element, image);
-
-		cornerstoneTools.addStackStateManager(element, ['stack']);
-		cornerstoneTools.addToolState(element, 'stack', stack);
 	});
 
 	function setAllToolsPassive() {
@@ -341,46 +301,54 @@
 
 	const brushTool = cornerstoneTools.getToolForElement(element, 'Brush');
 
+  let activeLabelmap = 0;
+
 	function brushApiCall (opperation) {
 		switch (opperation) {
-			case 'hide-all':
-				brushTool.hideAllSegmentationsOnElement();
+			case 'next-segment':
+				brushTool.nextSegment();
 				break;
-			case 'show-all':
-				brushTool.showAllSegmentationsOnElement();
+			case 'previous-segment':
+				brushTool.previousSegment();
 				break;
-			case 'hide-third':
-				brushTool.hideSegmentationOnElement(2); //Zero-indexed
-				break;
-			case 'show-third':
-				brushTool.showSegmentationOnElement(2); //Zero-indexed
-				break;
+      case 'switch-labelmap':
+        if (activeLabelmap === 0) {
+          activeLabelmap = 1;
+        } else {
+          activeLabelmap = 0;
+        }
+
+        cornerstoneTools.store.modules.brush.setters.activeLabelmap(element, activeLabelmap);
+
+        const label = document.getElementById("active-label-map-label");
+        label.innerHTML = "Active Labelmap: " + activeLabelmap;
+
+        break;
 			default:
 				return;
 		}
 	}
 
-	// BRUSH TOOL Key interface
 
 	// API Sliders
-
 	const alphaSlider = document.getElementById("alpha");
-	const alphaWhenHiddenButActiveSlider = document.getElementById("alphaWhenHiddenButActive");
 
-	alphaSlider.defaultValue = Math.floor(0.4*255);
-	alphaWhenHiddenButActiveSlider.defaultValue = Math.floor(0.2*255);
+  alphaSlider.defaultValue = Math.floor(0.6*255);
+  alphaSlider.addEventListener('input', event => {
+    const normalisedAlpha = event.target.value/255.0;
 
-	alphaSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
+    brushTool.alpha = normalisedAlpha;
+  });
 
-		brushTool.alpha = normalisedAlpha;
-	});
 
-	alphaWhenHiddenButActiveSlider.addEventListener('input', event => {
-		const normalisedAlpha = event.target.value/255.0;
+  const alphaOfInactiveLabelmapSlider = document.getElementById("alpha-inactive");
 
-		brushTool.hiddenButActiveAlpha = normalisedAlpha;
-	});
+  alphaOfInactiveLabelmapSlider.defaultValue = Math.floor(0.0);
+  alphaOfInactiveLabelmapSlider.addEventListener('input', event => {
+    const normalisedAlpha = event.target.value/255.0;
+
+    brushTool.alphaOfInactiveLabelmap = normalisedAlpha;
+  });
 
 
 </script>

@@ -1,6 +1,7 @@
-import { getToolState, addToolState } from '../stateManagement/toolState.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import external from '../externalModules.js';
+import store from '../store/index.js';
+
+const brushModule = store.modules.brush;
 
 /**
  * Clears the brush imageBitmapCache,
@@ -13,25 +14,33 @@ export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  let toolData = getToolState(
-    element,
-    BaseBrushTool.getReferencedToolDataName()
+  const { labelmaps3D, currentImageIdIndex } = brushModule.getters.labelmaps3D(
+    element
   );
 
-  if (!toolData) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolData = getToolState(element, BaseBrushTool.getReferencedToolDataName());
+  if (!labelmaps3D) {
+    return;
   }
 
-  const maxSegmentations = BaseBrushTool.getNumberOfColors();
+  let invalidated = false;
 
-  // Invalidate the segmentation bitmap such that it gets redrawn.
-  for (let i = 0; i < maxSegmentations; i++) {
-    if (toolData.data[i]) {
-      toolData.data[i].invalidated = true;
+  for (let i = 0; i < labelmaps3D.length; i++) {
+    const labelmap3D = labelmaps3D[i];
+
+    if (!labelmap3D) {
+      continue;
+    }
+
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+    if (labelmap2D) {
+      labelmap2D.invalidated = true;
+      invalidated = true;
     }
   }
 
-  // Refresh the canvas
-  external.cornerstone.updateImage(eventData.element);
+  if (invalidated) {
+    // Refresh the canvas
+    external.cornerstone.updateImage(eventData.element);
+  }
 }
