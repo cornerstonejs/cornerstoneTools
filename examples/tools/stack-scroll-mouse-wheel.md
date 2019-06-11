@@ -7,6 +7,7 @@ toolType: stack
 
 <h2 class="title is-2">How to set up the StackScrollMouseWheel tool:</h2>
 
+<!-- prettier-ignore-start -->
 {% highlight javascript %}
 // Init cornerstone tools
 cornerstoneTools.init()
@@ -14,8 +15,8 @@ cornerstoneTools.init()
 const scheme = 'wadouri'
 const baseUrl = 'https://mypacs.com/dicoms/'
 const series = [
-    'image_1.dcm',
-    'image_2.dcm'
+  'image_1.dcm',
+  'image_2.dcm'
 ]
 
 const imageIds = series.map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`
@@ -37,6 +38,7 @@ cornerstone.loadImage(imageIds[0]).then((image) => {
 })
 
 cornerstoneTools.addTool(StackScrollMouseWheelTool)
-cornerstoneTools.setToolActive('StackScrollMouseWheelTool', { mouseButtonMask: 1 })
+cornerstoneTools.setToolActive('StackScrollMouseWheelTool', { })
 
 {% endhighlight %}
+<!-- prettier-ignore-end -->
