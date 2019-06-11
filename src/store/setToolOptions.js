@@ -34,7 +34,7 @@ const setToolOptionsForElement = function(element, toolName, options) {
  */
 const setToolOptions = function(toolName, options) {
   state.enabledElements.forEach(element => {
-    setToolOptionsForElement(element, options);
+    setToolOptionsForElement(element, toolName, options);
   });
 };
 
