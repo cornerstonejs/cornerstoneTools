@@ -33,17 +33,6 @@ layout: default
 </section>
 
 <script>
-  // NOTE: We pull these in from packaged sources in our header,
-  // but here are the associated NPM packages that can be used instead
-
-  // Packages
-  // import Hammer from 'hammerjs';
-  // import dicomParser from 'dicom-parser';
-  // import * as cornerstone from 'cornerstone-core';
-  // import * as cornerstoneMath from 'cornerstone-math';
-  // import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
-  // import * as cornerstoneTools from '@cornerstonejs/tools';
-
   const baseUrl =
     window.ENVIRONMENT === 'development'
       ? 'http://localhost:4000/'
@@ -58,16 +47,26 @@ layout: default
   cornerstoneTools.init();
   cornerstone.enable(element);
   const toolName = '{{ page.toolName }}';
-  const imageIds = [
-    `wadouri:${baseUrl}assets/dicom/bellona/chest_lung/1.dcm`,
-    `wadouri:${baseUrl}assets/dicom/bellona/chest_lung/2.dcm`,
-  ];
+  const imageIds = [];
+
+  for (let i = 1; i < 38; i++) {
+    imageIds.push(
+      'wadouri:' + baseUrl + 'assets/dicom/bellona/chest_lung/' + i + '.dcm'
+    );
+  }
+
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
 
   element.tabIndex = 0;
   element.focus();
 
   cornerstone.loadImage(imageIds[0]).then(function(image) {
     cornerstone.displayImage(element, image);
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
   });
 
   // Add the tool

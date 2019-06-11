@@ -21,8 +21,15 @@ layout: default
 
     <div class="cornerstone-element-wrapper">
       <div
-        id="cornerstone-element"
         class="cornerstone-element"
+        id="topgram_element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+
+      <div
+        class="cornerstone-element"
+        id="chest_element"
         data-index="0"
         oncontextmenu="return false"
       ></div>
@@ -52,28 +59,65 @@ layout: default
   _initCornerstone();
   _initInterface();
 
-  const element = document.querySelector('.cornerstone-element');
+  const topgramElement = document.getElementById('topgram_element');
+  const chestElement = document.getElementById('chest_element');
+  const elements = [topgramElement, chestElement];
 
   // Init CornerstoneTools
-  cornerstoneTools.init();
-  cornerstone.enable(element);
+  cornerstoneTools.init({
+    globalToolSyncEnabled: true,
+  });
+  // image enable the dicomImage element and add canvas to it
+  elements.forEach(element => {
+    cornerstone.enable(element);
+  });
   const toolName = '{{ page.toolName }}';
-  const imageIds = [
-    `wadouri:${baseUrl}assets/dicom/bellona/chest_lung/1.dcm`,
-    `wadouri:${baseUrl}assets/dicom/bellona/chest_lung/2.dcm`,
+
+  const topgramImageIds = [
+    `wadouri:${baseUrl}assets/dicom/bellona/topogram/IM-0001-0001.dcm`,
   ];
 
-  element.tabIndex = 0;
-  element.focus();
+  const chestImageIds = new Array();
+  // up to now it is hard coded 37 chest images
+  for (let i = 1; i < 37; i++) {
+    chestImageIds.push(
+      `wadouri:${baseUrl}assets/dicom/bellona/chest_lung/${i}.dcm`
+    );
+  }
 
-  cornerstone.loadImage(imageIds[0]).then(function(image) {
-    cornerstone.displayImage(element, image);
-  });
+  const chestStack = {
+    currentImageIdIndex: 0,
+    imageIds: chestImageIds,
+  };
 
-  // Add the tool
-  const apiTool = cornerstoneTools[`${toolName}Tool`];
-  cornerstoneTools.addTool(apiTool);
-  cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
+  const topgramStack = {
+    currentImageIdIndex: 0,
+    imageIds: topgramImageIds,
+  };
+
+  // Add Default tools; set them active
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+  cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+  cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+  cornerstoneTools.setToolActive('StackScrollMouseWheel', {});
+
+  loadSeries(cornerstone, chestImageIds, chestElement, chestStack);
+  loadSeries(cornerstone, topgramImageIds, topgramElement, topgramStack);
+
+  function loadSeries(cornerstone, imageIds, element, stack) {
+    // Cache all images and metadata
+    imageIds.forEach(imageId => cornerstone.loadAndCacheImage(imageId));
+
+    // Load and display first image in stack
+    return cornerstone.loadImage(imageIds[0]).then(image => {
+      // display this image
+      cornerstone.displayImage(element, image);
+
+      // set the stack as tool state
+      cornerstoneTools.addStackStateManager(element, ['stack', toolName]);
+      cornerstoneTools.addToolState(element, 'stack', stack);
+    });
+  }
 
   /***************************************************************************
    * UI & Boilerplate setup code
