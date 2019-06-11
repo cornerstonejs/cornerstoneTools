@@ -125,7 +125,6 @@ export default class BrushTool extends BaseBrushTool {
       pointerArray,
       labelmap3D,
       currentImageIdIndex,
-      labelmap3D.activeDrawColorId,
       columns,
       shouldErase
     );
