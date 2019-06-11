@@ -14,23 +14,17 @@ It's important to note that the CrossHairs tool uses the Cornerstone MetaDataPro
 // Init cornerstone tools
 cornerstoneTools.init()
 
+// ...
+// Enable our elements
+
 const scheme = 'wadouri'
 const baseUrl = 'https://mypacs.com/dicoms/'
 
-// Create first series stack
+// Create our Stack data
 const firstSeries = [
   'image_1.dcm'
 ]
 
-const firstSeriesImageIds = firstSeries
-  .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);
-
-const stackSeries1 = {
-  currentImageIdIndex: 0,
-  firstSeriesImageIds
-}
-
-// Create second series stack
 const secondSeries = [
   'image_11.dcm',
   'image_22.dcm',
@@ -38,11 +32,17 @@ const secondSeries = [
   'image_44.dcm'
 ]
 
-const stackSeries2 = {
+const firstStack = {
+  currentImageIdIndex: 0,
+  imageIds: firstSeries
+    .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);,
+};
+
+const secondStack = {
   currentImageIdIndex: 0,
   imageIds: secondSeries
-    .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);
-}
+    .map(seriesImage => `${scheme}:${baseUrl}${seriesImage}`);,
+};
 
 // Create the synchronizer
 const synchronizer = new cornerstoneTools.Synchronizer(
@@ -52,53 +52,56 @@ const synchronizer = new cornerstoneTools.Synchronizer(
   cornerstoneTools.updateImageSynchronizer
 )
 
+// Add and activate tools
+cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 });
+cornerstoneTools.setToolActive('StackScrollMouseWheel', { });
+
 // load images and set the stack
-const chestPromise = cornerstone.loadImage(chestImageIds[0]).then((image) => {
-// display this image
-cornerstone.displayImage(chestElement, image)
+const firstLoadImagePromise = cornerstone.loadImage(firstStack.imageIds[0])
+  .then((image) => {
+    cornerstone.displayImage(firstElement, image)
 
     // set the stack as tool state
-    synchronizer.add(chestElement)
-    cornerstoneTools.addStackStateManager(
-      chestElement,
-      ['stack', toolName]
-    )
-    cornerstoneTools.addToolState(chestElement, 'stack', chestStack)
-})
+    synchronizer.add(firstElement)
+    cornerstoneTools.addStackStateManager(firstStack, ['stack', 'Crosshairs'])
+    cornerstoneTools.addToolState(firstElement, 'stack', firstStack)
+  })
 
-// Add the tool
-cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
-cornerstoneTools.setToolActive('StackScroll', { mouseButtonMask: 1 })
+const secondLoadImagePromise = cornerstone.loadImage(secondStack.imageIds[0])
+  .then((image) => {
+    cornerstone.displayImage(secondElement, image)
 
-cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
-cornerstoneTools.setToolActive('StackScrollMouseWheel', { mouseButtonMask: 1 })
+    // set the stack as tool state
+    synchronizer.add(secondElement);
+    cornerstoneTools.addStackStateManager(secondElement, ['stack', 'Crosshairs']);
+    cornerstoneTools.addToolState(secondElement, 'stack', secondStack);
+  })
 
-const topgramPromise = cornerstone.loadImage(
-  topgramImageIds[0]).then((image) => {
-  // display this image
-  cornerstone.displayImage(topgramElement, image)
-  // set the stack as tool state
-  synchronizer.add(topgramElement)
-  cornerstoneTools.addStackStateManager(
-    topgramElement,
-    ['stack', toolName]
-  )
-  cornerstoneTools.addToolState(topgramElement, 'stack', topgramStack)
-})
+// After images have loaded, and our sync context has added both elements
+Promise.all([firstLoadImagePromise, secondLoadImagePromise])
+  .then(() => {
+    const tool = cornerstoneTools.CrosshairsTool;
+
+    cornerstoneTools.addTool(tool);
+    cornerstoneTools.setToolActive('Crosshairs', {
+      mouseButtonMask: 1,
+      synchronizationContext: synchronizer,
+    });
+  });
 {% endhighlight %}
 <!-- prettier-ignore-end -->
 
 <script>
 // Doing some dark magic here to make sure we don't add our
 // synchronizer/tool until all canvases have rendered an image.
-
 let canvasesReady = false;
 let numImagesLoaded = 0;
 const firstElement = document.getElementById('topgram_element');
 const secondElement = document.getElementById('chest_element');
 
 function addCrosshairsTool(){
-  console.log('addCrosshairsTool')
   const synchronizer = new cornerstoneTools.Synchronizer(
     'cornerstonenewimage',
     cornerstoneTools.updateImageSynchronizer

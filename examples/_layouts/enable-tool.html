@@ -104,17 +104,6 @@ layout: default
   loadSeries(cornerstone, chestImageIds, chestElement, chestStack);
   loadSeries(cornerstone, topgramImageIds, topgramElement, topgramStack);
 
-  // // This probably should live somewhere else
-  // // setTimeout(() => {
-  // const tool = cornerstoneTools[`${toolName}Tool`];
-
-  // cornerstoneTools.addTool(tool);
-  // cornerstoneTools.setToolActive(toolName, {
-  //   mouseButtonMask: 1,
-  //   synchronizationContext: synchronizer,
-  // });
-  // // }, 2000);
-
   function loadSeries(cornerstone, imageIds, element, stack) {
     // Cache all images and metadata
     imageIds.forEach(imageId => cornerstone.loadAndCacheImage(imageId));
