@@ -17,3 +17,5 @@ junit.xml
 
 ## Only track CI's lock
 yarn.lock
+
+Gemfile.lock
