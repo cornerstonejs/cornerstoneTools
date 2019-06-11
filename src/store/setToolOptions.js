@@ -1,5 +1,5 @@
-import { state } from './index.js';
 import getToolForElement from './getToolForElement.js';
+import { state } from './index.js';
 
 /**
  * Sets the options of a tool on a specific element.
