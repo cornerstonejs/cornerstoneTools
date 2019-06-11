@@ -203,7 +203,7 @@ class BaseBrushTool extends BaseTool {
     const segmentSet = new Set(labelmap2D.pixelData);
     const iterator = segmentSet.values();
 
-    const segmentsOnSlice = [];
+    const segmentsOnLabelmap = [];
     let done = false;
 
     while (!done) {
@@ -212,17 +212,17 @@ class BaseBrushTool extends BaseTool {
       done = next.done;
 
       if (!done) {
-        segmentsOnSlice.push(next.value);
+        segmentsOnLabelmap.push(next.value);
       }
     }
 
-    labelmap2D.segmentsOnSlice = segmentsOnSlice;
+    labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
 
     // If labelmap2D now empty, delete it.
     if (
       shouldErase &&
-      labelmap2D.segmentsOnSlice.length === 1 &&
-      labelmap2D.segmentsOnSlice[0] === 0
+      labelmap2D.segmentsOnLabelmap.length === 1 &&
+      labelmap2D.segmentsOnLabelmap[0] === 0
     ) {
       delete labelmap3D.labelmaps2D[currentImageIdIndex];
     }
@@ -283,7 +283,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   nextSegment() {
-    setters.incrementBrushColor(this.element);
+    setters.incrementActiveSegmentIndex(this.element);
   }
 
   /**
@@ -294,7 +294,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   previousSegment() {
-    setters.decrementBrushColor(this.element);
+    setters.decrementActiveSegmentIndex(this.element);
   }
 
   /**
