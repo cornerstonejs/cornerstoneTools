@@ -3,8 +3,11 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
+import { getLogger } from '../../util/logger.js';
 
-const { state, setters } = store.modules.brush;
+const logger = getLogger('tools:BrushTool');
+
+const { state, getters, setters } = store.modules.brush;
 
 /**
  * @abstract
@@ -16,7 +19,7 @@ const { state, setters } = store.modules.brush;
 class BaseBrushTool extends BaseTool {
   constructor(props, defaultProps = {}) {
     if (!defaultProps.configuration) {
-      defaultProps.configuration = {};
+      defaultProps.configuration = { alwaysEraseOnClick: false };
     }
     defaultProps.configuration.referencedToolData = 'brush';
 
@@ -98,6 +101,22 @@ class BaseBrushTool extends BaseTool {
     const eventData = evt.detail;
     const element = eventData.element;
 
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = getters.getAndCacheLabelmap2D(element);
+
+    const shouldErase =
+      this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
+
+    this.paintEventData = {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+      shouldErase,
+    };
+
     this._paint(evt);
     this._drawing = true;
     this._startListeningForMouseUp(element);
@@ -170,6 +189,45 @@ class BaseBrushTool extends BaseTool {
 
     this._drawing = false;
     this._mouseUpRender = true;
+
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+      shouldErase,
+    } = this.paintEventData;
+
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+    // Grab the labels on the slice.
+    const segmentSet = new Set(labelmap2D.pixelData);
+    const iterator = segmentSet.values();
+
+    const segmentsOnSlice = [];
+    let done = false;
+
+    while (!done) {
+      const next = iterator.next();
+
+      done = next.done;
+
+      if (!done) {
+        segmentsOnSlice.push(next.value);
+      }
+    }
+
+    labelmap2D.segmentsOnSlice = segmentsOnSlice;
+
+    // If labelmap2D now empty, delete it.
+    if (
+      shouldErase &&
+      labelmap2D.segmentsOnSlice.length === 1 &&
+      labelmap2D.segmentsOnSlice[0] === 0
+    ) {
+      delete labelmap3D.labelmaps2D[currentImageIdIndex];
+    }
+
+    logger.warn(labelmap2D);
 
     this._stopListeningForMouseUp(element);
   }
@@ -297,6 +355,10 @@ class BaseBrushTool extends BaseTool {
 
   _getEnabledElement() {
     return external.cornerstone.getEnabledElement(this.element);
+  }
+
+  _isCtrlDown(eventData) {
+    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
   }
 
   /**
