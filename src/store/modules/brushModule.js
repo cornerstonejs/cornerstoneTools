@@ -588,11 +588,79 @@ function setLabelmap3DByFirstImageId(
     if (pixelData.some(element => !element)) {
       labelmaps2D[i] = {
         pixelData,
-        getSegmentIndexes: () => new Set(pixelData),
+        segmentsOnSlice: [],
         invalidated: true,
       };
     }
   }
+}
+
+/**
+ * setDeleteSegment - Deletes the segment and any associated metadata from
+ *                    the labelmap.
+ *
+ * @param  {type} elementOrEnabledElementUID The cornerstone enabled element
+ *                                           or its UUID.
+ * @param  {type} segmentIndex               The segment Index
+ * @param  {type} [labelmapIndex]            The labelmap index. Defaults to the
+ *                                           active labelmap index.
+ * @returns {null}
+ */
+function setDeleteSegment(
+  elementOrEnabledElementUID,
+  segmentIndex,
+  labelmapIndex
+) {
+  if (!segmentIndex) {
+    return;
+  }
+
+  const element = _getEnabledElement(elementOrEnabledElementUID);
+
+  if (!element) {
+    return;
+  }
+
+  const stackState = getToolState(element, 'stack');
+  const stackData = stackState.data[0];
+  const firstImageId = stackData.imageIds[0];
+
+  const brushStackState = state.series[firstImageId];
+
+  if (!brushStackState) {
+    return;
+  }
+
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
+
+  const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
+
+  if (!labelmap3D) {
+    return;
+  }
+
+  // Delete metadata if present.
+  delete labelmap3D.metadata[segmentIndex];
+
+  const labelmaps2D = labelmap3D.labelmaps2D;
+
+  // clear segment's voxels.
+  for (let i = 0; i < labelmaps2D.length; i++) {
+    const labelmap2D = labelmaps2D[i];
+
+    // If the slice has data, and it contains the segment, set that segment to 0.
+    if (labelmap2D && labelmap2D.segmentsOnSlice.includes(segmentIndex)) {
+      const pixelData = labelmap2D.pixelData;
+
+      for (let p = 0; p < pixelData.length; p++) {
+        if (pixelData[p] === segmentIndex) pixelData[p] = 0;
+      }
+    }
+  }
+
+  external.cornerstone.updateImage(element);
 }
 
 /**
@@ -1009,9 +1077,7 @@ function _addLabelmap2DView(
     currentImageIdIndex
   ] = {
     pixelData,
-    getSegmentIndexes: () => {
-      return new Set(pixelData);
-    },
+    segmentsOnSlice: [],
     invalidated: true,
   };
   // Clear cache for this displaySet to avoid flickering.

@@ -5,7 +5,9 @@ import { getToolState } from '../../stateManagement/toolState.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
-import triggerEvent from './../../util/triggerEvent.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:BrushTool');
 
 const { state, getters, setters } = store.modules.brush;
 
@@ -19,9 +21,7 @@ const { state, getters, setters } = store.modules.brush;
 class BaseBrushTool extends BaseTool {
   constructor(props, defaultProps = {}) {
     if (!defaultProps.configuration) {
-      defaultProps.configuration = {
-        skipPaintForInvisibleSegmentations: false,
-      };
+      defaultProps.configuration = { alwaysEraseOnClick: false };
     }
     defaultProps.configuration.referencedToolData = 'brush';
 
@@ -103,6 +103,22 @@ class BaseBrushTool extends BaseTool {
     const eventData = evt.detail;
     const element = eventData.element;
 
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = getters.getAndCacheLabelmap2D(element);
+
+    const shouldErase =
+      this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
+
+    this.paintEventData = {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+      shouldErase,
+    };
+
     this._paint(evt);
     this._drawing = true;
     this._startListeningForMouseUp(element);
@@ -173,33 +189,44 @@ class BaseBrushTool extends BaseTool {
     this._drawing = false;
     this._mouseUpRender = true;
 
-    const element = evt.detail.element;
-    const toolData = (
-      getToolState(element, this.name) ||
-      getToolState(element, 'brush') ||
-      {}
-    ).data;
-    const segmentationIndex = state.drawColorId;
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+      shouldErase,
+    } = this.paintEventData;
 
-    if (
-      !this.configuration.skipPaintForInvisibleSegmentations ||
-      _isSegmentationVisibleForElement(element, segmentationIndex, toolData)
-    ) {
-      let measurementData = null;
+    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
-      if (toolData && toolData.length > segmentationIndex) {
-        measurementData = toolData[segmentationIndex];
+    // Grab the labels on the slice.
+    const segmentSet = new Set(labelmap2D.pixelData);
+    const iterator = segmentSet.values();
+
+    const segmentsOnSlice = [];
+    let done = false;
+
+    while (!done) {
+      const next = iterator.next();
+
+      done = next.done;
+
+      if (!done) {
+        segmentsOnSlice.push(next.value);
       }
-
-      const eventData = {
-        toolName: this.name,
-        element,
-        measurementData,
-        evtDetail: evt.detail,
-      };
-
-      triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, eventData);
     }
+
+    labelmap2D.segmentsOnSlice = segmentsOnSlice;
+
+    // If labelmap2D now empty, delete it.
+    if (
+      shouldErase &&
+      labelmap2D.segmentsOnSlice.length === 1 &&
+      labelmap2D.segmentsOnSlice[0] === 0
+    ) {
+      delete labelmap3D.labelmaps2D[currentImageIdIndex];
+    }
+
+    logger.warn(labelmap2D);
 
     this._stopListeningForMouseUp(element);
   }
@@ -327,6 +354,10 @@ class BaseBrushTool extends BaseTool {
 
   _getEnabledElement() {
     return external.cornerstone.getEnabledElement(this.element);
+  }
+
+  _isCtrlDown(eventData) {
+    return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
   }
 
   /**

@@ -37,10 +37,6 @@ function drawBrushPixels(
   });
 
   labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
-
-  if (shouldErase && pixelData.some(element => !element)) {
-    delete labelmap3D.labelmaps2D[imageIdIndex];
-  }
 }
 
 export { drawBrushPixels };
