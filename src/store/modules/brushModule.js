@@ -983,6 +983,7 @@ export default {
     incrementBrushColor: setIncrementBrushColor,
     decrementBrushColor: setDecrementBrushColor,
     brushColor: setBrushColor,
+    deleteSegment: setDeleteSegment,
     colorLUT: setColorLUT,
     activeLabelmap: setActiveLabelmap,
     radius: setRadius,
