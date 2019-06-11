@@ -1,10 +1,11 @@
-import external from './../../externalModules.js';
-import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
-import isToolActive from './../../store/isToolActive.js';
-import store from './../../store/index.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
+import isToolActive from './../../store/isToolActive.js';
+import store from './../../store/index.js';
+import triggerEvent from './../../util/triggerEvent.js';
 
 const { state, setters } = store.modules.brush;
 
@@ -193,6 +194,8 @@ class BaseBrushTool extends BaseTool {
 
     this._drawing = false;
     this._mouseUpRender = true;
+
+    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_COMPLETED, evt.detail);
 
     this._stopListeningForMouseUp(element);
   }
