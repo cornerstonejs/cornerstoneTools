@@ -56,8 +56,6 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
     return;
   }
 
-  logger.warn(brushStackState);
-
   if (labelmapIndex === undefined) {
     labelmapIndex = brushStackState.activeLabelmapIndex;
   }
@@ -585,7 +583,9 @@ function setLabelmap3DByFirstImageId(
       sliceLengthInUint16
     );
 
-    if (pixelData.some(element => !element)) {
+    const segmentsOnLabelmap = _getSegmentsOnPixelData(pixelData);
+
+    if (segmentsOnLabelmap.some(segment => !segment)) {
       labelmaps2D[i] = {
         pixelData,
         segmentsOnLabelmap: [],
@@ -593,6 +593,27 @@ function setLabelmap3DByFirstImageId(
       };
     }
   }
+}
+
+function _getSegmentsOnPixelData(pixelData) {
+  // Grab the labels on the slice.
+  const segmentSet = new Set(pixelData);
+  const iterator = segmentSet.values();
+
+  const segmentsOnLabelmap = [];
+  let done = false;
+
+  while (!done) {
+    const next = iterator.next();
+
+    done = next.done;
+
+    if (!done) {
+      segmentsOnLabelmap.push(next.value);
+    }
+  }
+
+  return segmentsOnLabelmap;
 }
 
 /**
