@@ -95,7 +95,7 @@ export default class BrushTool extends BaseBrushTool {
   /**
    * Paints the data to the canvas.
    *
-   * @private
+   * @protected
    * @param  {Object} evt The data object associated with the event.
    * @returns {void}
    */
@@ -109,24 +109,21 @@ export default class BrushTool extends BaseBrushTool {
       return;
     }
 
+    const radius = brushModule.state.radius;
+    const pointerArray = getCircle(radius, rows, columns, x, y);
+
     const {
       labelmap3D,
       currentImageIdIndex,
       activeLabelmapIndex,
-    } = brushModule.getters.getAndCacheLabelmap2D(element);
-
-    const radius = brushModule.state.radius;
-    const pointerArray = getCircle(radius, rows, columns, x, y);
-    const shouldErase =
-      _isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
-    const segmentIndex = labelmap3D.activeDrawColorId;
+      shouldErase,
+    } = this.paintEventData;
 
     // Draw / Erase the active color.
     drawBrushPixels(
       pointerArray,
       labelmap3D,
       currentImageIdIndex,
-      segmentIndex,
       columns,
       shouldErase
     );
@@ -137,8 +134,4 @@ export default class BrushTool extends BaseBrushTool {
 
     external.cornerstone.updateImage(evt.detail.element);
   }
-}
-
-function _isCtrlDown(eventData) {
-  return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
 }

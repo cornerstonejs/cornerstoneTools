@@ -17,10 +17,10 @@ function drawBrushPixels(
   pointerArray,
   labelmap3D,
   imageIdIndex,
-  segmentIndex,
   columns,
   shouldErase = false
 ) {
+  const segmentIndex = labelmap3D.activeSegmentIndex;
   const getPixelIndex = (x, y) => y * columns + x;
   const pixelData = labelmap3D.labelmaps2D[imageIdIndex].pixelData;
 
@@ -37,10 +37,6 @@ function drawBrushPixels(
   });
 
   labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
-
-  if (shouldErase && pixelData.some(element => !element)) {
-    delete labelmap3D.labelmaps2D[imageIdIndex];
-  }
 }
 
 export { drawBrushPixels };
