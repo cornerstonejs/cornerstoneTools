@@ -227,8 +227,6 @@ class BaseBrushTool extends BaseTool {
       delete labelmap3D.labelmaps2D[currentImageIdIndex];
     }
 
-    logger.warn(labelmap2D);
-
     this._stopListeningForMouseUp(element);
   }
 
