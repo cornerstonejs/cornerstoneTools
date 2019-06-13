@@ -28,8 +28,6 @@ export default class BrushTool extends BaseBrushTool {
 
     super(props, defaultProps);
 
-    logger.warn(this);
-
     this.touchDragCallback = this._paint.bind(this);
   }
 
