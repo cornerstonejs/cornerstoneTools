@@ -249,6 +249,15 @@
         "example",
         "doc"
       ]
+    },
+    {
+      "login": "DevonBernard",
+      "name": "Devon Bernard",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5349517?v=4",
+      "profile": "https://www.linkedin.com/in/devonbernard",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
