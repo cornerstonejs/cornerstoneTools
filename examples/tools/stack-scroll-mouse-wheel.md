@@ -38,7 +38,7 @@ cornerstone.loadImage(imageIds[0]).then((image) => {
 })
 
 cornerstoneTools.addTool(StackScrollMouseWheelTool)
-cornerstoneTools.setToolActive('StackScrollMouseWheelTool', { })
+cornerstoneTools.setToolActive('StackScrollMouseWheel', { })
 
 {% endhighlight %}
 <!-- prettier-ignore-end -->
