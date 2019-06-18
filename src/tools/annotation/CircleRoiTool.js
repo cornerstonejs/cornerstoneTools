@@ -461,6 +461,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   };
 }
 
+// TODO - to use /util/getCircleCoords (Different Name, same stuff)
 /**
  * Retrieve the bounds of the ellipse in image coordinates
  *

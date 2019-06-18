@@ -1,7 +1,7 @@
 import external from './../../externalModules.js';
-import BaseBrushTool from './../base/BaseBrushTool.js';
+import { BaseBrushTool } from '../base';
 import store from './../../store/index.js';
-import brushUtils from './../../util/brush/index.js';
+import brushUtils from '../../util/segmentation/brush/index.js';
 import EVENTS from '../../events.js';
 import { getLogger } from '../../util/logger.js';
 
@@ -27,8 +27,6 @@ export default class BrushTool extends BaseBrushTool {
     };
 
     super(props, defaultProps);
-
-    logger.warn(this);
 
     this.touchDragCallback = this._paint.bind(this);
   }

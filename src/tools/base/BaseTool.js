@@ -172,8 +172,20 @@ class BaseTool {
     }
   }
 
+  /**
+   * Change the active strategy.
+   *
+   * @public
+   * @method setActiveStrategy
+   * @param  {string} strategy
+   * @returns {null}
+   */
+  setActiveStrategy(strategy) {
+    this.activeStrategy = strategy;
+  }
+
   // ===================================================================
-  // Virtual Methods - Have default behavior but may be overriden.
+  // Virtual Methods - Have default behavior but may be overridden.
   // ===================================================================
 
   //

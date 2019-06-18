@@ -1,0 +1,50 @@
+<div class="buttons mode-buttons">
+    <button class="button set-tool-mode is-primary" data-action="Active">
+        Active
+    </button>
+    <button class="button set-tool-mode" data-action="Passive">
+        Passive
+    </button>
+    <button class="button set-tool-mode" data-action="Enabled">Enable</button>
+    <button class="button set-tool-mode" data-action="Disabled">
+        Disable
+    </button>
+</div>
+
+
+<script>
+  function initModeButtons() {
+
+    const nameSpace = `.mode-buttons`;
+    const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
+
+    const handleClick = function(evt) {
+      const action = this.dataset.action;
+      const options = {
+        mouseButtonMask:
+          evt.buttons || convertMouseEventWhichToButtons(evt.which),
+      };
+
+      cornerstoneTools[`setTool${action}`](toolName, options);
+
+      // Remove active style from all buttons
+      buttons.forEach(btn => {
+        btn.classList.remove('is-primary');
+      });
+
+      // Add active style to this button
+      this.classList.add('is-primary');
+
+      evt.preventDefault();
+      evt.stopPropagation();
+      evt.stopImmediatePropagation();
+      return false;
+    };
+
+    buttons.forEach(btn => {
+      btn.addEventListener('contextmenu', handleClick);
+      btn.addEventListener('auxclick', handleClick);
+      btn.addEventListener('click', handleClick);
+    });
+  }
+</script>

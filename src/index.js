@@ -88,7 +88,13 @@ import {
   RectangleRoiTool,
   TextMarkerTool,
 } from './tools/annotation/index.js';
-import { BrushTool } from './tools/brush/index.js';
+import {
+  BrushTool,
+  FreehandScissorsTool,
+  RectangleScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
+} from './tools/segmentation/index.js';
 import {
   CrosshairsTool,
   DoubleTapFitToWindowTool,
@@ -213,8 +219,11 @@ const cornerstoneTools = {
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
-  // ~ Brush Tools
+  // ~ Segmentation Tools
   BrushTool,
+  FreehandScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
@@ -313,8 +322,12 @@ export {
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
-  // ~ Brush Tools
+  // ~ Segmentation Tools
   BrushTool,
+  RectangleScissorsTool,
+  FreehandScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
