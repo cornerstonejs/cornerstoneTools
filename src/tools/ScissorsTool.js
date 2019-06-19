@@ -2,10 +2,9 @@ import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 // Drawing
 import { draw, drawRect, drawJoinedLines, getNewContext } from '../drawing/index.js';
-import clip from '../util/clip.js';
 import toolColors from '../stateManagement/toolColors.js';
+// TODO: Add scissors cursor
 import { wwwcRegionCursor } from './cursors/index.js';
-import { getToolState } from "../stateManagement/toolState.js";
 import { modules } from '../store/index.js'
 
 /**
@@ -160,8 +159,6 @@ export default class ScissorsTool extends BaseTool {
     const eventData = evt.detail;
     const element = evt.detail.element;
 
-    const toolState = getToolState(eventData.element, this.name);
-
     const config = this.configuration;
     const currentTool = config.currentTool;
 
@@ -180,10 +177,10 @@ export default class ScissorsTool extends BaseTool {
    * @returns {void}
    */
   _applyStrategy(evt) {
-    console.warn('CALLING BRUSH PIXEL DATA CHANGE');
+    const { element } = evt.detail;
 
     evt.detail.handles = this.handles;
-    _applySegmentationChanges(evt, this.configuration);
+    _applySegmentationChanges(evt, this.configuration, this.handles.points);
     this._resetHandles();
 
     external.cornerstone.updateImage(element);
@@ -273,7 +270,7 @@ const _isEmptyObject = obj =>
   Object.keys(obj).length === 0 && obj.constructor === Object;
 
 
-function _applySegmentationChanges(evt, config) {
+function _applySegmentationChanges(evt, config, points) {
   const eventData = evt.detail;
   const { image, element } = eventData;
 
@@ -285,8 +282,6 @@ function _applySegmentationChanges(evt, config) {
   const arrayLength = image.width * image.height * 2
   const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength)
 
-  const points = this.handles.points;
-
   // TODO: Hardcoded! Only sets a value of 1 in the labelmap
   const labelValue = 1
 
@@ -294,30 +289,106 @@ function _applySegmentationChanges(evt, config) {
     case 'FILL_INSIDE':
     default:
       console.warn('fill inside!');
-      fillInside(points, segmentationData, labelValue)
+      fillInside(points, segmentationData, image, labelValue)
       break;
     case 'FILL_OUTSIDE':
-      fillOutside(points, segmentationData, labelValue)
+      fillOutside(points, segmentationData, image, labelValue)
       break;
     case 'ERASE_OUTSIDE':
-      fillOutside(points, segmentationData, 0)
+      fillOutside(points, segmentationData, image, 0)
       break;
     case 'ERASE_INSIDE':
-      fillInside(points, segmentationData, 0)
+      fillInside(points, segmentationData, image, 0)
       break;
   }
 
   // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
 
-  external.cornerstone.updateImage(element);
+  // Invalidate the brush tool data so it is redrawn
+  brushModule.setters.invalidateBrushOnEnabledElement(element, activeLabelmapIndex);
 };
 
-function fillInside(points, segmentationData, labelValue) {
+function fillInside(points, segmentationData, image, labelValue = 1) {
   // Loop through all pixels in the segmentation data mask
-  // If they are inside of the region defined by the array of points, set their value to labelValue
+
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search. Outside of the bounding box,
+  // everything is outside of the polygon.
+  const { width } = image;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+  console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
+  const [xMin, yMin] = topLeft;
+  const [xMax, yMax] = bottomRight;
+
+  let painted = 0;
+  // Loop through all of the points inside the bounding box
+  for (let i = xMin; i < xMax; i++) {
+    for (let j = yMin; j < yMax; j++) {
+      // If they are inside of the region defined by the array of points, set their value to labelValue
+      const inside = pointInPolygon([i, j], vertices);
+
+      if (inside) {
+        segmentationData[j * width + i] = labelValue;
+        painted++
+      }
+    }
+  }
+
+  console.log(`painted: ${painted}`);
 }
 
 function fillOutside() {
   // Loop through all pixels in the segmentation data mask
   // If they are outside of the region defined by the array of points, set their value to labelValue
+}
+
+function getBoundingBoxAroundPolygon(vertices) {
+  let xMin = Infinity;
+  let xMax = 0;
+  let yMin = Infinity;
+  let yMax = 0;
+
+  vertices.forEach(v => {
+    xMin = Math.min(v[0], xMin);
+    xMax = Math.max(v[0], xMax);
+    yMin = Math.min(v[1], yMin);
+    yMax = Math.max(v[1], yMax);
+  });
+
+  xMin = Math.round(xMin);
+  yMin = Math.round(yMin);
+  xMax = Math.round(xMax);
+  yMax = Math.round(yMax);
+
+  return [[xMin, yMin], [xMax, yMax]];
+}
+
+/**
+ * Checks whether a point is inside a polygon
+ *
+ * @param point The point [x1, y1]
+ * @param vs The vertices [[x1, y1], [x2, y2], ...] of the Polygon
+ * @return {boolean}
+ */
+function pointInPolygon(point, vs) {
+  // https://github.com/substack/point-in-polygon/blob/master/index.js
+  // ray-casting algorithm based on
+  // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+  //
+  // We might want to try this one instead: https://github.com/mikolalysenko/robust-point-in-polygon
+
+  let x = point[0], y = point[1];
+
+  let inside = false;
+  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    var xi = vs[i][0], yi = vs[i][1];
+    var xj = vs[j][0], yj = vs[j][1];
+
+    var intersect = ((yi > y) !== (yj > y))
+      && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+
+  return inside;
 }
