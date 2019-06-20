@@ -74,8 +74,6 @@ export default class GrowCutSegmenterTool extends BaseTool {
     const { element } = eventData;
     const color = toolColors.getColorIfActive({ active: true });
     const context = getNewContext(eventData.canvasContext.canvas);
-
-    const strategy = 'freehand';
     const handles = this.handles;
 
     draw(context, context => {
@@ -204,22 +202,32 @@ const _isEmptyObject = obj =>
 function _applySegmentationChanges(evt, config, points) {
   const eventData = evt.detail;
   const { image, element } = eventData;
-
   const brushModule = modules.brush;
-  const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
-  const toolData = brushModule.getters.labelmapBuffers(element, activeLabelmapIndex);
+
+  const previewLabelmapIndex = 1;
+  const labelmap = brushModule.setters.activeLabelmap(element, previewLabelmapIndex)
+  const previewToolData = brushModule.getters.labelmapBuffers(element, previewLabelmapIndex);
+
+  brushModule.getters.getAndCacheLabelmap2D(element);
 
   // TODO: This is only reading from the first image in the volume for now
   const arrayLength = image.width * image.height * 2
-  const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength)
+  const segmentationData = new Uint16Array(previewToolData.buffer, 0, arrayLength)
 
   // TODO: Hardcoded! Only sets a value of 1 in the labelmap
   const labelValue = 1
 
-  growCutSegmenterTool(points, segmentationData, image)
+  const previewLabelValue = 2
+  growCutSegmenterTool(points, segmentationData, image, previewLabelValue)
+
+  const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
+  //const toolData = brushModule.getters.labelmapBuffers(element, activeLabelmapIndex);
 
   // Invalidate the brush tool data so it is redrawn
-  brushModule.setters.invalidateBrushOnEnabledElement(element, activeLabelmapIndex);
+  brushModule.setters.invalidateBrushOnEnabledElement(element, previewLabelmapIndex);
+
+  // TODO: If the segmentation is 'confirmed', dump this new data into the original labelmap
+  // - Use only the bounding box of the ROI that we know has changed
 };
 
 function growCutSegmenterTool(points, segmentationData, image, labelValue = 1) {
