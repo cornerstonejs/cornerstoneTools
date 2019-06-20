@@ -25,6 +25,32 @@
         z-index: 100;
       }
     </style>
+
+
+      <script type="text/javascript" src="http://unpkg.com/dcmjs"></script>
+      <script type="text/javascript" src="./step/src/gl-matrix-min.js"></script>
+      <script type="text/javascript" src="./step/src/linear.js"></script>
+      <script type="text/javascript" src="./step/src/commongl.js"></script>
+      <script type="text/javascript" src="./step/src/fields/field.js"></script>
+      <script type="text/javascript" src="./step/src/fields/fiducial.js"></script>
+      <script type="text/javascript" src="./step/src/fields/pixel.js"></script>
+      <script type="text/javascript" src="./step/src/fields/image.js"></script>
+      <script type="text/javascript" src="./step/src/fields/segmentation.js"></script>
+      <script type="text/javascript" src="./step/src/fields/transform.js"></script>
+      <script type="text/javascript" src="./step/src/formats.js"></script>
+      <script type="text/javascript" src="./step/src/slicer.js"></script>
+      <script type="text/javascript" src="./step/src/view.js"></script>
+      <script type="text/javascript" src="./step/src/generators.js"></script>
+      <script type="text/javascript" src="./step/src/renderer.js"></script>
+      <script type="text/javascript" src="./step/src/growcut.js"></script>
+      <script type="text/javascript" src="./step/src/gaussian.js"></script>
+      <script type="text/javascript" src="./step/src/bilateral.js"></script>
+      <script type="text/javascript" src="./step/src/similarity.js"></script>
+      <script type="text/javascript" src="./step/src/gabor.js"></script>
+      <script type="text/javascript" src="./step/src/nonlocalmeans.js"></script>
+      <script type="text/javascript" src="./step/src/pde.js"></script>
+      <script type="text/javascript" src="./step/src/registration.js"></script>
+
   </head>
 
   <body>
@@ -183,7 +209,7 @@
 
   <script>
     cornerstoneTools.init({ showSVGCursors: true });
-    const imageIds = ['example://1', 'example://2', 'example://3'];
+    const imageIds = ['example://1', 'example://2'];
     const stack = {
       currentImageIdIndex: 0,
       imageIds: imageIds,
