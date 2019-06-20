@@ -16,6 +16,7 @@ import StackScrollTool from './StackScrollTool.js';
 import WwwcRegionTool from './WwwcRegionTool.js';
 import ScissorsTool from './ScissorsTool.js';
 import CorrectionTool from './CorrectionTool.js';
+import GrowCutSegmenterTool from './GrowCutSegmenterTool.js';
 import WwwcTool from './WwwcTool.js';
 import ZoomMouseWheelTool from './ZoomMouseWheelTool.js';
 import ZoomTool from './ZoomTool.js';
@@ -41,6 +42,7 @@ export {
   WwwcRegionTool,
   ScissorsTool,
   CorrectionTool,
+  GrowCutSegmenterTool,
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
@@ -67,6 +69,7 @@ export default {
   WwwcRegionTool,
   ScissorsTool,
   CorrectionTool,
+  GrowCutSegmenterTool,
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
