@@ -495,6 +495,7 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
     console.log('added field', index);
   });
 
+  labelFields[0] = Field.fromDataset(labelmapDataset)[0]
   step.renderer.inputFields[1] = Field.fromDataset(labelmapDataset)[0]
 
 

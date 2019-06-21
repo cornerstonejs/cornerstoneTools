@@ -74,7 +74,7 @@
 
         <!-- Select Active Tool -->
         <ul class="tool-category active" data-tool-category="annotation">
-          <li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
+          <!--<li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
           <li><a href="#" data-tool="Angle">Angle</a></li>
           <li><a href="#" data-tool="Bidirectional">Bidirectional</a></li>
           <li><a href="#" data-tool="CircleRoi">CircleRoi</a></li>
@@ -86,12 +86,13 @@
             <a href="#" data-tool="FreehandRoiSculptor"
               >FreehandRoiSculptor</a
             >
-          </li>
+          </li>!-->
           <li><a href="#" data-tool="Brush">BrushTool</a></li>
-          <li><a href="#" data-tool="TextMarker">TextMarker</a></li>
+          <li><a href="#" data-tool="GrowCutSegmenter">GrowCutSegmenterTool</a></li>
+          <!--<li><a href="#" data-tool="TextMarker">TextMarker</a></li>
           <li><a href="#" data-tool="Length">Length</a></li>
           <li><a href="#" data-tool="Probe">Probe</a></li>
-          <li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
+          <li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>!-->
         </ul>
         <ul class="tool-category" data-tool-category="drag">
           <li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
@@ -104,7 +105,7 @@
           <li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
           <li><a href="#" data-tool="Scissors">ScissorsTool</a></li>
           <li><a href="#" data-tool="Correction">CorrectionTool</a></li>
-          <li><a href="#" data-tool="GrowCutSegmenter">GrowCutSegmenterTool</a></li>
+
           <li><a href="#" data-tool="Zoom">Zoom</a></li>
         </ul>
         <ul class="tool-category" data-tool-category="double-tap">
@@ -224,10 +225,10 @@
       element.focus();
 
       cornerstone.loadImage(imageIds[0]).then(function(image) {
-        cornerstone.displayImage(element, image);
-
         cornerstoneTools.addStackStateManager(element, ['stack']);
         cornerstoneTools.addToolState(element, 'stack', stack);
+
+        cornerstone.displayImage(element, image);
       });
 
       //Save As Tool
