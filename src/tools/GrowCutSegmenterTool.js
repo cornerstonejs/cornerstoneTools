@@ -239,7 +239,7 @@ async function _applySegmentationChanges(evt, config, points) {
   const updatedData = growCutSegmenterTool(points, segmentationData, image, backgroundVolume, 1, imageIndex)
 
   segmentationData.set(updatedData);
-  
+
   // Invalidate the brush tool data so it is redrawn
   brushModule.setters.invalidateBrushOnEnabledElement(element, previewLabelmapIndex);
 
@@ -466,19 +466,11 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
   step.renderer.inputFields.push(backgroundField);
   step.renderer.updateProgram();
 
-
-  /*let backgroundField = step.renderer.inputFields[step.renderer.inputFields.length-1];
-  if (!backgroundField || backgroundField.constructor.name != "ImageField") {
-    alert('Need to have a background image field');
-    return;
-  }*/
-
   let labelFields = [];
   let strengthFields = [];
 
   [0,1].forEach(index => {
     let derivedImage = new dcmjs.derivations.DerivedImage([backgroundField.dataset]);
-    debugger
     let labelField = Field.fromDataset(derivedImage.dataset)[0];
     let strengthField = Field.fromDataset(derivedImage.dataset)[0];
     labelFields.push(labelField);
@@ -503,7 +495,6 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
   let iterations = 200;
   let iteration = 0;
   let animationFrame = function() {
-    console.warn('animationFrame')
     let inBuffer = iteration%2;
     let outBuffer = (iteration+1)%2;
 
@@ -541,7 +532,6 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
       step.growcut.outputFields.forEach(outputField => {
         outputField.generatedPixelData = new ArrayBuffer(outputField.dataset.PixelData.byteLength);
         //outputField.generatedPixelData = outputField.dataset.PixelData
-        console.warn(outputField.generatedPixelData.length);
       });
     }
     console.log(step.growcut.uniforms.iteration.value);
@@ -577,6 +567,5 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
   }
   step.renderer.requestRender(step.view);
 
-  console.warn('DONE!');
   return step.growcut.outputFields;
 }

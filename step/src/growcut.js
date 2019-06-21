@@ -40,7 +40,7 @@ class GrowCutGenerator extends ProgrammaticGenerator {
     }.bind(this)()
       }
 
-      #define MAX_STRENGTH ${this.bufferType}(10000)
+      #define MAX_STRENGTH ${this.bufferType}(65535)
 
       uniform int iterations;
       uniform int iteration;
@@ -61,6 +61,8 @@ class GrowCutGenerator extends ProgrammaticGenerator {
         ${this.bufferType} background = texelFetch(inputTexture0, texelIndex, 0).r;
 
         label = texelFetch(inputTexture1, texelIndex, 0).r;
+        
+        // TODO: Grow until label does not change, then stop.
 
         if (iteration == 0) {
           // All non-zero initial labels are given maximum strength
@@ -76,6 +78,13 @@ class GrowCutGenerator extends ProgrammaticGenerator {
               for (int i = -1; i <= 1; i++) {
                 if (i != 0 && j != 0 && k != 0) {
                   ivec3 neighborIndex = texelIndex + ivec3(i,j,k);
+                  
+                  // Boundary conditions. Do not grow outside of the volume
+                  if (any( lessThan( neighborIndex, ivec3(0,0,0) ) ) ||
+                      any( greaterThanEqual( neighborIndex, size ) )) {
+                    continue;
+                  }
+                  
                   ${this.bufferType} neighborBackground = texelFetch(inputTexture0, neighborIndex, 0).r;
                   ${this.bufferType} neighborStrength = texelFetch(inputTexture2, neighborIndex, 0).r;
                   ${this.bufferType} strengthCost = abs(neighborBackground - background);
