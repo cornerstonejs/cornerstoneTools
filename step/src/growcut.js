@@ -73,9 +73,10 @@ class GrowCutGenerator extends ProgrammaticGenerator {
           }
         } else {
           strength = texelFetch(inputTexture2, texelIndex, 0).r;
-          for (int k = -1; k <= 1; k++) {
-            for (int j = -1; j <= 1; j++) {
-              for (int i = -1; i <= 1; i++) {
+          int window = 4;
+          for (int k = -1 * window; k <= 1 * window; k++) {
+            for (int j = -1 * window; j <= 1 * window; j++) {
+              for (int i = -1 * window; i <= 1 * window; i++) {
                 if (i != 0 && j != 0 && k != 0) {
                   ivec3 neighborIndex = texelIndex + ivec3(i,j,k);
                   
