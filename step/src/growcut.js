@@ -7,10 +7,10 @@ class GrowCutGenerator extends ProgrammaticGenerator {
   // outputFields are:
   // - 0 new label image
   // - 1 new strength image
-  constructor(options={}) {
+  constructor(options = {}) {
     super(options);
-    this.uniforms.iteration = { type: '1i', value: 0 };
-    this.uniforms.iterations = { type: '1i', value: 0 };
+    this.uniforms.iteration = {type: '1i', value: 0};
+    this.uniforms.iterations = {type: '1i', value: 0};
   }
 
   headerSource() {
@@ -30,14 +30,14 @@ class GrowCutGenerator extends ProgrammaticGenerator {
       // these are the function definitions for sampleVolume*
       // and transferFunction*
       // that define a field at a sample point in space
-      ${function() {
-          let perFieldSamplingShaderSource = '';
-          this.inputFields.forEach(field=>{
-            perFieldSamplingShaderSource += field.transformShaderSource();
-            perFieldSamplingShaderSource += field.samplingShaderSource();
-          });
-          return(perFieldSamplingShaderSource);
-        }.bind(this)()
+      ${function () {
+      let perFieldSamplingShaderSource = '';
+      this.inputFields.forEach(field => {
+        perFieldSamplingShaderSource += field.transformShaderSource();
+        perFieldSamplingShaderSource += field.samplingShaderSource();
+      });
+      return (perFieldSamplingShaderSource);
+    }.bind(this)()
       }
 
       #define MAX_STRENGTH ${this.bufferType}(10000)
@@ -61,14 +61,16 @@ class GrowCutGenerator extends ProgrammaticGenerator {
         ${this.bufferType} background = texelFetch(inputTexture0, texelIndex, 0).r;
 
         label = texelFetch(inputTexture1, texelIndex, 0).r;
-        strength = texelFetch(inputTexture2, texelIndex, 0).r;
 
         if (iteration == 0) {
-          // All initial labels are given maximum strength
-          if (label != ${this.bufferType}(0)) {
+          // All non-zero initial labels are given maximum strength
+          if (label == ${this.bufferType}(0)) {
+            strength = ${this.bufferType}(0);
+          } else {
             strength = MAX_STRENGTH;
           }
         } else {
+          strength = texelFetch(inputTexture2, texelIndex, 0).r;
           for (int k = -1; k <= 1; k++) {
             for (int j = -1; j <= 1; j++) {
               for (int i = -1; i <= 1; i++) {

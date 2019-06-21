@@ -239,15 +239,7 @@ async function _applySegmentationChanges(evt, config, points) {
   const updatedData = growCutSegmenterTool(points, segmentationData, image, backgroundVolume, 1, imageIndex)
 
   segmentationData.set(updatedData);
-  /*previewToolData.buffer = updatedData.buffer;
-
-  for (let i=0; i< 1000; i++) {
-    segmentationData[i] = 1;
-  }
-
-  console.warn(updatedData);
-  console.warn(segmentationData);*/
-
+  
   // Invalidate the brush tool data so it is redrawn
   brushModule.setters.invalidateBrushOnEnabledElement(element, previewLabelmapIndex);
 
@@ -266,7 +258,7 @@ function growCutSegmenterTool(points, labelmapData, image, backgroundVolume, lab
   const xRound = Math.round(x);
   const yRound = Math.round(y);
 
-  labelmapData[yRound * width + xRound] = insideValue;
+  labelmapData[width * height * imageIndex + yRound * width + xRound] = insideValue;
 
   // Set the circumference points to the 'outside'
   const radius = _getDistance(points.end, points.start);
@@ -291,9 +283,11 @@ function growCutSegmenterTool(points, labelmapData, image, backgroundVolume, lab
   const labelmapDataset = arrayToDataset(labelmapData, { width, height, numFrames: 2 })
 
   const outputFields = performGrowCut(backgroundDataset, labelmapDataset);
-  const result = new Uint16Array(outputFields[1].generatedPixelData);
 
-  console.warn(result);
+  const result = new Uint16Array(outputFields[0].generatedPixelData);
+  //const result = new Uint16Array(outputFields[1].generatedPixelData);
+  //const result = labelmapData;
+
   return result;
 }
 
@@ -484,6 +478,7 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
 
   [0,1].forEach(index => {
     let derivedImage = new dcmjs.derivations.DerivedImage([backgroundField.dataset]);
+    debugger
     let labelField = Field.fromDataset(derivedImage.dataset)[0];
     let strengthField = Field.fromDataset(derivedImage.dataset)[0];
     labelFields.push(labelField);
@@ -496,7 +491,7 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
   });
 
   labelFields[0] = Field.fromDataset(labelmapDataset)[0]
-  step.renderer.inputFields[1] = Field.fromDataset(labelmapDataset)[0]
+  //step.renderer.inputFields[1] = Field.fromDataset(labelmapDataset)[0]
 
 
   // TODO: don't need to upload texture of generated fields
@@ -505,9 +500,10 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
   let iterationMode = null//'animated';
 
   backgroundField.visible = 0;
-  let iterations = 50;
+  let iterations = 200;
   let iteration = 0;
   let animationFrame = function() {
+    console.warn('animationFrame')
     let inBuffer = iteration%2;
     let outBuffer = (iteration+1)%2;
 
@@ -543,12 +539,14 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
     if (iteration == iterations-1) {
       // outputfields[0] is the labelmap, 1 is the strength
       step.growcut.outputFields.forEach(outputField => {
-        outputField.generatedPixelData = outputField.dataset.PixelData;
+        outputField.generatedPixelData = new ArrayBuffer(outputField.dataset.PixelData.byteLength);
+        //outputField.generatedPixelData = outputField.dataset.PixelData
+        console.warn(outputField.generatedPixelData.length);
       });
-
-      console.log(step.growcut.outputFields);
     }
+    console.log(step.growcut.uniforms.iteration.value);
     step.growcut.generate();
+
     console.log(iteration,'rendering');
     step.renderer._render();
     iteration++;
