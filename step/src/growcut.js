@@ -59,19 +59,16 @@ class GrowCutGenerator extends ProgrammaticGenerator {
         ivec3 size = textureSize(inputTexture0, 0);
         ivec3 texelIndex = ivec3(floor(interpolatedTextureCoordinate * vec3(size)));
         ${this.bufferType} background = texelFetch(inputTexture0, texelIndex, 0).r;
-        ${this.bufferType} currentLabel = texelFetch(inputTexture1, texelIndex, 0).r;
+
+        label = texelFetch(inputTexture1, texelIndex, 0).r;
+        strength = texelFetch(inputTexture2, texelIndex, 0).r;
 
         if (iteration == 0) {
-          if (currentLabel > ${this.bufferType}(0)) {
+          // All initial labels are given maximum strength
+          if (label != ${this.bufferType}(0)) {
             strength = MAX_STRENGTH;
-            label = currentLabel; 
-          } else {
-            strength = ${this.bufferType}(0);
-            label = ${this.bufferType}(0);
           }
         } else {
-          label = texelFetch(inputTexture1, texelIndex, 0).r;
-          strength = texelFetch(inputTexture2, texelIndex, 0).r;
           for (int k = -1; k <= 1; k++) {
             for (int j = -1; j <= 1; j++) {
               for (int i = -1; i <= 1; i++) {

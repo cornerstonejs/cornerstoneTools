@@ -545,6 +545,8 @@ function performGrowCut(backgroundDataset, labelmapDataset) {
       step.growcut.outputFields.forEach(outputField => {
         outputField.generatedPixelData = outputField.dataset.PixelData;
       });
+
+      console.log(step.growcut.outputFields);
     }
     step.growcut.generate();
     console.log(iteration,'rendering');
