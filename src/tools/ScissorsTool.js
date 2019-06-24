@@ -1,17 +1,32 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { setToolCursor } from '../store/setToolCursor.js';
+
 // Drawing
-import { draw, drawRect, drawJoinedLines, getNewContext } from '../drawing/index.js';
+import {
+  draw,
+  drawRect,
+  drawJoinedLines,
+  getNewContext,
+} from '../drawing/index.js';
 import toolColors from '../stateManagement/toolColors.js';
-// TODO: Add scissors cursor
-import { wwwcRegionCursor } from './cursors/index.js';
-import { modules } from '../store/index.js'
+
+import {
+  scissorsFillInsideCursor,
+  scissorsEraseInsideCursor,
+  scissorsEraseOutsideCursor,
+  scissorsFillOutsideCursor,
+} from './cursors/index.js';
+
+import { modules } from '../store/index.js';
+import { getLogger } from '../util/logger';
+
+const logger = getLogger('tools:ScissorsTool');
 
 /**
  * @public
  * @class ScissorsTool
  * @memberof Tools
- *
  * @classdesc Tool for slicing brush pixel data
  * @extends Tools.Base.BaseTool
  */
@@ -21,18 +36,17 @@ export default class ScissorsTool extends BaseTool {
     const defaultProps = {
       name: 'Scissors',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {
-      },
-      svgCursor: null,
+      configuration: {},
+      svgCursor: scissorsFillInsideCursor,
     };
 
     super(props, defaultProps);
+
     this._resetHandles();
 
     //
     // Touch
     //
-
     /** @inheritdoc */
     this.postTouchStartCallback = this._startOutliningRegion.bind(this);
 
@@ -45,7 +59,6 @@ export default class ScissorsTool extends BaseTool {
     //
     // MOUSE
     //
-
     /** @inheritdoc */
     this.postMouseDownCallback = this._startOutliningRegion.bind(this);
 
@@ -60,6 +73,13 @@ export default class ScissorsTool extends BaseTool {
 
     /** @inheritdoc */
     this.mouseUpCallback = this._applyStrategy.bind(this);
+
+    this._changeStrategy();
+
+    this._setChangerListeners = this._setChangerListeners.bind(this);
+    this._setChangerListeners();
+
+    logger.warn(this);
   }
 
   /**
@@ -79,7 +99,7 @@ export default class ScissorsTool extends BaseTool {
     const handles = this.handles;
 
     draw(context, context => {
-      switch(strategy) {
+      switch (strategy) {
         case 'circle':
           break;
         case 'rectangle':
@@ -89,25 +109,25 @@ export default class ScissorsTool extends BaseTool {
           break;
         case 'freehand':
         default:
-            if (handles.points.length > 1) {
-              for (let j = 0; j < handles.points.length; j++) {
-                const lines = [...handles.points[j].lines];
-                const points = handles.points;
+          if (handles.points.length > 1) {
+            for (let j = 0; j < handles.points.length; j++) {
+              const lines = [...handles.points[j].lines];
+              const points = handles.points;
 
-                if (j === points.length - 1) {
-                  // If it's still being actively drawn, keep the last line to
-                  // The mouse location
-                  lines.push(this.handles.points[0]);
-                }
-                drawJoinedLines(
-                  context,
-                  eventData.element,
-                  this.handles.points[j],
-                  lines,
-                  { color }
-                );
+              if (j === points.length - 1) {
+                // If it's still being actively drawn, keep the last line to
+                // The mouse location
+                lines.push(this.handles.points[0]);
               }
+              drawJoinedLines(
+                context,
+                eventData.element,
+                this.handles.points[j],
+                lines,
+                { color }
+              );
             }
+          }
           break;
       }
     });
@@ -124,19 +144,20 @@ export default class ScissorsTool extends BaseTool {
     const consumeEvent = true;
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
+    const emptyPoints = !this.handles.points.length;
 
-    if (!this.handles.points.length) {
+    if (emptyPoints) {
       this.handles.points.push({
         x: image.x,
         y: image.y,
-        lines: []
+        lines: [],
       });
       this.currentHandle += 1;
     } else {
       this.handles.points.push({
         x: image.x,
         y: image.y,
-        lines: []
+        lines: [],
       });
       this.currentHandle += 1;
       this._applyStrategy(evt);
@@ -159,12 +180,30 @@ export default class ScissorsTool extends BaseTool {
     const eventData = evt.detail;
     const element = evt.detail.element;
 
-    const config = this.configuration;
+    /* TODO const config = this.configuration;
     const currentTool = config.currentTool;
+    this._dragging = true; */
 
     this._addPointPencilMode(eventData, this.handles.points);
-    this._dragging = true;
+    external.cornerstone.updateImage(element);
+  }
 
+  /**
+   * Function responsible for changing the Cursor, according to the strategy
+   * @param {HTMLElement} element
+   * @param {string} strategy The strategy to be used on Tool
+   * @private
+   * @returns {void}
+   */
+  _changeCursor(element, strategy) {
+    const scissorsCursors = {
+      FILL_INSIDE: scissorsFillInsideCursor,
+      FILL_OUTSIDE: scissorsFillOutsideCursor,
+      ERASE_OUTSIDE: scissorsEraseOutsideCursor,
+      ERASE_INSIDE: scissorsEraseInsideCursor,
+    };
+
+    setToolCursor(element, scissorsCursors[strategy]);
     external.cornerstone.updateImage(element);
   }
 
@@ -211,16 +250,16 @@ export default class ScissorsTool extends BaseTool {
    * @returns {undefined}
    */
   _addPointPencilMode(eventData, points) {
-    const config = this.configuration;
+    /* T const config = this.configuration;
     const element = eventData.element;
-    /*const mousePoint = config.mouseLocation.handles.start;
+    const mousePoint = config.mouseLocation.handles.start;
 
     const handleFurtherThanMinimumSpacing = handle =>
       this._isDistanceLargerThanSpacing(element, handle, mousePoint);
 
     if (points.every(handleFurtherThanMinimumSpacing)) {*/
-      this._addPoint(eventData);
-    //}
+    this._addPoint(eventData);
+    // }
   }
 
   /**
@@ -239,7 +278,7 @@ export default class ScissorsTool extends BaseTool {
       this.handles.points[this.currentHandle - 1].lines.push({
         x: eventData.currentPoints.image.x,
         y: eventData.currentPoints.image.y,
-        lines: []
+        lines: [],
       });
     }
 
@@ -247,7 +286,7 @@ export default class ScissorsTool extends BaseTool {
     this.handles.points.push({
       x: eventData.currentPoints.image.x,
       y: eventData.currentPoints.image.y,
-      lines: []
+      lines: [],
     });
 
     // Increment the current handle value
@@ -256,59 +295,83 @@ export default class ScissorsTool extends BaseTool {
     // Force onImageRendered to fire
     external.cornerstone.updateImage(eventData.element);
   }
+
+  /**
+   * Change Strategy Method
+   * @param { string} strategy
+   * @private
+   * @returns {void}
+   */
+  _changeStrategy(strategy = 'FILL_INSIDE') {
+    this.configuration = { strategy };
+  }
+
+  // TODO - Replace this for CornerStone Way to Listen Events
+  _setChangerListeners() {
+    document.addEventListener('keydown', event => {
+      const keyName = event.key;
+      const eventMatchers = {
+        f: 'FILL_INSIDE',
+        g: 'FILL_OUTSIDE',
+        e: 'ERASE_INSIDE',
+        r: 'ERASE_OUTSIDE',
+      };
+
+      if (eventMatchers[keyName]) {
+        logger.warn('Key Changer pressed', eventMatchers[keyName]);
+        this._changeStrategy(eventMatchers[keyName]);
+        this._changeCursor(this.element, eventMatchers[keyName]);
+      }
+    });
+  }
 }
-
-/**
- * Helper to determine if an object has no keys and is the correct type (is empty)
- *
- * @private
- * @function _isEmptyObject
- * @param {Object} obj The object to check
- * @returns {Boolean} true if the object is empty
- */
-const _isEmptyObject = obj =>
-  Object.keys(obj).length === 0 && obj.constructor === Object;
-
 
 function _applySegmentationChanges(evt, config, points) {
   const eventData = evt.detail;
   const { image, element } = eventData;
-
   const brushModule = modules.brush;
   const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
-  const toolData = brushModule.getters.labelmapBuffers(element, activeLabelmapIndex);
+  const toolData = brushModule.getters.labelmapBuffers(
+    element,
+    activeLabelmapIndex
+  );
 
   // TODO: This is only reading from the first image in the volume for now
-  const arrayLength = image.width * image.height * 2
-  const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength)
+  const arrayLength = image.width * image.height * 2;
+  const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength);
 
   // TODO: Hardcoded! Only sets a value of 1 in the labelmap
-  const labelValue = 1
+  const labelValue = 1;
 
   switch (config.strategy) {
     case 'FILL_INSIDE':
     default:
-      console.warn('fill inside!');
-      fillInside(points, segmentationData, image, labelValue)
+      fillInside(points, segmentationData, image, labelValue);
       break;
     case 'FILL_OUTSIDE':
-      fillOutside(points, segmentationData, image, labelValue)
+      fillOutside(points, segmentationData, image, labelValue);
       break;
     case 'ERASE_OUTSIDE':
-      fillOutside(points, segmentationData, image, 0)
+      eraseOutside(points, segmentationData, image, 0);
       break;
     case 'ERASE_INSIDE':
-      fillInside(points, segmentationData, image, 0)
+      eraseInside(points, segmentationData, image, 0);
       break;
   }
 
   // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
 
   // Invalidate the brush tool data so it is redrawn
-  brushModule.setters.invalidateBrushOnEnabledElement(element, activeLabelmapIndex);
-};
+  brushModule.setters.invalidateBrushOnEnabledElement(
+    element,
+    activeLabelmapIndex
+  );
+}
 
+// Insiders
 function fillInside(points, segmentationData, image, labelValue = 1) {
+  logger.warn('Filling Inside');
+
   // Loop through all pixels in the segmentation data mask
 
   // Obtain the bounding box of the entire drawing so that
@@ -317,12 +380,15 @@ function fillInside(points, segmentationData, image, labelValue = 1) {
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+
+  // eslint-disable-next-line
   console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
 
   let painted = 0;
   // Loop through all of the points inside the bounding box
+
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
       // If they are inside of the region defined by the array of points, set their value to labelValue
@@ -330,19 +396,117 @@ function fillInside(points, segmentationData, image, labelValue = 1) {
 
       if (inside) {
         segmentationData[j * width + i] = labelValue;
-        painted++
+        painted++;
       }
     }
   }
-
+  // eslint-disable-next-line
   console.log(`painted: ${painted}`);
 }
 
-function fillOutside() {
+function eraseInside(points, segmentationData, image, labelValue = 1) {
+  // eslint-disable-next-line
+  console.log('Erasing Inside');
   // Loop through all pixels in the segmentation data mask
-  // If they are outside of the region defined by the array of points, set their value to labelValue
+
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search. Outside of the bounding box,
+  // everything is outside of the polygon.
+  const { width } = image;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+
+  // eslint-disable-next-line
+  console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
+  const [xMin, yMin] = topLeft;
+  const [xMax, yMax] = bottomRight;
+
+  let painted = 0;
+  // Loop through all of the points inside the bounding box
+
+  for (let i = xMin; i < xMax; i++) {
+    for (let j = yMin; j < yMax; j++) {
+      // If they are inside of the region defined by the array of points, set their value to labelValue
+      const inside = pointInPolygon([i, j], vertices);
+
+      if (inside) {
+        segmentationData[j * width + i] = labelValue;
+        painted--;
+      }
+    }
+  }
+  // eslint-disable-next-line
+  console.log(`painted: ${painted}`);
 }
 
+// Outsiders
+function fillOutside(points, segmentationData, image, labelValue = 1) {
+  // eslint-disable-next-line
+  console.log('Painting outside');
+  // Loop through all pixels in the segmentation data mask
+  // If they are outside of the region defined by the array of points, set their value to labelValue
+  const { width } = image;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+
+  // eslint-disable-next-line
+  console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
+  const [xMin, yMin] = topLeft;
+  const [xMax, yMax] = bottomRight;
+
+  let painted = 0;
+  // Loop through all of the points inside the bounding box
+
+  for (let i = xMin; i < xMax; i++) {
+    for (let j = yMin; j < yMax; j++) {
+      const outside = !pointInPolygon([i, j], vertices);
+
+      if (outside) {
+        segmentationData[j * width + i] = labelValue;
+        painted++;
+      }
+    }
+  }
+  // eslint-disable-next-line
+  console.log(`painted: ${painted}`);
+}
+
+function eraseOutside(points, segmentationData, image, labelValue = 1) {
+  // eslint-disable-next-line
+  console.log('Erasing Inside');
+  // Loop through all pixels in the segmentation data mask
+
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search. Outside of the bounding box,
+  // everything is outside of the polygon.
+  const { width } = image;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+
+  // eslint-disable-next-line
+  console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
+  const [xMin, yMin] = topLeft;
+  const [xMax, yMax] = bottomRight;
+
+  let painted = 0;
+  // Loop through all of the points inside the bounding box
+
+  for (let i = xMin; i < xMax; i++) {
+    for (let j = yMin; j < yMax; j++) {
+      // If they are inside of the region defined by the array of points, set their value to labelValue
+      const outside = !pointInPolygon([i, j], vertices);
+
+      if (outside) {
+        segmentationData[j * width + i] = labelValue;
+        painted--;
+      }
+    }
+  }
+  // eslint-disable-next-line
+  console.log(`painted: ${painted}`);
+}
+
+// Utils
 function getBoundingBoxAroundPolygon(vertices) {
   let xMin = Infinity;
   let xMax = 0;
@@ -366,10 +530,9 @@ function getBoundingBoxAroundPolygon(vertices) {
 
 /**
  * Checks whether a point is inside a polygon
- *
- * @param point The point [x1, y1]
- * @param vs The vertices [[x1, y1], [x2, y2], ...] of the Polygon
- * @return {boolean}
+ * @param {Array} point The point [x1, y1]
+ * @param {Array} vs The vertices [[x1, y1], [x2, y2], ...] of the Polygon
+ * @returns {boolean}
  */
 function pointInPolygon(point, vs) {
   // https://github.com/substack/point-in-polygon/blob/master/index.js
@@ -378,16 +541,23 @@ function pointInPolygon(point, vs) {
   //
   // We might want to try this one instead: https://github.com/mikolalysenko/robust-point-in-polygon
 
-  let x = point[0], y = point[1];
-
+  const x = point[0];
+  const y = point[1];
   let inside = false;
-  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-    var xi = vs[i][0], yi = vs[i][1];
-    var xj = vs[j][0], yj = vs[j][1];
 
-    var intersect = ((yi > y) !== (yj > y))
-      && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    const xi = vs[i][0];
+    const yi = vs[i][1];
+
+    const xj = vs[j][0];
+    const yj = vs[j][1];
+
+    const intersect =
+      yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
+
+    if (intersect) {
+      inside = !inside;
+    }
   }
 
   return inside;
