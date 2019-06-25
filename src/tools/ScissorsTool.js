@@ -445,18 +445,23 @@ function fillOutside(points, segmentationData, image, labelValue = 1) {
   console.log('Painting outside');
   // Loop through all pixels in the segmentation data mask
   // If they are outside of the region defined by the array of points, set their value to labelValue
-  const { width } = image;
+  const { width, height } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+
+  // If we know exactly how big the polygon is,
+  // we do not need to loop through the whole image.
+  //
+  // Outside of the polygon bounding box should definitely be filled
+  // Inside of the polygon bounding box should be tested with pointInPolygon
+  let painted = fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, width, height, labelValue);
 
   // eslint-disable-next-line
   console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
 
-  let painted = 0;
   // Loop through all of the points inside the bounding box
-
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
       const outside = !pointInPolygon([i, j], vertices);
@@ -467,6 +472,8 @@ function fillOutside(points, segmentationData, image, labelValue = 1) {
       }
     }
   }
+
+  // Red means outside
   // eslint-disable-next-line
   console.log(`painted: ${painted}`);
 }
@@ -476,34 +483,7 @@ function eraseOutside(points, segmentationData, image, labelValue = 1) {
   console.log('Erasing Inside');
   // Loop through all pixels in the segmentation data mask
 
-  // Obtain the bounding box of the entire drawing so that
-  // we can subset our search. Outside of the bounding box,
-  // everything is outside of the polygon.
-  const { width } = image;
-  const vertices = points.map(a => [a.x, a.y]);
-  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
-
-  // eslint-disable-next-line
-  console.log(`topLeft: ${topLeft}, bottomRight: ${bottomRight}`);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
-
-  let painted = 0;
-  // Loop through all of the points inside the bounding box
-
-  for (let i = xMin; i < xMax; i++) {
-    for (let j = yMin; j < yMax; j++) {
-      // If they are inside of the region defined by the array of points, set their value to labelValue
-      const outside = !pointInPolygon([i, j], vertices);
-
-      if (outside) {
-        segmentationData[j * width + i] = labelValue;
-        painted--;
-      }
-    }
-  }
-  // eslint-disable-next-line
-  console.log(`painted: ${painted}`);
+  fillOutside(points, segmentationData, image, 0);
 }
 
 // Utils
@@ -526,6 +506,50 @@ function getBoundingBoxAroundPolygon(vertices) {
   yMax = Math.round(yMax);
 
   return [[xMin, yMin], [xMax, yMax]];
+}
+
+
+function fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, width, height, labelValue = 1) {
+  let painted = 0;
+
+  // Loop until top of bounding box from top of image, color the entire row
+  for (let i = 0; i < width; i++) {
+    for (let j = 0; j < topLeft[1]; j++) {
+      segmentationData[j * width + i] = labelValue;
+
+      painted++;
+    }
+  }
+
+  // Loop within rows of bounding box, to the left of the box
+  for (let i = 0; i < topLeft[0]; i++) {
+    for (let j = topLeft[1]; j < bottomRight[1]; j++) {
+      segmentationData[j * width + i] = labelValue;
+
+      painted++;
+    }
+  }
+
+  // Loop within rows of bounding box, to the right of the box
+  for (let i = bottomRight[0]; i < width; i++) {
+    for (let j = topLeft[1]; j < bottomRight[1]; j++) {
+      segmentationData[j * width + i] = labelValue;
+
+      painted++;
+    }
+  }
+
+
+  // Loop from bottom of bounding box until bottom of image, color entire row
+  for (let i = 0; i < width; i++) {
+    for (let j = bottomRight[1]; j < height; j++) {
+      segmentationData[j * width + i] = labelValue;
+
+      painted++;
+    }
+  }
+
+  return painted;
 }
 
 /**
