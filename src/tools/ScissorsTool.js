@@ -508,6 +508,9 @@ function getBoundingBoxAroundPolygon(vertices) {
   return [[xMin, yMin], [xMax, yMax]];
 }
 
+function getBoundingBoxAroundCircle(center, radius) {
+
+}
 
 function fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, width, height, labelValue = 1) {
   let painted = 0;
@@ -585,4 +588,9 @@ function pointInPolygon(point, vs) {
   }
 
   return inside;
+}
+
+// We already have pointInEllipse inside src/util/ellipse/pointInEllipse
+function pointInCircle() {
+
 }
