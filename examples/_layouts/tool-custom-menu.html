@@ -6,7 +6,7 @@ layout: default
   <div class="container">
     <h1 class="title is-1">{{ page.title }}</h1>
 
-    {% include customButtons/general.html %}
+    {% include customButtons/{{ page.customButtons }} %}
 
     <div class="cornerstone-element-wrapper">
       <div
@@ -38,7 +38,6 @@ layout: default
       : 'https://tools.cornerstonejs.org/examples/';
 
   _initCornerstone();
-  _initInterface();
 
   const element = document.querySelector('.cornerstone-element');
 
@@ -89,44 +88,6 @@ layout: default
       },
     };
     cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
-  }
-
-  /***
-   *
-   *
-   */
-  function _initInterface() {
-    const handleClick = function(evt) {
-      const action = this.dataset.action;
-      const options = {
-        mouseButtonMask:
-          evt.buttons || convertMouseEventWhichToButtons(evt.which),
-      };
-
-      cornerstoneTools[`setTool${action}`](toolName, options);
-
-      // Remove active style from all buttons
-      const buttons = document.querySelectorAll('.set-tool-mode');
-      buttons.forEach(btn => {
-        btn.classList.remove('is-primary');
-      });
-
-      // Add active style to this button
-      this.classList.add('is-primary');
-
-      evt.preventDefault();
-      evt.stopPropagation();
-      evt.stopImmediatePropagation();
-      return false;
-    };
-
-    const buttons = document.querySelectorAll('.set-tool-mode');
-
-    buttons.forEach(btn => {
-      btn.addEventListener('contextmenu', handleClick);
-      btn.addEventListener('auxclick', handleClick);
-      btn.addEventListener('click', handleClick);
-    });
   }
 
   const convertMouseEventWhichToButtons = which => {
