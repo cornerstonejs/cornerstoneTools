@@ -67,7 +67,8 @@
 
       const handleClick = function(evt) {
         const action = this.dataset.action;
-        cornerstoneTools[`ScissorsTool`].prototype._changeStrategy(action);
+        const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
+        ActiveScissorTool._changeStrategy(action);
 
         cleanAllButtons(evt, buttons);
 
@@ -101,6 +102,4 @@
     })();
 
   }
-
-  _initInterface();
 </script>
