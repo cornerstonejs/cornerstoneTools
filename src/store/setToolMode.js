@@ -546,7 +546,7 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
 
   if (!globalTool) {
     logger.warn(
-      `setToolMode call for tool that's not available globally: ${toolName}`
+      `setToolMode call for tool not available globally: ${toolName}`
     );
 
     return;
