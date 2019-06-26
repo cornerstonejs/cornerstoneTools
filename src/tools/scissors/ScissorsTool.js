@@ -1,5 +1,5 @@
 import external from '../../externalModules.js';
-import BaseBrushTool from '../base/BaseBrushTool.js';
+import BaseTool from '../base/BaseTool.js';
 import { setToolCursor } from '../../store/setToolCursor.js';
 
 // Drawing
@@ -21,6 +21,11 @@ import {
   RectangleStrategy,
 } from './utils';
 
+import getLuminance from '../../util/getLuminance';
+
+const _isEmptyObject = obj =>
+  Object.keys(obj).length === 0 && obj.constructor === Object;
+
 /**
  * @public
  * @class ScissorsTool
@@ -28,7 +33,7 @@ import {
  * @classdesc Tool for slicing brush pixel data
  * @extends Tools.Base.BaseTool
  */
-export default class ScissorsTool extends BaseBrushTool {
+export default class ScissorsTool extends BaseTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {
@@ -79,6 +84,7 @@ export default class ScissorsTool extends BaseBrushTool {
     this.mouseUpCallback = this._applyStrategy.bind(this);
 
     this._changeOperation = this._changeOperation.bind(this);
+    this._changeOperation();
   }
 
   /**
@@ -101,11 +107,12 @@ export default class ScissorsTool extends BaseBrushTool {
         case 'CircleStrategy':
           break;
         case 'RectangleStrategy':
-          if (handles.points.length > 1) {
-            drawRect(context, element, this.handles.start, this.handles.end, {
-              color,
-            });
+          if (_isEmptyObject(handles.start) || _isEmptyObject(handles.end)) {
+            break;
           }
+          drawRect(context, element, handles.start, handles.end, {
+            color,
+          });
           break;
         case 'ScissorsStrategy':
         default:
@@ -141,6 +148,19 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {Boolean} True
    */
   _startOutliningRegion(evt) {
+    if (this.activeStrategy === 'ScissorsStrategy') {
+      this._startOutliningRegionForScissors(evt);
+      this._startOutliningRegionForScissors = this._startOutliningRegionForScissors.bind(
+        this
+      );
+    }
+
+    if (this.activeStrategy === 'RectangleStrategy') {
+      this._startOutliningRegionForRectangles(evt);
+    }
+  }
+
+  _startOutliningRegionForScissors(evt) {
     const consumeEvent = true;
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;
@@ -168,6 +188,23 @@ export default class ScissorsTool extends BaseBrushTool {
     return consumeEvent;
   }
 
+  _startOutliningRegionForRectangles(evt) {
+    const consumeEvent = true;
+    const element = evt.detail.element;
+    const image = evt.detail.currentPoints.image;
+
+    if (_isEmptyObject(this.handles.start)) {
+      this.handles.start = image;
+    } else {
+      this.handles.end = image;
+      this._applyStrategy(evt);
+    }
+
+    external.cornerstone.updateImage(element);
+
+    return consumeEvent;
+  }
+
   /**
    * This function will update the handles and updateImage to force re-draw
    *
@@ -177,9 +214,28 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {void}
    */
   _setHandlesAndUpdate(evt) {
+    if (this.activeStrategy === 'ScissorsStrategy') {
+      this._setHandlesAndUpdateForScissors(evt);
+    }
+
+    if (this.activeStrategy === 'RectangleStrategy') {
+      this._setHandlesAndUpdateForRectangles(evt);
+    }
+  }
+
+  _setHandlesAndUpdateForScissors(evt) {
     const eventData = evt.detail;
     const element = evt.detail.element;
+
     this._addPointPencilMode(eventData, this.handles.points);
+    external.cornerstone.updateImage(element);
+  }
+
+  _setHandlesAndUpdateForRectangles(evt) {
+    const element = evt.detail.element;
+    const image = evt.detail.currentPoints.image;
+
+    this.handles.end = image;
     external.cornerstone.updateImage(element);
   }
 
@@ -230,11 +286,17 @@ export default class ScissorsTool extends BaseBrushTool {
    */
   _applyStrategy(evt) {
     const { element } = evt.detail;
-
     evt.detail.handles = this.handles;
-    _applySegmentationChanges(evt, this.configuration, this.handles.points);
-    this._resetHandles();
 
+    if (this.activeStrategy === 'ScissorsStrategy') {
+      _applySegmentationChangesForScissors(evt, this, this.handles.points);
+    }
+
+    if (this.activeStrategy === 'RectangleStrategy') {
+      _applySegmentationChangesForRectangles(evt, this);
+    }
+
+    this._resetHandles();
     external.cornerstone.updateImage(element);
   }
 
@@ -246,11 +308,20 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {undefined}
    */
   _resetHandles() {
-    this.handles = {
-      points: [],
-    };
+    if (this.activeStrategy === 'ScissorsStrategy') {
+      this.handles = {
+        points: [],
+      };
 
-    this.currentHandle = 0;
+      this.currentHandle = 0;
+    }
+
+    if (this.activeStrategy === 'RectangleStrategy') {
+      this.handles = {
+        start: {},
+        end: {},
+      };
+    }
   }
 
   /**
@@ -317,7 +388,10 @@ export default class ScissorsTool extends BaseBrushTool {
    */
   _changeOperation(operation = 'FILL_INSIDE') {
     this.configuration = { operation };
-    this._changeCursor(this.element, operation);
+    if (this.element) {
+      this._changeCursor(this.element, operation);
+    }
+    this._resetHandles();
   }
 
   /**
@@ -327,12 +401,14 @@ export default class ScissorsTool extends BaseBrushTool {
    */
   _changeStrategy(strategy) {
     this.activeStrategy = strategy;
+    this._resetHandles();
   }
 
   _paint(){}
 }
 
-function _applySegmentationChanges(evt, config, points) {
+function _applySegmentationChangesForScissors(evt, toolInstance, points) {
+  const config = toolInstance.configuration;
   const eventData = evt.detail;
   const { image, element } = eventData;
   const brushModule = modules.brush;
@@ -372,4 +448,13 @@ function _applySegmentationChanges(evt, config, points) {
     element,
     activeLabelmapIndex
   );
+}
+
+function _applySegmentationChangesForRectangles(evt, toolInstance) {
+  const config = toolInstance.configuration;
+  const eventData = evt.detail;
+  const { image, element } = eventData;
+  const { start: startPoint, end: endPoint } = evt.detail.handles;
+
+  external.cornerstone.updateImage(element);
 }
