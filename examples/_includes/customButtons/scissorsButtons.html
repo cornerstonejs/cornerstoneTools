@@ -1,21 +1,21 @@
-<div class="buttons shape-buttons">
+<div class="buttons strategies-buttons">
     <div class="row-label">
-        Shapes:
+        Strategies:
     </div>
-    <button class="button set-tool-mode is-primary" data-action="SCISSORS">
+    <button class="button set-tool-mode is-primary" data-action="ScissorsStrategy">
         <span>Scissors</span>
     </button>
-    <button class="button set-tool-mode" data-action="CIRCLE">
+    <button class="button set-tool-mode" data-action="CircleStrategy">
         <span>Circle</span>
     </button>
-    <button class="button set-tool-mode" data-action="RECTANGLE">
+    <button class="button set-tool-mode" data-action="RectangleStrategy">
         <span>Rectangle</span>
     </button>
 </div>
 
-<div class="buttons strategies-buttons">
+<div class="buttons operations-buttons">
     <div class="row-label">
-        Strategies
+        Operations
     </div>
     <button class="button set-tool-mode is-primary" data-action="FILL_INSIDE">
         <span>Fill Inside</span>
@@ -61,6 +61,23 @@
       evt.stopImmediatePropagation();
     }
 
+    (function DealWithOperations(){
+      const nameSpace = `.operations-buttons`;
+      const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
+
+      const handleClick = function(evt) {
+        const action = this.dataset.action;
+        const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
+        ActiveScissorTool._changeOperation(action);
+        cleanAllButtons(evt, buttons);
+        this.classList.add('is-primary');
+        deactivateLinkBehaviour(evt);
+        return false;
+      };
+
+      bindEvents(buttons, handleClick);
+    })();
+
     (function DealWithStrategies(){
       const nameSpace = `.strategies-buttons`;
       const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
@@ -69,31 +86,8 @@
         const action = this.dataset.action;
         const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
         ActiveScissorTool._changeStrategy(action);
-
         cleanAllButtons(evt, buttons);
-
-        // Add active style to this button
         this.classList.add('is-primary');
-
-        deactivateLinkBehaviour(evt);
-        return false;
-      };
-
-      bindEvents(buttons, handleClick);
-    })();
-
-    (function DealWithShapes(){
-      const nameSpace = `.shape-buttons`;
-      const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
-
-      const handleClick = function(evt) {
-        const action = this.dataset.action;
-
-        cleanAllButtons(evt, buttons);
-
-        // Add active style to this button
-        this.classList.add('is-primary');
-
         deactivateLinkBehaviour(evt);
         return false;
       };
