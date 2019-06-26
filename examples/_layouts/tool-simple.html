@@ -51,10 +51,17 @@ layout: default
     `wadouri:${baseUrl}assets/dicom/exotic/2.dcm`,
   ];
 
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
   element.tabIndex = 0;
   element.focus();
 
   cornerstone.loadImage(imageIds[0]).then(function(image) {
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
     cornerstone.displayImage(element, image);
   });
 

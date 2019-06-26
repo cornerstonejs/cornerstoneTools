@@ -1,5 +1,5 @@
 import external from '../externalModules.js';
-import BaseTool from './base/BaseTool.js';
+import BaseBrushTool from './base/BaseBrushTool.js';
 import { setToolCursor } from '../store/setToolCursor.js';
 
 // Drawing
@@ -30,7 +30,7 @@ const logger = getLogger('tools:ScissorsTool');
  * @classdesc Tool for slicing brush pixel data
  * @extends Tools.Base.BaseTool
  */
-export default class ScissorsTool extends BaseTool {
+export default class ScissorsTool extends BaseBrushTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {
@@ -324,6 +324,8 @@ export default class ScissorsTool extends BaseTool {
       }
     });
   }
+
+  _paint(){}
 }
 
 function _applySegmentationChanges(evt, config, points) {

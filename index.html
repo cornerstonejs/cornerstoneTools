@@ -197,9 +197,8 @@
       element.focus();
 
       cornerstone.loadImage(imageIds[0]).then(function(image) {
-        cornerstone.displayImage(element, image);
-
         cornerstoneTools.addStackStateManager(element, ['stack']);
+        cornerstone.displayImage(element, image);
         cornerstoneTools.addToolState(element, 'stack', stack);
       });
 
