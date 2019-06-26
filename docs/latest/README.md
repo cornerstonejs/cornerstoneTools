@@ -10,4 +10,4 @@
 	</div>
 </div>
 
-{% include "./SUMMARY.md" %}
+{% include SUMMARY.md %}
