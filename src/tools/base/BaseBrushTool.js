@@ -206,6 +206,7 @@ class BaseBrushTool extends BaseTool {
       toolState[imageId].brush.data[0].pixelData
     ) {
       console.log(toolState[imageId].brush);
+      console.log(toolState[imageId].brush.data[0]);
       measurementData = toolState;
     }
 
