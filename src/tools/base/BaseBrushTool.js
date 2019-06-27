@@ -196,11 +196,18 @@ class BaseBrushTool extends BaseTool {
     this._drawing = false;
     this._mouseUpRender = true;
 
-    const measurementData =
+    let measurementData = null;
+    const brushModule = store.modules.brush;
+    const toolState =
       getToolState(element, this.name) || getToolState(element, 'brush');
+    const currentSegmentationIndex = brushModule.state.drawColorId;
+
+    if (toolState.data && toolState.data.length > currentSegmentationIndex) {
+      measurementData = toolState.data[currentSegmentationIndex];
+    }
 
     const eventData = {
-      toolType: this.name,
+      toolName: this.name,
       element,
       measurementData,
       evtDetail: evt.detail,
