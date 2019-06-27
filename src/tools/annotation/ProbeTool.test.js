@@ -18,6 +18,7 @@ jest.mock('./../../externalModules.js', () => ({
     },
     getStoredPixels: (element, x, y) => {
       const storedPixels = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+
       return [storedPixels[x * 2 + y]];
     },
   },

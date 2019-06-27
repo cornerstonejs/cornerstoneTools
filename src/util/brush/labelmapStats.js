@@ -1,5 +1,5 @@
 /**
- * labelmapStats - Returns the statistics of the requested labelmap.
+ * LabelmapStats - Returns the statistics of the requested labelmap.
  *
  * @param  {type} labelmapBuffer The buffer for the labelmap.
  * @param  {Number[][]} imagePixelData The pixeldata of each image slice.

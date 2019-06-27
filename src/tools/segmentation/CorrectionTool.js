@@ -296,9 +296,9 @@ function correctionTool(points, segmentationData, image, labelValue = 1) {
 
   const firstInsideSegment = firstInsidePoint.segment;
 
-  const allSegmentsEqualOrOutside = points.every(p => {
-    return p.segment === firstInsideSegment || p.segment === 0;
-  });
+  const allSegmentsEqualOrOutside = points.every(
+    p => p.segment === firstInsideSegment || p.segment === 0
+  );
 
   if (startOutside && startAndEndEqual && allSegmentsEqualOrOutside) {
     // If the user draws a line which starts and ends outside the segmenation a part of it is cut off (left image)

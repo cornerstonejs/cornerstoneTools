@@ -30,6 +30,7 @@ export default function(
 ) {
   if (coordSystem === 'pixel') {
     const cornerstone = external.cornerstone;
+
     corner1 = cornerstone.pixelToCanvas(element, corner1);
     corner2 = cornerstone.pixelToCanvas(element, corner2);
   }
