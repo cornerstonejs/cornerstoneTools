@@ -198,7 +198,8 @@ class BaseBrushTool extends BaseTool {
     this._mouseUpRender = true;
 
     let measurementData;
-    const toolState = getToolState(element, this.name);
+    const toolState =
+      getToolState(element, this.name) || getToolState(element, 'brush');
 
     logger.log(toolState);
 
