@@ -6,7 +6,9 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ima
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
 import triggerEvent from './../../util/triggerEvent.js';
+import { getLogger } from './../../util/logger.js';
 
+const logger = getLogger('baseBrushTool');
 const { state, setters } = store.modules.brush;
 
 /**
@@ -190,24 +192,12 @@ class BaseBrushTool extends BaseTool {
    */
   _drawingMouseUpCallback(evt) {
     const element = evt.detail.element;
-    const imageId = evt.detail.image.imageId;
 
     this._drawing = false;
     this._mouseUpRender = true;
 
-    let measurementData;
-    const toolState = getToolState(element, this.name);
-
-    console.log(toolState);
-
-    if (
-      toolState[imageId] &&
-      toolState[imageId].brush &&
-      toolState[imageId].brush.data[0].pixelData
-    ) {
-      console.log(toolState[imageId].brush);
-      measurementData = toolState;
-    }
+    const measurementData =
+      getToolState(element, this.name) || getToolState(element, 'brush');
 
     const eventData = {
       toolType: this.name,
