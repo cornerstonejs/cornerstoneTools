@@ -232,10 +232,9 @@ export default class ScissorsTool extends BaseBrushTool {
    *
    * @private
    * @param {Object} eventData - Data object associated with an event.
-   * @param {Object} points - Data object associated with the tool.
    * @returns {undefined}
    */
-  _addPointPencilMode(eventData, points) {
+  _addPointPencilMode(eventData) {
     this._addPoint(eventData);
   }
 
@@ -247,8 +246,6 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {undefined}
    */
   _addPoint(eventData) {
-    const config = this.configuration;
-
     // If this is not the first handle
     if (this.handles.points.length) {
       // Add the line from the current handle to the new handle
