@@ -556,6 +556,14 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
   // Update ActiveBindings Array
   const globalTool = store.state.globalTools[toolName];
 
+  if (!globalTool) {
+    logger.warn(
+      `setToolMode call for tool not available globally: ${toolName}`
+    );
+
+    return;
+  }
+
   if (mode === 'active') {
     let stringBindings = _determineStringBindings(
       toolName,
