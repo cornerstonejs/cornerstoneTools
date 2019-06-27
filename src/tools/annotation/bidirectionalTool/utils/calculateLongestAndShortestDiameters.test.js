@@ -39,30 +39,21 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
       colPixelSpacing: 0.876953125,
     };
 
-    const {
-      longestDiameter,
-      shortestDiameter,
-    } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
     expect(longestDiameter).toEqual('94.5');
     expect(shortestDiameter).toEqual('47.3');
   });
 
   it('should return values with scale of 1', () => {
-    const {
-      longestDiameter,
-      shortestDiameter,
-    } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
     expect(shortestDiameter).toMatch(/\d*\.\d$/);
     expect(longestDiameter).toMatch(/\d*\.\d$/);
   });
 
   it('should use a default pixelSpacing of 1 when pixelSpacing is undefined', () => {
-    const {
-      longestDiameter,
-      shortestDiameter,
-    } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
     expect(longestDiameter).toEqual('107.8');
     expect(shortestDiameter).toEqual('53.9');
@@ -82,10 +73,7 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
       perpendicularEnd: {},
     };
 
-    const {
-      longestDiameter,
-      shortestDiameter,
-    } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
     expect(shortestDiameter).toEqual('0.0');
     expect(longestDiameter).toEqual('5.7');
@@ -111,10 +99,7 @@ describe('CalculateLongestAndShortestDiameters.js', () => {
       },
     };
 
-    const {
-      longestDiameter,
-      shortestDiameter,
-    } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
+    const { longestDiameter, shortestDiameter } = calculateLongestAndShortestDiameters(measurementData, pixelSpacing);
 
     expect(shortestDiameter).toEqual('7.1');
     expect(longestDiameter).toEqual('9.9');

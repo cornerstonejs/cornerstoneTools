@@ -180,7 +180,6 @@ describe('LengthTool.js', () => {
           },
         },
       };
-
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.length.toFixed(2)).toEqual('50.86');
 

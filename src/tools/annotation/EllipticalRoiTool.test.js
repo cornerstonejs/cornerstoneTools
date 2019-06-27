@@ -16,7 +16,9 @@ jest.mock('./../../externalModules.js', () => ({
     metaData: {
       get: jest.fn(),
     },
-    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
+    getPixels: () => {
+      return [100, 100, 100, 100, 4, 5, 100, 3, 6];
+    },
   },
 }));
 
@@ -196,7 +198,6 @@ describe('EllipticalRoiTool.js', () => {
           },
         },
       };
-
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area.toFixed(2)).toEqual('5.71');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
