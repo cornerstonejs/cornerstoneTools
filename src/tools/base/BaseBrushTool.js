@@ -201,7 +201,10 @@ class BaseBrushTool extends BaseTool {
     const toolState =
       getToolState(element, this.name) || getToolState(element, 'brush');
 
+    const fallback = globalImageIdSpecificToolStateManager.saveToolState();
+
     logger.log(toolState);
+    logger.log(fallback[imageId].brush);
 
     if (
       toolState[imageId] &&
