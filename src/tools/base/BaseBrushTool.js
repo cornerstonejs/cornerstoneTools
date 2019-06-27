@@ -189,13 +189,34 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   _drawingMouseUpCallback(evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
+    const element = evt.detail.element;
+    const imageId = evt.detail.image.imageId;
 
     this._drawing = false;
     this._mouseUpRender = true;
 
-    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_COMPLETED, evt.detail);
+    let measurementData;
+    const toolState = getToolState(element, this.name);
+
+    console.log(toolState);
+
+    if (
+      toolState[imageId] &&
+      toolState[imageId].brush &&
+      toolState[imageId].brush.data[0].pixelData
+    ) {
+      console.log(toolState[imageId].brush);
+      measurementData = toolState;
+    }
+
+    const eventData = {
+      toolType: this.name,
+      element,
+      measurementData,
+      evtDetail: evt.detail,
+    };
+
+    triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, eventData);
 
     this._stopListeningForMouseUp(element);
   }
