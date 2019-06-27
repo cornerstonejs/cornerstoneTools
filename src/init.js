@@ -15,8 +15,9 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @param {Object} configuration
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
-export default function(configuration) {
+export default function(configuration = {}) {
   _addCornerstoneEventListeners();
+
   _initModules();
   windowResizeHandler.enable();
 

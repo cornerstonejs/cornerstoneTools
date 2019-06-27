@@ -114,8 +114,6 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
-import { default as importInternalModule } from './importInternalModule.js';
-
 import { default as init } from './init.js';
 
 // ~~~~~~ STACK TOOLS ~~~~~ //
@@ -201,6 +199,8 @@ import { default as external } from './externalModules.js';
 import { default as EVENTS } from './events.js';
 import { default as version } from './version.js';
 
+import importInternalModule from './importInternalModule.js';
+
 const cornerstoneTools = {
   // ~~~ TOOLS
   // ~ Annotation Tools
@@ -285,6 +285,7 @@ const cornerstoneTools = {
   enableLogger,
   disableLogger,
   importInternalModule,
+  import: importInternalModule,
   register,
   registerSome,
   wwwcSynchronizer,
@@ -401,5 +402,7 @@ export {
   EVENTS,
   version,
 };
+
+export { default as import } from './importInternalModule.js';
 
 export default cornerstoneTools;
