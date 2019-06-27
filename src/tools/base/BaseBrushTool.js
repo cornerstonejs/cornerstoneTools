@@ -6,7 +6,9 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ima
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
 import triggerEvent from './../../util/triggerEvent.js';
+import { getLogger } from './../../util/logger.js';
 
+const logger = getLogger('baseBrushTool');
 const { state, setters } = store.modules.brush;
 
 /**
@@ -198,15 +200,15 @@ class BaseBrushTool extends BaseTool {
     let measurementData;
     const toolState = getToolState(element, this.name);
 
-    console.log(toolState);
+    logger.log(toolState);
 
     if (
       toolState[imageId] &&
       toolState[imageId].brush &&
       toolState[imageId].brush.data[0].pixelData
     ) {
-      console.log(toolState[imageId].brush);
-      console.log(toolState[imageId].brush.data[0]);
+      logger.log(toolState[imageId].brush);
+      logger.log(toolState[imageId].brush.data[0]);
       measurementData = toolState;
     }
 
