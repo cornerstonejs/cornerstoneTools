@@ -28,6 +28,15 @@ export default class ScissorsTool extends BaseBrushTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'Scissors',
+      configuration: {},
+      strategies: {
+        FILL_INSIDE: _fillInsideStrategy,
+        FILL_OUTSIDE: _fillOutsideStrategy,
+        ERASE_OUTSIDE: _eraseOutsideStrategy,
+        ERASE_INSIDE: _eraseInsideStrategy,
+        default: _fillInsideStrategy,
+      },
+      defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: scissorsFillInsideCursor,
     };
@@ -66,8 +75,8 @@ export default class ScissorsTool extends BaseBrushTool {
     /** @inheritdoc */
     this.mouseUpCallback = this._applyStrategy.bind(this);
 
-    this._changeOperation = this._changeOperation.bind(this);
-    this._changeOperation();
+    this._changeStrategy = this._changeStrategy.bind(this);
+    this._changeStrategy();
   }
 
   /**
@@ -161,11 +170,11 @@ export default class ScissorsTool extends BaseBrushTool {
   /**
    * Function responsible for changing the Cursor, according to the strategy
    * @param {HTMLElement} element
-   * @param {string} operation The strategy to be used on Tool
+   * @param {string} strategy The strategy to be used on Tool
    * @private
    * @returns {void}
    */
-  _changeCursor(element, operation) {
+  _changeCursor(element, strategy) {
     // Necessary to avoid setToolCursor without elements, what throws an error
     if (!this.element) {
       return;
@@ -179,7 +188,7 @@ export default class ScissorsTool extends BaseBrushTool {
       default: scissorsFillInsideCursor,
     };
 
-    const newCursor = cursorList[operation] || cursorList.default;
+    const newCursor = cursorList[strategy] || cursorList.default;
 
     setToolCursor(element, newCursor);
     external.cornerstone.updateImage(element);
@@ -194,14 +203,9 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {void}
    */
   _applyStrategy(evt) {
-    const { element } = evt.detail;
-
-    evt.detail.handles = this.handles;
-
-    _applySegmentationChanges(evt, this, this.handles.points);
-
+    this._applySegmentationChanges(evt);
     this._resetHandles();
-    external.cornerstone.updateImage(element);
+    external.cornerstone.updateImage(evt.detail.element);
   }
 
   /**
@@ -264,14 +268,14 @@ export default class ScissorsTool extends BaseBrushTool {
   }
 
   /**
-   * Change Operation Method
-   * @param { string } operation
+   * Change Strategy Method
+   * @param { string } strategy
    * @private
    * @returns {void}
    */
-  _changeOperation(operation = 'FILL_INSIDE') {
-    this.configuration = { operation };
-    this._changeCursor(this.element, operation);
+  _changeStrategy(strategy = 'default') {
+    this.activeStrategy = strategy;
+    this._changeCursor(this.element, strategy);
     this._resetHandles();
   }
 
@@ -288,47 +292,61 @@ export default class ScissorsTool extends BaseBrushTool {
    * @private
    */
   renderBrush() {}
+
+  _applySegmentationChanges(evt) {
+    const points = this.handles.points;
+    const eventData = evt.detail;
+    const { image, element } = eventData;
+    const brushModule = modules.brush;
+    const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
+    const toolData = brushModule.getters.labelmapBuffers(
+      element,
+      activeLabelmapIndex
+    );
+
+    // TODO: This is only reading from the first image in the volume for now
+    const arrayLength = image.width * image.height * 2;
+    const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength);
+
+    evt.detail.handles = this.handles;
+    evt.OperationData = {
+      points,
+      segmentationData,
+      image,
+    };
+
+    this.applyActiveStrategy(evt);
+
+    // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
+
+    // Invalidate the brush tool data so it is redrawn
+    brushModule.setters.invalidateBrushOnEnabledElement(
+      element,
+      activeLabelmapIndex
+    );
+  }
 }
 
-function _applySegmentationChanges(evt, toolInstance, points) {
-  const config = toolInstance.configuration;
-  const eventData = evt.detail;
-  const { image, element } = eventData;
-  const brushModule = modules.brush;
-  const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
-  const toolData = brushModule.getters.labelmapBuffers(
-    element,
-    activeLabelmapIndex
-  );
+function _fillInsideStrategy(evt) {
+  const { points, segmentationData, image } = evt.OperationData;
 
-  // TODO: This is only reading from the first image in the volume for now
-  const arrayLength = image.width * image.height * 2;
-  const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength);
+  fillInside(points, segmentationData, image, 1);
+}
 
-  // TODO: Hardcoded! Only sets a value of 1 in the labelmap
-  const labelValue = 1;
+function _fillOutsideStrategy(evt) {
+  const { points, segmentationData, image } = evt.OperationData;
 
-  switch (config.operation) {
-    case 'FILL_INSIDE':
-    default:
-      fillInside(points, segmentationData, image, labelValue);
-      break;
-    case 'FILL_OUTSIDE':
-      fillOutside(points, segmentationData, image, labelValue);
-      break;
-    case 'ERASE_OUTSIDE':
-      fillOutside(points, segmentationData, image, 0);
-      break;
-    case 'ERASE_INSIDE':
-      fillInside(points, segmentationData, image, 0);
-      break;
-  }
+  fillOutside(points, segmentationData, image, 1);
+}
 
-  // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
+function _eraseOutsideStrategy(evt) {
+  const { points, segmentationData, image } = evt.OperationData;
 
-  // Invalidate the brush tool data so it is redrawn
-  brushModule.setters.invalidateBrushOnEnabledElement(
-    element,
-    activeLabelmapIndex
-  );
+  fillOutside(points, segmentationData, image, 0);
+}
+
+function _eraseInsideStrategy(evt) {
+  const { points, segmentationData, image } = evt.OperationData;
+
+  fillInside(points, segmentationData, image, 0);
 }

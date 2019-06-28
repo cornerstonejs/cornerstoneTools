@@ -1,18 +1,3 @@
-<!-- div class="buttons strategies-buttons">
-    <div class="row-label">
-        Strategies:
-    </div>
-    <button class="button set-tool-mode is-primary" data-action="ScissorsStrategy">
-        <span>Scissors</span>
-    </button>
-    <button class="button set-tool-mode" data-action="CircleStrategy">
-        <span>Circle</span>
-    </button>
-    <button class="button set-tool-mode" data-action="RectangleStrategy">
-        <span>Rectangle</span>
-    </button>
-</div -->
-
 <div class="buttons operations-buttons">
     <div class="row-label">
         Operations
@@ -68,23 +53,6 @@
       const handleClick = function(evt) {
         const action = this.dataset.action;
         const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
-        ActiveScissorTool._changeOperation(action);
-        cleanAllButtons(evt, buttons);
-        this.classList.add('is-primary');
-        deactivateLinkBehaviour(evt);
-        return false;
-      };
-
-      bindEvents(buttons, handleClick);
-    })();
-
-    /*(function DealWithStrategies(){
-      const nameSpace = `.strategies-buttons`;
-      const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
-
-      const handleClick = function(evt) {
-        const action = this.dataset.action;
-        const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
         ActiveScissorTool._changeStrategy(action);
         cleanAllButtons(evt, buttons);
         this.classList.add('is-primary');
@@ -93,7 +61,7 @@
       };
 
       bindEvents(buttons, handleClick);
-    })();*/
+    })();
 
   }
 </script>
