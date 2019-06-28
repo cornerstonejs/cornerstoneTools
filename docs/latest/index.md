@@ -1,3 +1,15 @@
+<div class='row'>
+	<div class='column' style='text-align: right; padding: 0 20px'>
+		<strong>Looking for a Deploy Preview?</strong>
+		<a onclick="function redirect() { window.location.href='/examples/'; } redirect();">Deploy Preview for Cornerstone Tools</a>
+	</div>
+	<div class='column' style='text-align: left; padding: 0 20px'>
+		<a href="https://www.netlify.com">
+		  <img src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"/>
+		</a>
+	</div>
+</div>
+
 # Introduction
 
 ## What is CornerstoneTools.js {#what-is-cornerstone-tools-js}
