@@ -115,13 +115,6 @@ export default class ScissorsTool extends BaseBrushTool {
    * @returns {Boolean} True
    */
   _startOutliningRegion(evt) {
-    this._startOutliningRegionForScissors(evt);
-    this._startOutliningRegionForScissors = this._startOutliningRegionForScissors.bind(
-      this
-    );
-  }
-
-  _startOutliningRegionForScissors(evt) {
     const consumeEvent = true;
     const element = evt.detail.element;
     const image = evt.detail.currentPoints.image;

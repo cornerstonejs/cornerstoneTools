@@ -14,7 +14,7 @@ import StackScrollMouseWheelTool from './StackScrollMouseWheelTool.js';
 import StackScrollMultiTouchTool from './StackScrollMultiTouchTool.js';
 import StackScrollTool from './StackScrollTool.js';
 import WwwcRegionTool from './WwwcRegionTool.js';
-import ScissorsTool from './segmentation/ScissorsTool.js';
+import ScissorsTool from './brush/ScissorsTool.js';
 import WwwcTool from './WwwcTool.js';
 import ZoomMouseWheelTool from './ZoomMouseWheelTool.js';
 import ZoomTool from './ZoomTool.js';

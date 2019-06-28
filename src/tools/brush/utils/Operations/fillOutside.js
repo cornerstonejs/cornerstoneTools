@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundPolygon } from '../Boundaries';
 import { pointInPolygon } from '../PointInside';
-import { fillOutsideBoundingBox } from '.';
+import { fillOutsideBoundingBox } from './index';
 
 export default function fillOutside(
   points,
