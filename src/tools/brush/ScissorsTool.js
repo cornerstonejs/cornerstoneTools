@@ -163,7 +163,7 @@ export default class ScissorsTool extends BaseBrushTool {
     const eventData = evt.detail;
     const element = evt.detail.element;
 
-    this._addPointPencilMode(eventData, this.handles.points);
+    this._addPoint(eventData);
     external.cornerstone.updateImage(element);
   }
 
@@ -221,18 +221,6 @@ export default class ScissorsTool extends BaseBrushTool {
     };
 
     this.currentHandle = 0;
-  }
-
-  /**
-   * If in pencilMode, check the mouse position is farther than the minimum
-   * distance between points, then add a point.
-   *
-   * @private
-   * @param {Object} eventData - Data object associated with an event.
-   * @returns {undefined}
-   */
-  _addPointPencilMode(eventData) {
-    this._addPoint(eventData);
   }
 
   /**
