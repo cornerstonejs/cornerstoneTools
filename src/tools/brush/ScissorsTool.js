@@ -16,6 +16,9 @@ import {
 import store from '../../store';
 import { fillInside, fillOutside } from './utils';
 
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:ScissorsTool');
 const brushModule = store.modules.brush;
 const { getters } = brushModule;
 
@@ -134,6 +137,12 @@ export default class ScissorsTool extends BaseTool {
     const image = evt.detail.currentPoints.image;
     const emptyPoints = !this.handles.points.length;
 
+    if (!emptyPoints) {
+      logger.warn('Something went wrong, empty handles detected.');
+
+      return null;
+    }
+
     if (emptyPoints) {
       this.handles.points.push({
         x: image.x,
@@ -141,14 +150,6 @@ export default class ScissorsTool extends BaseTool {
         lines: [],
       });
       this.currentHandle += 1;
-    } else {
-      this.handles.points.push({
-        x: image.x,
-        y: image.y,
-        lines: [],
-      });
-      this.currentHandle += 1;
-      this._applyStrategy(evt);
     }
 
     external.cornerstone.updateImage(element);
