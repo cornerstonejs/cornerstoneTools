@@ -1,4 +1,5 @@
 import { getBoundingBoxAroundPolygon } from '../Boundaries';
+import pointInPolygon_ from '../../../../util/freehand/pointInFreehand.js';
 import { pointInPolygon } from '../PointInside';
 
 import { getLogger } from '../../../../util/logger.js';
@@ -18,16 +19,19 @@ export default function fillInside(
   // everything is outside of the polygon.
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
-  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
   const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
+  let [xMax, yMax] = bottomRight;
 
   let painted = 0;
 
   // Loop through all of the points inside the bounding box
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
+      // Commented for benchMark Purposes
+      // const inside = pointInPolygon_(points, { x: i, y: j });
+
       // If they are inside of the region defined by the array of points, set their value to labelValue
       const inside = pointInPolygon([i, j], vertices);
 
