@@ -33,9 +33,9 @@
         <!-- Select Tool Category -->
         <ul class="tool-category-list">
           <li>
-            <a  data-category="annotation" href="#">Annotation</a>
+            <a class="active" data-category="annotation" href="#">Annotation</a>
           </li>
-          <li><a class="active" data-category="drag" href="#">Drag</a></li>
+          <li><a data-category="drag" href="#">Drag</a></li>
           <li>
             <a data-category="multitouch-pinch" href="#"
               >Multi-Touch / Pinch (touch only)</a
@@ -47,7 +47,7 @@
         </ul>
 
         <!-- Select Active Tool -->
-        <ul class="tool-category" data-tool-category="annotation">
+        <ul class="tool-category active" data-tool-category="annotation">
           <li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
           <li><a href="#" data-tool="Angle">Angle</a></li>
           <li><a href="#" data-tool="Bidirectional">Bidirectional</a></li>
@@ -67,7 +67,7 @@
           <li><a href="#" data-tool="Probe">Probe</a></li>
           <li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
         </ul>
-        <ul class="tool-category active" data-tool-category="drag">
+        <ul class="tool-category" data-tool-category="drag">
           <li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
           <!-- <li><a href="#" data-tool="DragProbe">DragProbe</a></li> -->
           <li><a href="#" data-tool="Magnify">Magnify</a></li>
@@ -368,7 +368,7 @@
     });
 
     // Activate first tool
-    cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[42].name, {
+    cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
       mouseButtonMask: 1,
       isTouchActive: true,
     });
