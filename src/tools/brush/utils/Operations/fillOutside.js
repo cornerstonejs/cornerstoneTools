@@ -1,6 +1,9 @@
 import { getBoundingBoxAroundPolygon } from '../Boundaries';
 import { pointInPolygon } from '../PointInside';
 import { fillOutsideBoundingBox } from './index';
+import { getLogger } from '../../../../util/logger.js';
+
+const logger = getLogger('tools:ScissorsTool');
 
 export default function fillOutside(
   points,
@@ -42,4 +45,6 @@ export default function fillOutside(
       }
     }
   }
+
+  logger.warn(painted);
 }

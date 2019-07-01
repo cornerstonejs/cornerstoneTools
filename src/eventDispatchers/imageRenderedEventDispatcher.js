@@ -20,9 +20,7 @@ const onImageRendered = function(evt) {
     tool => tool instanceof BaseBrushTool
   );
 
-  if (brushTools.length > 0) {
-    onImageRenderedBrushEventHandler(evt);
-  }
+  onImageRenderedBrushEventHandler(evt);
 
   toolsToRender.forEach(tool => {
     if (tool.renderToolData) {

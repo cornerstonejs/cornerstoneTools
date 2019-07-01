@@ -1,5 +1,5 @@
 import external from '../../externalModules.js';
-import BaseBrushTool from '../base/BaseBrushTool.js';
+import BaseTool from '../base/BaseTool.js';
 import { setToolCursor } from '../../store/setToolCursor.js';
 
 // Drawing
@@ -13,8 +13,11 @@ import {
   scissorsFillOutsideCursor,
 } from '../cursors';
 
-import { modules } from '../../store';
+import store from '../../store';
 import { fillInside, fillOutside } from './utils';
+
+const brushModule = store.modules.brush;
+const { getters } = brushModule;
 
 /**
  * @public
@@ -23,12 +26,14 @@ import { fillInside, fillOutside } from './utils';
  * @classdesc Tool for slicing brush pixel data
  * @extends Tools.Base.BaseTool
  */
-export default class ScissorsTool extends BaseBrushTool {
+export default class ScissorsTool extends BaseTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {
       name: 'Scissors',
-      configuration: {},
+      configuration: {
+        referencedToolData: 'brush',
+      },
       strategies: {
         FILL_INSIDE: _fillInsideStrategy,
         FILL_OUTSIDE: _fillOutsideStrategy,
@@ -267,32 +272,18 @@ export default class ScissorsTool extends BaseBrushTool {
     this._resetHandles();
   }
 
-  /**
-   * Fake Override asked by BaseBrushTool
-   * @returns {void}
-   * @private
-   */
-  _paint() {}
-
-  /**
-   * Fake Override asked by BaseBrushTool
-   * @returns {void}
-   * @private
-   */
-  renderBrush() {}
-
   _applySegmentationChanges(evt) {
     const points = this.handles.points;
-    const eventData = evt.detail;
-    const { image, element } = eventData;
-    const brushModule = modules.brush;
-    const activeLabelmapIndex = 0; // TODO: Hardcoded for now, only works on first labelmap!
-    const toolData = brushModule.getters.labelmapBuffers(
-      element,
-      activeLabelmapIndex
-    );
+    const { image, element } = evt.detail;
 
-    // TODO: This is only reading from the first image in the volume for now
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = getters.getAndCacheLabelmap2D(element);
+
+    const toolData = getters.labelmapBuffers(element, activeLabelmapIndex);
+
     const arrayLength = image.width * image.height * 2;
     const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength);
 
@@ -308,10 +299,7 @@ export default class ScissorsTool extends BaseBrushTool {
     // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
 
     // Invalidate the brush tool data so it is redrawn
-    brushModule.setters.invalidateBrushOnEnabledElement(
-      element,
-      activeLabelmapIndex
-    );
+    labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;
   }
 }
 

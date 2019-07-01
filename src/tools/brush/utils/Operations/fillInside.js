@@ -1,6 +1,10 @@
 import { getBoundingBoxAroundPolygon } from '../Boundaries';
 import { pointInPolygon } from '../PointInside';
 
+import { getLogger } from '../../../../util/logger.js';
+
+const logger = getLogger('tools:ScissorsTool');
+
 export default function fillInside(
   points,
   segmentationData,
@@ -33,4 +37,6 @@ export default function fillInside(
       }
     }
   }
+
+  logger.warn(painted);
 }
