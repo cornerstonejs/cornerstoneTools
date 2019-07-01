@@ -15,7 +15,7 @@ export default function fillOutside(
   // If they are outside of the region defined by the array of points, set their value to labelValue
   const { width, height } = image;
   const vertices = points.map(a => [a.x, a.y]);
-  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
   // If we know exactly how big the polygon is,
   // we do not need to loop through the whole image.
