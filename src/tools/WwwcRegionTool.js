@@ -6,7 +6,6 @@ import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
 import { wwwcRegionCursor } from './cursors/index.js';
-import _isEmptyObject from './../util/isEmptyObject.js';
 
 /**
  * @public
@@ -159,6 +158,17 @@ export default class WwwcRegionTool extends BaseTool {
     };
   }
 }
+
+/**
+ * Helper to determine if an object has no keys and is the correct type (is empty)
+ *
+ * @private
+ * @function _isEmptyObject
+ * @param {Object} obj The object to check
+ * @returns {Boolean} true if the object is empty
+ */
+const _isEmptyObject = obj =>
+  Object.keys(obj).length === 0 && obj.constructor === Object;
 
 /**
  * Calculates the minimum and maximum value in the given pixel array
