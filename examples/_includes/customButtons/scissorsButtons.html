@@ -1,25 +1,23 @@
 <div class="buttons operations-buttons">
-    <div class="row-label">
-        Operations
-    </div>
-    <button class="button set-tool-mode is-primary" data-action="FILL_INSIDE">
-        <span>Fill Inside</span>
-    </button>
-    <button class="button set-tool-mode" data-action="ERASE_INSIDE">
-        <span>Erase Inside</span>
-    </button>
-    <button class="button set-tool-mode" data-action="FILL_OUTSIDE">
-        <span>Fill outside</span>
-    </button>
-    <button class="button set-tool-mode" data-action="ERASE_OUTSIDE">
-        <span>Erase Outside</span>
-    </button>
+  <div class="row-label">
+    Operations
+  </div>
+  <button class="button set-tool-mode is-primary" data-action="FILL_INSIDE">
+    <span>Fill Inside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="ERASE_INSIDE">
+    <span>Erase Inside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="FILL_OUTSIDE">
+    <span>Fill outside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="ERASE_OUTSIDE">
+    <span>Erase Outside</span>
+  </button>
 </div>
-
 
 <script>
   function _initInterface() {
-
     function bindEvents(buttons, handleClick) {
       buttons.forEach(btn => {
         btn.addEventListener('contextmenu', handleClick);
@@ -46,13 +44,16 @@
       evt.stopImmediatePropagation();
     }
 
-    (function DealWithOperations(){
+    (function DealWithOperations() {
       const nameSpace = `.operations-buttons`;
       const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
 
       const handleClick = function(evt) {
         const action = this.dataset.action;
-        const ActiveScissorTool = cornerstoneTools.getToolForElement(element, 'Scissors');
+        const ActiveScissorTool = cornerstoneTools.getToolForElement(
+          element,
+          '{{page.toolName}}'
+        );
         ActiveScissorTool._changeStrategy(action);
         cleanAllButtons(evt, buttons);
         this.classList.add('is-primary');
@@ -62,6 +63,5 @@
 
       bindEvents(buttons, handleClick);
     })();
-
   }
 </script>
