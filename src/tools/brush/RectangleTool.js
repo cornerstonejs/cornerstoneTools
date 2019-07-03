@@ -1,9 +1,16 @@
 import BaseTool from '../base/BaseTool';
-import { scissorsFillInsideCursor } from '../cursors';
+import {
+  scissorsRectangleEraseInsideCursor,
+  scissorsRectangleEraseOutsideCursor,
+  scissorsRectangleFillInsideCursor,
+  scissorsRectangleFillOutsideCursor,
+} from '../cursors';
 import toolColors from '../../stateManagement/toolColors';
 import { draw, drawRect, getNewContext } from '../../drawing';
 import { fillInside, fillOutside } from './utils/Operations';
 import external from '../../externalModules';
+import _isEmptyObject from './../../util/isEmptyObject';
+import { setToolCursor } from '../../store/setToolCursor';
 
 /**
  * @public
@@ -29,7 +36,7 @@ export default class RectangleTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: scissorsFillInsideCursor,
+      svgCursor: scissorsRectangleFillInsideCursor,
     };
 
     super(props, defaultProps);
@@ -155,18 +162,46 @@ export default class RectangleTool extends BaseTool {
       end: {},
     };
   }
-}
 
-/**
- * Helper to determine if an object has no keys and is the correct type (is empty)
- *
- * @private
- * @function _isEmptyObject
- * @param {Object} obj The object to check
- * @returns {Boolean} true if the object is empty
- */
-const _isEmptyObject = obj =>
-  Object.keys(obj).length === 0 && obj.constructor === Object;
+  /**
+   * Function responsible for changing the Cursor, according to the strategy
+   * @param {HTMLElement} element
+   * @param {string} strategy The strategy to be used on Tool
+   * @private
+   * @returns {void}
+   */
+  _changeCursor(element, strategy) {
+    // Necessary to avoid setToolCursor without elements, what throws an error
+    if (!this.element) {
+      return;
+    }
+
+    const cursorList = {
+      FILL_INSIDE: scissorsRectangleFillInsideCursor,
+      FILL_OUTSIDE: scissorsRectangleFillOutsideCursor,
+      ERASE_OUTSIDE: scissorsRectangleEraseOutsideCursor,
+      ERASE_INSIDE: scissorsRectangleEraseInsideCursor,
+      default: scissorsRectangleFillInsideCursor,
+    };
+
+    const newCursor = cursorList[strategy] || cursorList.default;
+
+    setToolCursor(element, newCursor);
+    external.cornerstone.updateImage(element);
+  }
+
+  /**
+   * Change Strategy Method
+   * @param { string } strategy
+   * @private
+   * @returns {void}
+   */
+  _changeStrategy(strategy = 'default') {
+    this.activeStrategy = strategy;
+    this._changeCursor(this.element, strategy);
+    this._resetHandles();
+  }
+}
 
 function _fillInsideStrategy(evt) {
   const { points, segmentationData, image } = evt.OperationData;

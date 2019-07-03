@@ -386,35 +386,97 @@ const scissorsCursorBoundaries = {
   y: 60,
 };
 
+const minusRect = (color = 'ACTIVE_COLOR') =>
+  `<rect fill="${color}" x="80.19" y="25.03" width="47.14" height="15.85"/>`;
+
+const plusRect = (
+  color = 'ACTIVE_COLOR'
+) => `<rect fill="${color}" x="80.19" y="25.03" width="47.14" height="15.85"/>
+      <rect fill="${color}" x="95.84" y="9.38" width="15.85" height="47.14"/>`;
+
+const scissorsPath = `<path fill="ACTIVE_COLOR" d="M82.89,10a12.09,12.09,0,0,0-16.8-2.5l-27.5,20.4-8.5-6.3a2.93,2.93,0,0,1-1.1-3,14.66,14.66,0,0,0,.1-6.6,14.08,14.08,0,1,0-6.5,15.2,2.87,2.87,0,0,1,3.2.2l8.2,6.1-8.2,6.1a2.87,2.87,0,0,1-3.2.2,14.16,14.16,0,1,0,6.7,14.4,14,14,0,0,0-.3-5.8,2.93,2.93,0,0,1,1.1-3l8.5-6.3,27.5,20.4A11.91,11.91,0,0,0,82.89,57l-31.7-23.5ZM15.29,21a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,21Zm0,36.8a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,57.77Zm28.3-21.5a2.8,2.8,0,1,1,2.8-2.8A2.8,2.8,0,0,1,43.59,36.27Z" transform="translate(-1.17 -0.96)"/>`;
+const rectanglePath = `<path fill="ACTIVE_COLOR" d="M8.86,2.25V66.08H72.69V2.25H8.86ZM65.28,58.67h-49v-49h49v49Z" transform="translate(-8.86 -2.25)"/>`;
+const circlePath = `<path fill="ACTIVE_COLOR" d="M40.77,2.25A31.92,31.92,0,1,0,72.69,34.16,31.92,31.92,0,0,0,40.77,2.25Zm0,57.63A25.71,25.71,0,1,1,66.48,34.16,25.71,25.71,0,0,1,40.77,59.87Z" transform="translate(-8.86 -2.25)"/>`;
+
 export const scissorsEraseInsideCursor = new MouseCursor(
-  `<path fill="ACTIVE_COLOR" d="M82.89,10a12.09,12.09,0,0,0-16.8-2.5l-27.5,20.4-8.5-6.3a2.93,2.93,0,0,1-1.1-3,14.66,14.66,0,0,0,.1-6.6,14.08,14.08,0,1,0-6.5,15.2,2.87,2.87,0,0,1,3.2.2l8.2,6.1-8.2,6.1a2.87,2.87,0,0,1-3.2.2,14.16,14.16,0,1,0,6.7,14.4,14,14,0,0,0-.3-5.8,2.93,2.93,0,0,1,1.1-3l8.5-6.3,27.5,20.4A11.91,11.91,0,0,0,82.89,57l-31.7-23.5ZM15.29,21a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,21Zm0,36.8a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,57.77Zm28.3-21.5a2.8,2.8,0,1,1,2.8-2.8A2.8,2.8,0,0,1,43.59,36.27Z" transform="translate(-1.17 -0.96)"/>
-   <rect fill="ACTIVE_COLOR" x="80.19" y="25.03" width="47.14" height="15.85"/>`,
+  `${scissorsPath} ${minusRect()}`,
   {
     viewBox: scissorsCursorBoundaries,
   }
 );
 
 export const scissorsFillInsideCursor = new MouseCursor(
-  `<path fill="ACTIVE_COLOR" d="M82.89,10a12.09,12.09,0,0,0-16.8-2.5l-27.5,20.4-8.5-6.3a2.93,2.93,0,0,1-1.1-3,14.66,14.66,0,0,0,.1-6.6,14.08,14.08,0,1,0-6.5,15.2,2.87,2.87,0,0,1,3.2.2l8.2,6.1-8.2,6.1a2.87,2.87,0,0,1-3.2.2,14.16,14.16,0,1,0,6.7,14.4,14,14,0,0,0-.3-5.8,2.93,2.93,0,0,1,1.1-3l8.5-6.3,27.5,20.4A11.91,11.91,0,0,0,82.89,57l-31.7-23.5ZM15.29,21a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,21Zm0,36.8a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,57.77Zm28.3-21.5a2.8,2.8,0,1,1,2.8-2.8A2.8,2.8,0,0,1,43.59,36.27Z" transform="translate(-1.17 -0.96)"/>
-   <rect fill="ACTIVE_COLOR" x="80.19" y="25.03" width="47.14" height="15.85"/>
-   <rect fill="ACTIVE_COLOR" x="95.84" y="9.38" width="15.85" height="47.14"/>`,
+  `${scissorsPath} ${plusRect()}`,
   {
     viewBox: scissorsCursorBoundaries,
   }
 );
 
 export const scissorsEraseOutsideCursor = new MouseCursor(
-  `<path fill="ACTIVE_COLOR" d="M82.89,10a12.09,12.09,0,0,0-16.8-2.5l-27.5,20.4-8.5-6.3a2.93,2.93,0,0,1-1.1-3,14.66,14.66,0,0,0,.1-6.6,14.08,14.08,0,1,0-6.5,15.2,2.87,2.87,0,0,1,3.2.2l8.2,6.1-8.2,6.1a2.87,2.87,0,0,1-3.2.2,14.16,14.16,0,1,0,6.7,14.4,14,14,0,0,0-.3-5.8,2.93,2.93,0,0,1,1.1-3l8.5-6.3,27.5,20.4A11.91,11.91,0,0,0,82.89,57l-31.7-23.5ZM15.29,21a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,21Zm0,36.8a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,57.77Zm28.3-21.5a2.8,2.8,0,1,1,2.8-2.8A2.8,2.8,0,0,1,43.59,36.27Z" transform="translate(-1.17 -0.96)"/>
-   <rect fill="red" x="80.19" y="25.03" width="47.14" height="15.85"/>`,
+  `${scissorsPath} ${minusRect('red')}`,
   {
     viewBox: scissorsCursorBoundaries,
   }
 );
 
 export const scissorsFillOutsideCursor = new MouseCursor(
-  `<path fill="ACTIVE_COLOR" d="M82.89,10a12.09,12.09,0,0,0-16.8-2.5l-27.5,20.4-8.5-6.3a2.93,2.93,0,0,1-1.1-3,14.66,14.66,0,0,0,.1-6.6,14.08,14.08,0,1,0-6.5,15.2,2.87,2.87,0,0,1,3.2.2l8.2,6.1-8.2,6.1a2.87,2.87,0,0,1-3.2.2,14.16,14.16,0,1,0,6.7,14.4,14,14,0,0,0-.3-5.8,2.93,2.93,0,0,1,1.1-3l8.5-6.3,27.5,20.4A11.91,11.91,0,0,0,82.89,57l-31.7-23.5ZM15.29,21a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,21Zm0,36.8a5.9,5.9,0,1,1,5.9-5.9A5.91,5.91,0,0,1,15.29,57.77Zm28.3-21.5a2.8,2.8,0,1,1,2.8-2.8A2.8,2.8,0,0,1,43.59,36.27Z" transform="translate(-1.17 -0.96)"/>
-   <rect fill="red" x="80.19" y="25.03" width="47.14" height="15.85"/>
-   <rect fill="red" x="95.84" y="9.38" width="15.85" height="47.14"/>`,
+  `${scissorsPath} ${plusRect('red')}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsRectangleEraseInsideCursor = new MouseCursor(
+  `${rectanglePath} ${minusRect()}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsRectangleFillInsideCursor = new MouseCursor(
+  `${rectanglePath} ${plusRect()}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsRectangleEraseOutsideCursor = new MouseCursor(
+  `${rectanglePath} ${minusRect('red')}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsRectangleFillOutsideCursor = new MouseCursor(
+  `${rectanglePath} ${plusRect('red')}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsCircleEraseInsideCursor = new MouseCursor(
+  `${circlePath} ${minusRect()}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsCircleFillInsideCursor = new MouseCursor(
+  `${circlePath} ${plusRect()}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsCircleEraseOutsideCursor = new MouseCursor(
+  `${circlePath} ${minusRect('red')}`,
+  {
+    viewBox: scissorsCursorBoundaries,
+  }
+);
+
+export const scissorsCircleFillOutsideCursor = new MouseCursor(
+  `${circlePath} ${plusRect('red')}`,
   {
     viewBox: scissorsCursorBoundaries,
   }
