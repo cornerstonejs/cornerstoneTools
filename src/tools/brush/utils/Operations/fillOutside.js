@@ -13,7 +13,7 @@ export default function fillOutside(
 ) {
   // Loop through all pixels in the segmentation data mask
   // If they are outside of the region defined by the array of points, set their value to labelValue
-  const { width, height } = image;
+  const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
@@ -26,8 +26,7 @@ export default function fillOutside(
     topLeft,
     bottomRight,
     segmentationData,
-    width,
-    height,
+    image,
     labelValue
   );
 

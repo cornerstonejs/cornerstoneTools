@@ -2,11 +2,11 @@ export default function fillOutsideBoundingBox(
   topLeft,
   bottomRight,
   segmentationData,
-  width,
-  height,
+  image,
   labelValue = 1
 ) {
   let painted = 0;
+  const { width, height } = image;
 
   // Loop until top of bounding box from top of image, color the entire row
   for (let i = 0; i < width; i++) {

@@ -1,16 +1,26 @@
 import BaseTool from '../base/BaseTool';
+import toolColors from '../../stateManagement/toolColors';
+import { draw, drawRect, getNewContext } from '../../drawing';
+import {
+  fillInsideBoundingBox,
+  fillOutsideBoundingBox,
+} from './utils/Operations';
+import external from '../../externalModules';
+import _isEmptyObject from './../../util/isEmptyObject';
+import { setToolCursor } from '../../store/setToolCursor';
+import store from '../../store';
+
+// Cursors
 import {
   scissorsRectangleEraseInsideCursor,
   scissorsRectangleEraseOutsideCursor,
   scissorsRectangleFillInsideCursor,
   scissorsRectangleFillOutsideCursor,
 } from '../cursors';
-import toolColors from '../../stateManagement/toolColors';
-import { draw, drawRect, getNewContext } from '../../drawing';
-import { fillInside, fillOutside } from './utils/Operations';
-import external from '../../externalModules';
-import _isEmptyObject from './../../util/isEmptyObject';
-import { setToolCursor } from '../../store/setToolCursor';
+import { getBoundingBoxAroundPolygon } from './utils/Boundaries';
+
+const brushModule = store.modules.brush;
+const { getters } = brushModule;
 
 /**
  * @public
@@ -32,7 +42,7 @@ export default class RectangleTool extends BaseTool {
         FILL_OUTSIDE: _fillOutsideStrategy,
         ERASE_OUTSIDE: _eraseOutsideStrategy,
         ERASE_INSIDE: _eraseInsideStrategy,
-        default: _fillInsideStrategy,
+        default: _fillOutsideStrategy,
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
@@ -45,7 +55,6 @@ export default class RectangleTool extends BaseTool {
     //
     // Touch
     //
-
     /** @inheritdoc */
     this.postTouchStartCallback = this._startOutliningRegion.bind(this);
 
@@ -58,7 +67,6 @@ export default class RectangleTool extends BaseTool {
     //
     // MOUSE
     //
-
     /** @inheritdoc */
     this.postMouseDownCallback = this._startOutliningRegion.bind(this);
 
@@ -128,8 +136,10 @@ export default class RectangleTool extends BaseTool {
    * @returns {void}
    */
   _setHandlesAndUpdate(evt) {
-    const element = evt.detail.element;
-    const image = evt.detail.currentPoints.image;
+    const {
+      element,
+      currentPoints: { image },
+    } = evt.detail;
 
     this.handles.end = image;
     external.cornerstone.updateImage(element);
@@ -145,8 +155,8 @@ export default class RectangleTool extends BaseTool {
    */
   _applyStrategy(evt) {
     evt.detail.handles = this.handles;
+    this._applySegmentationChanges(evt);
     this._resetHandles();
-    console.log('Drawing');
   }
 
   /**
@@ -201,28 +211,72 @@ export default class RectangleTool extends BaseTool {
     this._changeCursor(this.element, strategy);
     this._resetHandles();
   }
+
+  _applySegmentationChanges(evt) {
+    const points = [
+      {
+        x: this.handles.start.x,
+        y: this.handles.start.y,
+      },
+      {
+        x: this.handles.end.x,
+        y: this.handles.end.y,
+      },
+    ];
+    const { image, element } = evt.detail;
+
+    const {
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = getters.getAndCacheLabelmap2D(element);
+
+    const toolData = getters.labelmapBuffers(element, activeLabelmapIndex);
+
+    const arrayLength = image.width * image.height * 2;
+    const segmentationData = new Uint16Array(toolData.buffer, 0, arrayLength);
+
+    evt.detail.handles = this.handles;
+    evt.OperationData = {
+      points,
+      segmentationData,
+      image,
+    };
+
+    this.applyActiveStrategy(evt);
+
+    // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
+
+    // Invalidate the brush tool data so it is redrawn
+    labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;
+    external.cornerstone.updateImage(element);
+  }
 }
 
 function _fillInsideStrategy(evt) {
   const { points, segmentationData, image } = evt.OperationData;
 
-  fillInside(points, segmentationData, image, 1);
+  fillInsideBoundingBox(points, segmentationData, image, 1);
 }
 
 function _fillOutsideStrategy(evt) {
   const { points, segmentationData, image } = evt.OperationData;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
-  fillOutside(points, segmentationData, image, 1);
+  fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, image, 1);
 }
 
 function _eraseOutsideStrategy(evt) {
   const { points, segmentationData, image } = evt.OperationData;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
-  fillOutside(points, segmentationData, image, 0);
+  fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, image, 0);
 }
 
 function _eraseInsideStrategy(evt) {
   const { points, segmentationData, image } = evt.OperationData;
 
-  fillInside(points, segmentationData, image, 0);
+  fillInsideBoundingBox(points, segmentationData, image, 0);
 }
