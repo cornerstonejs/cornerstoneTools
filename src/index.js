@@ -88,7 +88,7 @@ import {
   RectangleRoiTool,
   TextMarkerTool,
 } from './tools/annotation/index.js';
-import { BrushTool, ScissorsTool } from './tools/brush/index.js';
+import { BrushTool, ScissorsTool, RectangleTool } from './tools/brush/index.js';
 import {
   CrosshairsTool,
   DoubleTapFitToWindowTool,
@@ -316,6 +316,8 @@ export {
   TextMarkerTool,
   // ~ Brush Tools
   BrushTool,
+  RectangleTool,
+  ScissorsTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
@@ -333,7 +335,6 @@ export {
   StackScrollMultiTouchTool,
   StackScrollTool,
   WwwcRegionTool,
-  ScissorsTool,
   WwwcTool,
   ZoomMouseWheelTool,
   ZoomTool,
