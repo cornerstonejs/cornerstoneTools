@@ -150,6 +150,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   const pixelData = toolData.data[segIndex].pixelData;
+  const imageSpecificSegmentationAlpha = toolData.data[segIndex].alpha;
 
   if (!pixelData) {
     return;
@@ -168,6 +169,13 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
     minPixelValue: 0,
     getPixelData: () => pixelData,
   };
+
+  const hasImageSpecificSegmentationAlpha =
+    imageSpecificSegmentationAlpha !== undefined;
+
+  if (hasImageSpecificSegmentationAlpha) {
+    colorLutTable[1][3] = imageSpecificSegmentationAlpha;
+  }
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
