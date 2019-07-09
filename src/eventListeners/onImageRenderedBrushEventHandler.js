@@ -1,13 +1,14 @@
-import store from '../store/index.js';
-import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
-import { getToolState } from '../stateManagement/toolState.js';
-import external from '../externalModules.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
 import {
   getNewContext,
   resetCanvasContextTransform,
   transformCanvasContext,
 } from '../drawing/index.js';
+
+import BaseBrushTool from './../tools/base/BaseBrushTool.js';
+import external from '../externalModules.js';
+import getActiveToolsForElement from '../store/getActiveToolsForElement.js';
+import { getToolState } from '../stateManagement/toolState.js';
+import store from '../store/index.js';
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
@@ -149,6 +150,7 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   const pixelData = toolData.data[segIndex].pixelData;
+  const imageSpecificSegmentationAlpha = toolData.data[segIndex].alpha;
 
   if (!pixelData) {
     return;
@@ -167,6 +169,13 @@ function createNewBitmapAndQueueRenderOfSegmentation(evt, toolData, segIndex) {
     minPixelValue: 0,
     getPixelData: () => pixelData,
   };
+
+  const hasImageSpecificSegmentationAlpha =
+    imageSpecificSegmentationAlpha !== undefined;
+
+  if (hasImageSpecificSegmentationAlpha) {
+    colorLutTable[1][3] = imageSpecificSegmentationAlpha;
+  }
 
   external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
     image,
