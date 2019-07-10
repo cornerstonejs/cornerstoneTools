@@ -24,7 +24,7 @@ const state = {
 };
 
 /**
- * getMetadata - Returns the metadata object for a partiular segment if
+ * GetMetadata - Returns the metadata object for a partiular segment if
  * segmentIndex is specified, otherwise returns an array of all segment metadata
  * for the labelmap.
  *
@@ -77,7 +77,7 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
 }
 
 /**
- * getLabelmaps3D - Returns the labelmaps associated with the series displayed
+ * GetLabelmaps3D - Returns the labelmaps associated with the series displayed
  * in the element, the activeLabelmapIndex and the currentImageIdIndex.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -114,7 +114,7 @@ function getLabelmaps3D(elementOrEnabledElementUID) {
 }
 
 /**
- * getAndCacheLabelmap2D - Returns the 3D labelmap and the currentImageIdIndex.
+ * GetAndCacheLabelmap2D - Returns the 3D labelmap and the currentImageIdIndex.
  *                         Allocates memory for the labelmap and sets a 2D view
  *                         for the currentImageIdIndex if it does not yet exist.
  *
@@ -202,7 +202,7 @@ function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
 }
 
 /**
- * getLabelmapStats - returns the maximum pixel value, mean and standard
+ * GetLabelmapStats - returns the maximum pixel value, mean and standard
  * deviation of the segment given by the segmentIndex of the scan on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -264,7 +264,7 @@ function getLabelmapStats(elementOrEnabledElementUID, segmentIndex) {
 }
 
 /**
- * getBrushColor - Returns the brush color as a string for the active segment of
+ * GetBrushColor - Returns the brush color as a string for the active segment of
  * the active labelmap for the series displayed on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -312,7 +312,7 @@ function getBrushColor(elementOrEnabledElementUID, drawing = false) {
 }
 
 /**
- * getActiveSegmentIndex - Returns the active segment segment index  for the
+ * GetActiveSegmentIndex - Returns the active segment segment index  for the
  * active labelmap for the series displayed on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -349,7 +349,7 @@ function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
 }
 
 /**
- * getLabelmapBuffers - Returns the ArrayBuffers of each labelmap associated
+ * GetLabelmapBuffers - Returns the ArrayBuffers of each labelmap associated
  *                      with the series displayed on the element, or a specific
  *                      one if labelmapIndex is defined.
  *
@@ -380,9 +380,9 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
         bytesPerVoxel: 2,
         buffer: labelmaps3D[labelmapIndex].buffer,
       };
-    } else {
-      return;
     }
+
+    return;
   }
 
   const labelmapBuffers = [];
@@ -401,7 +401,7 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
 }
 
 /**
- * getActiveLabelmapBuffer - Returns the ArrayBuffer corresponding to the active
+ * GetActiveLabelmapBuffer - Returns the ArrayBuffer corresponding to the active
  *                           labelmap associated with the series displayed on
  *                           the element.
  *
@@ -433,7 +433,7 @@ function getActiveLabelmapBuffer(elementOrEnabledElementUID) {
 }
 
 /**
- * setMetadata - Sets the metadata object for a particular segment of a
+ * SetMetadata - Sets the metadata object for a particular segment of a
  * labelmap3D.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -490,7 +490,7 @@ function setMetadata(
 }
 
 /**
- * setLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
+ * SetLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
  * it as a segmentation for the series assoicated with the element.
  *
  * @param  {HTMLElement|string} elementOrEnabledElementUID The cornerstone
@@ -532,7 +532,7 @@ function setLabelmap3DForElement(
 }
 
 /**
- * setLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
+ * SetLabelmap3DForElement - Takes an 16-bit encoded ArrayBuffer and stores
  * it as a segmentation for the series assoicated with the firstImageId.
  *
  * @param  {HTMLElement|string} firstImageId  The firstImageId of the series to
@@ -573,7 +573,7 @@ function setLabelmap3DByFirstImageId(
   const labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
 
   const slicelengthInBytes = buffer / numberOfFrames;
-  const sliceLengthInUint16 = slicelengthInBytes / 2; //sliceLength in Uint16.
+  const sliceLengthInUint16 = slicelengthInBytes / 2; // SliceLength in Uint16.
 
   for (let i = 0; i < numberOfFrames; i++) {
     const pixelData = new Uint16Array(
@@ -616,7 +616,7 @@ function _getSegmentsOnPixelData(pixelData) {
 }
 
 /**
- * setDeleteSegment - Deletes the segment and any associated metadata from
+ * SetDeleteSegment - Deletes the segment and any associated metadata from
  *                    the labelmap.
  *
  * @param  {type} elementOrEnabledElementUID The cornerstone enabled element
@@ -667,7 +667,7 @@ function setDeleteSegment(
 
   const labelmaps2D = labelmap3D.labelmaps2D;
 
-  // clear segment's voxels.
+  // Clear segment's voxels.
   for (let i = 0; i < labelmaps2D.length; i++) {
     const labelmap2D = labelmaps2D[i];
 
@@ -685,7 +685,9 @@ function setDeleteSegment(
 
       // Delete the label for this segment.
       for (let p = 0; p < pixelData.length; p++) {
-        if (pixelData[p] === segmentIndex) pixelData[p] = 0;
+        if (pixelData[p] === segmentIndex) {
+          pixelData[p] = 0;
+        }
       }
     }
   }
@@ -694,7 +696,7 @@ function setDeleteSegment(
 }
 
 /**
- * getActiveLabelmapIndex - description
+ * GetActiveLabelmapIndex - description
  *
  * @param  {type} elementOrEnabledElementUID description
  * @returns {type}                            description
@@ -720,7 +722,7 @@ function getActiveLabelmapIndex(elementOrEnabledElementUID) {
 }
 
 /**
- * getActiveCornerstoneColorMap - Returns the cornerstone colormap for the active
+ * GetActiveCornerstoneColorMap - Returns the cornerstone colormap for the active
  * labelmap.
  *
  * @param  {type} elementOrEnabledElementUID The cornerstone enabled
@@ -738,7 +740,7 @@ function getActiveCornerstoneColorMap(elementOrEnabledElementUID) {
 }
 
 /**
- * setActiveLabelmap - Sets the active labelmap for the stack displayed on this
+ * SetActiveLabelmap - Sets the active labelmap for the stack displayed on this
  * elemenet to the labelmap given by the labelmapIndex. Creates the labelmap if
  * it doesn't exist.
  *
@@ -797,7 +799,7 @@ function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
 }
 
 /**
- * setIncrementActiveSegmentIndex - Increment the active segment index for the
+ * SetIncrementActiveSegmentIndex - Increment the active segment index for the
  *                                  active labelmap on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -815,7 +817,7 @@ function setIncrementActiveSegmentIndex(elementOrEnabledElementUID) {
 }
 
 /**
- * setDecrementActiveSegmentIndex - Decrement the active segment index for the
+ * SetDecrementActiveSegmentIndex - Decrement the active segment index for the
  *                                  active labelmap on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -833,7 +835,7 @@ function setDecrementActiveSegmentIndex(elementOrEnabledElementUID) {
 }
 
 /**
- * setActiveSegmentIndex - Sets the active segment index for the active labelmap
+ * SetActiveSegmentIndex - Sets the active segment index for the active labelmap
  *                         on the element.
  *
  * @param  {HTMLElement} elementOrEnabledElementUID   The cornerstone enabled
@@ -917,7 +919,7 @@ function _getEnabledElement(elementOrEnabledElementUID) {
 }
 
 /**
- * setColorLUT - Sets the labelmap to a specfic LUT, or generates a new LUT.
+ * SetColorLUT - Sets the labelmap to a specfic LUT, or generates a new LUT.
  *
  * @param  {type} labelmapIndex The labelmap index to apply the color LUT to.
  * @param  {type} [colorLUT]    An array of The colorLUT to set.

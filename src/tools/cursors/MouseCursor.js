@@ -23,7 +23,7 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconSVG - Returns an SVG of the icon only.
+   * GetIconSVG - Returns an SVG of the icon only.
    *
    * @param  {Object} options    An object which overrides default properties
    *                             of the returned SVG.
@@ -36,7 +36,7 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconSVGString - Returns a string representation of the SVG of the icon only.
+   * GetIconSVGString - Returns a string representation of the SVG of the icon only.
    *
    * @param  {Object} options An object which overrides default properties
    *                             of the returned SVG.
@@ -47,7 +47,7 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconWithPointerSVG - Returns an SVG of the icon + pointer.
+   * GetIconWithPointerSVG - Returns an SVG of the icon + pointer.
    *
    * @param  {Object} options An object which overrides default properties
    *                             of the returned SVG.
@@ -60,7 +60,7 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconWithPointerString - Returns a string representation of the SVG
+   * GetIconWithPointerString - Returns a string representation of the SVG
    *                            of the icon + pointer.
    *
    * @param  {Object} options An object which overrides default properties
@@ -72,7 +72,7 @@ export default class MouseCursor {
   }
 
   /**
-   * get mousePoint - Returns the mousePoint as a space seperated string.
+   * Get mousePoint - Returns the mousePoint as a space seperated string.
    *
    * @returns {string} The mousePoint.
    */

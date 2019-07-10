@@ -4,6 +4,4 @@ const mockLogger = {
   error: jest.fn(),
 };
 
-export const getLogger = () => {
-  return mockLogger;
-};
+export const getLogger = () => mockLogger;
