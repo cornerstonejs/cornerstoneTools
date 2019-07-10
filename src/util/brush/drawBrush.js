@@ -3,7 +3,7 @@ import EVENTS from '../../events.js';
 import { draw, fillBox } from '../../drawing/index.js';
 
 /**
- * drawBrushPixels - Adds or removes labels to a labelmap.
+ * DrawBrushPixels - Adds or removes labels to a labelmap.
  *
  * @param  {number[]} pointerArray      The array of points to draw.
  * @param  {Object} labelmap3D          The labelmap to modify.

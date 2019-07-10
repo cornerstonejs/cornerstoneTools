@@ -1,5 +1,5 @@
-import toolColors from '../../stateManagement/toolColors.js';
-import { modules } from '../../store/index.js';
+import toolColors from "../../stateManagement/toolColors.js";
+import { modules } from "../../store/index.js";
 
 const cursorModule = modules.cursor;
 
@@ -33,7 +33,7 @@ export default class MouseCursor {
   getIconSVG(options = {}) {
     const svgString = this._generateIconSVGString(options);
 
-    return new Blob([svgString], { type: 'image/svg+xml' });
+    return new Blob([svgString], { type: "image/svg+xml" });
   }
 
   /**
@@ -55,7 +55,7 @@ export default class MouseCursor {
   getIconWithPointerSVG(options = {}) {
     const svgString = this._generateIconWithPointerSVGString(options);
 
-    return new Blob([svgString], { type: 'image/svg+xml' });
+    return new Blob([svgString], { type: "image/svg+xml" });
   }
 
   /**

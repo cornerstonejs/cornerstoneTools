@@ -88,7 +88,7 @@ export default function(evt) {
 }
 
 /**
- * renderActiveLabelMap - Renders the active label map for this element.
+ * RenderActiveLabelMap - Renders the active label map for this element.
  *
  * @param  {object} evt                 The cornerstone event.
  * @param  {object[]} labelmaps3D       An array of labelmaps.
@@ -116,7 +116,7 @@ function renderActiveLabelMap(
 }
 
 /**
- * renderInactiveLabelMaps - Renders all the inactive label maps if the global
+ * RenderInactiveLabelMaps - Renders all the inactive label maps if the global
  * alphaOfInactiveLabelmap setting is not zero.
  *
  * @param  {object} evt                 The cornerstone event.
@@ -152,7 +152,7 @@ function renderInactiveLabelMaps(
 }
 
 /**
- * renderSegmentation - Renders the labelmap2D to the canvas.
+ * RenderSegmentation - Renders the labelmap2D to the canvas.
  *
  * @param  {object} evt              The cornerstone event.
  * @param  {object} labelmap3D       The 3D labelmap.
@@ -184,7 +184,7 @@ function renderSegmentation(
 }
 
 /**
- * createNewBitmapAndQueueRenderOfSegmentation - Creates a bitmap from the
+ * CreateNewBitmapAndQueueRenderOfSegmentation - Creates a bitmap from the
  * labelmap2D and queues a re-render once it is built.
  *
  * @param  {object} evt           The cornerstone event.

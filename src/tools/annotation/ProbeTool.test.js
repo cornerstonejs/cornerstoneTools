@@ -1,20 +1,20 @@
-import ProbeTool from './ProbeTool.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import { getLogger } from '../../util/logger.js';
+import ProbeTool from "./ProbeTool.js";
+import { getToolState } from "../../stateManagement/toolState.js";
+import { getLogger } from "../../util/logger.js";
 
-jest.mock('../../util/logger.js');
-jest.mock('../../stateManagement/toolState.js', () => ({
-  getToolState: jest.fn(),
+jest.mock("../../util/logger.js");
+jest.mock("../../stateManagement/toolState.js", () => ({
+  getToolState: jest.fn()
 }));
 
-jest.mock('../../importInternalModule.js', () => ({
-  default: jest.fn(),
+jest.mock("../../importInternalModule.js", () => ({
+  default: jest.fn()
 }));
 
-jest.mock('./../../externalModules.js', () => ({
+jest.mock("./../../externalModules.js", () => ({
   cornerstone: {
     metaData: {
-      get: jest.fn(),
+      get: jest.fn()
     },
     getStoredPixels: (element, x, y) => {
       /* eslint-disable prettier/prettier */
@@ -22,18 +22,18 @@ jest.mock('./../../externalModules.js', () => ({
       /* eslint-enable prettier/prettier */
 
       return [storedPixels[x * 2 + y]];
-    },
-  },
+    }
+  }
 }));
 
-const badMouseEventData = 'hello world';
+const badMouseEventData = "hello world";
 const goodMouseEventData = {
   currentPoints: {
     image: {
       x: 0,
-      y: 0,
-    },
-  },
+      y: 0
+    }
+  }
 };
 
 const image = {
@@ -41,28 +41,28 @@ const image = {
   columns: 3,
   slope: 1,
   intercept: 1,
-  color: false,
+  color: false
 };
 
-describe('ProbeTool.js', () => {
-  describe('default values', () => {
+describe("ProbeTool.js", () => {
+  describe("default values", () => {
     it('has a default name of "Probe"', () => {
-      const defaultName = 'Probe';
+      const defaultName = "Probe";
       const instantiatedTool = new ProbeTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
-    it('can be created with a custom tool name', () => {
-      const customToolName = { name: 'customToolName' };
+    it("can be created with a custom tool name", () => {
+      const customToolName = { name: "customToolName" };
       const instantiatedTool = new ProbeTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 
-  describe('createNewMeasurement', () => {
-    it('emits console error if required eventData is not provided', () => {
+  describe("createNewMeasurement", () => {
+    it("emits console error if required eventData is not provided", () => {
       const logger = getLogger();
       const instantiatedTool = new ProbeTool();
 
@@ -71,12 +71,12 @@ describe('ProbeTool.js', () => {
       expect(d).toBeUndefined();
       expect(logger.error).toHaveBeenCalled();
       expect(logger.error.mock.calls[0][0]).toContain(
-        'required eventData not supplied to tool'
+        "required eventData not supplied to tool"
       );
     });
 
     // Todo: create a more formal definition of a tool measurement object
-    it('returns a tool measurement object', () => {
+    it("returns a tool measurement object", () => {
       const instantiatedTool = new ProbeTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
@@ -94,7 +94,7 @@ describe('ProbeTool.js', () => {
       );
       const endHandle = {
         x: toolMeasurement.handles.end.x,
-        y: toolMeasurement.handles.end.y,
+        y: toolMeasurement.handles.end.y
       };
 
       expect(toolMeasurement.handles.start).toBeUndefined();
@@ -103,7 +103,7 @@ describe('ProbeTool.js', () => {
     });
   });
 
-  describe('pointNearTool', () => {
+  describe("pointNearTool", () => {
     let element, coords;
 
     beforeEach(() => {
@@ -112,21 +112,21 @@ describe('ProbeTool.js', () => {
     });
 
     // Todo: Not sure we want all of our methods to check for valid params.
-    it('emits a console warning when measurementData without start/end handles are supplied', () => {
+    it("emits a console warning when measurementData without start/end handles are supplied", () => {
       const logger = getLogger();
 
       const instantiatedTool = new ProbeTool();
       const noHandlesMeasurementData = {
-        handles: {},
+        handles: {}
       };
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
       expect(logger.warn).toHaveBeenCalled();
-      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn.mock.calls[0][0]).toContain("invalid parameters");
     });
 
-    it('returns false when measurement data is null or undefined', () => {
+    it("returns false when measurement data is null or undefined", () => {
       const instantiatedTool = new ProbeTool();
       const nullMeasurementData = null;
 
@@ -139,10 +139,10 @@ describe('ProbeTool.js', () => {
       expect(isPointNearTool).toBe(false);
     });
 
-    it('returns false when measurement data is not visible', () => {
+    it("returns false when measurement data is not visible", () => {
       const instantiatedTool = new ProbeTool();
       const notVisibleMeasurementData = {
-        visible: false,
+        visible: false
       };
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -155,23 +155,23 @@ describe('ProbeTool.js', () => {
     });
   });
 
-  describe('updateCachedStats', () => {
+  describe("updateCachedStats", () => {
     let element;
 
     beforeEach(() => {
       element = jest.fn();
     });
 
-    it('should calculate and update annotation values', () => {
+    it("should calculate and update annotation values", () => {
       const instantiatedTool = new ProbeTool();
 
       const data = {
         handles: {
           end: {
             x: 0,
-            y: 0,
-          },
-        },
+            y: 0
+          }
+        }
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
@@ -191,12 +191,12 @@ describe('ProbeTool.js', () => {
     });
   });
 
-  describe('renderToolData', () => {
-    it('returns undefined when no toolData exists for the tool', () => {
+  describe("renderToolData", () => {
+    it("returns undefined when no toolData exists for the tool", () => {
       const instantiatedTool = new ProbeTool();
       const mockEvent = {
         detail: undefined,
-        currentTarget: undefined,
+        currentTarget: undefined
       };
 
       getToolState.mockReturnValueOnce(undefined);

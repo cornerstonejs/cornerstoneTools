@@ -1,5 +1,5 @@
 /**
- * getNewColorLUT - Generates an array of RGB colors of length numberOfColors.
+ * GetNewColorLUT - Generates an array of RGB colors of length numberOfColors.
  *
  * @param  {Number} numberOfColors = 255 The number of colors to generate
  * @returns {Number[][]}           The array of RGB values.
@@ -45,7 +45,7 @@ function getNextL() {
 }
 
 /**
- * getRGBAfromHSL - Returns an RGBA color given H, S, L and A.
+ * GetRGBAfromHSL - Returns an RGBA color given H, S, L and A.
  *
  * @param  {Number} hue         The hue.
  * @param  {Number} s = 1       The saturation.
