@@ -80,6 +80,13 @@ layout: default
         <div class="column">
           <h4 class="title is-4">Misc.</h4>
           <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'sync-tool' %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
             <li>Stack Image Id Synchronization</li>
             <li>Stack Image Position Synchronization</li>
             <li>Pan/Zoom Synchronization</li>
