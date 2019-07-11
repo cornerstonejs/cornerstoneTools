@@ -60,8 +60,6 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
     labelmapIndex = brushStackState.activeLabelmapIndex;
   }
 
-  logger.warn(`getMetadata, labelmapIndex: ${labelmapIndex}`);
-
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
     return;
@@ -249,8 +247,6 @@ function getLabelmapStats(elementOrEnabledElementUID, segmentIndex) {
       for (let i = 0; i < images.length; i++) {
         imagePixelData.push(images[i].getPixelData());
       }
-
-      logger.warn(imagePixelData);
 
       const stats = labelmapStats(
         labelmap3Dbuffer,
