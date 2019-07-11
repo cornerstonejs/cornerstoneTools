@@ -222,6 +222,7 @@ MIT
 Links:
 -->
 
+
 <!-- prettier-ignore-start -->
 [build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg
 [build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master
