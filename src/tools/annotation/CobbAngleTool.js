@@ -22,6 +22,10 @@ import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import EVENTS from './../../events.js';
+import { cobbAngleCursor } from '../cursors/index.js';
+import triggerEvent from '../../util/triggerEvent.js';
+import throttle from '../../util/throttle';
+import getPixelSpacing from '../../util/getPixelSpacing';
 
 /**
  * @public
@@ -31,17 +35,18 @@ import EVENTS from './../../events.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class CobbAngleTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: cobbAngleCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.hasIncomplete = false;
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -52,6 +57,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       complete: false,
       value: '',
       handles: {
@@ -116,6 +122,35 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start2, data.handles.end2, coords) <
         25
     );
+  }
+
+  updateCachedStats(image, element, data) {
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+    const dx1 =
+      (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
+      colPixelSpacing;
+    const dy1 =
+      (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
+      rowPixelSpacing;
+    const dx2 =
+      (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
+      colPixelSpacing;
+    const dy2 =
+      (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
+      rowPixelSpacing;
+
+    let angle = Math.acos(
+      Math.abs(
+        (dx1 * dx2 + dy1 * dy2) /
+          (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))
+      )
+    );
+
+    angle *= 180 / Math.PI;
+
+    data.rAngle = roundToDecimal(angle, 2);
+    data.invalidated = false;
   }
 
   renderToolData(evt) {
@@ -214,17 +249,11 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     }
   }
 
-  getIncomplete(target) {
-    const toolData = getToolState(target, this.name);
+  getIncomplete(element) {
+    const toolState = getToolState(element, this.name);
 
-    if (toolData === undefined) {
-      return;
-    }
-
-    for (let i = 0; i < toolData.data.length; i++) {
-      if (toolData.data[i].complete === false) {
-        return toolData.data[i];
-      }
+    if (toolState && Array.isArray(toolState.data)) {
+      return toolState.data.find(({ complete }) => complete === false);
     }
   }
 
@@ -236,13 +265,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     let measurementData;
     let toMoveHandle;
+    let options;
 
     // Search for incomplete measurements
     const element = evt.detail.element;
-    const maybePending = this.getIncomplete(element);
+    const pendingMeasurement = this.getIncomplete(element);
 
-    if (maybePending) {
-      measurementData = maybePending;
+    if (pendingMeasurement) {
+      measurementData = pendingMeasurement;
       measurementData.complete = true;
       measurementData.handles.start2 = {
         x: eventData.currentPoints.image.x,
@@ -260,10 +290,26 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       };
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
+      options = Object.assign(
+        {
+          doneMovingCallback: () => {
+            const eventType = EVENTS.MEASUREMENT_COMPLETED;
+            const eventData = {
+              toolType: this.name,
+              element,
+              measurementData,
+            };
+
+            triggerEvent(element, eventType, eventData);
+          },
+        },
+        this.options
+      );
     } else {
       measurementData = this.createNewMeasurement(eventData);
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
+      options = this.options;
     }
 
     // Associate this data with this imageId so we can render it and manipulate it
@@ -274,66 +320,40 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.name,
       measurementData,
       toMoveHandle,
-      this.options,
+      options,
       interactionType
     );
   }
 
   onMeasureModified(ev) {
-    const image = external.cornerstone.getEnabledElement(ev.detail.element)
-      .image;
+    const { element } = ev.detail;
+    const image = external.cornerstone.getEnabledElement(element).image;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     if (ev.detail.toolName !== this.name) {
       return;
     }
     const data = ev.detail.measurementData;
 
-    data.value = calculateValue(data, image);
-
-    function calculateValue(data, image) {
-      // Default to isotropic pixel size, update suffix to reflect this
-      const columnPixelSpacing = image.columnPixelSpacing || 1;
-      const rowPixelSpacing = image.rowPixelSpacing || 1;
-
-      const dx1 =
-        (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
-        columnPixelSpacing;
-      const dy1 =
-        (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
-        rowPixelSpacing;
-      const dx2 =
-        (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
-        columnPixelSpacing;
-      const dy2 =
-        (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
-        rowPixelSpacing;
-
-      let angle = Math.acos(
-        Math.abs(
-          (dx1 * dx2 + dy1 * dy2) /
-            (Math.sqrt(dx1 * dx1 + dy1 * dy1) *
-              Math.sqrt(dx2 * dx2 + dy2 * dy2))
-        )
-      );
-
-      angle *= 180 / Math.PI;
-
-      const rAngle = roundToDecimal(angle, 2);
-
-      if (!Number.isNaN(data.rAngle)) {
-        return textBoxText(
-          rAngle,
-          image.rowPixelSpacing,
-          image.columnPixelSpacing
-        );
+    // Update textbox stats
+    if (data.invalidated === true) {
+      if (data.rAngle) {
+        this.throttledUpdateCachedStats(image, element, data);
+      } else {
+        this.updateCachedStats(image, element, data);
       }
-
-      return '';
     }
 
-    function textBoxText(rAngle, rowPixelSpacing, columnPixelSpacing) {
-      const suffix =
-        !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
+    const { rAngle } = data;
+
+    data.value = '';
+
+    if (!Number.isNaN(rAngle)) {
+      data.value = textBoxText(rAngle, rowPixelSpacing, colPixelSpacing);
+    }
+
+    function textBoxText(rAngle, rowPixelSpacing, colPixelSpacing) {
+      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
 
       return (

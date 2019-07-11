@@ -2,12 +2,15 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
+import EVENTS from './../../events.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import triggerEvent from './../../util/triggerEvent.js';
+
 import {
   addToolState,
   removeToolState,
@@ -18,6 +21,7 @@ import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
+import { arrowAnnotateCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -27,8 +31,8 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -38,12 +42,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         drawHandlesOnHover: true,
         arrowFirst: true,
       },
+      svgCursor: arrowAnnotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.preventNewMeasurement = false;
   }
 
@@ -87,6 +89,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
       25
     );
+  }
+
+  updateCachedStats(image, element, data) {
+    // No stats calculation for this tool
   }
 
   renderToolData(evt) {
@@ -245,13 +251,22 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         doneMovingCallback: () => {
           if (measurementData.text === undefined) {
             this.configuration.getTextCallback(text => {
+              measurementData.active = false;
+
               if (text) {
                 measurementData.text = text;
+                const eventType = EVENTS.MEASUREMENT_COMPLETED;
+                const eventData = {
+                  toolName: this.name,
+                  element,
+                  measurementData,
+                };
+
+                triggerEvent(element, eventType, eventData);
               } else {
                 removeToolState(element, this.name, measurementData);
               }
 
-              measurementData.active = false;
               external.cornerstone.updateImage(element);
             });
           }

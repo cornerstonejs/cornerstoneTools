@@ -79,6 +79,7 @@ import {
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
+  CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
   FreehandMouseTool,
@@ -172,6 +173,10 @@ import { default as orientation } from './orientation/index.js';
 
 // ~~~~~~ CANVAS EXPORT  ~~~~~ //
 import { default as SaveAs } from './util/SaveAs.js';
+import {
+  enable as enableLogger,
+  disable as disableLogger,
+} from './util/logger.js';
 
 // ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
 import { default as register } from './thirdParty/register.js';
@@ -200,6 +205,7 @@ const cornerstoneTools = {
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
+  CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
   FreehandMouseTool,
@@ -272,6 +278,8 @@ const cornerstoneTools = {
   forceEnabledElementResize,
   orientation,
   SaveAs,
+  enableLogger,
+  disableLogger,
   import: imp,
   register,
   registerSome,
@@ -296,6 +304,7 @@ export {
   AngleTool,
   ArrowAnnotateTool,
   BidirectionalTool,
+  CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
   FreehandMouseTool,
@@ -368,6 +377,8 @@ export {
   forceEnabledElementResize,
   orientation,
   SaveAs,
+  enableLogger,
+  disableLogger,
   register,
   registerSome,
   wwwcSynchronizer,

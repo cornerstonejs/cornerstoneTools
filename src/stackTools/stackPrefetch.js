@@ -3,6 +3,9 @@ import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('stackTools:stackPrefetch');
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
@@ -146,7 +149,7 @@ function prefetch(element) {
   const preventCache = false;
 
   function doneCallback(image) {
-    // Console.log('prefetch done: ' + image.imageId);
+    logger.log('prefetch done: %s', image.imageId);
     const imageIdIndex = stack.imageIds.indexOf(image.imageId);
 
     removeFromList(imageIdIndex);
@@ -156,7 +159,7 @@ function prefetch(element) {
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
   function failCallback(error) {
-    console.log(`prefetch errored: ${error}`);
+    logger.log('prefetch errored: %o', error);
     if (errorLoadingHandler) {
       errorLoadingHandler(element, imageId, error, 'stackPrefetch');
     }
@@ -295,7 +298,7 @@ function enable(element) {
 
   // Check if we are allowed to cache images in this stack
   if (stack.preventCache === true) {
-    console.warn(
+    logger.warn(
       'A stack that should not be cached was given the stackPrefetch'
     );
 

@@ -18,6 +18,7 @@ import {
 } from './util/findAndMoveHelpers.js';
 
 import mixins from './mixins/index.js';
+import * as cursors from './tools/cursors/index.js';
 
 import {
   getNewContext,
@@ -66,6 +67,7 @@ import {
 import angleBetweenPoints from './util/angleBetweenPoints.js';
 import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
 import numbersWithCommas from './util/numbersWithCommas.js';
+import MouseCursor from './tools/cursors/MouseCursor.js';
 
 import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
@@ -78,6 +80,9 @@ export const lib = {
   'base/BaseTool': BaseTool,
   'base/BaseAnnotationTool': BaseAnnotationTool,
   'base/BaseBrushTool': BaseBrushTool,
+
+  'tools/cursors/MouseCursor': MouseCursor,
+  'tools/cursors': cursors,
 
   'manipulators/anyHandlesOutsideImage': anyHandlesOutsideImage,
   'manipulators/getHandleNearImagePoint': getHandleNearImagePoint,

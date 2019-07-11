@@ -1,4 +1,8 @@
 import mixins from './../../mixins/index.js';
+import { getLogger } from '../../util/logger.js';
+import deepmerge from './../../util/deepmerge.js';
+
+const logger = getLogger('tools:base:BaseTool');
 
 /**
  * @typedef ToolConfiguration
@@ -17,16 +21,25 @@ import mixins from './../../mixins/index.js';
 class BaseTool {
   /**
    * Constructor description
-   * @param {ToolConfiguration} [ToolConfiguration={}]
+   * @param {defaultProps} [defaultProps={}] Tools Default properties
+   * @param {props} [props={}] Tool properties set on instantiation of a tool
    */
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-  } = {}) {
+  constructor(props, defaultProps) {
+    /**
+     * Merge default props with custom props
+     */
+    this.initialConfiguration = deepmerge(defaultProps, props);
+
+    const {
+      name,
+      strategies,
+      defaultStrategy,
+      configuration,
+      supportedInteractionTypes,
+      mixins,
+      svgCursor,
+    } = this.initialConfiguration;
+
     /**
      * A unique, identifying tool name
      * @type {String}
@@ -43,14 +56,22 @@ class BaseTool {
       defaultStrategy || Object.keys(this.strategies)[0] || undefined;
     this.activeStrategy = this.defaultStrategy;
 
+    if (svgCursor) {
+      this.svgCursor = svgCursor;
+    }
+
     // Options are set when a tool is added, during a "mode" change,
-    // Or via a tool's option's setter
+    // or via a tool's option's setter
     this._options = {};
+
     // Configuration is set at tool initalization
     this._configuration = Object.assign({}, configuration);
 
-    // True if tool has a custom cursor, causes the frame to render on every mouse move when the tool is active.
-    this.hasCursor = false;
+    // `updateOnMouseMove` causes the frame to render on every mouse move when
+    // the tool is active. This is useful for tools that render large/dynamic
+    // items to the canvas which can't easily be respresented with an SVG Cursor.
+    this.updateOnMouseMove = false;
+    this.hideDefaultCursor = false;
 
     // Apply mixins if mixinsArray is not empty.
     if (mixins && mixins.length) {
@@ -146,7 +167,7 @@ class BaseTool {
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
       } else {
-        console.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
+        logger.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
       }
     }
   }

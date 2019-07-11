@@ -13,9 +13,7 @@ import register from './register.js';
  * @returns {void}
  */
 export default function(items, overwrite = false) {
-  for (let i = 0; i < items.length; i++) {
-    const { type, name, item } = items[i];
-
+  items.forEach(({ type, name, item }) => {
     register(type, name, item, overwrite);
-  }
+  });
 }

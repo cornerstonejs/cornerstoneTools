@@ -51,6 +51,7 @@
           <li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
           <li><a href="#" data-tool="Angle">Angle</a></li>
           <li><a href="#" data-tool="Bidirectional">Bidirectional</a></li>
+          <li><a href="#" data-tool="CircleRoi">CircleRoi</a></li>
           <li><a href="#" data-tool="CobbAngle">Cobb Angle</a></li>
           <li><a href="#" data-tool="EllipticalRoi">EllipticalRoi</a></li>
           <li><a href="#" data-tool="Eraser">Eraser</a></li>
@@ -178,7 +179,7 @@
   <script src="netlify-example/imageLoader.js"></script>
 
   <script>
-    cornerstoneTools.init();
+    cornerstoneTools.init({ showSVGCursors: true });
     const imageIds = ['example://1', 'example://2', 'example://3'];
     const stack = {
       currentImageIdIndex: 0,
@@ -208,6 +209,69 @@
       saveBtn.addEventListener('click', evt => {
         cornerstoneTools.SaveAs(element, 'viewportImage.png');
       });
+
+      // Log measurement events
+      const { EVENTS } = cornerstoneTools;
+      const log = event => {
+        const type = `MEASUREMENT_${event.type
+          .replace('cornerstonetoolsmeasurement', '')
+          .toUpperCase()}`;
+        const color = {
+          MEASUREMENT_ADDED: '#27e',
+          MEASUREMENT_MODIFIED: '#e72',
+          MEASUREMENT_COMPLETED: '#5b5',
+          MEASUREMENT_REMOVED: '#f55',
+        }[type];
+
+        const getData = detail => {
+          const { measurementData = {} } = detail;
+          const out = {};
+          const measurementKeys = [
+            'length',
+            'rAngle',
+            'value',
+            'text',
+            'str',
+            'text',
+            'longestDiameter',
+            'shortestDiameter',
+          ];
+
+          if (measurementData.cachedStats) {
+            Object.keys(measurementData.cachedStats).forEach(key => {
+              out[key] = measurementData.cachedStats[key];
+            });
+          }
+
+          measurementKeys.forEach(key => {
+            if (key in measurementData) {
+              out[key] = measurementData[key];
+            }
+          });
+
+          if (Object.keys(out).length === 0) {
+            return measurementData;
+          } else {
+            return JSON.stringify(out);
+          }
+        };
+
+        console.log(
+          '%c %s %c %s %c %o',
+          `background: ${color}; color: white; padding: 4px 0;`,
+          type,
+          // The tool type
+          `color: ${color}; font-family: monospace;`,
+          event.detail.toolType || event.detail.toolName,
+          '',
+          getData(event.detail)
+          // event.detail
+        );
+      };
+      element.addEventListener(EVENTS.MEASUREMENT_ADDED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_COMPLETED, log);
+      element.addEventListener(EVENTS.MEASUREMENT_REMOVED, log);
     });
 
     // Iterate over all tool-category links

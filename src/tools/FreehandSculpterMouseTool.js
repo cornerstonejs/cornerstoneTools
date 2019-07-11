@@ -7,6 +7,8 @@ import { getToolState } from '../stateManagement/toolState.js';
 import { clipToBox } from '../util/clip.js';
 import getToolForElement from '../store/getToolForElement.js';
 import BaseTool from './base/BaseTool.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
+import { freehandSculpterMouseCursor } from './cursors/index.js';
 
 import freehandUtils from '../util/freehand/index.js';
 
@@ -22,22 +24,21 @@ const { FreehandHandleData } = freehandUtils;
  * @extends Tools.Base.BaseTool
  */
 export default class FreehandSculpterMouseTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'FreehandSculpterMouse',
       referencedToolName: 'FreehandMouse',
       supportedInteractionTypes: ['Mouse', 'Touch', 'DoubleTap'],
       mixins: ['activeOrDisabledBinaryTool'],
       configuration: getDefaultFreehandSculpterMouseToolConfiguration(),
+      svgCursor: freehandSculpterMouseCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.hasCursor = true;
+    this.updateOnMouseMove = true;
     this.isMultiPartTool = true;
-    this.initialConfiguration = initialConfiguration;
-    this.referencedToolName = initialConfiguration.referencedToolName;
+    this.referencedToolName = defaultProps.referencedToolName;
 
     this._active = false;
 
@@ -330,6 +331,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
     }
 
     config.currentTool = closestToolIndex;
+    hideToolCursor(element);
   }
 
   /**
@@ -361,7 +363,7 @@ export default class FreehandSculpterMouseTool extends BaseTool {
    * tool, and begin sculpting.
    *
    * @private
-   * @param {Object} eventData - Data object associated with the event.
+   * @param {Object} evt - The event.
    * @returns {void}
    */
   _initialiseSculpting(evt) {
@@ -371,6 +373,10 @@ export default class FreehandSculpterMouseTool extends BaseTool {
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
+
+      if (config.currentTool === null) {
+        return;
+      }
     }
 
     this._active = true;
@@ -888,6 +894,8 @@ export default class FreehandSculpterMouseTool extends BaseTool {
         toolData.data[i].active = false;
       }
     }
+
+    setToolCursor(this.element, this.svgCursor);
 
     external.cornerstone.updateImage(this.element);
   }

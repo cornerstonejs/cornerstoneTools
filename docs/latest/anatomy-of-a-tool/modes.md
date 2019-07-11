@@ -5,7 +5,7 @@ A tool's mode (known as tool state in v2) determines how a tool is rendered, and
 | Mode               | Description                                                                                                                  |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
 | Active             | Active tools will render and respond to user input. Active tools are able to create new annotations and/or measurements.     |
-| Passive            | Passive tools will render and _passively_ respond to user input. Their data can be manipulated, but not createed.            |
+| Passive            | Passive tools will render and _passively_ respond to user input. Their data can be manipulated, but not created.             |
 | Enabled            | Enabled tools will render, but will not respond to input. The "enabled" tool state is essentially a "read-only" state.       |
 | Disabled (default) | The default state for a tool. Tools that are disabled cannot be interacted with and are not rendered on the enabled element. |
 
@@ -21,13 +21,13 @@ If you've added a tool with the same name to multiple enabled elements, you can 
 
 ```js
 // Active
-csTools.setToolModeActive("ToolName", options);
+csTools.setToolActive('ToolName', options);
 // Passive
-csTools.setToolModePassive("ToolName", options);
+csTools.setToolPassive('ToolName', options);
 // Enabled
-csTools.setToolModeEnabled("ToolName", options);
+csTools.setToolEnabled('ToolName', options);
 // Disabled
-csTools.setToolModeDisabled("ToolName", options);
+csTools.setToolDisabled('ToolName', options);
 ```
 
 #### For a Specific Enabled Element
@@ -36,13 +36,21 @@ If you need tool behavior to differ across multiple enabled elements, you can ch
 
 ```js
 // Active
-csTools.setToolModeActiveForElement(enabledElement, "ToolName", options);
+csTools.setToolActiveForElement(
+  enabledElement,
+  'ToolName',
+  {
+    mouseButtonMask: 1,
+  },
+  ['Mouse']
+);
+
 // Passive
-csTools.setToolModePassiveForElement(enabledElement, "ToolName", options);
+csTools.setToolPassiveForElement(enabledElement, 'ToolName', options);
 // Enabled
-csTools.setToolModeEnabledForElement(enabledElement, "ToolName", options);
+csTools.setToolEnabledForElement(enabledElement, 'ToolName', options);
 // Disabled
-csTools.setToolModeDisabledForElement(enabledElement, "ToolName", options);
+csTools.setToolDisabledForElement(enabledElement, 'ToolName', options);
 ```
 
 ### Caveats

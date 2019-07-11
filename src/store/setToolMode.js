@@ -2,6 +2,15 @@ import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
 import store from './../store/index.js';
+import {
+  setToolCursor,
+  resetToolCursor,
+  hideToolCursor,
+} from './setToolCursor.js';
+import { getLogger } from '../util/logger.js';
+
+const globalConfiguration = store.modules.globalConfiguration;
+const logger = getLogger('store:setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -56,11 +65,38 @@ const setToolActiveForElement = function(
         options[`is${interactionType}Active`] = false;
       }
     });
+
+    if (
+      globalConfiguration.state.showSVGCursors &&
+      tool.supportedInteractionTypes.includes('Mouse')
+    ) {
+      _setToolCursorIfPrimary(element, options, tool);
+    }
   }
 
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
+
+function _setToolCursorIfPrimary(element, options, tool) {
+  let mouseButtonMask;
+
+  if (typeof options === 'number') {
+    mouseButtonMask = [options];
+  } else {
+    mouseButtonMask = options.mouseButtonMask;
+  }
+
+  if (mouseButtonMask.includes(1)) {
+    if (tool.svgCursor) {
+      setToolCursor(tool.element, tool.svgCursor);
+    } else if (tool.hideDefaultCursor) {
+      hideToolCursor(element);
+    } else {
+      resetToolCursor(element);
+    }
+  }
+}
 
 /**
  * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,
@@ -195,7 +231,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    console.warn(`Unable to find tool '${toolName}' for enabledElement`);
+    logger.warn('Unable to find tool "%s" for enabledElement', toolName);
 
     return;
   }
@@ -287,8 +323,9 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
       if (inputResolver) {
         inputResolver(tool, element, options);
       } else {
-        console.warn(
-          `Unable to resolve input conflicts for type ${interactionType}`
+        logger.warn(
+          'Unable to resolve input conflicts for type %s',
+          interactionType
         );
       }
     }
@@ -311,7 +348,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
     });
 
     if (!toolHasAnyActiveInteractionType) {
-      console.info(`Setting tool ${t.name}'s to PASSIVE`);
+      logger.log("Setting tool %s's to PASSIVE", t.name);
       setToolPassiveForElement(element, t.name);
     }
   });
@@ -387,16 +424,16 @@ function _resolveTouchInputConflicts(tool, element, options) {
   );
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
   if (activeMultiTouchToolWithOneTouchPointer) {
-    console.info(
-      `Setting tool ${
-        activeMultiTouchToolWithOneTouchPointer.name
-      }'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeMultiTouchToolWithOneTouchPointer.name
     );
     activeMultiTouchToolWithOneTouchPointer.options.isMultiTouchActive = false;
   }
@@ -433,15 +470,17 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
   }
 
   if (activeMultiTouchTool) {
-    console.info(
-      `Setting tool ${activeMultiTouchTool.name}'s isMultiTouchActive to false`
+    logger.log(
+      "Setting tool %s's isMultiTouchActive to false",
+      activeMultiTouchTool.name
     );
     activeMultiTouchTool.options.isMultiTouchActive = false;
   }
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
@@ -466,22 +505,21 @@ function _resolveGenericInputConflicts(
   element,
   options
 ) {
+  const interactionTypeFlag = `is${interactionType}Active`;
   const activeToolWithActiveInteractionType = store.state.tools.find(
     t =>
       t.element === element &&
       t.mode === 'active' &&
-      t.options[`is${interactionType}Active`] === true
+      t.options[interactionTypeFlag] === true
   );
 
   if (activeToolWithActiveInteractionType) {
-    console.info(
-      `Setting tool ${
-        activeToolWithActiveInteractionType.name
-      }'s is${interactionType}Active to false`
+    logger.log(
+      "Setting tool %s's %s to false",
+      activeToolWithActiveInteractionType.name,
+      interactionTypeFlag
     );
-    activeToolWithActiveInteractionType.options[
-      `is${interactionType}Active`
-    ] = false;
+    activeToolWithActiveInteractionType.options[interactionTypeFlag] = false;
   }
 }
 
@@ -512,6 +550,14 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
 
   // Update ActiveBindings Array
   const globalTool = store.state.globalTools[toolName];
+
+  if (!globalTool) {
+    logger.warn(
+      `setToolMode call for tool that's not available globally: ${toolName}`
+    );
+
+    return;
+  }
 
   if (mode === 'active') {
     let stringBindings = _determineStringBindings(
@@ -558,7 +604,7 @@ function _determineStringBindings(toolName, options, interactionTypes) {
 
   if (globalTool) {
     // eslint-disable-next-line new-cap
-    const tool = new globalTool.tool(globalTool.configuration);
+    const tool = new globalTool.tool(globalTool.props);
 
     tool.supportedInteractionTypes.forEach(interactionType => {
       if (

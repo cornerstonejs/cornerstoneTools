@@ -2,6 +2,7 @@ import BaseTool from './base/BaseTool.js';
 import scroll from '../util/scroll.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { setToolOptions, getToolOptions } from '../toolOptions.js';
+import { stackScrollCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -12,20 +13,18 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @extends Tools.Base.BaseTool
  */
 export default class StackScrollTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'StackScroll',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         loop: false,
         allowSkipping: true,
       },
+      svgCursor: stackScrollCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
 
     this.mouseDragCallback = this._dragCallback.bind(this);
     this.touchDragCallback = this._dragCallback.bind(this);

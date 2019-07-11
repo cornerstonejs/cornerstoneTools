@@ -1,11 +1,14 @@
-import external from './../../externalModules.js';
-import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
-import isToolActive from './../../store/isToolActive.js';
-import store from './../../store/index.js';
+import EVENTS from './../../events.js';
+import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
+import isToolActive from './../../store/isToolActive.js';
+import store from './../../store/index.js';
+import triggerEvent from './../../util/triggerEvent.js';
+import { getLogger } from './../../util/logger.js';
 
+const logger = getLogger('baseBrushTool');
 const { state, setters } = store.modules.brush;
 
 /**
@@ -16,26 +19,15 @@ const { state, setters } = store.modules.brush;
  * @extends Tools.Base.BaseTool
  */
 class BaseBrushTool extends BaseTool {
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-  }) {
-    configuration.referencedToolData = 'brush';
+  constructor(props, defaultProps = {}) {
+    if (!defaultProps.configuration) {
+      defaultProps.configuration = {};
+    }
+    defaultProps.configuration.referencedToolData = 'brush';
+    super(props, defaultProps);
 
-    super({
-      name,
-      strategies,
-      defaultStrategy,
-      configuration,
-      supportedInteractionTypes,
-      mixins,
-    });
-
-    this.hasCursor = true;
+    this.updateOnMouseMove = true;
+    this.hideDefaultCursor = true;
 
     this._drawing = false;
     this._drawingMouseUpCallback = this._drawingMouseUpCallback.bind(this);
@@ -138,7 +130,13 @@ class BaseBrushTool extends BaseTool {
    */
   // eslint-disable-next-line no-unused-vars
   passiveCallback(evt) {
-    external.cornerstone.updateImage(this.element);
+    try {
+      external.cornerstone.updateImage(this.element);
+    } catch (error) {
+      // It is possible that the image has not been loaded
+      // when this is called.
+      return;
+    }
   }
 
   /**
@@ -193,11 +191,29 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   _drawingMouseUpCallback(evt) {
-    const eventData = evt.detail;
-    const element = eventData.element;
+    const element = evt.detail.element;
 
     this._drawing = false;
     this._mouseUpRender = true;
+
+    let measurementData = null;
+    const brushModule = store.modules.brush;
+    const toolState =
+      getToolState(element, this.name) || getToolState(element, 'brush');
+    const currentSegmentationIndex = brushModule.state.drawColorId;
+
+    if (toolState.data && toolState.data.length > currentSegmentationIndex) {
+      measurementData = toolState.data[currentSegmentationIndex];
+    }
+
+    const eventData = {
+      toolName: this.name,
+      element,
+      measurementData,
+      evtDetail: evt.detail,
+    };
+
+    triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, eventData);
 
     this._stopListeningForMouseUp(element);
   }

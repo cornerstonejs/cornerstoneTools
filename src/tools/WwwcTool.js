@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { wwwcCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -10,20 +11,18 @@ import BaseTool from './base/BaseTool.js';
  * @extends Tools.Base.BaseTool
  */
 export default class WwwcTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Wwwc',
       strategies: { basicLevelingStrategy },
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         orientation: 0,
       },
+      svgCursor: wwwcCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   mouseDragCallback(evt) {

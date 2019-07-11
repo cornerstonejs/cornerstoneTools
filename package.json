@@ -36,7 +36,7 @@
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
     "test": "npm run test:unit",
-    "test:unit": "jest --clearCache && jest \\.test\\.js$",
+    "test:unit": "jest --clearCache && jest --runInBand \\.test\\.js$",
     "test:ci": "npm run test:unit && codecov",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },
@@ -75,7 +75,8 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "^0.1.7"
+    "cornerstone-math": "0.1.7",
+    "debug": "4.1.1"
   },
   "files": [
     "dist/cornerstoneTools.js",
@@ -108,5 +109,11 @@
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
     }
-  }
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

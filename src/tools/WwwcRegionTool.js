@@ -5,6 +5,7 @@ import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
+import { wwwcRegionCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -16,19 +17,17 @@ import toolColors from '../stateManagement/toolColors.js';
  */
 export default class WwwcRegionTool extends BaseTool {
   /** @inheritdoc */
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'WwwcRegion',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         minWindowWidth: 10,
       },
+      svgCursor: wwwcRegionCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this._resetHandles();
 
     //

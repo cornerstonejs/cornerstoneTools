@@ -1,6 +1,8 @@
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
+import { magnifyCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -11,20 +13,19 @@ import BaseTool from './base/BaseTool.js';
  * @extends Tools.Base.BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2,
       },
+      svgCursor: magnifyCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 
@@ -55,6 +56,8 @@ export default class MagnifyTool extends BaseTool {
     // On next frame
     window.requestAnimationFrame(() => this._drawMagnificationTool(evt));
 
+    hideToolCursor(evt.detail.element);
+
     evt.preventDefault();
     evt.stopPropagation();
   }
@@ -69,9 +72,10 @@ export default class MagnifyTool extends BaseTool {
   _removeMagnifyingGlass(evt) {
     const element = evt.detail.element;
 
-    element.querySelector('.magnifyTool').style.display = 'none';
     // Re-enable the mouse cursor
-    document.body.style.cursor = 'default';
+    setToolCursor(this.element, this.svgCursor);
+
+    element.querySelector('.magnifyTool').style.display = 'none';
     this._removeZoomElement();
   }
 
@@ -169,9 +173,6 @@ export default class MagnifyTool extends BaseTool {
     magnifyCanvas.style.top = `${magnifyPosition.top}px`;
     magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
-
-    // Hide the mouse cursor, so the user can see better
-    document.body.style.cursor = 'none';
   }
 
   /**

@@ -1,3 +1,15 @@
+<div class='row'>
+	<div class='column' style='text-align: right; padding: 0 20px'>
+		<strong>Looking for a Deploy Preview?</strong>
+		<a onclick="function redirect() { window.location.href='/examples/'; } redirect();">Deploy Preview for Cornerstone Tools</a>
+	</div>
+	<div class='column' style='text-align: left; padding: 0 20px'>
+		<a href="https://www.netlify.com">
+		  <img src="https://www.netlify.com/img/global/badges/netlify-color-bg.svg"/>
+		</a>
+	</div>
+</div>
+
 # Introduction
 
 ## What is CornerstoneTools.js {#what-is-cornerstone-tools-js}
@@ -62,7 +74,7 @@ const config = {
 const csTools = cornerstoneTools.init(config);
 ```
 
-A full list of the settings and their defaults can be found here: [globalConfigurationModule.js](https://github.com/cornerstonejs/cornerstoneTools/blob/vNext/src/store/modules/globalConfigurationModule.js#L1-L3)
+A full list of the settings and their defaults can be found here: [globalConfigurationModule.js](https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/store/modules/globalConfigurationModule.js#L1-L5)
 
 ## Adding and Using Tools {#adding-and-using-tools}
 

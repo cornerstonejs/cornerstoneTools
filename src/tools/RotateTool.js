@@ -1,6 +1,7 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
+import { rotateCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -11,8 +12,8 @@ import angleBetweenPoints from '../util/angleBetweenPoints.js';
  * @extends Tools.Base.BaseTool
  */
 export default class RotateTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Rotate',
       strategies: {
         default: defaultStrategy,
@@ -21,12 +22,10 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: rotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   touchDragCallback(evt) {

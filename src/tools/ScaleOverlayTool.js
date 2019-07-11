@@ -1,9 +1,12 @@
-import external from './../externalModules.js';
+import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('tools:ScaleOverlayTool');
 
 /**
  * @public
@@ -14,8 +17,8 @@ import toolColors from './../stateManagement/toolColors.js';
  * @extends Tools.Base.BaseTool
  */
 export default class ScaleOverlayTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ScaleOverlay',
       configuration: {
         minorTickLength: 12.5,
@@ -23,11 +26,8 @@ export default class ScaleOverlayTool extends BaseTool {
       },
       mixins: ['enabledOrDisabledBinaryTool'],
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   enabledCallback(element) {
@@ -68,7 +68,7 @@ export default class ScaleOverlayTool extends BaseTool {
 
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
-      console.warn(
+      logger.warn(
         `unable to define rowPixelSpacing or colPixelSpacing from data on ${
           this.name
         }'s renderToolData`

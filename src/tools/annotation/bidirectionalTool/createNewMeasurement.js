@@ -20,6 +20,7 @@ export default function(mouseEventData) {
     isCreating: true,
     visible: true,
     active: true,
+    invalidated: true,
     handles: {
       start: getHandle(x, y, 0),
       end: getHandle(x, y, 1, { active: true }),

@@ -6,7 +6,7 @@ We use [GitBook](https://www.gitbook.com/) to create our documentation. It prima
 
 _Requirements:_
 
-Make sure you have the `[gitbook-cli](https://www.npmjs.com/package/gitbook-cli)` installed globally:
+Make sure you have the [`gitbook-cli`](https://www.npmjs.com/package/gitbook-cli) installed globally:
 
 > `npm install -g gitbook-cli`
 
