@@ -3,6 +3,7 @@ import debugLib from 'debug';
 const BASE_SCOPE = 'cornerstoneTools';
 const baseLogger = debugLib(BASE_SCOPE);
 
+// eslint-disable-next-line no-process-env
 const devMode = process.env.NODE_ENV === 'development';
 
 // If we're in dev-mode, tell the user how to get logs

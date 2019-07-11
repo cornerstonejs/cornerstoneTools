@@ -19,8 +19,8 @@ import { textMarkerCursor } from '../cursors/index.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class TextMarkerTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'TextMarker',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -32,11 +32,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       },
       svgCursor: textMarkerCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.touchPressCallback = this._changeText.bind(this);
     this.doubleClickCallback = this._changeText.bind(this);
   }
@@ -118,6 +115,10 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     const insideBoundingBox = pointInsideBoundingBox(data.handles.end, coords);
 
     return distanceToPoint < 10 || insideBoundingBox;
+  }
+
+  updateCachedStats(image, element, data) {
+    // No stats calculation for this tool
   }
 
   renderToolData(evt) {

@@ -173,7 +173,8 @@
       "profile": "https://github.com/mikehazell",
       "contributions": [
         "doc",
-        "code"
+        "code",
+        "test"
       ]
     },
     {
@@ -202,6 +203,72 @@
       "profile": "http://www.mikewasser.com",
       "contributions": [
         "doc"
+      ]
+    },
+    {
+      "login": "singhArmani",
+      "name": "Amandeep Singh",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11068601?v=4",
+      "profile": "https://github.com/singhArmani",
+      "contributions": [
+        "content"
+      ]
+    },
+    {
+      "login": "mix3d",
+      "name": "Madison Dickson",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1474137?v=4",
+      "profile": "http://mix3dstudios.com",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "kevinleedrum",
+      "name": "Kevin Lee Drum",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/3342530?v=4",
+      "profile": "https://github.com/kevinleedrum",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "mbauskar",
+      "name": "Makarand Bauskar",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11224291?v=4",
+      "profile": "https://github.com/mmbauskar",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "biharck",
+      "name": "Biharck Araujo",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1713255?v=4",
+      "profile": "http://www.biharck.com.br",
+      "contributions": [
+        "example",
+        "doc"
+      ]
+    },
+    {
+      "login": "DevonBernard",
+      "name": "Devon Bernard",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5349517?v=4",
+      "profile": "https://www.linkedin.com/in/devonbernard",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Karl-Heinrich",
+      "name": "Karl-Heinrich",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/38315992?v=4",
+      "profile": "https://github.com/Karl-Heinrich",
+      "contributions": [
+        "bug",
+        "code",
+        "test"
       ]
     }
   ],

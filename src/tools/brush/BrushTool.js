@@ -6,6 +6,7 @@ import {
 } from './../../stateManagement/toolState.js';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
+import triggerEvent from './../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 
 const { drawBrushPixels, getCircle } = brushUtils;
@@ -20,8 +21,8 @@ const brushModule = store.modules.brush;
  * @extends Tools.Base.BaseBrushTool
  */
 export default class BrushTool extends BaseBrushTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Brush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       strategies: {
@@ -29,15 +30,12 @@ export default class BrushTool extends BaseBrushTool {
         nonOverlapping: _nonOverlappingStrategy,
       },
       defaultStrategy: 'overlapping',
-      configuration: {},
+      configuration: { alwaysEraseOnClick: false },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
     this.touchDragCallback = this._paint.bind(this);
-
-    this.initialConfiguration = initialConfiguration;
   }
 
   /**
@@ -110,17 +108,13 @@ export default class BrushTool extends BaseBrushTool {
   _paint(evt) {
     this.applyActiveStrategy(evt, this.configuration);
 
-    external.cornerstone.triggerEvent(
-      evt.detail.element,
-      EVENTS.MEASUREMENT_MODIFIED,
-      evt.detail
-    );
+    triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
 
     external.cornerstone.updateImage(evt.detail.element);
   }
 }
 
-function _overlappingStrategy(evt) {
+function _overlappingStrategy(evt, configuration) {
   const eventData = evt.detail;
   const element = eventData.element;
   const { rows, columns } = eventData.image;
@@ -147,10 +141,10 @@ function _overlappingStrategy(evt) {
   const radius = brushModule.state.radius;
   const pointerArray = getCircle(radius, rows, columns, x, y);
 
-  _drawMainColor(eventData, toolData, pointerArray);
+  _drawMainColor(eventData, toolData, pointerArray, configuration);
 }
 
-function _nonOverlappingStrategy(evt) {
+function _nonOverlappingStrategy(evt, configuration) {
   const eventData = evt.detail;
   const element = eventData.element;
   const { rows, columns } = eventData.image;
@@ -193,11 +187,12 @@ function _nonOverlappingStrategy(evt) {
     }
   }
 
-  _drawMainColor(eventData, toolData, pointerArray);
+  _drawMainColor(eventData, toolData, pointerArray, configuration);
 }
 
-function _drawMainColor(eventData, toolData, pointerArray) {
-  const shouldErase = _isCtrlDown(eventData);
+function _drawMainColor(eventData, toolData, pointerArray, configuration) {
+  const shouldErase =
+    configuration.alwaysEraseOnClick || _isCtrlDown(eventData);
   const columns = eventData.image.columns;
   const segmentationIndex = brushModule.state.drawColorId;
 

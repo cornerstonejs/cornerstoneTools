@@ -1,5 +1,6 @@
-import mixins from '../../mixins/index.js';
+import mixins from './../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
+import deepmerge from './../../util/deepmerge.js';
 
 const logger = getLogger('tools:base:BaseTool');
 
@@ -20,17 +21,25 @@ const logger = getLogger('tools:base:BaseTool');
 class BaseTool {
   /**
    * Constructor description
-   * @param {ToolConfiguration} [ToolConfiguration={}]
+   * @param {defaultProps} [defaultProps={}] Tools Default properties
+   * @param {props} [props={}] Tool properties set on instantiation of a tool
    */
-  constructor({
-    name,
-    strategies,
-    defaultStrategy,
-    configuration,
-    supportedInteractionTypes,
-    mixins,
-    svgCursor,
-  } = {}) {
+  constructor(props, defaultProps) {
+    /**
+     * Merge default props with custom props
+     */
+    this.initialConfiguration = deepmerge(defaultProps, props);
+
+    const {
+      name,
+      strategies,
+      defaultStrategy,
+      configuration,
+      supportedInteractionTypes,
+      mixins,
+      svgCursor,
+    } = this.initialConfiguration;
+
     /**
      * A unique, identifying tool name
      * @type {String}
@@ -52,12 +61,13 @@ class BaseTool {
     }
 
     // Options are set when a tool is added, during a "mode" change,
-    // Or via a tool's option's setter
+    // or via a tool's option's setter
     this._options = {};
+
     // Configuration is set at tool initalization
     this._configuration = Object.assign({}, configuration);
 
-    // updateOnMouseMove causes the frame to render on every mouse move when
+    // `updateOnMouseMove` causes the frame to render on every mouse move when
     // the tool is active. This is useful for tools that render large/dynamic
     // items to the canvas which can't easily be respresented with an SVG Cursor.
     this.updateOnMouseMove = false;
