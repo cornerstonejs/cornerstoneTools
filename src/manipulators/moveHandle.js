@@ -5,6 +5,8 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import getActiveTool from '../util/getActiveTool';
+import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 
 const runAnimation = {
   value: false,
@@ -133,7 +135,7 @@ function _dragHandler(
   interactionType,
   evt
 ) {
-  const { image, currentPoints, element } = evt.detail;
+  const { image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -155,6 +157,12 @@ function _dragHandler(
   }
 
   external.cornerstone.updateImage(element);
+
+  const activeTool = getActiveTool(element, buttons, interactionType);
+
+  if (activeTool instanceof BaseAnnotationTool) {
+    activeTool.updateCachedStats(image, element, annotation);
+  }
 
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {

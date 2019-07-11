@@ -16,6 +16,8 @@ import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import throttle from '../../util/throttle';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -35,6 +37,8 @@ export default class LengthTool extends BaseAnnotationTool {
     };
 
     super(props, defaultProps);
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -57,6 +61,7 @@ export default class LengthTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       handles: {
         start: {
           x,
@@ -113,6 +118,23 @@ export default class LengthTool extends BaseAnnotationTool {
     );
   }
 
+  updateCachedStats(image, element, data) {
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+    // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+    const dx =
+      (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+    const dy =
+      (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+
+    // Calculate the length, and create the text variable with the millimeters or pixels suffix
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    // Store the length inside the tool for outside access
+    data.length = length;
+    data.invalidated = false;
+  }
+
   renderToolData(evt) {
     const eventData = evt.detail;
     const { handleRadius, drawHandlesOnHover } = this.configuration;
@@ -125,24 +147,9 @@ export default class LengthTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
-    const imagePlane = external.cornerstone.metaData.get(
-      'imagePlaneModule',
-      image.imageId
-    );
-    let rowPixelSpacing;
-    let colPixelSpacing;
-
-    if (imagePlane) {
-      rowPixelSpacing =
-        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-      colPixelSpacing =
-        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-    } else {
-      rowPixelSpacing = image.rowPixelSpacing;
-      colPixelSpacing = image.columnPixelSpacing;
-    }
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -171,18 +178,6 @@ export default class LengthTool extends BaseAnnotationTool {
 
         drawHandles(context, eventData, data.handles, handleOptions);
 
-        // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-        const dx =
-          (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
-        const dy =
-          (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
-
-        // Calculate the length, and create the text variable with the millimeters or pixels suffix
-        const length = Math.sqrt(dx * dx + dy * dy);
-
-        // Store the length inside the tool for outside access
-        data.length = length;
-
         if (!data.handles.textBox.hasMoved) {
           const coords = {
             x: Math.max(data.handles.start.x, data.handles.end.x),
@@ -203,6 +198,15 @@ export default class LengthTool extends BaseAnnotationTool {
         // Move the textbox slightly to the right and upwards
         // So that it sits beside the length tool handle
         const xOffset = 10;
+
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.length) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
+          }
+        }
 
         const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 

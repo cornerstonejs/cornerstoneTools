@@ -5,6 +5,9 @@ import {
   moveHandleNearImagePoint,
   moveAnnotation,
 } from './../../util/findAndMoveHelpers.js';
+import { getLogger } from '../../util/logger';
+
+const logger = getLogger('baseAnnotationTool');
 
 /**
  * @memberof Tools.Base
@@ -117,9 +120,9 @@ class BaseAnnotationTool extends BaseTool {
       // Tool data's 'active' does not match coordinates
       // TODO: can't we just do an if/else and save on a pointNearTool check?
       const nearToolAndNotMarkedActive =
-        this.pointNearTool(element, data, coords) && !data.active;
+        this.pointNearTool(element, data, coords, 'mouse') && !data.active;
       const notNearToolAndMarkedActive =
-        !this.pointNearTool(element, data, coords) && data.active;
+        !this.pointNearTool(element, data, coords, 'mouse') && data.active;
 
       if (nearToolAndNotMarkedActive || notNearToolAndMarkedActive) {
         data.active = !data.active;
@@ -158,6 +161,18 @@ class BaseAnnotationTool extends BaseTool {
    */
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
     moveAnnotation(evt, this, annotation, interactionType);
+  }
+
+  /**
+   * Updates cached statistics for the tool's annotation data on the element
+   *
+   * @param {*} image
+   * @param {*} element
+   * @param {*} data
+   * @returns {void}
+   */
+  updateCachedStats(image, element, data) {
+    logger.warn(`updateCachedStats not implemented for ${this.name}.`);
   }
 }
 
