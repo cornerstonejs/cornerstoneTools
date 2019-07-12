@@ -37,7 +37,7 @@ export default function getCircle(
     for (let x = -radius; x <= radius; x++) {
       const xCoord = x0 + x;
 
-      if (xCoord > columns || xCoord < 0) {
+      if (xCoord >= columns || xCoord < 0) {
         continue;
       }
 
