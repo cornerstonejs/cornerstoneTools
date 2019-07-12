@@ -1,29 +1,29 @@
-let defaultStartLoadHandler;
-let defaultEndLoadHandler;
-let defaultErrorLoadingHandler;
+let defaultStartLoadHandler = {};
+let defaultEndLoadHandler = {};
+let defaultErrorLoadingHandler = {};
 
-function setStartLoadHandler(handler) {
-  defaultStartLoadHandler = handler;
+function setStartLoadHandler(handler, element) {
+  defaultStartLoadHandler[element] = handler;
 }
 
-function getStartLoadHandler() {
-  return defaultStartLoadHandler;
+function getStartLoadHandler(element) {
+  return defaultStartLoadHandler[element];
 }
 
-function setEndLoadHandler(handler) {
-  defaultEndLoadHandler = handler;
+function setEndLoadHandler(handler, element) {
+  defaultEndLoadHandler[element] = handler;
 }
 
-function getEndLoadHandler() {
-  return defaultEndLoadHandler;
+function getEndLoadHandler(element) {
+  return defaultEndLoadHandler[element];
 }
 
-function setErrorLoadingHandler(handler) {
-  defaultErrorLoadingHandler = handler;
+function setErrorLoadingHandler(handler, element) {
+  defaultErrorLoadingHandler[element] = handler;
 }
 
-function getErrorLoadingHandler() {
-  return defaultErrorLoadingHandler;
+function getErrorLoadingHandler(element) {
+  return defaultErrorLoadingHandler[element];
 }
 
 const loadHandlerManager = {
