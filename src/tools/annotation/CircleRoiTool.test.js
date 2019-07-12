@@ -34,7 +34,7 @@ const goodMouseEventData = {
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('CircleRoiTool.js', () => {
@@ -246,21 +246,44 @@ describe('CircleRoiTool.js', () => {
       get: jest.fn(),
     };
 
-    external.cornerstone.getPixels = () => {
-      return [100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6,
-        100, 100, 100,
-        100, 4, 5,
-        100, 3, 6
-      ];
-    };
+    external.cornerstone.getPixels = () => [
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+    ];
 
     it('should calculate and update annotation values', () => {
       const instantiatedTool = new CircleRoiTool();
@@ -269,12 +292,12 @@ describe('CircleRoiTool.js', () => {
         handles: {
           start: {
             x: 3,
-            y: 3
+            y: 3,
           },
           end: {
             x: 4,
-            y: 4
-          }
+            y: 4,
+          },
         },
       };
 
