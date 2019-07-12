@@ -218,7 +218,7 @@ export default class MagnifyTool extends BaseTool {
     viewport.scale *= magnificationLevel;
     external.cornerstone.displayImage(this.zoomElement, image);
     external.cornerstone.setViewport(this.zoomElement, viewport);
-    // To do enable annotation tools for zoomElement 
+    // To do enable annotation tools for zoomElement
   }
 
   /**
