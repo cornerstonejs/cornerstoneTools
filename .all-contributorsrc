@@ -270,6 +270,16 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "xingbofeng",
+      "name": "counterxing",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/15172026?v=4",
+      "profile": "https://blog.xingbofeng.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
