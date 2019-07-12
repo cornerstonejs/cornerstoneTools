@@ -17,8 +17,8 @@ export default function getCircle(
   xCoord = 0,
   yCoord = 0
 ) {
-  const x0 = Math.round(xCoord);
-  const y0 = Math.round(yCoord);
+  const x0 = Math.floor(xCoord);
+  const y0 = Math.floor(yCoord);
 
   if (radius === 1) {
     return [[x0, y0]];
