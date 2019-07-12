@@ -44,14 +44,18 @@ export default function(element, newImageIdIndex) {
     newImageIdIndex += stackData.imageIds.length;
   }
 
+  let viewportIndex = {};
+
+  if (element.dataset.viewportIndex) {
+    viewportIndex = element.dataset.viewportIndex;
+  }
+
   const startLoadingHandler = loadHandlerManager.getStartLoadHandler(
-    element.dataset.viewportIndex
+    viewportIndex
   );
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(
-    element.dataset.viewportIndex
-  );
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(viewportIndex);
   const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
-    element.dataset.viewportIndex
+    viewportIndex
   );
 
   function doneCallback(image) {
