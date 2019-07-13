@@ -44,19 +44,15 @@ export default function(element, newImageIdIndex) {
     newImageIdIndex += stackData.imageIds.length;
   }
 
-  let viewportIndex = {};
+  let uuid = {};
 
   if (element.dataset.viewportIndex) {
-    viewportIndex = element.dataset.viewportIndex;
+    uuid = cornerstone.getEnabledElement(element).uuid;
   }
 
-  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(
-    viewportIndex
-  );
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(viewportIndex);
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
-    viewportIndex
-  );
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(uuid);
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(uuid);
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(uuid);
 
   function doneCallback(image) {
     if (stackData.currentImageIdIndex !== newImageIdIndex) {

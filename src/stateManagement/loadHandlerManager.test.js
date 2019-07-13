@@ -132,4 +132,58 @@ describe('loadHandlerManager', () => {
     const startLoadHandler = loadHandlerManager.getErrorLoadingHandler(10);
     expect(startLoadHandler).toEqual(undefined);
   });
+
+  it('should remove loadHandler for multiple handlers', () => {
+    const items = [1, 2, 3];
+
+    items.forEach(i => {
+      loadHandlerManager.setStartLoadHandler(() => {
+        return i;
+      }, i);
+
+      loadHandlerManager.setEndLoadHandler(() => {
+        return i;
+      }, i);
+
+      loadHandlerManager.setErrorLoadingHandler(() => {
+        return i;
+      }, i);
+    });
+
+    items.forEach(i => {
+      loadHandlerManager.removeHandler(i);
+    });
+
+    items.forEach(i => {
+      const start = loadHandlerManager.getStartLoadHandler(i);
+      const end = loadHandlerManager.getEndLoadHandler(i);
+      const error = loadHandlerManager.getErrorLoadingHandler(i);
+      expect(start).toBe(undefined);
+      expect(end).toBe(undefined);
+      expect(error).toBe(undefined);
+    });
+  });
+
+  it('should remove loadHandler a single handler', () => {
+    loadHandlerManager.setStartLoadHandler(() => {
+      return 0;
+    });
+
+    loadHandlerManager.setEndLoadHandler(() => {
+      return 0;
+    });
+
+    loadHandlerManager.setErrorLoadingHandler(() => {
+      return 0;
+    });
+
+    loadHandlerManager.removeHandler();
+
+    const start = loadHandlerManager.getStartLoadHandler();
+    const end = loadHandlerManager.getEndLoadHandler();
+    const error = loadHandlerManager.getErrorLoadingHandler();
+    expect(start).toBe(undefined);
+    expect(end).toBe(undefined);
+    expect(error).toBe(undefined);
+  });
 });

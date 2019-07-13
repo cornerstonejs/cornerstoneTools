@@ -35,6 +35,12 @@ function getErrorLoadingHandler(element) {
   return defaultErrorLoadingHandler[element];
 }
 
+function removeHandler(element) {
+  delete defaultStartLoadHandler[element];
+  delete defaultEndLoadHandler[element];
+  delete defaultErrorLoadingHandler[element];
+}
+
 const loadHandlerManager = {
   setStartLoadHandler,
   getStartLoadHandler,
@@ -42,6 +48,7 @@ const loadHandlerManager = {
   getEndLoadHandler,
   setErrorLoadingHandler,
   getErrorLoadingHandler,
+  removeHandler,
 };
 
 export default loadHandlerManager;
