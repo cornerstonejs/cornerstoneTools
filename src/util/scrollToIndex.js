@@ -44,11 +44,7 @@ export default function(element, newImageIdIndex) {
     newImageIdIndex += stackData.imageIds.length;
   }
 
-  let uuid = {};
-
-  if (element.dataset.viewportIndex) {
-    uuid = cornerstone.getEnabledElement(element).uuid;
-  }
+  let uuid = cornerstone.getEnabledElement(element).uuid;
 
   const startLoadingHandler = loadHandlerManager.getStartLoadHandler(uuid);
   const endLoadingHandler = loadHandlerManager.getEndLoadHandler(uuid);
