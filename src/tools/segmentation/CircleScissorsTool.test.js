@@ -1,4 +1,4 @@
-import FreehandScissorsTool from './FreehandScissorsTool';
+import CircleScissorsTool from './CircleScissorsTool';
 import { fill } from '../../util/segmentation/operations';
 import store from '../../store';
 import mixins from '../../mixins';
@@ -44,9 +44,9 @@ function setMocksAndSpies(store) {
   store.modules.brush.getters.brushColor = jest.fn();
 
   // Spies for Mixins
-  _startOutliningRegion_Spy = jest.spyOn(mixins.freehandSegmentationMixin, '_startOutliningRegion');
-  _setHandlesAndUpdate_Spy = jest.spyOn(mixins.freehandSegmentationMixin, '_setHandlesAndUpdate');
-  _applyStrategy_Spy = jest.spyOn(mixins.freehandSegmentationMixin, '_applyStrategy');
+  _startOutliningRegion_Spy = jest.spyOn(mixins.circleSegmentationMixin, '_startOutliningRegion');
+  _setHandlesAndUpdate_Spy = jest.spyOn(mixins.circleSegmentationMixin, '_setHandlesAndUpdate');
+  _applyStrategy_Spy = jest.spyOn(mixins.circleSegmentationMixin, '_applyStrategy');
 }
 
 function restoreMocksAndSpies(store) {
@@ -61,7 +61,7 @@ function restoreMocksAndSpies(store) {
   fill.mockRestore();
 }
 
-describe('FreehandScissorsTool.js', () => {
+describe('CircleScissorsTool.js', () => {
 
   beforeEach(() => {
     setMocksAndSpies(store);
@@ -72,16 +72,16 @@ describe('FreehandScissorsTool.js', () => {
   });
 
   describe('Initialization', () => {
-    it('Instantiate FreehandScissorsTool Correctly', () => {
-      const defaultName = 'FreehandScissors';
-      const instantiatedTool = new FreehandScissorsTool();
+    it('Instantiate CircleScissorsTool Correctly', () => {
+      const defaultName = 'CircleScissors';
+      const instantiatedTool = new CircleScissorsTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
     it('allows a custom name', () => {
       const customToolName = { name: 'CustomScissorsName' };
-      const instantiatedTool = new FreehandScissorsTool(customToolName);
+      const instantiatedTool = new CircleScissorsTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
@@ -91,50 +91,50 @@ describe('FreehandScissorsTool.js', () => {
     let instantiatedTool;
 
     beforeEach(() => {
-      instantiatedTool = new FreehandScissorsTool();
+      instantiatedTool = new CircleScissorsTool();
     });
 
     describe('Touch Events setup', () => {
       it('Calls right method on touchDragCallback ', () => {
         instantiatedTool.touchDragCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
       });
 
       it('Calls right method on postTouchStartCallback ', () => {
         instantiatedTool.postTouchStartCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
       });
 
       it('Calls right method on touchEndCallback ', () => {
         instantiatedTool.touchEndCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._applyStrategy).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._applyStrategy).toHaveBeenCalled();
       });
     });
 
     describe('Mouse Events setup', () => {
       it('Calls right method on postMouseDownCallback ', () => {
         instantiatedTool.postMouseDownCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
       });
 
       it('Calls right method on mouseClickCallback ', () => {
         instantiatedTool.mouseClickCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._startOutliningRegion).toHaveBeenCalled();
       });
 
       it('Calls right method on mouseDragCallback ', () => {
         instantiatedTool.mouseDragCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
       });
 
       it('Calls right method on mouseMoveCallback ', () => {
         instantiatedTool.mouseMoveCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._setHandlesAndUpdate).toHaveBeenCalled();
       });
 
       it('Calls right method on mouseUpCallback ', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
-        expect(mixins.freehandSegmentationMixin._applyStrategy).toHaveBeenCalled();
+        expect(mixins.circleSegmentationMixin._applyStrategy).toHaveBeenCalled();
       });
     });
 
@@ -144,7 +144,7 @@ describe('FreehandScissorsTool.js', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
 
         expect(fill).toHaveBeenCalledWith(
-          'Freehand',
+          'Circle',
           'FILL_INSIDE',
           mockEvt
         );
@@ -155,7 +155,7 @@ describe('FreehandScissorsTool.js', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
 
         expect(fill).toHaveBeenCalledWith(
-          'Freehand',
+          'Circle',
           'FILL_INSIDE',
           mockEvt
         );
@@ -166,7 +166,7 @@ describe('FreehandScissorsTool.js', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
 
         expect(fill).toHaveBeenCalledWith(
-          'Freehand',
+          'Circle',
           'ERASE_INSIDE',
           mockEvt
         );
@@ -177,7 +177,7 @@ describe('FreehandScissorsTool.js', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
 
         expect(fill).toHaveBeenCalledWith(
-          'Freehand',
+          'Circle',
           'FILL_OUTSIDE',
           mockEvt
         );
@@ -188,7 +188,7 @@ describe('FreehandScissorsTool.js', () => {
         instantiatedTool.mouseUpCallback(mockEvt);
 
         expect(fill).toHaveBeenCalledWith(
-          'Freehand',
+          'Circle',
           'ERASE_OUTSIDE',
           mockEvt
         );

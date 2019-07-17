@@ -1,4 +1,3 @@
-import toolColors from '../../stateManagement/toolColors';
 import { draw, drawCircle, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
