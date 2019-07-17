@@ -18,7 +18,7 @@
     "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
   },
   "engines": {
-    "node": "8.16.0"
+    "node": ">=8.16.0"
   },
   "scripts": {
     "build": "npm run test && npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
