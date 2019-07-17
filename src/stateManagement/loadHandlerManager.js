@@ -1,44 +1,64 @@
+import external from '../externalModules.js';
+
 let defaultStartLoadHandler = {};
 let defaultEndLoadHandler = {};
 let defaultErrorLoadingHandler = {};
+
+function _getUUIDFromElement(element) {
+  if (!element) {
+    return undefined;
+  }
+  const uuid = external.cornerstone.getEnabledElement(element).uuid;
+  if (!uuid) {
+    throw new Error('Something went wrong when getting uuid from element');
+  }
+  return uuid;
+}
 
 function setStartLoadHandler(handler, element = undefined) {
   if (!handler) {
     throw new Error('The Handler function must be defined');
   }
-  defaultStartLoadHandler[element] = handler;
+  const uuid = _getUUIDFromElement(element);
+  defaultStartLoadHandler[uuid] = handler;
 }
 
 function getStartLoadHandler(element) {
-  return defaultStartLoadHandler[element];
+  const uuid = _getUUIDFromElement(element);
+  return defaultStartLoadHandler[uuid];
 }
 
 function setEndLoadHandler(handler, element = undefined) {
   if (!handler) {
     throw new Error('The Handler function must be defined');
   }
-  defaultEndLoadHandler[element] = handler;
+  const uuid = _getUUIDFromElement(element);
+  defaultEndLoadHandler[uuid] = handler;
 }
 
 function getEndLoadHandler(element) {
-  return defaultEndLoadHandler[element];
+  const uuid = _getUUIDFromElement(element);
+  return defaultEndLoadHandler[uuid];
 }
 
 function setErrorLoadingHandler(handler, element = undefined) {
   if (!handler) {
     throw new Error('The Handler function must be defined');
   }
-  defaultErrorLoadingHandler[element] = handler;
+  const uuid = _getUUIDFromElement(element);
+  defaultErrorLoadingHandler[uuid] = handler;
 }
 
 function getErrorLoadingHandler(element) {
-  return defaultErrorLoadingHandler[element];
+  const uuid = _getUUIDFromElement(element);
+  return defaultErrorLoadingHandler[uuid];
 }
 
 function removeHandler(element) {
-  delete defaultStartLoadHandler[element];
-  delete defaultEndLoadHandler[element];
-  delete defaultErrorLoadingHandler[element];
+  const uuid = _getUUIDFromElement(element);
+  delete defaultStartLoadHandler[uuid];
+  delete defaultEndLoadHandler[uuid];
+  delete defaultErrorLoadingHandler[uuid];
 }
 
 const loadHandlerManager = {
