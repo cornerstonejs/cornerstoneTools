@@ -1,4 +1,3 @@
-import toolColors from '../../stateManagement/toolColors';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
 import { getCursor } from '../../util/segmentation';
 

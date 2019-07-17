@@ -2,7 +2,6 @@ import external from '../../externalModules.js';
 import store from '../../store';
 import { getLogger } from '../../util/logger.js';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
-import toolColors from '../../stateManagement/toolColors';
 import { getCursor } from '../../util/segmentation';
 
 const logger = getLogger('tools:ScissorsTool');
