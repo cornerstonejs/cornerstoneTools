@@ -1,1 +1,1 @@
-export default '4.0.0-rc2';
+export default '4.0.0-rc4';

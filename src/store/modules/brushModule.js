@@ -956,13 +956,17 @@ function _validColorLUTLength(colorLUT, segmentsPerLabelmap) {
   if (colorLUT) {
     if (colorLUT.length < segmentsPerLabelmap) {
       logger.error(
-        `The provided colorLUT only provides ${colorLUT.length} labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}.`
+        `The provided colorLUT only provides ${
+          colorLUT.length
+        } labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}.`
       );
 
       return false;
     } else if (colorLUT.length > segmentsPerLabelmap) {
       logger.warn(
-        `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${colorLUT.length}. Using the first ${segmentsPerLabelmap} colors from the LUT.`
+        `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${
+          colorLUT.length
+        }. Using the first ${segmentsPerLabelmap} colors from the LUT.`
       );
     }
   }

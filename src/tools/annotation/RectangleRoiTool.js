@@ -58,7 +58,9 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
     if (!goodEventData) {
       logger.error(
-        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
       );
 
       return;
