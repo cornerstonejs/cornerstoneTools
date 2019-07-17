@@ -1,5 +1,9 @@
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
 import { getCursor } from '../../util/segmentation';
+import store from '../../store';
+
+const brushModule = store.modules.brush;
+const { getters } = brushModule;
 
 /**
  * Gets The cursor according to strategy.

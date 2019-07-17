@@ -75,6 +75,7 @@ class BaseBrushTool extends BaseTool {
    */
   mouseDragCallback(evt) {
     const { currentPoints } = evt.detail;
+
     this._lastImageCoords = currentPoints.image;
 
     // Safety measure incase _startPainting is overridden and doesn't always
