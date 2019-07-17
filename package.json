@@ -17,6 +17,9 @@
     "type": "git",
     "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
   },
+  "engines": {
+    "node": "8.16.0"
+  },
   "scripts": {
     "build": "npm run test && npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
