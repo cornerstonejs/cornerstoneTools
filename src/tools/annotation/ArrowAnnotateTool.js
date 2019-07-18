@@ -62,6 +62,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
+    eventData = eventData.detail || {};
+
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -85,14 +87,14 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       activeColor: config.activeColor,
       handles: {
         start: {
-          x: eventData.detail.currentPoints.image.x,
-          y: eventData.detail.currentPoints.image.y,
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
         },
         end: {
-          x: eventData.detail.currentPoints.image.x,
-          y: eventData.detail.currentPoints.image.y,
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
         },
