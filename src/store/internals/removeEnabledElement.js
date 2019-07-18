@@ -101,10 +101,10 @@ const _removeEnabledElement = function(enabledElement) {
 };
 
 /**
- * Remove load handler for the enabled element
+ * Remove load handler for the element
  * @private
  * @method
- * @param {HTMLElement} enabledElement
+ * @param {HTMLElement} element
  * @returns {void}
  */
 const _removeLoadHandlers = function(element) {
