@@ -62,8 +62,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
-    eventData = eventData.detail || {};
-
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -290,7 +288,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
   addNewMeasurement(evt, interactionType) {
     const element = evt.detail.element;
-    const measurementData = this.createNewMeasurement(evt);
+    const measurementData = this.createNewMeasurement(evt.detail);
 
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
