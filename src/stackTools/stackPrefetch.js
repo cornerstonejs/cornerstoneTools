@@ -156,7 +156,9 @@ function prefetch(element) {
   }
 
   // Retrieve the errorLoadingHandler if one exists
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
+    element
+  );
 
   function failCallback(error) {
     logger.log('prefetch errored: %o', error);
