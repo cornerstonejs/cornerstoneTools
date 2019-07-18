@@ -1,8 +1,8 @@
 ---
-layout: tool-simple
+layout: segmentation-tool
 title: Brush Tool
 toolName: Brush
-toolType: brush
+toolType: segmentation
 ---
 
 <h2 class="title is-2">🚧 Under Construction 🚧</h2>

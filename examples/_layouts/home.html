@@ -58,11 +58,12 @@ layout: default
           </ul>
         </div>
 
-        <!-- BRUSH TOOLS -->
+        <!-- SEGMENTATION TOOLS -->
         <div class="column">
-          <h4 class="title is-4">Brush</h4>
+          <h4 class="title is-4">Segmentation</h4>
           <ul class="tool-list content">
-            {% for page in site.pages %} {% if page.toolType == 'brush' %}
+            {% for page in site.pages %} {% if page.toolType == 'segmentation'
+            %}
             <li>
               <a class="tool-link" href="{{ page.url | relative_url }}">
                 {{ page.title | escape }}

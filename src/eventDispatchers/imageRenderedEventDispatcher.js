@@ -1,5 +1,6 @@
 import { state } from './../store/index.js';
 import BaseBrushTool from './../tools/base/BaseBrushTool.js';
+import BaseSegmentationTool from './../tools/base/BaseSegmentationTool.js';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
 import external from './../externalModules.js';
 
@@ -16,13 +17,16 @@ const onImageRendered = function(evt) {
         tool.mode === 'enabled')
   );
 
-  const brushTools = toolsToRender.filter(
-    tool => tool instanceof BaseBrushTool
+  const brushAndSegmentationTools = toolsToRender.filter(
+    tool =>
+      tool instanceof BaseBrushTool || tool instanceof BaseSegmentationTool
   );
 
-  if (brushTools.length > 0) {
+  if (brushAndSegmentationTools.length) {
     onImageRenderedBrushEventHandler(evt);
   }
+
+  onImageRenderedBrushEventHandler(evt);
 
   toolsToRender.forEach(tool => {
     if (tool.renderToolData) {

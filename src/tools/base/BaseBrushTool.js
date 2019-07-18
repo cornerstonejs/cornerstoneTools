@@ -22,6 +22,7 @@ class BaseBrushTool extends BaseTool {
       defaultProps.configuration = { alwaysEraseOnClick: false };
     }
     defaultProps.configuration.referencedToolData = 'brush';
+    defaultProps.mixins = ['segmentationAPI'];
 
     super(props, defaultProps);
 
@@ -74,6 +75,7 @@ class BaseBrushTool extends BaseTool {
    */
   mouseDragCallback(evt) {
     const { currentPoints } = evt.detail;
+
     this._lastImageCoords = currentPoints.image;
 
     // Safety measure incase _startPainting is overridden and doesn't always
@@ -293,28 +295,6 @@ class BaseBrushTool extends BaseTool {
   // ===================================================================
   // Segmentation API. This is effectively a wrapper around the store.
   // ===================================================================
-
-  /**
-   * Switches to the next segment color.
-   *
-   * @public
-   * @api
-   * @returns {void}
-   */
-  nextSegment() {
-    setters.incrementActiveSegmentIndex(this.element);
-  }
-
-  /**
-   * Switches to the previous segmentation color.
-   *
-   * @public
-   * @api
-   * @returns {void}
-   */
-  previousSegment() {
-    setters.decrementActiveSegmentIndex(this.element);
-  }
 
   /**
    * Increases the brush size
