@@ -78,7 +78,7 @@ const loadHandlerManager = {
   getEndLoadHandler,
   setErrorLoadingHandler,
   getErrorLoadingHandler,
-  removeHandler,
+  removeHandlers,
 };
 
 export default loadHandlerManager;
