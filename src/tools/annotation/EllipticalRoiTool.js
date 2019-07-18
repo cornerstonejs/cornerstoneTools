@@ -59,7 +59,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
-  createNewMeasurement(eventData) {
+  createNewMeasurement(eventData = {}) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
@@ -73,11 +73,13 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {

@@ -10,6 +10,11 @@ import {
 } from './../../stateManagement/toolState.js';
 import { textMarkerCursor } from '../cursors/index.js';
 
+// Logger
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:RectangleRoiTool');
+
 /**
  * @public
  * @class TextMarkerTool
@@ -35,7 +40,20 @@ export default class TextMarkerTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
-    const config = this.configuration;
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      logger.error(
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
+    const config = this.configuration || {};
 
     if (!config.current) {
       return;
@@ -46,8 +64,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       text: config.current,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       handles: {
         end: {
           x: eventData.currentPoints.image.x,

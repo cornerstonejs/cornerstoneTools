@@ -18,9 +18,11 @@ import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
-import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -62,24 +64,24 @@ export default class LengthTool extends BaseAnnotationTool {
       return;
     }
 
-    const { x, y } = eventData.currentPoints.image;
+    const config = this.configuration || {};
 
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {
-          x,
-          y,
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: false,
         },
         end: {
-          x,
-          y,
+          x: eventData.currentPoints.image.x,
+          y: eventData.currentPoints.image.y,
           highlight: true,
           active: true,
         },

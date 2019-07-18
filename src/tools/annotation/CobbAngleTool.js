@@ -28,6 +28,11 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 
+// Logger
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:CircleRoiTool');
+
 /**
  * @public
  * @class CobbAngleTool
@@ -55,14 +60,28 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
-    // Create the measurement data for this tool with the end handle activated
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      logger.error(
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
+    const config = this.configuration || {};
+
     this.hasIncomplete = true;
 
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       complete: false,
       value: '',

@@ -60,11 +60,13 @@ export default class ProbeTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         end: {

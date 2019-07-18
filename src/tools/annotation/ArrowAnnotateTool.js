@@ -31,6 +31,11 @@ import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
 import { arrowAnnotateCursor } from '../cursors/index.js';
 
+// Logger
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:CircleRoiTool');
+
 /**
  * @public
  * @class ArrowAnnotateTool
@@ -56,23 +61,38 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     this.preventNewMeasurement = false;
   }
 
-  createNewMeasurement(evt) {
+  createNewMeasurement(eventData) {
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      logger.error(
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
+    const config = this.configuration || {};
+
     // Create the measurement data for this tool with the end handle activated
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       handles: {
         start: {
-          x: evt.detail.currentPoints.image.x,
-          y: evt.detail.currentPoints.image.y,
+          x: eventData.detail.currentPoints.image.x,
+          y: eventData.detail.currentPoints.image.y,
           highlight: true,
           active: false,
         },
         end: {
-          x: evt.detail.currentPoints.image.x,
-          y: evt.detail.currentPoints.image.y,
+          x: eventData.detail.currentPoints.image.x,
+          y: eventData.detail.currentPoints.image.y,
           highlight: true,
           active: false,
         },

@@ -23,8 +23,10 @@ import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
-import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -69,11 +71,13 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {

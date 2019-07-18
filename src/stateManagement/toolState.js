@@ -30,18 +30,18 @@ function getElementToolStateManager(element) {
  * @method addToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolName      The toolName of the state.
+ * @param  {string} toolType      The toolType of the state.
  * @param  {Object} measurementData The data to store in the state.
  * @returns {undefined}
  */
-function addToolState(element, toolName, measurementData) {
+function addToolState(element, toolType, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
-  toolStateManager.add(element, toolName, measurementData);
+  toolStateManager.add(element, toolType, measurementData);
 
   const eventType = EVENTS.MEASUREMENT_ADDED;
   const eventData = {
-    toolName,
+    toolType,
     element,
     measurementData,
   };
@@ -58,13 +58,13 @@ function addToolState(element, toolName, measurementData) {
  * @name getToolState
  *
  * @param  {HTMLElement} element The element.
- * @param  {string} toolName The toolName of the state.
- * @returns {Object}          The element's state for the given toolName.
+ * @param  {string} toolType The toolType of the state.
+ * @returns {Object}          The element's state for the given toolType.
  */
-function getToolState(element, toolName) {
+function getToolState(element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
 
-  return toolStateManager.get(element, toolName);
+  return toolStateManager.get(element, toolType);
 }
 
 /**
@@ -73,13 +73,13 @@ function getToolState(element, toolName) {
  * @method removeToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolName      The toolName of the state.
+ * @param  {string} toolType      The toolType of the state.
  * @param  {Object} data          The data to remove from the toolStateManager.
  * @returns {undefined}
  */
-function removeToolState(element, toolName, data) {
+function removeToolState(element, toolType, data) {
   const toolStateManager = getElementToolStateManager(element);
-  const toolData = toolStateManager.get(element, toolName);
+  const toolData = toolStateManager.get(element, toolType);
   // Find this tool data
   let indexOfData = -1;
 
@@ -94,7 +94,7 @@ function removeToolState(element, toolName, data) {
 
     const eventType = EVENTS.MEASUREMENT_REMOVED;
     const eventData = {
-      toolName,
+      toolType,
       element,
       measurementData: data,
     };
@@ -105,17 +105,17 @@ function removeToolState(element, toolName, data) {
 
 /**
  * Removes all toolState from the toolStateManager corresponding to
- * the toolName and element.
+ * the toolType and element.
  * @public
  * @method clearToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolName      The toolName of the state.
+ * @param  {string} toolType      The toolType of the state.
  * @returns {undefined}
  */
-function clearToolState(element, toolName) {
+function clearToolState(element, toolType) {
   const toolStateManager = getElementToolStateManager(element);
-  const toolData = toolStateManager.get(element, toolName);
+  const toolData = toolStateManager.get(element, toolType);
 
   // If any toolData actually exists, clear it
   if (toolData !== undefined) {

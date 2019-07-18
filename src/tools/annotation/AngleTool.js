@@ -31,6 +31,11 @@ import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 
+// Logger
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:CircleRoiTool');
+
 /**
  * @public
  * @class AngleTool
@@ -61,12 +66,27 @@ export default class AngleTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      logger.error(
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
+      );
+
+      return;
+    }
+
+    const config = this.configuration || {};
+
     // Create the measurement data for this tool with the end handle activated
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {

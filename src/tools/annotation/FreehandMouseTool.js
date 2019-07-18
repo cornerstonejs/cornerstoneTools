@@ -30,8 +30,10 @@ import { clipToBox } from '../../util/clip.js';
 import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 import { freehandMouseCursor } from '../cursors/index.js';
 import freehandUtils from '../../util/freehand/index.js';
-import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:FreehandMouseTool');
 
@@ -110,11 +112,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: this.configuration.color,
-      activeColor: this.configuration.activeColor,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         points: [],
