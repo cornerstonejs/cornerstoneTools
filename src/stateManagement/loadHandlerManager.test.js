@@ -147,6 +147,8 @@ describe('loadHandlerManager', () => {
       loadHandlerManager.removeHandler(i);
     });
 
+    loadHandlerManager.removeHandler();
+
     items.forEach(i => {
       const start = loadHandlerManager.getStartLoadHandler(i);
       const end = loadHandlerManager.getEndLoadHandler(i);

@@ -1,12 +1,14 @@
 import external from '../externalModules.js';
 
+const _DEFAULT_LOAD_HANDLER = 'DEFAULT';
+
 let defaultStartLoadHandler = {};
 let defaultEndLoadHandler = {};
 let defaultErrorLoadingHandler = {};
 
 function _getUUIDFromElement(element) {
   if (!element) {
-    return undefined;
+    return _DEFAULT_LOAD_HANDLER;
   }
   const uuid = external.cornerstone.getEnabledElement(element).uuid;
   if (!uuid) {
@@ -25,7 +27,10 @@ function setStartLoadHandler(handler, element = undefined) {
 
 function getStartLoadHandler(element) {
   const uuid = _getUUIDFromElement(element);
-  return defaultStartLoadHandler[uuid];
+  return (
+    defaultStartLoadHandler[uuid] ||
+    defaultStartLoadHandler[_DEFAULT_LOAD_HANDLER]
+  );
 }
 
 function setEndLoadHandler(handler, element = undefined) {
@@ -38,7 +43,9 @@ function setEndLoadHandler(handler, element = undefined) {
 
 function getEndLoadHandler(element) {
   const uuid = _getUUIDFromElement(element);
-  return defaultEndLoadHandler[uuid];
+  return (
+    defaultEndLoadHandler[uuid] || defaultEndLoadHandler[_DEFAULT_LOAD_HANDLER]
+  );
 }
 
 function setErrorLoadingHandler(handler, element = undefined) {
@@ -51,7 +58,10 @@ function setErrorLoadingHandler(handler, element = undefined) {
 
 function getErrorLoadingHandler(element) {
   const uuid = _getUUIDFromElement(element);
-  return defaultErrorLoadingHandler[uuid];
+  return (
+    defaultErrorLoadingHandler[uuid] ||
+    defaultErrorLoadingHandler[_DEFAULT_LOAD_HANDLER]
+  );
 }
 
 function removeHandler(element) {
