@@ -108,7 +108,7 @@ const _removeEnabledElement = function(enabledElement) {
  * @returns {void}
  */
 const _removeLoadHandlers = function(element) {
-  loadHandlerManager.removeHandler(element);
+  loadHandlerManager.removeHandlers(element);
 };
 
 /**
