@@ -1,7 +1,7 @@
 import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
-import getNewColorLUT from '../../util/brush/getNewColorLUT.js';
-import labelmapStats from '../../util/brush/labelmapStats.js';
+import getNewColorLUT from '../../util/segmentation/brush/getNewColorLUT.js';
+import labelmapStats from '../../util/segmentation/brush/labelmapStats.js';
 import EVENTS from '../../events.js';
 
 import { getters as storeGetters } from '../index.js';
@@ -893,6 +893,10 @@ function invalidateBrushOnEnabledElement(
   if (!labelmap3D) {
     return;
   }
+
+  labelmap3D.labelmaps2D.forEach(l => {
+    l.invalidated = true;
+  });
 
   external.cornerstone.updateImage(element, true);
 }

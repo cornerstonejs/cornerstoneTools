@@ -1,8 +1,7 @@
 import external from './../../externalModules.js';
-import BaseBrushTool from './../base/BaseBrushTool.js';
+import { BaseBrushTool } from '../base';
 import store from './../../store/index.js';
 import brushUtils from './../../util/brush/index.js';
-import triggerEvent from './../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 import { getLogger } from '../../util/logger.js';
 

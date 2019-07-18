@@ -1,6 +1,6 @@
-import external from '../../externalModules.js';
-import EVENTS from '../../events.js';
-import { draw, fillBox } from '../../drawing/index.js';
+import external from '../../../externalModules.js';
+import EVENTS from '../../../events.js';
+import { draw, fillBox } from '../../../drawing';
 
 /**
  * DrawBrushPixels - Adds or removes labels to a labelmap.
