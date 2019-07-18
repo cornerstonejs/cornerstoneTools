@@ -64,7 +64,7 @@ function getErrorLoadingHandler(element) {
   );
 }
 
-function removeHandler(element) {
+function removeHandlers(element) {
   const uuid = _getUUIDFromElement(element);
   delete defaultStartLoadHandler[uuid];
   delete defaultEndLoadHandler[uuid];

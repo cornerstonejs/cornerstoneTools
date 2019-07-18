@@ -144,10 +144,10 @@ describe('loadHandlerManager', () => {
     });
 
     items.forEach(i => {
-      loadHandlerManager.removeHandler(i);
+      loadHandlerManager.removeHandlers(i);
     });
 
-    loadHandlerManager.removeHandler();
+    loadHandlerManager.removeHandlers();
 
     items.forEach(i => {
       const start = loadHandlerManager.getStartLoadHandler(i);
@@ -172,7 +172,7 @@ describe('loadHandlerManager', () => {
       return 0;
     });
 
-    loadHandlerManager.removeHandler();
+    loadHandlerManager.removeHandlers();
 
     const start = loadHandlerManager.getStartLoadHandler();
     const end = loadHandlerManager.getEndLoadHandler();
