@@ -12,7 +12,7 @@
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
 [![Coverage Status][coverage-badge]][coverage]
-[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-27-orange.svg?style=flat-square)](#contributors)
 
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -180,6 +180,7 @@ Thanks goes to these people ([emoji key][emojis]):
     <td align="center"><a href="http://www.biharck.com.br"><img src="https://avatars0.githubusercontent.com/u/1713255?v=4" width="100px;" alt="Biharck Araujo"/><br /><sub><b>Biharck Araujo</b></sub></a><br /><a href="#example-biharck" title="Examples">💡</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=biharck" title="Documentation">📖</a></td>
     <td align="center"><a href="https://www.linkedin.com/in/devonbernard"><img src="https://avatars3.githubusercontent.com/u/5349517?v=4" width="100px;" alt="Devon Bernard"/><br /><sub><b>Devon Bernard</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=DevonBernard" title="Documentation">📖</a></td>
     <td align="center"><a href="https://github.com/Karl-Heinrich"><img src="https://avatars2.githubusercontent.com/u/38315992?v=4" width="100px;" alt="Karl-Heinrich"/><br /><sub><b>Karl-Heinrich</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3AKarl-Heinrich" title="Bug reports">🐛</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Karl-Heinrich" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Karl-Heinrich" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://blog.xingbofeng.com/"><img src="https://avatars0.githubusercontent.com/u/15172026?v=4" width="100px;" alt="counterxing"/><br /><sub><b>counterxing</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3Axingbofeng" title="Bug reports">🐛</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=xingbofeng" title="Code">💻</a></td>
   </tr>
 </table>
 
