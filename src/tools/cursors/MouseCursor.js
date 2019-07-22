@@ -3,6 +3,8 @@ import { modules } from '../../store/index.js';
 
 const cursorModule = modules.cursor;
 
+/* eslint-disable valid-jsdoc */
+
 /*
 MACROS - The following keys will have the appropriate value injected when
 an SVG is requested:
@@ -23,7 +25,7 @@ export default class MouseCursor {
   }
 
   /**
-   * GetIconSVG - Returns an SVG of the icon only.
+   * Returns an SVG of the icon only.
    *
    * @param  {Object} options    An object which overrides default properties
    *                             of the returned SVG.
@@ -36,7 +38,7 @@ export default class MouseCursor {
   }
 
   /**
-   * GetIconSVGString - Returns a string representation of the SVG of the icon only.
+   * Returns a string representation of the SVG of the icon only.
    *
    * @param  {Object} options An object which overrides default properties
    *                             of the returned SVG.
@@ -47,7 +49,7 @@ export default class MouseCursor {
   }
 
   /**
-   * GetIconWithPointerSVG - Returns an SVG of the icon + pointer.
+   * Returns an SVG of the icon + pointer.
    *
    * @param  {Object} options An object which overrides default properties
    *                             of the returned SVG.
@@ -60,7 +62,7 @@ export default class MouseCursor {
   }
 
   /**
-   * GetIconWithPointerString - Returns a string representation of the SVG
+   * Returns a string representation of the SVG
    *                            of the icon + pointer.
    *
    * @param  {Object} options An object which overrides default properties
@@ -72,7 +74,7 @@ export default class MouseCursor {
   }
 
   /**
-   * Get mousePoint - Returns the mousePoint as a space seperated string.
+   * Returns the mousePoint as a space seperated string.
    *
    * @returns {string} The mousePoint.
    */
@@ -83,7 +85,7 @@ export default class MouseCursor {
   }
 
   /**
-   * _generateIconWithPointerSVGString - Generates a string representation of
+   * Generates a string representation of
    *                                     the icon + pointer.
    *
    * @param  {Object} options   An object which overrides default properties
@@ -114,7 +116,7 @@ export default class MouseCursor {
   }
 
   /**
-   * _generateIconSVGString - Generates a string representation of the icon.
+   * Generates a string representation of the icon.
    *
    * @param  {Object} options   An object which overrides default properties
    *                            of the returned string.
@@ -137,7 +139,7 @@ export default class MouseCursor {
   }
 
   /**
-   * _injectColors - Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in
+   * Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in
    *                 svgString with their appropriate values.
    *
    * @param  {string} svgString    The string to modify.
