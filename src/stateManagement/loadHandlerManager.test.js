@@ -32,6 +32,7 @@ describe('loadHandlerManager', () => {
       );
       loadHandlerManager.setStartLoadHandler(element.handler_function, element);
       const start = loadHandlerManager.getStartLoadHandler(element);
+
       expect(start()).toBe(index);
     });
   });
@@ -43,6 +44,7 @@ describe('loadHandlerManager', () => {
       );
       loadHandlerManager.setEndLoadHandler(element.handler_function, element);
       const end = loadHandlerManager.getEndLoadHandler(element);
+
       expect(end()).toBe(index);
     });
   });
@@ -57,6 +59,7 @@ describe('loadHandlerManager', () => {
         element
       );
       const error = loadHandlerManager.getErrorLoadingHandler(element);
+
       expect(error()).toBe(index);
     });
   });
@@ -72,15 +75,15 @@ describe('loadHandlerManager', () => {
       element
     );
     const error = loadHandlerManager.getErrorLoadingHandler(element);
+
     expect(error()).toBe(0);
   });
 
   it('should create a single loadHandler even though the element is not passed as parameter to the function', () => {
-    loadHandlerManager.setErrorLoadingHandler(() => {
-      return 0;
-    });
+    loadHandlerManager.setErrorLoadingHandler(() => 0);
 
     const error = loadHandlerManager.getErrorLoadingHandler();
+
     expect(error()).toBe(0);
   });
 
@@ -130,17 +133,11 @@ describe('loadHandlerManager', () => {
     const items = [1, 2, 3];
 
     items.forEach(i => {
-      loadHandlerManager.setStartLoadHandler(() => {
-        return i;
-      }, i);
+      loadHandlerManager.setStartLoadHandler(() => i, i);
 
-      loadHandlerManager.setEndLoadHandler(() => {
-        return i;
-      }, i);
+      loadHandlerManager.setEndLoadHandler(() => i, i);
 
-      loadHandlerManager.setErrorLoadingHandler(() => {
-        return i;
-      }, i);
+      loadHandlerManager.setErrorLoadingHandler(() => i, i);
     });
 
     items.forEach(i => {
@@ -153,6 +150,7 @@ describe('loadHandlerManager', () => {
       const start = loadHandlerManager.getStartLoadHandler(i);
       const end = loadHandlerManager.getEndLoadHandler(i);
       const error = loadHandlerManager.getErrorLoadingHandler(i);
+
       expect(start).toBe(undefined);
       expect(end).toBe(undefined);
       expect(error).toBe(undefined);
@@ -160,23 +158,18 @@ describe('loadHandlerManager', () => {
   });
 
   it('should remove loadHandler a single handler', () => {
-    loadHandlerManager.setStartLoadHandler(() => {
-      return 0;
-    });
+    loadHandlerManager.setStartLoadHandler(() => 0);
 
-    loadHandlerManager.setEndLoadHandler(() => {
-      return 0;
-    });
+    loadHandlerManager.setEndLoadHandler(() => 0);
 
-    loadHandlerManager.setErrorLoadingHandler(() => {
-      return 0;
-    });
+    loadHandlerManager.setErrorLoadingHandler(() => 0);
 
     loadHandlerManager.removeHandlers();
 
     const start = loadHandlerManager.getStartLoadHandler();
     const end = loadHandlerManager.getEndLoadHandler();
     const error = loadHandlerManager.getErrorLoadingHandler();
+
     expect(start).toBe(undefined);
     expect(end).toBe(undefined);
     expect(error).toBe(undefined);
