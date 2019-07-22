@@ -11,6 +11,7 @@ import {
 } from '../../eventDispatchers/index.js';
 import store from '../index.js';
 import { getLogger } from '../../util/logger.js';
+import loadHandlerManager from '../../stateManagement/loadHandlerManager.js';
 
 const logger = getLogger('internals:removeEnabledElement');
 
@@ -58,6 +59,7 @@ export default function(elementDisabledEvt) {
   // State
   _removeAllToolsForElement(enabledElement);
   _removeEnabledElement(enabledElement);
+  _removeLoadHandlers(enabledElement);
 }
 
 /**
@@ -96,6 +98,17 @@ const _removeEnabledElement = function(enabledElement) {
   } else {
     logger.warn('unable to remove element');
   }
+};
+
+/**
+ * Remove load handler for the element
+ * @private
+ * @method
+ * @param {HTMLElement} element
+ * @returns {void}
+ */
+const _removeLoadHandlers = function(element) {
+  loadHandlerManager.removeHandlers(element);
 };
 
 /**

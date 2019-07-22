@@ -270,6 +270,34 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "xingbofeng",
+      "name": "counterxing",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/15172026?v=4",
+      "profile": "https://blog.xingbofeng.com/",
+      "contributions": [
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "jlopes90",
+      "name": "Jorge Lopes",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/50026015?v=4",
+      "profile": "https://github.com/jlopes90",
+      "contributions": [
+        "question"
+      ]
+    },
+    {
+      "login": "Ggpsv",
+      "name": "Gabriel Garrido",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/5546851?v=4",
+      "profile": "http://garrido.io",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
