@@ -35,7 +35,7 @@
     "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api:dev\"",
     "docs:book": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
     "docs:deploy": "bash ./.circleci/update-docs.sh",
-    "lint": "eslint -c .eslintrc.js --fix src",
+    "lint": "eslint -c .eslintrc --fix src && prettier --single-quote --write src/**/*.{js,jsx,json,css}",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
     "test": "npm run test:unit",
