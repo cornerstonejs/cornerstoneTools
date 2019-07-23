@@ -108,11 +108,13 @@ describe('eventListeners/wheelEventListener.js', () => {
     // Setup
     const localElement = document.createElement('div');
     const scrollCloseToZeroPixel = 0.00001;
-    const middleMouseButtonClickedEvent = new WheelEvent('wheel', { deltaY: scrollCloseToZeroPixel });
+    const middleMouseButtonClickedEvent = new WheelEvent('wheel', {
+      deltaY: scrollCloseToZeroPixel,
+    });
 
     // Assert
-    localElement.addEventListener('cornerstonetoolsmousewheel', (evt) => {
-      expect(false).toBe(true, 'Unwanted event fired');
+    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+      expect(false).toBe(true, `Unwanted event fired for ${evt}`);
     });
 
     // SUT
@@ -121,5 +123,4 @@ describe('eventListeners/wheelEventListener.js', () => {
     // Fire Away!
     localElement.dispatchEvent(middleMouseButtonClickedEvent);
   });
-
 });

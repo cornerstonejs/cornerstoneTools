@@ -5,9 +5,6 @@ import {
   moveHandleNearImagePoint,
   moveAnnotation,
 } from './../../util/findAndMoveHelpers.js';
-import { getLogger } from '../../util/logger';
-
-const logger = getLogger('baseAnnotationTool');
 
 /**
  * @memberof Tools.Base
@@ -16,10 +13,6 @@ const logger = getLogger('baseAnnotationTool');
  * @extends Tools.Base.BaseTool
  */
 class BaseAnnotationTool extends BaseTool {
-  constructor(...args) {
-    super(...args);
-  }
-
   // ===================================================================
   // Abstract Methods - Must be implemented.
   // ===================================================================
@@ -161,18 +154,6 @@ class BaseAnnotationTool extends BaseTool {
    */
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
     moveAnnotation(evt, this, annotation, interactionType);
-  }
-
-  /**
-   * Updates cached statistics for the tool's annotation data on the element
-   *
-   * @param {*} image
-   * @param {*} element
-   * @param {*} data
-   * @returns {void}
-   */
-  updateCachedStats(image, element, data) {
-    logger.warn(`updateCachedStats not implemented for ${this.name}.`);
   }
 }
 
