@@ -58,20 +58,47 @@ If you find the dependencies confusing, here is a high level overview of why eac
 | Cornerstone Math             | Is a dependency some tools use to aid in vector math, or other complex operations                                                                   | N/A                                                                                                                                                                                                      |
 | Cornerstone (Core)           | Renders our image, and provides useful events and methods to make tools that respond to viewport changes possible                                   | N/A                                                                                                                                                                                                      |
 | Cornerstone Web Image Loader | Adds the ability to "fetch" PNG / JPEG images from `http` or `https` URLs. Other image loaders exist to load NIFTI or DICOM images into Cornerstone | [CornerstoneWADOImageLoader](https://github.com/cornerstonejs/cornerstoneWADOImageLoader) (DICOM) / [CornerstoneNIFTIImageLoader](https://github.com/flywheel-io/cornerstone-nifti-image-loader) (NIFTI) |
+| debug                        | A tiny JavaScript debugging utility modelled after Node.js core's debugging technique. Works in Node.js and web browsers.                           | N/A                                                                                                                                                                                                      |
 
 If you find this overly complicated and have alternative solutions to managing and using dependencies, we are always looking for new ideas on how to simplify the process. Please do not hesitate to create a [GitHub issue](https://github.com/cornerstonejs/cornerstoneTools/issues) and discuss (:
 
 ## Configuration {#configuration}
 
-Previous versions of Cornerstone Tools required a strong knowledge of its internals to enable/disable different features and functionality. Now, sensible defaults are applied when you initialize a new instance of Cornerstone Tools. You also have the ability to override those defaults, for example:
-
-_To disable touch event listeners:_
+Previous versions of Cornerstone Tools required a strong knowledge of its internals to enable/disable different features and functionality. Now, sensible defaults are applied when you initialize a new instance of Cornerstone Tools.
+This is basics you need in order to start using CornerstoneTools:
 
 ```js
-const config = {
-  touchEnabled: false,
-};
-const csTools = cornerstoneTools.init(config);
+import cornerstone from 'cornerstone-core';
+import cornerstoneMath from 'cornerstone-math';
+import cornerstoneTools from 'cornerstone-tools';
+import Hammer from 'hammerjs';
+
+cornerstoneTools.external.cornerstone = cornerstone;
+cornerstoneTools.external.Hammer = Hammer;
+cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+
+cornerstoneTools.init();
+```
+
+You can go further and configure textStyle, toolStyle, toolColors, etc:
+
+```js
+// Set the tool font and font size
+const fontFamily =
+  'Work Sans, Roboto, OpenSans, HelveticaNeue-Light, Helvetica Neue Light, Helvetica Neue, Helvetica, Arial, Lucida Grande, sans-serif';
+
+cornerstoneTools.textStyle.setFont(`16px ${fontFamily}`);
+
+// Set the tool width
+cornerstoneTools.toolStyle.setToolWidth(2);
+
+// Set color for inactive tools
+cornerstoneTools.toolColors.setToolColor('rgb(255, 255, 0)');
+
+// Set color for active tools
+cornerstoneTools.toolColors.setActiveColor('rgb(0, 255, 0)');
+
+// and so on...
 ```
 
 A full list of the settings and their defaults can be found here: [globalConfigurationModule.js](https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/store/modules/globalConfigurationModule.js#L1-L5)
@@ -108,9 +135,14 @@ When a Tool is added, its default [mode](anatomy-of-a-tool/index.md#modes) is `D
 csTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
 
 // OR activate the tool for a specific Enabled element
-csTools.setToolActiveForElement(enabledElement, LengthTool.name, {
-  mouseButtonMask: 1,
-});
+csTools.setToolActiveForElement(
+  enabledElement,
+  LengthTool.name,
+  {
+    mouseButtonMask: 1,
+  },
+  ['Mouse']
+);
 ```
 
 Now that our Tool is `Active`, we should be able to use our `LengthTool` to draw length annotations on the `Enabled` element. Having trouble or just want to see a quick demo? [Check out this jsfiddle!](https://jsfiddle.net/dannyrb/jhxdgu94/)
