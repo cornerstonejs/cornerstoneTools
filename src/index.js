@@ -177,6 +177,7 @@ import {
   enable as enableLogger,
   disable as disableLogger,
 } from './util/logger.js';
+import { default as scroll } from './util/scroll';
 
 // ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
 import { default as register } from './thirdParty/register.js';
@@ -295,6 +296,7 @@ const cornerstoneTools = {
   external,
   EVENTS,
   version,
+  scroll,
 };
 
 // Named Exports
@@ -393,6 +395,7 @@ export {
   external,
   EVENTS,
   version,
+  scroll,
 };
 
 // This has a weird name, so we can't just import it as 'import';
