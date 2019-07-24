@@ -123,6 +123,8 @@ Serve the page with autoreload in docker:
 ```
 docker run --rm -it --volume="$PWD:/srv/jekyll" -p 4000:4000 jekyll/jekyll:3.8.5 jekyll serve --watch
 ```
+Go to localhost:4000
+
 Explanation:
 ```
 docker run
@@ -133,4 +135,3 @@ docker run
 jekyll/jekyll:3.8.5           # Which docker image to use
 jekyll serve --watch          # Command to run inside the container
 ```
-go to localhost:4000
