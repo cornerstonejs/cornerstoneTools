@@ -1,29 +1,74 @@
-let defaultStartLoadHandler;
-let defaultEndLoadHandler;
-let defaultErrorLoadingHandler;
+import external from '../externalModules.js';
 
-function setStartLoadHandler(handler) {
-  defaultStartLoadHandler = handler;
+const _DEFAULT_LOAD_HANDLER = 'DEFAULT';
+
+let defaultStartLoadHandler = {};
+let defaultEndLoadHandler = {};
+let defaultErrorLoadingHandler = {};
+
+function _getUUIDFromElement(element) {
+  if (!element) {
+    return _DEFAULT_LOAD_HANDLER;
+  }
+  const uuid = external.cornerstone.getEnabledElement(element).uuid;
+  if (!uuid) {
+    throw new Error('Something went wrong when getting uuid from element');
+  }
+  return uuid;
 }
 
-function getStartLoadHandler() {
-  return defaultStartLoadHandler;
+function setStartLoadHandler(handler, element = undefined) {
+  if (!handler) {
+    throw new Error('The Handler function must be defined');
+  }
+  const uuid = _getUUIDFromElement(element);
+  defaultStartLoadHandler[uuid] = handler;
 }
 
-function setEndLoadHandler(handler) {
-  defaultEndLoadHandler = handler;
+function getStartLoadHandler(element) {
+  const uuid = _getUUIDFromElement(element);
+  return (
+    defaultStartLoadHandler[uuid] ||
+    defaultStartLoadHandler[_DEFAULT_LOAD_HANDLER]
+  );
 }
 
-function getEndLoadHandler() {
-  return defaultEndLoadHandler;
+function setEndLoadHandler(handler, element = undefined) {
+  if (!handler) {
+    throw new Error('The Handler function must be defined');
+  }
+  const uuid = _getUUIDFromElement(element);
+  defaultEndLoadHandler[uuid] = handler;
 }
 
-function setErrorLoadingHandler(handler) {
-  defaultErrorLoadingHandler = handler;
+function getEndLoadHandler(element) {
+  const uuid = _getUUIDFromElement(element);
+  return (
+    defaultEndLoadHandler[uuid] || defaultEndLoadHandler[_DEFAULT_LOAD_HANDLER]
+  );
 }
 
-function getErrorLoadingHandler() {
-  return defaultErrorLoadingHandler;
+function setErrorLoadingHandler(handler, element = undefined) {
+  if (!handler) {
+    throw new Error('The Handler function must be defined');
+  }
+  const uuid = _getUUIDFromElement(element);
+  defaultErrorLoadingHandler[uuid] = handler;
+}
+
+function getErrorLoadingHandler(element) {
+  const uuid = _getUUIDFromElement(element);
+  return (
+    defaultErrorLoadingHandler[uuid] ||
+    defaultErrorLoadingHandler[_DEFAULT_LOAD_HANDLER]
+  );
+}
+
+function removeHandlers(element) {
+  const uuid = _getUUIDFromElement(element);
+  delete defaultStartLoadHandler[uuid];
+  delete defaultEndLoadHandler[uuid];
+  delete defaultErrorLoadingHandler[uuid];
 }
 
 const loadHandlerManager = {
@@ -33,6 +78,7 @@ const loadHandlerManager = {
   getEndLoadHandler,
   setErrorLoadingHandler,
   getErrorLoadingHandler,
+  removeHandlers,
 };
 
 export default loadHandlerManager;

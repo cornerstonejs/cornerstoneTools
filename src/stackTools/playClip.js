@@ -212,9 +212,9 @@ function playClip(element, framesPerSecond) {
     }
 
     if (newImageIdIndex !== stackData.currentImageIdIndex) {
-      startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-      endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-      errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+      startLoadingHandler = loadHandlerManager.getStartLoadHandler(element);
+      endLoadingHandler = loadHandlerManager.getEndLoadHandler(element);
+      errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(element);
 
       if (startLoadingHandler) {
         startLoadingHandler(element);
