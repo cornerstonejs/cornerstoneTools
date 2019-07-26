@@ -12,6 +12,7 @@
   - [Configuration](index.md#configuration)
   - [Adding and Using Tools](index.md#adding-and-using-tools)
   - [Next Steps](index.md#next-steps)
+- [Debugging](debugging/index.md)
 - [Contributing](contributing.md)
 
 ## Tools In-Depth

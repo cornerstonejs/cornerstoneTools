@@ -21,13 +21,13 @@ If you've added a tool with the same name to multiple enabled elements, you can 
 
 ```js
 // Active
-csTools.setToolActive('ToolName', options);
+cornerstoneTools.setToolActive('ToolName', options);
 // Passive
-csTools.setToolPassive('ToolName', options);
+cornerstoneTools.setToolPassive('ToolName', options);
 // Enabled
-csTools.setToolEnabled('ToolName', options);
+cornerstoneTools.setToolEnabled('ToolName', options);
 // Disabled
-csTools.setToolDisabled('ToolName', options);
+cornerstoneTools.setToolDisabled('ToolName', options);
 ```
 
 #### For a Specific Enabled Element
@@ -36,7 +36,7 @@ If you need tool behavior to differ across multiple enabled elements, you can ch
 
 ```js
 // Active
-csTools.setToolActiveForElement(
+cornerstoneTools.setToolActiveForElement(
   enabledElement,
   'ToolName',
   {
@@ -46,11 +46,11 @@ csTools.setToolActiveForElement(
 );
 
 // Passive
-csTools.setToolPassiveForElement(enabledElement, 'ToolName', options);
+cornerstoneTools.setToolPassiveForElement(enabledElement, 'ToolName', options);
 // Enabled
-csTools.setToolEnabledForElement(enabledElement, 'ToolName', options);
+cornerstoneTools.setToolEnabledForElement(enabledElement, 'ToolName', options);
 // Disabled
-csTools.setToolDisabledForElement(enabledElement, 'ToolName', options);
+cornerstoneTools.setToolDisabledForElement(enabledElement, 'ToolName', options);
 ```
 
 ### Caveats
