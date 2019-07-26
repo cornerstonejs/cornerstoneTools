@@ -24,21 +24,33 @@ title: Cursors
   option to `true` when initializing `cornerstoneTools`.
 </p>
 
-{% highlight javascript %} cornerstoneTools.init({ showSVGCursors: true, }); {%
-endhighlight %}
+{% highlight javascript %}
+cornerstoneTools.init({
+  showSVGCursors: true,
+});
+{% endhighlight %}
 
 <h3 class="title is-3">Access Cursor Images</h3>
 
-{% highlight javascript %} // Grab a cursor const cursors =
-cornerstoneTools.import('tools/cursors'); const cursor =
-cursors.arrowAnnotateCursor; // `MouseCursor` class // Create and display cursor
-image const cursorImg = document.createElement('img'); const cursorImgUrl =
-window.URL.createObjectURL(cursor.iconSVG); cursorImg.src = cursorImgUrl;
-document.querySelector('body').appendChild(cursorImg); // Create and display
-cursor image w/ pointer const cursorImgPointer = document.createElement('img');
+{% highlight javascript %}
+// Grab a cursor
+const cursors = cornerstoneTools.import('tools/cursors');
+const cursor = cursors.arrowAnnotateCursor; // `MouseCursor` class
+
+// Create and display cursor image
+const cursorImg = document.createElement('img');
+const cursorImgUrl = window.URL.createObjectURL(cursor.iconSVG);
+
+cursorImg.src = cursorImgUrl;
+document.querySelector('body').appendChild(cursorImg);
+
+// Create and display cursor image w/ pointer
+const cursorImgPointer = document.createElement('img');
 const cursorImgPointerUrl = window.URL.createObjectURL(cursor.blob);
+
 cursorImgPointer.src = cursorImgPointerUrl;
-document.querySelector('body').appendChild(cursorImgPointer); {% endhighlight %}
+document.querySelector('body').appendChild(cursorImgPointer);
+{% endhighlight %}
 
 <h4 class="title is-4">Cursors w/o Pointers</h4>
 
