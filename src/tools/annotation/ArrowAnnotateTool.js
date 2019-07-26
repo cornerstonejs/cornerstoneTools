@@ -91,6 +91,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
+  }
+
   renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
     const { handleRadius, drawHandlesOnHover } = this.configuration;

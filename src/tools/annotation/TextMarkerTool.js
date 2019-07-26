@@ -117,6 +117,10 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     return distanceToPoint < 10 || insideBoundingBox;
   }
 
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
+  }
+
   renderToolData(evt) {
     const eventData = evt.detail;
     const config = this.configuration;
