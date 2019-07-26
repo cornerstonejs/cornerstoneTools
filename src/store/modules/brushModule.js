@@ -12,6 +12,8 @@ const state = {
   visibleSegmentations: {},
   imageBitmapCache: {},
   segmentationMetadata: {},
+  //
+  invalidatedEnabledElements: [],
 };
 
 const setters = {
@@ -23,6 +25,15 @@ const setters = {
    */
   radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
+  },
+
+  forceUpdateImageForElement(element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const enabledElementUID = enabledElement.uuid;
+
+    if (!state.invalidatedEnabledElements.includes(enabledElementUID)) {
+      state.invalidatedEnabledElements.push(enabledElementUID);
+    }
   },
 
   /**
