@@ -6,9 +6,7 @@ import { globalImageIdSpecificToolStateManager } from '../../stateManagement/ima
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
 import triggerEvent from './../../util/triggerEvent.js';
-import { getLogger } from './../../util/logger.js';
 
-const logger = getLogger('baseBrushTool');
 const { state, setters } = store.modules.brush;
 
 /**
@@ -515,21 +513,7 @@ class BaseBrushTool extends BaseTool {
 
     const imageIds = stackToolState.data[0].imageIds;
 
-    const enabledElement = external.cornerstone.getEnabledElement(element);
-
-    const image = enabledElement.image;
-
-    const dim = {
-      xy: image.columns * image.rows,
-      z: image.rows,
-      xyz: image.columns * image.rows * imageIds.length,
-    };
-
     const toolState = globalImageIdSpecificToolStateManager.saveToolState();
-
-    const buffer = new ArrayBuffer(dim.xyz);
-
-    const uint8View = new Uint8Array(buffer);
 
     for (let i = 0; i < imageIds.length; i++) {
       const imageId = imageIds[i];

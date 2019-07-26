@@ -31,7 +31,7 @@ const goodMouseEventData = {
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('LengthTool.js', () => {
@@ -172,14 +172,15 @@ describe('LengthTool.js', () => {
         handles: {
           start: {
             x: 166.10687022900754,
-            y: 90.8702290076336
+            y: 90.8702290076336,
           },
           end: {
             x: 145.58778625954199,
-            y: 143.63358778625957
-          }
+            y: 143.63358778625957,
+          },
         },
       };
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.length.toFixed(2)).toEqual('50.86');
 
