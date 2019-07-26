@@ -93,9 +93,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     if (!goodEventData) {
       logger.error(
-        `required eventData not supplied to tool ${
-          this.name
-        }'s createNewMeasurement`
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
       );
 
       return;
@@ -126,9 +124,9 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
   /**
    *
    *
-   * @param {*} element
-   * @param {*} data
-   * @param {*} coords
+   * @param {*} element element
+   * @param {*} data data
+   * @param {*} coords coords
    * @returns {Boolean}
    */
   pointNearTool(element, data, coords) {
@@ -226,13 +224,15 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    *
    *
    *
-   * @param image
-   * @param element
-   * @param data
+   * @param {Object} image image
+   * @param {Object} element element
+   * @param {Object} data data
+   *
+   * @returns {void}  void
    */
   updateCachedStats(image, element, data) {
     // Define variables for the area and mean/standard deviation
-    let area, meanStdDev, meanStdDevSUV;
+    let meanStdDev, meanStdDevSUV;
 
     const seriesModule = external.cornerstone.metaData.get(
       'generalSeriesModule',
@@ -322,7 +322,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     const rowPixelSpacing = image.rowPixelSpacing || 1;
     const scaling = columnPixelSpacing * rowPixelSpacing;
 
-    area = freehandArea(data.handles.points, scaling);
+    const area = freehandArea(data.handles.points, scaling);
 
     // If the area value is sane, store it for later retrieval
     if (!isNaN(area)) {

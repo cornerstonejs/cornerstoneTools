@@ -117,8 +117,8 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     return distanceToPoint < 10 || insideBoundingBox;
   }
 
-  updateCachedStats(image, element, data) {
-    // No stats calculation for this tool
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
   }
 
   renderToolData(evt) {

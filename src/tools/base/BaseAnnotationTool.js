@@ -16,10 +16,6 @@ const logger = getLogger('baseAnnotationTool');
  * @extends Tools.Base.BaseTool
  */
 class BaseAnnotationTool extends BaseTool {
-  constructor(...args) {
-    super(...args);
-  }
-
   // ===================================================================
   // Abstract Methods - Must be implemented.
   // ===================================================================

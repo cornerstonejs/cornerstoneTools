@@ -1,6 +1,6 @@
 import FreehandMouseTool from './FreehandMouseTool.js';
 import freehandUtils from '../../util/freehand/index.js';
-import { getLogger } from '../../util/logger.js'
+import { getLogger } from '../../util/logger.js';
 
 const {
   calculateFreehandStatistics,
@@ -50,7 +50,7 @@ describe('FreehandMouseTool.js', function() {
     it('emits console error if required eventData is not provided', () => {
       const instantiatedTool = new FreehandMouseTool();
       const logger = getLogger();
-      
+
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
       expect(logger.error).toHaveBeenCalled();
