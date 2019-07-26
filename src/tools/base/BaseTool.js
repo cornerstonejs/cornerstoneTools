@@ -21,8 +21,8 @@ const logger = getLogger('tools:base:BaseTool');
 class BaseTool {
   /**
    * Constructor description
-   * @param {defaultProps} [defaultProps={}] Tools Default properties
    * @param {props} [props={}] Tool properties set on instantiation of a tool
+   * @param {defaultProps} [defaultProps={}] Tools Default properties
    */
   constructor(props, defaultProps) {
     /**
