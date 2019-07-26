@@ -1263,7 +1263,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     if (this._dragging) {
       invalidHandlePlacement = this._checkHandlesPencilMode(data, eventData);
     } else {
-      invalidHandlePlacement = this._checkHandlesPolygonMode(data, element);
+      invalidHandlePlacement = this._checkHandlesPolygonMode(data, eventData);
     }
 
     data.handles.invalidHandlePlacement = invalidHandlePlacement;
