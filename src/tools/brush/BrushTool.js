@@ -30,7 +30,10 @@ export default class BrushTool extends BaseBrushTool {
         nonOverlapping: _nonOverlappingStrategy,
       },
       defaultStrategy: 'overlapping',
-      configuration: { alwaysEraseOnClick: false },
+      configuration: {
+        alwaysEraseOnClick: false,
+        skipPaintForInvisibleSegmentations: false,
+      },
     };
 
     super(props, defaultProps);
@@ -106,6 +109,21 @@ export default class BrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _paint(evt) {
+    const element = evt.detail.element;
+    const toolData = _getBaseBrushToolStateForElement(element).data;
+    const segmentationIndex = brushModule.state.drawColorId;
+    const shouldErase =
+      this.configuration.alwaysEraseOnClick || _isCtrlDown(evt.detail);
+    const isErasingNothing = shouldErase && !toolData[segmentationIndex];
+
+    if (
+      isErasingNothing ||
+      (this.configuration.skipPaintForInvisibleSegmentations &&
+        !_isSegmentationVisibleForElement(element, segmentationIndex, toolData))
+    ) {
+      return;
+    }
+
     this.applyActiveStrategy(evt, this.configuration);
 
     triggerEvent(evt.detail.element, EVENTS.MEASUREMENT_MODIFIED, evt.detail);
@@ -119,19 +137,10 @@ function _overlappingStrategy(evt, configuration) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-  let toolState = getToolState(
+  const toolState = getToolState(
     element,
     BaseBrushTool.getReferencedToolDataName()
   );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-  }
-
   const toolData = toolState.data;
 
   if (x < 0 || x > columns || y < 0 || y > rows) {
@@ -149,20 +158,10 @@ function _nonOverlappingStrategy(evt, configuration) {
   const element = eventData.element;
   const { rows, columns } = eventData.image;
   const { x, y } = eventData.currentPoints.image;
-
-  let toolState = getToolState(
+  const toolState = getToolState(
     element,
     BaseBrushTool.getReferencedToolDataName()
   );
-
-  if (!toolState) {
-    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
-    toolState = getToolState(
-      element,
-      BaseBrushTool.getReferencedToolDataName()
-    );
-  }
-
   const toolData = toolState.data;
   const segmentationIndex = brushModule.state.drawColorId;
 
@@ -193,15 +192,10 @@ function _nonOverlappingStrategy(evt, configuration) {
 function _drawMainColor(eventData, toolData, pointerArray, configuration) {
   const shouldErase =
     configuration.alwaysEraseOnClick || _isCtrlDown(eventData);
-  const columns = eventData.image.columns;
   const segmentationIndex = brushModule.state.drawColorId;
+  const hasNoDataForSegmentation = !toolData[segmentationIndex];
 
-  if (shouldErase && !toolData[segmentationIndex]) {
-    // Erase command, yet no data yet, just return.
-    return;
-  }
-
-  if (!toolData[segmentationIndex]) {
+  if (hasNoDataForSegmentation) {
     toolData[segmentationIndex] = {};
   }
 
@@ -227,6 +221,7 @@ function _drawMainColor(eventData, toolData, pointerArray, configuration) {
   }
 
   const toolDataI = toolData[segmentationIndex];
+  const columns = eventData.image.columns;
 
   // Draw / Erase the active color.
   drawBrushPixels(pointerArray, toolDataI, columns, shouldErase);
@@ -236,4 +231,44 @@ function _drawMainColor(eventData, toolData, pointerArray, configuration) {
 
 function _isCtrlDown(eventData) {
   return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
+}
+
+function _getBaseBrushToolStateForElement(element) {
+  let toolState = getToolState(
+    element,
+    BaseBrushTool.getReferencedToolDataName()
+  );
+
+  if (!toolState) {
+    addToolState(element, BaseBrushTool.getReferencedToolDataName(), {});
+    toolState = getToolState(
+      element,
+      BaseBrushTool.getReferencedToolDataName()
+    );
+  }
+
+  return toolState;
+}
+
+function _isSegmentationVisibleForElement(
+  element,
+  segmentationIndex,
+  toolData
+) {
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+  const visibleSegmentationsForElement = brushModule.getters.visibleSegmentationsForElement(
+    enabledElement.uuid
+  );
+
+  return (
+    // Global alpha for active segmentation
+    brushModule.state.alpha > 0.001 &&
+    // Master isVisible toggle per seg + element
+    // TODO: If false, should we check the secondary alpha that's applied to segmentions that aren't visible?
+    visibleSegmentationsForElement[segmentationIndex] === true &&
+    // Does not have alpha, or alpha is > 1 (0 to 255)
+    (toolData[segmentationIndex] === undefined ||
+      toolData[segmentationIndex].alpha === undefined ||
+      toolData[segmentationIndex].alpha > 0.001)
+  );
 }
