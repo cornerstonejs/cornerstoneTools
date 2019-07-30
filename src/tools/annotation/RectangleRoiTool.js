@@ -242,6 +242,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
+        data.suffix = _getSuffix(modality, this.configuration.showHounsfieldUnits);
+
         drawLinkedTextBox(
           context,
           element,
@@ -435,6 +437,10 @@ function _formatArea(area, hasPixelSpacing) {
   return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
+function _getSuffix(modality, showHounsfieldUnits) {
+  return modality === 'CT' && showHounsfieldUnits !== false ? ' HU' : '';
+}
+
 /**
  * TODO: This is identical to EllipticalROI's same fn
  * TODO: We may want to make this a utility for ROIs with these values?
@@ -456,14 +462,13 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   const otherLines = [];
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
+    const suffix = _getSuffix(modality, options.showHounsfieldUnits);
 
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(

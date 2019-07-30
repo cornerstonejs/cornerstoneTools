@@ -493,6 +493,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         if (modality === 'CT') {
           moSuffix = ' HU';
         }
+        data.suffix = moSuffix;
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
         let meanText = `Mean: ${numbersWithCommas(

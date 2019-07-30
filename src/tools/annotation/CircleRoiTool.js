@@ -251,6 +251,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           hasPixelSpacing,
           this.configuration
         );
+        data.suffix = _getSuffix(modality, this.configuration.showHounsfieldUnits);
 
         drawLinkedTextBox(
           context,
@@ -306,6 +307,10 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
+function _getSuffix(modality, showHounsfieldUnits) {
+  return modality === 'CT' && showHounsfieldUnits !== false ? ' HU' : '';
+}
+
 /**
  *
  *
@@ -326,7 +331,6 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
@@ -334,7 +338,7 @@ function _createTextBoxContent(
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
+    const suffix = _getSuffix(modality, options.showHounsfieldUnits);
 
     let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
