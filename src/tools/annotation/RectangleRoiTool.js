@@ -242,7 +242,10 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
-        data.suffix = _getSuffix(modality, this.configuration.showHounsfieldUnits);
+        data.suffix = _getSuffix(
+          modality,
+          this.configuration.showHounsfieldUnits
+        );
 
         drawLinkedTextBox(
           context,

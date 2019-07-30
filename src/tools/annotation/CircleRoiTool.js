@@ -251,7 +251,10 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           hasPixelSpacing,
           this.configuration
         );
-        data.suffix = _getSuffix(modality, this.configuration.showHounsfieldUnits);
+        data.suffix = _getSuffix(
+          modality,
+          this.configuration.showHounsfieldUnits
+        );
 
         drawLinkedTextBox(
           context,
