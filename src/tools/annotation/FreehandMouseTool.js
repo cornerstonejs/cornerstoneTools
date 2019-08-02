@@ -15,8 +15,6 @@ import triggerEvent from '../../util/triggerEvent.js';
 import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
 // Implementation Logic
 import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
-import calculateSUV from '../../util/calculateSUV.js';
-import numbersWithCommas from '../../util/numbersWithCommas.js';
 
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from '../../drawing/index.js';
@@ -34,10 +32,26 @@ const logger = getLogger('tools:annotation:FreehandMouseTool');
 const {
   insertOrDelete,
   freehandArea,
-  calculateFreehandStatistics,
+  calculateMeanStdDev,
+  calculateMinDistanceFromPointsToCoords,
+  calculatePolyBoundingBox,
   freehandIntersect,
   FreehandHandleData,
+  getTextBoxText,
 } = freehandUtils;
+
+function getImageScaling(image) {
+  // Retrieve the pixel spacing values, and if they are not
+  // Real non-zero values, set them to 1
+  const columnPixelSpacing = image.columnPixelSpacing || 1;
+  const rowPixelSpacing = image.rowPixelSpacing || 1;
+
+  return columnPixelSpacing * rowPixelSpacing;
+}
+
+function textBoxAnchorPoints(handles) {
+  return handles;
+}
 
 /**
  * @public
@@ -99,26 +113,23 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       return;
     }
 
-    const measurementData = {
+    return {
       visible: true,
       active: true,
       invalidated: true,
       color: undefined,
       handles: {
         points: [],
+        textBox: {
+          active: false,
+          hasMoved: false,
+          movesIndependently: false,
+          drawnIndependently: true,
+          allowedOutsideImage: true,
+          hasBoundingBox: true,
+        },
       },
     };
-
-    measurementData.handles.textBox = {
-      active: false,
-      hasMoved: false,
-      movesIndependently: false,
-      drawnIndependently: true,
-      allowedOutsideImage: true,
-      hasBoundingBox: true,
-    };
-
-    return measurementData;
   }
 
   /**
@@ -138,17 +149,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       );
     }
 
-    if (!validParameters || data.visible === false) {
+    if (data.visible === false) {
       return false;
     }
 
-    const isPointNearTool = this._pointNearHandle(element, data, coords);
-
-    if (isPointNearTool !== undefined) {
-      return true;
-    }
-
-    return false;
+    return undefined !== this._pointNearHandle(element, data, coords);
   }
 
   /**
@@ -160,23 +165,11 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * calculated.
    */
   distanceFromPoint(element, data, coords) {
-    let distance = Infinity;
-
-    for (let i = 0; i < data.handles.points.length; i++) {
-      const distanceI = external.cornerstoneMath.point.distance(
-        data.handles.points[i],
-        coords
-      );
-
-      distance = Math.min(distance, distanceI);
-    }
-
-    // If an error caused distance not to be calculated, return -1.
-    if (distance === Infinity) {
+    if (!data) {
       return -1;
     }
 
-    return distance;
+    return calculateMinDistanceFromPointsToCoords(data.handles.points, coords);
   }
 
   /**
@@ -188,36 +181,16 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * calculated.
    */
   distanceFromPointCanvas(element, data, coords) {
-    let distance = Infinity;
-
     if (!data) {
       return -1;
     }
 
     const canvasCoords = external.cornerstone.pixelToCanvas(element, coords);
+    const points = data.handles.points.map(point =>
+      external.cornerstone.pixelToCanvas(element, point)
+    );
 
-    const points = data.handles.points;
-
-    for (let i = 0; i < points.length; i++) {
-      const handleCanvas = external.cornerstone.pixelToCanvas(
-        element,
-        points[i]
-      );
-
-      const distanceI = external.cornerstoneMath.point.distance(
-        handleCanvas,
-        canvasCoords
-      );
-
-      distance = Math.min(distance, distanceI);
-    }
-
-    // If an error caused distance not to be calculated, return -1.
-    if (distance === Infinity) {
-      return -1;
-    }
-
-    return distance;
+    return calculateMinDistanceFromPointsToCoords(points, canvasCoords);
   }
 
   /**
@@ -232,39 +205,12 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    */
   updateCachedStats(image, element, data) {
     // Define variables for the area and mean/standard deviation
-    let meanStdDev, meanStdDevSUV;
+    const { points } = data.handles;
 
-    const seriesModule = external.cornerstone.metaData.get(
-      'generalSeriesModule',
-      image.imageId
-    );
-    const modality = seriesModule ? seriesModule.modality : null;
-
-    const points = data.handles.points;
     // If the data has been invalidated, and the tool is not currently active,
     // We need to calculate it again.
 
-    // Retrieve the bounds of the ROI in image coordinates
-    const bounds = {
-      left: points[0].x,
-      right: points[0].x,
-      bottom: points[0].y,
-      top: points[0].x,
-    };
-
-    for (let i = 0; i < points.length; i++) {
-      bounds.left = Math.min(bounds.left, points[i].x);
-      bounds.right = Math.max(bounds.right, points[i].x);
-      bounds.bottom = Math.min(bounds.bottom, points[i].y);
-      bounds.top = Math.max(bounds.top, points[i].y);
-    }
-
-    const polyBoundingBox = {
-      left: bounds.left,
-      top: bounds.bottom,
-      width: Math.abs(bounds.right - bounds.left),
-      height: Math.abs(bounds.top - bounds.bottom),
-    };
+    const polyBoundingBox = calculatePolyBoundingBox(points);
 
     // Store the bounding box information for the text box
     data.polyBoundingBox = polyBoundingBox;
@@ -272,42 +218,12 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
     // First, make sure this is not a color image, since no mean / standard
     // Deviation will be calculated for color images.
     if (!image.color) {
-      // Retrieve the array of pixels that the ROI bounds cover
-      const pixels = external.cornerstone.getPixels(
+      const { meanStdDev, meanStdDevSUV } = calculateMeanStdDev({
         element,
-        polyBoundingBox.left,
-        polyBoundingBox.top,
-        polyBoundingBox.width,
-        polyBoundingBox.height
-      );
-
-      // Calculate the mean & standard deviation from the pixels and the object shape
-      meanStdDev = calculateFreehandStatistics.call(
-        this,
-        pixels,
+        image,
         polyBoundingBox,
-        data.handles.points
-      );
-
-      if (modality === 'PT') {
-        // If the image is from a PET scan, use the DICOM tags to
-        // Calculate the SUV from the mean and standard deviation.
-
-        // Note that because we are using modality pixel values from getPixels, and
-        // The calculateSUV routine also rescales to modality pixel values, we are first
-        // Returning the values to storedPixel values before calcuating SUV with them.
-        // TODO: Clean this up? Should we add an option to not scale in calculateSUV?
-        meanStdDevSUV = {
-          mean: calculateSUV(
-            image,
-            (meanStdDev.mean - image.intercept) / image.slope
-          ),
-          stdDev: calculateSUV(
-            image,
-            (meanStdDev.stdDev - image.intercept) / image.slope
-          ),
-        };
-      }
+        points,
+      });
 
       // If the mean and standard deviation values are sane, store them for later retrieval
       if (meanStdDev && !isNaN(meanStdDev.mean)) {
@@ -316,13 +232,8 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
       }
     }
 
-    // Retrieve the pixel spacing values, and if they are not
-    // Real non-zero values, set them to 1
-    const columnPixelSpacing = image.columnPixelSpacing || 1;
-    const rowPixelSpacing = image.rowPixelSpacing || 1;
-    const scaling = columnPixelSpacing * rowPixelSpacing;
-
-    const area = freehandArea(data.handles.points, scaling);
+    const scaling = getImageScaling(image);
+    const area = freehandArea(points, scaling);
 
     // If the area value is sane, store it for later retrieval
     if (!isNaN(area)) {
@@ -351,11 +262,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     const { image, element } = eventData;
     const config = this.configuration;
-    const seriesModule = external.cornerstone.metaData.get(
-      'generalSeriesModule',
-      image.imageId
-    );
-    const modality = seriesModule ? seriesModule.modality : null;
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
@@ -458,7 +364,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
               data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
           }
 
-          const text = textBoxText.call(this, data);
+          const text = getTextBoxText(image, data);
 
           drawLinkedTextBox(
             context,
@@ -474,69 +380,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
           );
         }
       });
-    }
-
-    function textBoxText(data) {
-      const { meanStdDev, meanStdDevSUV, area } = data;
-      // Define an array to store the rows of text for the textbox
-      const textLines = [];
-
-      // If the mean and standard deviation values are present, display them
-      if (meanStdDev && meanStdDev.mean !== undefined) {
-        // If the modality is CT, add HU to denote Hounsfield Units
-        let moSuffix = '';
-
-        if (modality === 'CT') {
-          moSuffix = ' HU';
-        }
-
-        // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numbersWithCommas(
-          meanStdDev.mean.toFixed(2)
-        )}${moSuffix}`;
-        // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numbersWithCommas(
-          meanStdDev.stdDev.toFixed(2)
-        )}${moSuffix}`;
-
-        // If this image has SUV values to display, concatenate them to the text line
-        if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
-          const SUVtext = ' SUV: ';
-
-          meanText +=
-            SUVtext + numbersWithCommas(meanStdDevSUV.mean.toFixed(2));
-          stdDevText +=
-            SUVtext + numbersWithCommas(meanStdDevSUV.stdDev.toFixed(2));
-        }
-
-        // Add these text lines to the array to be displayed in the textbox
-        textLines.push(meanText);
-        textLines.push(stdDevText);
-      }
-
-      // If the area is a sane value, display it
-      if (area) {
-        // Determine the area suffix based on the pixel spacing in the image.
-        // If pixel spacing is present, use millimeters. Otherwise, use pixels.
-        // This uses Char code 178 for a superscript 2
-        let suffix = ` mm${String.fromCharCode(178)}`;
-
-        if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
-          suffix = ` pixels${String.fromCharCode(178)}`;
-        }
-
-        // Create a line of text to display the area and its units
-        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
-
-        // Add this text line to the array to be displayed in the textbox
-        textLines.push(areaText);
-      }
-
-      return textLines;
-    }
-
-    function textBoxAnchorPoints(handles) {
-      return handles;
     }
   }
 
@@ -1252,8 +1095,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {Boolean}
    */
   _checkInvalidHandleLocation(data, eventData) {
-    const { element } = eventData;
-
     if (data.handles.points.length < 2) {
       return true;
     }
