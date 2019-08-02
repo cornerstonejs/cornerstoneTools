@@ -54,7 +54,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      logger.error(`required eventData not supplied to tool ${this.name}'s createNewMeasurement`);
+      logger.error(
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+      );
 
       return;
     }

@@ -1,4 +1,3 @@
-import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';

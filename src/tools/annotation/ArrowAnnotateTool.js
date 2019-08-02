@@ -91,8 +91,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
-  updateCachedStats(image, element, data) {
-    // No stats calculation for this tool
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
   }
 
   renderToolData(evt) {

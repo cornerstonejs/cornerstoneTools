@@ -69,9 +69,7 @@ export default class ScaleOverlayTool extends BaseTool {
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
       logger.warn(
-        `unable to define rowPixelSpacing or colPixelSpacing from data on ${
-          this.name
-        }'s renderToolData`
+        `unable to define rowPixelSpacing or colPixelSpacing from data on ${this.name}'s renderToolData`
       );
 
       return;
