@@ -250,7 +250,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
-        data.unit = _getSuffix(
+        data.unit = _getUnit(
           modality,
           this.configuration.showHounsfieldUnits
         );
@@ -309,7 +309,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
-function _getSuffix(modality, showHounsfieldUnits) {
+function _getUnit(modality, showHounsfieldUnits) {
   return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
 }
 
@@ -340,12 +340,12 @@ function _createTextBoxContent(
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const suffix = _getSuffix(modality, options.showHounsfieldUnits);
+    const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${suffix}`;
+    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
-    )} ${suffix}`;
+    )} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -373,8 +373,8 @@ function _createTextBoxContent(
     }
 
     if (showMinMax) {
-      let minString = `Min: ${min} ${suffix}`;
-      const maxString = `Max: ${max} ${suffix}`;
+      let minString = `Min: ${min} ${unit}`;
+      const maxString = `Max: ${max} ${unit}`;
       const targetStringLength = hasStandardUptakeValues
         ? Math.floor(context.measureText(`${stdDevString}     `).width)
         : Math.floor(context.measureText(`${meanString}     `).width);
