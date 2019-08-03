@@ -253,10 +253,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
-        data.unit = _getUnit(
-          modality,
-          this.configuration.showHounsfieldUnits
-        );
+        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
 
         drawLinkedTextBox(
           context,
