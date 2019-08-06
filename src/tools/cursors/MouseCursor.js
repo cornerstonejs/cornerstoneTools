@@ -3,6 +3,8 @@ import { modules } from '../../store/index.js';
 
 const cursorModule = modules.cursor;
 
+/* eslint-disable valid-jsdoc */
+
 /*
 MACROS - The following keys will have the appropriate value injected when
 an SVG is requested:

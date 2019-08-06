@@ -168,6 +168,7 @@ class BaseAnnotationTool extends BaseTool {
    * @returns {void}
    */
   updateCachedStats(image, element, data) {
+    // eslint-disable-line
     logger.warn(`updateCachedStats not implemented for ${this.name}.`);
   }
 }

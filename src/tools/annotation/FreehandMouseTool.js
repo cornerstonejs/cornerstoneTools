@@ -1252,8 +1252,6 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
    * @returns {Boolean}
    */
   _checkInvalidHandleLocation(data, eventData) {
-    const { element } = eventData;
-
     if (data.handles.points.length < 2) {
       return true;
     }
