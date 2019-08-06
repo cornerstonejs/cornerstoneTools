@@ -16,10 +16,9 @@ jest.mock('./../../externalModules.js', () => ({
     metaData: {
       get: jest.fn(),
     },
-    // prettier-ignore
-    getPixels: () => [100, 100, 100,
-      100, 4, 5,
-      100, 3, 6]
+    /* eslint-disable prettier/prettier */
+    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
+    /* eslint-enable prettier/prettier */
   },
 }));
 
