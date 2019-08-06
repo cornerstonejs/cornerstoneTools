@@ -487,17 +487,18 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         let moSuffix = '';
 
         if (modality === 'CT') {
-          moSuffix = ' HU';
+          moSuffix = 'HU';
         }
+        data.unit = moSuffix;
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
         let meanText = `Mean: ${numbersWithCommas(
           meanStdDev.mean.toFixed(2)
-        )}${moSuffix}`;
+        )} ${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
         let stdDevText = `StdDev: ${numbersWithCommas(
           meanStdDev.stdDev.toFixed(2)
-        )}${moSuffix}`;
+        )} ${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {

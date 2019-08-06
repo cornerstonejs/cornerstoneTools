@@ -224,13 +224,15 @@ export default class LengthTool extends BaseAnnotationTool {
 
     function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
       // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = ' mm';
+      let suffix = 'mm';
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = ' pixels';
+        suffix = 'pixels';
       }
 
-      return `${data.length.toFixed(2)}${suffix}`;
+      data.unit = suffix;
+
+      return `${data.length.toFixed(2)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
