@@ -37,11 +37,7 @@ export default class MouseCursor {
   }
 
   /**
-<<<<<<< HEAD
-   * Returns a string representation of the SVG of the icon only.
-=======
    *  Returns a string representation of the SVG of the icon only.
->>>>>>> e7099c3e176c7b6ca6ce99fbf8c34d7907c7332a
    *
    * @param  {Object} options - An object which overrides default properties of the returned SVG.
    * @returns {string} The stringified SVG of the icon.
@@ -63,12 +59,7 @@ export default class MouseCursor {
   }
 
   /**
-<<<<<<< HEAD
-   * Returns a string representation of the SVG
-   *                            of the icon + pointer.
-=======
    * Returns a string representation of the SVG of the icon + pointer.
->>>>>>> e7099c3e176c7b6ca6ce99fbf8c34d7907c7332a
    *
    * @param  {Object} options - An object which overrides default properties of the returned SVG.
    * @returns {string} The stringified SVG of the icon + pointer.
@@ -89,12 +80,7 @@ export default class MouseCursor {
   }
 
   /**
-<<<<<<< HEAD
-   * Generates a string representation of
-   *                                     the icon + pointer.
-=======
    * Generates a string representation of the icon + pointer.
->>>>>>> e7099c3e176c7b6ca6ce99fbf8c34d7907c7332a
    *
    * @param  {Object} options - An object which overrides default properties of the returned string.
    * @returns {string} The SVG as a string.
@@ -145,12 +131,7 @@ export default class MouseCursor {
   }
 
   /**
-<<<<<<< HEAD
-   * Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in
-   *                 svgString with their appropriate values.
-=======
    * Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in svgString with their appropriate values.
->>>>>>> e7099c3e176c7b6ca6ce99fbf8c34d7907c7332a
    *
    * @param  {string} svgString - The string to modify.
    * @param  {Object} options - Optional overrides for the colors.
