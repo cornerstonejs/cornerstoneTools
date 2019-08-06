@@ -19,33 +19,35 @@ But there is more log information available if you need it.
 Multiple scopes are comma separated. Excluding a scope is done by prefixing with `-`. You can use the `*` match against many scopes.
 
 ```js
-import csTools from 'cornerstone-tools';
+import cornerstoneTools from 'cornerstone-tools';
 
 // Enable logging
-csTools.enableLogger();
+cornerstoneTools.enableLogger();
 // defaults to "cornerstoneTools:*" which will print all logs from the cornerstoneTools package
 
 // This is just some sugar ontop of the debug library. You can enable all
 // debug logging – including things outside of cornerstoneTools
-csTools.enableLogger('*');
+cornerstoneTools.enableLogger('*');
 
 // Only show logs from setToolMode.js
-csTools.enableLogger('cornerstoneTools:store:setToolMode');
+cornerstoneTools.enableLogger('cornerstoneTools:store:setToolMode');
 
 // Show all logs, but exclude the eventDispatchers (which can be a bit noisy)
-csTools.enableLogger('cornerstoneTools:*,-cornerstoneTools:eventDispatchers:*');
+cornerstoneTools.enableLogger(
+  'cornerstoneTools:*,-cornerstoneTools:eventDispatchers:*'
+);
 
 // Disable logging
-const prevSettings = csTools.disableLogger();
+const prevSettings = cornerstoneTools.disableLogger();
 // `disableLogger` returns a string of the previous settings in case
 // you wanted to toggle logging off and back on later.
 
 // Eg. this would re-enable the previous settings
-csTools.enableLogging(prevSettings);
+cornerstoneTools.enableLogging(prevSettings);
 ```
 
 As this is based on the wonderful `debug` library, you can also enable/disable
-the logger when you don't have access to `csTools` by using `localStorage`.
+the logger when you don't have access to `cornerstoneTools` by using `localStorage`.
 
 ```js
 // This will enable all cornerstoneTools logs

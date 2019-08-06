@@ -114,7 +114,7 @@ describe('eventListeners/wheelEventListener.js', () => {
 
     // Assert
     localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
-      expect(false).toBe(true, 'Unwanted event fired');
+      expect(false).toBe(true, `Unwanted event fired for ${evt}`);
     });
 
     // SUT

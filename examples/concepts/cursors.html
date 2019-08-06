@@ -19,8 +19,10 @@ title: Cursors
   }
 </style>
 
-<p>By default, cursors are disabled. To enable them, set the `showSVGCursors`
-  option to `true` when initializing `cornerstoneTools`.</p>
+<p>
+  By default, cursors are disabled. To enable them, set the `showSVGCursors`
+  option to `true` when initializing `cornerstoneTools`.
+</p>
 
 {% highlight javascript %}
 cornerstoneTools.init({
@@ -28,9 +30,7 @@ cornerstoneTools.init({
 });
 {% endhighlight %}
 
-
 <h3 class="title is-3">Access Cursor Images</h3>
-
 
 {% highlight javascript %}
 // Grab a cursor
@@ -74,7 +74,7 @@ document.querySelector('body').appendChild(cursorImgPointer);
 
   const baseUrl =
     window.ENVIRONMENT === 'development'
-      ? 'http://localhost:4000/'
+      ? 'http://127.0.0.1:4000/'
       : 'https://tools.cornerstonejs.org/examples/';
 
   _initCornerstone();
@@ -108,7 +108,9 @@ document.querySelector('body').appendChild(cursorImgPointer);
   const MouseCursor = cornerstoneTools.import('tools/cursors/MouseCursor');
   const cursors = cornerstoneTools.import('tools/cursors');
   const $cursorList = document.querySelector('.cursor-list');
-  const $cursorListWithPointer = document.querySelector('.cursor-list-with-pointer')
+  const $cursorListWithPointer = document.querySelector(
+    '.cursor-list-with-pointer'
+  );
 
   Object.keys(cursors).forEach(cursorName => {
     const cursor = cursors[cursorName];
@@ -119,7 +121,7 @@ document.querySelector('body').appendChild(cursorImgPointer);
 
     img.src = imageUrl;
     img.alt = cursorName;
-    $cursorList.appendChild(img)
+    $cursorList.appendChild(img);
 
     // Create cursor + pointer image from blob
     const imageUrl2 = window.URL.createObjectURL(cursor.blob);

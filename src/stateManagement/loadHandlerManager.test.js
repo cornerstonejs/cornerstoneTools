@@ -7,19 +7,19 @@ describe('loadHandlerManager', () => {
   const elements = [
     {
       uuid: 'a.5.b.6.4.9.1e12.992.2.9.62a8ea91d561d50bd364df6c48c3631253e82b1',
-      handler_function() {
+      handlerFunction() {
         return 0;
       },
     },
     {
       uuid: 'a.5.b.6.4.9.1e12.992.2.9.62a8ea91d561d50bd364df6c48c3631253e82b2',
-      handler_function() {
+      handlerFunction() {
         return 1;
       },
     },
     {
       uuid: 'a.5.b.6.4.9.1e12.992.2.9.62a8ea91d561d50bd364df6c48c3631253e82b3',
-      handler_function() {
+      handlerFunction() {
         return 2;
       },
     },
@@ -30,7 +30,7 @@ describe('loadHandlerManager', () => {
       externalModules.cornerstone.getEnabledElement.mockImplementation(
         () => element
       );
-      loadHandlerManager.setStartLoadHandler(element.handler_function, element);
+      loadHandlerManager.setStartLoadHandler(element.handlerFunction, element);
       const start = loadHandlerManager.getStartLoadHandler(element);
 
       expect(start()).toBe(index);
@@ -42,7 +42,7 @@ describe('loadHandlerManager', () => {
       externalModules.cornerstone.getEnabledElement.mockImplementation(
         () => element
       );
-      loadHandlerManager.setEndLoadHandler(element.handler_function, element);
+      loadHandlerManager.setEndLoadHandler(element.handlerFunction, element);
       const end = loadHandlerManager.getEndLoadHandler(element);
 
       expect(end()).toBe(index);
@@ -55,7 +55,7 @@ describe('loadHandlerManager', () => {
         () => element
       );
       loadHandlerManager.setErrorLoadingHandler(
-        element.handler_function,
+        element.handlerFunction,
         element
       );
       const error = loadHandlerManager.getErrorLoadingHandler(element);
@@ -70,10 +70,7 @@ describe('loadHandlerManager', () => {
     externalModules.cornerstone.getEnabledElement.mockImplementation(
       () => element
     );
-    loadHandlerManager.setErrorLoadingHandler(
-      element.handler_function,
-      element
-    );
+    loadHandlerManager.setErrorLoadingHandler(element.handlerFunction, element);
     const error = loadHandlerManager.getErrorLoadingHandler(element);
 
     expect(error()).toBe(0);

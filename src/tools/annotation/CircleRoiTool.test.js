@@ -248,20 +248,44 @@ describe('CircleRoiTool.js', () => {
 
     /* eslint-disable prettier/prettier */
     external.cornerstone.getPixels = () => [
-      100, 100, 100,
-      100, 4, 5,
-      100, 3, 6,
-      100, 100, 100,
-      100, 4, 5,
-      100, 3, 6,
-      100, 100, 100,
-      100, 4, 5,
-      100, 3, 6,
-      100, 100, 100,
-      100, 4, 5,
-      100, 3, 6
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
+      100,
+      100,
+      100,
+      100,
+      4,
+      5,
+      100,
+      3,
+      6,
     ];
-  /* eslint-enable prettier/prettier */
+    /* eslint-enable prettier/prettier */
 
     it('should calculate and update annotation values', () => {
       const instantiatedTool = new CircleRoiTool();

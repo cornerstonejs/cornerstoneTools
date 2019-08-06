@@ -35,13 +35,24 @@
     "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api:dev\"",
     "docs:book": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
     "docs:deploy": "bash ./.circleci/update-docs.sh",
-    "lint": "eslint -c .eslintrc.js --fix src",
+    "lint": "eslint -c .eslintrc.js --fix src && prettier --single-quote --write src/**/*.{js,jsx,json,css}",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
     "test": "npm run test:unit",
     "test:unit": "jest --clearCache && jest --runInBand \\.test\\.js$",
     "test:ci": "npm run test:unit && codecov",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,css}": [
+      "prettier --single-quote --write",
+      "git add"
+    ]
   },
   "devDependencies": {
     "@babel/core": "7.3.3",
@@ -65,9 +76,12 @@
     "gitbook-plugin-ga": "2.0.0",
     "gitbook-plugin-github": "3.0.0",
     "gitbook-plugin-sitemap": "1.2.0",
+    "husky": "2.4.x",
     "jest": "23.4.0",
     "jest-junit": "5.1.0",
+    "lint-staged": "^8.2.1",
     "lodash": "4.17.11",
+    "prettier": "1.18.x",
     "nodemon": "1.18.6",
     "semantic-release": "15.13.4",
     "shx": "^0.3.2",
