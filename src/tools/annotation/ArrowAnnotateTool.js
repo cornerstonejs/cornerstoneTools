@@ -288,13 +288,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
   }
 
   doubleClickCallback(evt) {
-    if (
-      !Array.isArray(this.options.mouseButtonMask) ||
-      !this.options.mouseButtonMask.includes(evt.detail.buttons)
-    ) {
-      return;
-    }
-
     return this._updateTextForNearbyAnnotation(evt);
   }
 
