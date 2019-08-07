@@ -6,6 +6,10 @@ import {
   transformCanvasContext,
 } from '../drawing/index.js';
 
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
+
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
@@ -69,6 +73,9 @@ export default function(evt) {
     return;
   }
 
+  // TODO -> Configurable outline by global brush module config.
+  // TODO -> outline for inactive labelmaps? Discuss.
+
   renderInactiveLabelMaps(
     evt,
     labelmaps3D,
@@ -108,6 +115,8 @@ function renderActiveLabelMap(
 
   if (labelmap2D) {
     renderSegmentation(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
+    // TODO - Add a global config for this.
+    renderOutline(evt, labelmap3D, activeLabelmapIndex, labelmap2D);
   }
 }
 
@@ -146,6 +155,135 @@ function renderInactiveLabelMaps(
     }
   }
 }
+
+/**
+ * @param  {Object} evt             The cornerstone event.
+ * @param  {Object} labelmap3D      The 3D labelmap.
+ * @param  {number} labelmapIndex   The index of the labelmap.
+ * @param  {Object} labelmap2D      The 2D labelmap for this current image.
+ */
+function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
+  // TODO -> We need to store the cached labelmap.
+  if (!labelmap2D.invalidated) {
+    return;
+  }
+
+  const eventData = evt.detail;
+  const { element, image, canvasContext } = eventData;
+  const { canvas } = canvasContext;
+  const segmentationData = labelmap2D.pixelData;
+  const cols = image.width;
+
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+
+  const { width, height } = canvas;
+
+  logger.warn('test');
+
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height; y++) {
+      //pixelOnBorder({ x, y }, segmentationData, width, height, cols, element);
+    }
+  }
+
+  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
+
+  //const getPixelIndex = coord => coord[1] * cols + coord[0];
+  //const getPixelCoordinateFromPixelIndex = pixelIndex => {
+  //  return [Math.floor(pixelIndex / cols), pixelIndex % cols];
+  //};
+}
+/*
+function pixelOnBorder(
+  point,
+  segmentationData,
+  width,
+  height,
+  enabledElement,
+  cols
+) {
+  const thickness = 3; // TODO -> Don't hardcode.
+
+  const coord = external.cornerstone.canvasToPixel(element, point);
+
+  coord.x = Math.floor(coord.x);
+  coord.y = Math.floor(coord.y);
+
+  const getPixelIndex = pixel => pixel.y * cols + pixel.y;
+
+  const segmentIndex = segmentationData[getPixelIndex(coord)];
+
+  if (segmentIndex === 1) {
+    logger.warn(coord);
+  }
+
+  // TODO -> Outside image range, skip.
+
+  /*
+  for (let i = -thickness; i <= thickness; ++i) {
+    for (let j = -thickness; j <= thickness; ++j) {
+
+    }
+  }
+
+}
+*/
+
+/*
+function canvas line method() {
+  // Check pixel above
+  if (coord[1] - 1 >= 0) {
+    const pixelIndex = getPixelIndex(coord[0], coord[1] - 1);
+    const segmentIndexAbove = pixelData[pixelIndex];
+
+    if (segmentIndexAbove !== segmentIndex) {
+      // TODO -> draw line above in segmentIndex color.
+    }
+  } else {
+    // Segment on Edge, draw line.
+    // TODO -> draw line above in segmentIndex color.
+  }
+
+  // Check pixel below
+  if (coord[1] + 1 < rows) {
+    const pixelIndex = getPixelIndex(coord[0], coord[1] + 1);
+    const segmentIndexBelow = pixelData[pixelIndex];
+
+    if (segmentIndexBelow !== segmentIndex) {
+      // TODO -> draw line below in segmentIndex color.
+    }
+  } else {
+    // Segment on Edge, draw line.
+    // TODO -> draw line below in segmentIndex color.
+  }
+
+  // Check pixel to the left
+  if (coord[0] - 1 >= 0) {
+    const pixelIndex = getPixelIndex(coord[0] - 1, coord[1]);
+    const segmentIndexLeft = pixelData[pixelIndex];
+
+    if (segmentIndexLeft !== segmentIndex) {
+      // TODO -> draw line to left in segmentIndex color.
+    }
+  } else {
+    // Segment on Edge, draw line.
+    // TODO -> draw line to left in segmentIndex color.
+  }
+
+  // Check pixel to the right
+  if (coord[0] + 1 < cols) {
+    const pixelIndex = getPixelIndex(coord[0] + 1, coord[1]);
+    const segmentIndexRight = pixelData[pixelIndex];
+
+    if (segmentIndexRight !== segmentIndex) {
+      // TODO -> draw line to right in segmentIndex color.
+    }
+  } else {
+    // Segment on Edge, draw line.
+    // TODO -> draw line to left in segmentIndex color.
+  }
+}
+*/
 
 /**
  * RenderSegmentation - Renders the labelmap2D to the canvas.
