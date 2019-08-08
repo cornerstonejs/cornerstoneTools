@@ -156,7 +156,7 @@ function renderInactiveLabelMaps(
 }
 
 /**
- * renderOutline - Renders the outlines of segments to the canvas.
+ * RenderOutline - Renders the outlines of segments to the canvas.
  *
  * @param  {Object} evt             The cornerstone event.
  * @param  {Object} labelmap3D      The 3D labelmap.
@@ -203,6 +203,9 @@ function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colorLutTable = state.colorLutTables[colorMapId];
 
+  const previousAlpha = context.globalAlpha;
+  context.globalAlpha = state.outlineAlpha;
+
   // Draw outlines.
   draw(context, context => {
     for (let i = 0; i < lineSegments.length; i++) {
@@ -222,11 +225,13 @@ function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
       }
     }
   });
+
+  context.globalAlpha = previousAlpha;
 }
 >>>>>>> Configurable line length. Paint inside the pixel.
 
 /**
- * getLineSegments - Returns an object containing all the line segments to be
+ * GetLineSegments - Returns an object containing all the line segments to be
  * drawn the canvas.
  *
  * @param  {Object} eventData The eventdata associated with the cornerstone event.
@@ -444,7 +449,7 @@ function canvas line method() {
 }
 
 /**
- * addTopOutline - adds an outline at the top of the pixel.
+ * AddTopOutline - adds an outline at the top of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -468,7 +473,7 @@ function addTopOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
 }
 
 /**
- * addBottomOutline - adds an outline at the bottom of the pixel.
+ * AddBottomOutline - adds an outline at the bottom of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -497,7 +502,7 @@ function addBottomOutline(
 }
 
 /**
- * addLeftOutline - adds an outline at the left side of the pixel.
+ * AddLeftOutline - adds an outline at the left side of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -521,7 +526,7 @@ function addLeftOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
 }
 
 /**
- * addRightOutline - adds an outline at the right side of the pixel.
+ * AddRightOutline - adds an outline at the right side of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.

@@ -17,9 +17,9 @@ const state = {
   minRadius: 1,
   maxRadius: 50,
   segmentsPerLabelmap: 65535, // Max is 65535 due to using 16-bit Unsigned ints.
-  alpha: 0.6,
+  alpha: 0.2,
   alphaOfInactiveLabelmap: 0.2,
-  outlineAlpha: 1.0,
+  outlineAlpha: 0.75,
   outlineWidth: 3,
   colorMapId: 'BrushColorMap',
   series: {},
