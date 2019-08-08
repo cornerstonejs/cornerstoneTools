@@ -200,6 +200,32 @@ function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
 }
 
 /**
+ * SetCacheLabelMap2DView - Caches a labelmap2D view if its not cached.
+ *
+ * @param  {Object} labelmap3D   The 3D labelmap.
+ * @param  {number} imageIdIndex The imageId Index.
+ * @param  {number} rows         The number of rows.
+ * @param  {number} columns      The number of columns.
+ * @returns {null}
+ */
+function setCacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns) {
+  if (labelmap3D.labelmaps2D[imageIdIndex]) {
+    return;
+  }
+
+  const sliceLength = rows * columns;
+  const byteOffset = sliceLength * 2 * imageIdIndex; // 2 bytes/pixel
+
+  const pixelData = new Uint16Array(labelmap3D.buffer, byteOffset, sliceLength);
+
+  labelmap3D.labelmaps2D[imageIdIndex] = {
+    pixelData,
+    getSegmentIndexes: () => new Set(pixelData),
+    invalidated: true,
+  };
+}
+
+/**
  * GetLabelmapStats - returns the maximum pixel value, mean and standard
  * deviation of the segment given by the segmentIndex of the scan on the element.
  *
@@ -1013,6 +1039,7 @@ export default {
     labelmap3DByFirstImageId: setLabelmap3DByFirstImageId,
     incrementActiveSegmentIndex: setIncrementActiveSegmentIndex,
     decrementActiveSegmentIndex: setDecrementActiveSegmentIndex,
+    cacheLabelMap2DView: setCacheLabelMap2DView,
     activeSegmentIndex: setActiveSegmentIndex,
     deleteSegment: setDeleteSegment,
     colorLUT: setColorLUT,
