@@ -60,6 +60,37 @@ class BaseSegmentationTool extends BaseTool {
     throw new Error(`Method _getCursor not implemented for ${this.name}.`);
   }
 
+  /**
+   * Sets the start handle point and claims the eventDispatcher event
+   *
+   * @private
+   * @param {Object} evt // mousedown, touchstart, click
+   * @returns {void|null}
+   */
+  _startOutliningRegion(evt) {
+    throw new Error(
+      `Method _startOutliningRegion not implemented for ${
+        this.name
+      }, you must use a segmentation mixin.`
+    );
+  }
+
+  /**
+   * This function will update the handles and updateImage to force re-draw
+   *
+   * @private
+   * @method _setHandlesAndUpdate
+   * @param {Object} evt  Interaction event emitted by an enabledElement
+   * @returns {void}
+   */
+  _setHandlesAndUpdate(evt) {
+    throw new Error(
+      `Method _setHandlesAndUpdate not implemented for ${
+        this.name
+      }, you must use a segmentation mixin.`
+    );
+  }
+
   // ===================================================================
   // Virtual Methods - Have default behavior but may be overridden.
   // ===================================================================
