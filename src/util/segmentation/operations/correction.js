@@ -41,9 +41,9 @@ export default function correction(
 
   logger.warn(points);
 
-  //const startAndEndEqual =
+  // Const startAndEndEqual =
   //  points[0].segment === points[points.length - 1].segment;
-  //const startOutside = points[0].segment === outsideLabelValue;
+  // const startOutside = points[0].segment === outsideLabelValue;
 
   let allInside = true;
   let allOutside = true;
@@ -62,7 +62,7 @@ export default function correction(
     }
   }
 
-  //const firstInsidePoint = points.find(p => p.segment === labelValue);
+  // Const firstInsidePoint = points.find(p => p.segment === labelValue);
 
   logger.warn(allOutside, allInside);
 
@@ -80,8 +80,72 @@ export default function correction(
     return;
   }
 
+  let isLabel = points[0].segment === labelValue;
+
+  logger.warn(isLabel);
+
+  const lineSegments = [];
+
+  lineSegments.push({
+    additive: !isLabel,
+    points: [],
+  });
+
+  let lineSegmentIndex = 0;
+
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+
+    if (isLabel) {
+      lineSegments[lineSegmentIndex].points.push(point);
+
+      if (point.segment !== labelValue) {
+        // Start a new line segment and add this point.
+        lineSegmentIndex++;
+        isLabel = !isLabel;
+        lineSegments.push({
+          additive: true,
+          points: [],
+        });
+        lineSegments[lineSegmentIndex].points.push(point);
+      }
+    } else {
+      lineSegments[lineSegmentIndex].points.push(point);
+
+      if (point.segment === labelValue) {
+        // Start a new line segment and add this point.
+        lineSegmentIndex++;
+        isLabel = !isLabel;
+        lineSegments.push({
+          additive: false,
+          points: [],
+        });
+        lineSegments[lineSegmentIndex].points.push(point);
+      }
+    }
+  }
+
+  // Remove the first and last line segments as they don't form a complete opperation.
+
+  lineSegments.pop();
+  lineSegments.shift();
+
+  //logger.warn(lineSegments);
+
+  for (let i = 0; i < lineSegments.length; i++) {
+    const lineSegment = lineSegments[i];
+
+    if (lineSegment.additive) {
+      // TODO -> additive mode
+      logger.warn('implement additive mode!');
+    } else {
+      // TODO -> additive mode
+      logger.warn('implement subtractive mode!');
+    }
+  }
+
   /*
-  if (startOutside && startAndEndEqual ) {
+  If (startOutside && startAndEndEqual ) {
     // If the user draws a line which starts and ends outside the segmenation a part of it is cut off (left image)
     // TODO: this behaviour currently isn't correct. It should erase the entire portion of the segment, not just what is inside the polygon defined by the points
     // Not sure what the fastest way to do this is yet.
