@@ -1,5 +1,9 @@
 import { fillInside } from '.';
 
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:opperations:correction');
+
 /*
 With the correction tool you draw a stroke and the tool does "something useful"
 http://mitk.org/wiki/Interactive_segmentation
@@ -19,19 +23,23 @@ You do not have to draw a closed contour to use the Correction tool and do not n
 export default function correction(
   points,
   segmentationData,
-  image,
+  evt,
   labelValue = 1
 ) {
-  const { width } = image;
+  const { image } = evt.detail;
+  const cols = image.width;
 
   // For each point, determine whether or not it is inside a segment
   points.forEach(point => {
     const { x, y } = point;
-    const xRound = Math.round(x);
-    const yRound = Math.round(y);
 
-    point.segment = segmentationData[yRound * width + xRound];
+    const xRound = Math.floor(x);
+    const yRound = Math.floor(y);
+
+    point.segment = segmentationData[yRound * cols + xRound];
   });
+
+  logger.warn(points);
 
   const outsideLabelValue = 0;
   const startAndEndEqual =
@@ -40,12 +48,8 @@ export default function correction(
   const firstInsidePoint = points.find(p => p.segment !== 0);
 
   if (!firstInsidePoint) {
-    // eslint-disable-next-line
-    console.log('The line never intersects a segment');
-    // TODO: if the user draws a line which starts and ends outside the segmenation AND it intersects no other segmentation the endpoints of the line are connected and the resulting contour is filled
-    // ... Do nothing (or draw a contour?)
-    // In the docs it says it draws a contour, but in the latest application
-    // it doesn't seem to do that
+    logger.warn('The line never intersects a segment');
+    fillInside(points, segmentationData, evt, labelValue);
 
     return;
   }
@@ -60,9 +64,13 @@ export default function correction(
     // If the user draws a line which starts and ends outside the segmenation a part of it is cut off (left image)
     // TODO: this behaviour currently isn't correct. It should erase the entire portion of the segment, not just what is inside the polygon defined by the points
     // Not sure what the fastest way to do this is yet.
-    return fillInside(points, segmentationData, image, outsideLabelValue);
+    fillInside(points, segmentationData, evt, outsideLabelValue);
+
+    return;
   } else if (!startOutside && startAndEndEqual && allSegmentsEqualOrOutside) {
     // If the line is drawn fully inside the segmentation the marked region is added to the segmentation (right image)
-    return fillInside(points, segmentationData, image, labelValue);
+    fillInside(points, segmentationData, evt, labelValue);
+
+    return;
   }
 }
