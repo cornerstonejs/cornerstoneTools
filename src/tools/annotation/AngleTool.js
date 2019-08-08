@@ -290,7 +290,7 @@ export default class AngleTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    // Step 1, create start and second middle
+    // Step 1, create start and second middle.
     moveNewHandle(
       eventData,
       this.name,
@@ -304,7 +304,7 @@ export default class AngleTool extends BaseAnnotationTool {
 
         external.cornerstone.updateImage(element);
 
-        // Step 2, create end
+        // Step 2, create end.
         moveNewHandle(
           eventData,
           this.name,
