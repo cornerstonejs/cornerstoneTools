@@ -73,7 +73,6 @@ export default function(evt) {
     return;
   }
 
-  // TODO -> Configurable outline by global brush module config.
   // TODO -> outline for inactive labelmaps? Discuss.
 
   renderInactiveLabelMaps(
@@ -157,10 +156,13 @@ function renderInactiveLabelMaps(
 }
 
 /**
+ * renderOutline - Renders the outlines of segments to the canvas.
+ *
  * @param  {Object} evt             The cornerstone event.
  * @param  {Object} labelmap3D      The 3D labelmap.
  * @param  {number} labelmapIndex   The index of the labelmap.
  * @param  {Object} labelmap2D      The 2D labelmap for this current image.
+ * @returns {null}
  */
 function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
   // TODO -> We need to store the cached labelmap.
@@ -169,6 +171,7 @@ function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
   }
 
   const eventData = evt.detail;
+<<<<<<< HEAD
   const { element, image, canvasContext } = eventData;
   const { canvas } = canvasContext;
   const segmentationData = labelmap2D.pixelData;
@@ -185,9 +188,60 @@ function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
       //pixelOnBorder({ x, y }, segmentationData, width, height, cols, element);
     }
   }
+=======
+  const { element, canvasContext } = eventData;
 
+  const lineWidth = state.outlineWidth || 1;
+  const lineSegments = getLineSegments(
+    eventData,
+    labelmap3D,
+    labelmap2D,
+    lineWidth
+  );
+
+  const context = getNewContext(canvasContext.canvas);
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
+  const colorLutTable = state.colorLutTables[colorMapId];
 
+  // Draw outlines.
+  draw(context, context => {
+    for (let i = 0; i < lineSegments.length; i++) {
+      if (lineSegments[i]) {
+        const color = colorLutTable[i];
+
+        drawLines(
+          context,
+          element,
+          lineSegments[i],
+          {
+            color: `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1.0 )`,
+            lineWidth,
+          },
+          'canvas'
+        );
+      }
+    }
+  });
+}
+>>>>>>> Configurable line length. Paint inside the pixel.
+
+/**
+ * getLineSegments - Returns an object containing all the line segments to be
+ * drawn the canvas.
+ *
+ * @param  {Object} eventData The eventdata associated with the cornerstone event.
+ * @param  {Object} labelmap3D The 3D labelmap.
+ * @param  {Object} labelmap2D The 2D labelmap for this current image.
+ * @param  {number} lineWidth The width of the line segments.
+ *
+ * @returns {Object[][]} An array of arrays of lines for each segment.
+ */
+function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
+  const { element, image } = eventData;
+  const cols = image.width;
+  const rows = image.height;
+
+<<<<<<< HEAD
   //const getPixelIndex = coord => coord[1] * cols + coord[0];
   //const getPixelCoordinateFromPixelIndex = pixelIndex => {
   //  return [Math.floor(pixelIndex / cols), pixelIndex % cols];
@@ -210,6 +264,11 @@ function pixelOnBorder(
   coord.y = Math.floor(coord.y);
 
   const getPixelIndex = pixel => pixel.y * cols + pixel.y;
+=======
+  const pixelData = labelmap2D.pixelData;
+  const activeSegmentIndex = labelmap3D.activeSegmentIndex;
+  const lineSegments = [];
+>>>>>>> Configurable line length. Paint inside the pixel.
 
   const segmentIndex = segmentationData[getPixelIndex(coord)];
 
@@ -217,7 +276,17 @@ function pixelOnBorder(
     logger.warn(coord);
   }
 
+<<<<<<< HEAD
   // TODO -> Outside image range, skip.
+=======
+  const halfLineWidth = lineWidth / 2;
+
+  const getPixelIndex = pixelCoord => pixelCoord[1] * cols + pixelCoord[0];
+  const getPixelCoordinateFromPixelIndex = pixelIndex => ({
+    x: pixelIndex % cols,
+    y: Math.floor(pixelIndex / cols),
+  });
+>>>>>>> Configurable line length. Paint inside the pixel.
 
   /*
   for (let i = -thickness; i <= thickness; ++i) {
@@ -226,6 +295,7 @@ function pixelOnBorder(
     }
   }
 
+<<<<<<< HEAD
 }
 */
 
@@ -238,6 +308,26 @@ function canvas line method() {
 
     if (segmentIndexAbove !== segmentIndex) {
       // TODO -> draw line above in segmentIndex color.
+=======
+    const coord = getPixelCoordinateFromPixelIndex(i);
+
+    // Check pixel above
+    if (coord.y - 1 >= 0) {
+      const pixelIndex = getPixelIndex([coord.x, coord.y - 1]);
+      const segmentIndexAbove = pixelData[pixelIndex];
+
+      if (segmentIndexAbove !== segmentIndex) {
+        addTopOutline(
+          lineSegments[segmentIndex],
+          element,
+          coord,
+          halfLineWidth
+        );
+      }
+    } else {
+      // Segment on Edge, draw line.
+      addTopOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
+>>>>>>> Configurable line length. Paint inside the pixel.
     }
   } else {
     // Segment on Edge, draw line.
@@ -249,14 +339,39 @@ function canvas line method() {
     const pixelIndex = getPixelIndex(coord[0], coord[1] + 1);
     const segmentIndexBelow = pixelData[pixelIndex];
 
+<<<<<<< HEAD
     if (segmentIndexBelow !== segmentIndex) {
       // TODO -> draw line below in segmentIndex color.
+=======
+    // Check pixel below
+    if (coord.y + 1 < rows) {
+      const pixelIndex = getPixelIndex([coord.x, coord.y + 1]);
+      const segmentIndexBelow = pixelData[pixelIndex];
+
+      if (segmentIndexBelow !== segmentIndex) {
+        addBottomOutline(
+          lineSegments[segmentIndex],
+          element,
+          coord,
+          halfLineWidth
+        );
+      }
+    } else {
+      // Segment on Edge, draw line.
+      addBottomOutline(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+>>>>>>> Configurable line length. Paint inside the pixel.
     }
   } else {
     // Segment on Edge, draw line.
     // TODO -> draw line below in segmentIndex color.
   }
 
+<<<<<<< HEAD
   // Check pixel to the left
   if (coord[0] - 1 >= 0) {
     const pixelIndex = getPixelIndex(coord[0] - 1, coord[1]);
@@ -264,12 +379,54 @@ function canvas line method() {
 
     if (segmentIndexLeft !== segmentIndex) {
       // TODO -> draw line to left in segmentIndex color.
+=======
+    // Check pixel to the left
+    if (coord.x - 1 >= 0) {
+      const pixelIndex = getPixelIndex([coord.x - 1, coord.y]);
+      const segmentIndexLeft = pixelData[pixelIndex];
+
+      if (segmentIndexLeft !== segmentIndex) {
+        addLeftOutline(
+          lineSegments[segmentIndex],
+          element,
+          coord,
+          halfLineWidth
+        );
+      }
+    } else {
+      // Segment on Edge, draw line.
+      addLeftOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
+    }
+
+    // Check pixel to the right
+    if (coord.x + 1 < cols) {
+      const pixelIndex = getPixelIndex([coord.x + 1, coord.y]);
+      const segmentIndexRight = pixelData[pixelIndex];
+
+      if (segmentIndexRight !== segmentIndex) {
+        addRightOutline(
+          lineSegments[segmentIndex],
+          element,
+          coord,
+          halfLineWidth
+        );
+      }
+    } else {
+      // Segment on Edge, draw line.
+      addRightOutline(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+>>>>>>> Configurable line length. Paint inside the pixel.
     }
   } else {
     // Segment on Edge, draw line.
     // TODO -> draw line to left in segmentIndex color.
   }
 
+<<<<<<< HEAD
   // Check pixel to the right
   if (coord[0] + 1 < cols) {
     const pixelIndex = getPixelIndex(coord[0] + 1, coord[1]);
@@ -282,6 +439,115 @@ function canvas line method() {
     // Segment on Edge, draw line.
     // TODO -> draw line to left in segmentIndex color.
   }
+=======
+  return lineSegments;
+}
+
+/**
+ * addTopOutline - adds an outline at the top of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
+function addTopOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, coord);
+  const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
+
+  start.y += halfLineWidth;
+  end.y += halfLineWidth;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * addBottomOutline - adds an outline at the bottom of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
+function addBottomOutline(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
+  const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
+
+  start.y -= halfLineWidth;
+  end.y -= halfLineWidth;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * addLeftOutline - adds an outline at the left side of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
+function addLeftOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, coord);
+  const end = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
+
+  start.x += halfLineWidth;
+  end.x += halfLineWidth;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * addRightOutline - adds an outline at the right side of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
+function addRightOutline(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
+  const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
+
+  start.x -= halfLineWidth;
+  end.x -= halfLineWidth;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+>>>>>>> Configurable line length. Paint inside the pixel.
 }
 */
 
@@ -293,6 +559,7 @@ function canvas line method() {
  * @param  {number} labelmapIndex    The index of the labelmap.
  * @param  {Object} labelmap2D       The 2D labelmap for this current image.
  * @param  {number} isActiveLabelMap   Whether the labelmap is active.
+ *
  * @returns {null}
  */
 function renderSegmentation(
