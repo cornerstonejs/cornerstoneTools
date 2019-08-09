@@ -2,6 +2,7 @@ import { fillInside } from '.';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 
 import { getLogger } from '../../logger';
+import floodFill from './floodFill.js';
 
 const logger = getLogger('util:segmentation:operations:correction');
 
@@ -44,8 +45,6 @@ export default function correction(
     });
   });
 
-  logger.warn(nodes);
-
   let allInside = true;
   let allOutside = true;
 
@@ -62,8 +61,6 @@ export default function correction(
       break;
     }
   }
-
-  logger.warn(allOutside, allInside);
 
   if (allOutside) {
     logger.warn('The line never intersects a segment.');
@@ -90,10 +87,6 @@ export default function correction(
     }
   }
 
-  logger.warn(workingLabelMap);
-
-  logger.warn(operations);
-
   // TODO ->
   // //DONE 1) copy labelmap only once for all calculations (this segment only).
   // 2) For each operation:
@@ -114,8 +107,8 @@ export default function correction(
         evt
       );
     } else {
-      // TODO -> additive mode
-      //logger.warn('implement subtractive mode!');
+      // TODO -> subtractive mode (this can likely be one function with different flags).
+      logger.warn('implement subtractive mode!');
     }
   }
 }
@@ -129,6 +122,14 @@ function addOperation(
 ) {
   logger.warn('additive operation...');
 
+  const cols = evt.detail.image.width;
+
+  const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
+  const getPixelCoordinateFromPixelIndex = pixelIndex => ({
+    x: pixelIndex % cols,
+    y: Math.floor(pixelIndex / cols),
+  });
+
   const pixelPath = [];
 
   for (let i = 0; i < nodes.length - 1; i++) {
@@ -141,7 +142,115 @@ function addOperation(
   // Push final node.
   pixelPath.push[nodes[nodes.length - 1]];
 
-  //logger.warn(pixelPath);
+  // Tobias Heimann Correction Algorithm:
+  // The algorithm is described in full length in Tobias Heimann's diploma thesis
+  // (MBI Technical Report 145, p. 37 - 40).
+
+  // Set path to 2.
+  for (let i = 0; i < pixelPath.length; i++) {
+    const pixel = pixelPath[i];
+
+    workingLabelMap[getPixelIndex(pixel)] = 2;
+  }
+
+  // Traverse the left side of the path and flood fill 0s.
+
+  const leftPath = [];
+  const rightPath = [];
+
+  logger.warn(pixelPath);
+
+  for (let i = 0; i < pixelPath.length - 1; i++) {
+    logger.warn(i);
+    const { left, right } = getNodesPerpendicularToPathPixel(
+      pixelPath[i],
+      pixelPath[i + 1]
+    );
+
+    logger.warn(left, right);
+
+    leftPath.push(left);
+    rightPath.push(right);
+  }
+
+  logger.warn('left + right:');
+
+  logger.warn(leftPath);
+  logger.warn(rightPath);
+}
+
+/**
+ * getNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
+ * which are perpendicular to the path direction. (i.e. to the left and to the right).
+ *
+ * @param  {Object} pathPixel
+ * @param  {Object} nextPathPixel
+ *
+ * @returns {Object} The coordinates of the left and right perpendicular pixels.
+ */
+function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
+  const direction = {
+    x: nextPathPixel.x - pathPixel.x,
+    y: nextPathPixel.y - pathPixel.y,
+  };
+
+  // p = pathPixel, n = nextPathPixel, L = left, R = right
+  //
+  // |n| |R|  | |n| |  |L| |n|
+  // | |p| |  |L|p|R|  | |p| |
+  // |L| | |  | | | |  | | |R|
+  //
+  // | |R| |           | |L| |
+  // |n|p| |           | |p|n|
+  // | |L| |           | |R| |
+  //
+  // |R| | |  | | | |  | | |L|
+  // | |p| |  |R|p|L|  | |p| |
+  // |n| |L|  | |n| |  |R| |n|
+
+  if (direction.x === -1 && direction.y === 1) {
+    return {
+      left: { x: pathPixel.x - 1, y: pathPixel.y - 1 },
+      right: { x: pathPixel.x + 1, y: pathPixel.y + 1 },
+    };
+  } else if (direction.x === 0 && direction.y === 1) {
+    return {
+      left: { x: pathPixel.x - 1, y: pathPixel.y },
+      right: { x: pathPixel.x + 1, y: pathPixel.y },
+    };
+  } else if (direction.x === 1 && direction.y === 1) {
+    return {
+      left: { x: pathPixel.x - 1, y: pathPixel.y + 1 },
+      right: { x: pathPixel.x + 1, y: pathPixel.y - 1 },
+    };
+  } else if (direction.x === 1 && direction.y === 0) {
+    return {
+      left: { x: pathPixel.x, y: pathPixel.y + 1 },
+      right: { x: pathPixel.x, y: pathPixel.y - 1 },
+    };
+  } else if (direction.x === 1 && direction.y === -1) {
+    return {
+      left: { x: pathPixel.x + 1, y: pathPixel.y + 1 },
+      right: { x: pathPixel.x - 1, y: pathPixel.y - 1 },
+    };
+  } else if (direction.x === 0 && direction.y === -1) {
+    return {
+      left: { x: pathPixel.x + 1, y: pathPixel.y },
+      right: { x: pathPixel.x - 1, y: pathPixel.y },
+    };
+  } else if (direction.x === -1 && direction.y === -1) {
+    return {
+      left: { x: pathPixel.x + 1, y: pathPixel.y - 1 },
+      right: { x: pathPixel.x - 1, y: pathPixel.y + 1 },
+    };
+  } else if (direction.x === -1 && direction.y === 0) {
+    return {
+      left: { x: pathPixel.x, y: pathPixel.y - 1 },
+      right: { x: pathPixel.x, y: pathPixel.y + 1 },
+    };
+  }
+
+  logger.error(pathPixel, nextPathPixel, direction);
 }
 
 /**

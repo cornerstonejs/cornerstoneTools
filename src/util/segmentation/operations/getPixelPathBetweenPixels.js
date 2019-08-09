@@ -41,8 +41,10 @@ const DIRECTIONS = {
  * GetPixelPathBetweenPixels - Generates a 1-pixel wide path of pixels between two pixels.
  * This is essentially simplified A* pathfinding, as we know there are no "obstacles".
  *
- * @param  {} p1
- * @param  {} p2
+ * @param  {Object} p1 The starting pixel
+ * @param  {Object} p2 The end pixel.
+ *
+ * @returns {Object[]} All of the pixels on the shortest path between p1 and p2.
  */
 export default function(p1, p2) {
   const p = {
