@@ -1,8 +1,9 @@
 import { fillInside } from '.';
+import external from '../../../externalModules.js';
 
 import { getLogger } from '../../logger';
 
-const logger = getLogger('util:segmentation:opperations:correction');
+const logger = getLogger('util:segmentation:operations:correction');
 
 /*
 With the correction tool you draw a stroke and the tool does "something useful"
@@ -29,29 +30,29 @@ export default function correction(
   const { image } = evt.detail;
   const cols = image.width;
 
-  // For each point, determine whether or not it is inside a segment
+  const nodes = [];
+
+  // For each point, snap to a pixel and determine whether or not it is inside a segment.
   points.forEach(point => {
-    const { x, y } = point;
+    const x = Math.floor(point.x);
+    const y = Math.floor(point.y);
 
-    const xRound = Math.floor(x);
-    const yRound = Math.floor(y);
-
-    point.segment = segmentationData[yRound * cols + xRound];
+    nodes.push({
+      x,
+      y,
+      segment: segmentationData[y * cols + x],
+    });
   });
 
-  logger.warn(points);
-
-  // Const startAndEndEqual =
-  //  points[0].segment === points[points.length - 1].segment;
-  // const startOutside = points[0].segment === outsideLabelValue;
+  logger.warn(nodes);
 
   let allInside = true;
   let allOutside = true;
 
-  for (let i = 0; i < points.length; i++) {
-    const point = points[i];
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
 
-    if (point.segment === labelValue) {
+    if (node.segment === labelValue) {
       allOutside = false;
     } else {
       allInside = false;
@@ -61,8 +62,6 @@ export default function correction(
       break;
     }
   }
-
-  // Const firstInsidePoint = points.find(p => p.segment === labelValue);
 
   logger.warn(allOutside, allInside);
 
@@ -80,62 +79,33 @@ export default function correction(
     return;
   }
 
-  let isLabel = points[0].segment === labelValue;
+  const operations = splitLineIntoSeperateoperations(nodes, labelValue);
 
-  logger.warn(isLabel);
+  logger.warn(operations);
 
-  const lineSegments = [];
+  const t0 = performance.now();
 
-  lineSegments.push({
-    additive: !isLabel,
-    points: [],
-  });
-
-  let lineSegmentIndex = 0;
-
-  for (let i = 0; i < points.length; i++) {
-    const point = points[i];
-
-    if (isLabel) {
-      lineSegments[lineSegmentIndex].points.push(point);
-
-      if (point.segment !== labelValue) {
-        // Start a new line segment and add this point.
-        lineSegmentIndex++;
-        isLabel = !isLabel;
-        lineSegments.push({
-          additive: true,
-          points: [],
-        });
-        lineSegments[lineSegmentIndex].points.push(point);
-      }
-    } else {
-      lineSegments[lineSegmentIndex].points.push(point);
-
-      if (point.segment === labelValue) {
-        // Start a new line segment and add this point.
-        lineSegmentIndex++;
-        isLabel = !isLabel;
-        lineSegments.push({
-          additive: false,
-          points: [],
-        });
-        lineSegments[lineSegmentIndex].points.push(point);
-      }
+  // TEMP
+  const path = getPixelPathBetweenPixels(
+    {
+      x: 0,
+      y: 0,
+    },
+    {
+      x: 40,
+      y: 25,
     }
-  }
+  );
 
-  // Remove the first and last line segments as they don't form a complete opperation.
+  const t1 = performance.now();
 
-  lineSegments.pop();
-  lineSegments.shift();
+  logger.warn(`time: ${t1 - t0}`);
+  logger.warn(path);
 
-  //logger.warn(lineSegments);
+  for (let i = 0; i < operations.length; i++) {
+    const operation = operations[i];
 
-  for (let i = 0; i < lineSegments.length; i++) {
-    const lineSegment = lineSegments[i];
-
-    if (lineSegment.additive) {
+    if (operation.additive) {
       // TODO -> additive mode
       logger.warn('implement additive mode!');
     } else {
@@ -143,22 +113,288 @@ export default function correction(
       logger.warn('implement subtractive mode!');
     }
   }
+}
 
-  /*
-  If (startOutside && startAndEndEqual ) {
-    // If the user draws a line which starts and ends outside the segmenation a part of it is cut off (left image)
-    // TODO: this behaviour currently isn't correct. It should erase the entire portion of the segment, not just what is inside the polygon defined by the points
-    // Not sure what the fastest way to do this is yet.
+/**
+ * splitLineIntoSeperateoperations
+ * @param  {} nodes
+ * @param  {} labelValue
+ */
+function splitLineIntoSeperateoperations(nodes, labelValue) {
+  // Check whether the first node is inside a segment of the appropriate label or not.
+  let isLabel = nodes[0].segment === labelValue;
 
-    // TODO -> Don't use zero. I think the fill mechanism in general needs to be rewritten to support multiple segments.
-    fillInside(points, segmentationData, evt, 0);
+  const operations = [];
 
-    return;
-  } else if (!startOutside && startAndEndEqual && allSegmentsEqualOrOutside) {
-    // If the line is drawn fully inside the segmentation the marked region is added to the segmentation (right image)
-    fillInside(points, segmentationData, evt, labelValue);
+  operations.push({
+    additive: !isLabel,
+    nodes: [],
+  });
 
-    return;
+  let operationIndex = 0;
+
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+
+    if (isLabel) {
+      operations[operationIndex].nodes.push(node);
+
+      if (node.segment !== labelValue) {
+        // Start a new operation and add this node.
+        operationIndex++;
+        isLabel = !isLabel;
+        operations.push({
+          additive: true,
+          nodes: [],
+        });
+        operations[operationIndex].nodes.push(node);
+      }
+    } else {
+      operations[operationIndex].nodes.push(node);
+
+      if (node.segment === labelValue) {
+        // Start a new operation and add this node.
+        operationIndex++;
+        isLabel = !isLabel;
+        operations.push({
+          additive: false,
+          nodes: [],
+        });
+        operations[operationIndex].nodes.push(node);
+      }
+    }
   }
-  */
+
+  // Trim the first and last entries, as they don't form full operations.
+
+  operations.pop();
+  operations.shift();
+
+  return operations;
+}
+
+/**
+ * getPixelPathBetweenPixels - Generates a 1-pixel wide path of pixels between two pixels.
+ * This is essentially simplified A* pathfinding, as we know there are no "obstacles".
+ *
+ * @param  {} p1
+ * @param  {} p2
+ */
+function getPixelPathBetweenPixels(p1, p2) {
+  const p = {
+    x: p1.x,
+    y: p1.y,
+  };
+
+  const path = [];
+
+  path.push({
+    x: p.x,
+    y: p.y,
+  });
+
+  // TEMP - make sure we step in the right direction.
+
+  //let counter = 1;
+
+  while (p2.x !== p.x || p2.y !== p.y) {
+    if (p2.x === p.x) {
+      // Goal is above or bellow us.
+      if (p2.y > p.y) {
+        p.y++;
+      } else {
+        p.y--;
+      }
+    } else if (p2.y === p.y) {
+      // Goal is to the left or right of us.
+      if (p2.x > p.x) {
+        p.x++;
+      } else {
+        p.x--;
+      }
+    } else if (p2.y > p.y) {
+      if (p2.x > p.x) {
+        // Can go up, right or diagonally up-right towards goal.
+        moveUpRight(p, p2);
+      } else {
+        // Can go up, left, or diagonally up-left towards goal.
+        moveUpLeft(p, p2);
+      }
+    } else {
+      if (p2.x > p.x) {
+        // Can go down, right, or diagonally down-right towards goal.
+        moveDownRight(p, p2);
+      } else {
+        // Can go down, left, or diagonally down-left towards goal.
+        moveDownLeft(p, p2);
+      }
+    }
+
+    path.push({
+      x: p.x,
+      y: p.y,
+    });
+  }
+
+  return path;
+}
+
+const oneOverRoot2 = 1 / Math.sqrt(2); // Cache this to avoid repeated computation.
+
+const DIRECTIONS = {
+  up: {
+    x: 0,
+    y: 1,
+  },
+  upRight: {
+    x: oneOverRoot2,
+    y: oneOverRoot2,
+  },
+  right: {
+    x: 1,
+    y: 0,
+  },
+  downRight: {
+    x: oneOverRoot2,
+    y: -oneOverRoot2,
+  },
+  down: {
+    x: 0,
+    y: 1,
+  },
+  downLeft: {
+    x: -oneOverRoot2,
+    y: -oneOverRoot2,
+  },
+  left: {
+    x: -1,
+    y: 0,
+  },
+  upLeft: {
+    x: -oneOverRoot2,
+    y: oneOverRoot2,
+  },
+};
+
+function moveUpRight(p, p2) {
+  const unitVector = unitVectorFromPtoP2(p, p2);
+
+  // Largest dot product is fastest way to travel.
+  const dotProducts = [
+    dotProduct2D(unitVector, DIRECTIONS.up),
+    dotProduct2D(unitVector, DIRECTIONS.right),
+    dotProduct2D(unitVector, DIRECTIONS.upRight),
+  ];
+
+  const largestIndex = getIndexOfLargestInLengthThreeArray(dotProducts);
+
+  switch (largestIndex) {
+    case 0:
+      p.y++;
+      break;
+    case 1:
+      p.x++;
+      break;
+    case 2:
+      p.y++;
+      p.x++;
+  }
+}
+
+function moveUpLeft(p, p2) {
+  const unitVector = unitVectorFromPtoP2(p, p2);
+
+  // Largest dot product is fastest way to travel.
+  const dotProducts = [
+    dotProduct2D(unitVector, DIRECTIONS.up),
+    dotProduct2D(unitVector, DIRECTIONS.left),
+    dotProduct2D(unitVector, DIRECTIONS.upLeft),
+  ];
+
+  const largestIndex = getIndexOfLargestInLengthThreeArray(dotProducts);
+
+  switch (largestIndex) {
+    case 0:
+      p.y++;
+      break;
+    case 1:
+      p.x--;
+      break;
+    case 2:
+      p.y++;
+      p.x--;
+  }
+}
+
+function moveDownRight(p, p2) {
+  const unitVector = unitVectorFromPtoP2(p, p2);
+
+  // Largest dot product is fastest way to travel.
+  const dotProducts = [
+    dotProduct2D(unitVector, DIRECTIONS.down),
+    dotProduct2D(unitVector, DIRECTIONS.right),
+    dotProduct2D(unitVector, DIRECTIONS.downRight),
+  ];
+
+  const largestIndex = getIndexOfLargestInLengthThreeArray(dotProducts);
+
+  switch (largestIndex) {
+    case 0:
+      p.y--;
+      break;
+    case 1:
+      p.x++;
+      break;
+    case 2:
+      p.y--;
+      p.x++;
+  }
+}
+
+function moveDownLeft(p, p2) {
+  const unitVector = unitVectorFromPtoP2(p, p2);
+
+  // Largest dot product is fastest way to travel.
+  const dotProducts = [
+    dotProduct2D(unitVector, DIRECTIONS.down),
+    dotProduct2D(unitVector, DIRECTIONS.left),
+    dotProduct2D(unitVector, DIRECTIONS.downLeft),
+  ];
+
+  const largestIndex = getIndexOfLargestInLengthThreeArray(dotProducts);
+
+  switch (largestIndex) {
+    case 0:
+      p.y--;
+      break;
+    case 1:
+      p.x--;
+      break;
+    case 2:
+      p.y--;
+      p.x--;
+  }
+}
+
+function unitVectorFromPtoP2(p, p2) {
+  const distance = external.cornerstoneMath.point.distance(p, p2);
+
+  return {
+    x: (p2.x - p.x) / distance,
+    y: (p2.y - p.y) / distance,
+  };
+}
+
+function dotProduct2D(p, p2) {
+  return p.x * p2.x + p.y * p2.y;
+}
+
+function getIndexOfLargestInLengthThreeArray(array) {
+  let largestIndex = array[0] > array[1] ? 0 : 1;
+
+  if (array[2] > array[largestIndex]) {
+    largestIndex = 2;
+  }
+
+  return largestIndex;
 }
