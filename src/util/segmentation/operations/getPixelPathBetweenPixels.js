@@ -38,7 +38,7 @@ const DIRECTIONS = {
 };
 
 /**
- * getPixelPathBetweenPixels - Generates a 1-pixel wide path of pixels between two pixels.
+ * GetPixelPathBetweenPixels - Generates a 1-pixel wide path of pixels between two pixels.
  * This is essentially simplified A* pathfinding, as we know there are no "obstacles".
  *
  * @param  {} p1
@@ -51,11 +51,6 @@ export default function(p1, p2) {
   };
 
   const path = [];
-
-  path.push({
-    x: p.x,
-    y: p.y,
-  });
 
   // TEMP - make sure we step in the right direction.
 
@@ -97,6 +92,8 @@ export default function(p1, p2) {
       y: p.y,
     });
   }
+
+  path.pop(); // Remove last node as is the same as the destination.
 
   return path;
 }

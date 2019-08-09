@@ -12,7 +12,7 @@ jest.mock('../../../externalModules.js', () => ({
 
 describe('getPixelPathBetweenPixels.js', () => {
   describe('getPixelPathBetweenPixels', () => {
-    it('should generate 41 points between (0,0) and (40,25)', () => {
+    it('should generate a path of 39 points between (0,0) and (40,25)', () => {
       const path = getPixelPathBetweenPixels(
         {
           x: 0,
@@ -24,9 +24,9 @@ describe('getPixelPathBetweenPixels.js', () => {
         }
       );
 
-      expect(path.length).toEqual(41);
-      expect(path[16].x).toEqual(16);
-      expect(path[16].y).toEqual(15);
+      expect(path.length).toEqual(39);
+      expect(path[15].x).toEqual(16);
+      expect(path[15].y).toEqual(15);
     });
   });
 });

@@ -1,4 +1,5 @@
 import { fillInside } from '.';
+import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 
 import { getLogger } from '../../logger';
 
@@ -80,22 +81,67 @@ export default function correction(
 
   const operations = splitLineIntoSeperateoperations(nodes, labelValue);
 
+  // Create binary labelmap with only this segment for calculations of each operation.
+  const workingLabelMap = new Uint8Array(segmentationData.length);
+
+  for (let i = 0; i < workingLabelMap.length; i++) {
+    if (segmentationData[i] === labelValue) {
+      workingLabelMap[i] = 1;
+    }
+  }
+
+  logger.warn(workingLabelMap);
+
   logger.warn(operations);
+
+  // TODO ->
+  // //DONE 1) copy labelmap only once for all calculations (this segment only).
+  // 2) For each operation:
+  //   a) Perform calculation and find pixels to change.
+  //   b) Change pixels on source labelmap. (fill some region with labelValue or zero)
+  //   c) Change pixels on copy for next calculation.
+  //
 
   for (let i = 0; i < operations.length; i++) {
     const operation = operations[i];
 
     if (operation.additive) {
-      addOperation(operation.nodes, segmentationData);
+      addOperation(
+        operation.nodes,
+        segmentationData,
+        workingLabelMap,
+        labelValue,
+        evt
+      );
     } else {
       // TODO -> additive mode
-      logger.warn('implement subtractive mode!');
+      //logger.warn('implement subtractive mode!');
     }
   }
 }
 
-function addOperation(nodes, segmentationData) {
+function addOperation(
+  nodes,
+  segmentationData,
+  workingLabelMap,
+  labelValue,
+  evt
+) {
   logger.warn('additive operation...');
+
+  const pixelPath = [];
+
+  for (let i = 0; i < nodes.length - 1; i++) {
+    // Push the node.
+    pixelPath.push(nodes[i]);
+    // Path towards next node.
+    pixelPath.push(...getPixelPathBetweenPixels(nodes[i], nodes[i + 1]));
+  }
+
+  // Push final node.
+  pixelPath.push[nodes[nodes.length - 1]];
+
+  //logger.warn(pixelPath);
 }
 
 /**
