@@ -182,38 +182,25 @@ function addOperation(
   logger.warn(pixelPath);
 
   for (let i = 0; i < pixelPath.length - 1; i++) {
-    logger.warn(i);
     const { left, right } = getNodesPerpendicularToPathPixel(
       pixelPath[i],
       pixelPath[i + 1]
     );
 
-    logger.warn(left, right);
-
     leftPath.push(left);
     rightPath.push(right);
   }
 
-  // TEMP
-
+  // TEMP TEMP TEMP
+  /*
   for (let i = 0; i < pixelPath.length; i++) {
     segmentationData[getPixelIndex(pixelPath[i])] = 2;
   }
-
-  for (let i = 0; i < nodes.length; i++) {
-    segmentationData[getPixelIndex(nodes[i])] = 3;
-  }
-
-  // TEMP
-
-  logger.warn('left + right:');
-
-  logger.warn(leftPath);
-  logger.warn(rightPath);
+  */
+  // TEMP TEMP TEMP
 
   // Define a getter for the fill routine to access the working label map.
 
-  /*
   function getter(x, y) {
     if (x >= cols || x < 0 || y > rows || y < 0) {
       return;
@@ -222,33 +209,71 @@ function addOperation(
     return workingLabelMap[y * cols + x];
   }
 
-  const node = [leftPath[0].x, leftPath[0].y];
+  let leftArea = 0;
+  let rightArea = 0;
 
-  logger.warn(node);
-
-  logger.warn(workingLabelMap[(node[0], node[1])]);
-
-  const result = floodFill({
-    getter,
-    seed: node,
-  });
-
-  logger.warn(result);
-  */
-
-  /*
   // Traverse the left side of the path and flood fill 0s.
   for (let i = 0; i < leftPath.length; i++) {
-    const node = leftPath[i];
+    // Left fill
+    const leftPathPixel = leftPath[i];
+    const leftPathValue = workingLabelMap[getPixelIndex(leftPathPixel)];
 
-    const result = floodFill({
-      getter: getter,
-      seed: [node.x, node.y],
-    });
+    if (leftPathValue === 0) {
+      const result = floodFill({
+        getter: getter,
+        seed: [leftPathPixel.x, leftPathPixel.y],
+      });
 
-    logger.warn(result);
+      const flooded = result.flooded;
+
+      leftArea += flooded.length;
+
+      for (let p = 0; p < flooded.length; p++) {
+        const floodedI = flooded[p];
+        workingLabelMap[floodedI[1] * cols + floodedI[0]] = 3;
+        // TEMP
+        //segmentationData[floodedI[1] * cols + floodedI[0]] = 3;
+      }
+    }
+
+    // Right fill
+    const rightPathPixel = rightPath[i];
+    const rightPathValue = workingLabelMap[getPixelIndex(rightPathPixel)];
+
+    if (rightPathValue === 0) {
+      const result = floodFill({
+        getter: getter,
+        seed: [rightPathPixel.x, rightPathPixel.y],
+      });
+
+      const flooded = result.flooded;
+
+      rightArea += flooded.length;
+
+      for (let p = 0; p < flooded.length; p++) {
+        const floodedI = flooded[p];
+        workingLabelMap[floodedI[1] * cols + floodedI[0]] = 4;
+        // TEMP
+        //segmentationData[floodedI[1] * cols + floodedI[0]] = 4;
+      }
+    }
   }
-  */
+
+  logger.warn(leftArea, rightArea);
+
+  // Fill in smallest area.
+  const fillValue = leftArea < rightArea ? 3 : 4;
+
+  for (let i = 0; i < workingLabelMap.length; i++) {
+    if (workingLabelMap[i] === fillValue) {
+      segmentationData[i] = labelValue;
+    }
+  }
+
+  // Fill in the path
+  for (let i = 0; i < pixelPath.length; i++) {
+    segmentationData[getPixelIndex(pixelPath[i])] = labelValue;
+  }
 }
 
 /**
