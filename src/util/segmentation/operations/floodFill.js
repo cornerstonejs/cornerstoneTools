@@ -58,12 +58,12 @@ export default function(options) {
 
   function markAsFlooded(getArgs) {
     flooded.push(getArgs);
-    onFlood.apply(undefined, getArgs);
+    onFlood(...getArgs);
   }
 
   function markAsBoundary(prevArgs) {
     bounds[prevArgs] = prevArgs;
-    onBoundary.apply(undefined, prevArgs);
+    onBoundary(...prevArgs);
   }
 
   function pushAdjacent(getArgs) {
@@ -83,12 +83,12 @@ export default function(options) {
   }
 
   function get(getArgs) {
-    return getter.apply(undefined, getArgs);
+    return getter(...getArgs);
   }
 
   function safely(f, args) {
     try {
-      return f.apply(undefined, args);
+      return f(...args);
     } catch (error) {
       return;
     }
@@ -99,6 +99,7 @@ export default function(options) {
 
     return permutations.filter(function(perm) {
       const count = countNonZeroes(perm);
+
       return count !== 0 && (count === 1 || diagonals);
     });
   }
@@ -114,6 +115,7 @@ export default function(options) {
 
     for (let i = 0; i < Math.pow(3, length); i += 1) {
       const string = lpad(i.toString(3), '0', length);
+
       perms.push(permutation(string));
     }
 
@@ -123,7 +125,7 @@ export default function(options) {
   function boundaries() {
     const array = [];
 
-    for (let key in bounds) {
+    for (const key in bounds) {
       if (bounds.hasOwnProperty(key)) {
         array.unshift(bounds[key]);
       }
@@ -152,5 +154,6 @@ function countNonZeroes(array) {
 function lpad(string, character, length) {
   const array = new Array(length + 1);
   const pad = array.join(character);
+
   return (pad + string).slice(-length);
 }

@@ -180,7 +180,7 @@ function addOperation(
 }
 
 /**
- * getNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
+ * GetNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
  * which are perpendicular to the path direction. (i.e. to the left and to the right).
  *
  * @param  {Object} pathPixel
@@ -194,7 +194,7 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
     y: nextPathPixel.y - pathPixel.y,
   };
 
-  // p = pathPixel, n = nextPathPixel, L = left, R = right
+  // P = pathPixel, n = nextPathPixel, L = left, R = right
   //
   // |n| |R|  | |n| |  |L| |n|
   // | |p| |  |L|p|R|  | |p| |
