@@ -1,6 +1,7 @@
 import { fillInside } from '.';
 import { draw, drawLines, getNewContext } from '../../../drawing/index.js';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
+import clip from '../../clip';
 
 import { getLogger } from '../../logger';
 import floodFill from './floodFill.js';
@@ -31,6 +32,7 @@ export default function correction(
 ) {
   const { image } = evt.detail;
   const cols = image.width;
+  const rows = image.height;
 
   const nodes = [];
 
@@ -38,8 +40,12 @@ export default function correction(
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
 
-    const x = Math.floor(point.x);
-    const y = Math.floor(point.y);
+    let x = Math.floor(point.x);
+    let y = Math.floor(point.y);
+
+    // Clamp within the confines of the image.
+    x = clip(x, 0, cols - 1);
+    y = clip(y, 0, rows - 1);
 
     const lastNode = nodes[nodes.length - 1];
 
