@@ -344,13 +344,15 @@ function splitLineIntoSeperateoperations(nodes, labelValue) {
       operations[operationIndex].nodes.push(node);
 
       if (node.segment !== labelValue) {
-        // Start a new operation and add this node.
+        // Start a new operation and add this node and the previous node.
+
         operationIndex++;
         isLabel = !isLabel;
         operations.push({
           additive: true,
           nodes: [],
         });
+        operations[operationIndex].nodes.push(nodes[i - 1]);
         operations[operationIndex].nodes.push(node);
       }
     } else {
@@ -364,6 +366,7 @@ function splitLineIntoSeperateoperations(nodes, labelValue) {
           additive: false,
           nodes: [],
         });
+        operations[operationIndex].nodes.push(nodes[i - 1]);
         operations[operationIndex].nodes.push(node);
       }
     }
