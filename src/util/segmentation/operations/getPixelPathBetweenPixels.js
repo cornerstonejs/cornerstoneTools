@@ -1,4 +1,5 @@
 import external from '../../../externalModules.js';
+import { getLogger } from '../../logger.js';
 
 const oneOverRoot2 = 1 / Math.sqrt(2); // Cache this to avoid repeated computation.
 
@@ -53,10 +54,6 @@ export default function(p1, p2) {
   };
 
   const path = [];
-
-  // TEMP - make sure we step in the right direction.
-
-  // let counter = 1;
 
   while (p2.x !== p.x || p2.y !== p.y) {
     if (p2.x === p.x) {

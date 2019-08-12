@@ -1,4 +1,5 @@
 import { fillInside } from '.';
+import { draw, drawLines, getNewContext } from '../../../drawing/index.js';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 
 import { getLogger } from '../../logger';
@@ -34,16 +35,25 @@ export default function correction(
   const nodes = [];
 
   // For each point, snap to a pixel and determine whether or not it is inside a segment.
-  points.forEach(point => {
+  for (let i = 0; i < points.length; i++) {
+    const point = points[i];
+
     const x = Math.floor(point.x);
     const y = Math.floor(point.y);
+
+    const lastNode = nodes[nodes.length - 1];
+
+    // Skip the node if it falls in the same pixel as the previous point.
+    if (lastNode && x === lastNode.x && y === lastNode.y) {
+      continue;
+    }
 
     nodes.push({
       x,
       y,
       segment: segmentationData[y * cols + x],
     });
-  });
+  }
 
   let allInside = true;
   let allOutside = true;
@@ -122,7 +132,12 @@ function addOperation(
 ) {
   logger.warn('additive operation...');
 
-  const cols = evt.detail.image.width;
+  const eventData = evt.detail;
+
+  const { image } = eventData;
+
+  const cols = image.width;
+  const rows = image.height;
 
   const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
   const getPixelCoordinateFromPixelIndex = pixelIndex => ({
@@ -153,7 +168,7 @@ function addOperation(
     workingLabelMap[getPixelIndex(pixel)] = 2;
   }
 
-  // Traverse the left side of the path and flood fill 0s.
+  // Get paths on either side.
 
   const leftPath = [];
   const rightPath = [];
@@ -173,10 +188,61 @@ function addOperation(
     rightPath.push(right);
   }
 
+  // TEMP
+
+  for (let i = 0; i < pixelPath.length; i++) {
+    segmentationData[getPixelIndex(pixelPath[i])] = 2;
+  }
+
+  for (let i = 0; i < nodes.length; i++) {
+    segmentationData[getPixelIndex(nodes[i])] = 3;
+  }
+
+  // TEMP
+
   logger.warn('left + right:');
 
   logger.warn(leftPath);
   logger.warn(rightPath);
+
+  // Define a getter for the fill routine to access the working label map.
+
+  /*
+  function getter(x, y) {
+    if (x >= cols || x < 0 || y > rows || y < 0) {
+      return;
+    }
+
+    return workingLabelMap[y * cols + x];
+  }
+
+  const node = [leftPath[0].x, leftPath[0].y];
+
+  logger.warn(node);
+
+  logger.warn(workingLabelMap[(node[0], node[1])]);
+
+  const result = floodFill({
+    getter,
+    seed: node,
+  });
+
+  logger.warn(result);
+  */
+
+  /*
+  // Traverse the left side of the path and flood fill 0s.
+  for (let i = 0; i < leftPath.length; i++) {
+    const node = leftPath[i];
+
+    const result = floodFill({
+      getter: getter,
+      seed: [node.x, node.y],
+    });
+
+    logger.warn(result);
+  }
+  */
 }
 
 /**
