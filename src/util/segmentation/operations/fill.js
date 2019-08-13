@@ -20,9 +20,8 @@ const operationList = {
     FILL_INSIDE: evt => {
       fillInsideCircle(evt);
     },
-    // TODO
-    FILL_OUTSIDE: (points, segmentationData, evt) => {
-      fillOutsideCircle(points, segmentationData, evt, 1);
+    FILL_OUTSIDE: evt => {
+      fillOutsideCircle(evt);
     },
     // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
@@ -40,9 +39,8 @@ const operationList = {
     FILL_INSIDE: evt => {
       fillInside(evt);
     },
-    // TODO
-    FILL_OUTSIDE: (points, segmentationData, evt) => {
-      fillOutside(points, segmentationData, evt, 1);
+    FILL_OUTSIDE: evt => {
+      fillOutside(evt);
     },
     // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
@@ -60,15 +58,8 @@ const operationList = {
     FILL_INSIDE: evt => {
       fillInsideBoundingBox(evt);
     },
-    // TODO
-    FILL_OUTSIDE: (points, segmentationData, evt) => {
-      const vertices = points.map(a => [a.x, a.y]);
-      const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(
-        vertices,
-        evt.detail.image
-      );
-
-      fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, evt, 1);
+    FILL_OUTSIDE: evt => {
+      fillOutsideBoundingBox(evt);
     },
     // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {

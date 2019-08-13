@@ -20,6 +20,7 @@ export default function eraseInsideBoundingBox(evt) {
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
       const pixelIndex = j * width + i;
+
       if (segmentationData[pixelIndex] === segmentIndex) {
         segmentationData[pixelIndex] = 0;
       }
