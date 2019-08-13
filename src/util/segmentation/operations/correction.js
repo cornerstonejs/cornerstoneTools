@@ -7,28 +7,49 @@ import floodFill from './floodFill.js';
 
 const logger = getLogger('util:segmentation:operations:correction');
 
-/*
-With the correction tool you draw a stroke and the tool does "something useful"
-http://mitk.org/wiki/Interactive_segmentation
-- Stroke starts and ends inside a segmentation -> something is added
-- Stroke starts and ends outside a segmentation -> something is removed
-- In and out several times -> above points are done for individual segments
-
-
-You do not have to draw a closed contour to use the Correction tool and do not need to switch between the Add and Subtract tool to perform small corrective changes. The following figure shows the usage of this tool:
-
-- if the user draws a line which starts and ends outside the segmentation AND it intersects no other segmentation the endpoints of the line are connected and the resulting contour is filled
-- if the user draws a line which starts and ends outside the segmentation a part of it is cut off (left image)
-- if the line is drawn fully inside the segmentation the marked region is added to the segmentation (right image)
-- http://docs.mitk.org/2016.11/org_mitk_views_segmentation.html
+/**
+ * correction - Using the stroke given, determine which action(s) to perfom:
+ * - Stroke starts and ends inside a segmentation: Behaves as an subtractive freehand scissors.
+ * - Stroke starts and ends outside a segmentation: Behaves as an additive freehand scissors.
+ * - Stroke out-in-out: Section is subtracted.
+ * - Stroke in-out-in: Section is added.
+ *
+ * @param  {Object[]} points An array of points drawn by the user.
+ * @param  {Uint16Array} segmentationData The 2D labelmap.
+ * @param  {Object} evt The cornerstone event.
+ * @param  {number} [labelValue=1] The label value being used.
  */
-
 export default function correction(
   points,
   segmentationData,
   evt,
   labelValue = 1
 ) {
+  const nodes = snapPointsToGrid(points, segmentationData, evt);
+
+  if (
+    simpleScissorOperation(nodes, points, segmentationData, evt, labelValue)
+  ) {
+    return;
+  }
+
+  const operations = splitLineIntoSeperateOperations(nodes, labelValue);
+
+  // Create binary labelmap with only this segment for calculations of each operation.
+  const workingLabelMap = new Uint8Array(segmentationData.length);
+
+  operations.forEach(operation => {
+    performOperation(
+      operation,
+      segmentationData,
+      workingLabelMap,
+      labelValue,
+      evt
+    );
+  });
+}
+
+function snapPointsToGrid(points, segmentationData, evt) {
   const { image } = evt.detail;
   const cols = image.width;
   const rows = image.height;
@@ -60,6 +81,16 @@ export default function correction(
     });
   }
 
+  return nodes;
+}
+
+function simpleScissorOperation(
+  nodes,
+  points,
+  segmentationData,
+  evt,
+  labelValue
+) {
   let allInside = true;
   let allOutside = true;
 
@@ -81,32 +112,15 @@ export default function correction(
     logger.warn('The line never intersects a segment.');
     fillInside(points, segmentationData, evt, labelValue);
 
-    return;
-  }
-
-  if (allInside) {
+    return true;
+  } else if (allInside) {
     logger.warn('The line is only ever inside the segment.');
     fillInside(points, segmentationData, evt, 0);
 
-    return;
+    return true;
   }
 
-  const operations = splitLineIntoSeperateoperations(nodes, labelValue);
-
-  // Create binary labelmap with only this segment for calculations of each operation.
-  const workingLabelMap = new Uint8Array(segmentationData.length);
-
-  for (let i = 0; i < operations.length; i++) {
-    const operation = operations[i];
-
-    performOperation(
-      operation,
-      segmentationData,
-      workingLabelMap,
-      labelValue,
-      evt
-    );
-  }
+  return false;
 }
 
 function performOperation(
@@ -143,7 +157,7 @@ function performOperation(
 
   // Find extent of region for floodfill (This segment + the drawn loop).
   // This is to reduce the extent of the outwards floodfill, which constitutes 99% of the computation.
-  let firstPixelOnPath = pixelPath[0];
+  const firstPixelOnPath = pixelPath[0];
   let xMin = firstPixelOnPath.x;
   let xMax = firstPixelOnPath.x;
   let yMin = firstPixelOnPath.y;
@@ -156,10 +170,18 @@ function performOperation(
 
       const { x, y } = getPixelCoordinateFromPixelIndex(i);
 
-      if (x < xMin) xMin = x;
-      if (x > xMax) xMax = x;
-      if (y < yMin) yMin = y;
-      if (y > yMax) yMax = y;
+      if (x < xMin) {
+        xMin = x;
+      }
+      if (x > xMax) {
+        xMax = x;
+      }
+      if (y < yMin) {
+        yMin = y;
+      }
+      if (y > yMax) {
+        yMax = y;
+      }
     } else {
       workingLabelMap[i] = 0;
     }
@@ -173,10 +195,18 @@ function performOperation(
 
     const { x, y } = pixel;
 
-    if (x < xMin) xMin = x;
-    if (x > xMax) xMax = x;
-    if (y < yMin) yMin = y;
-    if (y > yMax) yMax = y;
+    if (x < xMin) {
+      xMin = x;
+    }
+    if (x > xMax) {
+      xMax = x;
+    }
+    if (y < yMin) {
+      yMin = y;
+    }
+    if (y > yMax) {
+      yMax = y;
+    }
   }
 
   // Add a 2px border to stop the floodfill starting out of bounds and exploading.
@@ -391,11 +421,11 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
 }
 
 /**
- * SplitLineIntoSeperateoperations
+ * splitLineIntoSeperateOperations
  * @param  {} nodes
  * @param  {} labelValue
  */
-function splitLineIntoSeperateoperations(nodes, labelValue) {
+function splitLineIntoSeperateOperations(nodes, labelValue) {
   // Check whether the first node is inside a segment of the appropriate label or not.
   let isLabel = nodes[0].segment === labelValue;
 
