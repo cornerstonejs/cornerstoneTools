@@ -1,6 +1,7 @@
 import { fillInside } from '.';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import clip from '../../clip';
+import pointInImage from '../../pointInImage';
 
 import { getLogger } from '../../logger';
 import floodFill from './floodFill.js';
@@ -237,7 +238,7 @@ function performOperation(
     const leftPixel = leftPath[i];
     const leftValue = workingLabelMap[getPixelIndex(leftPixel)];
 
-    if (leftValue === fillOver && pixelInImage(leftPixel, rows, cols)) {
+    if (leftValue === fillOver && pointInImage(leftPixel, rows, cols)) {
       leftArea += fillFromPixel(leftPixel, 3, workingLabelMap, getter, cols);
     }
 
@@ -245,7 +246,7 @@ function performOperation(
     const rightPixel = rightPath[i];
     const rightValue = workingLabelMap[getPixelIndex(rightPixel)];
 
-    if (rightValue === fillOver && pixelInImage(rightPixel, rows, cols)) {
+    if (rightValue === fillOver && pointInImage(rightPixel, rows, cols)) {
       rightArea += fillFromPixel(rightPixel, 4, workingLabelMap, getter, cols);
     }
   }
@@ -312,16 +313,6 @@ function clipBoundingBox(boundingBox, rows, cols) {
   boundingBox.xMin = Math.max(boundingBox.xMin - border, 0);
   boundingBox.yMax = Math.min(boundingBox.yMax + border, rows);
   boundingBox.yMin = Math.max(boundingBox.yMin - border, 0);
-}
-
-/**
- * PixelInImage - Checks if the pixel is within the image.
- * @param  {Object} pixel The pixel.
- * @param  {number} rows The number of rows.
- * @param  {number} cols The number of columns.
- */
-function pixelInImage(pixel, rows, cols) {
-  return pixel.x < cols && pixel.x >= 0 && pixel.y < rows && pixel.y >= 0;
 }
 
 /**
