@@ -2,9 +2,12 @@ import {
   correction,
   fillInside,
   fillInsideBoundingBox,
+  eraseInsideBoundingBox,
   fillOutside,
+  eraseInside,
   fillOutsideBoundingBox,
   fillInsideCircle,
+  eraseInsideCircle,
   fillOutsideCircle,
 } from './index';
 import { getBoundingBoxAroundPolygon } from '../boundaries';
@@ -25,9 +28,8 @@ const operationList = {
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
       fillOutsideCircle(points, segmentationData, evt, 0);
     },
-    // TODO
-    ERASE_INSIDE: (points, segmentationData, evt) => {
-      fillInsideCircle(points, segmentationData, evt, 0);
+    ERASE_INSIDE: evt => {
+      eraseInsideCircle(evt);
     },
     // TODO
     default: (points, segmentationData, evt) => {
@@ -46,9 +48,8 @@ const operationList = {
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
       fillOutside(points, segmentationData, evt, 0);
     },
-    // TODO
-    ERASE_INSIDE: (points, segmentationData, evt) => {
-      fillInside(points, segmentationData, evt, 0);
+    ERASE_INSIDE: evt => {
+      eraseInside(evt);
     },
     // TODO
     default: (points, segmentationData, evt) => {
@@ -79,9 +80,8 @@ const operationList = {
 
       fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, evt, 0);
     },
-    // TODO
-    ERASE_INSIDE: (points, segmentationData, evt) => {
-      fillInsideBoundingBox(points, segmentationData, evt, 0);
+    ERASE_INSIDE: evt => {
+      eraseInsideBoundingBox(evt);
     },
     // TODO
     default: (points, segmentationData, evt) => {
@@ -96,6 +96,5 @@ const operationList = {
   },
 };
 
-export default (tool, strategy, evt) => {
-  return operationList[tool][strategy](evt) || null;
-};
+export default (tool, strategy, evt) =>
+  operationList[tool][strategy](evt) || null;

@@ -116,6 +116,22 @@
                   segmentations.
                 </td>
               </tr>
+              <tr>
+                <td>
+                  <select
+                    id="change-scissor-strategy"
+                    onchange="changeScissorStrategy(this.value)"
+                  >
+                    <option value="fillInside">Fill Inside</option>
+                    <option value="fillOutside">Fill Outside</option>
+                    <option value="eraseInside">Erase Inside</option>
+                    <option value="eraseOutside">Erase Outside</option>
+                  </select>
+                </td>
+                <td>
+                  Active strategy for Scissor Tools.
+                </td>
+              </tr>
             </table>
           </div>
         </div>
@@ -399,5 +415,53 @@
 
       brushTool.alphaOfInactiveLabelmap = normalisedAlpha;
     });
+
+    // Segmentation Tool API
+    const freehandScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'FreehandScissors'
+    );
+    const rectangleScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'RectangleScissors'
+    );
+    const circleScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'CircleScissors'
+    );
+
+    const changeScissorStrategyElement = document.getElementById(
+      'change-scissor-strategy'
+    );
+
+    console.log(changeScissorStrategyElement);
+
+    changeScissorStrategyElement.value = 'fillInside';
+
+    function changeScissorStrategy(value) {
+      console.log(value);
+      switch (value) {
+        case 'fillInside':
+          freehandScissorsTool.setActiveStrategy('FILL_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          break;
+        case 'eraseInside':
+          freehandScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          break;
+        case 'fillOutside':
+          freehandScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          break;
+        case 'eraseOutside':
+          freehandScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          break;
+      }
+    }
   </script>
 </html>
