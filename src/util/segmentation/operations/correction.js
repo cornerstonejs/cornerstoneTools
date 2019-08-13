@@ -96,12 +96,6 @@ export default function correction(
   // Create binary labelmap with only this segment for calculations of each operation.
   const workingLabelMap = new Uint8Array(segmentationData.length);
 
-  for (let i = 0; i < workingLabelMap.length; i++) {
-    if (segmentationData[i] === labelValue) {
-      workingLabelMap[i] = 1;
-    }
-  }
-
   // TODO ->
   // //DONE 1) copy labelmap only once for all calculations (this segment only).
   // 2) For each operation:
@@ -130,9 +124,17 @@ function performOperation(
   labelValue,
   evt
 ) {
-  logger.warn('additive operation...');
-
   const { nodes, additive } = operation;
+
+  if (additive) {
+    logger.warn('additive operation...');
+  } else {
+    logger.warn('subtractive operation...');
+  }
+
+  for (let i = 0; i < workingLabelMap.length; i++) {
+    workingLabelMap[i] = segmentationData[i] === labelValue ? 1 : 0;
+  }
 
   const fillOver = additive ? 0 : 1;
 
