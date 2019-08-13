@@ -96,14 +96,6 @@ export default function correction(
   // Create binary labelmap with only this segment for calculations of each operation.
   const workingLabelMap = new Uint8Array(segmentationData.length);
 
-  // TODO ->
-  // //DONE 1) copy labelmap only once for all calculations (this segment only).
-  // 2) For each operation:
-  //   a) Perform calculation and find pixels to change.
-  //   b) Change pixels on source labelmap. (fill some region with labelValue or zero)
-  //   c) Change pixels on copy for next calculation.
-  //
-
   for (let i = 0; i < operations.length; i++) {
     const operation = operations[i];
 
@@ -124,7 +116,18 @@ function performOperation(
   labelValue,
   evt
 ) {
+  const eventData = evt.detail;
+  const { image } = eventData;
+  const cols = image.width;
+  const rows = image.height;
+
   const { nodes, additive } = operation;
+  const fillOver = additive ? 0 : 1;
+  const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
+  const getPixelCoordinateFromPixelIndex = pixelIndex => ({
+    x: pixelIndex % cols,
+    y: Math.floor(pixelIndex / cols),
+  });
 
   if (additive) {
     logger.warn('additive operation...');
@@ -132,38 +135,66 @@ function performOperation(
     logger.warn('subtractive operation...');
   }
 
-  for (let i = 0; i < workingLabelMap.length; i++) {
-    workingLabelMap[i] = segmentationData[i] === labelValue ? 1 : 0;
-  }
-
-  const fillOver = additive ? 0 : 1;
-
-  const eventData = evt.detail;
-  const { image } = eventData;
-  const cols = image.width;
-  const rows = image.height;
-
-  const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
-
   // Tobias Heimann Correction Algorithm:
   // The algorithm is described in full length in Tobias Heimann's diploma thesis
   // (MBI Technical Report 145, p. 37 - 40).
 
   const { pixelPath, leftPath, rightPath } = getPixelPaths(nodes);
 
+  // Find extent of region for floodfill (This segment + the drawn loop).
+  // This is to reduce the extent of the outwards floodfill, which constitutes 99% of the computation.
+  let firstPixelOnPath = pixelPath[0];
+  let xMin = firstPixelOnPath.x;
+  let xMax = firstPixelOnPath.x;
+  let yMin = firstPixelOnPath.y;
+  let yMax = firstPixelOnPath.y;
+
+  // ...whilst also initializing the workingLabelmap
+  for (let i = 0; i < workingLabelMap.length; i++) {
+    if (segmentationData[i] === labelValue) {
+      workingLabelMap[i] = 1;
+
+      const { x, y } = getPixelCoordinateFromPixelIndex(i);
+
+      if (x < xMin) xMin = x;
+      if (x > xMax) xMax = x;
+      if (y < yMin) yMin = y;
+      if (y > yMax) yMax = y;
+    } else {
+      workingLabelMap[i] = 0;
+    }
+  }
+
   // Set workingLabelmap pixelPath to 2 to form a boundary.
   for (let i = 0; i < pixelPath.length; i++) {
     const pixel = pixelPath[i];
 
     workingLabelMap[getPixelIndex(pixel)] = 2;
+
+    const { x, y } = pixel;
+
+    if (x < xMin) xMin = x;
+    if (x > xMax) xMax = x;
+    if (y < yMin) yMin = y;
+    if (y > yMax) yMax = y;
   }
+
+  // Add a 2px border to stop the floodfill starting out of bounds and exploading.
+  const border = 2;
+
+  xMax = Math.min(xMax + border, cols);
+  xMin = Math.max(xMin - border, 0);
+  yMax = Math.min(yMax + border, rows);
+  yMin = Math.max(yMin - border, 0);
+
+  // Make dimensions one bigger in all directions.
 
   // Define a getter for the fill routine to access the working label map.
   function getter(x, y) {
     // Check if out of bounds, as the flood filler doesn't know about the dimensions of
     // The datastructure. E.g. if cols is 10, (0,1) and (10, 0) would point to the same
     // position in this getter.
-    if (x >= cols || x < 0 || y > rows || y < 0) {
+    if (x >= xMax || x < xMin || y >= yMax || y < yMin) {
       return;
     }
 
@@ -179,7 +210,13 @@ function performOperation(
     const leftPathPixel = leftPath[i];
     const leftPathValue = workingLabelMap[getPixelIndex(leftPathPixel)];
 
-    if (leftPathValue === fillOver) {
+    if (
+      leftPathValue === fillOver &&
+      leftPathPixel.x < cols &&
+      leftPathPixel.x >= 0 &&
+      leftPathPixel.y < rows &&
+      leftPathPixel.y >= 0
+    ) {
       leftArea += fillFromPixel(
         leftPathPixel,
         3,
@@ -192,7 +229,13 @@ function performOperation(
     const rightPathPixel = rightPath[i];
     const rightPathValue = workingLabelMap[getPixelIndex(rightPathPixel)];
 
-    if (rightPathValue === fillOver) {
+    if (
+      rightPathValue === fillOver &&
+      rightPathPixel.y < rows &&
+      rightPathPixel.y >= 0 &&
+      rightPathPixel.x < cols &&
+      rightPathPixel.x >= 0
+    ) {
       rightArea += fillFromPixel(
         rightPathPixel,
         4,
@@ -227,7 +270,7 @@ function performOperation(
 
 function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
   const result = floodFill({
-    getter: getter,
+    getter,
     seed: [pixel.x, pixel.y],
   });
 
