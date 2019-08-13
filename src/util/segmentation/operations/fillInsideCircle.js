@@ -2,13 +2,13 @@ import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
 
-export default function fillInsideCircle(
-  points,
-  segmentationData,
-  evt,
-  labelValue = 1
-) {
-  const { width } = evt.detail.image;
+export default function fillInsideCircle(evt) {
+  const eventData = evt.detail;
+  const { operationData } = evt;
+  const { segmentationData, segmentIndex } = operationData;
+
+  const { image } = eventData;
+  const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
@@ -25,7 +25,7 @@ export default function fillInsideCircle(
       });
 
       if (inside) {
-        segmentationData[y * width + x] = labelValue;
+        segmentationData[y * width + x] = segmentIndex;
       }
     }
   }

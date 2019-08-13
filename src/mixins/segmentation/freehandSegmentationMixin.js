@@ -118,14 +118,13 @@ function _applyStrategy(evt) {
   const segmentationData =
     labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
-  evt.OperationData = {
+  evt.operationData = {
     points,
     segmentationData,
+    segmentIndex: labelmap3D.activeSegmentIndex,
   };
 
   this.applyActiveStrategy(evt);
-
-  // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
 
   // Invalidate the brush tool data so it is redrawn
   labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;

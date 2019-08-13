@@ -15,27 +15,22 @@ const logger = getLogger('util:segmentation:operations:correction');
  * - Stroke out-in-out: Section is subtracted.
  * - Stroke in-out-in: Section is added.
  *
- * @param  {Object[]} points An array of points drawn by the user.
- * @param  {UInt16Array} segmentationData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
- * @param  {number} [labelValue=1] The label value being used.
  * @returns {null}
  */
-export default function correction(
-  points,
-  segmentationData,
-  evt,
-  labelValue = 1
-) {
-  const nodes = snapPointsToGrid(points, segmentationData, evt);
+export default function correction(evt) {
+  const { operationData } = evt;
+  const { segmentationData, segmentIndex, points } = operationData;
+
+  const nodes = snapPointsToGrid(evt);
 
   if (
-    simpleScissorOperation(nodes, points, segmentationData, evt, labelValue)
+    simpleScissorOperation(nodes, points, segmentationData, evt, segmentIndex)
   ) {
     return;
   }
 
-  const operations = splitLineIntoSeperateOperations(nodes, labelValue);
+  const operations = splitLineIntoSeperateOperations(nodes, segmentIndex);
 
   // Create binary labelmap with only this segment for calculations of each operation.
   const workingLabelMap = new Uint8Array(segmentationData.length);
@@ -45,7 +40,7 @@ export default function correction(
       operation,
       segmentationData,
       workingLabelMap,
-      labelValue,
+      segmentIndex,
       evt
     );
   });
@@ -59,7 +54,10 @@ export default function correction(
  * @param  {Object} evt The cornerstone event.
  * @returns {Object[]}
  */
-function snapPointsToGrid(points, segmentationData, evt) {
+function snapPointsToGrid(evt) {
+  const { operationData } = evt;
+  const { segmentationData, points } = operationData;
+
   const { image } = evt.detail;
   const cols = image.width;
   const rows = image.height;
@@ -99,7 +97,7 @@ function snapPointsToGrid(points, segmentationData, evt) {
  * @param  {Object} points - An array of points drawn by the user.
  * @param  {UInt16Array} segmentationData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
- * @param  {number} labelValue
+ * @param  {number} segmentIndex
  * @returns {boolean} Returns true if the operation was simple.
  */
 function simpleScissorOperation(
@@ -107,7 +105,7 @@ function simpleScissorOperation(
   points,
   segmentationData,
   evt,
-  labelValue
+  segmentIndex
 ) {
   let allInside = true;
   let allOutside = true;
@@ -115,7 +113,7 @@ function simpleScissorOperation(
   for (let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
 
-    if (node.segment === labelValue) {
+    if (node.segment === segmentIndex) {
       allOutside = false;
     } else {
       allInside = false;
@@ -128,12 +126,13 @@ function simpleScissorOperation(
 
   if (allOutside) {
     logger.warn('The line never intersects a segment.');
-    fillInside(points, segmentationData, evt, labelValue);
+    fillInside(evt);
 
     return true;
   } else if (allInside) {
+    // TODO - Erase inside?
     logger.warn('The line is only ever inside the segment.');
-    fillInside(points, segmentationData, evt, 0);
+    fillInside(evt);
 
     return true;
   }
@@ -148,14 +147,14 @@ function simpleScissorOperation(
  * @param  {Object} operation The operation.
  * @param  {UInt16Array} segmentationData The 2D labelmap.
  * @param  {UInt16Array} workingLabelMap A copy of the labelmap for processing purposes.
- * @param  {number} labelValue The label of the tool being used.
+ * @param  {number} segmentIndex The label of the tool being used.
  * @param  {Object} evt The cornerstone event.
  */
 function performOperation(
   operation,
   segmentationData,
   workingLabelMap,
-  labelValue,
+  segmentIndex,
   evt
 ) {
   const eventData = evt.detail;
@@ -194,7 +193,7 @@ function performOperation(
 
   // ...whilst also initializing the workingLabelmap
   for (let i = 0; i < workingLabelMap.length; i++) {
-    if (segmentationData[i] === labelValue) {
+    if (segmentationData[i] === segmentIndex) {
       const pixel = getPixelCoordinateFromPixelIndex(i);
 
       expandBoundingBox(boundingBox, pixel);
@@ -257,7 +256,7 @@ function performOperation(
     return;
   }
 
-  const replaceValue = additive ? labelValue : 0;
+  const replaceValue = additive ? segmentIndex : 0;
 
   // Fill in smallest area.
   const fillValue = leftArea < rightArea ? 3 : 4;
@@ -461,12 +460,12 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
  * seperate add/remove operations.
  *
  * @param  {Object[]} nodes The array of nodes.
- * @param  {number} labelValue The label value to replace.
+ * @param  {number} segmentIndex The label value to replace.
  * @returns {Object[]} An array of operations to perform.
  */
-function splitLineIntoSeperateOperations(nodes, labelValue) {
+function splitLineIntoSeperateOperations(nodes, segmentIndex) {
   // Check whether the first node is inside a segment of the appropriate label or not.
-  let isLabel = nodes[0].segment === labelValue;
+  let isLabel = nodes[0].segment === segmentIndex;
 
   const operations = [];
 
@@ -483,7 +482,7 @@ function splitLineIntoSeperateOperations(nodes, labelValue) {
     if (isLabel) {
       operations[operationIndex].nodes.push(node);
 
-      if (node.segment !== labelValue) {
+      if (node.segment !== segmentIndex) {
         // Start a new operation and include the last two nodes.
 
         operationIndex++;
@@ -498,7 +497,7 @@ function splitLineIntoSeperateOperations(nodes, labelValue) {
     } else {
       operations[operationIndex].nodes.push(node);
 
-      if (node.segment === labelValue) {
+      if (node.segment === segmentIndex) {
         // Start a new operation and add include the last two nodes.
         operationIndex++;
         isLabel = !isLabel;

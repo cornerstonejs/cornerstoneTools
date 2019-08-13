@@ -8,46 +8,58 @@ import {
   fillOutsideCircle,
 } from './index';
 import { getBoundingBoxAroundPolygon } from '../boundaries';
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:operations:fill');
 
 const operationList = {
   Circle: {
-    FILL_INSIDE: (points, segmentationData, evt) => {
-      fillInsideCircle(points, segmentationData, evt, 1);
+    FILL_INSIDE: evt => {
+      fillInsideCircle(evt);
     },
+    // TODO
     FILL_OUTSIDE: (points, segmentationData, evt) => {
       fillOutsideCircle(points, segmentationData, evt, 1);
     },
+    // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
       fillOutsideCircle(points, segmentationData, evt, 0);
     },
+    // TODO
     ERASE_INSIDE: (points, segmentationData, evt) => {
       fillInsideCircle(points, segmentationData, evt, 0);
     },
+    // TODO
     default: (points, segmentationData, evt) => {
       fillInsideCircle(points, segmentationData, evt, 1);
     },
   },
   Freehand: {
-    FILL_INSIDE: (points, segmentationData, evt) => {
-      fillInside(points, segmentationData, evt, 1);
+    FILL_INSIDE: evt => {
+      fillInside(evt);
     },
+    // TODO
     FILL_OUTSIDE: (points, segmentationData, evt) => {
       fillOutside(points, segmentationData, evt, 1);
     },
+    // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
       fillOutside(points, segmentationData, evt, 0);
     },
+    // TODO
     ERASE_INSIDE: (points, segmentationData, evt) => {
       fillInside(points, segmentationData, evt, 0);
     },
+    // TODO
     default: (points, segmentationData, evt) => {
       fillInside(points, segmentationData, evt, 1);
     },
   },
   Rectangle: {
-    FILL_INSIDE: (points, segmentationData, evt) => {
-      fillInsideBoundingBox(points, segmentationData, evt, 1);
+    FILL_INSIDE: evt => {
+      fillInsideBoundingBox(evt);
     },
+    // TODO
     FILL_OUTSIDE: (points, segmentationData, evt) => {
       const vertices = points.map(a => [a.x, a.y]);
       const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(
@@ -57,6 +69,7 @@ const operationList = {
 
       fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, evt, 1);
     },
+    // TODO
     ERASE_OUTSIDE: (points, segmentationData, evt) => {
       const vertices = points.map(a => [a.x, a.y]);
       const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(
@@ -66,22 +79,23 @@ const operationList = {
 
       fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, evt, 0);
     },
+    // TODO
     ERASE_INSIDE: (points, segmentationData, evt) => {
       fillInsideBoundingBox(points, segmentationData, evt, 0);
     },
+    // TODO
     default: (points, segmentationData, evt) => {
       fillInsideBoundingBox(points, segmentationData, evt, 1);
     },
   },
   Correction: {
-    default: (points, segmentationData, evt) => {
-      correction(points, segmentationData, evt);
+    // TODO
+    default: evt => {
+      correction(evt);
     },
   },
 };
 
 export default (tool, strategy, evt) => {
-  const { points, segmentationData } = evt.OperationData;
-
-  return operationList[tool][strategy](points, segmentationData, evt) || null;
+  return operationList[tool][strategy](evt) || null;
 };
