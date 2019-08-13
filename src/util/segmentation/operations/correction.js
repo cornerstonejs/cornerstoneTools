@@ -15,9 +15,10 @@ const logger = getLogger('util:segmentation:operations:correction');
  * - Stroke in-out-in: Section is added.
  *
  * @param  {Object[]} points An array of points drawn by the user.
- * @param  {Uint16Array} segmentationData The 2D labelmap.
+ * @param  {UInt16Array} segmentationData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @param  {number} [labelValue=1] The label value being used.
+ * @returns {null}
  */
 export default function correction(
   points,
@@ -49,6 +50,14 @@ export default function correction(
   });
 }
 
+/**
+ * snapPointsToGrid - Snap the freehand points to the labelmap grid and attach a label for each node.
+ *
+ * @param  {Object[]} points An array of points drawn by the user.
+ * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {Object} evt The cornerstone event.
+ * @returns {Object[]}
+ */
 function snapPointsToGrid(points, segmentationData, evt) {
   const { image } = evt.detail;
   const cols = image.width;
@@ -56,7 +65,6 @@ function snapPointsToGrid(points, segmentationData, evt) {
 
   const nodes = [];
 
-  // For each point, snap to a pixel and determine whether or not it is inside a segment.
   for (let i = 0; i < points.length; i++) {
     const point = points[i];
 
@@ -69,7 +77,7 @@ function snapPointsToGrid(points, segmentationData, evt) {
 
     const lastNode = nodes[nodes.length - 1];
 
-    // Skip the node if it falls in the same pixel as the previous point.
+    // Skip double counting of closely drawn freehand points.
     if (lastNode && x === lastNode.x && y === lastNode.y) {
       continue;
     }
@@ -83,7 +91,16 @@ function snapPointsToGrid(points, segmentationData, evt) {
 
   return nodes;
 }
-
+/**
+ * simpleScissorOperation - Check if the operation is a simple scissors
+ * add/remove, and performs it if so.
+ * @param  {Object[]} nodes - The nodes snapped to the grid.
+ * @param  {Object} points - An array of points drawn by the user.
+ * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {Object} evt The cornerstone event.
+ * @param  {number} labelValue
+ * @returns {boolean} Returns true if the operation was simple.
+ */
 function simpleScissorOperation(
   nodes,
   points,
@@ -123,6 +140,16 @@ function simpleScissorOperation(
   return false;
 }
 
+/**
+ * performOperation - Performs the given add/subtract operation using a modification of the Tobias Heimann Correction Algorithm:
+ * The algorithm is described in full length in Tobias Heimann's diploma thesis (MBI Technical Report 145, p. 37 - 40).
+ *
+ * @param  {Object} operation The operation.
+ * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {UInt16Array} workingLabelMap A copy of the labelmap for processing purposes.
+ * @param  {number} labelValue The label of the tool being used.
+ * @param  {Object} evt The cornerstone event.
+ */
 function performOperation(
   operation,
   segmentationData,
@@ -137,6 +164,8 @@ function performOperation(
 
   const { nodes, additive } = operation;
   const fillOver = additive ? 0 : 1;
+
+  // Local getters to swap from cornerstone vector notation and flattened array indicies.
   const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
   const getPixelCoordinateFromPixelIndex = pixelIndex => ({
     x: pixelIndex % cols,
@@ -149,39 +178,26 @@ function performOperation(
     logger.warn('subtractive operation...');
   }
 
-  // Tobias Heimann Correction Algorithm:
-  // The algorithm is described in full length in Tobias Heimann's diploma thesis
-  // (MBI Technical Report 145, p. 37 - 40).
-
   const { pixelPath, leftPath, rightPath } = getPixelPaths(nodes);
 
   // Find extent of region for floodfill (This segment + the drawn loop).
   // This is to reduce the extent of the outwards floodfill, which constitutes 99% of the computation.
   const firstPixelOnPath = pixelPath[0];
-  let xMin = firstPixelOnPath.x;
-  let xMax = firstPixelOnPath.x;
-  let yMin = firstPixelOnPath.y;
-  let yMax = firstPixelOnPath.y;
+
+  const boundingBox = {
+    xMin: firstPixelOnPath.x,
+    xMax: firstPixelOnPath.x,
+    yMin: firstPixelOnPath.y,
+    yMax: firstPixelOnPath.y,
+  };
 
   // ...whilst also initializing the workingLabelmap
   for (let i = 0; i < workingLabelMap.length; i++) {
     if (segmentationData[i] === labelValue) {
+      const pixel = getPixelCoordinateFromPixelIndex(i);
+
+      expandBoundingBox(boundingBox, pixel);
       workingLabelMap[i] = 1;
-
-      const { x, y } = getPixelCoordinateFromPixelIndex(i);
-
-      if (x < xMin) {
-        xMin = x;
-      }
-      if (x > xMax) {
-        xMax = x;
-      }
-      if (y < yMin) {
-        yMin = y;
-      }
-      if (y > yMax) {
-        yMax = y;
-      }
     } else {
       workingLabelMap[i] = 0;
     }
@@ -192,38 +208,19 @@ function performOperation(
     const pixel = pixelPath[i];
 
     workingLabelMap[getPixelIndex(pixel)] = 2;
-
-    const { x, y } = pixel;
-
-    if (x < xMin) {
-      xMin = x;
-    }
-    if (x > xMax) {
-      xMax = x;
-    }
-    if (y < yMin) {
-      yMin = y;
-    }
-    if (y > yMax) {
-      yMax = y;
-    }
+    expandBoundingBox(boundingBox, pixel);
   }
 
-  // Add a 2px border to stop the floodfill starting out of bounds and exploading.
-  const border = 2;
+  clipBoundingBox(boundingBox, rows, cols);
 
-  xMax = Math.min(xMax + border, cols);
-  xMin = Math.max(xMin - border, 0);
-  yMax = Math.min(yMax + border, rows);
-  yMin = Math.max(yMin - border, 0);
-
-  // Make dimensions one bigger in all directions.
+  const { xMin, xMax, yMin, yMax } = boundingBox;
 
   // Define a getter for the fill routine to access the working label map.
   function getter(x, y) {
     // Check if out of bounds, as the flood filler doesn't know about the dimensions of
-    // The datastructure. E.g. if cols is 10, (0,1) and (10, 0) would point to the same
+    // The data structure. E.g. if cols is 10, (0,1) and (10, 0) would point to the same
     // position in this getter.
+
     if (x >= xMax || x < xMin || y >= yMax || y < yMin) {
       return;
     }
@@ -234,45 +231,22 @@ function performOperation(
   let leftArea = 0;
   let rightArea = 0;
 
-  // Traverse the path and flood fill the left and right sides.
+  // Traverse the path whilst pouring paint off the left and right sides.
   for (let i = 0; i < leftPath.length; i++) {
     // Left fill
-    const leftPathPixel = leftPath[i];
-    const leftPathValue = workingLabelMap[getPixelIndex(leftPathPixel)];
+    const leftPixel = leftPath[i];
+    const leftValue = workingLabelMap[getPixelIndex(leftPixel)];
 
-    if (
-      leftPathValue === fillOver &&
-      leftPathPixel.x < cols &&
-      leftPathPixel.x >= 0 &&
-      leftPathPixel.y < rows &&
-      leftPathPixel.y >= 0
-    ) {
-      leftArea += fillFromPixel(
-        leftPathPixel,
-        3,
-        workingLabelMap,
-        getter,
-        cols
-      );
+    if (leftValue === fillOver && pixelInImage(leftPixel, rows, cols)) {
+      leftArea += fillFromPixel(leftPixel, 3, workingLabelMap, getter, cols);
     }
 
-    const rightPathPixel = rightPath[i];
-    const rightPathValue = workingLabelMap[getPixelIndex(rightPathPixel)];
+    // Right fill
+    const rightPixel = rightPath[i];
+    const rightValue = workingLabelMap[getPixelIndex(rightPixel)];
 
-    if (
-      rightPathValue === fillOver &&
-      rightPathPixel.y < rows &&
-      rightPathPixel.y >= 0 &&
-      rightPathPixel.x < cols &&
-      rightPathPixel.x >= 0
-    ) {
-      rightArea += fillFromPixel(
-        rightPathPixel,
-        4,
-        workingLabelMap,
-        getter,
-        cols
-      );
+    if (rightValue === fillOver && pixelInImage(rightPixel, rows, cols)) {
+      rightArea += fillFromPixel(rightPixel, 4, workingLabelMap, getter, cols);
     }
   }
 
@@ -282,10 +256,10 @@ function performOperation(
     return;
   }
 
-  // Fill in smallest area.
-  const fillValue = leftArea < rightArea ? 3 : 4;
   const replaceValue = additive ? labelValue : 0;
 
+  // Fill in smallest area.
+  const fillValue = leftArea < rightArea ? 3 : 4;
   for (let i = 0; i < workingLabelMap.length; i++) {
     if (workingLabelMap[i] === fillValue) {
       segmentationData[i] = replaceValue;
@@ -298,6 +272,66 @@ function performOperation(
   }
 }
 
+/**
+ * expandBoudningBox - expands the bounding box if the pixel falls outside it.
+ *
+ * @param  {Object} boundingBox The bounding box.
+ * @param  {Object} pixel The pixel.
+ * @returns {null}
+ */
+function expandBoundingBox(boundingBox, pixel) {
+  const { x, y } = pixel;
+
+  if (x < boundingBox.xMin) {
+    boundingBox.xMin = x;
+  }
+  if (x > boundingBox.xMax) {
+    boundingBox.xMax = x;
+  }
+  if (y < boundingBox.yMin) {
+    boundingBox.yMin = y;
+  }
+  if (y > boundingBox.yMax) {
+    boundingBox.yMax = y;
+  }
+}
+
+/**
+ * clipBoundingBox - Expands the bounding box by 2 px and then clips it to the image size.
+ * @param  {Object} boundingBox The bounding box.
+ * @param  {number} rows The number of rows.
+ * @param  {number} cols The number of columns.
+ * @returns {null}
+ */
+function clipBoundingBox(boundingBox, rows, cols) {
+  // Add a 2px border to stop the floodfill starting out of bounds and exploading.
+  const border = 2;
+
+  boundingBox.xMax = Math.min(boundingBox.xMax + border, cols);
+  boundingBox.xMin = Math.max(boundingBox.xMin - border, 0);
+  boundingBox.yMax = Math.min(boundingBox.yMax + border, rows);
+  boundingBox.yMin = Math.max(boundingBox.yMin - border, 0);
+}
+
+/**
+ * pixelInImage - Checks if the pixel is within the image.
+ * @param  {Object} pixel The pixel.
+ * @param  {number} rows The number of rows.
+ * @param  {number} cols The number of columns.
+ */
+function pixelInImage(pixel, rows, cols) {
+  return pixel.x < cols && pixel.x >= 0 && pixel.y < rows && pixel.y >= 0;
+}
+
+/**
+ * fillFromPixel - Performs a floodfill from the given pixel to the workingLabelMap.
+ * @param  {Object} pixel The pixel.
+ * @param  {number} fillValue The fill value.
+ * @param  {UInt8Array} workingLabelMap The working labelmap.
+ * @param  {function} getter The getter function for pixels in the labelmap.
+ * @param  {number} cols The number of columns.
+ * @returns {number} The number of pixels flooded.
+ */
 function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
   const result = floodFill({
     getter,
@@ -315,6 +349,11 @@ function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
   return flooded.length;
 }
 
+/**
+ * getPixelPaths - Interpolates the pixelPath using an obstacleless path finding algorithm.
+ * @param  {Object[]} nodes The nodes to interpolate between.
+ * @returns {Object} The pixelPath, and the path to the left and right of it.
+ */
 function getPixelPaths(nodes) {
   const pixelPath = [];
 
@@ -347,11 +386,11 @@ function getPixelPaths(nodes) {
 }
 
 /**
- * GetNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
+ * getNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
  * which are perpendicular to the path direction. (i.e. to the left and to the right).
  *
- * @param  {Object} pathPixel
- * @param  {Object} nextPathPixel
+ * @param  {Object} pathPixel The pixel being queried.
+ * @param  {Object} nextPathPixel the pathPixel's successor.
  *
  * @returns {Object} The coordinates of the left and right perpendicular pixels.
  */
@@ -417,13 +456,21 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
     };
   }
 
-  logger.error(pathPixel, nextPathPixel, direction);
+  logger.error(
+    `Unable to find left and right paths for flood fill `,
+    pathPixel,
+    nextPathPixel,
+    direction
+  );
 }
 
 /**
- * splitLineIntoSeperateOperations
- * @param  {} nodes
- * @param  {} labelValue
+ * SplitLineIntoSeperateOperations - Splits the path of nodes into
+ * seperate add/remove operations.
+ *
+ * @param  {Object[]} nodes The array of nodes.
+ * @param  {number} labelValue The label value to replace.
+ * @returns {Object[]} An array of operations to perform.
  */
 function splitLineIntoSeperateOperations(nodes, labelValue) {
   // Check whether the first node is inside a segment of the appropriate label or not.
@@ -445,7 +492,7 @@ function splitLineIntoSeperateOperations(nodes, labelValue) {
       operations[operationIndex].nodes.push(node);
 
       if (node.segment !== labelValue) {
-        // Start a new operation and add this node and the previous node.
+        // Start a new operation and include the last two nodes.
 
         operationIndex++;
         isLabel = !isLabel;
@@ -460,7 +507,7 @@ function splitLineIntoSeperateOperations(nodes, labelValue) {
       operations[operationIndex].nodes.push(node);
 
       if (node.segment === labelValue) {
-        // Start a new operation and add this node.
+        // Start a new operation and add include the last two nodes.
         operationIndex++;
         isLabel = !isLabel;
         operations.push({
