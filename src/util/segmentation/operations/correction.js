@@ -51,7 +51,7 @@ export default function correction(
 }
 
 /**
- * snapPointsToGrid - Snap the freehand points to the labelmap grid and attach a label for each node.
+ * SnapPointsToGrid - Snap the freehand points to the labelmap grid and attach a label for each node.
  *
  * @param  {Object[]} points An array of points drawn by the user.
  * @param  {UInt16Array} segmentationData The 2D labelmap.
@@ -92,7 +92,7 @@ function snapPointsToGrid(points, segmentationData, evt) {
   return nodes;
 }
 /**
- * simpleScissorOperation - Check if the operation is a simple scissors
+ * SimpleScissorOperation - Check if the operation is a simple scissors
  * add/remove, and performs it if so.
  * @param  {Object[]} nodes - The nodes snapped to the grid.
  * @param  {Object} points - An array of points drawn by the user.
@@ -260,6 +260,7 @@ function performOperation(
 
   // Fill in smallest area.
   const fillValue = leftArea < rightArea ? 3 : 4;
+
   for (let i = 0; i < workingLabelMap.length; i++) {
     if (workingLabelMap[i] === fillValue) {
       segmentationData[i] = replaceValue;
@@ -273,7 +274,7 @@ function performOperation(
 }
 
 /**
- * expandBoudningBox - expands the bounding box if the pixel falls outside it.
+ * ExpandBoudningBox - expands the bounding box if the pixel falls outside it.
  *
  * @param  {Object} boundingBox The bounding box.
  * @param  {Object} pixel The pixel.
@@ -297,7 +298,7 @@ function expandBoundingBox(boundingBox, pixel) {
 }
 
 /**
- * clipBoundingBox - Expands the bounding box by 2 px and then clips it to the image size.
+ * ClipBoundingBox - Expands the bounding box by 2 px and then clips it to the image size.
  * @param  {Object} boundingBox The bounding box.
  * @param  {number} rows The number of rows.
  * @param  {number} cols The number of columns.
@@ -314,7 +315,7 @@ function clipBoundingBox(boundingBox, rows, cols) {
 }
 
 /**
- * pixelInImage - Checks if the pixel is within the image.
+ * PixelInImage - Checks if the pixel is within the image.
  * @param  {Object} pixel The pixel.
  * @param  {number} rows The number of rows.
  * @param  {number} cols The number of columns.
@@ -324,7 +325,7 @@ function pixelInImage(pixel, rows, cols) {
 }
 
 /**
- * fillFromPixel - Performs a floodfill from the given pixel to the workingLabelMap.
+ * FillFromPixel - Performs a floodfill from the given pixel to the workingLabelMap.
  * @param  {Object} pixel The pixel.
  * @param  {number} fillValue The fill value.
  * @param  {UInt8Array} workingLabelMap The working labelmap.
@@ -350,7 +351,7 @@ function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
 }
 
 /**
- * getPixelPaths - Interpolates the pixelPath using an obstacleless path finding algorithm.
+ * GetPixelPaths - Interpolates the pixelPath using an obstacleless path finding algorithm.
  * @param  {Object[]} nodes The nodes to interpolate between.
  * @returns {Object} The pixelPath, and the path to the left and right of it.
  */
@@ -386,7 +387,7 @@ function getPixelPaths(nodes) {
 }
 
 /**
- * getNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
+ * GetNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
  * which are perpendicular to the path direction. (i.e. to the left and to the right).
  *
  * @param  {Object} pathPixel The pixel being queried.
