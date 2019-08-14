@@ -109,7 +109,6 @@ describe('CircleScissorsTool.js', () => {
 
       it('Calls right method on touchEndCallback ', () => {
         instantiatedTool.touchEndCallback(mockEvt);
-        console.log(instantiatedTool.defaultStrategy);
 
         expect(
           mixins.circleSegmentationMixin._applyStrategy

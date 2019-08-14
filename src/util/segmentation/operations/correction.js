@@ -1,4 +1,4 @@
-import { fillInside } from '.';
+import { fillInside, eraseInside } from './index.js';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import clip from '../../clip';
 import pointInImage from '../../pointInImage';
@@ -118,7 +118,7 @@ function simpleScissorOperation(nodes, evt, segmentIndex) {
   } else if (allInside) {
     // TODO - Erase inside?
     logger.warn('The line is only ever inside the segment.');
-    fillInside(evt);
+    eraseInside(evt);
 
     return true;
   }

@@ -5,7 +5,7 @@ import store from '../../store';
 import { getCursor } from '../../util/segmentation';
 
 const brushModule = store.modules.brush;
-const { getters } = brushModule;
+const { getters, setters } = brushModule;
 
 /**
  * Gets The cursor according to strategy.
@@ -120,7 +120,10 @@ function _applyStrategy(evt) {
   this.applyActiveStrategy(evt);
 
   // Invalidate the brush tool data so it is redrawn
-  labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;
+  const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+  labelmap2D.invalidated = true;
+  setters.updateSegmentsOnLabelmaps2D(labelmap2D);
   external.cornerstone.updateImage(element);
 
   this._resetHandles();

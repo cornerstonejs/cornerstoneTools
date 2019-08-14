@@ -965,6 +965,27 @@ function setActiveSegmentIndex(elementOrEnabledElementUID, segmentIndex) {
   labelmap3D.activeSegmentIndex = segmentIndex;
 }
 
+function setUpdateSegmentsOnLabelmaps2D(labelmap2D) {
+  // Grab the labels on the slice.
+  const segmentSet = new Set(labelmap2D.pixelData);
+  const iterator = segmentSet.values();
+
+  const segmentsOnLabelmap = [];
+  let done = false;
+
+  while (!done) {
+    const next = iterator.next();
+
+    done = next.done;
+
+    if (!done) {
+      segmentsOnLabelmap.push(next.value);
+    }
+  }
+
+  labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
+}
+
 /**
  * Invalidate all the brush data for a labelmap. Useful if multiple libraries
  * are writting to the same labelmap.
@@ -1115,6 +1136,7 @@ export default {
     decrementActiveSegmentIndex: setDecrementActiveSegmentIndex,
     cacheLabelMap2DView: setCacheLabelMap2DView,
     activeSegmentIndex: setActiveSegmentIndex,
+    updateSegmentsOnLabelmaps2D: setUpdateSegmentsOnLabelmaps2D,
     deleteSegment: setDeleteSegment,
     colorLUT: setColorLUT,
     activeLabelmap: setActiveLabelmap,
