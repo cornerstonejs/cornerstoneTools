@@ -1,3 +1,5 @@
+import { eraseIfSegmentIndex } from './index';
+
 export default function eraseOutsideBoundingBox(evt, topLeft, bottomRight) {
   const eventData = evt.detail;
   const { operationData } = evt;
@@ -32,11 +34,5 @@ export default function eraseOutsideBoundingBox(evt, topLeft, bottomRight) {
     for (let j = bottomRight[1]; j < height; j++) {
       eraseIfSegmentIndex(j * width + i, segmentationData, segmentIndex);
     }
-  }
-}
-
-function eraseIfSegmentIndex(pixelIndex, segmentationData, segmentIndex) {
-  if (segmentationData[pixelIndex] === segmentIndex) {
-    segmentationData[pixelIndex] = 0;
   }
 }

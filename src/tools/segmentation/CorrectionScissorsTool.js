@@ -1,6 +1,6 @@
 import { BaseSegmentationTool } from '../base';
 import { freehandFillInsideCursor } from '../cursors';
-import { fill } from '../../util/segmentation/index.js';
+import { correction } from '../../util/segmentation/operations';
 
 /**
  * @public
@@ -18,9 +18,9 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
         referencedToolData: 'segmentation',
       },
       strategies: {
-        default: correctionStrategy,
+        CORRECTION: correction,
       },
-      defaultStrategy: 'default',
+      defaultStrategy: 'CORRECTION',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: freehandFillInsideCursor,
       mixins: ['freehandSegmentationMixin', 'polylineSegmentationMixin'],
@@ -28,8 +28,4 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
 
     super(props, defaultProps);
   }
-}
-
-function correctionStrategy(evt) {
-  fill('Correction', 'default', evt);
 }

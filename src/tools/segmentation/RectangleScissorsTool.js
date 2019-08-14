@@ -1,5 +1,10 @@
 import { BaseSegmentationTool } from '../base';
-import { fill } from '../../util/segmentation/operations';
+import {
+  fillInsideBoundingBox,
+  fillOutsideRectangle,
+  eraseOutsideRectangle,
+  eraseInsideBoundingBox,
+} from '../../util/segmentation/operations';
 import { segRectangleFillInsideCursor } from '../cursors';
 
 /**
@@ -18,13 +23,12 @@ export default class RectangleScissorsTool extends BaseSegmentationTool {
         referencedToolData: 'segmentation',
       },
       strategies: {
-        FILL_INSIDE: _fillInsideStrategy,
-        FILL_OUTSIDE: _fillOutsideStrategy,
-        ERASE_OUTSIDE: _eraseOutsideStrategy,
-        ERASE_INSIDE: _eraseInsideStrategy,
-        default: _fillInsideStrategy,
+        FILL_INSIDE: fillInsideBoundingBox,
+        FILL_OUTSIDE: fillOutsideRectangle,
+        ERASE_OUTSIDE: eraseOutsideRectangle,
+        ERASE_INSIDE: eraseInsideBoundingBox,
       },
-      defaultStrategy: 'default',
+      defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: segRectangleFillInsideCursor,
       mixins: ['rectangleSegmentationMixin'],
@@ -32,20 +36,4 @@ export default class RectangleScissorsTool extends BaseSegmentationTool {
 
     super(props, defaultProps);
   }
-}
-
-function _fillInsideStrategy(evt) {
-  fill('Rectangle', 'FILL_INSIDE', evt);
-}
-
-function _fillOutsideStrategy(evt) {
-  fill('Rectangle', 'FILL_OUTSIDE', evt);
-}
-
-function _eraseOutsideStrategy(evt) {
-  fill('Rectangle', 'ERASE_OUTSIDE', evt);
-}
-
-function _eraseInsideStrategy(evt) {
-  fill('Rectangle', 'ERASE_INSIDE', evt);
 }

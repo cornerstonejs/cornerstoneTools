@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import { eraseOutsideBoundingBox } from './index';
+import { eraseOutsideBoundingBox, eraseIfSegmentIndex } from './index';
 import getCircleCoords from '../../getCircleCoords';
 
 export default function eraseOutsideCircle(evt) {
@@ -28,11 +28,7 @@ export default function eraseOutsideCircle(evt) {
       });
 
       if (outside) {
-        const pixelIndex = y * width + x;
-
-        if (segmentationData[pixelIndex] === segmentIndex) {
-          segmentationData[pixelIndex] = 0;
-        }
+        eraseIfSegmentIndex(y * width + x, segmentationData, segmentIndex);
       }
     }
   }

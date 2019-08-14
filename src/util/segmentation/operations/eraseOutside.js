@@ -2,6 +2,8 @@ import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 import { eraseOutsideBoundingBox } from './index';
 
+import { eraseIfSegmentIndex } from './index';
+
 export default function eraseOutside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
@@ -30,11 +32,7 @@ export default function eraseOutside(evt) {
       const outside = !pointInPolygon([i, j], vertices);
 
       if (outside) {
-        const pixelIndex = j * width + i;
-
-        if (segmentationData[pixelIndex] === segmentIndex) {
-          segmentationData[pixelIndex] = 0;
-        }
+        eraseIfSegmentIndex(j * width + i, segmentationData, segmentIndex);
       }
     }
   }
