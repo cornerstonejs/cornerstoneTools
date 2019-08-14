@@ -1,5 +1,4 @@
 import external from '../../../externalModules.js';
-import { getLogger } from '../../logger.js';
 
 const oneOverRoot2 = 1 / Math.sqrt(2); // Cache this to avoid repeated computation.
 
