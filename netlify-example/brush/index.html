@@ -17,13 +17,22 @@
       <div class="wrapper">
         <!-- Select Tool Category -->
         <ul class="tool-category-list">
-          <li><a class="tools" data-category="tools" href="#">Drag</a></li>
+          <li><a class="tools" data-category="brush" href="#">Brush</a></li>
+          <li>
+            <a class="tools" data-category="scissors" href="#">Scissors</a>
+          </li>
+          <li>
+            <a class="tools" data-category="stack" href="#">Stack</a>
+          </li>
         </ul>
 
         <!-- Select Active Tool -->
-        <ul class="tool-category active" data-tool-category="tools">
+        <ul class="tool-category active" data-tool-category="brush">
           <li><a href="#" data-tool="Brush">Brush</a></li>
           <li><a href="#" data-tool="SphericalBrush">SphericalBrush</a></li>
+        </ul>
+
+        <ul class="tool-category" data-tool-category="scissors">
           <li>
             <a href="#" data-tool="FreehandScissors">FreehandScissors</a>
           </li>
@@ -36,8 +45,23 @@
           <li>
             <a href="#" data-tool="CorrectionScissors">CorrectionScissors</a>
           </li>
+          <li>
+            <select
+              id="change-scissor-strategy"
+              onchange="changeScissorStrategy(this.value)"
+            >
+              <option value="fillInside">Fill Inside</option>
+              <option value="fillOutside">Fill Outside</option>
+              <option value="eraseInside">Erase Inside</option>
+              <option value="eraseOutside">Erase Outside</option>
+            </select>
+          </li>
+        </ul>
 
+        <ul class="tool-category" data-tool-category="stack">
           <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
+          <li><a href="#" data-tool="Pan">Pan</a></li>
+          <li><a href="#" data-tool="Zoom">Zoom</a></li>
         </ul>
 
         <!-- Our beautiful element targets -->
@@ -114,22 +138,6 @@
                 <td>
                   alphaOfInactiveLabelmap - The transparency of inactive
                   segmentations.
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <select
-                    id="change-scissor-strategy"
-                    onchange="changeScissorStrategy(this.value)"
-                  >
-                    <option value="fillInside">Fill Inside</option>
-                    <option value="fillOutside">Fill Outside</option>
-                    <option value="eraseInside">Erase Inside</option>
-                    <option value="eraseOutside">Erase Outside</option>
-                  </select>
-                </td>
-                <td>
-                  Active strategy for Scissor Tools.
                 </td>
               </tr>
             </table>
