@@ -109,12 +109,11 @@ function _applyStrategy(evt) {
     element
   );
 
-  const segmentationData =
-    labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
+  const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
   evt.operationData = {
     points,
-    segmentationData,
+    pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
   };
 

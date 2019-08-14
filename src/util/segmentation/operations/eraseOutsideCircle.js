@@ -3,10 +3,18 @@ import { pointInEllipse } from '../../ellipse';
 import { eraseOutsideBoundingBox, eraseIfSegmentIndex } from './index';
 import getCircleCoords from '../../getCircleCoords';
 
+/**
+ * EraseOutsideCircle - Erase all pixels labeled with the activeSegmentIndex,
+ * outside the region defined by the circle.
+ * @param  {} evt The Cornerstone event.
+ * @param {} evt.operationData An object containing the `pixelData` to
+ *                          modify, the `segmentIndex` and the `points` array.
+ * @returns {null}
+ */
 export default function eraseOutsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
-  const { segmentationData, segmentIndex } = operationData;
+  const { pixelData, segmentIndex } = operationData;
 
   const { image } = eventData;
   const { width } = image;
@@ -28,7 +36,7 @@ export default function eraseOutsideCircle(evt) {
       });
 
       if (outside) {
-        eraseIfSegmentIndex(y * width + x, segmentationData, segmentIndex);
+        eraseIfSegmentIndex(y * width + x, pixelData, segmentIndex);
       }
     }
   }

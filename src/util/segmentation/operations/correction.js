@@ -20,7 +20,7 @@ const logger = getLogger('util:segmentation:operations:correction');
  */
 export default function correction(evt) {
   const { operationData } = evt;
-  const { segmentationData, segmentIndex } = operationData;
+  const { pixelData, segmentIndex } = operationData;
 
   const nodes = snapPointsToGrid(evt);
 
@@ -31,16 +31,10 @@ export default function correction(evt) {
   const operations = splitLineIntoSeperateOperations(nodes, segmentIndex);
 
   // Create binary labelmap with only this segment for calculations of each operation.
-  const workingLabelMap = new Uint8Array(segmentationData.length);
+  const workingLabelMap = new Uint8Array(pixelData.length);
 
   operations.forEach(operation => {
-    performOperation(
-      operation,
-      segmentationData,
-      workingLabelMap,
-      segmentIndex,
-      evt
-    );
+    performOperation(operation, pixelData, workingLabelMap, segmentIndex, evt);
   });
 }
 
@@ -48,13 +42,13 @@ export default function correction(evt) {
  * SnapPointsToGrid - Snap the freehand points to the labelmap grid and attach a label for each node.
  *
  * @param  {Object[]} points An array of points drawn by the user.
- * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {UInt16Array} pixelData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @returns {Object[]}
  */
 function snapPointsToGrid(evt) {
   const { operationData } = evt;
-  const { segmentationData, points } = operationData;
+  const { pixelData, points } = operationData;
 
   const { image } = evt.detail;
   const cols = image.width;
@@ -82,7 +76,7 @@ function snapPointsToGrid(evt) {
     nodes.push({
       x,
       y,
-      segment: segmentationData[y * cols + x],
+      segment: pixelData[y * cols + x],
     });
   }
 
@@ -93,7 +87,7 @@ function snapPointsToGrid(evt) {
  * add/remove, and performs it if so.
  * @param  {Object[]} nodes - The nodes snapped to the grid.
  * @param  {Object} points - An array of points drawn by the user.
- * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {UInt16Array} pixelData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @param  {number} segmentIndex
  * @returns {boolean} Returns true if the operation was simple.
@@ -137,14 +131,14 @@ function simpleScissorOperation(nodes, evt, segmentIndex) {
  * The algorithm is described in full length in Tobias Heimann's diploma thesis (MBI Technical Report 145, p. 37 - 40).
  *
  * @param  {Object} operation The operation.
- * @param  {UInt16Array} segmentationData The 2D labelmap.
+ * @param  {UInt16Array} pixelData The 2D labelmap.
  * @param  {UInt16Array} workingLabelMap A copy of the labelmap for processing purposes.
  * @param  {number} segmentIndex The label of the tool being used.
  * @param  {Object} evt The cornerstone event.
  */
 function performOperation(
   operation,
-  segmentationData,
+  pixelData,
   workingLabelMap,
   segmentIndex,
   evt
@@ -185,7 +179,7 @@ function performOperation(
 
   // ...whilst also initializing the workingLabelmap
   for (let i = 0; i < workingLabelMap.length; i++) {
-    if (segmentationData[i] === segmentIndex) {
+    if (pixelData[i] === segmentIndex) {
       const pixel = getPixelCoordinateFromPixelIndex(i);
 
       expandBoundingBox(boundingBox, pixel);
@@ -255,22 +249,22 @@ function performOperation(
 
   for (let i = 0; i < workingLabelMap.length; i++) {
     if (workingLabelMap[i] === fillValue) {
-      segmentationData[i] = replaceValue;
+      pixelData[i] = replaceValue;
     }
   }
 
   if (replaceValue === segmentIndex) {
     // Fill in the path.
     for (let i = 0; i < pixelPath.length; i++) {
-      segmentationData[getPixelIndex(pixelPath[i])] = segmentIndex;
+      pixelData[getPixelIndex(pixelPath[i])] = segmentIndex;
     }
   } else {
     // Only erase this segment.
     for (let i = 0; i < pixelPath.length; i++) {
       const pixelIndex = getPixelIndex(pixelPath[i]);
 
-      if (segmentationData[pixelIndex] === segmentIndex) {
-        segmentationData[pixelIndex] = 0;
+      if (pixelData[pixelIndex] === segmentIndex) {
+        pixelData[pixelIndex] = 0;
       }
     }
   }
@@ -327,10 +321,7 @@ function clipBoundingBox(boundingBox, rows, cols) {
  * @returns {number} The number of pixels flooded.
  */
 function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
-  const result = floodFill({
-    getter,
-    seed: [pixel.x, pixel.y],
-  });
+  const result = floodFill(getter, [pixel.x, pixel.y]);
 
   const flooded = result.flooded;
 

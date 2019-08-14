@@ -4,7 +4,7 @@ import {
   fillOutside,
   eraseOutside,
   eraseInside,
-} from '../../util/segmentation';
+} from '../../util/segmentation/operations';
 import { BaseSegmentationTool } from '../base';
 
 /**

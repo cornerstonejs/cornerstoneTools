@@ -1,10 +1,18 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 
+/**
+ * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
+ * in the region defined by evt.operationData.points.
+ * @param  {} evt The Cornerstone event.
+ * @param {} evt.operationData An object containing the `pixelData` to
+ *                          modify, the `segmentIndex` and the `points` array.
+ * @returns {null}
+ */
 export default function eraseInside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
-  const { segmentationData, segmentIndex, points } = operationData;
+  const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask
 
@@ -28,8 +36,8 @@ export default function eraseInside(evt) {
       if (inside) {
         const pixelIndex = j * width + i;
 
-        if (segmentationData[pixelIndex] === segmentIndex) {
-          segmentationData[pixelIndex] = 0;
+        if (pixelData[pixelIndex] === segmentIndex) {
+          pixelData[pixelIndex] = 0;
         }
       }
     }

@@ -2,10 +2,18 @@ import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
 
+/**
+ * FillInsideCircle - Fill all pixels in the region defined
+ * by the circle.
+ * @param  {} evt The Cornerstone event.
+ * @param {} evt.operationData An object containing the `pixelData` to
+ *                          modify, the `segmentIndex` and the `points` array.
+ * @returns {null}
+ */
 export default function fillInsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
-  const { segmentationData, segmentIndex } = operationData;
+  const { pixelData, segmentIndex } = operationData;
 
   const { image } = eventData;
   const { width } = image;
@@ -25,7 +33,7 @@ export default function fillInsideCircle(evt) {
       });
 
       if (inside) {
-        segmentationData[y * width + x] = segmentIndex;
+        pixelData[y * width + x] = segmentIndex;
       }
     }
   }
