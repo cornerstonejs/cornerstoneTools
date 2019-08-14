@@ -230,7 +230,7 @@ function setCacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns) {
  * at the event position and its corresponding metadata.
  * @param  {Object} evt A cornerstone event with a currentPoints property.
  *
- * @returns {Object} An object with the segmentIndex and its metadata.
+ * @returns {Object} An `Object` with the `segmentIndex` and its `metadata`.
  */
 function getSegmentOfActiveLabelmapAtEvent(evt) {
   const eventData = evt.detail;

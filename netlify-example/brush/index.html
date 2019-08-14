@@ -17,14 +17,51 @@
       <div class="wrapper">
         <!-- Select Tool Category -->
         <ul class="tool-category-list">
-          <li><a class="tools" data-category="tools" href="#">Drag</a></li>
+          <li><a class="tools" data-category="brush" href="#">Brush</a></li>
+          <li>
+            <a class="tools" data-category="scissors" href="#">Scissors</a>
+          </li>
+          <li>
+            <a class="tools" data-category="stack" href="#">Stack</a>
+          </li>
         </ul>
 
         <!-- Select Active Tool -->
-        <ul class="tool-category active" data-tool-category="tools">
+        <ul class="tool-category active" data-tool-category="brush">
           <li><a href="#" data-tool="Brush">Brush</a></li>
           <li><a href="#" data-tool="SphericalBrush">SphericalBrush</a></li>
+        </ul>
+
+        <ul class="tool-category" data-tool-category="scissors">
+          <li>
+            <a href="#" data-tool="FreehandScissors">FreehandScissors</a>
+          </li>
+          <li>
+            <a href="#" data-tool="RectangleScissors">RectangleScissors</a>
+          </li>
+          <li>
+            <a href="#" data-tool="CircleScissors">CircleScissors</a>
+          </li>
+          <li>
+            <a href="#" data-tool="CorrectionScissors">CorrectionScissors</a>
+          </li>
+          <li>
+            <select
+              id="change-scissor-strategy"
+              onchange="changeScissorStrategy(this.value)"
+            >
+              <option value="fillInside">Fill Inside</option>
+              <option value="fillOutside">Fill Outside</option>
+              <option value="eraseInside">Erase Inside</option>
+              <option value="eraseOutside">Erase Outside</option>
+            </select>
+          </li>
+        </ul>
+
+        <ul class="tool-category" data-tool-category="stack">
           <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
+          <li><a href="#" data-tool="Pan">Pan</a></li>
+          <li><a href="#" data-tool="Zoom">Zoom</a></li>
         </ul>
 
         <!-- Our beautiful element targets -->
@@ -386,5 +423,53 @@
 
       brushTool.alphaOfInactiveLabelmap = normalisedAlpha;
     });
+
+    // Segmentation Tool API
+    const freehandScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'FreehandScissors'
+    );
+    const rectangleScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'RectangleScissors'
+    );
+    const circleScissorsTool = cornerstoneTools.getToolForElement(
+      element,
+      'CircleScissors'
+    );
+
+    const changeScissorStrategyElement = document.getElementById(
+      'change-scissor-strategy'
+    );
+
+    console.log(changeScissorStrategyElement);
+
+    changeScissorStrategyElement.value = 'fillInside';
+
+    function changeScissorStrategy(value) {
+      console.log(value);
+      switch (value) {
+        case 'fillInside':
+          freehandScissorsTool.setActiveStrategy('FILL_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          break;
+        case 'eraseInside':
+          freehandScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          break;
+        case 'fillOutside':
+          freehandScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          break;
+        case 'eraseOutside':
+          freehandScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          break;
+      }
+    }
   </script>
 </html>

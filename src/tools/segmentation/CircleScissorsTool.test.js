@@ -1,5 +1,4 @@
 import CircleScissorsTool from './CircleScissorsTool';
-import { fill } from '../../util/segmentation/operations';
 import store from '../../store';
 import mixins from '../../mixins';
 import mockEvt from '../../util/__mocks__/segmentationEvent.mock';
@@ -8,10 +7,6 @@ jest.mock('./../../externalModules.js');
 
 jest.mock('../../mixins', () => ({
   ...jest.requireActual('../../mixins').default,
-}));
-
-jest.mock('../../util/segmentation/operations', () => ({
-  fill: jest.fn(),
 }));
 
 jest.mock('../../store', () => ({
@@ -63,7 +58,6 @@ function restoreMocksAndSpies(store) {
   startOutliningRegionSpy.mockRestore();
   setHandlesAndUpdateSpy.mockRestore();
   applyStrategySpy.mockRestore();
-  fill.mockRestore();
 }
 
 describe('CircleScissorsTool.js', () => {
@@ -115,6 +109,8 @@ describe('CircleScissorsTool.js', () => {
 
       it('Calls right method on touchEndCallback ', () => {
         instantiatedTool.touchEndCallback(mockEvt);
+        console.log(instantiatedTool.defaultStrategy);
+
         expect(
           mixins.circleSegmentationMixin._applyStrategy
         ).toHaveBeenCalled();
@@ -155,42 +151,6 @@ describe('CircleScissorsTool.js', () => {
         expect(
           mixins.circleSegmentationMixin._applyStrategy
         ).toHaveBeenCalled();
-      });
-    });
-
-    describe('Strategies set up', () => {
-      it('Calls right default strategy callback', () => {
-        instantiatedTool.mouseUpCallback(mockEvt);
-
-        expect(fill).toHaveBeenCalledWith('Circle', 'FILL_INSIDE', mockEvt);
-      });
-
-      it('FILL_INSIDE', () => {
-        instantiatedTool.changeStrategy('FILL_INSIDE');
-        instantiatedTool.mouseUpCallback(mockEvt);
-
-        expect(fill).toHaveBeenCalledWith('Circle', 'FILL_INSIDE', mockEvt);
-      });
-
-      it('ERASE_INSIDE', () => {
-        instantiatedTool.changeStrategy('ERASE_INSIDE');
-        instantiatedTool.mouseUpCallback(mockEvt);
-
-        expect(fill).toHaveBeenCalledWith('Circle', 'ERASE_INSIDE', mockEvt);
-      });
-
-      it('FILL_OUTSIDE', () => {
-        instantiatedTool.changeStrategy('FILL_OUTSIDE');
-        instantiatedTool.mouseUpCallback(mockEvt);
-
-        expect(fill).toHaveBeenCalledWith('Circle', 'FILL_OUTSIDE', mockEvt);
-      });
-
-      it('ERASE_OUTSIDE', () => {
-        instantiatedTool.changeStrategy('ERASE_OUTSIDE');
-        instantiatedTool.mouseUpCallback(mockEvt);
-
-        expect(fill).toHaveBeenCalledWith('Circle', 'ERASE_OUTSIDE', mockEvt);
       });
     });
   });

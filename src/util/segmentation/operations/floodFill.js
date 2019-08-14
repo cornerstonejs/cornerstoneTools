@@ -2,11 +2,26 @@ import { getLogger } from '../../logger';
 
 const logger = getLogger('util:segmentation:operations:floodFill');
 
-// Taken from MIT OSS lib - https://github.com/tuzz/n-dimensional-flood-fill
-// Refactored to ES6.
-
-export default function(options) {
-  const { getter, seed } = options;
+/**
+ * floodFill.js - Taken from MIT OSS lib - https://github.com/tuzz/n-dimensional-flood-fill
+ * Refactored to ES6.
+ *
+ * @param {function} getter The getter to the elements of your data structure,
+ *                          e.g. getter(x,y) for a 2D interprettation of your structure.
+ * @param {number[]} seed The seed for your fill. The dimensionality is infered
+ *                        by the number of dimensions of the seed.
+ * @param {function} [options.onFlood] An optional callback to execute when each pixel is flooded.
+ *                             e.g. onFlood(x,y).
+ * @param {function} [options.onBoundary] An optional callback to execute whenever a boundary is reached.
+ *                                a boundary could be another segmentIndex, or the edge of your
+ *                                data structure (i.e. when your getter returns undefined).
+ * @param {function} [options.equals] An optional equality method for your datastructure.
+ *                            Default is simply value1 = value2.
+ * @param {boolean} [options.diagonals] Whether you allow flooding through diagonals. Defaults to false.
+ *
+ * @returns {Object}
+ */
+export default function(getter, seed, options = {}) {
   const onFlood = options.onFlood || function() {};
   const onBoundary = options.onBoundary || function() {};
   const equals = options.equals || defaultEquals;

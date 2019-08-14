@@ -2,15 +2,22 @@ import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 import { fillOutsideBoundingBox } from './index';
 
-export default function fillOutside(
-  points,
-  segmentationData,
-  evt,
-  labelValue = 1
-) {
+/**
+ * FillOutside - Fill all pixels outside of the region defined by
+ * evt.operationData.points with the activeSegmentIndex value.
+ * @param  {} evt The Cornerstone event.
+ * @param {} evt.operationData An object containing the `pixelData` to
+ *                          modify, the `segmentIndex` and the `points` array.
+ * @returns {null}
+ */
+export default function fillOutside(evt) {
+  const eventData = evt.detail;
+  const { operationData } = evt;
+  const { pixelData, segmentIndex, points } = operationData;
+
   // Loop through all pixels in the segmentation data mask
-  // If they are outside of the region defined by the array of points, set their value to labelValue
-  const { image } = evt.detail;
+  // If they are outside of the region defined by the array of points, set their value to segmentIndex
+  const { image } = eventData;
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
@@ -20,13 +27,7 @@ export default function fillOutside(
   //
   // Outside of the polygon bounding box should definitely be filled
   // Inside of the polygon bounding box should be tested with pointInPolygon
-  fillOutsideBoundingBox(
-    topLeft,
-    bottomRight,
-    segmentationData,
-    evt,
-    labelValue
-  );
+  fillOutsideBoundingBox(evt, topLeft, bottomRight);
 
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
@@ -37,7 +38,7 @@ export default function fillOutside(
       const outside = !pointInPolygon([i, j], vertices);
 
       if (outside) {
-        segmentationData[j * width + i] = labelValue;
+        pixelData[j * width + i] = segmentIndex;
       }
     }
   }
