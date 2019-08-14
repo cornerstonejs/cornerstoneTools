@@ -1,5 +1,4 @@
 import external from '../../../externalModules.js';
-import { getLogger } from '../../logger.js';
 
 const oneOverRoot2 = 1 / Math.sqrt(2); // Cache this to avoid repeated computation.
 
@@ -97,6 +96,13 @@ export default function(p1, p2) {
   return path;
 }
 
+/**
+ * MoveUpRight - Moves p up, right or diagonally up right towards p2.
+ * @param  {Object} p
+ * @param  {Object} p2
+ *
+ * @returns {null}
+ */
 function moveUpRight(p, p2) {
   const unitVector = unitVectorFromPtoP2(p, p2);
 
@@ -122,6 +128,13 @@ function moveUpRight(p, p2) {
   }
 }
 
+/**
+ * MoveUpLeft - Moves p up, left or diagonally up left towards p2.
+ * @param  {Object} p
+ * @param  {Object} p2
+ *
+ * @returns {null}
+ */
 function moveUpLeft(p, p2) {
   const unitVector = unitVectorFromPtoP2(p, p2);
 
@@ -147,6 +160,13 @@ function moveUpLeft(p, p2) {
   }
 }
 
+/**
+ * MoveDownRight - Moves p down, right or diagonally down right towards p2.
+ * @param  {Object} p
+ * @param  {Object} p2
+ *
+ * @returns {null}
+ */
 function moveDownRight(p, p2) {
   const unitVector = unitVectorFromPtoP2(p, p2);
 
@@ -172,6 +192,13 @@ function moveDownRight(p, p2) {
   }
 }
 
+/**
+ * MoveDownLeft - Moves p down, left or diagonally down left towards p2.
+ * @param  {Object} p
+ * @param  {Object} p2
+ *
+ * @returns {null}
+ */
 function moveDownLeft(p, p2) {
   const unitVector = unitVectorFromPtoP2(p, p2);
 
@@ -197,6 +224,13 @@ function moveDownLeft(p, p2) {
   }
 }
 
+/**
+ * UnitVectorFromPtoP2 - Returns a unit vector pointing from p to p2.
+ * @param  {Object} p
+ * @param  {Object} p2
+ *
+ * @returns {Object} The unit vector.
+ */
 function unitVectorFromPtoP2(p, p2) {
   const distance = external.cornerstoneMath.point.distance(p, p2);
 
@@ -210,6 +244,12 @@ function dotProduct2D(p, p2) {
   return p.x * p2.x + p.y * p2.y;
 }
 
+/**
+ * GetIndexOfLargestInLengthThreeArray - Returns the index of the largest value
+ * in the 3 element array.
+ * @param  {number[]} array
+ * @returns {number}
+ */
 function getIndexOfLargestInLengthThreeArray(array) {
   let largestIndex = array[0] > array[1] ? 0 : 1;
 

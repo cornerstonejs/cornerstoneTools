@@ -1,8 +1,16 @@
 export { default as correction } from './correction';
 export { default as fillInside } from './fillInside';
+export { default as eraseInside } from './eraseInside';
+export { default as eraseOutside } from './eraseOutside';
 export { default as fillOutside } from './fillOutside';
+export { default as fillOutsideRectangle } from './fillOutsideRectangle';
 export { default as fillOutsideBoundingBox } from './fillOutsideBoundingBox';
+export { default as eraseOutsideBoundingBox } from './eraseOutsideBoundingBox';
+export { default as eraseOutsideRectangle } from './eraseOutsideRectangle';
+export { default as eraseOutsideCircle } from './eraseOutsideCircle';
 export { default as fillInsideBoundingBox } from './fillInsideBoundingBox';
+export { default as eraseInsideBoundingBox } from './eraseInsideBoundingBox';
 export { default as fillInsideCircle } from './fillInsideCircle';
+export { default as eraseInsideCircle } from './eraseInsideCircle';
 export { default as fillOutsideCircle } from './fillOutsideCircle';
-export { default as fill } from './fill';
+export { default as eraseIfSegmentIndex } from './eraseIfSegmentIndex';

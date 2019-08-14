@@ -1,5 +1,10 @@
 import { BaseSegmentationTool } from '../base';
-import { fill } from '../../util/segmentation/operations';
+import {
+  fillInsideCircle,
+  fillOutsideCircle,
+  eraseOutsideCircle,
+  eraseInsideCircle,
+} from '../../util/segmentation/operations';
 import { segCircleFillInsideCursor } from '../cursors';
 
 /**
@@ -18,13 +23,12 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
         referencedToolData: 'segmentation',
       },
       strategies: {
-        FILL_INSIDE: _fillInsideStrategy,
-        FILL_OUTSIDE: _fillOutsideStrategy,
-        ERASE_OUTSIDE: _eraseOutsideStrategy,
-        ERASE_INSIDE: _eraseInsideStrategy,
-        default: _fillInsideStrategy,
+        FILL_INSIDE: fillInsideCircle,
+        FILL_OUTSIDE: fillOutsideCircle,
+        ERASE_OUTSIDE: eraseOutsideCircle,
+        ERASE_INSIDE: eraseInsideCircle,
       },
-      defaultStrategy: 'default',
+      defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: segCircleFillInsideCursor,
       mixins: ['circleSegmentationMixin'],
@@ -32,20 +36,4 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
 
     super(props, defaultProps);
   }
-}
-
-function _fillInsideStrategy(evt) {
-  fill('Circle', 'FILL_INSIDE', evt);
-}
-
-function _fillOutsideStrategy(evt) {
-  fill('Circle', 'FILL_OUTSIDE', evt);
-}
-
-function _eraseOutsideStrategy(evt) {
-  fill('Circle', 'ERASE_OUTSIDE', evt);
-}
-
-function _eraseInsideStrategy(evt) {
-  fill('Circle', 'ERASE_INSIDE', evt);
 }

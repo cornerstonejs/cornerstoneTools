@@ -137,12 +137,12 @@ function _applyStrategy(evt) {
     },
   ];
 
-  const segmentationData =
-    labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
+  const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
-  evt.OperationData = {
+  evt.operationData = {
     points,
-    segmentationData,
+    pixelData,
+    segmentIndex: labelmap3D.activeSegmentIndex,
   };
 
   this.applyActiveStrategy(evt);

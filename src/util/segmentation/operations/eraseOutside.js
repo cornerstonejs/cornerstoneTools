@@ -1,28 +1,35 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
+import { eraseOutsideBoundingBox } from './index';
+
+import { eraseIfSegmentIndex } from './index';
 
 /**
- * FillInside - Fill all pixels in the region defined by
- * evt.operationData.points with the activeSegmentIndex value.
+ * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
+ * outside the region defined by evt.operationData.points.
  * @param  {} evt The Cornerstone event.
  * @param {} evt.operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillInside(evt) {
+export default function eraseOutside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
   const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask
-
-  // Obtain the bounding box of the entire drawing so that
-  // we can subset our search. Outside of the bounding box,
-  // everything is outside of the polygon.
+  // If they are outside of the region defined by the array of points, set their value to segmentIndex
   const { image } = eventData;
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
+
+  // If we know exactly how big the polygon is,
+  // we do not need to loop through the whole image.
+  //
+  // Outside of the polygon bounding box should definitely be filled
+  // Inside of the polygon bounding box should be tested with pointInPolygon
+  eraseOutsideBoundingBox(evt, topLeft, bottomRight);
 
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
@@ -30,11 +37,10 @@ export default function fillInside(evt) {
   // Loop through all of the points inside the bounding box
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
-      // If they are inside of the region defined by the array of points, set their value to segmentIndex
-      const inside = pointInPolygon([i, j], vertices);
+      const outside = !pointInPolygon([i, j], vertices);
 
-      if (inside) {
-        pixelData[j * width + i] = segmentIndex;
+      if (outside) {
+        eraseIfSegmentIndex(j * width + i, pixelData, segmentIndex);
       }
     }
   }
