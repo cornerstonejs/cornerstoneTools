@@ -1,8 +1,8 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
-import { fillOutsideBoundingBox } from './index';
+import { eraseOutsideBoundingBox } from './index';
 
-export default function fillOutside(evt) {
+export default function eraseOutside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
   const { segmentationData, segmentIndex, points } = operationData;
@@ -19,7 +19,7 @@ export default function fillOutside(evt) {
   //
   // Outside of the polygon bounding box should definitely be filled
   // Inside of the polygon bounding box should be tested with pointInPolygon
-  fillOutsideBoundingBox(evt, topLeft, bottomRight);
+  eraseOutsideBoundingBox(evt, topLeft, bottomRight);
 
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
@@ -30,7 +30,11 @@ export default function fillOutside(evt) {
       const outside = !pointInPolygon([i, j], vertices);
 
       if (outside) {
-        segmentationData[j * width + i] = segmentIndex;
+        const pixelIndex = j * width + i;
+
+        if (segmentationData[pixelIndex] === segmentIndex) {
+          segmentationData[pixelIndex] = 0;
+        }
       }
     }
   }

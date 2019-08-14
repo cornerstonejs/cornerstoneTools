@@ -20,13 +20,11 @@ const logger = getLogger('util:segmentation:operations:correction');
  */
 export default function correction(evt) {
   const { operationData } = evt;
-  const { segmentationData, segmentIndex, points } = operationData;
+  const { segmentationData, segmentIndex } = operationData;
 
   const nodes = snapPointsToGrid(evt);
 
-  if (
-    simpleScissorOperation(nodes, points, segmentationData, evt, segmentIndex)
-  ) {
+  if (simpleScissorOperation(nodes, evt, segmentIndex)) {
     return;
   }
 
@@ -100,13 +98,7 @@ function snapPointsToGrid(evt) {
  * @param  {number} segmentIndex
  * @returns {boolean} Returns true if the operation was simple.
  */
-function simpleScissorOperation(
-  nodes,
-  points,
-  segmentationData,
-  evt,
-  segmentIndex
-) {
+function simpleScissorOperation(nodes, evt, segmentIndex) {
   let allInside = true;
   let allOutside = true;
 
@@ -267,9 +259,20 @@ function performOperation(
     }
   }
 
-  // Fill in the path
-  for (let i = 0; i < pixelPath.length; i++) {
-    segmentationData[getPixelIndex(pixelPath[i])] = replaceValue;
+  if (replaceValue === segmentIndex) {
+    // Fill in the path.
+    for (let i = 0; i < pixelPath.length; i++) {
+      segmentationData[getPixelIndex(pixelPath[i])] = segmentIndex;
+    }
+  } else {
+    // Only erase this segment.
+    for (let i = 0; i < pixelPath.length; i++) {
+      const pixelIndex = getPixelIndex(pixelPath[i]);
+
+      if (segmentationData[pixelIndex] === segmentIndex) {
+        segmentationData[pixelIndex] = 0;
+      }
+    }
   }
 }
 

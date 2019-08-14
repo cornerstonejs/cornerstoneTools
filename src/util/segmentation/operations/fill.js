@@ -4,13 +4,15 @@ import {
   fillInsideBoundingBox,
   eraseInsideBoundingBox,
   fillOutside,
+  eraseOutside,
+  eraseOutsideCircle,
+  eraseOutsideRectangle,
   eraseInside,
-  fillOutsideBoundingBox,
+  fillOutsideRectangle,
   fillInsideCircle,
   eraseInsideCircle,
   fillOutsideCircle,
 } from './index';
-import { getBoundingBoxAroundPolygon } from '../boundaries';
 import { getLogger } from '../../logger';
 
 const logger = getLogger('util:segmentation:operations:fill');
@@ -23,16 +25,14 @@ const operationList = {
     FILL_OUTSIDE: evt => {
       fillOutsideCircle(evt);
     },
-    // TODO
-    ERASE_OUTSIDE: (points, segmentationData, evt) => {
-      fillOutsideCircle(points, segmentationData, evt, 0);
+    ERASE_OUTSIDE: evt => {
+      eraseOutsideCircle(evt);
     },
     ERASE_INSIDE: evt => {
       eraseInsideCircle(evt);
     },
-    // TODO
-    default: (points, segmentationData, evt) => {
-      fillInsideCircle(points, segmentationData, evt, 1);
+    default: evt => {
+      fillInsideCircle(evt);
     },
   },
   Freehand: {
@@ -42,16 +42,14 @@ const operationList = {
     FILL_OUTSIDE: evt => {
       fillOutside(evt);
     },
-    // TODO
-    ERASE_OUTSIDE: (points, segmentationData, evt) => {
-      fillOutside(points, segmentationData, evt, 0);
+    ERASE_OUTSIDE: evt => {
+      eraseOutside(evt);
     },
     ERASE_INSIDE: evt => {
       eraseInside(evt);
     },
-    // TODO
-    default: (points, segmentationData, evt) => {
-      fillInside(points, segmentationData, evt, 1);
+    default: evt => {
+      fillInside(evt);
     },
   },
   Rectangle: {
@@ -59,28 +57,19 @@ const operationList = {
       fillInsideBoundingBox(evt);
     },
     FILL_OUTSIDE: evt => {
-      fillOutsideBoundingBox(evt);
+      fillOutsideRectangle(evt);
     },
-    // TODO
-    ERASE_OUTSIDE: (points, segmentationData, evt) => {
-      const vertices = points.map(a => [a.x, a.y]);
-      const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(
-        vertices,
-        evt.detail.image
-      );
-
-      fillOutsideBoundingBox(topLeft, bottomRight, segmentationData, evt, 0);
+    ERASE_OUTSIDE: evt => {
+      eraseOutsideRectangle(evt);
     },
     ERASE_INSIDE: evt => {
       eraseInsideBoundingBox(evt);
     },
-    // TODO
-    default: (points, segmentationData, evt) => {
-      fillInsideBoundingBox(points, segmentationData, evt, 1);
+    default: evt => {
+      fillInsideBoundingBox(evt);
     },
   },
   Correction: {
-    // TODO
     default: evt => {
       correction(evt);
     },

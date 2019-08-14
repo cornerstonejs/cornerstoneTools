@@ -1,9 +1,9 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import fillOutsideBoundingBox from './fillOutsideBoundingBox';
+import { eraseOutsideBoundingBox } from './index';
 import getCircleCoords from '../../getCircleCoords';
 
-export default function fillOutsideCircle(evt) {
+export default function eraseOutsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
   const { segmentationData, segmentIndex } = operationData;
@@ -18,7 +18,7 @@ export default function fillOutsideCircle(evt) {
     eventData.handles.end
   );
 
-  fillOutsideBoundingBox(evt, topLeft, bottomRight);
+  eraseOutsideBoundingBox(evt, topLeft, bottomRight);
 
   for (let x = xMin; x < xMax; x++) {
     for (let y = yMin; y < yMax; y++) {
@@ -28,7 +28,11 @@ export default function fillOutsideCircle(evt) {
       });
 
       if (outside) {
-        segmentationData[y * width + x] = segmentIndex;
+        const pixelIndex = y * width + x;
+
+        if (segmentationData[pixelIndex] === segmentIndex) {
+          segmentationData[pixelIndex] = 0;
+        }
       }
     }
   }
