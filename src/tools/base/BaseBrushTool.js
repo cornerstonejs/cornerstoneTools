@@ -330,25 +330,25 @@ class BaseBrushTool extends BaseTool {
     setters.radius(newRadius);
   }
 
-  get alpha() {
-    return state.alpha;
+  get fillAlpha() {
+    return state.fillAlpha;
   }
 
-  set alpha(value) {
+  set fillAlpha(value) {
     const enabledElement = this._getEnabledElement();
 
-    state.alpha = value;
+    state.fillAlpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
-  get alphaOfInactiveLabelmap() {
-    return state.alphaOfInactiveLabelmap;
+  get fillAlphaInactive() {
+    return state.fillAlphaInactive;
   }
 
-  set alphaOfInactiveLabelmap(value) {
+  set fillAlphaInactive(value) {
     const enabledElement = this._getEnabledElement();
 
-    state.alphaOfInactiveLabelmap = value;
+    state.fillAlphaInactive = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 

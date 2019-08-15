@@ -75,14 +75,15 @@ export default function(evt) {
     return;
   }
 
-  // TODO -> outline for inactive labelmaps? Discuss.
+  if (state.renderInactiveLabelmaps) {
+    renderInactiveLabelMaps(
+      evt,
+      labelmaps3D,
+      activeLabelmapIndex,
+      currentImageIdIndex
+    );
+  }
 
-  renderInactiveLabelMaps(
-    evt,
-    labelmaps3D,
-    activeLabelmapIndex,
-    currentImageIdIndex
-  );
   renderActiveLabelMap(
     evt,
     labelmaps3D,
@@ -115,14 +116,12 @@ function renderActiveLabelMap(
   const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
   if (labelmap2D) {
-    renderSegmentation(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
-    renderOutline(evt, labelmap3D, activeLabelmapIndex, labelmap2D);
+    render(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
   }
 }
 
 /**
- * RenderInactiveLabelMaps - Renders all the inactive label maps if the global
- * alphaOfInactiveLabelmap setting is not zero.
+ * RenderInactiveLabelMaps - Renders all the inactive label maps.
  *
  * @param  {Object} evt                 The cornerstone event.
  * @param  {Object[]} labelmaps3D       An array of labelmaps.
@@ -136,11 +135,6 @@ function renderInactiveLabelMaps(
   activeLabelmapIndex,
   currentImageIdIndex
 ) {
-  if (state.alphaOfInactiveLabelmap === 0) {
-    // Don't bother rendering a whole labelmaps with full transparency!
-    return;
-  }
-
   for (let i = 0; i < labelmaps3D.length; i++) {
     const labelmap3D = labelmaps3D[i];
 
@@ -151,8 +145,24 @@ function renderInactiveLabelMaps(
     const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
     if (labelmap2D) {
-      renderSegmentation(evt, labelmap3D, i, labelmap2D, false);
+      render(evt, labelmap3D, i, labelmap2D, false);
     }
+  }
+}
+
+function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
+  if (state.renderFill) {
+    renderSegmentation(
+      evt,
+      labelmap3D,
+      labelmapIndex,
+      labelmap2D,
+      isActiveLabelMap
+    );
+  }
+
+  if (state.renderOutline) {
+    renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
   }
 }
 
@@ -163,9 +173,23 @@ function renderInactiveLabelMaps(
  * @param  {Object} labelmap3D      The 3D labelmap.
  * @param  {number} labelmapIndex   The index of the labelmap.
  * @param  {Object} labelmap2D      The 2D labelmap for this current image.
+ * @param  {number} isActiveLabelMap   Whether the labelmap is active.
  * @returns {null}
  */
-function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
+function renderOutline(
+  evt,
+  labelmap3D,
+  labelmapIndex,
+  labelmap2D,
+  isActiveLabelMap = true
+) {
+  // Don't bother rendering a whole labelmap with full transparency!
+  if (isActiveLabelMap && state.outlineAlpha === 0) {
+    return;
+  } else if (state.outlineAlphaInactive === 0) {
+    return;
+  }
+
   const eventData = evt.detail;
   const { element, canvasContext } = eventData;
 
@@ -183,7 +207,9 @@ function renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D) {
 
   const previousAlpha = context.globalAlpha;
 
-  context.globalAlpha = state.outlineAlpha;
+  context.globalAlpha = isActiveLabelMap
+    ? state.outlineAlpha
+    : state.outlineAlphaInactive;
 
   // Draw outlines.
   draw(context, context => {
@@ -666,6 +692,13 @@ function renderSegmentation(
   labelmap2D,
   isActiveLabelMap
 ) {
+  // Don't bother rendering a whole labelmap with full transparency!
+  if (isActiveLabelMap && state.fillAlpha === 0) {
+    return;
+  } else if (state.fillAlphaInactive === 0) {
+    return;
+  }
+
   // Draw previous image if cached.
   if (labelmap3D.imageBitmapCache) {
     _drawImageBitmap(evt, labelmap3D.imageBitmapCache, isActiveLabelMap);
@@ -773,8 +806,8 @@ function _drawImageBitmap(evt, imageBitmap, isActiveLabelMap) {
 
   context.imageSmoothingEnabled = false;
   context.globalAlpha = isActiveLabelMap
-    ? state.alpha
-    : state.alphaOfInactiveLabelmap;
+    ? state.fillAlpha
+    : state.fillAlphaInactive;
 
   transformCanvasContext(context, canvas, viewport);
 
