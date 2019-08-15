@@ -7,7 +7,7 @@ import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BaseBrushTool');
 
-const { state, getters, setters } = store.modules.brush;
+const { configuration, getters, setters } = store.modules.brush;
 
 /**
  * @abstract
@@ -304,7 +304,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   increaseBrushSize() {
-    const oldRadius = state.radius;
+    const oldRadius = configuration.radius;
     let newRadius = Math.floor(oldRadius * 1.2);
 
     // If e.g. only 2 pixels big. Math.floor(2*1.2) = 2.
@@ -324,31 +324,31 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   decreaseBrushSize() {
-    const oldRadius = state.radius;
+    const oldRadius = configuration.radius;
     const newRadius = Math.floor(oldRadius * 0.8);
 
     setters.radius(newRadius);
   }
 
   get fillAlpha() {
-    return state.fillAlpha;
+    return configuration.fillAlpha;
   }
 
   set fillAlpha(value) {
     const enabledElement = this._getEnabledElement();
 
-    state.fillAlpha = value;
+    configuration.fillAlpha = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 
   get fillAlphaInactive() {
-    return state.fillAlphaInactive;
+    return configuration.fillAlphaInactive;
   }
 
   set fillAlphaInactive(value) {
     const enabledElement = this._getEnabledElement();
 
-    state.fillAlphaInactive = value;
+    configuration.fillAlphaInactive = value;
     external.cornerstone.updateImage(enabledElement.element);
   }
 

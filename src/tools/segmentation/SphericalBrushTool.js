@@ -46,7 +46,7 @@ export default class SphericalBrushTool extends BrushTool {
     const image = eventData.image;
     const { rows, columns } = image;
     const { x, y } = eventData.currentPoints.image;
-    const radius = brushModule.state.radius;
+    const radius = brushModule.configuration.radius;
 
     const pixelSpacing = Math.max(
       image.rowPixelSpacing,

@@ -52,7 +52,7 @@ if (!('createImageBitmap' in window)) {
   };
 }
 
-const { state, getters } = store.modules.brush;
+const { state, configuration, getters } = store.modules.brush;
 
 /**
  * Used to redraw the brush label map data per render.
@@ -75,7 +75,7 @@ export default function(evt) {
     return;
   }
 
-  if (state.renderInactiveLabelmaps) {
+  if (configuration.renderInactiveLabelmaps) {
     renderInactiveLabelMaps(
       evt,
       labelmaps3D,
@@ -151,7 +151,7 @@ function renderInactiveLabelMaps(
 }
 
 function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
-  if (state.renderFill) {
+  if (configuration.renderFill) {
     renderSegmentation(
       evt,
       labelmap3D,
@@ -161,7 +161,7 @@ function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
     );
   }
 
-  if (state.renderOutline) {
+  if (configuration.renderOutline) {
     renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
   }
 }
@@ -184,16 +184,16 @@ function renderOutline(
   isActiveLabelMap = true
 ) {
   // Don't bother rendering a whole labelmap with full transparency!
-  if (isActiveLabelMap && state.outlineAlpha === 0) {
+  if (isActiveLabelMap && configuration.outlineAlpha === 0) {
     return;
-  } else if (state.outlineAlphaInactive === 0) {
+  } else if (configuration.outlineAlphaInactive === 0) {
     return;
   }
 
   const eventData = evt.detail;
   const { element, canvasContext } = eventData;
 
-  const lineWidth = state.outlineWidth || 1;
+  const lineWidth = configuration.outlineWidth || 1;
   const lineSegments = getLineSegments(
     eventData,
     labelmap3D,
@@ -208,8 +208,8 @@ function renderOutline(
   const previousAlpha = context.globalAlpha;
 
   context.globalAlpha = isActiveLabelMap
-    ? state.outlineAlpha
-    : state.outlineAlphaInactive;
+    ? configuration.outlineAlpha
+    : configuration.outlineAlphaInactive;
 
   // Draw outlines.
   draw(context, context => {
@@ -693,9 +693,9 @@ function renderSegmentation(
   isActiveLabelMap
 ) {
   // Don't bother rendering a whole labelmap with full transparency!
-  if (isActiveLabelMap && state.fillAlpha === 0) {
+  if (isActiveLabelMap && configuration.fillAlpha === 0) {
     return;
-  } else if (state.fillAlphaInactive === 0) {
+  } else if (configuration.fillAlphaInactive === 0) {
     return;
   }
 
@@ -806,8 +806,8 @@ function _drawImageBitmap(evt, imageBitmap, isActiveLabelMap) {
 
   context.imageSmoothingEnabled = false;
   context.globalAlpha = isActiveLabelMap
-    ? state.fillAlpha
-    : state.fillAlphaInactive;
+    ? configuration.fillAlpha
+    : configuration.fillAlphaInactive;
 
   transformCanvasContext(context, canvas, viewport);
 

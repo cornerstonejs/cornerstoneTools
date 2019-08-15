@@ -12,6 +12,12 @@ import pointInImage from '../../util/pointInImage.js';
 const logger = getLogger('store:modules:brushModule');
 
 const state = {
+  colorMapId: 'BrushColorMap',
+  series: {},
+  colorLutTables: {},
+};
+
+const configuration = {
   renderOutline: true,
   renderFill: true,
   renderInactiveLabelmaps: true,
@@ -24,9 +30,6 @@ const state = {
   outlineAlpha: 0.7,
   outlineAlphaInactive: 0.35,
   outlineWidth: 1,
-  colorMapId: 'BrushColorMap',
-  series: {},
-  colorLutTables: {},
 };
 
 /**
@@ -1103,7 +1106,10 @@ function _validColorLUTLength(colorLUT, segmentsPerLabelmap) {
  * @returns {void}
  */
 function setRadius(radius) {
-  state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
+  configuration.radius = Math.min(
+    Math.max(radius, configuration.minRadius),
+    configuration.maxRadius
+  );
 }
 
 /**

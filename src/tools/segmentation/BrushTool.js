@@ -64,7 +64,7 @@ export default class BrushTool extends BaseBrushTool {
     }
 
     // Draw the hover overlay on top of the pixel data
-    const radius = brushModule.state.radius;
+    const radius = brushModule.configuration.radius;
     const context = eventData.canvasContext;
     const element = eventData.element;
     const color = brushModule.getters.brushColor(element, this._drawing);
@@ -107,7 +107,7 @@ export default class BrushTool extends BaseBrushTool {
       return;
     }
 
-    const radius = brushModule.state.radius;
+    const radius = brushModule.configuration.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
     const {
