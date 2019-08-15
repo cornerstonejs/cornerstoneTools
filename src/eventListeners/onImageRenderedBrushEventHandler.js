@@ -5,7 +5,6 @@ import {
   resetCanvasContextTransform,
   transformCanvasContext,
   draw,
-  drawLine,
   drawLines,
 } from '../drawing/index.js';
 
@@ -117,7 +116,6 @@ function renderActiveLabelMap(
 
   if (labelmap2D) {
     renderSegmentation(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
-    // TODO - Add a global config for this.
     renderOutline(evt, labelmap3D, activeLabelmapIndex, labelmap2D);
   }
 }
@@ -241,7 +239,6 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 
   const halfLineWidth = lineWidth / 2;
 
-  const getPixelIndex = pixelCoord => pixelCoord[1] * cols + pixelCoord[0];
   const getPixelCoordinateFromPixelIndex = pixelIndex => ({
     x: pixelIndex % cols,
     y: Math.floor(pixelIndex / cols),
@@ -256,10 +253,11 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 
     const coord = getPixelCoordinateFromPixelIndex(i);
 
+    const pixels = getPixelIndiciesAroundPixel(coord, rows, cols);
+
     // Check pixel above
-    if (coord.y - 1 >= 0) {
-      const pixelIndex = getPixelIndex([coord.x, coord.y - 1]);
-      const segmentIndexAbove = pixelData[pixelIndex];
+    if (pixels.top !== undefined) {
+      const segmentIndexAbove = pixelData[pixels.top];
 
       if (segmentIndexAbove !== segmentIndex) {
         addTopOutline(
@@ -275,9 +273,8 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     }
 
     // Check pixel below
-    if (coord.y + 1 < rows) {
-      const pixelIndex = getPixelIndex([coord.x, coord.y + 1]);
-      const segmentIndexBelow = pixelData[pixelIndex];
+    if (pixels.bottom !== undefined) {
+      const segmentIndexBelow = pixelData[pixels.bottom];
 
       if (segmentIndexBelow !== segmentIndex) {
         addBottomOutline(
@@ -298,9 +295,8 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     }
 
     // Check pixel to the left
-    if (coord.x - 1 >= 0) {
-      const pixelIndex = getPixelIndex([coord.x - 1, coord.y]);
-      const segmentIndexLeft = pixelData[pixelIndex];
+    if (pixels.left !== undefined) {
+      const segmentIndexLeft = pixelData[pixels.left];
 
       if (segmentIndexLeft !== segmentIndex) {
         addLeftOutline(
@@ -316,9 +312,8 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     }
 
     // Check pixel to the right
-    if (coord.x + 1 < cols) {
-      const pixelIndex = getPixelIndex([coord.x + 1, coord.y]);
-      const segmentIndexRight = pixelData[pixelIndex];
+    if (pixels.right !== undefined) {
+      const segmentIndexRight = pixelData[pixels.right];
 
       if (segmentIndexRight !== segmentIndex) {
         addRightOutline(
@@ -337,9 +332,214 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
         halfLineWidth
       );
     }
+
+    // Top left corner
+    if (
+      pixels.topLeft !== undefined &&
+      pixelData[pixels.topLeft] !== segmentIndex &&
+      pixelData[pixels.top] === segmentIndex &&
+      pixelData[pixels.left] === segmentIndex
+    ) {
+      // TODO
+      addTopLeftCorner(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+    }
+
+    // Top right corner
+    if (
+      pixels.topRight !== undefined &&
+      pixelData[pixels.topRight] !== segmentIndex &&
+      pixelData[pixels.top] === segmentIndex &&
+      pixelData[pixels.right] === segmentIndex
+    ) {
+      // TODO
+      addTopRightCorner(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+    }
+
+    // Bottom left corner
+    if (
+      pixels.bottomLeft !== undefined &&
+      pixelData[pixels.bottomLeft] !== segmentIndex &&
+      pixelData[pixels.bottom] === segmentIndex &&
+      pixelData[pixels.left] === segmentIndex
+    ) {
+      // TODO
+      addBottomLeftCorner(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+    }
+
+    // Bottom right corner
+    if (
+      pixels.bottomRight !== undefined &&
+      pixelData[pixels.bottomRight] !== segmentIndex &&
+      pixelData[pixels.bottom] === segmentIndex &&
+      pixelData[pixels.right] === segmentIndex
+    ) {
+      // TODO
+      addBottomRightCorner(
+        lineSegments[segmentIndex],
+        element,
+        coord,
+        halfLineWidth
+      );
+    }
   }
 
   return lineSegments;
+}
+
+function addTopLeftCorner(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, coord);
+
+  start.y += halfLineWidth;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x += halfLineWidth * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+function addTopRightCorner(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
+
+  start.y += halfLineWidth;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x -= halfLineWidth * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+function addBottomLeftCorner(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
+
+  start.y -= halfLineWidth;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x += halfLineWidth * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+function addBottomRightCorner(
+  lineSegmentsForSegment,
+  element,
+  coord,
+  halfLineWidth
+) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
+
+  start.y -= halfLineWidth;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x -= halfLineWidth * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+function getPixelIndiciesAroundPixel(coord, rows, cols) {
+  const getPixelIndex = pixelCoord => pixelCoord[1] * cols + pixelCoord[0];
+
+  const pixel = {};
+
+  const hasPixelToTop = coord.y - 1 >= 0;
+  const hasPixelToBotoom = coord.y + 1 < rows;
+  const hasPixelToLeft = coord.x - 1 >= 0;
+  const hasPixelToRight = coord.x + 1 < cols;
+
+  if (hasPixelToTop) {
+    pixel.top = getPixelIndex([coord.x, coord.y - 1]);
+
+    if (hasPixelToRight) {
+      pixel.topRight = getPixelIndex([coord.x + 1, coord.y - 1]);
+    }
+
+    if (hasPixelToLeft) {
+      pixel.topLeft = getPixelIndex([coord.x - 1, coord.y - 1]);
+    }
+  }
+
+  if (hasPixelToBotoom) {
+    pixel.bottom = getPixelIndex([coord.x, coord.y + 1]);
+
+    if (hasPixelToRight) {
+      pixel.bottomRight = getPixelIndex([coord.x + 1, coord.y + 1]);
+    }
+
+    if (hasPixelToLeft) {
+      pixel.bottomLeft = getPixelIndex([coord.x - 1, coord.y + 1]);
+    }
+  }
+
+  if (hasPixelToLeft) {
+    pixel.left = getPixelIndex([coord.x - 1, coord.y]);
+  }
+
+  if (hasPixelToRight) {
+    pixel.right = getPixelIndex([coord.x + 1, coord.y]);
+  }
+
+  return pixel;
 }
 
 /**
