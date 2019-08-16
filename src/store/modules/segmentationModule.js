@@ -994,7 +994,7 @@ function setActiveSegmentIndex(elementOrEnabledElementUID, segmentIndex) {
 }
 
 /**
- * setUpdateSegmentsOnLabelmaps2D - Updates the `segmentsOnLabelmap` for the `Labelmap2D`.
+ * SetUpdateSegmentsOnLabelmaps2D - Updates the `segmentsOnLabelmap` for the `Labelmap2D`.
  * @param  {Labelmap2D} labelmap2D The `Labelmap2D` object.
  */
 function setUpdateSegmentsOnLabelmaps2D(labelmap2D) {

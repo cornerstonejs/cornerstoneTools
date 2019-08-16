@@ -8,10 +8,6 @@ import {
   drawLines,
 } from '../drawing/index.js';
 
-import { getLogger } from '../util/logger.js';
-
-const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
-
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
  */
@@ -21,7 +17,6 @@ const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
 // https://babeljs.io/docs/en/babel-plugin-transform-runtime
 // @James, I think Babel should take care of this for us
 // Import regeneratorRuntime from "regenerator-runtime";
-
 if (!('createImageBitmap' in window)) {
   window.createImageBitmap = function(imageData) {
     return new Promise(resolve => {
@@ -55,11 +50,11 @@ if (!('createImageBitmap' in window)) {
 const { state, configuration, getters } = store.modules.segmentation;
 
 /**
- * Used to redraw the brush label map data per render.
+ * Renders segmentation labelmap data associated with this element, with
+ * settings defined in the segmentationModules configuration.
  *
- * @private
- * @param {Object} evt - The event.
- * @returns {void}
+ * @param {Object} evt - The cornerstone event.
+ * @returns {null}
  */
 export default function(evt) {
   const eventData = evt.detail;
@@ -93,10 +88,11 @@ export default function(evt) {
 }
 
 /**
- * RenderActiveLabelMap - Renders the active label map for this element.
+ * RenderActiveLabelMap - Renders the `Labelmap3D` for this element if a `Labelmap2D`
+ *                        view of the `currentImageIdIndex` exists.
  *
  * @param  {Object} evt                 The cornerstone event.
- * @param  {Object[]} labelmaps3D       An array of labelmaps.
+ * @param  {Labelmap3D[]} labelmaps3D       An array of `Labelmap3D` objects.
  * @param  {number} activeLabelmapIndex The index of the active label map.
  * @param  {number} currentImageIdIndex The in-stack image position.
  * @returns {null}
@@ -121,10 +117,10 @@ function renderActiveLabelMap(
 }
 
 /**
- * RenderInactiveLabelMaps - Renders all the inactive label maps.
+ * RenderInactiveLabelMaps - Renders all the inactive `Labelmap3D`s for this element.
  *
  * @param  {Object} evt                 The cornerstone event.
- * @param  {Object[]} labelmaps3D       An array of labelmaps.
+ * @param  {Labelmap3D[]} labelmaps3D       An array of labelmaps.
  * @param  {number} activeLabelmapIndex The index of the active label map.
  * @param  {number} currentImageIdIndex The in-stack image position.
  * @returns {null}
@@ -150,6 +146,14 @@ function renderInactiveLabelMaps(
   }
 }
 
+/**
+ * render - Renders the segmentation based on the settings given.
+ * @param  {} evt
+ * @param  {} labelmap3D
+ * @param  {} labelmapIndex
+ * @param  {} labelmap2D
+ * @param  {} isActiveLabelMap
+ */
 function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
   if (configuration.renderFill) {
     renderSegmentation(
@@ -170,9 +174,9 @@ function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
  * RenderOutline - Renders the outlines of segments to the canvas.
  *
  * @param  {Object} evt             The cornerstone event.
- * @param  {Object} labelmap3D      The 3D labelmap.
+ * @param  {Labelmap3D} labelmap3D     The `Labelmap3D` object.
  * @param  {number} labelmapIndex   The index of the labelmap.
- * @param  {Object} labelmap2D      The 2D labelmap for this current image.
+ * @param  {Labelmap2D} labelmap2D     The `Labelmap2D` for this current image.
  * @param  {number} isActiveLabelMap   Whether the labelmap is active.
  * @returns {null}
  */
@@ -239,8 +243,8 @@ function renderOutline(
  * drawn the canvas.
  *
  * @param  {Object} eventData The eventdata associated with the cornerstone event.
- * @param  {Object} labelmap3D The 3D labelmap.
- * @param  {Object} labelmap2D The 2D labelmap for this current image.
+ * @param  {Labelmap3D} labelmap3D The 3D labelmap.
+ * @param  {Labelmap2D} labelmap2D The 2D labelmap for this current image.
  * @param  {number} lineWidth The width of the line segments.
  *
  * @returns {Object[][]} An array of arrays of lines for each segment.
