@@ -4,8 +4,7 @@ import _isEmptyObject from '../../util/isEmptyObject';
 import store from '../../store';
 import { getCursor } from '../../util/segmentation';
 
-const brushModule = store.modules.brush;
-const { getters, setters } = brushModule;
+const { getters, setters } = store.modules.segmentation;
 
 /**
  * Gets The cursor according to strategy.

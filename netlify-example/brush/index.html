@@ -444,7 +444,7 @@
             activeLabelmap = 0;
           }
 
-          cornerstoneTools.store.modules.brush.setters.activeLabelmap(
+          cornerstoneTools.store.modules.segmentation.setters.activeLabelmap(
             element,
             activeLabelmap
           );
@@ -458,7 +458,8 @@
       }
     }
 
-    const configuration = cornerstoneTools.store.modules.brush.configuration;
+    const configuration =
+      cornerstoneTools.store.modules.segmentation.configuration;
 
     // Display Outline
     const outlineDisplay = document.getElementById('display-outline');

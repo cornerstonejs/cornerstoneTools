@@ -1,7 +1,7 @@
 import external from '../externalModules.js';
 import store from '../store/index.js';
 
-const brushModule = store.modules.brush;
+const { getters } = store.modules.segmentation;
 
 /**
  * Clears the brush imageBitmapCache,
@@ -14,9 +14,7 @@ export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
 
-  const { labelmaps3D, currentImageIdIndex } = brushModule.getters.labelmaps3D(
-    element
-  );
+  const { labelmaps3D, currentImageIdIndex } = getters.labelmaps3D(element);
 
   if (!labelmaps3D) {
     return;

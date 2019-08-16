@@ -7,7 +7,7 @@ import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BaseBrushTool');
 
-const { configuration, getters, setters } = store.modules.brush;
+const { configuration, getters, setters } = store.modules.segmentation;
 
 /**
  * @abstract

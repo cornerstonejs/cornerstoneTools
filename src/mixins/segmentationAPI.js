@@ -1,6 +1,6 @@
 import store from './../store/index.js';
 
-const { setters, getters } = store.modules.brush;
+const { setters, getters } = store.modules.segmentation;
 
 // ===================================================================
 // Segmentation API. This is effectively a wrapper around the store.

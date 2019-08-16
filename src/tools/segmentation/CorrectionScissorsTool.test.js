@@ -20,7 +20,7 @@ let applyStrategySpy;
 
 function setMocksAndSpies(store) {
   // Brush Module Spies
-  store.modules.brush.getters.getAndCacheLabelmap2D = jest.fn(() => ({
+  store.modules.segmentation.getters.getAndCacheLabelmap2D = jest.fn(() => ({
     labelmap3D: {
       labelmaps2D: [
         {
@@ -32,7 +32,7 @@ function setMocksAndSpies(store) {
     currentImageIdIndex: 0,
   }));
 
-  store.modules.brush.getters.brushColor = jest.fn();
+  store.modules.segmentation.getters.brushColor = jest.fn();
 
   // Spies for Mixins
   startOutliningRegionSpy = jest.spyOn(
@@ -51,8 +51,8 @@ function setMocksAndSpies(store) {
 
 function restoreMocksAndSpies(store) {
   // Brush Module Spies
-  store.modules.brush.getters.getAndCacheLabelmap2D.mockRestore();
-  store.modules.brush.getters.brushColor.mockRestore();
+  store.modules.segmentation.getters.getAndCacheLabelmap2D.mockRestore();
+  store.modules.segmentation.getters.brushColor.mockRestore();
 
   // Spies for Mixins
   startOutliningRegionSpy.mockRestore();

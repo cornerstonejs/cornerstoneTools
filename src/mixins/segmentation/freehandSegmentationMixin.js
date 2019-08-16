@@ -6,8 +6,7 @@ import { getCursor } from '../../util/segmentation';
 
 const logger = getLogger('tools:ScissorsTool');
 
-const brushModule = store.modules.brush;
-const { getters, setters } = brushModule;
+const { getters, setters } = store.modules.segmentation;
 
 /**
  * Gets The cursor according to strategy.

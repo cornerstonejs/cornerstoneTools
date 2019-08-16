@@ -52,7 +52,7 @@ if (!('createImageBitmap' in window)) {
   };
 }
 
-const { state, configuration, getters } = store.modules.brush;
+const { state, configuration, getters } = store.modules.segmentation;
 
 /**
  * Used to redraw the brush label map data per render.

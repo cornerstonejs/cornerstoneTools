@@ -10,7 +10,7 @@ const logger = getLogger('tools:SphericalBrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
-const brushModule = store.modules.brush;
+const { getters, setters, configuration } = store.modules.segmentation;
 
 /**
  * @public
@@ -46,7 +46,7 @@ export default class SphericalBrushTool extends BrushTool {
     const image = eventData.image;
     const { rows, columns } = image;
     const { x, y } = eventData.currentPoints.image;
-    const radius = brushModule.configuration.radius;
+    const radius = configuration.radius;
 
     const pixelSpacing = Math.max(
       image.rowPixelSpacing,
@@ -94,10 +94,9 @@ export default class SphericalBrushTool extends BrushTool {
 
     this._imagesInRange = imagesInRange;
 
-    const {
-      labelmap3D,
-      activeLabelmapIndex,
-    } = brushModule.getters.getAndCacheLabelmap2D(element);
+    const { labelmap3D, activeLabelmapIndex } = getters.getAndCacheLabelmap2D(
+      element
+    );
 
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
@@ -107,12 +106,7 @@ export default class SphericalBrushTool extends BrushTool {
       const pointerArray = getCircle(radiusOnImage, rows, columns, x, y);
 
       // Cache the view on this image if its not present.
-      brushModule.setters.cacheLabelMap2DView(
-        labelmap3D,
-        imageIdIndex,
-        rows,
-        columns
-      );
+      setters.cacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns);
 
       // Draw / Erase the active color.
       drawBrushPixels(
