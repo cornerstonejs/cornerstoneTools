@@ -152,7 +152,7 @@ function renderInactiveLabelMaps(
 }
 
 /**
- * render - Renders the segmentation based on the settings given.
+ * Render - Renders the segmentation based on the settings given.
  * @param  {} evt
  * @param  {} labelmap3D
  * @param  {} labelmapIndex
@@ -227,7 +227,7 @@ function renderSegmentation(
           });
         }
 
-        // start scanning rect of index newSegmentIndex.
+        // Start scanning rect of index newSegmentIndex.
         start = { x, y };
         segmentIndex = newSegmentIndex;
       }
@@ -253,9 +253,63 @@ function renderSegmentation(
     : configuration.fillAlphaInactive;
 
   const previousImageSmoothingEnabled = context.imageSmoothingEnabled;
+
   context.imageSmoothingEnabled = false;
 
-  // render rects
+  const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
+    x: 0,
+    y: 0,
+  });
+
+  const canvasTopRight = external.cornerstone.pixelToCanvas(eventData.element, {
+    x: eventData.image.width,
+    y: 0,
+  });
+
+  const canvasBottomRight = external.cornerstone.pixelToCanvas(
+    eventData.element,
+    {
+      x: eventData.image.width,
+      y: eventData.image.height,
+    }
+  );
+
+  const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
+    canvasTopLeft,
+    canvasTopRight
+  );
+  const cornerstoneCanvasHeight = external.cornerstoneMath.point.distance(
+    canvasTopRight,
+    canvasBottomRight
+  );
+
+  const canvas = eventData.canvasContext.canvas;
+  const viewport = eventData.viewport;
+
+  context.imageSmoothingEnabled = false;
+  context.globalAlpha = isActiveLabelMap
+    ? configuration.fillAlpha
+    : configuration.fillAlphaInactive;
+
+  transformCanvasContext(context, canvas, viewport);
+
+  const canvasViewportTranslation = {
+    x: viewport.translation.x * viewport.scale,
+    y: viewport.translation.y * viewport.scale,
+  };
+
+  const transformOffset = {
+    left:
+      canvas.width / 2 -
+      cornerstoneCanvasWidth / 2 +
+      canvasViewportTranslation.x,
+    top:
+      canvas.height / 2 -
+      cornerstoneCanvasHeight / 2 +
+      canvasViewportTranslation.y,
+  };
+
+  // Render rects
 
   for (let i = 0; i < rects.length; i++) {
     const rectsI = rects[i];
@@ -266,7 +320,7 @@ function renderSegmentation(
       const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
       for (let r = 0; r < rectsI.length; r++) {
-        fillRect(context, rectsI[r], fillStyle, element);
+        fillRect(context, rectsI[r], fillStyle, element, transformOffset);
       }
     }
   }
@@ -275,7 +329,7 @@ function renderSegmentation(
   context.imageSmoothingEnabled = previousImageSmoothingEnabled;
 }
 
-function fillRect(context, rect, fillStyle, element) {
+function fillRect(context, rect, fillStyle, element, transformOffset) {
   const { pixelToCanvas } = external.cornerstone;
   const topLeft = pixelToCanvas(element, rect.start);
   const bottomRight = pixelToCanvas(element, {
@@ -284,8 +338,8 @@ function fillRect(context, rect, fillStyle, element) {
   });
 
   const boundingBox = {
-    left: topLeft.x,
-    top: topLeft.y,
+    left: topLeft.x - transformOffset.left,
+    top: topLeft.y - transformOffset.top,
     width: bottomRight.x - topLeft.x,
     height: bottomRight.y - topLeft.y,
   };
