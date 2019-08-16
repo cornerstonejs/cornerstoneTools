@@ -116,7 +116,6 @@ function simpleScissorOperation(nodes, evt, segmentIndex) {
 
     return true;
   } else if (allInside) {
-    // TODO - Erase inside?
     logger.warn('The line is only ever inside the segment.');
     eraseInside(evt);
 

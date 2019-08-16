@@ -381,7 +381,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 }
 
 /**
- * addTopLeftCorner - Adds an outline to the top left corner of the pixel.
+ * AddTopLeftCorner - Adds an outline to the top left corner of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -415,7 +415,7 @@ function addTopLeftCorner(
 }
 
 /**
- * addTopRightCorner - Adds an outline to the top right corner of the pixel.
+ * AddTopRightCorner - Adds an outline to the top right corner of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -449,7 +449,7 @@ function addTopRightCorner(
 }
 
 /**
- * addBottomLeftCorner - Adds an outline to the bottom left corner of the pixel.
+ * AddBottomLeftCorner - Adds an outline to the bottom left corner of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -483,7 +483,7 @@ function addBottomLeftCorner(
 }
 
 /**
- * addBottomRightCorner - Adds an outline to the bottom right corner of the pixel.
+ * AddBottomRightCorner - Adds an outline to the bottom right corner of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
@@ -517,7 +517,7 @@ function addBottomRightCorner(
 }
 
 /**
- * getPixelIndiciesAroundPixel - Returnns the coordinates for up to 8 surrounding
+ * GetPixelIndiciesAroundPixel - Returnns the coordinates for up to 8 surrounding
  * pixels, if they within the bounds of the image.
  *
  * @param  {Object} coord The coordinate to check.
