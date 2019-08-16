@@ -511,8 +511,10 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         }
 
         // Add these text lines to the array to be displayed in the textbox
-        textLines.push(meanText);
-        textLines.push(stdDevText);
+        if (showDefaultContent) {
+          textLines.push(meanText);
+          textLines.push(stdDevText);
+        }
       }
 
       // If the area is a sane value, display it
@@ -530,8 +532,13 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
-        textLines.push(areaText);
+        if (showDefaultContent) {
+          textLines.push(areaText);
+        }
       }
+
+      if (options.addToTextBoxContent)
+        textLines.push(options.addToTextBoxContent);
 
       return textLines;
     }
@@ -1815,6 +1822,8 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
+    showDefaultContent: true,
+    addToTextBoxContent: '',
   };
 }
 
