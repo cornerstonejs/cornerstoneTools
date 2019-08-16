@@ -6,7 +6,12 @@ import {
   transformCanvasContext,
   draw,
   drawLines,
+  fillBox,
 } from '../drawing/index.js';
+
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
 
 /* Safari and Edge polyfill for createImageBitmap
  * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
@@ -168,6 +173,124 @@ function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
   if (configuration.renderOutline) {
     renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
   }
+}
+
+function renderSegmentation(
+  evt,
+  labelmap3D,
+  labelmapIndex,
+  labelmap2D,
+  isActiveLabelMap
+) {
+  // Don't bother rendering a whole labelmap with full transparency!
+  if (isActiveLabelMap && configuration.fillAlpha === 0) {
+    return;
+  } else if (!isActiveLabelMap && configuration.fillAlphaInactive === 0) {
+    return;
+  }
+
+  const eventData = evt.detail;
+  const { element, image, canvasContext } = eventData;
+  const cols = image.width;
+  const rows = image.height;
+
+  const pixelData = labelmap2D.pixelData;
+  const activeSegmentIndex = labelmap3D.activeSegmentIndex;
+
+  // Find rects.
+  const rects = [];
+
+  labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
+    rects[segmentIndex] = [];
+  });
+
+  // TODO - Do this in a cleaner way?
+  if (!rects[activeSegmentIndex]) {
+    rects[activeSegmentIndex] = [];
+  }
+
+  // Scan through each row.
+  for (let y = 0; y < rows; y++) {
+    // Start at the first pixel, and traverse until you hit a pixel of a different segment.
+    let segmentIndex = pixelData[y * rows];
+    let start = { x: 0, y };
+
+    for (let x = 1; x < cols; x++) {
+      const newSegmentIndex = pixelData[y * rows + x];
+
+      if (newSegmentIndex !== segmentIndex) {
+        // Hit new segment, save rect.
+        if (segmentIndex !== 0) {
+          rects[segmentIndex].push({
+            start,
+            end: { x: x - 1, y },
+          });
+        }
+
+        // start scanning rect of index newSegmentIndex.
+        start = { x, y };
+        segmentIndex = newSegmentIndex;
+      }
+    }
+
+    // Close off final rect (its fine if start and end are the same value).
+    if (segmentIndex !== 0) {
+      rects[segmentIndex].push({
+        start,
+        end: { x: cols - 1, y },
+      });
+    }
+  }
+
+  const context = getNewContext(canvasContext.canvas);
+  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
+  const colorLutTable = state.colorLutTables[colorMapId];
+
+  const previousAlpha = context.globalAlpha;
+
+  context.globalAlpha = isActiveLabelMap
+    ? configuration.fillAlpha
+    : configuration.fillAlphaInactive;
+
+  const previousImageSmoothingEnabled = context.imageSmoothingEnabled;
+  context.imageSmoothingEnabled = false;
+
+  // render rects
+
+  for (let i = 0; i < rects.length; i++) {
+    const rectsI = rects[i];
+
+    if (rectsI) {
+      const color = colorLutTable[i];
+
+      const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+
+      for (let r = 0; r < rectsI.length; r++) {
+        fillRect(context, rectsI[r], fillStyle, element);
+      }
+    }
+  }
+
+  context.globalAlpha = previousAlpha;
+  context.imageSmoothingEnabled = previousImageSmoothingEnabled;
+}
+
+function fillRect(context, rect, fillStyle, element) {
+  const { pixelToCanvas } = external.cornerstone;
+  const topLeft = pixelToCanvas(element, rect.start);
+  const bottomRight = pixelToCanvas(element, {
+    x: rect.end.x + 1,
+    y: rect.end.y + 1,
+  });
+
+  const boundingBox = {
+    left: topLeft.x,
+    top: topLeft.y,
+    width: bottomRight.x - topLeft.x,
+    height: bottomRight.y - topLeft.y,
+  };
+
+  fillBox(context, boundingBox, fillStyle);
 }
 
 /**
@@ -682,7 +805,7 @@ function addRightOutline(
 }
 
 /**
- * RenderSegmentation - Renders the labelmap2D to the canvas.
+ * RenderSegmentation_OLD - Renders the labelmap2D to the canvas.
  *
  * @param  {Object} evt              The cornerstone event.
  * @param  {Object} labelmap3D       The 3D labelmap.
@@ -692,7 +815,7 @@ function addRightOutline(
  *
  * @returns {null}
  */
-function renderSegmentation(
+function renderSegmentation_OLD(
   evt,
   labelmap3D,
   labelmapIndex,
