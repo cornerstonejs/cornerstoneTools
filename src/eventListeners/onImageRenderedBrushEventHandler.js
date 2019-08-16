@@ -278,40 +278,18 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     }
 
     const coord = getPixelCoordinateFromPixelIndex(i);
-
     const pixels = getPixelIndiciesAroundPixel(coord, rows, cols);
 
     // Check pixel above
-    if (pixels.top !== undefined) {
-      const segmentIndexAbove = pixelData[pixels.top];
-
-      if (segmentIndexAbove !== segmentIndex) {
-        addTopOutline(
-          lineSegments[segmentIndex],
-          element,
-          coord,
-          halfLineWidth
-        );
-      }
-    } else {
-      // Segment on Edge, draw line.
+    if (pixels.top === undefined || pixelData[pixels.top] !== segmentIndex) {
       addTopOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
     }
 
     // Check pixel below
-    if (pixels.bottom !== undefined) {
-      const segmentIndexBelow = pixelData[pixels.bottom];
-
-      if (segmentIndexBelow !== segmentIndex) {
-        addBottomOutline(
-          lineSegments[segmentIndex],
-          element,
-          coord,
-          halfLineWidth
-        );
-      }
-    } else {
-      // Segment on Edge, draw line.
+    if (
+      pixels.bottom === undefined ||
+      pixelData[pixels.bottom] !== segmentIndex
+    ) {
       addBottomOutline(
         lineSegments[segmentIndex],
         element,
@@ -321,36 +299,15 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     }
 
     // Check pixel to the left
-    if (pixels.left !== undefined) {
-      const segmentIndexLeft = pixelData[pixels.left];
-
-      if (segmentIndexLeft !== segmentIndex) {
-        addLeftOutline(
-          lineSegments[segmentIndex],
-          element,
-          coord,
-          halfLineWidth
-        );
-      }
-    } else {
-      // Segment on Edge, draw line.
+    if (pixels.left === undefined || pixelData[pixels.left] !== segmentIndex) {
       addLeftOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
     }
 
     // Check pixel to the right
-    if (pixels.right !== undefined) {
-      const segmentIndexRight = pixelData[pixels.right];
-
-      if (segmentIndexRight !== segmentIndex) {
-        addRightOutline(
-          lineSegments[segmentIndex],
-          element,
-          coord,
-          halfLineWidth
-        );
-      }
-    } else {
-      // Segment on Edge, draw line.
+    if (
+      pixels.right === undefined ||
+      pixelData[pixels.right] !== segmentIndex
+    ) {
       addRightOutline(
         lineSegments[segmentIndex],
         element,
@@ -366,7 +323,6 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.top] === segmentIndex &&
       pixelData[pixels.left] === segmentIndex
     ) {
-      // TODO
       addTopLeftCorner(
         lineSegments[segmentIndex],
         element,
@@ -382,7 +338,6 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.top] === segmentIndex &&
       pixelData[pixels.right] === segmentIndex
     ) {
-      // TODO
       addTopRightCorner(
         lineSegments[segmentIndex],
         element,
@@ -398,7 +353,6 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.bottom] === segmentIndex &&
       pixelData[pixels.left] === segmentIndex
     ) {
-      // TODO
       addBottomLeftCorner(
         lineSegments[segmentIndex],
         element,
@@ -414,7 +368,6 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.bottom] === segmentIndex &&
       pixelData[pixels.right] === segmentIndex
     ) {
-      // TODO
       addBottomRightCorner(
         lineSegments[segmentIndex],
         element,
@@ -427,6 +380,16 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
   return lineSegments;
 }
 
+/**
+ * addTopLeftCorner - Adds an outline to the top left corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
 function addTopLeftCorner(
   lineSegmentsForSegment,
   element,
@@ -451,6 +414,16 @@ function addTopLeftCorner(
   });
 }
 
+/**
+ * addTopRightCorner - Adds an outline to the top right corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
 function addTopRightCorner(
   lineSegmentsForSegment,
   element,
@@ -475,6 +448,16 @@ function addTopRightCorner(
   });
 }
 
+/**
+ * addBottomLeftCorner - Adds an outline to the bottom left corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
 function addBottomLeftCorner(
   lineSegmentsForSegment,
   element,
@@ -499,6 +482,16 @@ function addBottomLeftCorner(
   });
 }
 
+/**
+ * addBottomRightCorner - Adds an outline to the bottom right corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ *
+ * @returns {null}
+ */
 function addBottomRightCorner(
   lineSegmentsForSegment,
   element,
@@ -523,6 +516,16 @@ function addBottomRightCorner(
   });
 }
 
+/**
+ * getPixelIndiciesAroundPixel - Returnns the coordinates for up to 8 surrounding
+ * pixels, if they within the bounds of the image.
+ *
+ * @param  {Object} coord The coordinate to check.
+ * @param  {number} rows The number of rows in the image.
+ * @param  {number} cols The number of cols in the image.
+ *
+ * @returns {Object} Object containing the position of adjacent pixels.
+ */
 function getPixelIndiciesAroundPixel(coord, rows, cols) {
   const getPixelIndex = pixelCoord => pixelCoord[1] * cols + pixelCoord[0];
 
