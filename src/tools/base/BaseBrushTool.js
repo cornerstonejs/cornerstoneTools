@@ -352,6 +352,28 @@ class BaseBrushTool extends BaseTool {
     external.cornerstone.updateImage(enabledElement.element);
   }
 
+  get outlineAlpha() {
+    return configuration.outlineAlpha;
+  }
+
+  set outlineAlpha(value) {
+    const enabledElement = this._getEnabledElement();
+
+    configuration.outlineAlpha = value;
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
+  get outlineAlphaInactive() {
+    return configuration.outlineAlphaInactive;
+  }
+
+  set outlineAlphaInactive(value) {
+    const enabledElement = this._getEnabledElement();
+
+    configuration.outlineAlphaInactive = value;
+    external.cornerstone.updateImage(enabledElement.element);
+  }
+
   _getEnabledElement() {
     return external.cornerstone.getEnabledElement(this.element);
   }

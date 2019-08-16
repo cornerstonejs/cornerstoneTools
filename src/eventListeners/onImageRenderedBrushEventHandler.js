@@ -186,7 +186,7 @@ function renderOutline(
   // Don't bother rendering a whole labelmap with full transparency!
   if (isActiveLabelMap && configuration.outlineAlpha === 0) {
     return;
-  } else if (configuration.outlineAlphaInactive === 0) {
+  } else if (!isActiveLabelMap && configuration.outlineAlphaInactive === 0) {
     return;
   }
 
@@ -695,7 +695,7 @@ function renderSegmentation(
   // Don't bother rendering a whole labelmap with full transparency!
   if (isActiveLabelMap && configuration.fillAlpha === 0) {
     return;
-  } else if (configuration.fillAlphaInactive === 0) {
+  } else if (!isActiveLabelMap && configuration.fillAlphaInactive === 0) {
     return;
   }
 
