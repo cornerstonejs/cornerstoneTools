@@ -57,14 +57,14 @@ export default function(elementEnabledEvt) {
   newImageEventDispatcher.enable(enabledElement);
 
   // Mouse
-  if (store.modules.globalConfiguration.state.mouseEnabled) {
+  if (store.modules.globalConfiguration.configuration.mouseEnabled) {
     mouseEventListeners.enable(enabledElement);
     wheelEventListener.enable(enabledElement);
     mouseToolEventDispatcher.enable(enabledElement);
   }
 
   // Touch
-  if (store.modules.globalConfiguration.state.touchEnabled) {
+  if (store.modules.globalConfiguration.configuration.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
   }
@@ -115,7 +115,7 @@ function _initModulesOnElement(enabledElement) {
  * @returns {void}
  */
 function _addGlobalToolsToElement(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 
@@ -135,7 +135,7 @@ function _addGlobalToolsToElement(enabledElement) {
  * @returns {void}
  */
 function _repeatGlobalToolHistory(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 

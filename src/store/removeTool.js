@@ -49,7 +49,7 @@ const removeTool = function(toolName) {
  * @returns {void}
  */
 const _removeToolGlobally = function(toolName) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 

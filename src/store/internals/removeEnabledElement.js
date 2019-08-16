@@ -43,14 +43,14 @@ export default function(elementDisabledEvt) {
   newImageEventDispatcher.disable(enabledElement);
 
   // Mouse
-  if (store.modules.globalConfiguration.state.mouseEnabled) {
+  if (store.modules.globalConfiguration.configuration.mouseEnabled) {
     mouseEventListeners.disable(enabledElement);
     wheelEventListener.disable(enabledElement);
     mouseToolEventDispatcher.disable(enabledElement);
   }
 
   // Touch
-  if (store.modules.globalConfiguration.state.touchEnabled) {
+  if (store.modules.globalConfiguration.configuration.touchEnabled) {
     touchEventListeners.disable(enabledElement);
     touchToolEventDispatcher.disable(enabledElement);
   }

@@ -1053,7 +1053,7 @@ function _getEnabledElement(elementOrEnabledElementUID) {
 function setColorLUT(labelmapIndex, colorLUT) {
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colormap = external.cornerstone.colors.getColormap(colorMapId);
-  const segmentsPerLabelmap = state.segmentsPerLabelmap;
+  const segmentsPerLabelmap = configuration.segmentsPerLabelmap;
 
   if (!_validColorLUTLength(colorLUT, segmentsPerLabelmap)) {
     return;
@@ -1124,6 +1124,7 @@ function onRegisterCallback() {
 
 export default {
   state,
+  configuration,
   onRegisterCallback,
   getters: {
     metadata: getMetadata,
