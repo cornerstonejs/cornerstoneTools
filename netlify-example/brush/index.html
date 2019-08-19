@@ -236,6 +236,8 @@
 
     cornerstone.enable(element);
 
+    const enabledElement = cornerstone.getEnabledElement(element);
+
     element.tabIndex = 0;
     element.focus();
 
@@ -243,6 +245,10 @@
       cornerstoneTools.addStackStateManager(element, ['stack']);
       cornerstoneTools.addToolState(element, 'stack', stack);
       cornerstone.displayImage(element, image);
+
+      console.log(enabledElement);
+
+      enabledElement.viewport.pixelReplication = true;
     });
 
     function setAllToolsPassive() {

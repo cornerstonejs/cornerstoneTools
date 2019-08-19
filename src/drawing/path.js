@@ -39,7 +39,8 @@ export default function(context, options = {}, fn) {
     context.fillStyle = fillStyle;
     context.fill();
   }
-  if (lineWidth) {
+
+  if (lineWidth !== null) {
     context.stroke();
   }
 

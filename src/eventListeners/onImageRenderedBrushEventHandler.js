@@ -118,7 +118,7 @@ function renderActiveLabelMap(
   const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
   if (labelmap2D) {
-    render(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
+    renderSegmentation(evt, labelmap3D, activeLabelmapIndex, labelmap2D, true);
   }
 }
 
@@ -147,28 +147,30 @@ function renderInactiveLabelMaps(
     const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
     if (labelmap2D) {
-      render(evt, labelmap3D, i, labelmap2D, false);
+      renderSegmentation(evt, labelmap3D, i, labelmap2D, false);
     }
   }
 }
 
 /**
- * Render - Renders the segmentation based on the settings given.
- * @param  {} evt
- * @param  {} labelmap3D
- * @param  {} labelmapIndex
- * @param  {} labelmap2D
- * @param  {} isActiveLabelMap
+ * RenderSegmentation - Renders the segmentation based on the brush configuration and
+ * the active status of the labelmap.
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Labelmap3D} labelmap3D  The `Labelmap3D` object.
+ * @param  {number} labelmapIndex The index of the active label map.
+ * @param  {Labelmap2D} labelmap2D The `Labelmap2D` object to render.
+ * @param  {boolean} isActiveLabelMap Whether or not the labelmap is active.
+ * @returns {null}
  */
-function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
+function renderSegmentation(
+  evt,
+  labelmap3D,
+  labelmapIndex,
+  labelmap2D,
+  isActiveLabelMap
+) {
   if (configuration.renderFill) {
-    renderSegmentation(
-      evt,
-      labelmap3D,
-      labelmapIndex,
-      labelmap2D,
-      isActiveLabelMap
-    );
+    renderFill(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
   }
 
   if (configuration.renderOutline) {
@@ -176,7 +178,16 @@ function render(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap) {
   }
 }
 
-function renderSegmentation(
+/**
+ * renderFill - Renders the filled region of each segment in the segmentation.
+ * @param  {Object} evt                 The cornerstone event.
+ * @param  {Labelmap3D} labelmap3D  The `Labelmap3D` object.
+ * @param  {number} labelmapIndex The index of the active label map.
+ * @param  {Labelmap2D} labelmap2D The `Labelmap2D` object to render.
+ * @param  {boolean} isActiveLabelMap Whether or not the labelmap is active.
+ * @returns {null}
+ */
+function renderFill(
   evt,
   labelmap3D,
   labelmapIndex,
@@ -205,7 +216,6 @@ function renderSegmentation(
     rects[segmentIndex] = [];
   });
 
-  // TODO - Do this in a cleaner way?
   if (!rects[activeSegmentIndex]) {
     rects[activeSegmentIndex] = [];
   }
@@ -243,134 +253,47 @@ function renderSegmentation(
     }
   }
 
-  const { pixelToCanvas } = external.cornerstone;
-
   const context = getNewContext(canvasContext.canvas);
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colorLutTable = state.colorLutTables[colorMapId];
 
   const previousAlpha = context.globalAlpha;
-
-  context.globalAlpha = isActiveLabelMap
-    ? configuration.fillAlpha
-    : configuration.fillAlphaInactive;
-
   const previousImageSmoothingEnabled = context.imageSmoothingEnabled;
 
-  context.imageSmoothingEnabled = true;
-
-  const previousLineWidth = context.lineWidth;
-
-  context.lineWidth = 0;
-
-  /*
-
-  const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
-    x: 0,
-    y: 0,
-  });
-
-  const canvasTopRight = external.cornerstone.pixelToCanvas(eventData.element, {
-    x: eventData.image.width,
-    y: 0,
-  });
-
-  const canvasBottomRight = external.cornerstone.pixelToCanvas(
-    eventData.element,
-    {
-      x: eventData.image.width,
-      y: eventData.image.height,
-    }
-  );
-
-  const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
-    canvasTopLeft,
-    canvasTopRight
-  );
-  const cornerstoneCanvasHeight = external.cornerstoneMath.point.distance(
-    canvasTopRight,
-    canvasBottomRight
-  );
-
-  const canvas = eventData.canvasContext.canvas;
-  const viewport = eventData.viewport;
-
-  // TEMP - Clean this!
-  for (let i = 0; i < rects.length; i++) {
-    const rectsI = rects[i];
-
-    if (rectsI) {
-      for (let r = 0; r < rectsI.length; r++) {
-        const rect = rectsI[r];
-        const topLeft = pixelToCanvas(element, rect.start);
-        const bottomRight = pixelToCanvas(element, {
-          x: rect.end.x + 1,
-          y: rect.end.y + 1,
-        });
-
-        topLeft.x -= canvasTopLeft.x;
-        topLeft.y -= canvasTopLeft.y;
-
-        bottomRight.x -= canvasTopLeft.x;
-        bottomRight.y -= canvasTopLeft.y;
-
-        rect.topLeft = topLeft;
-
-        rect.width = bottomRight.x - topLeft.x;
-        rect.height = bottomRight.y - topLeft.y;
-      }
-    }
-  }
-
-  logger.warn(rects);
-
-  context.imageSmoothingEnabled = false;
   context.globalAlpha = isActiveLabelMap
     ? configuration.fillAlpha
     : configuration.fillAlphaInactive;
-
-  transformCanvasContext(context, canvas, viewport);
-
-  const canvasViewportTranslation = {
-    x: viewport.translation.x * viewport.scale,
-    y: viewport.translation.y * viewport.scale,
-  };
-
-  const transformOffset = {
-    left:
-      canvas.width / 2 -
-      cornerstoneCanvasWidth / 2 +
-      canvasViewportTranslation.x,
-    top:
-      canvas.height / 2 -
-      cornerstoneCanvasHeight / 2 +
-      canvasViewportTranslation.y,
-  };
-  */
+  context.imageSmoothingEnabled = false;
 
   // Render rects
-
   for (let i = 0; i < rects.length; i++) {
     const rectsI = rects[i];
 
     if (rectsI) {
       const color = colorLutTable[i];
 
-      const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+      const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]}`;
 
       for (let r = 0; r < rectsI.length; r++) {
-        fillRectPath(context, rectsI[r], fillStyle, element);
-        //fillRect(context, rectsI[r], fillStyle, element, transformOffset);
+        fillRect(context, rectsI[r], fillStyle, element);
       }
     }
   }
 
   context.globalAlpha = previousAlpha;
   context.imageSmoothingEnabled = previousImageSmoothingEnabled;
-  context.lineWidth = previousLineWidth;
 }
 
-function fillRectPath(context, rect, fillStyle, element) {
+/**
+ * fillRect - renders the rectangle as a path, as this requires less transformation logic
+ * for arbitrary rotations.
+ *
+ * @param  {CanvasRenderingContext2D} context The canvas context.
+ * @param  {Object} rect An object with a start and end pixel to render.
+ * @param  {Object} fillStyle The fillstyle. Only property being passed is the color.
+ * @param  {HTMLElement} element The cornerstone enabled element.
+ */
+function fillRect(context, rect, fillStyle, element) {
   const { start, end } = rect;
 
   const points = [
@@ -390,41 +313,8 @@ function fillRectPath(context, rect, fillStyle, element) {
 
   drawJoinedLines(context, element, rect.start, points, {
     fillStyle,
+    lineWidth: null,
   });
-}
-
-function fillRect(context, rect, fillStyle, element, transformOffset) {
-  //const { pixelToCanvas } = external.cornerstone;
-  //const topLeft = pixelToCanvas(element, rect.start);
-  /*
-  const bottomRight = pixelToCanvas(element, {
-    x: rect.end.x + 1,
-    y: rect.end.y + 1,
-  });
-  */
-
-  const boundingBox = {
-    left: rect.topLeft.x + transformOffset.left,
-    top: rect.topLeft.y + transformOffset.top,
-    width: rect.width,
-    height: rect.height,
-    //width: bottomRight.x - topLeft.x,
-    //height: bottomRight.y - topLeft.y,
-  };
-
-  /*
-  context.drawImage(
-    imageBitmap,
-    canvas.width / 2 - cornerstoneCanvasWidth / 2 + canvasViewportTranslation.x,
-    canvas.height / 2 -
-      cornerstoneCanvasHeight / 2 +
-      canvasViewportTranslation.y,
-    cornerstoneCanvasWidth,
-    cornerstoneCanvasHeight
-  );
-  */
-
-  fillBox(context, boundingBox, fillStyle);
 }
 
 /**
@@ -507,7 +397,7 @@ function renderOutline(
  * @returns {Object[][]} An array of arrays of lines for each segment.
  */
 function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
-  const { element, image } = eventData;
+  const { element, image, viewport } = eventData;
   const cols = image.width;
   const rows = image.height;
 
@@ -524,12 +414,12 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     lineSegments[activeSegmentIndex] = [];
   }
 
-  const halfLineWidth = lineWidth / 2;
-
   const getPixelCoordinateFromPixelIndex = pixelIndex => ({
     x: pixelIndex % cols,
     y: Math.floor(pixelIndex / cols),
   });
+
+  const offset = getOutlineOffset(viewport, lineWidth);
 
   for (let i = 0; i < pixelData.length; i++) {
     const segmentIndex = pixelData[i];
@@ -543,7 +433,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 
     // Check pixel above
     if (pixels.top === undefined || pixelData[pixels.top] !== segmentIndex) {
-      addTopOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
+      addTopOutline(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Check pixel below
@@ -551,17 +441,12 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixels.bottom === undefined ||
       pixelData[pixels.bottom] !== segmentIndex
     ) {
-      addBottomOutline(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addBottomOutline(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Check pixel to the left
     if (pixels.left === undefined || pixelData[pixels.left] !== segmentIndex) {
-      addLeftOutline(lineSegments[segmentIndex], element, coord, halfLineWidth);
+      addLeftOutline(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Check pixel to the right
@@ -569,12 +454,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixels.right === undefined ||
       pixelData[pixels.right] !== segmentIndex
     ) {
-      addRightOutline(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addRightOutline(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Top left corner
@@ -584,12 +464,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.top] === segmentIndex &&
       pixelData[pixels.left] === segmentIndex
     ) {
-      addTopLeftCorner(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addTopLeftCorner(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Top right corner
@@ -599,12 +474,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.top] === segmentIndex &&
       pixelData[pixels.right] === segmentIndex
     ) {
-      addTopRightCorner(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addTopRightCorner(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Bottom left corner
@@ -614,12 +484,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.bottom] === segmentIndex &&
       pixelData[pixels.left] === segmentIndex
     ) {
-      addBottomLeftCorner(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addBottomLeftCorner(lineSegments[segmentIndex], element, coord, offset);
     }
 
     // Bottom right corner
@@ -629,12 +494,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
       pixelData[pixels.bottom] === segmentIndex &&
       pixelData[pixels.right] === segmentIndex
     ) {
-      addBottomRightCorner(
-        lineSegments[segmentIndex],
-        element,
-        coord,
-        halfLineWidth
-      );
+      addBottomRightCorner(lineSegments[segmentIndex], element, coord, offset);
     }
   }
 
@@ -642,139 +502,35 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 }
 
 /**
- * AddTopLeftCorner - Adds an outline to the top left corner of the pixel.
- *
- * @param  {Object[]} lineSegmentsForSegment - The list to append.
- * @param  {Object} element - The Cornerstone enabled element.
- * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
- *
- * @returns {null}
+ * getOutlineOffset - Returns the outline offset (half line width) in the
+ * i (column) and j (row) pixel directions in the viewport's rotated frame.
+ * @param  {Object} viewport The cornerstone viewport.
+ * @param  {number} lineWidth The width of the outline.
+ * @returns {Object} Two vectors in the i and j pixel directions, with magnitude
+ *                   lineWidth / 2.
  */
-function addTopLeftCorner(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
-  const { pixelToCanvas } = external.cornerstone;
-  const start = pixelToCanvas(element, coord);
+function getOutlineOffset(viewport, lineWidth) {
+  const halfLineWidth = lineWidth / 2;
+  let theta = viewport.rotation;
 
-  start.y += halfLineWidth;
+  theta *= Math.PI / 180;
 
-  const end = {
-    x: start.x,
-    y: start.y,
+  const cosTheta = Math.cos(theta);
+  const sinTheta = Math.sin(theta);
+
+  const unitVectorI = [cosTheta, sinTheta];
+  const unitVectorJ = [-sinTheta, cosTheta];
+
+  return {
+    i: {
+      x: halfLineWidth * unitVectorI[0],
+      y: halfLineWidth * unitVectorI[1],
+    },
+    j: {
+      x: halfLineWidth * unitVectorJ[0],
+      y: halfLineWidth * unitVectorJ[1],
+    },
   };
-
-  end.x += halfLineWidth * 2;
-
-  lineSegmentsForSegment.push({
-    start,
-    end,
-  });
-}
-
-/**
- * AddTopRightCorner - Adds an outline to the top right corner of the pixel.
- *
- * @param  {Object[]} lineSegmentsForSegment - The list to append.
- * @param  {Object} element - The Cornerstone enabled element.
- * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
- *
- * @returns {null}
- */
-function addTopRightCorner(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
-  const { pixelToCanvas } = external.cornerstone;
-  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
-
-  start.y += halfLineWidth;
-
-  const end = {
-    x: start.x,
-    y: start.y,
-  };
-
-  end.x -= halfLineWidth * 2;
-
-  lineSegmentsForSegment.push({
-    start,
-    end,
-  });
-}
-
-/**
- * AddBottomLeftCorner - Adds an outline to the bottom left corner of the pixel.
- *
- * @param  {Object[]} lineSegmentsForSegment - The list to append.
- * @param  {Object} element - The Cornerstone enabled element.
- * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
- *
- * @returns {null}
- */
-function addBottomLeftCorner(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
-  const { pixelToCanvas } = external.cornerstone;
-  const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
-
-  start.y -= halfLineWidth;
-
-  const end = {
-    x: start.x,
-    y: start.y,
-  };
-
-  end.x += halfLineWidth * 2;
-
-  lineSegmentsForSegment.push({
-    start,
-    end,
-  });
-}
-
-/**
- * AddBottomRightCorner - Adds an outline to the bottom right corner of the pixel.
- *
- * @param  {Object[]} lineSegmentsForSegment - The list to append.
- * @param  {Object} element - The Cornerstone enabled element.
- * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
- *
- * @returns {null}
- */
-function addBottomRightCorner(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
-  const { pixelToCanvas } = external.cornerstone;
-  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
-
-  start.y -= halfLineWidth;
-
-  const end = {
-    x: start.x,
-    y: start.y,
-  };
-
-  end.x -= halfLineWidth * 2;
-
-  lineSegmentsForSegment.push({
-    start,
-    end,
-  });
 }
 
 /**
@@ -833,22 +589,151 @@ function getPixelIndiciesAroundPixel(coord, rows, cols) {
 }
 
 /**
+ * AddTopLeftCorner - Adds an outline to the top left corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
+ *
+ * @returns {null}
+ */
+function addTopLeftCorner(lineSegmentsForSegment, element, coord, offset) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, coord);
+
+  start.x += offset.j.x;
+  start.y += offset.j.y;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x += offset.i.x * 2;
+  end.y += offset.i.y * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * AddTopRightCorner - Adds an outline to the top right corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
+ *
+ * @returns {null}
+ */
+function addTopRightCorner(lineSegmentsForSegment, element, coord, offset) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
+
+  start.x += offset.j.x;
+  start.y += offset.j.y;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x -= offset.i.x * 2;
+  end.y -= offset.i.y * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * AddBottomLeftCorner - Adds an outline to the bottom left corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
+ *
+ * @returns {null}
+ */
+function addBottomLeftCorner(lineSegmentsForSegment, element, coord, offset) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
+
+  start.x -= offset.j.x;
+  start.y -= offset.j.y;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x += offset.i.x * 2;
+  end.y += offset.i.y * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
+ * AddBottomRightCorner - Adds an outline to the bottom right corner of the pixel.
+ *
+ * @param  {Object[]} lineSegmentsForSegment - The list to append.
+ * @param  {Object} element - The Cornerstone enabled element.
+ * @param  {Object} coord - The pixel to add a line to.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
+ *
+ * @returns {null}
+ */
+function addBottomRightCorner(lineSegmentsForSegment, element, coord, offset) {
+  const { pixelToCanvas } = external.cornerstone;
+  const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
+
+  start.x -= offset.j.x;
+  start.y -= offset.j.y;
+
+  const end = {
+    x: start.x,
+    y: start.y,
+  };
+
+  end.x -= offset.i.x * 2;
+  end.y -= offset.i.y * 2;
+
+  lineSegmentsForSegment.push({
+    start,
+    end,
+  });
+}
+
+/**
  * AddTopOutline - adds an outline at the top of the pixel.
  *
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
  * @param  {Object} coord - The pixel to add a line to.
  * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
  *
  * @returns {null}
  */
-function addTopOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
+function addTopOutline(lineSegmentsForSegment, element, coord, offset) {
   const { pixelToCanvas } = external.cornerstone;
   const start = pixelToCanvas(element, coord);
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
 
-  start.y += halfLineWidth;
-  end.y += halfLineWidth;
+  // move the line in the y-direction.
+  start.x += offset.j.x;
+  start.y += offset.j.y;
+
+  end.x += offset.j.x;
+  end.y += offset.j.y;
 
   lineSegmentsForSegment.push({
     start,
@@ -862,22 +747,21 @@ function addTopOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
  * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
  *
  * @returns {null}
  */
-function addBottomOutline(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
+function addBottomOutline(lineSegmentsForSegment, element, coord, offset) {
   const { pixelToCanvas } = external.cornerstone;
   const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
 
-  start.y -= halfLineWidth;
-  end.y -= halfLineWidth;
+  // move the line in the negative y-direction.
+  start.x -= offset.j.x;
+  start.y -= offset.j.y;
+
+  end.x -= offset.j.x;
+  end.y -= offset.j.y;
 
   lineSegmentsForSegment.push({
     start,
@@ -891,17 +775,22 @@ function addBottomOutline(
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
  * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
  *
  * @returns {null}
  */
-function addLeftOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
+function addLeftOutline(lineSegmentsForSegment, element, coord, offset) {
   const { pixelToCanvas } = external.cornerstone;
   const start = pixelToCanvas(element, coord);
   const end = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
 
-  start.x += halfLineWidth;
-  end.x += halfLineWidth;
+  // move the line in the x-direction.
+
+  start.x += offset.i.x;
+  start.y += offset.i.y;
+
+  end.x += offset.i.x;
+  end.y += offset.i.y;
 
   lineSegmentsForSegment.push({
     start,
@@ -915,182 +804,25 @@ function addLeftOutline(lineSegmentsForSegment, element, coord, halfLineWidth) {
  * @param  {Object[]} lineSegmentsForSegment - The list to append.
  * @param  {Object} element - The Cornerstone enabled element.
  * @param  {Object} coord - The pixel to add a line to.
- * @param  {number} halfLineWidth - Half the line width, to place line within the pixel.
+ * @param  {Object} offset - The x and y offset in the rotated frame.
  *
  * @returns {null}
  */
-function addRightOutline(
-  lineSegmentsForSegment,
-  element,
-  coord,
-  halfLineWidth
-) {
+function addRightOutline(lineSegmentsForSegment, element, coord, offset) {
   const { pixelToCanvas } = external.cornerstone;
   const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
 
-  start.x -= halfLineWidth;
-  end.x -= halfLineWidth;
+  // move the line in the negative x-direction.
+
+  start.x -= offset.i.x;
+  start.y -= offset.i.y;
+
+  end.x -= offset.i.x;
+  end.y -= offset.i.y;
 
   lineSegmentsForSegment.push({
     start,
     end,
   });
-}
-
-/**
- * RenderSegmentation_OLD - Renders the labelmap2D to the canvas.
- *
- * @param  {Object} evt              The cornerstone event.
- * @param  {Object} labelmap3D       The 3D labelmap.
- * @param  {number} labelmapIndex    The index of the labelmap.
- * @param  {Object} labelmap2D       The 2D labelmap for this current image.
- * @param  {number} isActiveLabelMap   Whether the labelmap is active.
- *
- * @returns {null}
- */
-function renderSegmentation_OLD(
-  evt,
-  labelmap3D,
-  labelmapIndex,
-  labelmap2D,
-  isActiveLabelMap
-) {
-  // Don't bother rendering a whole labelmap with full transparency!
-  if (isActiveLabelMap && configuration.fillAlpha === 0) {
-    return;
-  } else if (!isActiveLabelMap && configuration.fillAlphaInactive === 0) {
-    return;
-  }
-
-  // Draw previous image if cached.
-  if (labelmap3D.imageBitmapCache) {
-    _drawImageBitmap(evt, labelmap3D.imageBitmapCache, isActiveLabelMap);
-  }
-
-  if (labelmap2D.invalidated) {
-    createNewBitmapAndQueueRenderOfSegmentation(
-      evt,
-      labelmap3D,
-      labelmapIndex,
-      labelmap2D
-    );
-  }
-}
-
-/**
- * CreateNewBitmapAndQueueRenderOfSegmentation - Creates a bitmap from the
- * labelmap2D and queues a re-render once it is built.
- *
- * @param  {Object} evt           The cornerstone event.
- * @param  {Object} labelmap3D    The 3D labelmap.
- * @param  {number} labelmapIndex The index of the labelmap.
- * @param  {Object} labelmap2D    The 2D labelmap for the current image.
- * @returns {null}
- */
-function createNewBitmapAndQueueRenderOfSegmentation(
-  evt,
-  labelmap3D,
-  labelmapIndex,
-  labelmap2D
-) {
-  const eventData = evt.detail;
-  const element = eventData.element;
-
-  const pixelData = labelmap2D.pixelData;
-
-  const imageData = new ImageData(
-    eventData.image.width,
-    eventData.image.height
-  );
-  const image = {
-    stats: {},
-    minPixelValue: 0,
-    getPixelData: () => pixelData,
-  };
-
-  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
-
-  external.cornerstone.storedPixelDataToCanvasImageDataColorLUT(
-    image,
-    state.colorLutTables[colorMapId],
-    imageData.data
-  );
-
-  window.createImageBitmap(imageData).then(newImageBitmap => {
-    labelmap3D.imageBitmapCache = newImageBitmap;
-    labelmap2D.invalidated = false;
-
-    external.cornerstone.updateImage(element);
-  });
-}
-
-/**
- * Draws the ImageBitmap the canvas.
- *
- * @private
- * @param  {Object} evt               The cornerstone event.
- * @param {ImageBitmap} imageBitmap   The ImageBitmap to draw.
- * @param {boolean} isActiveLabelMap  Whether the labelmap is active.
- * @returns {null}
- */
-function _drawImageBitmap(evt, imageBitmap, isActiveLabelMap) {
-  const eventData = evt.detail;
-  const context = getNewContext(eventData.canvasContext.canvas);
-
-  const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
-    x: 0,
-    y: 0,
-  });
-
-  const canvasTopRight = external.cornerstone.pixelToCanvas(eventData.element, {
-    x: eventData.image.width,
-    y: 0,
-  });
-
-  const canvasBottomRight = external.cornerstone.pixelToCanvas(
-    eventData.element,
-    {
-      x: eventData.image.width,
-      y: eventData.image.height,
-    }
-  );
-
-  const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
-    canvasTopLeft,
-    canvasTopRight
-  );
-  const cornerstoneCanvasHeight = external.cornerstoneMath.point.distance(
-    canvasTopRight,
-    canvasBottomRight
-  );
-
-  const canvas = eventData.canvasContext.canvas;
-  const viewport = eventData.viewport;
-
-  context.imageSmoothingEnabled = false;
-  context.globalAlpha = isActiveLabelMap
-    ? configuration.fillAlpha
-    : configuration.fillAlphaInactive;
-
-  transformCanvasContext(context, canvas, viewport);
-
-  const canvasViewportTranslation = {
-    x: viewport.translation.x * viewport.scale,
-    y: viewport.translation.y * viewport.scale,
-  };
-
-  context.drawImage(
-    imageBitmap,
-    canvas.width / 2 - cornerstoneCanvasWidth / 2 + canvasViewportTranslation.x,
-    canvas.height / 2 -
-      cornerstoneCanvasHeight / 2 +
-      canvasViewportTranslation.y,
-    cornerstoneCanvasWidth,
-    cornerstoneCanvasHeight
-  );
-
-  context.globalAlpha = 1.0;
-
-  resetCanvasContextTransform(context);
 }
