@@ -6,6 +6,7 @@ import {
   transformCanvasContext,
   draw,
   drawLines,
+  drawJoinedLines,
   fillBox,
 } from '../drawing/index.js';
 
@@ -242,6 +243,8 @@ function renderSegmentation(
     }
   }
 
+  const { pixelToCanvas } = external.cornerstone;
+
   const context = getNewContext(canvasContext.canvas);
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colorLutTable = state.colorLutTables[colorMapId];
@@ -254,7 +257,13 @@ function renderSegmentation(
 
   const previousImageSmoothingEnabled = context.imageSmoothingEnabled;
 
-  context.imageSmoothingEnabled = false;
+  context.imageSmoothingEnabled = true;
+
+  const previousLineWidth = context.lineWidth;
+
+  context.lineWidth = 0;
+
+  /*
 
   const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
     x: 0,
@@ -286,6 +295,35 @@ function renderSegmentation(
   const canvas = eventData.canvasContext.canvas;
   const viewport = eventData.viewport;
 
+  // TEMP - Clean this!
+  for (let i = 0; i < rects.length; i++) {
+    const rectsI = rects[i];
+
+    if (rectsI) {
+      for (let r = 0; r < rectsI.length; r++) {
+        const rect = rectsI[r];
+        const topLeft = pixelToCanvas(element, rect.start);
+        const bottomRight = pixelToCanvas(element, {
+          x: rect.end.x + 1,
+          y: rect.end.y + 1,
+        });
+
+        topLeft.x -= canvasTopLeft.x;
+        topLeft.y -= canvasTopLeft.y;
+
+        bottomRight.x -= canvasTopLeft.x;
+        bottomRight.y -= canvasTopLeft.y;
+
+        rect.topLeft = topLeft;
+
+        rect.width = bottomRight.x - topLeft.x;
+        rect.height = bottomRight.y - topLeft.y;
+      }
+    }
+  }
+
+  logger.warn(rects);
+
   context.imageSmoothingEnabled = false;
   context.globalAlpha = isActiveLabelMap
     ? configuration.fillAlpha
@@ -308,6 +346,7 @@ function renderSegmentation(
       cornerstoneCanvasHeight / 2 +
       canvasViewportTranslation.y,
   };
+  */
 
   // Render rects
 
@@ -320,29 +359,70 @@ function renderSegmentation(
       const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
       for (let r = 0; r < rectsI.length; r++) {
-        fillRect(context, rectsI[r], fillStyle, element, transformOffset);
+        fillRectPath(context, rectsI[r], fillStyle, element);
+        //fillRect(context, rectsI[r], fillStyle, element, transformOffset);
       }
     }
   }
 
   context.globalAlpha = previousAlpha;
   context.imageSmoothingEnabled = previousImageSmoothingEnabled;
+  context.lineWidth = previousLineWidth;
+}
+
+function fillRectPath(context, rect, fillStyle, element) {
+  const { start, end } = rect;
+
+  const points = [
+    {
+      x: end.x + 1,
+      y: start.y,
+    },
+    {
+      x: end.x + 1,
+      y: end.y + 1,
+    },
+    {
+      x: start.x,
+      y: end.y + 1,
+    },
+  ];
+
+  drawJoinedLines(context, element, rect.start, points, {
+    fillStyle,
+  });
 }
 
 function fillRect(context, rect, fillStyle, element, transformOffset) {
-  const { pixelToCanvas } = external.cornerstone;
-  const topLeft = pixelToCanvas(element, rect.start);
+  //const { pixelToCanvas } = external.cornerstone;
+  //const topLeft = pixelToCanvas(element, rect.start);
+  /*
   const bottomRight = pixelToCanvas(element, {
     x: rect.end.x + 1,
     y: rect.end.y + 1,
   });
+  */
 
   const boundingBox = {
-    left: topLeft.x - transformOffset.left,
-    top: topLeft.y - transformOffset.top,
-    width: bottomRight.x - topLeft.x,
-    height: bottomRight.y - topLeft.y,
+    left: rect.topLeft.x + transformOffset.left,
+    top: rect.topLeft.y + transformOffset.top,
+    width: rect.width,
+    height: rect.height,
+    //width: bottomRight.x - topLeft.x,
+    //height: bottomRight.y - topLeft.y,
   };
+
+  /*
+  context.drawImage(
+    imageBitmap,
+    canvas.width / 2 - cornerstoneCanvasWidth / 2 + canvasViewportTranslation.x,
+    canvas.height / 2 -
+      cornerstoneCanvasHeight / 2 +
+      canvasViewportTranslation.y,
+    cornerstoneCanvasWidth,
+    cornerstoneCanvasHeight
+  );
+  */
 
   fillBox(context, boundingBox, fillStyle);
 }
