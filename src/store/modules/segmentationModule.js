@@ -57,8 +57,8 @@ const configuration = {
  * @property {Object[]} metadata An array of metadata per segment. Metadata is optional and its form is
  *                               application specific.
  * @property {number} activeSegmentIndex The index of the active segment for this `Labelmap3D`.
- * @property {ImageBitmap} imageBitmapCache A cached `ImageBitmap` of the most recently displayed `Labelmap2D` view.
- *                                          The cache is rendered if the data isn't invalidated.
+ * @property {boolean[]} segmentsVisible The visibility of segments on this labelmap.
+ *                                       If an element is undefined, the visibility of that defaults to true.
  */
 
 /**
@@ -708,7 +708,7 @@ function setLabelmap3DByFirstImageId(
     labelmaps2D: [],
     metadata,
     activeSegmentIndex: 1,
-    imageBitmapCache: null,
+    segmentsVisible: [],
   };
 
   const labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
@@ -1254,7 +1254,7 @@ function _addLabelmap3D(brushStackState, labelmapIndex, size) {
     labelmaps2D: [],
     metadata: [],
     activeSegmentIndex: 1,
-    imageBitmapCache: null,
+    segmentsVisible: [],
   };
 }
 
@@ -1289,6 +1289,4 @@ function _addLabelmap2DView(
     segmentsOnLabelmap: [],
     invalidated: true,
   };
-  // Clear cache for this displaySet to avoid flickering.
-  brushStackState.labelmaps3D[labelmapIndex].imageBitmapCache = null;
 }

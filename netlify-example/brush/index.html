@@ -142,6 +142,16 @@
                   Active labelmap: 0
                 </td>
               </tr>
+              <tr>
+                <th>
+                  <button type="button" api-call="toggle-segment-1">
+                    Toggle Segment 1 visibility
+                  </button>
+                </th>
+                <td id="toggle-segment-1-label">
+                  visible
+                </td>
+              </tr>
             </table>
 
             <h2>Active Labelmap</h2>
@@ -459,6 +469,33 @@
           const label = document.getElementById('active-label-map-label');
           label.innerHTML = 'Active Labelmap: ' + activeLabelmap;
 
+          cornerstone.updateImage(element);
+
+          break;
+
+        case 'toggle-segment-1':
+          const {
+            labelmap3D,
+          } = cornerstoneTools.store.modules.segmentation.getters.getAndCacheLabelmap2D(
+            element
+          );
+
+          if (labelmap3D.segmentsVisible[1] === undefined) {
+            labelmap3D.segmentsVisible[1] = false;
+          } else {
+            labelmap3D.segmentsVisible[1] = !labelmap3D.segmentsVisible[1];
+          }
+
+          const visible = labelmap3D.segmentsVisible[1];
+
+          console.log(visible);
+
+          const visibilityLabel = document.getElementById(
+            'toggle-segment-1-label'
+          );
+          visibilityLabel.innerHTML = visible ? 'visible' : 'hidden';
+
+          cornerstone.updateImage(element);
           break;
         default:
           return;

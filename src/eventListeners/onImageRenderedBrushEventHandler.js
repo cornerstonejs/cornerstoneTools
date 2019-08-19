@@ -225,7 +225,10 @@ function renderFill(
   for (let i = 0; i < rects.length; i++) {
     const rectsI = rects[i];
 
-    if (rectsI) {
+    const visible =
+      labelmap3D.segmentsVisible[i] ||
+      labelmap3D.segmentsVisible[i] === undefined;
+    if (rectsI && visible) {
       const color = colorLutTable[i];
 
       const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]}`;
@@ -321,7 +324,11 @@ function renderOutline(
   // Draw outlines.
   draw(context, context => {
     for (let i = 0; i < lineSegments.length; i++) {
-      if (lineSegments[i]) {
+      const visible =
+        labelmap3D.segmentsVisible[i] ||
+        labelmap3D.segmentsVisible[i] === undefined;
+
+      if (lineSegments[i] && visible) {
         const color = colorLutTable[i];
 
         drawLines(
