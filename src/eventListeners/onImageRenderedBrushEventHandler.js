@@ -2,56 +2,14 @@ import store from '../store/index.js';
 import external from '../externalModules.js';
 import {
   getNewContext,
-  resetCanvasContextTransform,
-  transformCanvasContext,
   draw,
   drawLines,
   drawJoinedLines,
-  fillBox,
 } from '../drawing/index.js';
 
 import { getLogger } from '../util/logger.js';
 
 const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
-
-/* Safari and Edge polyfill for createImageBitmap
- * https://developer.mozilla.org/en-US/docs/Web/API/WindowOrWorkerGlobalScope/createImageBitmap
- */
-
-// TODO: Do we still need this? I've yanked the package for now
-// It should be covered by @babel/runtime and plugin-transform-runtime:
-// https://babeljs.io/docs/en/babel-plugin-transform-runtime
-// @James, I think Babel should take care of this for us
-// Import regeneratorRuntime from "regenerator-runtime";
-if (!('createImageBitmap' in window)) {
-  window.createImageBitmap = function(imageData) {
-    return new Promise(resolve => {
-      const img = document.createElement('img');
-
-      img.addEventListener('load', function() {
-        resolve(this);
-      });
-
-      const conversionCanvas = document.createElement('canvas');
-
-      conversionCanvas.width = imageData.width;
-      conversionCanvas.height = imageData.height;
-
-      const conversionCanvasContext = conversionCanvas.getContext('2d');
-
-      conversionCanvasContext.putImageData(
-        imageData,
-        0,
-        0,
-        0,
-        0,
-        conversionCanvas.width,
-        conversionCanvas.height
-      );
-      img.src = conversionCanvas.toDataURL();
-    });
-  };
-}
 
 const { state, configuration, getters } = store.modules.segmentation;
 
@@ -179,7 +137,7 @@ function renderSegmentation(
 }
 
 /**
- * renderFill - Renders the filled region of each segment in the segmentation.
+ * RenderFill - Renders the filled region of each segment in the segmentation.
  * @param  {Object} evt                 The cornerstone event.
  * @param  {Labelmap3D} labelmap3D  The `Labelmap3D` object.
  * @param  {number} labelmapIndex The index of the active label map.
@@ -208,8 +166,6 @@ function renderFill(
 
   const pixelData = labelmap2D.pixelData;
   const activeSegmentIndex = labelmap3D.activeSegmentIndex;
-
-  // Find rects.
   const rects = [];
 
   labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
@@ -285,7 +241,7 @@ function renderFill(
 }
 
 /**
- * fillRect - renders the rectangle as a path, as this requires less transformation logic
+ * FillRect - renders the rectangle as a path, as this requires less transformation logic
  * for arbitrary rotations.
  *
  * @param  {CanvasRenderingContext2D} context The canvas context.
@@ -502,7 +458,7 @@ function getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 }
 
 /**
- * getOutlineOffset - Returns the outline offset (half line width) in the
+ * GetOutlineOffset - Returns the outline offset (half line width) in the
  * i (column) and j (row) pixel directions in the viewport's rotated frame.
  * @param  {Object} viewport The cornerstone viewport.
  * @param  {number} lineWidth The width of the outline.
@@ -544,8 +500,7 @@ function getOutlineOffset(viewport, lineWidth) {
  * @returns {Object} Object containing the position of adjacent pixels.
  */
 function getPixelIndiciesAroundPixel(coord, rows, cols) {
-  const getPixelIndex = pixelCoord => pixelCoord[1] * cols + pixelCoord[0];
-
+  const pixelIndex = coord.y * cols + coord.x;
   const pixel = {};
 
   const hasPixelToTop = coord.y - 1 >= 0;
@@ -554,35 +509,35 @@ function getPixelIndiciesAroundPixel(coord, rows, cols) {
   const hasPixelToRight = coord.x + 1 < cols;
 
   if (hasPixelToTop) {
-    pixel.top = getPixelIndex([coord.x, coord.y - 1]);
+    pixel.top = pixelIndex - cols;
 
     if (hasPixelToRight) {
-      pixel.topRight = getPixelIndex([coord.x + 1, coord.y - 1]);
+      pixel.topRight = pixel.top + 1;
     }
 
     if (hasPixelToLeft) {
-      pixel.topLeft = getPixelIndex([coord.x - 1, coord.y - 1]);
+      pixel.topLeft = pixel.top - 1;
     }
   }
 
   if (hasPixelToBotoom) {
-    pixel.bottom = getPixelIndex([coord.x, coord.y + 1]);
+    pixel.bottom = pixelIndex + cols;
 
     if (hasPixelToRight) {
-      pixel.bottomRight = getPixelIndex([coord.x + 1, coord.y + 1]);
+      pixel.bottomRight = pixel.bottom + 1;
     }
 
     if (hasPixelToLeft) {
-      pixel.bottomLeft = getPixelIndex([coord.x - 1, coord.y + 1]);
+      pixel.bottomLeft = pixel.bottom - 1;
     }
   }
 
   if (hasPixelToLeft) {
-    pixel.left = getPixelIndex([coord.x - 1, coord.y]);
+    pixel.left = pixelIndex - 1;
   }
 
   if (hasPixelToRight) {
-    pixel.right = getPixelIndex([coord.x + 1, coord.y]);
+    pixel.right = pixelIndex + 1;
   }
 
   return pixel;
@@ -728,7 +683,7 @@ function addTopOutline(lineSegmentsForSegment, element, coord, offset) {
   const start = pixelToCanvas(element, coord);
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
 
-  // move the line in the y-direction.
+  // Move the line in the y-direction.
   start.x += offset.j.x;
   start.y += offset.j.y;
 
@@ -756,7 +711,7 @@ function addBottomOutline(lineSegmentsForSegment, element, coord, offset) {
   const start = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
 
-  // move the line in the negative y-direction.
+  // Move the line in the negative y-direction.
   start.x -= offset.j.x;
   start.y -= offset.j.y;
 
@@ -784,7 +739,7 @@ function addLeftOutline(lineSegmentsForSegment, element, coord, offset) {
   const start = pixelToCanvas(element, coord);
   const end = pixelToCanvas(element, { x: coord.x, y: coord.y + 1 });
 
-  // move the line in the x-direction.
+  // Move the line in the x-direction.
 
   start.x += offset.i.x;
   start.y += offset.i.y;
@@ -813,7 +768,7 @@ function addRightOutline(lineSegmentsForSegment, element, coord, offset) {
   const start = pixelToCanvas(element, { x: coord.x + 1, y: coord.y });
   const end = pixelToCanvas(element, { x: coord.x + 1, y: coord.y + 1 });
 
-  // move the line in the negative x-direction.
+  // Move the line in the negative x-direction.
 
   start.x -= offset.i.x;
   start.y -= offset.i.y;
